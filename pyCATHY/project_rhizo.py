@@ -5,6 +5,9 @@ from cathy_tools import CATHY
 import os
 import numpy as np
 
+os.chdir('/home/ben/Documents/CATHY/rhizoLab/create_mesh/')
+path2prj = os.getcwd()
+
 # %% Create the mesh
 
 # we first need to create a 2d surface mesh with the correct attribute to inject into CATHY;
@@ -20,8 +23,7 @@ import numpy as np
 # ctplot.
 
 # %% Prepare input files
-os.chdir('/home/ben/Documents/CATHY/rhizoLab/create_mesh/')
-path2prj = os.getcwd()
+
 #print(path2prj)
 survey = CATHY(dirName=path2prj)
 
@@ -37,6 +39,12 @@ survey.create_3dmesh_CATHY('rhizo2d.msh',NZONE=1,NSTR=25,N1=30,NNOD=357,
 # %% Run cathy processor
 # this function is a wrapper. It builds a makefile and the executable.
 # Then the exe is run and use core CATHY file to solve the problem
+
+os.chdir('/home/ben/Documents/CATHY/CathyGitbucket/Test_Ben/')
+            
+path2prj = os.getcwd()
+survey = CATHY(dirName=path2prj)
+
 survey.run_processor()
 
 # %% Visualise Data
