@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 STRUCTURAL PARAMETERS
 ------------------------------------------------------------------------------
-Grid spacing along the x-direction =                           0.50
+Grid spacing along the x-direction =              0.001
 Grid spacing along the y-direction =                           0.50
 DEM rectangle size along the x-direction =                    15
 DEM rectangle size along the y-direction =                     3

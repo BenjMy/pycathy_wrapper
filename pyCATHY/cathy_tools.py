@@ -22,7 +22,7 @@ import meshtools as mt
 
 class CATHY(object):
     '''Main CATHY object.'''
-    def __init__(self,dirName,prjName='my_cathy_prj'):
+    def __init__(self,dirName,prjName='my_cathy_prj',**kwargs):
         '''Create CATHY object.
         '''
         print('init CATHY object')
@@ -34,11 +34,11 @@ class CATHY(object):
         self.project_name = prjName
         self.input_dirname = 'input'
         self.output_dirname = 'output'
-        
-        
+
+
         # infitration
         self.drippers = []
-        
+
         # ERT
         self.elecs = []
 
@@ -48,47 +48,54 @@ class CATHY(object):
 
         # if not os.path.exists(os.path.join(self.project_name,'prepro')):
         #     os.makedirs(os.path.join(self.project_name,'prepro'),exist_ok=True)
-            
+
         # fetch src files if not existing
         if not os.path.exists(os.path.join(self.project_name,'src')):
             print('src files not found')
             try:
-                Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git', 
+                Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git',
                                 os.path.join(self.project_name,'tmp_src'),
                                  branch='master')
                 print('fetch cathy src files')
                 shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/src'),
-                            os.path.join(self.workdir,self.project_name,'src'))  
-                
+                            os.path.join(self.workdir,self.project_name,'src'))
+
                 print('fetch cathy prepro src files')
                 shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/prepro'),
-                            os.path.join(self.workdir,self.project_name,'prepro'))     
- 
+                            os.path.join(self.workdir,self.project_name,'prepro'))
+
                 print('fetch cathy input files')
                 shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/input'),
-                            os.path.join(self.workdir,self.project_name,'input'))     
+                            os.path.join(self.workdir,self.project_name,'input'))
 
 
                 pathsrc = os.path.join(os.getcwd(),self.project_name,'tmp_src/runs/weilletal/')
-                
+
 
                 onlyfiles = [f for f in listdir(pathsrc) if isfile(join(pathsrc, f))]
-                
+
                 for file in onlyfiles: # You could shorten this to one line, but it runs on a bit.
                     shutil.move(os.path.join(pathsrc, file),
-                                os.path.join(self.project_name,file))     
-                        
-                    
-    
+                                os.path.join(self.project_name,file))
+
+        
+
                 #shutil.rmtree(os.path.join(self.project_name,'tmp_src/runs'))
 
                 # shutil.move(os.path.join(self.dirName,self.project_name,'tmp_src/README'),
             #             os.path.join(self.dirName,self.project_name,'README'))
             except:
                 pass
-                    
 
-
+        for key,value in kwargs.items():
+            if key == 'clear_outputs':
+                if value == True:
+                        if not os.path.exists(os.path.join(self.workdir,self.project_name,'output')):
+                            self.create_output(output_dirname='output')
+                        else:
+                            shutil.rmtree(os.path.join(self.workdir,self.project_name,'output'))
+                            shutil.rmtree(os.path.join(self.workdir,self.project_name,'vtk'))
+                            self.create_output(output_dirname='output')
 
         #check if src files are existing
 
@@ -101,101 +108,93 @@ class CATHY(object):
         # cathy.fnames and cathy.exe
 
 
-    def init(self):
-        '''Make CATHY input files.
-        '''
-        self.prepare_makefile()
-        self.create_cathy_exe(exe_name=self.processor_name)
-        self.create_output(output_dirname='output')
-
-    def prepare_makefile(self, job_type=0):
-
-        # check flags for job type  r
-        # check if all inputs files are present
-
-        # DAFLAG - flag for the choice of the data assimilation scheme:
-        #           = 0 nudging (if NUDN=0, no data assimilation)
-        #           = 1 EnKF with Evensen's algorithm (Ocean Dynamics, 2004)
-        #           = 2 EnKF with parameters update
-        #           = 3 Particle filtering (SIR algorithm)
-        #           = 4 Particle filtering (SIR algorithm) with parameters update
+    # def init(self):
+    #     '''Make CATHY input files.
+    #     '''
+        # self.prepare_makefile()
+        # self.create_cathy_exe(exe_name=self.processor_name)
+        # self.create_output(output_dirname='output')
 
 
-        # Data assimilation = 2
-        # Plant model = 1
+
+    def update_prepo_inputs(self,DEM=None,verbose=False,**kwargs):
+        """ Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs
+
+        Parameters
+        ----------
+        DEM : type
+            Description of parameter `DEM`.
+        verbose : type
+            Description of parameter `verbose`.
+        **kwargs : type
+            Description of parameter `**kwargs`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
 
 
-        # mandatory inputs common to all type of simulation
-        self.set_atmbc()
-        # copy into project_name/inputs
-
-        # inputs for Data assimilation
-
-        # inputs for plant model
-
-
-        return
-    
-    
-    def create_DEM_mesh(self,DEM=None,verbose=False,**kwargs):
-        
         #%% hap.in
 
         structural_parameter = ['delta_x','delta_y','N','M','N_celle',
                                'xllcorner','yllcorner']
-    
+
         hap_file = open(os.path.join(self.project_name , 'prepro/hap.in'), 'r')
         Lines = hap_file.readlines()
-         
+
+        # read current values in hap.in
+
         tmp_param_value = []
-        tmp_lnb = []
+        tmp_lnb = [] # save line nb where values are existing
         count=0
         for line in Lines:
             x = line.strip().split("=")
-            if len(x)>1:
-                try: 
+            if len(x)>1: # skip lines with no =
+                try:
                     tmp_param_value.append(float(x[1]))
                     tmp_lnb.append(count)
                     count += 1
                 except:
                     pass
-        
-        
-        # check from kwargs
+        # iterate over the lines
+        # check from kwargs if values are changed
+        # save new line with new value if needed
+
         L=[]
+        tmp_param_value_new=[]
         count=0
         for i, line in enumerate(Lines):
             xnew = line.strip().split("=")
-            if len(xnew)>1:
+            if len(xnew)>1: # skip lines with no =
                 for key,value in kwargs.items():
-                    if count<len(structural_parameter):
+                    if count<len(structural_parameter): # only consider structural parameters
                         if key==structural_parameter[tmp_lnb[count]]:
                             print(f'key: {key} | value: {value}')
                             if value!=tmp_param_value[count]:
                                 xnew[1]=value
                                 line= xnew[0] + '=              ' + str(xnew[1])  + '\n'
-                                #tmp_param_value=value
-                count += 1
-            L.append(line)
-            
-        
-        
-        
-        
+                        tmp_param_value_new.append(value)
 
+                count += 1 # count line nb
+            L.append(line)
+
+        # write the new hap.in file
         hap_file.close()
 
         hap_file = open(os.path.join(self.project_name , 'prepro/hap.in'), 'w+')
         hap_file.writelines(L)
         hap_file.close()
-        
-        
-        # self.hapin = {}
-        
-        # for i in range(len(structural_parameter)):
-        #     key = structural_parameter[i]
-        #     self.hapin[key] = tmp_param_value[i]
-            
+
+
+        self.hapin = {}
+
+        for i in range(len(structural_parameter)):
+            key = structural_parameter[i]
+            self.hapin[key] = tmp_param_value_new[i]
+
         #%% dtm_13.val
         # If we start with a DEM file ("dtm_13.val") for an already delineated
         # catchment (i.e., a "catchment" DEM file instead of a "full" DEM file), then
@@ -203,69 +202,215 @@ class CATHY(object):
         # needed (make sure that "Boundary channel construction" is set to 0 in
         # "hap.in").
 
-    
+
         if DEM is not None:
             self.DEM = DEM
 
             # check consistency with hapin
-            
-            
 
             # check presence of the outlet
             if len(np.unique(DEM))==1:
                  print("Error: outlet not defined")
                  DEM_withOutlet = DEM
                  DEM_withOutlet[0,0]=0
-            
+
             with open(os.path.join(self.project_name,'prepro/dtm_13.val'), 'w+') as f:
                 np.savetxt(f, DEM_withOutlet, fmt='%1.4e')   # use exponential notation
 
-        return 
+
+        self.update_dem_parameters(**kwargs)
+        # self.update_transp(**kwargs)
+
+
+
+        return
+
+    def update_dem_parameters(self,**kwargs):
+        """Short summary.
+
+        Parameters
+        ----------
+        **kwargs : type
+            NZONE : type
+                # of material types in the porous medium.
+            NSTR : type
+                The number of vertical layers.
+            N1 : type
+                The maximum number of element connections to a node.
+            NNOD : type
+                Description of parameter `NNOD`.
+            NTRI : type
+                Description of parameter `NTRI`.
+            ZRATIO : type
+                The thickness of vertical layers or the fraction of total grid height
+                that each layer is to occupy (ZRATIO (1) is for the surface‐most layer.
+                ZRATIO values must sum to 1.).
+            Z1 : type
+                Description of parameter `Z1`.
+            IVERT : type
+                =0 each layer will be parallel to the surface, including the base of the 3‐d grid.
+                `ZRATIO` is applied to each vertical cross section.
+                =1 base of the 3‐d grid will be flat, and `ZRATIO` is applied to each vertical cross section
+                =2 base of the 3‐d grid will be flat, as will the NSTR‐1 horizontal cross sections above it.
+                `ZRATIO` is applied only to the vertical cross section having the lowest elevation.
+                =3 for each cell of the dem a single depth value is read in file input IIN60 (basement).
+                `ZRATIO` is applied to each vertical cross section.
+                =4 the first NSTR‐1 layers from the surface will be parallel to the surface and the base of the 3‐d grid will be flat.
+                `ZRATIO` is applied only to the vertical cross section having the lowest elevation.
+            ISP : type
+                =0 for flat surface layer (only one Z value is read in, and is replicated to all surface nodes);
+                otherwise surface layer is not flat (Z values read in for each surface node);
+                (for ISP=0, IVERT=0, 1, and 2 yield the same 3‐d mesh, given the same values of BASE and ZRATIO).
+            BASE : type
+                Value which defines the thickness or base of the 3‐d mesh.
+                For `IVERT`=0, BASE is subtracted from each surface elevation value,
+                so that each vertical cross section will be of thickness BASE,
+                and the base of the 3‐d mesh will be parallel to the surface.
+                For IVERT=1 or 2, BASE is subtracted from the lowest surface elevation value,
+                say ZMIN, so that each vertical cross section will be of thickness (Z ‐ ZMIN) + BASE,
+                where Z is the surface elevation for that cross section.
+                The base of the 3‐d mesh will thus be flat.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+        
+        print('update dem paramaters')
+        # set default parameters
+        
+        ltmp= [0.002,	0.004,	0.006,	0.008,	0.01,	0.01,	0.02, 0.02,
+               0.05,	0.05,	0.1,	0.1,	0.2, 0.2, 0.22]
+        
+        self.dem_parameters =	{
+                      "delta_x": self.hapin['delta_x'],
+                      "delta_y": self.hapin['delta_y'],
+                      "factor": 1.0e+0,
+                      "dostep": 1,
+                      "nzone": 1,
+                      "nstr": 15,
+                      "n1": 25,
+                      "ivert": 0,
+                      "isp": 1,
+                      "base": 3.0,
+                      "zratio(i),i=1,nstr": ltmp,
+                      }
 
         
+        # create dictionnary from kwargs
 
-    def run_preprocessor(self,KeepOutlet=False,verbose=False,**kwargs):
+        for keykwargs,value in kwargs.items():
+           if keykwargs=='zratio':
+                key = 'zratio(i),i=1,nstr'
+                if sum(value)!=1:
+                    print('sum is not equal to 1 -->' + str(sum(value)))
+           else:
+                key = keykwargs
+
+           try:
+               self.dem_parameters[key]
+               self.dem_parameters[key]=value
+           except:
+               pass
+
+
+
+        # write file
+        header_fmt = [1,1,1,1,3,3,1]
+
+        for key,value in self.dem_parameters.items():
+            if isinstance(value, list):
+                strlst = "\t".join(str(e) for e in value)
+                print(strlst)
+                self.dem_parameters[key]=strlst
+                
+                
+                
+        with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'dem_parameters'), 'w+') as dem_parametersfile:
+            
+            # for key,value in self.dem_parameters.items():
+            #     dem_parametersfile.write(str(value) + "\n")
+                
+                counth=0
+                for h in header_fmt:
+                    if h==3:
+                        dem_parametersfile.write(str(list(self.dem_parameters.values())[counth])+ "\t" + 
+                                       str(list(self.dem_parameters.values())[counth+1]) + "\t" + 
+                                       str(list(self.dem_parameters.values())[counth+2]) + "\t" + "\n")
+                        counth += 3
+                    if h==1:
+                        dem_parametersfile.write(str(list(self.dem_parameters.values())[counth])+ "\t" +"\n")
+                        counth += 1
+                        
+                        
+            # for key,value in self.dem_parameters.items():
+            #     dem_parametersfile.write(str(value) + "\n")
+                
+                counth=0
+                for h in header_fmt:
+                    if h==3:
+                        dem_parametersfile.write(str(list(self.dem_parameters.keys())[counth])+ "\t" + 
+                                       str(list(self.dem_parameters.keys())[counth+1]) + "\t" + 
+                                       str(list(self.dem_parameters.keys())[counth+2]) + "\t" + "\n")
+                        counth += 3
+                    if h==1:
+                        dem_parametersfile.write(str(list(self.dem_parameters.keys())[counth])+ "\t" +"\n")
+                        counth += 1
+
+
+        # with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'dem_parameters'), 'w+') as dem_parametersfile:
+        #     for key,value in self.dem_parameters.items():
+        #         dem_parametersfile.write(str(value) + "\n")
+        #     for key,value in self.dem_parameters.items():
+        #         dem_parametersfile.write(key + "\n")
+
+        dem_parametersfile.close()
+
+
+    def run_preprocessor(self,KeepOutlet=True,verbose=False,**kwargs):
         """Run cppp.exe
 
         Returns
         -------
         type
-            Running the executable file has allowed to generate a complete 
+            Running the executable file has allowed to generate a complete
             set of files describing physiographic features of the drainage system, as shown in Table 2.
 
         """
-                            
+
         os.chdir(os.path.join(self.project_name, 'prepro/src/'))
 
         #clean all files compiled
         for file in glob.glob("*.o"):
             os.remove(file)
-        
-       
+
+
         bashCommand = 'gfortran -O -o cppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
-            
+
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        
+
         if verbose:
             output, error = process.communicate()
-         
-            
-           
+
+
+
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        
+
         if verbose:
             output, error = process.communicate()
-        
-           
-            
+
+
+
         os.chdir(self.workdir)
 
         # move to the directory where the source FORTRAN files are contained (cathy_main.f)
         shutil.move(os.path.join(self.workdir,self.project_name, 'prepro/src/cppp'),
                     os.path.join(self.workdir,self.project_name, 'prepro/cppp'))
-        
-        
-        print('run preprocessor')                               
+
+
+        print('run preprocessor')
         os.chdir(os.path.join(self.workdir, self.project_name, 'prepro'))
 
         bashcmd = './cppp'
@@ -279,23 +424,23 @@ class CATHY(object):
         except Exception as e:
              print("Error: "+str(e))
              sys.exit(-1)
-        
+
         p.stdin.write('2\n')
         p.stdin.flush()
         p.stdin.write('0\n')
         p.stdin.flush()
         p.stdin.write('1\n')
         p.stdin.flush()
-            
 
-        if  KeepOutlet==False: 
+
+        if  KeepOutlet==False:
             print('remove outlet')
             with open(os.path.join(self.workdir,self.project_name,'prepro/dtm_13.val'), 'w+') as f:
-                    np.savetxt(f, self.DEM , fmt='%1.4e')   # use exponential notation
-                    
+                    np.savetxt(f, self.DEM , fmt='%1.4e')   # use exponential
+
         os.chdir(self.workdir)
 
-                    
+
         return
 
     def run_processor(self,verbose=False):
@@ -307,40 +452,41 @@ class CATHY(object):
             Description of returned object.
 
         """
-        
+
         # # call subroutines from kwargs here
         #         for key,value in kwargs.items():
         #             if count<len(structural_parameter):
         #                 if key==structural_parameter[tmp_lnb[count]]:
         #                     print(f'key: {key} | value: {value}')
-                            
-                            
+
+
         # check location of the exe (should be in project_name folder)
         print(os.getcwd())
         os.chdir(os.path.join(self.workdir,self.project_name,'src'))
-        
+
+
 
         #clean all files compiled
         for file in glob.glob("*.o"):
             os.remove(file)
-        
+
         for file in glob.glob("*.f"):
             bashCommand = "gfortran -c " + str(file)
-             
+
             process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
             if verbose:
                 output, error = process.communicate()
 
         files = ""
         for file in glob.glob("*.o"):
-            files += " " + str(file) 
-        
+            files += " " + str(file)
+
         bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
         # print(bashCommand)
 
-            
+
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        
+
         if verbose:
             output, error = process.communicate()
 
@@ -352,6 +498,9 @@ class CATHY(object):
 
         print('move ' + self.processor_name + ' into ' + self.project_name + ' directory')
 
+        
+
+
         # 'cathy.fnames'
         # -------------
         # Some of these inputs are automatically generated during the pre-processing (Table 2),
@@ -361,33 +510,52 @@ class CATHY(object):
         #'cathy_main.f'
         # -------------
 
+        fnames_file = open(os.path.join(self.project_name , 'cathy.fnames'), 'r')
+        Lines = fnames_file.readlines()
+        
+        count=0
+        for line in Lines:
+            x = line.strip().split("unit")
+            if len(x)>1:
+                # check if file exist
+                # print(str(x[0]))
+                # x[0]).replace('', '')
+                # x0 = x[0].replace(' '' ', '')
+                # print(str(x0))
+                if not os.path.exists(x[0]):
+                    print(str(x[0]))
+
+
+
+
+
         os.chdir(os.path.join(self.project_name))
 
         # try:
         #     os.path.exists(os.path.join('cathy.fnames'))
         # except OSError:
-        #     print('cathy.fnames missing')                               
+        #     print('cathy.fnames missing')
         #     sys.exit()
 
         # check if input folder
         try:
             os.path.exists(os.path.join('inputs'))
         except OSError:
-            print('input folder missing')                               
+            print('input folder missing')
             sys.exit()
-            
+
         # check if output folder
         if not os.path.exists('output'):
             os.makedirs('output',exist_ok=True)
-           
-            
+
+
         # check if vtk folder
         if not os.path.exists('vtk'):
             os.makedirs('vtk',exist_ok=True)
-        
-        
-        print('run processor')                               
-        print(os.getcwd())                               
+
+
+        print('run processor')
+        print(os.getcwd())
 
         callexe = './' + self.processor_name
         process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
@@ -420,10 +588,10 @@ class CATHY(object):
 
         # create project_name/output folders
         if not os.path.exists(os.path.join(self.project_name, output_dirname)):
-            os.mkdir(os.path.join(self.project_name, output_dirname), mode=0o777)
+            os.mkdir(os.path.join(self.workdir,self.project_name, output_dirname))
 
         if not os.path.exists(os.path.join(self.project_name, 'vtk')):
-            os.mkdir(os.path.join(self.project_name, 'vtk'), mode=0o777)
+            os.mkdir(os.path.join(self.workdir,self.project_name, 'vtk'))
 
 
         # compute the processor (make clean make) using the Makefile
@@ -487,7 +655,7 @@ class CATHY(object):
 
     def create_parm(self,**kwargs):
 
-    
+
         # set default parameters
         self.parm =	{
                       "IPRT1": 2,
@@ -500,12 +668,12 @@ class CATHY(object):
                       "TOLKSL": 0.01,
                       "PKRL": -3.0,
                       "PKRR": -1.0,
-                      "PSEL": -3.0,     
-                      "PSER": -1.0,      
+                      "PSEL": -3.0,
+                      "PSER": -1.0,
                       "PDSE1L": -3.0,
                       "PDSE1R": -1.0,
-                      "PDSE2L": -3.0,     
-                      "PDSE2R": -1.0,        
+                      "PDSE2L": -3.0,
+                      "PDSE2R": -1.0,
                       "ISFONE": 0,
                       "ISFCVG": 0,
                       "DUPUIT": 0,
@@ -526,25 +694,25 @@ class CATHY(object):
                       "TOLCG": 7,
                       "DELTAT":  0.01,
                       "DTMIN": .00001,
-                      "DTMAX": 10.,                  
-                      "TMAX":  3600.0,       
+                      "DTMAX": 10.,
+                      "TMAX":  3600.0,
                       "DTMAGA":  0.0,
                       "DTMAGM": 1.1,
-                      "DTREDS": 0.0,                  
-                      "DTREDM": .5, 
+                      "DTREDS": 0.0,
+                      "DTREDM": .5,
                       "IPRT": 4,
                       "VTKF":7 ,
-                      "NPRT": 3,                  
+                      "NPRT": 3,
                       "(TIMPRT(I),I=1,NPRT)": [1800.,3600.,7200.],
-                      "NUMVP": 1,                  
+                      "NUMVP": 1,
                       "(NODVP(I),I=1,NUMVP)": [441],
-                      "NR": 0,                  
+                      "NR": 0,
                       "NUM_QOUT": 0,
                       "(ID_QOUT(I),I=1,NUM_QOUT)": [441]
                       }
 
         # create dictionnary from kwargs
-    
+
         for keykwargs,value in kwargs.items():
             print(f'keykwargs: {keykwargs} | value: {value}')
             if keykwargs=='TIMPRTi':
@@ -553,14 +721,14 @@ class CATHY(object):
             else:
                 self.parm[keykwargs]=value
 
-    
-                           
-        # write file         
-        header_fmt = [3,3,2,4,4,3,3,2,4,3,3,4,4,4,2,1,2] 
+
+
+        # write file
+        header_fmt = [3,3,2,4,4,3,3,2,4,3,3,4,4,4,2,1,2]
         counth=0
-        
+
         print(os.getcwd())
-        
+
         for key,value in self.parm.items():
             if isinstance(value, list):
                 strlst = '\n '.join(str(e) for e in value)
@@ -568,40 +736,40 @@ class CATHY(object):
             if key == 'NUMVP':
                 self.parm[key]= str(value) + " \n"
 
-                
 
-        with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'parm'), 'w+') as parmfile: 
+
+        with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'parm'), 'w+') as parmfile:
             for h in header_fmt:
                 if h==4:
-                    parmfile.write(str(list(self.parm.values())[counth])+ "\t" + str(list(self.parm.values())[counth+1]) + 
-                                   "\t" + str(list(self.parm.values())[counth+2]) + "\t" + str(list(self.parm.values())[counth+3]) + 
-                                   "\t" + str(list(self.parm.keys())[counth]) + "\t" + str(list(self.parm.keys())[counth+1]) + 
+                    parmfile.write(str(list(self.parm.values())[counth])+ "\t" + str(list(self.parm.values())[counth+1]) +
+                                   "\t" + str(list(self.parm.values())[counth+2]) + "\t" + str(list(self.parm.values())[counth+3]) +
+                                   "\t" + str(list(self.parm.keys())[counth]) + "\t" + str(list(self.parm.keys())[counth+1]) +
                                    "\t" + str(list(self.parm.keys())[counth+2]) + "\t" + str(list(self.parm.keys())[counth+3]) + "\n")
                     counth += 4
                 if h==3:
-                    parmfile.write(str(list(self.parm.values())[counth])+ "\t" + str(list(self.parm.values())[counth+1]) + "\t" + str(list(self.parm.values())[counth+2]) + "\t" + 
+                    parmfile.write(str(list(self.parm.values())[counth])+ "\t" + str(list(self.parm.values())[counth+1]) + "\t" + str(list(self.parm.values())[counth+2]) + "\t" +
                                         str(list(self.parm.keys())[counth]) + "\t" + str(list(self.parm.keys())[counth+1]) + "\t" + str(list(self.parm.keys())[counth+2]) + "\n")
                     counth += 3
-                    
+
                 if h==2:
-                    parmfile.write(str(list(self.parm.values())[counth])+ "\t" + str(list(self.parm.values())[counth+1]) + "\t" + 
+                    parmfile.write(str(list(self.parm.values())[counth])+ "\t" + str(list(self.parm.values())[counth+1]) + "\t" +
                                         str(list(self.parm.keys())[counth])+ "\t" + str(list(self.parm.keys())[counth+1]) + "\n")
                     counth += 2
                 if h==1:
                     parmfile.write(str(list(self.parm.values())[counth])+ "\t"  +
                                         str(list(self.parm.keys())[counth])+ "\n")
                     counth += 1
-                                    
+
         parmfile.close()
 
-                
-                
+
+
 
 
 
 
         return
-    
+
 
 
 
@@ -759,20 +927,20 @@ class CATHY(object):
 
         pass
 
-    #%% Meshtool functions  
+    #%% Meshtool functions
 
 
 
     def create_dem_parameters():
         # Model grid (dem_parameters - IIN11)
-        
+
         with open('grid', 'w+') as gridfile:
             gridfile.write("\t"  + str(NZONE) + "\t" + str(NSTR) + "\t" + str(N1) + "\t"
                             + 'NZONE' + "\t" + 'NSTR' + "\t" + 'N1' + "\n")
-        
+
         pass
-        
-        
+
+
     def create_3dmesh_CATHY(self,gmsh_mesh=[],
                             NZONE=[],NSTR=[],N1=[],
                             NNOD=None, NTRI=None,
@@ -873,6 +1041,81 @@ class CATHY(object):
         # copy mesh attribute to 'grid' files
 
 
+
+
+
+    # -------------------------------------------------------------------#
+    #%% Infitration DATA
+
+
+    def create_infitration(self,dirfiles):
+        self.set_drippers(dirfiles)
+
+
+        pass
+
+
+    def set_drippers(self,dirfiles,drip_pos='drippers.txt'):
+
+        print(os.getcwd())
+        if isinstance(drip_pos, str):
+            self.drippers = np.loadtxt(os.path.join(self.project_name,dirfiles,drip_pos),skiprows=1,delimiter=',')
+        else:
+            self.drippers = drip_pos
+
+        # check drippers position against DEM
+        self.hapin
+        mesh_x_max = float(self.hapin['xllcorner']) + float(self.hapin['delta_x'])*float(self.hapin['N'])
+        mesh_y_max = float(self.hapin['yllcorner']) + float(self.hapin['delta_y'])*float(self.hapin['M'])
+
+        mesh_x=[]
+        for xx in range(int(self.hapin['N'])):
+            mesh_x.append(float(self.hapin['xllcorner']) + float(self.hapin['delta_x'])*xx)
+
+        mesh_y=[]
+        for yy in range(int(self.hapin['M'])):
+            mesh_y.append(float(self.hapin['yllcorner']) + float(self.hapin['delta_y'])*yy)
+
+
+        print(mesh_x)
+        print(mesh_y)
+
+
+
+        print(mesh_x_max)
+        print(max(self.drippers[:,0]))
+
+        if mesh_x_max < max(self.drippers[:,0]):
+            print('Error: max mesh_x=' + str(mesh_x_max) + '; max dripper x pos=' + str(max(self.drippers[:,0])))
+
+        if mesh_y_max< max(self.drippers[:,1]):
+            print('Error: max mesh_x=' + str(mesh_y_max) + '; max dripper y pos=' + str(max(self.drippers[:,1])))
+
+       # for dd in self.drippers:
+       #     dd==
+
+       #  (A==B).all()
+
+
+
+
+        self.drippers_nodes = []
+
+
+        pass
+
+    # -------------------------------------------------------------------#
+    #%% ERT DATA
+
+    def set_elecs(self,filename='elecs.csv'):
+
+        self.elecs = np.loadtxt(filename,skiprows=1,delimiter=',')
+
+
+
+        pass
+
+    # -------------------------------------------------------------------#
     #%% DATA ASSIMILATION
 
     def create_archie():
@@ -885,6 +1128,3 @@ class CATHY(object):
     def create_elec_nodes():
 
         pass
-
-
-    #%% ERT DATA

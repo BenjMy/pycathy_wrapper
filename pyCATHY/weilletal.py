@@ -18,13 +18,13 @@ import numpy as np
 # %% Run cathy processor
 # this function is a wrapper. It builds a makefile and the executable.
 # Then the exe is run and use core CATHY file to solve the problem
-            
+
 path2prj ='test_weilletal'
 
 simu = CATHY(dirName=path2prj)
 simu.project_name = 'my_cathy_prj'
-# survey.create_DEM_mesh(delta_x=100)
-    
+simu.update_prepo_inputs(delta_x=0.001)
+
 simu.run_preprocessor(verbose=True)
 
 simu.run_processor(verbose=True)
@@ -32,13 +32,8 @@ simu.run_processor(verbose=True)
 
 
 # %% Explore outputs
-                    
+
 cplt.showvtk('./my_cathy_prj/vtk/100.vtk')
 
 
-# %% test       
-
-
-
-    
-    
+# %% test

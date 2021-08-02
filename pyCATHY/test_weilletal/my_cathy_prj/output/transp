@@ -1,7 +1,7 @@
 #INITIAL MASS OF SOLUTE IN THE SUBSURFACE =   1.81500E+01
 #NSTEP       DELTAT         TIME  NADV         MASST        DSMASS     MASSINADV    MASSINDISP    MASSOUTADV   MASSOUTDISP        MINTOT    MASSOUTTOT        MERRAS       CMERRAS     MASSSURF
-     1 1.000000E-02 1.000000E-02     2  1.81500E+001 -2.63289E-013 -0.00000E+000  0.00000E+000 -2.63921E-013 -3.87236E-026  0.00000E+000 -2.63921E-013  0.00000E+000  0.00000E+000  0.00000E+000
-     2 1.100000E-02 2.100000E-02     2           NaN           NaN -6.07412E-015           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000  2.91929E-013
+     1 1.000000E-02 1.000000E-02     2  1.81500E+001 -2.63304E-013 -0.00000E+000  0.00000E+000 -2.63926E-013 -3.36244E-026  0.00000E+000 -2.63926E-013  0.00000E+000  0.00000E+000  0.00000E+000
+     2 1.100000E-02 2.100000E-02     2           NaN           NaN -6.07385E-015           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000  2.91931E-013
      3 1.210000E-02 3.310000E-02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
      4 1.331000E-02 4.641000E-02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
      5 1.464100E-02 6.105100E-02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
@@ -88,3 +88,47 @@
     86 1.000000E+01 2.350153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
     87 1.000000E+01 2.450153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
     88 1.000000E+01 2.550153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    89 1.000000E+01 2.650153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    90 1.000000E+01 2.750153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    91 1.000000E+01 2.850153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    92 1.000000E+01 2.950153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    93 1.000000E+01 3.050153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    94 1.000000E+01 3.150153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    95 1.000000E+01 3.250153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    96 1.000000E+01 3.350153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    97 1.000000E+01 3.450153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    98 1.000000E+01 3.550153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+    99 1.000000E+01 3.650153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   100 1.000000E+01 3.750153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   101 1.000000E+01 3.850153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   102 1.000000E+01 3.950153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   103 1.000000E+01 4.050153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   104 1.000000E+01 4.150153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   105 1.000000E+01 4.250153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   106 1.000000E+01 4.350153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   107 1.000000E+01 4.450153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   108 1.000000E+01 4.550153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   109 1.000000E+01 4.650153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   110 1.000000E+01 4.750153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   111 1.000000E+01 4.850153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   112 1.000000E+01 4.950153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   113 1.000000E+01 5.050153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   114 1.000000E+01 5.150153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   115 1.000000E+01 5.250153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   116 1.000000E+01 5.350153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   117 1.000000E+01 5.450153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   118 1.000000E+01 5.550153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   119 1.000000E+01 5.650153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   120 1.000000E+01 5.750153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   121 1.000000E+01 5.850153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   122 1.000000E+01 5.950153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   123 1.000000E+01 6.050153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   124 1.000000E+01 6.150153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   125 1.000000E+01 6.250153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   126 1.000000E+01 6.350153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   127 1.000000E+01 6.450153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   128 1.000000E+01 6.550153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   129 1.000000E+01 6.650153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   130 1.000000E+01 6.750153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   131 1.000000E+01 6.850153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN
+   132 1.000000E+01 6.950153E+02     2           NaN           NaN           NaN           NaN           NaN           NaN           NaN           NaN  0.00000E+000  0.00000E+000           NaN

@@ -4,7 +4,7 @@
 """
 from __future__ import print_function
 import numpy as np
-
+import cathy_tools as CT
 
 def create_nansf():
     
@@ -15,11 +15,18 @@ def create_atmbc(HSPATM=0,IETO=0):
     pass
 
 
-def create_infitration():
 
-    
-    pass
 
+
+
+
+# class RHIZO(object):
+#     '''Main RHIZO object.'''
+    # def __init__(self,dirName,prjName='my_cathy_prj'):
+        
+        
+  
+        
     
 
 # rhizo.create_infitration(drippersPos=[],RWU=False)
