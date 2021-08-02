@@ -1,0 +1,277 @@
+       NATM, NSF NEUMANN BCs  INPUT AT TIME:   0.0000E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.0000E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.0000E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.1000E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.3100E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.6410E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   6.1051E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.7156E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   9.4872E-02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.1436E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.3579E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.5937E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.8531E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.1384E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.4523E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.7975E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.1772E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.5950E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.0545E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.5599E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   5.1159E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   5.7275E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   6.4002E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.1403E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.9543E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   8.8497E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   9.8347E-01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.0918E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.2110E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.3421E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.4863E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.6449E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.8194E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.0114E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.2225E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.4548E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.7102E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.9913E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.3004E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.6404E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.0145E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.4259E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.8785E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   5.3764E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   5.9240E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   6.5264E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.1890E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.9180E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   8.7197E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   9.6017E+00
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.0572E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.1639E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.2813E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.4104E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.5525E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.7087E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.8806E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.0697E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.2776E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.5064E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.7580E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.0348E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.3393E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   3.6742E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.0427E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.4479E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   4.8937E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   5.3841E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   5.9235E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   6.5168E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.1695E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   7.8875E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   8.6772E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   9.5459E+01
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.0502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.1502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.2502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.3502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.4502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.5502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.6502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.7502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.8502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   1.9502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.0502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.1502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.2502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.3502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.4502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.5502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.6502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.7502E+02
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
+
+       NATM, NSF NEUMANN BCs VALUES AT TIME:   2.8502E+02

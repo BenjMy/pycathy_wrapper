@@ -1,0 +1,544 @@
+ DELTA_X=  0.50000000000000000      DELTA_Y=  0.50000000000000000     
+ FACTOR=   1.0000000000000000     
+ DOSTEP=           1
+ NCELL_NO_LAKES=          45
+ NCELL_WITH_LAKES=          45
+ INDCELL(IROW,ICOL)
+           1           2           3           4           5           6           7           8           9          10          11          12          13          14          15           0           0           0           0           0
+          21          22          23          24          25          26          27          28          29          30          31          32          33          34          35           0           0           0           0           0
+          41          42          43          44          45          46          47          48          49          50          51          52          53          54          55           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+ INDCELL_WITH_LAKES(IROW,ICOL)
+           1           2           3           4           5           6           7           8           9          10          11          12          13          14          15           0           0           0           0           0
+          21          22          23          24          25          26          27          28          29          30          31          32          33          34          35           0           0           0           0           0
+          41          42          43          44          45          46          47          48          49          50          51          52          53          54          55           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0           0
+ CELLCOL   CELLROW
+ 1      1
+ 2      1
+ 3      1
+ 4      1
+ 5      1
+ 6      1
+ 7      1
+ 8      1
+ 9      1
+10      1
+11      1
+12      1
+13      1
+14      1
+15      1
+ 1      2
+ 2      2
+ 3      2
+ 4      2
+ 5      2
+ 6      2
+ 7      2
+ 8      2
+ 9      2
+10      2
+11      2
+12      2
+13      2
+14      2
+15      2
+ 1      3
+ 2      3
+ 3      3
+ 4      3
+ 5      3
+ 6      3
+ 7      3
+ 8      3
+ 9      3
+10      3
+11      3
+12      3
+13      3
+14      3
+15      3
+ NCELNL=          45
+ NCELL=          45
+
+     NNOD   (# OF NODES IN 2-D MESH)         =     63
+     NTRI   (# OF TRIANGLES IN 2-D MESH)     =     88
+     NZONE  (NUMERO ZONE (MATERIAL TYPES))   =      1
+     NVEG   (NUMERO ZONE VEG (VEG TYPES))    =      1
+     NSTR   (NUMERO STRATI)                  =     15
+     N1     (NUM. MAX CONTATTI NODALI)       =     25
+
+     IVERT  (TYPE OF VERTICAL DISCRETIZATION)=      0
+     ISP    (0 FLAT SURFACE, ELSE NOT FLAT)  =      1
+     BASE   (THICKNESS OR BASE OF 3-D MESH)  =     3.00000E+00
+     LAYER   1     ZRATIO =   2.00000E-03
+     LAYER   2     ZRATIO =   4.00000E-03
+     LAYER   3     ZRATIO =   6.00000E-03
+     LAYER   4     ZRATIO =   8.00000E-03
+     LAYER   5     ZRATIO =   1.00000E-02
+     LAYER   6     ZRATIO =   1.00000E-02
+     LAYER   7     ZRATIO =   2.00000E-02
+     LAYER   8     ZRATIO =   2.00000E-02
+     LAYER   9     ZRATIO =   5.00000E-02
+     LAYER  10     ZRATIO =   5.00000E-02
+     LAYER  11     ZRATIO =   1.00000E-01
+     LAYER  12     ZRATIO =   1.00000E-01
+     LAYER  13     ZRATIO =   2.00000E-01
+     LAYER  14     ZRATIO =   2.00000E-01
+     LAYER  15     ZRATIO =   2.20000E-01
+ numero serbatoi=           0
+  2.10000000E-02     1     3    0.0000000E+00    0.0000000E+00        -Infinity              NaN
+  3.31000000E-02     1     3              NaN              NaN              NaN              NaN
+  4.64100000E-02     1     3              NaN              NaN              NaN              NaN
+  6.10510000E-02     1     3              NaN              NaN              NaN              NaN
+  7.71561000E-02     1     3              NaN              NaN              NaN              NaN
+  9.48717100E-02     1     3              NaN              NaN              NaN              NaN
+  1.14358881E-01     1     3              NaN              NaN              NaN              NaN
+  1.35794769E-01     1     3              NaN              NaN              NaN              NaN
+  1.59374246E-01     1     3              NaN              NaN              NaN              NaN
+  1.85311671E-01     1     3              NaN              NaN              NaN              NaN
+  2.13842838E-01     1     3              NaN              NaN              NaN              NaN
+  2.45227121E-01     1     3              NaN              NaN              NaN              NaN
+  2.79749834E-01     1     3              NaN              NaN              NaN              NaN
+  3.17724817E-01     1     3              NaN              NaN              NaN              NaN
+  3.59497299E-01     1     3              NaN              NaN              NaN              NaN
+  4.05447028E-01     1     3              NaN              NaN              NaN              NaN
+  4.55991731E-01     1     3              NaN              NaN              NaN              NaN
+  5.11590904E-01     1     3              NaN              NaN              NaN              NaN
+  5.72749995E-01     1     3              NaN              NaN              NaN              NaN
+  6.40024994E-01     1     3              NaN              NaN              NaN              NaN
+  7.14027494E-01     1     3              NaN              NaN              NaN              NaN
+  7.95430243E-01     1     3              NaN              NaN              NaN              NaN
+  8.84973268E-01     1     3              NaN              NaN              NaN              NaN
+  9.83470594E-01     1     3              NaN              NaN              NaN              NaN
+  1.09181765E+00     1     3              NaN              NaN              NaN              NaN
+  1.21099942E+00     1     3              NaN              NaN              NaN              NaN
+  1.34209936E+00     1     3              NaN              NaN              NaN              NaN
+  1.48630930E+00     1     3              NaN              NaN              NaN              NaN
+  1.64494023E+00     1     3              NaN              NaN              NaN              NaN
+  1.81943425E+00     1     3              NaN              NaN              NaN              NaN
+  2.01137767E+00     1     3              NaN              NaN              NaN              NaN
+  2.22251544E+00     1     3              NaN              NaN              NaN              NaN
+  2.45476699E+00     1     3              NaN              NaN              NaN              NaN
+  2.71024368E+00     1     3              NaN              NaN              NaN              NaN
+  2.99126805E+00     1     3              NaN              NaN              NaN              NaN
+  3.30039486E+00     1     3              NaN              NaN              NaN              NaN
+  3.64043434E+00     1     3              NaN              NaN              NaN              NaN
+  4.01447778E+00     1     3              NaN              NaN              NaN              NaN
+  4.42592556E+00     1     3              NaN              NaN              NaN              NaN
+  4.87851811E+00     1     3              NaN              NaN              NaN              NaN
+  5.37636992E+00     1     3              NaN              NaN              NaN              NaN
+  5.92400692E+00     1     3              NaN              NaN              NaN              NaN
+  6.52640761E+00     1     3              NaN              NaN              NaN              NaN
+  7.18904837E+00     1     3              NaN              NaN              NaN              NaN
+  7.91795321E+00     1     3              NaN              NaN              NaN              NaN
+  8.71974853E+00     1     3              NaN              NaN              NaN              NaN
+  9.60172338E+00     1     3              NaN              NaN              NaN              NaN
+  1.05718957E+01     1     3              NaN              NaN              NaN              NaN
+  1.16390853E+01     1     3              NaN              NaN              NaN              NaN
+  1.28129938E+01     1     3              NaN              NaN              NaN              NaN
+  1.41042932E+01     1     3              NaN              NaN              NaN              NaN
+  1.55247225E+01     1     3              NaN              NaN              NaN              NaN
+  1.70871948E+01     1     3              NaN              NaN              NaN              NaN
+  1.88059142E+01     1     3              NaN              NaN              NaN              NaN
+  2.06965057E+01     1     3              NaN              NaN              NaN              NaN
+  2.27761562E+01     1     3              NaN              NaN              NaN              NaN
+  2.50637719E+01     1     3              NaN              NaN              NaN              NaN
+  2.75801490E+01     1     3              NaN              NaN              NaN              NaN
+  3.03481640E+01     1     3              NaN              NaN              NaN              NaN
+  3.33929803E+01     1     3              NaN              NaN              NaN              NaN
+  3.67422784E+01     1     3              NaN              NaN              NaN              NaN
+  4.04265062E+01     1     3              NaN              NaN              NaN              NaN
+  4.44791568E+01     1     3              NaN              NaN              NaN              NaN
+  4.89370725E+01     1     3              NaN              NaN              NaN              NaN
+  5.38407798E+01     1     3              NaN              NaN              NaN              NaN
+  5.92348578E+01     1     3              NaN              NaN              NaN              NaN
+  6.51683435E+01     1     3              NaN              NaN              NaN              NaN
+  7.16951779E+01     1     3              NaN              NaN              NaN              NaN
+  7.88746957E+01     1     3              NaN              NaN              NaN              NaN
+  8.67721652E+01     1     3              NaN              NaN              NaN              NaN
+  9.54593818E+01     1     3              NaN              NaN              NaN              NaN
+  1.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  2.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  3.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  4.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  5.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  6.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  7.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  8.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.05015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.15015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.25015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.35015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.45015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.55015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.65015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.75015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.85015320E+02     1     3              NaN              NaN              NaN              NaN
+  9.95015320E+02     1     3              NaN              NaN              NaN              NaN
+  1.00501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.01501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.02501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.03501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.04501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.05501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.06501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.07501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.08501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.09501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.10501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.11501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.12501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.13501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.14501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.15501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.16501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.17501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.18501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.19501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.20501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.21501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.22501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.23501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.24501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.25501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.26501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.27501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.28501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.29501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.30501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.31501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.32501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.33501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.34501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.35501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.36501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.37501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.38501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.39501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.40501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.41501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.42501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.43501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.44501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.45501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.46501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.47501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.48501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.49501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.50501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.51501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.52501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.53501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.54501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.55501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.56501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.57501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.58501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.59501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.60501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.61501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.62501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.63501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.64501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.65501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.66501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.67501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.68501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.69501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.70501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.71501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.72501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.73501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.74501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.75501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.76501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.77501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.78501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.79501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.80501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.81501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.82501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.83501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.84501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.85501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.86501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.87501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.88501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.89501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.90501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.91501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.92501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.93501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.94501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.95501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.96501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.97501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.98501532E+03     1     3              NaN              NaN              NaN              NaN
+  1.99501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.00501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.01501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.02501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.03501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.04501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.05501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.06501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.07501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.08501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.09501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.10501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.11501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.12501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.13501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.14501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.15501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.16501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.17501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.18501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.19501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.20501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.21501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.22501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.23501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.24501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.25501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.26501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.27501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.28501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.29501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.30501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.31501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.32501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.33501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.34501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.35501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.36501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.37501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.38501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.39501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.40501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.41501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.42501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.43501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.44501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.45501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.46501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.47501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.48501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.49501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.50501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.51501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.52501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.53501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.54501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.55501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.56501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.57501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.58501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.59501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.60501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.61501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.62501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.63501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.64501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.65501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.66501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.67501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.68501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.69501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.70501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.71501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.72501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.73501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.74501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.75501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.76501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.77501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.78501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.79501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.80501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.81501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.82501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.83501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.84501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.85501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.86501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.87501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.88501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.89501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.90501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.91501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.92501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.93501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.94501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.95501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.96501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.97501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.98501532E+03     1     3              NaN              NaN              NaN              NaN
+  2.99501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.00501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.01501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.02501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.03501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.04501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.05501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.06501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.07501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.08501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.09501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.10501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.11501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.12501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.13501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.14501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.15501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.16501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.17501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.18501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.19501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.20501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.21501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.22501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.23501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.24501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.25501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.26501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.27501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.28501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.29501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.30501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.31501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.32501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.33501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.34501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.35501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.36501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.37501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.38501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.39501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.40501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.41501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.42501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.43501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.44501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.45501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.46501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.47501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.48501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.49501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.50501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.51501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.52501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.53501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.54501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.55501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.56501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.57501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.58501532E+03     1     3              NaN              NaN              NaN              NaN
+  3.59250766E+03     1     3              NaN              NaN              NaN              NaN
+  3.60000000E+03     1     3              NaN              NaN              NaN              NaN

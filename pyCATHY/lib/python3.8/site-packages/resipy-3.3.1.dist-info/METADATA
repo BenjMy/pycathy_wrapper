@@ -1,0 +1,41 @@
+Metadata-Version: 2.1
+Name: resipy
+Version: 3.3.1
+Summary: API for resistivity and IP inversion/modelling around R2 codes
+Home-page: https://gitlab.com/hkex/resipy
+Author: HKEx
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: psutil
+Requires-Dist: requests
+Requires-Dist: scipy
+
+ResIPy a python wrapper around R* codes
+=======================================
+
+This package is a Python wrapper around the R* family of codes (R2, cR2, R3t, cR3t, see http://www.es.lancs.ac.uk/people/amb/Freeware/R2/R2.htm for more details) and provides an API (Application Programming Interface) for inverting/modelling resistivity and IP data.
+
+It aims to be 
+- (1) **simple and intuitive** to use (you can invert your data in one-click with all default settings)
+- (2) but still allowing the user to have **full control** on data filtering, error modelling, mesh parameters and inversion settings
+
+This is an open-source project, everyone is welcome to contribute.
+
+In addition to this python package that provideds the API,
+a multi-platform standalone Graphical User Interface (GUI) is also available to download.
+
+Please see the gitlab repository for more information and to download the executable for the GUI: **https://gitlab.com/hkex/resipy**
+
+Or the online documentation: **https://hkex.gitlab.io/resipy**
+
+
+
+
+

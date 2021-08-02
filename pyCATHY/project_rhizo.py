@@ -1,12 +1,14 @@
 # cathy project rhizo lab
 from cathy_tools import CATHY
+import plottools as cplt
 #import cathy_plot as ctplot
 
 import os
 import numpy as np
 
-os.chdir('/home/ben/Documents/CATHY/rhizoLab/create_mesh/')
-path2prj = os.getcwd()
+path2prj ='/home/ben/Documents/CATHY/CathyGitbucket/Test_Ben/'
+os.chdir(path2prj)
+
 
 # %% Create the mesh
 
@@ -23,6 +25,7 @@ path2prj = os.getcwd()
 # ctplot.
 
 # %% Prepare input files
+os.chdir('/home/ben/Documents/CATHY/rhizoLab/create_mesh/')
 
 #print(path2prj)
 survey = CATHY(dirName=path2prj)
@@ -36,17 +39,9 @@ survey.create_3dmesh_CATHY('rhizo2d.msh',NZONE=1,NSTR=25,N1=30,NNOD=357,
 
 
 # test.processor_name= 'cathy'
-# %% Run cathy processor
-# this function is a wrapper. It builds a makefile and the executable.
-# Then the exe is run and use core CATHY file to solve the problem
-
-os.chdir('/home/ben/Documents/CATHY/CathyGitbucket/Test_Ben/')
-            
-path2prj = os.getcwd()
-survey = CATHY(dirName=path2prj)
-
-survey.run_processor()
 
 # %% Visualise Data
 
-#ctplot.
+# saturation evolution over time
+# relationship between relative hydraulic conductivity and pressure head
+cplt.showvtk(path2prj+'my_cathy_prj/vtk/100.vtk')
