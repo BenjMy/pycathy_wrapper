@@ -162,6 +162,9 @@ class CATHY(object):
         structural_parameter = ['delta_x','delta_y','N','M','N_celle',
                                'xllcorner','yllcorner']
 
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! need to update rivulet_parameter')
+
+
         hap_file = open(os.path.join(self.project_name , 'prepro/hap.in'), 'r')
         Lines = hap_file.readlines()
 
