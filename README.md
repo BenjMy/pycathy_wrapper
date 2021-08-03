@@ -1,3 +1,6 @@
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BenjMy/pycathy_wrapper.git/HEAD?filepath=pyCATHY%2Fweilletal.ipynb)
+
+
 # README #
 
 pyCATHY is a Python library for managing:
