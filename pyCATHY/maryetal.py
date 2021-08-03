@@ -29,44 +29,61 @@ simu = CATHY(dirName=path2prj,prjName='rhizo_prj',clear_outputs=True)
 xyzb=np.loadtxt('/home/ben/Documents/CATHY/rhizoLab/CATHY_additional_files_rhizo/elecsXYZ_Rhizo_LAB.csv',skiprows=1,delimiter=',')
 xyzb
 
-# xll=0
-# yll=0
-# delta_x = 0.025
-# delta_y = 0.0025
-# delta_z = 0.025
+xll=0
+yll=0
+zll=0
 
-# xb = np.arange(xll,0.5,delta_x)
-# yb = np.arange(xll,0.03,delta_y)
-# nstr=20
+delta_x = 0.025
+delta_y = 0.01
+# # delta_z = 0.025
+xb = np.arange(xll,0.45+delta_x,delta_x)
+yb = np.arange(xll,0.03+delta_y,delta_y)
+nstr=20
 # zb = np.linspace(0,0.5,nstr+1)
-# zr = list(zb[1:]/sum(zb))
-# N = len(xb)
-# M = len(yb)
-# dem_rhizo =  np.ones([N,M])
-# N_celle=N*M
+zb = np.arange(zll,0.5+delta_x,delta_x)
+zr=list(np.ones(len(zb)-1)/(len(zb)-1))
+len(zr)
+sum(zr)
 
-# simu.update_prepo_inputs(DEM=dem_rhizo,
-#                          xllcornery=xll,yllcorner=yll,
-#                          delta_x=delta_x,delta_y=delta_y,
-#                          N=N,M=M,N_celle=N_celle,
-#                          nstr=nstr,
-#                          zratio=zr)
+N = len(xb)
+M = len(yb)
+dem_rhizo =  np.ones([M,N])
+np.shape(dem_rhizo)
 
-
+N_celle=N*M
 simu.update_prepo_inputs(DEM=dem_rhizo,
-                         xllcornery=xll,yllcorner=yll,
-                         delta_x=delta_x,delta_y=delta_y,
-                         N=N,M=M,N_celle=N_celle,
-                         nstr=nstr,
-                         zratio=zr)
+                          xllcornery=xll,yllcorner=yll,
+                          delta_x=delta_x,delta_y=delta_y,
+                          N=N,M=M,N_celle=N_celle,
+                          nstr=nstr,base=0.5,n1=20,
+                          zratio=zr)
+
+with open(os.path.join('/home/ben/Documents/GitHub/pycathy_wrapper/pyCATHY/rhizo_prj/prepro/src/dtm_13.val'), 'w+') as f:
+    np.savetxt(f, dem_rhizo, fmt='%1.4e')   # use exponential notation
+
+# dem_test =  np.ones([20,5])
+# simu.update_prepo_inputs(DEM=dem_test,
+#                       N=np.shape(dem_test)[0],
+#                       M=np.shape(dem_test)[1],
+#                       delta_x=10.,delta_y=10.,
+#                       nstr=20,zratio=zr,base=5,m1=20,
+#                       N_celle=np.shape(dem_test)[0]*np.shape(dem_test)[1],
+#                       nzone=1)
 
 
+# simu.update_prepo_inputs(DEM=dem_test,
+#                       N=np.shape(dem_test)[0],
+#                       M=np.shape(dem_test)[1],
+#                       N_celle=np.shape(dem_test)[0]*np.shape(dem_test)[1])
 
-simu.hapin
-simu.dem_parameters
+# simu.hapin
+# simu.dem_parameters
 
-simu.run_preprocessor(verbose=True,KeepOutlet=False) # remove outlet as it is a lab experiment wirth no flux outside the rhizotron
+# # remove outlet as it is a lab experiment wirth no flux outside the rhizotron
+# simu.run_preprocessor(verbose=True,KeepOutlet=False) 
 
+
+simu.run_preprocessor(verbose=True,KeepOutlet=False) # remove outlet as it is a lab experiment with no flux outside the rhizotron
 
 # simu.create_parm(NPRT=4,TIMPRTi=[1800.,3600.,7200.,80000.])
 # simu.parm
@@ -85,10 +102,18 @@ simu.run_preprocessor(verbose=True,KeepOutlet=False) # remove outlet as it is a 
 # # # rhizo.create_DA(drippersPos=[],RWU=False)
 
 
+# generate xyz , grid2d.exp grid3d
+# simu.run_processor(verbose=True,IPRT1=3)
 
-simu.run_processor(verbose=True)
+# generate vtk files
+simu.run_processor(verbose=True,IPRT1=2,TRAFLAG=0,TMAX=7200)
+
+
 
 # %% Explore outputs
+
+cplt.showvtk('./rhizo_prj/vtk/100.vtk')
+
 # os.getcwd()
 # import time
 # import glob
@@ -97,7 +122,6 @@ simu.run_processor(verbose=True)
 
 # cplt.showvtkTL('./rhizo_prj/vtk/100.vtk')
 
-cplt.showvtk('./rhizo_prj/vtk/100.vtk')
 # cplt.showvtk('./rhizo_prj/vtk/103.vtk')
 
 # cplt.showvtk('./rhizo_prj/vtk/cele200.vtk')

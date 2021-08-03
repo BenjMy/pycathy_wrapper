@@ -1,0 +1,28 @@
+#                  ***** Surface vs subsurface diagnostics ***** 
+#NNOD    (# of surface nodes)            =     99
+#NCELL   (# of DEM cells)                =     76
+#AREATOT (total catchment surface area)  =     1.87500E-02
+#Step      (1) : Time step
+#Deltat    (2) : Time step size
+#Time      (3) : See parm input file for units
+#Back      (4) : # of back-stepping occurrences
+#NL-l      (5) : # of nonlinear iterations for the successful (last) time step
+#NL-a      (6) : # of nonlinear iterations for the successful time step and any back-steps (= NL-last + ITUNS*Back)
+#Sdt-l     (7) : # of time steps in the surface routing module for the successful (last) subsurface module time step
+#Sdt-a     (8) : # of time steps in the surface routing module for the successful subsurface module time step and any back-steps
+#Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]
+#Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)
+#Atmpot-r (11) : Potential atmospheric forcing rate [L/T]
+#Atmpot-d (12) : Potential atmospheric forcing depth [L]
+#Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
+#Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
+#Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
+#Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
+#Horton   (17) : Fraction of the surface nodes that are saturated or ponded due to Horton infiltration excess (Note: based on PNEW and not on IFATM)
+#Dunne    (18) : Fraction of the surface nodes that are saturated or ponded due to Dunne saturation excess (see previous note)
+#Ponded   (19) : Fraction of the surface nodes that are ponded (PNEW > PONDH_MIN)
+#Satur    (20) : Fraction of the surface nodes that are saturated or ponded (PNEW > 0)
+#CPU-sub  (21) : CPU seconds for the subsurface flow module
+#CPU-surf (22) : CPU seconds for the surface routing module
+#   (1)       (2)       (3)   (4)   (5)   (6)   (7)   (8)        (9)       (10)       (11)       (12)       (13)       (14)       (15)       (16)   (17)   (18)   (19)   (20)       (21)       (22)
+#  Step    Deltat      Time  Back  NL-l  NL-a Sdt-l Sdt-a  Atmpot-vf   Atmpot-v   Atmpot-r   Atmpot-d  Atmact-vf   Atmact-v   Atmact-r   Atmact-d Horton  Dunne Ponded  Satur   CPU-sub  CPU-surf

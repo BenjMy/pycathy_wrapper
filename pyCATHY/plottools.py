@@ -9,8 +9,9 @@ Created on Thu Jul 29 12:12:41 2021
 import pyvista as pv
 import glob
 import time 
+import os
 
-def showvtk(filename=None,unit=None,timeStep=0):
+def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None):
     """Short summary.
 
     Parameters
@@ -29,20 +30,28 @@ def showvtk(filename=None,unit=None,timeStep=0):
 
     """
 
-    mesh = pv.read(filename)
 
+    if path is None:
+       path = os.getcwd()
+       
+    if filename is None:
+        if unit == 'pressure':
+            filename = '10' + str(timeStep) + '.vtk'
+        if unit == 'saturation':
+            filename = 'cele20' + str(timeStep) + '.vtk'
+            
+    mesh = pv.read(os.path.join(path,filename))
+    
     if unit in list(mesh.array_names):
         print('plot '+ str(unit))
     else:
         print('physcial property not existing')
 
-    if filename is None:
-        if unit is 'pressure':
-            filename = '10' + timeStep + '.vtk'
 
+    # plotter = pv.PlotterITK()
 
-    plotter = pv.Plotter()
-    _ = plotter.add_mesh(mesh,show_edges=True)
+    plotter = pv.Plotter(notebook=notebook)
+    _ = plotter.add_mesh(mesh,show_edges=True,scalars=unit)
     legend_entries = []
     legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
     _ = plotter.add_legend(legend_entries)
@@ -52,7 +61,7 @@ def showvtk(filename=None,unit=None,timeStep=0):
 
     return
 
-def showvtkTL(filename,unit=None,timeStep='all'):
+def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None):
     """Short summary.
 
     Parameters
@@ -71,9 +80,28 @@ def showvtkTL(filename,unit=None,timeStep='all'):
 
     """
 
+    if path is None:
+       path = os.getcwd()
+        
+        
+    if filename is None:
+        if unit == 'pressure':
+            filename = '10*.vtk'
+            filename0 = '100.vtk'
+        if unit == 'saturation':
+            filename = 'cele20*.vtk'
+            filename0 = 'cele200.vtk'
 
-    plotter = pv.Plotter()
-    mesh = pv.read('./rhizo_prj/vtk/100.vtk')
+    mesh = pv.read(os.path.join(path,filename0))
+
+    if unit in list(mesh.array_names):
+        print('plot '+ str(unit))
+    else:
+        print('physcial property not existing')
+        
+        
+    plotter = pv.Plotter(notebook=notebook)
+    mesh = pv.read(filename0)
     _ = plotter.add_mesh(mesh,show_edges=True)
     legend_entries = []
     legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
@@ -82,10 +110,9 @@ def showvtkTL(filename,unit=None,timeStep='all'):
 
 
     # def TimeLapse():
-    for filename in glob.glob('./rhizo_prj/vtk/10*.vtk'):
-        print(filename)
-        mesh = pv.read(filename)
-        _ = plotter.add_mesh(mesh,show_edges=True)
+    for files in glob.glob(filename):
+        mesh = pv.read(files)
+        _ = plotter.add_mesh(mesh,show_edges=True,scalars=unit)
         legend_entries = []
         legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
         plotter.show_grid()

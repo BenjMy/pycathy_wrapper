@@ -1,3 +1,4 @@
 GitPython 
 Resipy
 pyvistaqt
+itkwidgets

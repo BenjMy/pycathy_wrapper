@@ -36,12 +36,25 @@ class CATHY(object):
         self.output_dirname = 'output'
 
 
+        # self.time = []
         # infitration
         self.drippers = []
 
         # ERT
         self.elecs = []
 
+
+
+        for key,value in kwargs.items():
+            if key == 'clear_src':
+                if value == True:
+                    if os.path.exists(os.path.join(self.workdir,self.project_name,'src')):
+                        print('clear src files')
+                        shutil.rmtree(os.path.join(self.workdir,self.project_name,'src'))
+                        shutil.rmtree(os.path.join(self.workdir,self.project_name,'input'))
+                        shutil.rmtree(os.path.join(self.workdir,self.project_name,'tmp_src'))
+                        shutil.rmtree(os.path.join(self.workdir,self.project_name,'prepro'))
+                
 
         if not os.path.exists(os.path.join(self.project_name)):
             os.makedirs(os.path.join(self.project_name),exist_ok=True)
@@ -52,31 +65,31 @@ class CATHY(object):
         # fetch src files if not existing
         if not os.path.exists(os.path.join(self.project_name,'src')):
             print('src files not found')
-            try:
-                Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git',
-                                os.path.join(self.project_name,'tmp_src'),
-                                 branch='master')
-                print('fetch cathy src files')
-                shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/src'),
-                            os.path.join(self.workdir,self.project_name,'src'))
+            # try:
+            Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git',
+                            os.path.join(self.workdir,self.project_name,'tmp_src'),
+                             branch='master')
+            print('fetch cathy src files')
+            shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/src'),
+                        os.path.join(self.workdir,self.project_name,'src'))
 
-                print('fetch cathy prepro src files')
-                shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/prepro'),
-                            os.path.join(self.workdir,self.project_name,'prepro'))
+            print('fetch cathy prepro src files')
+            shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/prepro'),
+                        os.path.join(self.workdir,self.project_name,'prepro'))
 
-                print('fetch cathy input files')
-                shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/input'),
-                            os.path.join(self.workdir,self.project_name,'input'))
-
-
-                pathsrc = os.path.join(os.getcwd(),self.project_name,'tmp_src/runs/weilletal/')
+            print('fetch cathy input files')
+            shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/input'),
+                        os.path.join(self.workdir,self.project_name,'input'))
 
 
-                onlyfiles = [f for f in listdir(pathsrc) if isfile(join(pathsrc, f))]
+            pathsrc = os.path.join(os.getcwd(),self.project_name,'tmp_src/runs/weilletal/')
 
-                for file in onlyfiles: # You could shorten this to one line, but it runs on a bit.
-                    shutil.move(os.path.join(pathsrc, file),
-                                os.path.join(self.project_name,file))
+
+            onlyfiles = [f for f in listdir(pathsrc) if isfile(join(pathsrc, f))]
+
+            for file in onlyfiles: # You could shorten this to one line, but it runs on a bit.
+                shutil.move(os.path.join(pathsrc, file),
+                            os.path.join(self.project_name,file))
 
         
 
@@ -84,8 +97,8 @@ class CATHY(object):
 
                 # shutil.move(os.path.join(self.dirName,self.project_name,'tmp_src/README'),
             #             os.path.join(self.dirName,self.project_name,'README'))
-            except:
-                pass
+            # except:
+            #     pass
 
         for key,value in kwargs.items():
             if key == 'clear_outputs':
@@ -96,6 +109,11 @@ class CATHY(object):
                             shutil.rmtree(os.path.join(self.workdir,self.project_name,'output'))
                             shutil.rmtree(os.path.join(self.workdir,self.project_name,'vtk'))
                             self.create_output(output_dirname='output')
+
+
+                    
+                    
+                    
 
         #check if src files are existing
 
@@ -138,6 +156,8 @@ class CATHY(object):
 
 
         #%% hap.in
+        
+        print('update hap.in')
 
         structural_parameter = ['delta_x','delta_y','N','M','N_celle',
                                'xllcorner','yllcorner']
@@ -213,7 +233,10 @@ class CATHY(object):
                  print("Error: outlet not defined")
                  DEM_withOutlet = DEM
                  DEM_withOutlet[0,0]=0
-
+                 
+            print('update dtm_13.val')
+            print(os.getcwd())
+            print(DEM_withOutlet)
             with open(os.path.join(self.project_name,'prepro/dtm_13.val'), 'w+') as f:
                 np.savetxt(f, DEM_withOutlet, fmt='%1.4e')   # use exponential notation
 
@@ -443,7 +466,7 @@ class CATHY(object):
 
         return
 
-    def run_processor(self,verbose=False):
+    def run_processor(self,verbose=False,**kwargs):
         """ Run cathy.exe
 
         Returns
@@ -459,7 +482,21 @@ class CATHY(object):
         #                 if key==structural_parameter[tmp_lnb[count]]:
         #                     print(f'key: {key} | value: {value}')
 
-
+        # print('kwargs.items()')
+        # print(kwargs.items())
+            
+            
+        if len(kwargs.items())>0:
+            print('kwargs.items()')
+            print(kwargs)
+        
+            self.update_parm(**kwargs)
+            
+        # for kk in kwargs.items():
+        #     print(kk)
+        #     self.update_parm(kk)
+        
+        
         # check location of the exe (should be in project_name folder)
         print(os.getcwd())
         os.chdir(os.path.join(self.workdir,self.project_name,'src'))
@@ -513,17 +550,17 @@ class CATHY(object):
         fnames_file = open(os.path.join(self.project_name , 'cathy.fnames'), 'r')
         Lines = fnames_file.readlines()
         
-        count=0
-        for line in Lines:
-            x = line.strip().split("unit")
-            if len(x)>1:
-                # check if file exist
-                # print(str(x[0]))
-                # x[0]).replace('', '')
-                # x0 = x[0].replace(' '' ', '')
-                # print(str(x0))
-                if not os.path.exists(x[0]):
-                    print(str(x[0]))
+        # count=0
+        # for line in Lines:
+        #     x = line.strip().split("unit")
+        #     if len(x)>1:
+        #         # check if file exist
+        #         # print(str(x[0]))
+        #         # x[0]).replace('', '')
+        #         # x0 = x[0].replace(' '' ', '')
+        #         # print(str(x0))
+        #         if not os.path.exists(x[0]):
+        #             print(str(x[0]))
 
 
 
@@ -598,9 +635,6 @@ class CATHY(object):
         return
 
 
-
-
-
     #%% INPUT FILES
 
     def create_inputs(self,input_dirname='input'):
@@ -628,32 +662,7 @@ class CATHY(object):
         return
 
 
-    # def create_parm(IPRT1,DAFLAG,
-    #                 ISIMGR, PONDH_MIN,
-    #                 KSLOPE, TOLKSL,
-    #                 PKRL,   PKRR,   PSEL,   PSER,
-    #                 PDSE1L, PDSE1R, PDSE2L, PDSE2R,
-    #                 ISFONE ,ISFCVG, DUPUIT,
-    #                 TETAF,  LUMP,   IOPT,
-    #                 NLRELX, OMEGA,
-    #                 L2NORM, TOLUNS, TOLSWI,  ERNLMX,
-    #                 ITUNS, ITUNS1, ITUNS2,
-    #                 ISOLV,  ITMXCG, TOLCG,
-    #                 DELTAT, DTMIN,  DTMAX,  TMAX,
-    #                 DTMAGA, DTMAGM, DTREDS, DTREDM,
-    #                 IPRT,   NPRT,   TIMPRT ,I):
-
-    #     with open('parm', 'w+') as parmfile:
-
-    #         parmfile.write(str(NDIR) + "\t" + str(NDIRC) + "\t"
-    #                             + 'NDIR' + "\t" + 'NDIRC' + "\n")
-
-
-    #         parmfile.close()
-
-    #     return
-
-    def create_parm(self,**kwargs):
+    def update_parm(self,**kwargs):
 
 
         # set default parameters
@@ -695,7 +704,7 @@ class CATHY(object):
                       "DELTAT":  0.01,
                       "DTMIN": .00001,
                       "DTMAX": 10.,
-                      "TMAX":  3600.0,
+                      "TMAX":  3600.0, #Time at end of simulation (TMAX is set to 0.0 for steady state problem)
                       "DTMAGA":  0.0,
                       "DTMAGM": 1.1,
                       "DTREDS": 0.0,
@@ -726,8 +735,6 @@ class CATHY(object):
         # write file
         header_fmt = [3,3,2,4,4,3,3,2,4,3,3,4,4,4,2,1,2]
         counth=0
-
-        print(os.getcwd())
 
         for key,value in self.parm.items():
             if isinstance(value, list):
@@ -762,29 +769,31 @@ class CATHY(object):
 
         parmfile.close()
 
+        pass
 
 
 
 
 
-
-        return
-
-
-
-
-
-    def create_ic(INDP,WTHEIGHT,IPOND):
+    def update_ic(self,INDP=2,IPOND=0,WTHEIGHT=[]):
         """Short summary.
 
         Parameters
         ----------
         INDP : int
-            Description of parameter `INDP`.
+            Flag for pressure head initial conditions (all nodes)
+            =0 for input of uniform initial conditions (one value read in)
+            =1 for input of non-uniform IC's (one value read in for each node)
+            =2 for calculation of fully saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVHE). In the case of IPOND>0, the fully saturated hydrostatic IC is calculated (in subroutine ICVHEPOND) starting from the ponding head values at the surface nodes, rather than surface pressure heads of 0.
+            =3 for calculation of partially saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVHWT) with the water table height (relative to the base of the 3‐d grid) given by parameter WTHEIGHT 
+            =4 for calculation of partially saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVDWT) with the water table depth (relative to the surface of the 3‐d grid) given by parameter WTHEIGHT 
         WTHEIGHT : type
-            Description of parameter `WTHEIGHT`.
+            For the case INDP=3, specifies the initial water table height relative to the base of the 3‐d grid
         IPOND : type
-            Description of parameter `IPOND`.
+            Flag for ponding head initial conditions (surface nodes)
+            =0 no input of ponding head initial conditions; otherwise (IPOND = 1 or 2) ponding head initial conditions are read into PONDNOD, and, where PONDNOD > 0, these values are used to update the surface node values in PTIMEP read in according to the previous INDP flag
+            =1 uniform ponding head initial conditions (one value read in)
+            =2 non-uniform ponding head initial conditions (one value read in for each node)
 
         Returns
         -------
@@ -793,10 +802,24 @@ class CATHY(object):
 
         """
 
-        return
+        # set default parameters
+        self.ic =	{
+                      "INDP": INDP,
+                      "WTHEIGHT": WTHEIGHT,
+                      "IPOND": IPOND
+                      }
+        
+        with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'ic'), 'w+') as icfile:
+            icfile.write(str(INDP) + "\t" + str(IPOND) + "\t"
+                            + 'INDP' + "\t" + 'IPOND' + "\n")
+            icfile.write(str(WTHEIGHT) + "\t" +  'WTHEIGHT' + "\n")                         
+        icfile.close()
+
+        pass
 
 
-    def create_atmbc(HSPATM=0,IETO=0,TIME=None,VALUE=None):
+
+    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=None):
         """Atmospheric forcing term (atmbc - IIN6).
 
         Parameters
@@ -819,15 +842,40 @@ class CATHY(object):
             Description of returned object.
 
         """
+        
+        # set default parameters
+        self.atmbc =	{
+                      "HSPATM": HSPATM,
+                      "IETO": IETO,
+                      "TIME": TIME,
+                      "VALUE": VALUE
+                     }
 
-        with open('atmbc', 'w+') as atmbcfile:
+        # C     Write atmbc file
+        #       write(32,*) '1  1  HSPATM IETO'
+        #          write(32,*) 0.D0, 'TIME'
+        #          write(32,*) 0.D0
+        #          write(32,*) 1e+20, 'TIME'
+        #          write(32,*) 0.D0
+        # c      do i=1,nt
+        # c         write(32,*) time(i), 'TIME'
+        # c         write(32,*) atmbc(i)
+        # c      enddo
+
+        with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'atmbc'), 'w+') as atmbcfile:
             atmbcfile.write(str(HSPATM) + "\t" + str(IETO) + "\t"
                             + 'HSPATM' + "\t" + 'IETO' + "\n")
-            atmbcfile.close()
+            for t,v in zip(TIME,VALUE):
+                print(t,v)
+                atmbcfile.write(str(t) + 
+                                 "\t" + 'TIME' + "\n")
+                atmbcfile.write(str(v) + 
+                                 "\t" + 'VALUE' + "\n")
+                 
+        atmbcfile.close()
+        pass
 
-        return
-
-    def create_nansfdirbc(NDIR=0,NDIRC=0, NQ3=None):
+    def update_nansfdirbc(NDIR=0,NDIRC=0, NQ3=None):
         """Boundary conditions (nansfdirbc - IIN8, nansfneubc - IIN9, sfbc - IIN7)
         The boundary conditions are defined in the nansfdirbc (Dirichlet),
         nansfneubc (Neumann), and sfbc (seepage face) files.
@@ -857,6 +905,46 @@ class CATHY(object):
             Description of returned object.
 
         """
+        
+        self.read_grid3d()
+
+        # C     Write dirbc 
+        #       write(33,*) 0.0, 'TIME'
+        #       write(33,*) '0', a
+        #       do i=1,nnod3
+        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
+        #      1       (y(i).eq.5))then
+        #          write(33,*) i
+        #          endif
+        #       enddo
+        #       do i=1,nnod3
+        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
+        #      1       (y(i).eq.5))then
+        #          write(33,*) -z(i)-WTdepth
+        #          endif
+        #       enddo
+                 
+        #       write(33,*) 2e+20, 'TIME'
+        #       write(33,*) '0', a
+        #       do i=1,nnod3
+        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
+        #      1       (y(i).eq.5))then
+        #          write(33,*) i
+        #          endif
+        #       enddo
+        #       do i=1,nnod3
+        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
+        #      1       (y(i).eq.5))then
+        #          write(33,*) -z(i)-WTdepth
+        #          endif
+        #       enddo
+              
+      
+        # set default parameters
+        # self.nansfdirbc =	{
+        #               "NDIR": HSPATM,
+        #               "NDIRC": IETO,
+        #              }
 
         with open('nansfdirbc', 'w+') as nansfdirbcfile:
 
@@ -929,17 +1017,29 @@ class CATHY(object):
 
     #%% Meshtool functions
 
-
-
-    def create_dem_parameters():
-        # Model grid (dem_parameters - IIN11)
-
-        with open('grid', 'w+') as gridfile:
-            gridfile.write("\t"  + str(NZONE) + "\t" + str(NSTR) + "\t" + str(N1) + "\t"
-                            + 'NZONE' + "\t" + 'NSTR' + "\t" + 'N1' + "\n")
-
-        pass
-
+    def read_grid3d(self):
+      
+         grid3d
+         hap_file = open(os.path.join(self.project_name , 'output/grid3d'), 'r')
+         Lines = hap_file.readlines()
+            
+         #    c     Read grid3d
+         #  read(28,*) nnod,nnod3,nel
+         #  do i=1,nel
+         #     read(28,*) 
+         #  enddo
+         #  a=0
+         #  do i=1,nnod3
+         #     read(28,*) x(i),y(i),z(i)
+         #     if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
+         # 1       (y(i).eq.5))then
+         #     a=a+1
+         #     endif
+         #  enddo
+      
+    
+         return
+      
 
     def create_3dmesh_CATHY(self,gmsh_mesh=[],
                             NZONE=[],NSTR=[],N1=[],
@@ -947,7 +1047,7 @@ class CATHY(object):
                             ZRATIO=[],Z1=[],
                             IVERT=0, ISP=0, BASE=4,
                             debug=False):
-        """Short summary.
+        """Create 3d mesh (grid file) from gmsh file.
 
         Parameters
         ----------

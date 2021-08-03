@@ -1,3 +1,0 @@
-vtk
-vtkCommonCorePython
-vtkmodules
