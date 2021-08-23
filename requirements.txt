@@ -2,3 +2,4 @@ GitPython
 Resipy
 pyvistaqt
 itkwidgets
+gfortran
