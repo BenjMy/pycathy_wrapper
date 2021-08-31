@@ -20,7 +20,7 @@ from git import Repo
 
 #import meshtools as mt
 
-import plot_tools as pltCT
+import lib.plot_tools as pltCT
 
 class CATHY(object):
     '''Main CATHY object.'''
@@ -1323,6 +1323,8 @@ class CATHY(object):
                 ??
             'OMGC': float
                 ??
+            For details, see http://dx.doi.org/10.1002/2015WR017139
+
                   
         SPP : Soil Physical Properties
             'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
