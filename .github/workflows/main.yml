@@ -1,0 +1,69 @@
+# on a new push or pull request to master, this workflow runs
+# it first checkout the change on master and add them to the gh-pages branch
+# it then build the documentation using sphinx and push it to the docs/ folder on gh-pages branch
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  docs:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          
+      # we need first to git pull all changes from master AND to reset the 'gh-pages' branch with master
+      # this is a hard reset and we need to force the push as the tip of 'gh-pages' will be more recent
+      # than the tip of 'master' because of our last build of the documentation.
+      - name: Reset gh-pages to master and force push
+        run: |
+          git pull
+          git reset --hard origin/master
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git push --force
+
+      - name: Install packages needed to build the doc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc python3-sphinx jupyter
+          pip3 install setuptools==49.0.0 wheel
+          pip3 install sphinx numpydoc sphinx_rtd_theme sphinx_nbexamples pandoc
+      
+      # apt or pip packages needed to run the notebooks are specified in apt.txt and requirements.txt
+      #- name: Install packages needed for the notebooks
+      #  run: |
+      #    pip3 install -r requirements.txt
+      #    cat apt.txt | xargs sudo apt-get install
+          
+      # we need to be inside the docsrc folder to build documentation because the path of the
+      # gallery of examples in conf.py are set RELATIVE to the docsrc directory. If we were building
+      # from the root (so no cd ... command), we would have the 'auto_examples' directory in the root
+      # rather than in docsrc
+      - name: Build the doc
+        run: |
+          cd docsrc
+          python3 -m sphinx -b html . ../docs
+          cd ..
+      
+      # we set || true, in case, nothing really changes
+      - name: Commit to gh-pages
+        run: |
+          find ./
+          git add docs/*
+          git commit -m "Update documentation" -a || true
+          git push
