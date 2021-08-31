@@ -1029,18 +1029,18 @@ class CATHY(object):
         ----------
         INDP : int
             Flag for pressure head initial conditions (all nodes)
-            =0 for input of uniform initial conditions (one value read in)
-            =1 for input of non-uniform IC's (one value read in for each node)
-            =2 for calculation of fully saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVHE). In the case of IPOND>0, the fully saturated hydrostatic IC is calculated (in subroutine ICVHEPOND) starting from the ponding head values at the surface nodes, rather than surface pressure heads of 0.
-            =3 for calculation of partially saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVHWT) with the water table height (relative to the base of the 3‐d grid) given by parameter WTHEIGHT 
-            =4 for calculation of partially saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVDWT) with the water table depth (relative to the surface of the 3‐d grid) given by parameter WTHEIGHT 
+            - =0 for input of uniform initial conditions (one value read in)
+            - =1 for input of non-uniform IC's (one value read in for each node)
+            - =2 for calculation of fully saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVHE). In the case of IPOND>0, the fully saturated hydrostatic IC is calculated (in subroutine ICVHEPOND) starting from the ponding head values at the surface nodes, rather than surface pressure heads of 0.
+            - =3 for calculation of partially saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVHWT) with the water table height (relative to the base of the 3‐d grid) given by parameter WTHEIGHT 
+            - =4 for calculation of partially saturated vertical hydrostatic equilibrium IC's (calculated in subroutine ICVDWT) with the water table depth (relative to the surface of the 3‐d grid) given by parameter WTHEIGHT 
         WTPOSITION : type
             For the case INDP=3, specifies the initial water table height relative to the base of the 3‐d grid
         IPOND : type
             Flag for ponding head initial conditions (surface nodes)
-            =0 no input of ponding head initial conditions; otherwise (IPOND = 1 or 2) ponding head initial conditions are read into PONDNOD, and, where PONDNOD > 0, these values are used to update the surface node values in PTIMEP read in according to the previous INDP flag
-            =1 uniform ponding head initial conditions (one value read in)
-            =2 non-uniform ponding head initial conditions (one value read in for each node)
+            - =0 no input of ponding head initial conditions; otherwise (IPOND = 1 or 2) ponding head initial conditions are read into PONDNOD, and, where PONDNOD > 0, these values are used to update the surface node values in PTIMEP read in according to the previous INDP flag
+            - =1 uniform ponding head initial conditions (one value read in)
+            - =2 non-uniform ponding head initial conditions (one value read in for each node)
 
         Returns
         -------
