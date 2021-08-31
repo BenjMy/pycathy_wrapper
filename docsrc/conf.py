@@ -11,12 +11,15 @@ import datetime
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-sys.path.insert(0, os.path.abspath("../src/pyCATHY/"))
-sys.path.insert(0, os.path.abspath("../src/pyCATHY/cathy_tools/"))
-sys.path.insert(0, os.path.abspath("../src/pyCATHY/plottools/"))
+#sys.path.insert(0, os.path.abspath("../src/pyCATHY/"))
+#sys.path.insert(0, os.path.abspath("../src/pyCATHY/cathy_tools/"))
+#sys.path.insert(0, os.path.abspath("../src/pyCATHY/plottools/"))
 
 
-sys.path.append(os.path.pardir)
+sys.path.append(os.path.relpath('../'))
+sys.path.insert(0, os.path.abspath('../'))
+
+#sys.path.append(os.path.pardir)
 
 from cathy_tools import CATHY
 
