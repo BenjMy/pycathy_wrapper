@@ -1,16 +1,16 @@
-# on a new push or pull request to master, this workflow runs
-# it first checkout the change on master and add them to the gh-pages branch
+# on a new push or pull request to main, this workflow runs
+# it first checkout the change on main and add them to the gh-pages branch
 # it then build the documentation using sphinx and push it to the docs/ folder on gh-pages branch
 
 name: CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# events but only for the main branch
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -26,13 +26,13 @@ jobs:
         with:
           ref: gh-pages
           
-      # we need first to git pull all changes from master AND to reset the 'gh-pages' branch with master
+      # we need first to git pull all changes from main AND to reset the 'gh-pages' branch with main
       # this is a hard reset and we need to force the push as the tip of 'gh-pages' will be more recent
-      # than the tip of 'master' because of our last build of the documentation.
-      - name: Reset gh-pages to master and force push
+      # than the tip of 'main' because of our last build of the documentation.
+      - name: Reset gh-pages to main and force push
         run: |
           git pull
-          git reset --hard origin/master
+          git reset --hard origin/main
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git push --force
