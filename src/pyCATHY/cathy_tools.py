@@ -18,7 +18,9 @@ from git import Repo
 #import resipy
 #from resipy import Project
 
-import meshtools as mt
+#import meshtools as mt
+
+import plot_tools as pltCT
 
 class CATHY(object):
     '''Main CATHY object.'''
@@ -47,7 +49,6 @@ class CATHY(object):
         self.parm = {} # dict of parm input parameters
         self.soil = {} # dict of soil input parameters
         self.ic = {} # dict of ic input parameters
-        # self.ic = {} # dict of soil input parameters
 
         
         # self.time = []
@@ -57,6 +58,7 @@ class CATHY(object):
         # ERT
         self.elecs = []
 
+        # meshing
         self.mesh_gmsh = [] # gmsh meshfile
 
 
@@ -140,7 +142,7 @@ class CATHY(object):
             os.remove(file)
 
         if self.notebook==False:
-            bashCommand = 'gfortran -O -o cppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
+            bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
     
             process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     
@@ -157,16 +159,25 @@ class CATHY(object):
             os.chdir(self.workdir)
     
             # move to the directory where the source FORTRAN files are contained (cathy_main.f)
-            shutil.move(os.path.join(self.workdir,self.project_name, 'prepro/src/cppp'),
-                        os.path.join(self.workdir,self.project_name, 'prepro/cppp'))
+            shutil.move(os.path.join(self.workdir,self.project_name, 'prepro/src/pycppp'),
+                        os.path.join(self.workdir,self.project_name, 'prepro/pycppp'))
     
     
             print('run preprocessor')
             os.chdir(os.path.join(self.workdir, self.project_name, 'prepro'))
 
-        bashcmd = './cppp'             
+        bashcmd = './pycppp'             
         my_data = "2\n0\n1\n" # user input data
         p = subprocess.run([bashcmd], text=True, input=my_data, capture_output=True)
+     
+        # try:
+        #     p = subprocess.run([bashcmd], text=True, input=my_data, capture_output=True)
+        # except:
+        #     shutil.move(os.path.join(self.workdir,self.project_name, 'prepro/src/cppp'),
+        #     os.path.join(self.workdir,self.project_name, 'prepro/cppp'))
+        #     p = subprocess.run([bashcmd], text=True, input=my_data, capture_output=True)
+
+                        
         print(p.stdout)
         print(p.stderr)
         
@@ -192,7 +203,47 @@ class CATHY(object):
  
         return
 
-    def run_processor(self,recompile=True,verbose=False, **kwargs):
+    def recompileSrc(self,verbose=True):
+
+        os.chdir(os.path.join(self.workdir,self.project_name,'src'))
+
+        print('recompileSrc')
+
+        #clean all files compiled
+        for file in glob.glob("*.o"):
+            os.remove(file)
+
+        for file in glob.glob("*.f"):
+            bashCommand = "gfortran -c " + str(file)
+
+            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+            if verbose:
+                output, error = process.communicate()
+
+        files = ""
+        for file in glob.glob("*.o"):
+            files += " " + str(file)
+
+        bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+
+        if verbose:
+            output, error = process.communicate()
+
+        # move to the directory where the source FORTRAN files are contained (cathy_main.f)
+        # and OVERWRITE IF ALREADY EXISTING (full path spacified)
+        
+        os.chdir(os.path.join(self.workdir))
+        shutil.move(os.path.join(self.project_name, 'src',self.processor_name),
+                    os.path.join(self.project_name, self.processor_name))
+
+        print('move ' + self.processor_name + ' into ' + self.project_name + ' directory')
+
+        os.chdir(os.path.join(self.project_name))
+        pass
+    
+        
+    def run_processor(self,recompile=True,verbose=False,runProcess=True,**kwargs):
         """ Run cathy.exe
         
         1. updates cathy parameters
@@ -212,6 +263,7 @@ class CATHY(object):
             print(kwargs)
         
             self.update_parm(**kwargs)
+            self.update_cathyH(**kwargs)
             
        
         # 'CATHY.H'
@@ -224,6 +276,13 @@ class CATHY(object):
 
         if recompile==True:
             
+            # self.recompileSrc()
+            print('recompile')
+            
+            # gfortran -c *.f 
+            # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
+
+
             #clean all files compiled
             for file in glob.glob("*.o"):
                 os.remove(file)
@@ -268,8 +327,9 @@ class CATHY(object):
         #'cathy_main.f'
         # -------------
 
-        fnames_file = open(os.path.join(self.project_name , 'cathy.fnames'), 'r')
-        Lines = fnames_file.readlines()
+
+        # fnames_file = open(os.path.join(self.project_name , 'cathy.fnames'), 'r')
+        # Lines = fnames_file.readlines()
         
         # count=0
         # for line in Lines:
@@ -283,7 +343,7 @@ class CATHY(object):
         #         if not os.path.exists(x[0]):
         #             print(str(x[0]))
         
-        os.chdir(os.path.join(self.project_name))
+        os.chdir(os.path.join(self.workdir,self.project_name))
 
         # try:
         #     os.path.exists(os.path.join('cathy.fnames'))
@@ -307,27 +367,28 @@ class CATHY(object):
         if not os.path.exists('vtk'):
             os.makedirs('vtk',exist_ok=True)
 
+        if runProcess==True:
 
-        print('run processor')
-        print(os.getcwd())
-
-        callexe = './' + self.processor_name
-        # process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
-        # if verbose:
-        #     output, error = process.communicate()
-        p = subprocess.run([callexe], text=True, capture_output=True)
-        print(p.stdout)
-        print(p.stderr)
-
-        os.chdir(os.path.join(self.workdir))
-
-        #try:
-        #    subprocess.call([callexe_path, '-ARG'], shell=True)
-        #    subprocess.Popen(["cathyEnv/bin/python"])
-        #except:
-        #    pass
+            print('run processor')
+            print(os.getcwd())
     
-        print('timer')
+            callexe = './' + self.processor_name
+            # process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
+            # if verbose:
+            #     output, error = process.communicate()
+            p = subprocess.run([callexe], text=True, capture_output=True)
+            print(p.stdout)
+            print(p.stderr)
+    
+            os.chdir(os.path.join(self.workdir))
+    
+            #try:
+            #    subprocess.call([callexe_path, '-ARG'], shell=True)
+            #    subprocess.Popen(["cathyEnv/bin/python"])
+            #except:
+            #    pass
+        
+            # print('timer')
 
         return
 
@@ -350,16 +411,16 @@ class CATHY(object):
         
         print('update_cathyH')
         print('-.-'*10)
-        CATHYH_file = open(os.path.join(self.project_name , 'CATHY.H'), 'r')
+        print(os.path.join(self.workdir,self.project_name ,'src' ,'CATHY.H'))
+        CATHYH_file = open(os.path.join(self.workdir,self.project_name ,'src' ,'CATHY.H'), 'r')
         Lines0_109 = CATHYH_file.readlines()
         CATHYH_file.close()
         
         DEMRES = 1
     
-
         self.cathyH = {
-                        'ROWMAX': self.hapin['N'], # maximum NROW, with NROW = number of rows in the DEM
-                        'COLMAX': self.hapin['M'], # maximum NCOL, with NCOL = number of columns in the DEM
+                        'ROWMAX': self.hapin['M'], # maximum NROW, with NROW = number of rows in the DEM
+                        'COLMAX': self.hapin['N'], # maximum NCOL, with NCOL = number of columns in the DEM
                         # 'COARSE': ,
                         'MAXCEL': int(self.hapin['N'])*int(self.hapin['M']),
                         'MAXRES': 1,
@@ -367,7 +428,7 @@ class CATHY(object):
                         'NODMAX': (int(self.hapin['N'])/DEMRES+1)*(int(self.hapin['M'])/DEMRES+1),
                         'NTRMAX': 2*(int(self.hapin['N'])*int(self.hapin['M']))/(DEMRES*DEMRES),
                         'NP2MAX': 1,
-                        'MAXSTR': 15,
+                        'MAXSTR': self.dem_parameters['nstr'],
                         'NPMAX': 1,
                         'NQMAX': 1,
                         'NSFMAX': 1,
@@ -379,52 +440,68 @@ class CATHY(object):
                         'MAXZON': self.dem_parameters['nzone'], #maximum NZONE, with NZONE = number of material types in the porous medium
                         'MAXTRM': 52111,
                         'MAXIT': 30,
-                        'NRMAX': 1,           
+                        'NRMAX': self.parm['NR'],           
                         'MAXPRT': self.parm['NPRT'],#maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
-                        'MAXVP': self.parm['NUMVP'], #maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
+                        'MAXVP': int(self.parm['NUMVP']), #maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
                         'N1MAX' : self.dem_parameters['n1'],    #maximum N1 (it is good to have N1 ≤ 20), N1 = maximum number of element connections to a node     
                         'MAXBOT': 1,
                         'INTBOT': 1,
                         'NTAB': 100,
                         'MAXQOUT': 1,
-                        'MAXENNOUT': 52560   #Is related to data assimilation (DA) (to do not considered if you do not have DA)          
-                        
-                    }
-            
-        self.cathyH['NMAX'] = self.cathyH['NODMAX']*(self.cathyH['MAXSTR'] + 1)
-        self.cathyH['NTEMAX'] = 3*self.cathyH['NTRMAX']*self.cathyH['MAXSTR'],
-        self.cathyH['MAXDIR'] = self.cathyH['NODMAX']+self.cathyH['NPMAX']+self.cathyH['NSFMAX']*self.cathyH['NNSFMX']
-        self.cathyH['NTPMAX'] = self.cathyH['N1MAX']*self.cathyH['NMAX']
-        print(self.cathyH)
+                        'MAXENNOUT': 52560,   #Is related to data assimilation (DA) (to do not considered if you do not have DA)          
+                        'MAXVEG': 1       
 
-
-        with open(os.path.join(self.workdir , self.project_name, 'CATHY.H'), 'w+') as CATHYH_file:
+                    }       
+        # self.run_processor(verbose=True,IPRT1=3,TRAFLAG=0)
+        # self.read_grid3d()
+        # # print('nnod' + str(self.nnod))
+        # # print('NODMAX' + str(self.cathyH['NODMAX']))
+        # print('N1MAX' + str(self.cathyH['N1MAX']))
+        # print('MAXVP' + str(self.cathyH['MAXVP']))
+        # sys.exit()
+        
+        
+        # create dictionnary from kwargs
+        for keykwargs,value in kwargs.items():
+           print(f'modified: {keykwargs} | value: {value}')
+           self.cathyH[keykwargs]=value
+           
+        with open(os.path.join(self.workdir,self.project_name ,'src' ,'CATHY.H'), 'w+') as CATHYH_file:
              for i, l in enumerate(Lines0_109):
                  if i < 109:
                      CATHYH_file.write(l)
 
-             CATHYH_file.write('PARAMETER (ROWMAX={},COLMAX={},DEMRES={})\n'.format(self.cathyH['ROWMAX'], self.cathyH['COLMAX'], self.cathyH['DEMRES']))
-             CATHYH_file.write('PARAMETER (NODMAX=(ROWMAX/DEMRES+1)*(COLMAX/DEMRES+1))\n')
-             CATHYH_file.write('PARAMETER (NTRMAX=2*MAXCEL/(DEMRES*DEMRES))\n'.format())
-             CATHYH_file.write('PARAMETER (NP2MAX=1,MAXSTR=15)\n'.format())
-             CATHYH_file.write('PARAMETER (NFACEMAX=74000)\n'.format())
-             CATHYH_file.write('PARAMETER (NPMAX={},NPMAX_TRA=1,NQMAX={},NSFMAX={})\n'.format(self.cathyH['NPMAX'],self.cathyH['NQMAX'],self.cathyH['NSFMAX']))
-             CATHYH_file.write('PARAMETER (NNSFMX={},MAXDIR=NODMAX+NPMAX+NSFMAX*NNSFMX)\n'.format(self.cathyH['NNSFMX']))
-             CATHYH_file.write('PARAMETER (MAXNUDN={},MAXNUDT={},MAXNUDC={})\n'.format(self.cathyH['MAXNUDN'], self.cathyH['MAXNUDT'], self.cathyH['MAXNUDC']))
-             CATHYH_file.write('PARAMETER (MAXZON={},MAXTRM={},MAXIT={},MAXVEG=1)\n'.format(self.cathyH['MAXZON'],self.cathyH['MAXTRM'],self.cathyH['MAXIT']))
-             CATHYH_file.write('PARAMETER (NRMAX={},MAXPRT={},MAXVP={})\n'.format(self.cathyH['NRMAX'],self.cathyH['MAXPRT'],self.cathyH['MAXVP']))
-             CATHYH_file.write('PARAMETER (N1MAX={},NTPMAX=N1MAX*NMAX)\n'.format(self.cathyH['N1MAX']))
-             CATHYH_file.write('PARAMETER (MAXBOT={},INTBOT={},MAXQOUT={})\n'.format(self.cathyH['MAXBOT'],self.cathyH['INTBOT'],self.cathyH['MAXQOUT']))
+             CATHYH_file.write('      PARAMETER (ROWMAX={},COLMAX={},DEMRES={})\n'.format(self.cathyH['ROWMAX'], self.cathyH['COLMAX'], self.cathyH['DEMRES']))
+             CATHYH_file.write('      PARAMETER (MAXCEL=ROWMAX*COLMAX,MAXRES=1)\n')
+             CATHYH_file.write('      PARAMETER (NODMAX=(ROWMAX/DEMRES+1)*(COLMAX/DEMRES+1))\n')
+             CATHYH_file.write('      PARAMETER (NTRMAX=2*MAXCEL/(DEMRES*DEMRES))\n'.format())
+             CATHYH_file.write('      PARAMETER (NP2MAX=1,MAXSTR={})\n'.format(self.cathyH['MAXSTR']))
+             CATHYH_file.write('      PARAMETER (NFACEMAX=74000)\n'.format())
+             CATHYH_file.write('      PARAMETER (NMAX=NODMAX*(MAXSTR + 1),NTEMAX=3*NTRMAX*MAXSTR)\n'.format())
+             CATHYH_file.write('      PARAMETER (NPMAX={},NPMAX_TRA=1,NQMAX={},NSFMAX={})\n'.format(self.cathyH['NPMAX'],
+                                                                                                    self.cathyH['NQMAX'],
+                                                                                                    self.cathyH['NSFMAX']))
+             CATHYH_file.write('      PARAMETER (NNSFMX={},MAXDIR=NODMAX+NPMAX+NSFMAX*NNSFMX)\n'.format(self.cathyH['NNSFMX']))
+             CATHYH_file.write('      PARAMETER (MAXNUDN={},MAXNUDT={},MAXNUDC={})\n'.format(self.cathyH['MAXNUDN'], self.cathyH['MAXNUDT'], 
+                                                                                             self.cathyH['MAXNUDC']))
+             CATHYH_file.write('      PARAMETER (MAXZON={},MAXTRM={},MAXIT={},MAXVEG={})\n'.format(self.cathyH['MAXZON'],self.cathyH['MAXTRM'],
+                                                                                                   self.cathyH['MAXIT'],self.cathyH['MAXVEG']))
+             CATHYH_file.write('      PARAMETER (NRMAX={},MAXPRT={},MAXVP={})\n'.format(self.cathyH['NRMAX'],
+                                                                                        self.cathyH['MAXPRT'],
+                                                                                        self.cathyH['MAXVP']))
+             CATHYH_file.write('      PARAMETER (N1MAX={},NTPMAX=N1MAX*NMAX)\n'.format(self.cathyH['N1MAX']))
+             CATHYH_file.write('      PARAMETER (MAXBOT={},INTBOT={},MAXQOUT={})\n'.format(self.cathyH['MAXBOT'],
+                                                                                           self.cathyH['INTBOT'],
+                                                                                           self.cathyH['MAXQOUT']))
              CATHYH_file.write('cxcx  PARAMETER (NIAUXMAX=NFACEMAX + MAXTRM + 1)\n'.format())
              CATHYH_file.write('cxcx  PARAMETER (NRAUXMAX=5*NFACEMAX + MAXTRM,NQMAX_TRA=NODMAX)\n'.format())
-             CATHYH_file.write('PARAMETER (NIAUXMAX=NMAX + MAXTRM + 1)\n'.format())
-             CATHYH_file.write('PARAMETER (NRAUXMAX=5*NMAX + MAXTRM,NQMAX_TRA=NODMAX)\n'.format())
-             CATHYH_file.write('PARAMETER (MAXVTKPRT=9)\n'.format())
-             CATHYH_file.write('PARAMETER (MAXFCONTONODE=100,MAXLKP=3)\n')
+             CATHYH_file.write('      PARAMETER (NIAUXMAX=NMAX + MAXTRM + 1)\n'.format())
+             CATHYH_file.write('      PARAMETER (NRAUXMAX=5*NMAX + MAXTRM,NQMAX_TRA=NODMAX)\n'.format())
+             CATHYH_file.write('      PARAMETER (MAXVTKPRT=9)\n'.format())
+             CATHYH_file.write('      PARAMETER (MAXFCONTONODE=100,MAXLKP=3)\n')
       
         CATHYH_file.close()
-
-
+        pass
 
             
     def create_output(self,output_dirname='output'):
@@ -491,7 +568,6 @@ class CATHY(object):
 
         channel_parameter = ['As_cf','(Qsf_cf,w_cf)','(Wsf_cf,b1_cf,b2_cf)','(kSsf_cf,y1_cf,y2_cf)',
                                'Qsi_cf']
-        
 
         # idhapin = np.ones(22) + [1,1,2,3,3,1] #+ [1,2,3,3,1]
         hapin = structural_parameter + terrain_parameter + rivulet_parameter + channel_parameter
@@ -513,7 +589,6 @@ class CATHY(object):
                 xs= " ".join(x[1].split())
                 xsr = xs.replace(" ", ",")
                 l = xsr.split(',')
-                print(l)
                 if isinstance(l,list):
                     l = "/t".join(l)
                 tmp_param_value.append(l)
@@ -683,7 +758,9 @@ class CATHY(object):
         
         
         # set default parameters
-        if hasattr(CATHY, 'dem_parameters') == False:
+        if hasattr(self, 'dem_parameters') == False:
+            
+            print('cannot finc dem paramters')
 
             ltmp= [0.002,	0.004,	0.006,	0.008,	0.01,	0.01,	0.02, 0.02,
                0.05,	0.05,	0.1,	0.1,	0.2, 0.2, 0.22]          
@@ -764,7 +841,19 @@ class CATHY(object):
 
 
     def update_zone(self,zone_xyz=[]):
+        """Short summary.
 
+        Parameters
+        ----------
+        input_dirname : type
+            Description of parameter `input_dirname`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
         with open(os.path.join(self.workdir , self.project_name, 'prepro/zone'), 'w+') as zonefile:
 
             zonefile.write('north:     0' + "\n")         
@@ -785,7 +874,7 @@ class CATHY(object):
         # update number of zone in the dem parameter file
         self.update_dem_parameters(nzone=len(np.unique(zone_xyz)))
         self.update_parm()
-        self.update_cathyH()
+        self.update_cathyH(MAXZON=len(np.unique(zone_xyz)))
 
 
     #%% INPUT FILES
@@ -880,6 +969,9 @@ class CATHY(object):
             if keykwargs=='TIMPRTi':
                 key = '(TIMPRT(I),I=1,NPRT)'
                 self.parm[key]=value
+                if len(value) != self.parm['NPRT']:
+                    self.parm['NPRT']=len(value)
+
             else:
                 self.parm[keykwargs]=value
 
@@ -921,6 +1013,8 @@ class CATHY(object):
                     counth += 1
 
         parmfile.close()
+        
+        self.update_cathyH(MAXPRT=self.parm['NPRT'])
 
         pass
 
@@ -964,7 +1058,8 @@ class CATHY(object):
         # set default parameters
         self.ic =	{
                       "INDP": INDP,
-                      "WTPOSITION": WTPOSITION,
+                      "WTPOSITION": WTPOSITION, #For the case INDP=3, specifies the initial water table 
+                                                  #height relative to the base of the 3‐d grid
                       "IPOND": IPOND
                       }
         
@@ -1028,12 +1123,19 @@ class CATHY(object):
             for t,v in zip(TIME,VALUE):
                 print(t,v)
                 atmbcfile.write(str(t) + 
-                                 "\t" + 'TIME' + "\n")
+                                  "\t" + 'TIME' + "\n")
                 atmbcfile.write(str(v) + 
-                                 "\t" + 'VALUE' + "\n")
+                                  "\t" + 'VALUE' + "\n")
                  
         atmbcfile.close()
+               
+        
+        self.update_parm(NPRT=len(TIME))
+        self.update_cathyH(MAXPRT=len(TIME))
+        
+        
         pass
+    
 
     def update_nansfdirbc(self,TIME=[], NDIR=0,NDIRC=0, NQ3=None, noflow=True, bound_xyz=None, pressureHead=[]):
         """Boundary conditions (nansfdirbc - IIN8, nansfneubc - IIN9, sfbc - IIN7)
@@ -1197,7 +1299,8 @@ class CATHY(object):
         
         pass    
 
-    def update_soil(self, **kwargs):
+    def update_soil(self, FP= [], SPP=[],                    
+                    **kwargs):
         """Soil parameters (soil - IIN4).
         The porous media properties are defined in the soil file.
         The first thing that must be decides is the type of relationship
@@ -1206,75 +1309,183 @@ class CATHY(object):
 
         Parameters
         ----------
-        PMIN : int
-            air dry' pressure head value (for switching control of atmospheric boundary conditions during evaporation)
-            [m sec]
-        IPEAT : int
-            Flag for peat soil deformation
-            =0 constant porosity (in unsaturated soil)
-            =1 consider porosity variations with water saturation
-        SCF : int
-            soil cover fraction (fraction of soil covered in vegetation)
+           
+        FP: Feddes Parameters [PCANA PCREF PCWLT ZROOT PZ OMGC] : [float float float float float float]
+            'PCANA': float
+                anaerobiosis point
+            'PCREF': float
+                field capacity
+            'PCWLT': float
+                wilting point
+            'ZROOT': float
+                root depth
+            'PZ': float
+                ??
+            'OMGC': float
+                ??
+                  
+        SPP : Soil Physical Properties
+            'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
+            'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
+            'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz
+            'ELSTOR' (NSTR, NZONE): specific storage
+            'POROS' (NSTR, NZONE): porosity (moisture content at saturation)
+            
+            Parameters for van Genuchten and extended van Genuchten moisture curves
+            'VGNCELL': 
+            'VGRMCCELL': residual moisture content
+            'VGPSATCELL': saturated water content
+                
         **kwargs : type
-            Description of parameter `**kwargs`.
-
+            PMIN : int
+                air dry' pressure head value (for switching control of atmospheric boundary conditions during evaporation)
+                [m sec]
+            IPEAT : int
+                Flag for peat soil deformation
+                =0 constant porosity (in unsaturated soil)
+                =1 consider porosity variations with water saturation
+            SCF : int
+                soil cover fraction (fraction of soil covered in vegetation)
+                
+            
         Returns
         -------
         type
-            Description of returned object.
+            write the soil file.
 
         """
 
-        # set default parameters
+        # set default parameters         
         self.soil =	{
-                      "PMIN": -5.0,
-                      "IPEAT SCF":[0,1.0],
-                      "CBETA0 CANG": [0.4,0.225],
-                      "PCANA PCREF PCWLT ZROOT PZ OMGC": [0.0,-4.0,-150,1.0,1.0,1.0],
+                      "PMIN":-5.0,
+                      
+                      "IPEAT": 0,
+                      "SCF":1.0,
+                      
+                      "CBETA0": 0.4,
+                      "CANG": 0.225,
+                      
+                      # Feddes parameters default values
+                       "PCANA":0.0,
+                       "PCREF":-4.0,
+                       "PCWLT":-150,
+                       "ZROOT":1.0,
+                       "PZ":1.0,
+                       "OMGC":1.0,
+            
+                      
                       "IVGHU": 0,
-                      "HUALFA HUBETA HUGAMA HUPSIA HUSWR": [0.02,2,2,0,0.333],
+                      
+                      "HUALFA": 0.02,
+                      "HUBETA": 2,
+                      "HUGAMA": 2,
+                      "HUPSIA": 0,
+                      "HUSWR": 0.333,
+                      
                       "HUN": 1,
-                      "HUA HUB": [-5,1],
-                      "BCBETA BCRMC BCPSAT": [1.2,0,-0.345]
+                      
+                      "HUA": -5,
+                      "HUB": 1,
+                      
+                      "BCBETA": 1.2,
+                      "BCRMC": 0, 
+                      "BCPSAT": -0.345
                 }
+
+        # read kwargs
+        for keykwargs,value in kwargs.items():
+            print(f'key kwargs: {keykwargs} | value: {value}')
+            self.soil[keykwargs]=value
+            self.parm[keykwargs]=value
+            
+        if hasattr(self,'dem_parameters') is False:
+            self.update_prepo_inputs()
         
+            
+        #%% Soil physical properties       
+        # Physical prop strat by strat
+        if self.dem_parameters['nzone']>1:
+            SoilPhysProp = np.ones([self.dem_parameters['nzone']*self.dem_parameters['nstr'],8])
+            k=0
+            for istr in range(self.dem_parameters['nstr']): # loop over strates
+                izoneSoil = np.zeros([self.dem_parameters['nzone'],8])
+                for izone in range(self.dem_parameters['nzone']): # loop over zones within a strate
+                    izoneSoil_tmp = []
+                    for spp in SPP:
+                        izoneSoil_tmp.append(SPP[spp][izone])
+                    izoneSoil_tmp = np.hstack(izoneSoil_tmp)
+                    izoneSoil[izone,:]= izoneSoil_tmp
+                    ki = k 
+                    ke = k + self.dem_parameters['nzone']
+                    SoilPhysProp[ki:ke,:]=izoneSoil
+                    # SoilPhysProp[self.dem_parameters['nzone']*istr*izone:self.dem_parameters['nzone']*istr*izone+self.dem_parameters['nzone'],:]=izoneSoil
+                k+= self.dem_parameters['nzone']
+        else:
+            izoneSoil=[]
+            for spp in SPP:
+                izoneSoil.append(SPP[spp])
+            # SoilPhysProp = np.ones([self.dem_parameters['nstr'],8])*izoneSoil
+            izoneSoil = np.hstack(izoneSoil)
+            SoilPhysProp = np.tile(izoneSoil,(self.dem_parameters['nstr'],1))
+
+        #%%  Vegetation properties
         
-        
-        
-        # write file
-        header_fmt = np.ones(9)
-        # PERMX    PERMY    PERMZ    ELSTOR   POROS,VGNCELL,VGRMCCELL,VGPSATCELL
-        PERMX = np.ones(self.dem_parameters['nstr'])*1.88E-04
-        PERMY = np.ones(self.dem_parameters['nstr'])*1.88E-04
-        PERMZ = np.ones(self.dem_parameters['nstr'])*1.88E-04
-        ELSTOR = np.ones(self.dem_parameters['nstr'])*1.00E-05
-        POROS = np.ones(self.dem_parameters['nstr'])*0.55
-        VGNCELL = np.ones(self.dem_parameters['nstr'])*1.46
-        VGRMCCELL = np.ones(self.dem_parameters['nstr'])*0.15
-        VGPSATCELL = np.ones(self.dem_parameters['nstr'])*0.03125
-        
+        # PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC
+        # Read only if IVGHU=0
+        print(self.cathyH['MAXVEG'])
+
+        if self.cathyH['MAXVEG']>1:
+            print(self.cathyH['MAXVEG'])
+            FeddesParam = np.zeros([self.cathyH['MAXVEG'],6])
+            for iveg in range(self.cathyH['MAXVEG']): # loop over veg zones within a strate
+                izoneVeg_tmp = []
+                for sfp in FP:
+                    izoneVeg_tmp.append(FP[sfp][iveg])
+                    # if iveg==1:
+                    #     izoneVeg_tmp.append('\t PCANA PCREF PCWLT ZROOT PZ OMGC')
+                    
+                izoneVeg_tmp = np.hstack(izoneVeg_tmp)
+                FeddesParam[iveg,:]= izoneVeg_tmp
+        else:
+            FeddesParam= np.c_[self.soil['PCANA'],self.soil['PCREF'],
+                            self.soil['PCWLT'],self.soil['ZROOT'],
+                            self.soil['PZ'],self.soil['OMGC']]
+            
+
+
+
+        #%% write soil file
         counth=0
-        
+        header_fmt_soil = [1,2,2,6,1,5,1,2,3]
+
         with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'soil'), 'w+') as soilfile:
-            for h in header_fmt:
-                ml = list(self.soil.values())[counth]
-                ml_str = str(ml)
-                b = "[,]"
-                for char in b:
-                    ml_str = ml_str.replace(char, "\t")
-                soilfile.write(ml_str + "\t"  +
-                                    str(list(self.soil.keys())[counth])+ "\n")
-                counth += 1
+            for i, h in enumerate(header_fmt_soil):
+                left=right=[]
+                left = str(list(self.soil.values())[counth:counth+h])            
+                left = left.strip('[]').replace(",", "")
                 
-            np.savetxt(soilfile,np.c_[PERMX,PERMY,PERMZ,ELSTOR,POROS,VGNCELL,VGRMCCELL,VGPSATCELL],fmt='%1.3e')
+                right = str(list(self.soil.keys())[counth:counth+h])
+                right = right.strip('[]').replace(",", "")
+                right = right.replace("'", "")
+                
+                if i==3: # Feddes parameters
+                    np.savetxt(soilfile,FeddesParam,fmt='%1.3e')
+                    counth += h
+                else:    
+                    line = left + '\t' + right + "\n"
+                    counth += h
+                    soilfile.write(str(line))
+                    
+            np.savetxt(soilfile,SoilPhysProp,fmt='%1.3e')
             soilfile.write('PERMX    PERMY    PERMZ    ELSTOR   POROS,VGNCELL,VGRMCCELL,VGPSATCELL' + "\n")
                 
         soilfile.close()
-
         pass
+    
+    
 
-    def update_root_map(self, root_depth=[]):
-        """Contains the raster map of the root zone depth as shown in the figure below.
+    def update_root_map(self, root_depth=1, show=False):
+        """Contains the raster map describing which type of vegetation every cell belongs to.
 
         Returns
         -------
@@ -1285,7 +1496,10 @@ class CATHY(object):
         if isinstance(root_depth,int):
             root_depth = float(root_depth)
 
-        
+        if hasattr(self,'hapin') is False:
+            self.update_prepo_inputs()
+            
+            
         print('update root map')
         with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'root_map'), 'w+') as rootmapfile:
  
@@ -1297,18 +1511,26 @@ class CATHY(object):
             rootmapfile.write('cols:     ' + str(self.hapin['N']) + "\n")  
             
             if isinstance(root_depth,float):
-                if  root_depth>self.dem_parameters['base']:
-                    print('max root mesh > max mesh depth')
-                    sys.exit()
-                np.savetxt(rootmapfile,np.c_[np.ones([self.hapin['M'],self.hapin['N']])]*root_depth)
+                # if  root_depth>self.dem_parameters['base']:
+                #     print('max root mesh > max mesh depth')
+                #     sys.exit()
+                np.savetxt(rootmapfile,np.c_[np.ones([int(self.hapin['M']),
+                                                      int(self.hapin['N'])])]*root_depth,
+                           fmt='%1.2e')
             else:
                 # if np.shape(zone_xyz)== :
-                if  max(root_depth)>self.dem_parameters['base']:
-                    print('max root mesh > max mesh depth')
-                    sys.exit()
-                np.savetxt(zonefile,root_depth)    
+                # if  max(max(root_depth))>self.dem_parameters['base']:
+                    # print('max root mesh > max mesh depth')
+                    # sys.exit()
+                np.savetxt(rootmapfile,root_depth,fmt='%1.2e')    
                 
         rootmapfile.close()
+        
+        self.update_cathyH(MAXVEG=len(np.unique(root_depth)))
+        
+        if show==True:
+            pltCT.rootMap_plot(root_depth)
+        
         pass
 
     def plant():
@@ -1326,15 +1548,39 @@ class CATHY(object):
          grid3d_file = open(os.path.join(self.project_name , 'output/grid3d'), 'r')
          # Lines = grid3d_file.readlines()
          self.nnod,self.nnod3,self.nel = np.loadtxt(grid3d_file,max_rows=1)
+         grid3d_file.close()
 
-         mesh3d_nodes = np.loadtxt('./my_cathy_prj/output/grid3d',skiprows=1,max_rows=int(nel))
-         mesh_tetra = np.loadtxt('./my_cathy_prj/output/grid3d',skiprows=1+int(nel))
-        
-         self.xmesh = mesh_tetra[:,0]
-         self.ymesh = mesh_tetra[:,1]
-         self.zmesh = mesh_tetra[:,2]     
-    
-         return
+         grid3d_file = open(os.path.join(self.project_name , 'output/grid3d'), 'r')
+         mesh_tetra = np.loadtxt(grid3d_file,skiprows=1,max_rows=int(self.nel)-1)
+         grid3d_file.close()
+
+
+         # mesh_tetra = np.loadtxt(grid3d_file,skiprows=1+int(self.nel)-1, max_rows=1+self.nel+self.nnod3-1)
+         grid3d_file = open(os.path.join(self.project_name , 'output/grid3d'), 'r')
+         mesh3d_nodes = np.loadtxt(grid3d_file,skiprows=1+int(self.nel), max_rows=1+int(self.nel)+int(self.nnod3)-1)
+         grid3d_file.close()
+
+
+         xyz_file = open(os.path.join(self.project_name , 'output/xyz'), 'r')
+         nodes_idxyz = np.loadtxt(xyz_file,skiprows=1)
+         xyz_file.close()
+         
+         
+         # self.xmesh = mesh_tetra[:,0]
+         # self.ymesh = mesh_tetra[:,1]
+         # self.zmesh = mesh_tetra[:,2]     
+         # return mesh3d_nodes
+         
+         self.grid = {
+                     'nnod': self.nnod, # number of surface nodes
+                     'nnod3': self.nnod3, # number of volume nodes
+                     'nel': self.nel,
+                     'mesh3d_nodes': mesh3d_nodes,
+                     'mesh_tetra': mesh_tetra,                     
+                     'nodes_idxyz': nodes_idxyz,                     
+                     }
+
+         return self.grid
       
 
     def create_3dmesh_CATHY(self,gmsh_mesh=[],

@@ -10,6 +10,7 @@ import pyvista as pv
 import glob
 import time 
 import os
+import matplotlib.pyplot as plt
 
 def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs):
     """Short summary.
@@ -132,4 +133,7 @@ def ET_plot(**kwargs):
     
     pass
 
-    
+def rootMap_plot(veg_map,**kwargs):
+    fig, ax = plt.subplots()
+    ax.pcolor(veg_map)
+    plt.show()
