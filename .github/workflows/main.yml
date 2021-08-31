@@ -45,10 +45,10 @@ jobs:
           pip3 install sphinx numpydoc sphinx_rtd_theme sphinx_nbexamples pandoc
       
       # apt or pip packages needed to run the notebooks are specified in apt.txt and requirements.txt
-      #- name: Install packages needed for the notebooks
-      #  run: |
-      #    pip3 install -r requirements.txt
-      #    cat apt.txt | xargs sudo apt-get install
+      - name: Install packages needed for the notebooks
+        run: |
+          pip3 install -r requirements.txt
+          cat apt.txt | xargs sudo apt-get install
           
       # we need to be inside the docsrc folder to build documentation because the path of the
       # gallery of examples in conf.py are set RELATIVE to the docsrc directory. If we were building
