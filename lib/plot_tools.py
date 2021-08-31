@@ -129,7 +129,22 @@ def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None):
     return
 
 
-def ET_plot(**kwargs):
+def atmbc_inputs_plot(t_atmbc,v_atmbc,**kwargs):
+
+
+    # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
+    vdiff = v_atmbc[0]-v_atmbc[1]
+
+    fig, ax = plt.subplots()
+    ax.plot(t_atmbc,vdiff,'k*')
+    ax.set(xlabel='time (s)', ylabel='Q (m/s)',
+            title='atmbc inputs')
+    ax.grid()
+
+    plt.step(t_atmbc, v_atmbc[0], color='blue', where='post', label='step(where="post")')
+    plt.step(t_atmbc, v_atmbc[1], color='green', where='post', label='step(where="post")')
+    plt.step(t_atmbc, vdiff, color='black', where='post', label='step(where="post")')
+    ax.legend(['Rain/Irr','ET','diff'])
     
     pass
 

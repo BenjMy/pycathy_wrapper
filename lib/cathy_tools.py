@@ -20,7 +20,7 @@ from git import Repo
 
 #import meshtools as mt
 
-import lib.plot_tools as pltCT
+import plot_tools as pltCT
 
 class CATHY(object):
     '''Main CATHY object.'''
@@ -33,7 +33,10 @@ class CATHY(object):
         self.notebook = notebook # flag if the script is run in a notebook
 
         self.workdir = os.path.join(os.getcwd() , dirName)
+        if not os.path.exists(os.path.join(self.project_name)):
+            os.makedirs(self.workdir,exist_ok=True)
         os.chdir(self.workdir)
+
         self.project_name = prjName
 
         if not os.path.exists(os.path.join(self.project_name)):
@@ -135,7 +138,7 @@ class CATHY(object):
 
         """
 
-        os.chdir(os.path.join(self.project_name, 'prepro/src/'))
+        os.chdir(os.path.join(self.workdir,self.project_name, 'prepro/src/'))
 
         #clean all files compiled
         for file in glob.glob("*.o"):
@@ -912,8 +915,8 @@ class CATHY(object):
                       "IPRT1": 2,
                       "NCOUT": 0,
                       "TRAFLAG": 1,
-                      "ISIMGR": 2,
-                      "PONDH_MIN": 0.00,
+                      "ISIMGR": 2, #Flag for type of simulation and type of surface grid
+                      "PONDH_MIN": 0.00, #Minimum ponding head
                       "VELREC": 0,
                       "KSLOPE": 0,
                       "TOLKSL": 0.01,
@@ -944,8 +947,8 @@ class CATHY(object):
                       "ITMXCG": 5,
                       "TOLCG": 7,
                       "DELTAT":  0.01,
-                      "DTMIN": .00001,
-                      "DTMAX": 10.,
+                      "DTMIN": .00001, #Minimum FLOW3D time step size allowed
+                      "DTMAX": 10., #Maximum FLOW3D time step size allowed
                       "TMAX":  3600.0, #Time at end of simulation (TMAX is set to 0.0 for steady state problem)
                       "DTMAGA":  0.0,
                       "DTMAGM": 1.1,
@@ -961,6 +964,19 @@ class CATHY(object):
                       "NUM_QOUT": 0,
                       "(ID_QOUT(I),I=1,NUM_QOUT)": [441]
                       }
+
+
+        #%%
+        
+        # DAFLAG:
+        # Flag for the choice of the data assimilation scheme:
+        # = 0 nudging (if NUDN=0, no data assimilation)
+        # = 1 EnKF with Evensen's algorithm (Ocean Dynamics, 2004)
+        # = 2 EnKF with parameters update
+        # = 3 Particle filtering (SIR algorithm)
+        # = 4 Particle filtering (SIR algorithm) with parameters update
+
+
 
         # create dictionnary from kwargs
 
@@ -1074,7 +1090,7 @@ class CATHY(object):
 
 
 
-    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=None):
+    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=[None,None],show=False):
         """Atmospheric forcing term (atmbc - IIN6).
 
         Parameters
@@ -1105,7 +1121,7 @@ class CATHY(object):
                       "TIME": TIME,
                       "VALUE": VALUE
                      }
-
+        vdiff = VALUE[0]-VALUE[1]
         # C     Write atmbc file
         #       write(32,*) '1  1  HSPATM IETO'
         #          write(32,*) 0.D0, 'TIME'
@@ -1120,7 +1136,8 @@ class CATHY(object):
         with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'atmbc'), 'w+') as atmbcfile:
             atmbcfile.write(str(HSPATM) + "\t" + str(IETO) + "\t"
                             + 'HSPATM' + "\t" + 'IETO' + "\n")
-            for t,v in zip(TIME,VALUE):
+            
+            for t,v in zip(TIME,vdiff):
                 print(t,v)
                 atmbcfile.write(str(t) + 
                                   "\t" + 'TIME' + "\n")
@@ -1133,6 +1150,13 @@ class CATHY(object):
         self.update_parm(NPRT=len(TIME))
         self.update_cathyH(MAXPRT=len(TIME))
         
+        if show == True:
+            if HSPATM !=0:
+                print('impossible to plot for non homogeneous atmbc')
+                sys.exit()
+            else:
+                pltCT.atmbc_inputs_plot(TIME,VALUE)
+            
         
         pass
     
