@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../'))
 
 #sys.path.append(os.path.pardir)
 
-from cathy_tools import CATHY
+from lib.cathy_tools import CATHY
 
 
 
