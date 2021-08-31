@@ -2,12 +2,12 @@
 API reference: The ``pyCATHY`` package
 =======================================
 
-.. automodule:: cathy_tools
+.. automodule:: src.pyCATHY.cathy_tools
    :members:
 
 
 ``pyCATHY.plotters``: plotters for results visualisation
-=======================================================
+========================================================
 
-.. automodule:: plot_tools
+.. automodule:: src.pyCATHY.plot_tools
    :members:
