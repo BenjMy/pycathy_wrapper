@@ -8,7 +8,7 @@ lib/pyCATHY/cathy_utils.py
 lib/pyCATHY/meshtools.py
 lib/pyCATHY/plot_tools.py
 lib/pyCATHY/rhizo_tools.py
-lib/pycathy.egg-info/PKG-INFO
-lib/pycathy.egg-info/SOURCES.txt
-lib/pycathy.egg-info/dependency_links.txt
-lib/pycathy.egg-info/top_level.txt
+lib/pycathy_test.egg-info/PKG-INFO
+lib/pycathy_test.egg-info/SOURCES.txt
+lib/pycathy_test.egg-info/dependency_links.txt
+lib/pycathy_test.egg-info/top_level.txt
