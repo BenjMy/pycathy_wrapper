@@ -149,6 +149,10 @@ def atmbc_inputs_plot(t_atmbc,v_atmbc,**kwargs):
     pass
 
 def rootMap_plot(veg_map,**kwargs):
+
     fig, ax = plt.subplots()
-    ax.pcolor(veg_map)
+    cf = ax.pcolormesh(veg_map,edgecolors='black')
+    ax.legend('vegetaton map')
+    fig.colorbar(cf, ax=ax)
     plt.show()
+

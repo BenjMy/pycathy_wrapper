@@ -143,7 +143,6 @@ class CATHY(object):
         """
 
         for loopi in range(2):                 # run it twice (to avoid the first error)
-            print(loopi)
             os.chdir(os.path.join(self.workdir,self.project_name, 'prepro/src/'))
     
             #clean all files compiled
@@ -153,15 +152,21 @@ class CATHY(object):
             if self.notebook==False:
                 bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
         
-                process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                p = os.system(bashCommand)
+                p = os.system(bashCommand) # run it twice (to avoid the first error)
+
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                # process.communicate()
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                # process.communicate()
+                
+                # if verbose:
+                #     output, error = process.communicate()
         
-                if verbose:
-                    output, error = process.communicate()
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
         
-                process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        
-                if verbose:
-                    output, error = process.communicate()
+                # if verbose:
+                #     output, error = process.communicate()
         
         
                 os.chdir(self.workdir)
@@ -186,9 +191,9 @@ class CATHY(object):
         #     os.path.join(self.workdir,self.project_name, 'prepro/cppp'))
         #     p = subprocess.run([bashcmd], text=True, input=my_data, capture_output=True)
 
-                        
-        print(p.stdout)
-        print(p.stderr)
+        if verbose:
+            print(p.stdout)
+            print(p.stderr)
         
         if  "catchment with more than one outlet cell!" in p.stdout:
             print("catchment with more than one outlet cell!")
@@ -269,7 +274,9 @@ class CATHY(object):
          
             
         if len(kwargs.items())>0:
-            print(kwargs)
+            
+            if verbose == True:
+                print(kwargs)
         
             self.update_parm(**kwargs)
             self.update_cathyH(**kwargs)
@@ -379,15 +386,17 @@ class CATHY(object):
         if runProcess==True:
 
             print('run processor')
-            print(os.getcwd())
+            # print(os.getcwd())
     
             callexe = './' + self.processor_name
             # process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
             # if verbose:
             #     output, error = process.communicate()
             p = subprocess.run([callexe], text=True, capture_output=True)
-            print(p.stdout)
-            print(p.stderr)
+            
+            if verbose == True:
+                print(p.stdout)
+                print(p.stderr)
     
             os.chdir(os.path.join(self.workdir))
     
@@ -402,7 +411,7 @@ class CATHY(object):
         return
 
 
-    def update_cathyH(self,**kwargs):
+    def update_cathyH(self,verbose=False,**kwargs):
         """Short summary.
 
         Parameters
@@ -418,9 +427,9 @@ class CATHY(object):
 
         """
         
-        print('update_cathyH')
-        print('-.-'*10)
-        print(os.path.join(self.workdir,self.project_name ,'src' ,'CATHY.H'))
+        if verbose == True:
+            print('update_cathyH')
+            print('-.-'*10)
         CATHYH_file = open(os.path.join(self.workdir,self.project_name ,'src' ,'CATHY.H'), 'r')
         Lines0_109 = CATHYH_file.readlines()
         CATHYH_file.close()
@@ -472,8 +481,9 @@ class CATHY(object):
         
         # create dictionnary from kwargs
         for keykwargs,value in kwargs.items():
-           print(f'modified: {keykwargs} | value: {value}')
-           self.cathyH[keykwargs]=value
+            if verbose == True:
+                print(f'modified: {keykwargs} | value: {value}')
+            self.cathyH[keykwargs]=value
            
         with open(os.path.join(self.workdir,self.project_name ,'src' ,'CATHY.H'), 'w+') as CATHYH_file:
              for i, l in enumerate(Lines0_109):
@@ -913,7 +923,7 @@ class CATHY(object):
         return
 
 
-    def update_parm(self,**kwargs):
+    def update_parm(self,verbose=False,**kwargs):
 
 
         # set default parameters
@@ -987,7 +997,8 @@ class CATHY(object):
         # create dictionnary from kwargs
 
         for keykwargs,value in kwargs.items():
-            print(f'keykwargs: {keykwargs} | value: {value}')
+            if verbose == True:
+                print(f'keykwargs: {keykwargs} | value: {value}')
             if keykwargs=='TIMPRTi':
                 key = '(TIMPRT(I),I=1,NPRT)'
                 self.parm[key]=value
@@ -1096,7 +1107,7 @@ class CATHY(object):
 
 
 
-    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=[None,None],show=False):
+    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=[None,None],show=False,verbose=False):
         """Atmospheric forcing term (atmbc - IIN6).
 
         Parameters
@@ -1144,7 +1155,9 @@ class CATHY(object):
                             + 'HSPATM' + "\t" + 'IETO' + "\n")
             
             for t,v in zip(TIME,vdiff):
-                print(t,v)
+                
+                if verbose == True:
+                    print(t,v)
                 atmbcfile.write(str(t) + 
                                   "\t" + 'TIME' + "\n")
                 atmbcfile.write(str(v) + 
@@ -1329,7 +1342,7 @@ class CATHY(object):
         
         pass    
 
-    def update_soil(self, FP= [], SPP=[],                    
+    def update_soil(self, FP= [], SPP=[], verbose=False,                   
                     **kwargs):
         """Soil parameters (soil - IIN4).
         The porous media properties are defined in the soil file.
@@ -1426,7 +1439,8 @@ class CATHY(object):
 
         # read kwargs
         for keykwargs,value in kwargs.items():
-            print(f'key kwargs: {keykwargs} | value: {value}')
+            if verbose == True:
+                print(f'key kwargs: {keykwargs} | value: {value}')
             self.soil[keykwargs]=value
             self.parm[keykwargs]=value
             
