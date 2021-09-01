@@ -4,7 +4,9 @@
 """
 from __future__ import print_function
 import numpy as np
-import cathy_tools as CT
+
+from pyCATHY import cathy_tools as CT
+
 
 import os
 
