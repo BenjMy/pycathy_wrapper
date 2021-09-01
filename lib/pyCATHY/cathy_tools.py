@@ -293,7 +293,7 @@ class CATHY(object):
         if recompile==True:
             
             # self.recompileSrc()
-            print('recompile')
+            print('recompile src files')
             
             # gfortran -c *.f 
             # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
@@ -307,8 +307,7 @@ class CATHY(object):
                 bashCommand = "gfortran -c " + str(file)
     
                 process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-                if verbose:
-                    output, error = process.communicate()
+                output, error = process.communicate()
     
             files = ""
             for file in glob.glob("*.o"):
@@ -326,12 +325,16 @@ class CATHY(object):
             # move to the directory where the source FORTRAN files are contained (cathy_main.f)
             # and OVERWRITE IF ALREADY EXISTING (full path spacified)
             os.chdir(os.path.join(self.workdir))
-            shutil.move(os.path.join(self.project_name, 'src',self.processor_name),
-                        os.path.join(self.project_name, self.processor_name))
-    
-            print('move ' + self.processor_name + ' into ' + self.project_name + ' directory')
-
+            
+            try:
+                shutil.move(os.path.join(self.workdir, self.project_name, 'src', self.processor_name),
+                            os.path.join(self.workdir, self.project_name, self.processor_name))
         
+                print('move ' + self.processor_name + ' into ' + self.project_name + ' directory')
+            except:
+                print('cannot find the new processsor:' + str(self.processor_name))
+    
+            
 
 
         # 'cathy.fnames'
