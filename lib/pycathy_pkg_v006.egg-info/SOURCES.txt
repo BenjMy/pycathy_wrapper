@@ -1,8 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-setup.cfg
-lib/pycathy_pkg_v006.egg-info/PKG-INFO
-lib/pycathy_pkg_v006.egg-info/SOURCES.txt
-lib/pycathy_pkg_v006.egg-info/dependency_links.txt
-lib/pycathy_pkg_v006.egg-info/top_level.txt

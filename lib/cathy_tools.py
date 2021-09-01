@@ -33,7 +33,8 @@ class CATHY(object):
         self.notebook = notebook # flag if the script is run in a notebook
 
         self.workdir = os.path.join(os.getcwd() , dirName)
-        if not os.path.exists(os.path.join(self.project_name)):
+        
+        if not os.path.exists(os.path.join(self.workdir)):
             os.makedirs(self.workdir,exist_ok=True)
         os.chdir(self.workdir)
 
@@ -138,36 +139,38 @@ class CATHY(object):
 
         """
 
-        os.chdir(os.path.join(self.workdir,self.project_name, 'prepro/src/'))
+        for loopi in range(2):                 # run it twice (to avoid the first error)
+            print(loopi)
+            os.chdir(os.path.join(self.workdir,self.project_name, 'prepro/src/'))
+    
+            #clean all files compiled
+            for file in glob.glob("*.o"):
+                os.remove(file)
+    
+            if self.notebook==False:
+                bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
+        
+                process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+        
+                if verbose:
+                    output, error = process.communicate()
+        
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+        
+                # if verbose:
+                #     output, error = process.communicate()
+        
+        
+                # os.chdir(self.workdir)
+    
+        #try:
+        # move to the directory where the source FORTRAN files are contained (cathy_main.f)
+        shutil.move(os.path.join(self.workdir,self.project_name, 'prepro/src/pycppp'),
+                    os.path.join(self.workdir,self.project_name, 'prepro/pycppp'))
 
-        #clean all files compiled
-        for file in glob.glob("*.o"):
-            os.remove(file)
-
-        if self.notebook==False:
-            bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
     
-            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-    
-            if verbose:
-                output, error = process.communicate()
-    
-            # run it twice (to avoid the first error)
-            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-    
-            if verbose:
-                output, error = process.communicate()
-    
-    
-            os.chdir(self.workdir)
-    
-            # move to the directory where the source FORTRAN files are contained (cathy_main.f)
-            shutil.move(os.path.join(self.workdir,self.project_name, 'prepro/src/pycppp'),
-                        os.path.join(self.workdir,self.project_name, 'prepro/pycppp'))
-    
-    
-            print('run preprocessor')
-            os.chdir(os.path.join(self.workdir, self.project_name, 'prepro'))
+        print('run preprocessor')
+        os.chdir(os.path.join(self.workdir, self.project_name, 'prepro'))
 
         bashcmd = './pycppp'             
         my_data = "2\n0\n1\n" # user input data
@@ -1153,7 +1156,7 @@ class CATHY(object):
         if show == True:
             if HSPATM !=0:
                 print('impossible to plot for non homogeneous atmbc')
-                sys.exit()
+                # sys.exit()
             else:
                 pltCT.atmbc_inputs_plot(TIME,VALUE)
             
