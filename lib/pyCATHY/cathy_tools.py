@@ -20,7 +20,9 @@ from git import Repo
 
 #import meshtools as mt
 
-import plot_tools as pltCT
+from pyCATHY import plot_tools as pltCT
+
+
 
 class CATHY(object):
     '''Main CATHY object.'''
