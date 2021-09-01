@@ -317,10 +317,8 @@ class CATHY(object):
             # print(bashCommand)
     
     
-            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-    
-            if verbose:
-                output, error = process.communicate()
+            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
+            output, error = process.communicate()
     
             # move to the directory where the source FORTRAN files are contained (cathy_main.f)
             # and OVERWRITE IF ALREADY EXISTING (full path spacified)
