@@ -5,7 +5,7 @@
 
 pyCATHY is a Python library for managing:
 
-### Python package for modeling electrical resistivity data ###
+### Python package for modeling hydrogeophysics data ###
 
 * pyCATHY is a Python wrapper for CATHY allowing mesh creation, forward and inverse modeling, and simple output visualization of CATHY simulations
 * Version 1.0
