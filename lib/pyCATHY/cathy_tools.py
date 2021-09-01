@@ -42,8 +42,8 @@ class CATHY(object):
 
         self.project_name = prjName
 
-        if not os.path.exists(os.path.join(self.project_name)):
-            os.makedirs(os.path.join(self.project_name),exist_ok=True)
+        if not os.path.exists(os.path.join(self.workdir,self.project_name)):
+            os.makedirs(os.path.join(self.workdir,self.project_name),exist_ok=True)
             
             
         self.processor_name = 'cathy'
@@ -84,6 +84,7 @@ class CATHY(object):
         # fetch src files if not existing from Gitbucket repo
         if not os.path.exists(os.path.join(self.project_name,'src')):
             print('src files not found')
+            print(self.workdir)
             try:
                 Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git',
                                 os.path.join(self.workdir,self.project_name,'tmp_src'),
