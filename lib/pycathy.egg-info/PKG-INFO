@@ -1,5 +1,5 @@
 Metadata-Version: 2.1
-Name: pycathy-v001
+Name: pycathy
 Version: 0.0.1
 Summary: pyCATHY is a Python package to create, run, and post-process CATHY forward and inverse models.
 Home-page: https://github.com/BenjMy/pycathy_wrapper
@@ -22,7 +22,7 @@ License-File: LICENSE
 
 pyCATHY is a Python library for managing:
 
-### Python package for modeling electrical resistivity data ###
+### Python package for modeling hydrogeophysics data ###
 
 * pyCATHY is a Python wrapper for CATHY allowing mesh creation, forward and inverse modeling, and simple output visualization of CATHY simulations
 * Version 1.0

@@ -155,13 +155,13 @@ class CATHY(object):
                 if verbose:
                     output, error = process.communicate()
         
-                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
         
-                # if verbose:
-                #     output, error = process.communicate()
+                if verbose:
+                    output, error = process.communicate()
         
         
-                # os.chdir(self.workdir)
+                os.chdir(self.workdir)
     
         #try:
         # move to the directory where the source FORTRAN files are contained (cathy_main.f)
