@@ -8,3 +8,4 @@ sphinx
 sphinx-gallery
 sphinx_bootstrap_theme
 numpydoc
+calysto_bash
