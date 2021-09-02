@@ -47,21 +47,62 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs
         print('plot '+ str(unit))
     else:
         print('physcial property not existing')
+    
+    pn.extension('vtk')  # this needs to be at the top of each cell for some reason
+
+    if notebook == True:
         
-    plotter = pv.Plotter(notebook=notebook)
-    _ = plotter.add_mesh(mesh,show_edges=True,scalars=unit)
-    legend_entries = []
-    legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
-    _ = plotter.add_legend(legend_entries)
-    plotter.show_grid()
-    #plotter.add_mesh_clip_box(mesh, color='white')
-    for key,value in kwargs.items():
-        print(f'key: {key} | value: {value}')
-        if key=='elecs':
-            poly_elecs = pv.PolyData(value)
-            poly_elecs["My Labels"] = [f"Label {i}" for i in range(poly_elecs.n_points)]
-            plotter.add_point_labels(poly_elecs, "My Labels", point_size=20, font_size=36)           
-    cpos = plotter.show()
+        out = widgets.Output()
+        def on_value_change(change):
+            with out:
+              print(change['new'])
+        
+              out.clear_output()
+              # mesh = pv.read('./my_cathy_prj/vtk/10' + str(change['new']) + '.vtk')
+              plotter = pv.Plotter(notebook=True)
+              _ = plotter.add_mesh(mesh,scalars='pressure')
+              plotter.show(True)
+        
+              legend_entries = []
+              legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
+              _ = plotter.add_legend(legend_entries)
+              plotter.show_grid()
+              plotter.add_mesh_clip_box(mesh, color='white')         
+              cpos = plotter.show(True)
+        
+        
+        
+        
+        slider = widgets.IntSlider(min=1, max=4, step=1, continuous_update=True)
+        #play = widgets.Play(min=1, interval=2000)
+        choice = widgets.Dropdown(
+            options=[('pressure', 1), ('saturation', 2)],
+            value=1,
+            description='Phys. prop:',
+        )
+        slider.observe(on_value_change, 'value')
+        choice.observe(on_value_change, 'value')
+        
+        widgets.VBox([choice, slider, out])
+        
+    else:
+
+        plotter = pv.Plotter(notebook=notebook)
+        _ = plotter.add_mesh(mesh,show_edges=True,scalars=unit)
+        legend_entries = []
+        legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
+        _ = plotter.add_legend(legend_entries)
+        plotter.show_grid()
+        #plotter.add_mesh_clip_box(mesh, color='white')
+        for key,value in kwargs.items():
+            print(f'key: {key} | value: {value}')
+            if key=='elecs':
+                poly_elecs = pv.PolyData(value)
+                poly_elecs["My Labels"] = [f"Label {i}" for i in range(poly_elecs.n_points)]
+                plotter.add_point_labels(poly_elecs, "My Labels", point_size=20, font_size=36)           
+        cpos = plotter.show()
+        
+    
 
     return
 
