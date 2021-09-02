@@ -10,5 +10,5 @@ dependencies:
     - git
     - pip
     - pip:
-     - -r requirements.txt
+      -r requirements.txt
 
