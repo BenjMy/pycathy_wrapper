@@ -9,6 +9,7 @@ dependencies:
 - m4
 - git
 - pip
+- mingw-w64-x86_64-python-ipykernel
 - pip:
   - numpy
   - GitPython 

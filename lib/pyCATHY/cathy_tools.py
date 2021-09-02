@@ -150,23 +150,33 @@ class CATHY(object):
                 os.remove(file)
     
             if self.notebook==False:
-                bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
-        
-                p = os.system(bashCommand)
-                p = os.system(bashCommand) # run it twice (to avoid the first error)
-
-                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-                # process.communicate()
-                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-                # process.communicate()
+                # bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
                 
-                # if verbose:
-                #     output, error = process.communicate()
-        
-                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        
-                # if verbose:
-                #     output, error = process.communicate()
+                try:
+                    bashCommand = 'gcc -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
+                    
+                    # p = os.system(bashCommand)
+                    # p = os.system(bashCommand) # run it twice (to avoid the first error)
+
+                    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                    process.communicate()
+                    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                    process.communicate()
+
+                    # if verbose:
+                    #     output, error = process.communicate()
+            
+                    # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+            
+                    # if verbose:
+                    #     output, error = process.communicate()
+
+                        
+                except:
+                    print('bash cmd not recognized')
+                    
+
+
         
         
                 os.chdir(self.workdir)
