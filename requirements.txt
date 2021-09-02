@@ -1,6 +1,5 @@
 numpy
 GitPython 
-Resipy
 pyvistaqt
 itkwidgets
 jupyter
