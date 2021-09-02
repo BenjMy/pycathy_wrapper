@@ -1,14 +1,14 @@
 channels:
-  - conda-forge
-  - default
+- conda-forge
+- default
 dependencies:
-    - gcc_linux-64
-    - gfortran_linux-64
-    - cmake
-    - make
-    - m4
-    - git
-    - pip
-    - pip:
-     - -r requirements.txt
+- gcc_linux-64
+- gfortran_linux-64
+- cmake
+- make
+- m4
+- git
+- pip
+- pip:
+  - -r file:requirements.txt
 
