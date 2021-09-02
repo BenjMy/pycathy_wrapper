@@ -8,4 +8,7 @@ dependencies:
     - make
     - m4
     - git
+    - pip
+    - pip:
+    	- -r requirements.txt
 
