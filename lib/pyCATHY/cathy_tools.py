@@ -21,6 +21,7 @@ from git import Repo
 #import meshtools as mt
 
 from pyCATHY import plot_tools as pltCT
+# from pyCATHY import cathy_utils as utilsCT
 
 
 
@@ -560,7 +561,7 @@ class CATHY(object):
         # compute the processor (make clean make) using the Makefile
         return
 
-    def update_prepo_inputs(self,DEM=None,verbose=False,**kwargs):
+    def update_prepo_inputs(self,DEM=None,verbose=False,show=False,**kwargs):
         """ Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs
 
         Parameters
@@ -726,9 +727,11 @@ class CATHY(object):
 
         self.update_dem_parameters(**kwargs)
         # self.update_transp(**kwargs)
-
-
-
+        
+        if show==True:
+            print('show')
+            # pltCT.test(self.workdir, self.project_name)
+            
         pass
 
     def update_dem_parameters(self,**kwargs):
@@ -982,7 +985,7 @@ class CATHY(object):
                       "DTREDS": 0.0,
                       "DTREDM": .5,
                       "IPRT": 4,
-                      "VTKF":7 ,
+                      "VTKF":7,
                       "NPRT": 3,
                       "(TIMPRT(I),I=1,NPRT)": [1800.,3600.,7200.],
                       "NUMVP": 1,
@@ -1410,6 +1413,18 @@ class CATHY(object):
             write the soil file.
 
         """
+        
+        if len(SPP)==0:#set defaults parameters
+            PERMX = PERMY = PERMZ =1.88E-04
+            ELSTOR = 1.00E-05
+            POROS = 0.55
+            VGNCELL = 1.46
+            VGRMCCELL = 0.15
+            VGPSATCELL =  0.03125
+                
+            SPP = {'PERMX':PERMX,'PERMY':PERMY,'PERMZ':PERMZ,
+                    'ELSTOR':ELSTOR,'POROS':POROS,
+                    'VGNCELL':VGNCELL,'VGRMCCELL':VGRMCCELL,'VGPSATCELL':VGPSATCELL}
 
         # set default parameters         
         self.soil =	{
@@ -1422,12 +1437,12 @@ class CATHY(object):
                       "CANG": 0.225,
                       
                       # Feddes parameters default values
-                       "PCANA":0.0,
-                       "PCREF":-4.0,
-                       "PCWLT":-150,
-                       "ZROOT":1.0,
-                       "PZ":1.0,
-                       "OMGC":1.0,
+                       "PCANA":[0.0],
+                       "PCREF":[-4.0],
+                       "PCWLT":[-150],
+                       "ZROOT":[1.0],
+                       "PZ":[1.0],
+                       "OMGC":[1.0],
             
                       
                       "IVGHU": 0,
@@ -1448,13 +1463,28 @@ class CATHY(object):
                       "BCPSAT": -0.345
                 }
 
+        # if len(FP)==0:#set defaults parameters
+           
+        #     FP = {'PCANA':self.soil['PCANA'],'PCREF':self.soil['PCREF'],'PCWLT':self.soil['PCWLT'],
+        #                       'ZROOT':self.soil['ZROOT'],'PZ':self.soil['PZ'],
+        #                       'OMGC':self.soil['OMGC']}
+            
+    
+
         # read kwargs
         for keykwargs,value in kwargs.items():
             if verbose == True:
                 print(f'key kwargs: {keykwargs} | value: {value}')
             self.soil[keykwargs]=value
             self.parm[keykwargs]=value
-            
+        
+        for fp in FP: # loop over fedded parameters
+            if verbose == True:
+                print(fp,FP[fp])
+            self.soil[fp]=FP[fp]
+
+
+        
         if hasattr(self,'dem_parameters') is False:
             self.update_prepo_inputs()
         
@@ -1571,8 +1601,9 @@ class CATHY(object):
                 # if  root_depth>self.dem_parameters['base']:
                 #     print('max root mesh > max mesh depth')
                 #     sys.exit()
-                np.savetxt(rootmapfile,np.c_[np.ones([int(self.hapin['M']),
-                                                      int(self.hapin['N'])])]*root_depth,
+                root_depth = np.c_[np.ones([int(self.hapin['M']),
+                                                      int(self.hapin['N'])])]*root_depth
+                np.savetxt(rootmapfile,root_depth,
                            fmt='%1.2e')
             else:
                 # if np.shape(zone_xyz)== :
@@ -1586,6 +1617,7 @@ class CATHY(object):
         self.update_cathyH(MAXVEG=len(np.unique(root_depth)))
         
         if show==True:
+            print(root_depth)
             pltCT.rootMap_plot(root_depth)
         
         pass

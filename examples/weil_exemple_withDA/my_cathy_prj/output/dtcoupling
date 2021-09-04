@@ -1,0 +1,37 @@
+#                  ***** Surface vs subsurface diagnostics ***** 
+#NNOD    (# of surface nodes)            =    441
+#NCELL   (# of DEM cells)                =    400
+#AREATOT (total catchment surface area)  =     1.00000E+02
+#Step      (1) : Time step
+#Deltat    (2) : Time step size
+#Time      (3) : See parm input file for units
+#Back      (4) : # of back-stepping occurrences
+#NL-l      (5) : # of nonlinear iterations for the successful (last) time step
+#NL-a      (6) : # of nonlinear iterations for the successful time step and any back-steps (= NL-last + ITUNS*Back)
+#Sdt-l     (7) : # of time steps in the surface routing module for the successful (last) subsurface module time step
+#Sdt-a     (8) : # of time steps in the surface routing module for the successful subsurface module time step and any back-steps
+#Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]
+#Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)
+#Atmpot-r (11) : Potential atmospheric forcing rate [L/T]
+#Atmpot-d (12) : Potential atmospheric forcing depth [L]
+#Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
+#Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
+#Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
+#Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
+#Horton   (17) : Fraction of the surface nodes that are saturated or ponded due to Horton infiltration excess (Note: based on PNEW and not on IFATM)
+#Dunne    (18) : Fraction of the surface nodes that are saturated or ponded due to Dunne saturation excess (see previous note)
+#Ponded   (19) : Fraction of the surface nodes that are ponded (PNEW > PONDH_MIN)
+#Satur    (20) : Fraction of the surface nodes that are saturated or ponded (PNEW > 0)
+#CPU-sub  (21) : CPU seconds for the subsurface flow module
+#CPU-surf (22) : CPU seconds for the surface routing module
+#   (1)       (2)       (3)   (4)   (5)   (6)   (7)   (8)        (9)       (10)       (11)       (12)       (13)       (14)       (15)       (16)   (17)   (18)   (19)   (20)       (21)       (22)
+#  Step    Deltat      Time  Back  NL-l  NL-a Sdt-l Sdt-a  Atmpot-vf   Atmpot-v   Atmpot-r   Atmpot-d  Atmact-vf   Atmact-v   Atmact-r   Atmact-d Horton  Dunne Ponded  Satur   CPU-sub  CPU-surf
+      1 1.000E-02 1.000E-02     0     9     9     0     0  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -4.592E-05 -4.592E-07 -4.592E-07 -4.592E-09  0.000  0.791  0.791  0.791  1.210E-01  0.000E+00
+      2 5.000E-03 1.500E-02     0     4     4     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -9.424E-05 -4.712E-07 -9.424E-07 -4.712E-09  0.000  0.796  0.796  0.796  5.406E-02  2.044E-03
+      3 5.500E-03 2.050E-02     0     4     4     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.039E-04 -5.715E-07 -1.039E-06 -5.715E-09  0.000  0.773  0.773  0.773  5.395E-02  1.894E-03
+      4 6.050E-03 2.655E-02     0     4     4     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.155E-04 -6.986E-07 -1.155E-06 -6.986E-09  0.000  0.771  0.771  0.771  5.291E-02  1.903E-03
+      5 6.655E-03 3.320E-02     0     8     8     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.259E-04 -8.380E-07 -1.259E-06 -8.380E-09  0.000  0.741  0.741  0.741  1.124E-01  1.899E-03
+      6 3.328E-03 3.653E-02     0     2     2     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.311E-04 -4.363E-07 -1.311E-06 -4.363E-09  0.000  0.741  0.741  0.741  2.743E-02  1.909E-03
+      7 3.660E-03 4.019E-02     0     5     5     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.331E-04 -4.871E-07 -1.331E-06 -4.871E-09  0.000  0.739  0.739  0.739  6.742E-02  1.898E-03
+      8 3.660E-03 4.385E-02     0     2     2     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.382E-04 -5.060E-07 -1.382E-06 -5.060E-09  0.000  0.739  0.739  0.739  2.706E-02  1.880E-03
+      9 4.026E-03 4.788E-02     0     5     5     1     1  0.000E+00  0.000E+00  0.000E+00  0.000E+00 -1.430E-04 -5.758E-07 -1.430E-06 -5.758E-09  0.000  0.737  0.737  0.737  6.693E-02  1.939E-03

@@ -97,8 +97,10 @@ def atmbc_PRD(workdir,project_name,
     #   end do
       # write(*,*) counter
       # write(*,*) totarea
-  
-  
+      
+    CT.update_parm(NPRT=len(t_atmbc))
+    CT.update_cathyH(MAXPRT=len(t_atmbc))
+
     return t_irr, t_atmbc, v_atmbc
 
 
