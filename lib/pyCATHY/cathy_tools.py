@@ -21,6 +21,8 @@ from git import Repo
 #import meshtools as mt
 
 from pyCATHY import plot_tools as pltCT
+import plot_tools as pltCT
+
 # from pyCATHY import cathy_utils as utilsCT
 
 
@@ -283,7 +285,12 @@ class CATHY(object):
         """
 
          
-            
+        import time
+
+        t0 = time.time()
+
+
+   
         if len(kwargs.items())>0:
             
             if verbose == True:
@@ -420,7 +427,23 @@ class CATHY(object):
         
             # print('timer')
 
+        t1 = time.time()
+        self.total = t1-t0
+        
+
+        
         return
+
+    def time_run(self):
+        
+        print(self.total)
+        print(self.cathyH['MAXCEL'])
+        print(self.cathyH['MAXZON'])
+        print(self.cathyH['MAXSTR'])
+        # print(self.cathyH['TMAX'])
+        
+        pass
+
 
 
     def update_cathyH(self,verbose=False,**kwargs):
@@ -1145,6 +1168,9 @@ class CATHY(object):
 
         """
         
+        
+        
+        
         # set default parameters
         self.atmbc =	{
                       "HSPATM": HSPATM,
@@ -1153,16 +1179,6 @@ class CATHY(object):
                       "VALUE": VALUE
                      }
         vdiff = VALUE[0]-VALUE[1]
-        # C     Write atmbc file
-        #       write(32,*) '1  1  HSPATM IETO'
-        #          write(32,*) 0.D0, 'TIME'
-        #          write(32,*) 0.D0
-        #          write(32,*) 1e+20, 'TIME'
-        #          write(32,*) 0.D0
-        # c      do i=1,nt
-        # c         write(32,*) time(i), 'TIME'
-        # c         write(32,*) atmbc(i)
-        # c      enddo
 
         with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'atmbc'), 'w+') as atmbcfile:
             atmbcfile.write(str(HSPATM) + "\t" + str(IETO) + "\t"
@@ -1184,11 +1200,11 @@ class CATHY(object):
         self.update_cathyH(MAXPRT=len(TIME))
         
         if show == True:
-            if HSPATM !=0:
-                print('impossible to plot for non homogeneous atmbc')
-                # sys.exit()
-            else:
-                pltCT.atmbc_inputs_plot(TIME,VALUE)
+            # if HSPATM !=0:
+            #     print('impossible to plot for non homogeneous atmbc')
+            #     # sys.exit()
+            # else:
+            pltCT.atmbc_inputs_plot(TIME,VALUE)
             
         
         pass
@@ -1616,8 +1632,7 @@ class CATHY(object):
         
         self.update_cathyH(MAXVEG=len(np.unique(root_depth)))
         
-        if show==True:
-            print(root_depth)
+        if show is not None:
             pltCT.rootMap_plot(root_depth)
         
         pass

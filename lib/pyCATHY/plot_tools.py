@@ -54,10 +54,10 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs
     else:
         print('physcial property not existing')
     
-    pn.extension('vtk')  # this needs to be at the top of each cell for some reason
 
     if notebook == True:
-        
+        pn.extension('vtk')  # this needs to be at the top of each cell for some reason
+
         out = widgets.Output()
         def on_value_change(change):
             with out:
@@ -187,11 +187,12 @@ def atmbc_inputs_plot(t_atmbc,v_atmbc,**kwargs):
             title='atmbc inputs')
     ax.grid()
 
-    plt.step(t_atmbc, v_atmbc[0], color='blue', where='post', label='step(where="post")')
-    plt.step(t_atmbc, v_atmbc[1], color='green', where='post', label='step(where="post")')
-    plt.step(t_atmbc, vdiff, color='black', where='post', label='step(where="post")')
-    ax.legend(['Rain/Irr','ET','diff'])
-    
+    plt.step(t_atmbc, v_atmbc[0], color='blue', where='post', label='Rain/Irr')
+    plt.step(t_atmbc, v_atmbc[1], color='red', where='post', label='ET')
+    plt.step(t_atmbc, vdiff, color='black', where='post', label='Diff')
+    # ax.legend(['Rain/Irr','ET','diff'])
+    ax.legend()
+
     pass
 
 def rootMap_plot(veg_map,**kwargs):
@@ -201,11 +202,6 @@ def rootMap_plot(veg_map,**kwargs):
     ax.legend('vegetaton map')
     fig.colorbar(cf, ax=ax)
     plt.show()
-
-
-    
-
-
 
 
 def dem_plot(workdir,project_name,**kwargs):

@@ -81,26 +81,7 @@ def atmbc_PRD(workdir,project_name,
             
         atmbcfile.close()
 
-
-
-    # # C Conto nodi per atmbc e li scrivo nel rispettivo file
-    # for i in range(grid['nnod3']):
-    #     if zmesh[i] == 0:
-    #         if (((xmin[i]>x_min) and (xmin[i]<x_max)) and ((ymin[i]>y_min) and (ymin[i]<y_max))):
-    #             counter=counter+1
-    #             if (grid['nodes_idxyz'][:,0][i] == nn2d(i)) then
-    #               write(25,*) nn(i),nn2d(i),areanod2d(i)
-    #               totarea=totarea+areanod2d(i)
-    #             end if
-    #         end if
-    #     end if
-    #   end do
-      # write(*,*) counter
-      # write(*,*) totarea
       
-    CT.update_parm(NPRT=len(t_atmbc))
-    CT.update_cathyH(MAXPRT=len(t_atmbc))
-
     return t_irr, t_atmbc, v_atmbc
 
 

@@ -15,7 +15,7 @@ Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BenjMy/pycathy_wrapper.git/HEAD)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Zl-VpMbrESu9MbeNpgUvXS6nfluno_dG#scrollTo=be0ef8fe-51bb-4d86-b00a-fa027c286ecf)
 
 
 # README #
