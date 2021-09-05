@@ -20,8 +20,8 @@ from git import Repo
 
 #import meshtools as mt
 
-# from pyCATHY import plot_tools as pltCT
 import pyCATHY.plot_tools as pltCT
+# from pltCT import *
 
 # from pyCATHY import cathy_utils as utilsCT
 
@@ -152,37 +152,37 @@ class CATHY(object):
             for file in glob.glob("*.o"):
                 os.remove(file)
     
-            if self.notebook==False:
-                bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
+            # if self.notebook==False:
+            bashCommand = 'gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
+            
+            try:
+                # bashCommand = 'gcc -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
                 
-                try:
-                    # bashCommand = 'gcc -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90'
-                    
-                    p = os.system(bashCommand)
-                    p = os.system(bashCommand) # run it twice (to avoid the first error)
+                p = os.system(bashCommand)
+                p = os.system(bashCommand) # run it twice (to avoid the first error)
 
-                    # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-                    # process.communicate()
-                    # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-                    # process.communicate()
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                # process.communicate()
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+                # process.communicate()
 
-                    # if verbose:
-                    #     output, error = process.communicate()
-            
-                    # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-            
-                    # if verbose:
-                    #     output, error = process.communicate()
-
-                        
-                except:
-                    print('bash cmd not recognized')
-                    
-
-
+                # if verbose:
+                #     output, error = process.communicate()
         
+                # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
         
-                os.chdir(self.workdir)
+                # if verbose:
+                #     output, error = process.communicate()
+
+                    
+            except:
+                print('bash cmd not recognized')
+                
+
+
+    
+    
+            os.chdir(self.workdir)
     
         #try:
         # move to the directory where the source FORTRAN files are contained (cathy_main.f)
@@ -752,8 +752,8 @@ class CATHY(object):
         # self.update_transp(**kwargs)
         
         if show==True:
-            print('show')
-            # pltCT.test(self.workdir, self.project_name)
+            print(pltCT.dem_plot(self.workdir, self.project_name))
+            # pltCT.dem_plot(self.workdir, self.project_name)
             
         pass
 

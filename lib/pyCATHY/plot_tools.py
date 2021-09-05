@@ -11,12 +11,10 @@ import glob
 import time 
 import os
 import matplotlib.pyplot as plt
+import panel as pn
+import numpy as np
 
-def test(workdir,project_name,**kwargs):
-    
-    print(workdir)
-    
-    return 
+
 
 def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs):
     """Short summary.

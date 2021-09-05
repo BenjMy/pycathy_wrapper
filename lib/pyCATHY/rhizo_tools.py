@@ -11,7 +11,7 @@ from pyCATHY import cathy_tools as CT
 import os
 
 def atmbc_PRD(workdir,project_name,
-              grid,
+              grid,x_min=[],x_max=[],y_min=[],y_max=[],
               flux=1.11111E-06,time_drying0=2,irr_days=1,lg_PRD=2):
 
     x_min = max(grid['nodes_idxyz'][:,1])/2
@@ -35,7 +35,7 @@ def atmbc_PRD(workdir,project_name,
     sec_h=3600
     days2sec=24*3600
     
-    time_drying0 = time_drying0*days2sec # let the system dry out during 30days
+    time_drying0 = time_drying0*sec_h #days2sec # let the system dry out during 30days
     # irr_days = 1 # irrigate on left side during 10days
     # lg_PRD = 2 # 2 hours length of irrigation during the morning
     no_irr = 0
