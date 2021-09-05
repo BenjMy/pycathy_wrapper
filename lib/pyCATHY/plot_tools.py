@@ -13,7 +13,7 @@ import os
 import matplotlib.pyplot as plt
 import panel as pn
 import numpy as np
-
+import ipywidgets as widgets
 
 
 def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs):
