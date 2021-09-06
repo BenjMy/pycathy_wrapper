@@ -15,8 +15,11 @@ import panel as pn
 import numpy as np
 import ipywidgets as widgets
 
+#from pyvirtualdisplay import Display
 
-def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs):
+
+def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
+            savefig=False,**kwargs):
     """Short summary.
 
     Parameters
@@ -54,44 +57,54 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs
     
 
     if notebook == True:
-        pn.extension('vtk')  # this needs to be at the top of each cell for some reason
+        #pn.extension('vtk')  # this needs to be at the top of each cell for some reason
 
         out = widgets.Output()
         def on_value_change(change):
             with out:
-              print(change['new'])
-        
+
+              PhysScalars='pressure'
+              time_step=timeStep
+              #print(change['new'])
+              if hasattr(change.owner,'options'): #=='Phys. prop:':
+                PhysScalars = change.owner.options[change['new']-1]
+              else:
+                 time_step=change['new']
+
               out.clear_output()
-              # mesh = pv.read('./my_cathy_prj/vtk/10' + str(change['new']) + '.vtk')
+              mesh = pv.read('./my_cathy_prj/vtk/10' + str(time_step) + '.vtk')
+              #display = Display(visible=0, size=(600, 400))
+              #display.start()
+
               plotter = pv.Plotter(notebook=True)
-              _ = plotter.add_mesh(mesh,scalars='pressure')
-              plotter.show(True)
+              _ = plotter.add_mesh(mesh,scalars=PhysScalars[0])
+              #plotter.show(True)
         
               legend_entries = []
               legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
               _ = plotter.add_legend(legend_entries)
               plotter.show_grid()
-              plotter.add_mesh_clip_box(mesh, color='white')         
+              #plotter.add_mesh_clip_box(mesh, color='white')         
               cpos = plotter.show(True)
-        
-        
-        
-        
-        slider = widgets.IntSlider(min=1, max=4, step=1, continuous_update=True)
+
+        slider = widgets.IntSlider(min=0, max=10, step=1, 
+                                  continuous_update=True,
+                                  description='Time step #:',)
         #play = widgets.Play(min=1, interval=2000)
         choice = widgets.Dropdown(
             options=[('pressure', 1), ('saturation', 2)],
-            value=1,
+            value=0,
             description='Phys. prop:',
         )
         slider.observe(on_value_change, 'value')
         choice.observe(on_value_change, 'value')
         
-        widgets.VBox([choice, slider, out])
+        plotvtk= widgets.VBox([choice, slider, out])
+        plotvtk
         
     else:
 
-        plotter = pv.Plotter(notebook=notebook)
+        plotter = pv.Plotter(notebook=True)
         _ = plotter.add_mesh(mesh,show_edges=True,scalars=unit)
         legend_entries = []
         legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
@@ -107,7 +120,11 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,**kwargs
         cpos = plotter.show()
         
     
-
+    if savefig is True:
+       # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
+       plotter.save_graphic(filename+str('.ps'), title='', raster=True, painter=True)
+        
+        
     return
 
 def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None):
