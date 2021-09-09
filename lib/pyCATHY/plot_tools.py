@@ -14,10 +14,26 @@ import matplotlib.pyplot as plt
 import panel as pn
 import numpy as np
 import ipywidgets as widgets
+import imageio
+import natsort
+from decimal import Decimal
 
 #from pyvirtualdisplay import Display
 
+def convert_time_units(t,x_units):
+    
+    xlabel = ' (s)'
+    if x_units=='days':
+        xlabel =  ' (days)'
+        t_new = [x / (24*60*60) for x in t]
+        t_new = round(t_new[0], 2)
+    if x_units=='hours':
+        xlabel = ' (h)'
+        t_new = [x / (60*60) for x in t]
+        t_new = round(t_new[0], 1)
 
+    return xlabel,t_new
+    
 def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
             savefig=False,**kwargs):
     """Short summary.
@@ -93,7 +109,7 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
         #play = widgets.Play(min=1, interval=2000)
         choice = widgets.Dropdown(
             options=[('pressure', 1), ('saturation', 2)],
-            value=0,
+            value=1,
             description='Phys. prop:',
         )
         slider.observe(on_value_change, 'value')
@@ -117,17 +133,18 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
                 poly_elecs = pv.PolyData(value)
                 poly_elecs["My Labels"] = [f"Label {i}" for i in range(poly_elecs.n_points)]
                 plotter.add_point_labels(poly_elecs, "My Labels", point_size=20, font_size=36)           
-        cpos = plotter.show()
         
     
-    if savefig is True:
-       # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
-       plotter.save_graphic(filename+str('.ps'), title='', raster=True, painter=True)
-        
-        
+        if savefig is True:
+           # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
+           plotter.save_graphic(filename+str('.pdf'), title='', raster=True, painter=True)
+            
+        cpos = plotter.show()
+
     return
 
-def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None):
+def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None,
+              savefig=False,**kwargs):
     """Short summary.
 
     Parameters
@@ -146,6 +163,15 @@ def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None):
 
     """
 
+    x_units = None
+    xlabel = 's'
+    for key,value in kwargs.items():
+        if key=='x_units':
+           x_units = value
+           print(x_units)
+
+           
+           
     if path is None:
        path = os.getcwd()
         
@@ -158,47 +184,96 @@ def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None):
             filename = 'cele20*.vtk'
             filename0 = 'cele200.vtk'
 
+
+
     mesh = pv.read(os.path.join(path,filename0))
 
     if unit in list(mesh.array_names):
         print('plot '+ str(unit))
     else:
         print('physcial property not existing')
-        
-        
-    plotter = pv.Plotter(notebook=notebook)
-    mesh = pv.read(filename0)
-    _ = plotter.add_mesh(mesh,show_edges=True)
-    legend_entries = []
-    legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
+    
+    offscreen=True        
+    plotter = pv.Plotter(notebook=False, off_screen=offscreen)
+    plotter.add_mesh(mesh,show_edges=True)
+    
+    if savefig==True:
+        plotter.open_gif(unit + ".gif")
+    
+    if x_units is not None:
+        xlabel,t_lgd = convert_time_units(mesh['TIME'],x_units)
+    legend_entry = 'Time=' + str(t_lgd) + xlabel
+    
+
+           
+           
     plotter.show_grid()
-    cpos = plotter.show(interactive_update=True, auto_close=False)
+    # cpos = plotter.show(interactive_update=True, auto_close=False)
+    cpos = plotter.show(auto_close=False)
+    # plotter.add_legend(legend_entry)
+    plotter.add_text(legend_entry, name='time-label')
+    
+    files = []
+    for file in glob.glob(os.path.join(path,filename)):
+        files.append(file)
+        
+        
+    import natsort
+    print(natsort.natsorted(files,reverse=False))
 
+    for ff in natsort.natsorted(files,reverse=False):
+        mesh = pv.read(ff)
+        array_new = mesh.get_array(unit)
+        
+        if x_units is not None:
+            xlabel,t_lgd = convert_time_units(mesh['TIME'],x_units)
+        legend_entry = 'Time=' + str(t_lgd) + xlabel
+        plotter.update_scalars(array_new, render=True)
+        plotter.add_text(legend_entry, name='time-label')
+    
+        plotter.render()
+        plotter.write_frame()
 
-    # def TimeLapse():
-    for files in glob.glob(filename):
-        mesh = pv.read(files)
-        _ = plotter.add_mesh(mesh,show_edges=True,scalars=unit)
-        legend_entries = []
-        legend_entries.append(['Time='+ str(mesh['TIME']), 'w'])
-        plotter.show_grid()
-        plotter.show_grid()
-        plotter.update(force_redraw=True)
-        time.sleep(1)
+    if savefig==True:
+        # gif_original = filename + '.gif'
+        # gif_speed_down = filename + 'new.gif'
+        gif_original = unit + ".gif"
+        gif_speed_down = unit + "_slow.gif"
+        gif = imageio.mimread(gif_original)
+        imageio.mimsave(gif_speed_down, gif, fps=0.8)
+    
+    plotter.close()
+    
+    
 
-    cpos = plotter.show()
+    
+
 
     return
 
 
 def atmbc_inputs_plot(t_atmbc,v_atmbc,**kwargs):
 
+    xlabel = 'time (s)'
+    for key,value in kwargs.items():
+        if key=='x_units':
+           x_units = value
+    
+    if x_units=='days':
+        xlabel = 'time (days)'
+        t_atmbc = [x / (24*60*60) for x in t_atmbc]
+    if x_units=='hours':
+        xlabel = 'time (h)'
+        t_atmbc = [x / (60*60) for x in t_atmbc]
+        
+
+    print(t_atmbc)
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
     vdiff = v_atmbc[0]-v_atmbc[1]
 
     fig, ax = plt.subplots()
     ax.plot(t_atmbc,vdiff,'k*')
-    ax.set(xlabel='time (s)', ylabel='Q (m/s)',
+    ax.set(xlabel=xlabel, ylabel='Q (m/s)',
             title='atmbc inputs')
     ax.grid()
 

@@ -6,13 +6,15 @@ from __future__ import print_function
 import numpy as np
 
 from pyCATHY import cathy_tools as CT
+from pyCATHY import plot_tools as pltCT
 
 
 import os
 
 def atmbc_PRD(workdir,project_name,
               grid,x_min=[],x_max=[],y_min=[],y_max=[],
-              flux=1.11111E-06,time_drying0=2,irr_days=1,lg_PRD=2):
+              flux=1.11111E-06,time_drying0=2,irr_days=1,lg_PRD=2,
+              show=False,**kwargs):
 
     x_min = max(grid['nodes_idxyz'][:,1])/2
     x_max = max(grid['nodes_idxyz'][:,1])
@@ -48,40 +50,107 @@ def atmbc_PRD(workdir,project_name,
         # write no irrigation during the first delta_drying0 days
         atmbcfile.write(str(HSPATM) + "\t" + str(IETO) + "\t"
                         + 'HSPATM' + "\t" + 'IETO' + "\n")
-        atmbcfile.write(str(no_irr) + "\t" + 'TIME' + "\n")
+        atmbcfile.write(str(0) + 
+                              "\t" + 'TIME' + "\n") 
+        
+        count_nmax=0
+        for i in range(int(grid['nnod3'])):
+            if round(zmesh[i], 3) == round(max(zmesh), 3):
+                count_nmax+=1
+        print(count_nmax)
+                    
+                    
+        # loop over the nodes of the mesh
+        count=0
         for i in range(int(grid['nnod3'])):
              if round(zmesh[i], 3) == round(max(zmesh), 3):
-                atmbcfile.write('0'.format('%f')+ "\n")
+                  # if i==max(range(int(grid['nnod3']))):
+                  if count==count_nmax:
+                      # atmbcfile.write('0'.format('%f'))
+                       atmbcfile.write(str(no_irr))
+                  else:
+                       # atmbcfile.write('0'.format('%f')+ "\n")
+                       atmbcfile.write(str(no_irr) + "\n")
+                 # atmbcfile.write('0'.format('%f')+ "\n")
+                 # atmbcfile.write(str(no_irr))
+
+
     
         # write irrigation once a day during 2h lasting 10 irr_days
         for k in range(irr_days):
             atmbcfile.write(str(t_irr) + 
-                             "\t" + 'TIME' + "\n") 
+                              "\t" + 'TIME' + "\n") 
+            
+            # loop over the nodes of the mesh
+            count=0
             for i in range(int(grid['nnod3'])):
                 if round(zmesh[i], 3) == round(max(zmesh), 3):
-                    if (((xmesh[i]>x_min) and (xmesh[i]<x_max)) and ((ymesh[i]>y_min) and (ymesh[i]<y_max))):
-                        atmbcfile.write(str(flux/totarea) + "\n")
+                    count+=1   
+                    # loop over right or left side (odd or not)
+                    if (k % 2) == 0:
+                        if (((xmesh[i]>x_min) and (xmesh[i]<x_max)) and ((ymesh[i]>y_min) and (ymesh[i]<y_max))):
+                            # if count==count_nmax:
+                            #     atmbcfile.write(str(flux/totarea))
+                            # else:
+                            atmbcfile.write(str(flux/totarea) + "\n")
+                        else:
+                            # if count==count_nmax:
+                            #     atmbcfile.write(str(no_irr))
+                            # else:
+                            atmbcfile.write(str(no_irr) + "\n")                            
+
                     else:
-                        atmbcfile.write(str(no_irr)+ "\n")
-            t_irr += lg_PRD*sec_h
+                        if (((xmesh[i]>x_min) and (xmesh[i]<x_max)) and ((ymesh[i]>y_min) and (ymesh[i]<y_max))):
+                            # if count==count_nmax:
+                            #     atmbcfile.write(str(no_irr))
+                            # else:
+                            atmbcfile.write(str(no_irr) + "\n")
+                        else:
+                            # if count==count_nmax:
+                            #     atmbcfile.write(str(flux/totarea))
+                            # else:
+                            atmbcfile.write(str(flux/totarea) + "\n")   
+            print(count)
+                
             t_atmbc.append(t_irr)
+            t_irr += lg_PRD*sec_h
             v_atmbc.append(flux/totarea)
 
             # break irrigation during the rest of the day i.e. 24h -2h = 22h
-            atmbcfile.write("\n")
+            # atmbcfile.write("\n")
             atmbcfile.write(str(t_irr) + 
                              "\t" + 'TIME' + "\n")
-            for i in range(int(grid['nnod3'])):
-                 if round(zmesh[i], 3) == round(max(zmesh), 3):
-                    atmbcfile.write(str(no_irr) +  "\n")
-                                    
-            t_irr += (24-lg_PRD)*sec_h
             t_atmbc.append(t_irr)
+
+            # break during the resting hours
+            count=0
+            for i in range(int(grid['nnod3'])):
+                if round(zmesh[i], 3) == round(max(zmesh), 3):
+                    count+=1
+                    # if count==count_nmax:
+                    #     atmbcfile.write(str(no_irr))
+                    # else:
+                    atmbcfile.write(str(no_irr) + "\n")   
+                                
+                    # atmbcfile.write(str(no_irr) +  "\n")
+                                    
             v_atmbc.append(no_irr)
-            
+            t_irr += (24-lg_PRD)*sec_h
+            # t_atmbc.append(t_irr)
+            # atmbcfile.write(str(no_irr) +  "\n")
+
         atmbcfile.close()
 
-      
+    if show == True:
+        x_units ='sec'
+        for key,value in kwargs.items():
+            if key=='x_units':
+               x_units = value
+        
+        pltCT.atmbc_inputs_plot(t_atmbc,[v_atmbc,np.zeros(len(v_atmbc))],
+                                       x_units=x_units)
+                   
+            
     return t_irr, t_atmbc, v_atmbc
 
 

@@ -19,8 +19,9 @@ from git import Repo
 #from resipy import Project
 
 #import meshtools as mt
-
-import pyCATHY.plot_tools as pltCT
+# import pyCATHY
+from pyCATHY import plot_tools as pltCT
+# import plot_tools as pltCT
 # from pltCT import *
 
 # from pyCATHY import cathy_utils as utilsCT
@@ -114,6 +115,8 @@ class CATHY(object):
                     shutil.move(os.path.join(pathsrc, file),
                                 os.path.join(self.project_name,file))
             except:
+                print('no internet connection to fetch the files')
+                sys.exit()
                 pass
 
         for key,value in kwargs.items():
@@ -752,7 +755,7 @@ class CATHY(object):
         # self.update_transp(**kwargs)
         
         if show==True:
-            print(pltCT.dem_plot(self.workdir, self.project_name))
+            print('pltCT.dem_plot(self.workdir, self.project_name)')
             # pltCT.dem_plot(self.workdir, self.project_name)
             
         pass
@@ -1134,7 +1137,8 @@ class CATHY(object):
                       }
         
         
-        with open(os.path.join(self.workdir , self.project_name, self.input_dirname, 'ic'), 'w+') as icfile:
+        with open(os.path.join(self.workdir , self.project_name, 
+                               self.input_dirname, 'ic'), 'w+') as icfile:
             icfile.write(str(INDP) + "\t" + str(IPOND) + "\t"
                             + 'INDP' + "\t" + 'IPOND' + "\n")
             icfile.write(str(WTPOSITION) + "\t" +  'WTPOSITION' + "\n")                         
@@ -1144,7 +1148,8 @@ class CATHY(object):
 
 
 
-    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=[None,None],show=False,verbose=False):
+    def update_atmbc(self, HSPATM=0,IETO=0,TIME=None,VALUE=[None,None],
+                     show=False,verbose=False,**kwargs):
         """Atmospheric forcing term (atmbc - IIN6).
 
         Parameters
@@ -1204,8 +1209,12 @@ class CATHY(object):
             #     print('impossible to plot for non homogeneous atmbc')
             #     # sys.exit()
             # else:
-            pltCT.atmbc_inputs_plot(TIME,VALUE)
-            
+            x_units ='sec'
+            for key,value in kwargs.items():
+                if key=='x_units':
+                   x_units = value
+            pltCT.atmbc_inputs_plot(TIME, VALUE, x_units=x_units)
+                   
         
         pass
     
