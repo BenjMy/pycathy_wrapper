@@ -31,7 +31,7 @@ from pyCATHY import plot_tools as pltCT
 class CATHY(object):
     '''Main CATHY object.'''
     
-    def __init__(self,dirName,prjName='my_cathy_prj', notebook=False, **kwargs):
+    def __init__(self,dirName,prjName='my_cathy_prj', notebook=False, version='1.0.0', **kwargs):
         '''Create CATHY object.
         '''
         
@@ -89,35 +89,44 @@ class CATHY(object):
         if not os.path.exists(os.path.join(self.project_name,'src')):
             print('src files not found')
             print(self.workdir)
-            try:
-                Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git',
-                                os.path.join(self.workdir,self.project_name,'tmp_src'),
-                                 branch='master')
-                print('fetch cathy src files')
-                shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/src'),
+            
+            if version == '1.0.0':
+                try:
+                    Repo.clone_from('https://bitbucket.org/cathy1_0/cathy.git',
+                                    os.path.join(self.workdir,self.project_name,'tmp_src'),
+                                     branch='master')
+                    print('fetch cathy src files')
+                    shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/src'),
+                                os.path.join(self.workdir,self.project_name,'src'))
+        
+                    print('fetch cathy prepro src files')
+                    shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/prepro'),
+                                os.path.join(self.workdir,self.project_name,'prepro'))
+        
+                    print('fetch cathy input files')
+                    shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/input'),
+                                os.path.join(self.workdir,self.project_name,'input'))
+        
+        
+                    pathsrc = os.path.join(os.getcwd(),self.project_name,'tmp_src/runs/weilletal/')
+        
+        
+                    onlyfiles = [f for f in listdir(pathsrc) if isfile(join(pathsrc, f))]
+        
+                    for file in onlyfiles: # You could shorten this to one line, but it runs on a bit.
+                        shutil.move(os.path.join(pathsrc, file),
+                                    os.path.join(self.project_name,file))
+                except:
+                    print('no internet connection to fetch the files')
+                    sys.exit()
+                    pass
+            
+            if version == 'G. Manoli':
+                print('fetch cathy G. Manoli src files')
+                path_manoli = '/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/'
+                shutil.copy(path_manoli,
                             os.path.join(self.workdir,self.project_name,'src'))
-    
-                print('fetch cathy prepro src files')
-                shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/prepro'),
-                            os.path.join(self.workdir,self.project_name,'prepro'))
-    
-                print('fetch cathy input files')
-                shutil.move(os.path.join(self.workdir,self.project_name,'tmp_src/runs/weilletal/input'),
-                            os.path.join(self.workdir,self.project_name,'input'))
-    
-    
-                pathsrc = os.path.join(os.getcwd(),self.project_name,'tmp_src/runs/weilletal/')
-    
-    
-                onlyfiles = [f for f in listdir(pathsrc) if isfile(join(pathsrc, f))]
-    
-                for file in onlyfiles: # You could shorten this to one line, but it runs on a bit.
-                    shutil.move(os.path.join(pathsrc, file),
-                                os.path.join(self.project_name,file))
-            except:
-                print('no internet connection to fetch the files')
-                sys.exit()
-                pass
+                
 
         for key,value in kwargs.items():
             if key == 'clear_outputs':

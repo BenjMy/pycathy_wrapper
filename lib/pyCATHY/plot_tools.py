@@ -144,7 +144,7 @@ def showvtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
     return
 
 def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None,
-              savefig=False,**kwargs):
+              savefig=False,show=True,**kwargs):
     """Short summary.
 
     Parameters
@@ -193,7 +193,11 @@ def showvtkTL(filename=None,unit=None,timeStep='All',notebook=False,path=None,
     else:
         print('physcial property not existing')
     
-    offscreen=True        
+    
+    offscreen=False        
+    if show==False:
+        offscreen=True 
+        
     plotter = pv.Plotter(notebook=False, off_screen=offscreen)
     plotter.add_mesh(mesh,show_edges=True)
     
