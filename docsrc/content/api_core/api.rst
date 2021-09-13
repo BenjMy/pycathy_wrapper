@@ -2,7 +2,7 @@
 API reference: The ``pyCATHY`` package
 =======================================
 
-.. automodule:: cathy_tools
+.. automodule:: pyCATHY.cathy_tools
    :members:
    :show-inheritance:
    :inherited-members:
@@ -10,7 +10,7 @@ API reference: The ``pyCATHY`` package
 ``pyCATHY.plotters``: plotters for results visualisation
 ========================================================
 
-.. automodule:: plot_tools
+.. automodule:: pyCATHY.plot_tools
    :members:
    :show-inheritance:
    :inherited-members:
