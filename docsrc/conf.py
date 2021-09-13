@@ -16,12 +16,12 @@ import datetime
 #sys.path.insert(0, os.path.abspath("../src/pyCATHY/plottools/"))
 
 
-sys.path.append(os.path.relpath('../'))
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.append(os.path.relpath('../lib/'))
+sys.path.insert(0, os.path.abspath('../lib/'))
 
 #sys.path.append(os.path.pardir)
 
-from lib.pyCATHY.cathy_tools import CATHY
+from pyCATHY.cathy_tools import CATHY
 
 
 
