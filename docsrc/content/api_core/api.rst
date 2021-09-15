@@ -2,6 +2,10 @@
 API reference: The ``pyCATHY`` package
 =======================================
 
+
+``pyCATHY.cathy_tools``: main tools for processing
+==================================================
+
 .. automodule:: pyCATHY.cathy_tools
    :members:
    :show-inheritance:

@@ -123,8 +123,9 @@ class CATHY(object):
             
             if version == 'G. Manoli':
                 print('fetch cathy G. Manoli src files')
+                #/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/
                 path_manoli = '/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/'
-                shutil.copy(path_manoli,
+                shutil.copytree(path_manoli,
                             os.path.join(self.workdir,self.project_name,'src'))
                 
 
@@ -1868,27 +1869,6 @@ class CATHY(object):
 
         pass
 
-    # -------------------------------------------------------------------#
-    #%% ERT DATA
-
-    def set_elecs(self,filename='elecs.csv'):
-
-        self.elecs = np.loadtxt(filename,skiprows=1,delimiter=',')
 
 
 
-        pass
-
-    # -------------------------------------------------------------------#
-    #%% DATA ASSIMILATION
-
-    def create_archie():
-        pass
-
-    def create_data_ass():
-
-        pass
-
-    def create_elec_nodes():
-
-        pass
