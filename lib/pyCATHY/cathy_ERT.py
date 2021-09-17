@@ -11,6 +11,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+# elec.dat :
+# contiene le nuove posizioni degli elettrodi nella griglia grande
+# indicando il numero di elettrodi totali e, per ciascun elettrodo, il numero
+# di nodo ed il corrispettivo numero di elettrodo;
+
 
 #%% Archie
 

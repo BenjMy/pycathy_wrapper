@@ -159,33 +159,5 @@ def dtcoupling(self):
     return
 
 
-def COCumflowvol(self):
-    """Processes Cumflowvol.
 
-    Returns
-    -------
-    type
-        Description of returned object.
-
-    """
-    cumflowvol_file = open(os.path.join(self.workdir ,'output' ,'cumflowvol'), 'r')
-    Lines = cumflowvol_file.readlines()
-    count = len(Lines)
-    cumflowvol_file.close()
-    
-    nstep = count-3 # Number of timesteps
-    
-    cumflowvol_file = open(os.path.join(self.workdir ,'output' ,'cumflowvol'), 'r')
-    CUMFLOWVOL = np.loadtxt(cumflowvol_file,skiprows=8,max_rows=8+nstep)
-    cumflowvol_file.close()
-    
-    fig, ax = plt.subplots()
-    ax.plot(CUMFLOWVOL[:,2],-CUMFLOWVOL[:,7])
-    ax.plot(CUMFLOWVOL[:,2]/3600,CUMFLOWVOL[:,7])
-    ax.set_title('Cumulative flow volume')
-    ax.set(xlabel='Time (h)', ylabel='Net Flow Volume (m^3)')
-    ax.legend(['Total flow volume','nansfdir flow volume'])
-
-
-    return
 

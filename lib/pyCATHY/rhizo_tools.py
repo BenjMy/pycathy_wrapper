@@ -6,7 +6,7 @@ from __future__ import print_function
 import numpy as np
 
 from pyCATHY import cathy_tools as CT
-from pyCATHY import plot_tools as pltCT
+from pyCATHY import cathy_plots as pltCT
 
 
 import os

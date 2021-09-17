@@ -345,3 +345,36 @@ def dem_plot(workdir,project_name,**kwargs):
     ax.set(xlabel='Easting (m)', ylabel='Northing (m)', zlabel='Elevation (m)')
     plt.show()
 
+
+
+
+
+def COCumflowvol(workdir,project_name):
+    """Processes Cumflowvol.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
+    cumflowvol_file = open(os.path.join(workdir, project_name, 'output' ,'cumflowvol'), 'r')
+    Lines = cumflowvol_file.readlines()
+    count = len(Lines)
+    cumflowvol_file.close()
+    
+    nstep = count-3 # Number of timesteps
+    
+    cumflowvol_file = open(os.path.join(workdir, project_name, 'output' ,'cumflowvol'), 'r')
+    CUMFLOWVOL = np.loadtxt(cumflowvol_file,skiprows=8,max_rows=8+nstep)
+    cumflowvol_file.close()
+    
+    fig, ax = plt.subplots()
+    ax.plot(CUMFLOWVOL[:,2],-CUMFLOWVOL[:,7],'b-.')
+    ax.plot(CUMFLOWVOL[:,2]/3600,CUMFLOWVOL[:,7])
+    ax.set_title('Cumulative flow volume')
+    ax.set(xlabel='Time (s)', ylabel='Net Flow Volume (m^3)')
+    ax.legend(['Total flow volume','nansfdir flow volume'])
+
+
+    return
