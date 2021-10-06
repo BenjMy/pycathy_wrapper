@@ -93,11 +93,11 @@ class CATHY(object):
         # inputs dictionnary
         
         # temporary create DAFLAG here
-        self.parm = {'DAFLAG':0}  # dict of parm input parameters 
+        self.parm = {'DAFLAG': 0}  # dict of parm input parameters 
         self.soil = {}  # dict of soil input parameters
         self.ic = {}  # dict of ic input parameters
         self.cathyH = {} # dict of cathyH C header parameters 
-        self.nudging = {'NUDN':0}   # Temporary
+        self.nudging = {'NUDN': 0}   # Temporary
 
         
         # self.time = []
@@ -462,11 +462,11 @@ class CATHY(object):
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name          
             # self.console.print(self.cathyH)
-            self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.parm['DAFLAG']))
-            
             
             if self.nudging['NUDN'] != 0:
                 
+                self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.parm['DAFLAG']))
+
                 # cathy_DA.run_DA()
                 # for ens_i in range(self.cathyH['MAXNUDN']):
                     
@@ -2151,6 +2151,7 @@ class CATHY(object):
         dict_name = 'test'
         
         dict_rich = {
+            'definition': None,
             'perturbation_dict': None,
             'damping_value': None,
             'assimilated': False,
