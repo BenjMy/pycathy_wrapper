@@ -69,7 +69,8 @@ def mesh3d():
 return 
 
 def RWU(**kwargs):
-    """Short summary.
+    """
+    Short summary.
 
     """
 
@@ -98,12 +99,10 @@ def RWU(**kwargs):
     return
 
 def dtcoupling(self):
-    """processes the file dtcoupling and compares potential and actuale.
+    """
+    processes the file dtcoupling and compares potential and actuale.
 
-    Returns
-    -------
-    type
-        Description of returned object.
+    Returns ------- type Description of returned object.
 
     """
     dtcoupling_file = open(os.path.join(self.workdir ,'output' ,'dtcoupling'), 'r')
