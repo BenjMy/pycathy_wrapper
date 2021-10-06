@@ -91,12 +91,14 @@ class CATHY(object):
         self.output_dirname = "output"
 
         # inputs dictionnary
-        self.parm = {}  # dict of parm input parameters
+        
+        # temporary create DAFLAG here
+        self.parm = {'DAFLAG':0}  # dict of parm input parameters 
         self.soil = {}  # dict of soil input parameters
         self.ic = {}  # dict of ic input parameters
         self.cathyH = {} # dict of cathyH C header parameters 
-        self.nudging = {'DAFLAG':0} # temporary create DAFLAG here
-        
+        self.nudging = {'NUDN':0}   # Temporary
+
         
         # self.time = []
         # infitration
@@ -460,7 +462,7 @@ class CATHY(object):
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name          
             # self.console.print(self.cathyH)
-            self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.nudging['DAFLAG']))
+            self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.parm['DAFLAG']))
             
             
             if self.nudging['NUDN'] != 0:
@@ -2028,8 +2030,8 @@ class CATHY(object):
 
         # update nudging file
         # self.update_nudging(NUDN=NUDT)
-        self.nudging['NUDN'] = NUDN # Temporary
-
+        self.nudging['NUDN':NUDN] # THIS IS TEMPORARY
+        
         # update cathyH DA parameters
         self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
 
@@ -2130,7 +2132,36 @@ class CATHY(object):
     #%% utils
     
     
-    def rich_variable(self, **kwargs):
+    def rich_create(self, **kwargs):
+
+        # from rich.console import Console
+        # from rich.table import Table
+        
+        # table = Table(title="Star Wars Movies")
+        
+        # table.add_column("Released", justify="right", style="cyan", no_wrap=True)
+        # table.add_column("Title", style="magenta")
+        # table.add_column("Box Office", justify="right", style="green")
+        
+        # table.add_row("Dec 20, 2019", "Star Wars: The Rise of Skywalker", "$952,110,690")
+        # table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
+        # table.add_row("Dec 15, 2017", "Star Wars Ep. V111: The Last Jedi", "$1,332,539,889")
+        # table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,889")
+        
+        dict_name = 'test'
+        
+        dict_rich = {
+            'perturbation_dict': None,
+            'damping_value': None,
+            'assimilated': False,
+            'assimilation_times': None
+        }
+        
+        self.console.print(dict_rich)
+        
+        
+        
+    def rich_display(self, title="Star Wars Movies", **kwargs):
         """
         Describe the variable state and fate during the simulation with a rich table
 
@@ -2142,25 +2173,16 @@ class CATHY(object):
         
         # Assimilated Yes/No
         
-        from rich.console import Console
-        from rich.table import Table
+        # from rich.console import Console
+        # from rich.table import Table
         
-        table = Table(title="Star Wars Movies")
+        # table = Table(title=title)
+
+        # console = Console(record=True)
+        self.console.print(eval('self.' + str(title)))
         
-        table.add_column("Released", justify="right", style="cyan", no_wrap=True)
-        table.add_column("Title", style="magenta")
-        table.add_column("Box Office", justify="right", style="green")
-        
-        table.add_row("Dec 20, 2019", "Star Wars: The Rise of Skywalker", "$952,110,690")
-        table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
-        table.add_row("Dec 15, 2017", "Star Wars Ep. V111: The Last Jedi", "$1,332,539,889")
-        table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,889")
-        
-        console = Console(record=True)
-        console.print(table)
-        
-        console.save_text('test.txt')
-        console.save_html('test.html')
+        # console.save_text('test.txt')
+        # console.save_html('test.html')
                
         
 
