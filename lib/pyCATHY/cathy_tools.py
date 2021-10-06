@@ -2001,7 +2001,7 @@ class CATHY(object):
     #%% DATA ASSIMILATION FCTS
 
     
-    def create_DA(self,NUDN, NUDT,ENKFT):
+    def create_DA(self,NUDN, NUDT=[],ENKFT=[]):
         """
         
         1. update cathyH file given NUDN, NUDT,ENKFT
