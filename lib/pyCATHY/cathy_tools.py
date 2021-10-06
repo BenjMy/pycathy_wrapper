@@ -95,6 +95,7 @@ class CATHY(object):
         self.soil = {}  # dict of soil input parameters
         self.ic = {}  # dict of ic input parameters
         self.cathyH = {} # dict of cathyH C header parameters 
+        self.nudging = {'DAFLAG':0} # temporary create DAFLAG here
         
         
         # self.time = []
@@ -130,9 +131,9 @@ class CATHY(object):
 
         # fetch src files if not existing from Gitbucket repo
         if not os.path.exists(os.path.join(self.project_name, "src")):
-            print("src files not found")
-            print(self.workdir)
-
+            self.console.print(":worried_face: [b]src files not found[/b]")
+            self.console.print("working directory is:" + str((self.workdir)))
+                               
             if version == "1.0.0":
                 try:
                     Repo.clone_from(
@@ -382,7 +383,7 @@ class CATHY(object):
 
             self.update_parm(**kwargs, verbose=verbose)
             self.update_cathyH(**kwargs, verbose=verbose)
-
+            
 
 
         # recompile
@@ -426,18 +427,9 @@ class CATHY(object):
 
             try:
                 shutil.move(
-                    os.path.join(
-                        self.workdir, self.project_name, "src", self.processor_name
+                    os.path.join(self.workdir, self.project_name, "src", self.processor_name
                     ),
-                    os.path.join(self.workdir, self.project_name, self.processor_name),
-                )
-
-                print(
-                    "move "
-                    + self.processor_name
-                    + " into "
-                    + self.project_name
-                    + " directory"
+                    os.path.join(self.workdir, self.project_name, self.processor_name)
                 )
             except:
                 print("cannot find the new processsor:" + str(self.processor_name))
@@ -466,24 +458,28 @@ class CATHY(object):
             t0 = time.time() # executation time estimate 
 
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
-            callexe = "./" + self.processor_name
+            callexe = "./" + self.processor_name          
+            # self.console.print(self.cathyH)
+            self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.nudging['DAFLAG']))
             
-            self.console.print(self.cathyH)
-
-            if self.cathyH['DAFLAG'] != 0:
+            
+            if self.nudging['NUDN'] != 0:
                 
                 # cathy_DA.run_DA()
-                for ens_i in range(self.cathyH['MAXNUDN']):
+                # for ens_i in range(self.cathyH['MAXNUDN']):
                     
+                from rich.progress import track
+                for ens_i in track(range(self.cathyH['MAXNUDN']), description="Processing..."):
+
                     self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
                                        '/' + str(self.cathyH['MAXNUDN']))
                     os.chdir(os.path.join(self.workdir,self.project_name,'DA/cathy_' + str(ens_i+1)))
                     p = subprocess.run([callexe], text=True, capture_output=True)
 
                     if verbose == True:
-                        print(p.stdout)
-                        print(p.stderr)
-                    
+                        self.console.print(p.stdout)
+                        self.console.print(p.stderr)
+                   
 
     
                 os.chdir(os.path.join(self.workdir))
@@ -538,8 +534,8 @@ class CATHY(object):
 
         """
 
-        if verbose == True:
-            self.console.print(":black_nib: [b]Update cathyH files[/b]")
+        # if verbose == True:
+        self.console.print(":black_nib: [b]Update cathyH files[/b]")
 
         CATHYH_file = open(
             os.path.join(self.workdir, self.project_name, "src", "CATHY.H"), "r"
@@ -614,11 +610,12 @@ class CATHY(object):
 
         # create dictionnary from kwargs
         for keykwargs, value in kwargs.items():
-            if verbose == True:
+            # if verbose == True:
                 # self.console.print("modified:" + {keykwargs} + " | value:" + {value})
-                self.console.print(f"modified: {keykwargs} | value: {value}")
+                # self.console.print(f"modified: {keykwargs} | value: {value}")
                 # print(f"modified: {keykwargs} | value: {value}")
             self.cathyH[keykwargs] = value
+            self.console.print(f"modified: {keykwargs} | value: {value}")
 
         # ---------------------------------------------------------------------
         # write new cathy H
@@ -737,7 +734,8 @@ class CATHY(object):
 
         #%% hap.in
 
-        print("update hap.in")
+        # print("update hap.in")
+        self.console.print(":black_nib: [b]Update hap.in file[/b]")
 
         structural_parameter = [
             "delta_x",
@@ -2029,7 +2027,8 @@ class CATHY(object):
         # to do create a readme file inside DA folder to explain how the dir tree works
 
         # update nudging file
-        # self.update_nudging(NUDN=NUDT,ENKFT=ENKFT)
+        # self.update_nudging(NUDN=NUDT)
+        self.nudging['NUDN'] = NUDN # Temporary
 
         # update cathyH DA parameters
         self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
@@ -2052,16 +2051,21 @@ class CATHY(object):
                 )
         
         try:
-            # copy exe into input folder
+            # copy exe into cathy_origin folder
             shutil.move(
                 os.path.join(self.workdir, self.project_name, self.processor_name),
                 os.path.join(self.workdir, self.project_name, "DA/cathy_origin", self.processor_name)
             )
+            # copy cathy.fnames into cathy_origin folder
             shutil.copy(
                 os.path.join(self.workdir, self.project_name, 'cathy.fnames'),
                 os.path.join(self.workdir, self.project_name, "DA/cathy_origin/cathy.fnames")
             ) 
-            
+            # copy prepro into cathy_origin folder            
+            shutil.copytree(os.path.join(self.workdir,  self.project_name, 'prepro'),
+                        os.path.join(self.workdir, self.project_name, "DA/cathy_origin/prepro"))
+                        
+                        
         except:
             self.console.print(":worried_face: [b]processor exe not found[/b]")
 
@@ -2119,6 +2123,48 @@ class CATHY(object):
         
         pass
         
+
+
+
+    # -------------------------------------------------------------------#
+    #%% utils
+    
+    
+    def rich_variable(self, **kwargs):
+        """
+        Describe the variable state and fate during the simulation with a rich table
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        # Assimilated Yes/No
+        
+        from rich.console import Console
+        from rich.table import Table
+        
+        table = Table(title="Star Wars Movies")
+        
+        table.add_column("Released", justify="right", style="cyan", no_wrap=True)
+        table.add_column("Title", style="magenta")
+        table.add_column("Box Office", justify="right", style="green")
+        
+        table.add_row("Dec 20, 2019", "Star Wars: The Rise of Skywalker", "$952,110,690")
+        table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
+        table.add_row("Dec 15, 2017", "Star Wars Ep. V111: The Last Jedi", "$1,332,539,889")
+        table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,889")
+        
+        console = Console(record=True)
+        console.print(table)
+        
+        console.save_text('test.txt')
+        console.save_html('test.html')
+               
+        
+
+
 
 
 
