@@ -15,17 +15,23 @@ import shutil
 import git
 from git import Repo
 
+import pandas as pd
 # import resipy
 # from resipy import Project
 
 # import meshtools as mt
 # import pyCATHY
-from pyCATHY import cathy_plots as pltCT
+
 
 # import plot_tools as pltCT
 # from pltCT import *
 
 # from pyCATHY import cathy_utils as utilsCT
+from pyCATHY import cathy_DA as cathyDA
+
+
+from multiprocessing import Pool
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 import rich.console
@@ -260,6 +266,8 @@ class CATHY(object):
 
                 # if verbose:
                 #     output, error = process.communicate()
+                self.console.print(":fried_egg: [b]gfortran compilation[/b]")
+
 
             except:
                 print("bash cmd not recognized")
@@ -273,7 +281,7 @@ class CATHY(object):
             os.path.join(self.workdir, self.project_name, "prepro/pycppp"),
         )
 
-        print("run preprocessor")
+        self.console.print(":athletic_shoe: [b]Run preprocessor[/b]")
         os.chdir(os.path.join(self.workdir, self.project_name, "prepro"))
 
         bashcmd = "./pycppp"
@@ -418,7 +426,7 @@ class CATHY(object):
             bashCommand = (
                 "gfortran" + files + " -llapack -lblas -o " + self.processor_name
             )
-            # print(bashCommand)
+            self.console.print(":fried_egg: [b]gfortran compilation[/b]")
 
             process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
             output, error = process.communicate()
@@ -464,24 +472,40 @@ class CATHY(object):
             # self.console.print(self.cathyH)
             
             if self.nudging['NUDN'] != 0:
+             
                 
-                self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.parm['DAFLAG']))
-
-                # cathy_DA.run_DA()
-                # for ens_i in range(self.cathyH['MAXNUDN']):
+                parallel_run = False
+                if parallel_run==True:
+                    print('paral')
+                    # https://stackoverflow.com/questions/41626089/python-spreading-subprocess-call-on-multiple-cpu-cores
+                    # Define a callable to do the work. It should take one work item.
+                    # def worker(tup):
+                    #     # Do the work.
+                    #     ...
                     
-                from rich.progress import track
-                for ens_i in track(range(self.cathyH['MAXNUDN']), description="Processing..."):
-
-                    self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
-                                       '/' + str(self.cathyH['MAXNUDN']))
-                    os.chdir(os.path.join(self.workdir,self.project_name,'DA/cathy_' + str(ens_i+1)))
-                    p = subprocess.run([callexe], text=True, capture_output=True)
-
-                    if verbose == True:
-                        self.console.print(p.stdout)
-                        self.console.print(p.stderr)
-                   
+                    #     # Return any results.
+                    # with ThreadPool(4) as pool:
+                    #     work_results = pool.map(worker, work_items)
+                
+                else:
+    
+                    self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.parm['DAFLAG']))
+    
+                    # cathy_DA.run_DA()
+                    for ens_i in range(self.cathyH['MAXNUDN']):
+                        
+                        from rich.progress import track
+                        for ens_i in track(range(self.cathyH['MAXNUDN']), description="Processing..."):
+        
+                            self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
+                                                '/' + str(self.cathyH['MAXNUDN']))
+                            os.chdir(os.path.join(self.workdir,self.project_name,'DA/cathy_' + str(ens_i+1)))
+                            p = subprocess.run([callexe], text=True, capture_output=True)
+        
+                            if verbose == True:
+                                self.console.print(p.stdout)
+                                self.console.print(p.stderr)
+                       
 
     
                 os.chdir(os.path.join(self.workdir))
@@ -546,11 +570,12 @@ class CATHY(object):
         CATHYH_file.close()
 
 
+        print(self.parm)
         # check if hapin and parm exist
         # create them if not existing
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
-        if len(self.parm) == 0:
+        if "NR" not in self.parm:
             self.update_parm()
         
         DEMRES = 1
@@ -954,12 +979,11 @@ class CATHY(object):
 
         """
 
-        print("update dem paramaters")
+        self.console.print(":black_nib: [b]update dem_parameters file [/b]")
 
         # set default parameters
         if hasattr(self, "dem_parameters") == False:
-
-            print("cannot find dem paramters")
+            self.console.print(":pensive_face: [b]cannot find existing dem paramters[/b]")
 
             ltmp = [
                 0.002,
@@ -1578,15 +1602,25 @@ class CATHY(object):
 
         pass
 
-    def update_soil(self, FP=[], SPP=[], verbose=False, **kwargs):
+    def update_soil(self, IVGHU, FP=[], SPP=[], verbose=False, **kwargs):
         """
         Soil parameters (soil - IIN4). The porous media properties are defined in the soil file.
-        The first thing that must be decides is the type of relationship to describe the hydraulic
+        
+        1 - The first thing that must be decides is the type of relationship to describe the hydraulic
         characteristics of the unsaturated soil (i.e. retention curves). This can be done through
-        the choice of the parameter IVGHU amongst the several options.
+        the choice of the parameter **IVGHU** amongst the several options.
 
         Parameters ----------
 
+        IVGHU: Type int
+        = -1 table look up for moisture curves
+        = 0 for van Genuchten moisture curves
+        = 1 for extended van Genuchten moisture curves
+        = 2 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with Kr=Se**n conductivity relationship
+        = 3 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with conductivity relationship from Table 3 of 1984 paper (log_10 Kr(Se) curve)
+        = 4 for Brooks‐Corey moisture curves    
+            
+            
         FP: Feddes Parameters [PCANA PCREF PCWLT ZROOT PZ OMGC] : [float float float float float
         float] 'PCANA': float anaerobiosis point 'PCREF': float field capacity 'PCWLT': float
         wilting point 'ZROOT': float root depth 'PZ': float ?? 'OMGC': float ?? For details, see
@@ -1611,7 +1645,83 @@ class CATHY(object):
 
         """
 
-        if len(SPP) == 0:  # set defaults parameters
+        # set default parameters
+        # --------------------------------------------------------------------
+        self.set_SOIL_defaults()
+        
+
+        # read function arguments kwargs and udpate soil and parm files
+        # --------------------------------------------------------------------
+        for keykwargs, value in kwargs.items():
+            if verbose == True:
+                print(f"key kwargs: {keykwargs} | value: {value}")
+            self.soil[keykwargs] = value
+            self.parm[keykwargs] = value
+
+
+        # loop over Feddes parameters FP mandatory fct arg
+        # --------------------------------------------------------------------
+        for fp in FP:  # loop over fedded parameters
+            if verbose == True:
+                print(fp, FP[fp])
+            self.soil[fp] = FP[fp]
+
+
+        # create prepro inputs if not existing (containing info about the DEM)
+        # --------------------------------------------------------------------
+        if hasattr(self, "dem_parameters") is False:
+            self.update_prepo_inputs()
+
+
+        # Soil Physical Properties strat by strat
+        # --------------------------------------------------------------------
+        SoilPhysProp = self._prepare_SOIL_Physical_Properties_tb()
+   
+
+        # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
+        # --------------------------------------------------------------------
+        # Read only if IVGHU=0
+        FeddesParam = self._prepare_SOIL_vegetation_tb(FP)
+        
+        
+        # write soil file
+        # --------------------------------------------------------------------
+        self._write_SOIL_file(SoilPhysProp,FeddesParam)
+
+        pass
+
+    def set_SOIL_defaults(self,SPP):
+
+        self.soil = {
+            "PMIN": -5.0,
+            "IPEAT": 0,
+            "SCF": 1.0,
+            "CBETA0": 0.4,
+            "CANG": 0.225,
+            # Feddes parameters default values
+            "PCANA": [0.0],
+            "PCREF": [-4.0],
+            "PCWLT": [-150],
+            "ZROOT": [1.0],
+            "PZ": [1.0],
+            "OMGC": [1.0],
+            "IVGHU": 0, # The first thing that must be decided!
+            "HUALFA": 0.02,
+            "HUBETA": 2,
+            "HUGAMA": 2,
+            "HUPSIA": 0,
+            "HUSWR": 0.333,
+            "HUN": 1,
+            "HUA": -5,
+            "HUB": 1,
+            "BCBETA": 1.2,
+            "BCRMC": 0,
+            "BCPSAT": -0.345,
+        }
+        
+        # set Soil Physical Properties defaults parameters
+        # --------------------------------------------------------------------
+        if len(SPP) == 0:  
             PERMX = PERMY = PERMZ = 1.88e-04
             ELSTOR = 1.00e-05
             POROS = 0.55
@@ -1630,61 +1740,37 @@ class CATHY(object):
                 "VGPSATCELL": VGPSATCELL,
             }
 
-        # set default parameters
-        self.soil = {
-            "PMIN": -5.0,
-            "IPEAT": 0,
-            "SCF": 1.0,
-            "CBETA0": 0.4,
-            "CANG": 0.225,
-            # Feddes parameters default values
-            "PCANA": [0.0],
-            "PCREF": [-4.0],
-            "PCWLT": [-150],
-            "ZROOT": [1.0],
-            "PZ": [1.0],
-            "OMGC": [1.0],
-            "IVGHU": 0,
-            "HUALFA": 0.02,
-            "HUBETA": 2,
-            "HUGAMA": 2,
-            "HUPSIA": 0,
-            "HUSWR": 0.333,
-            "HUN": 1,
-            "HUA": -5,
-            "HUB": 1,
-            "BCBETA": 1.2,
-            "BCRMC": 0,
-            "BCPSAT": -0.345,
-        }
 
-        # if len(FP)==0:#set defaults parameters
+        # set Soil Feddes Properties defaults parameters
+        # --------------------------------------------------------------------
+        # if len(FP)==0:
+        #     FP = {'PCANA':self.soil['PCANA'],
+        #           'PCREF':self.soil['PCREF'],'PCWLT':self.soil['PCWLT'],
+        #           'ZROOT':self.soil['ZROOT'],'PZ':self.soil['PZ'],
+        #           'OMGC':self.soil['OMGC']}
 
-        #     FP = {'PCANA':self.soil['PCANA'],'PCREF':self.soil['PCREF'],'PCWLT':self.soil['PCWLT'],
-        #                       'ZROOT':self.soil['ZROOT'],'PZ':self.soil['PZ'],
-        #                       'OMGC':self.soil['OMGC']}
 
-        # read kwargs
-        for keykwargs, value in kwargs.items():
-            if verbose == True:
-                print(f"key kwargs: {keykwargs} | value: {value}")
-            self.soil[keykwargs] = value
-            self.parm[keykwargs] = value
+    def _prepare_SOIL_Physical_Properties_tb(self,SPP):
+        '''
+        _prepare_SOIL_Physical_Properties_tb
 
-        for fp in FP:  # loop over fedded parameters
-            if verbose == True:
-                print(fp, FP[fp])
-            self.soil[fp] = FP[fp]
+        Parameters
+        ----------
+        SPP : TYPE
+            DESCRIPTION.
 
-        if hasattr(self, "dem_parameters") is False:
-            self.update_prepo_inputs()
+        Returns
+        -------
+        None.
 
-        #%% Soil physical properties
-        # Physical prop strat by strat
+        '''
+        # check number of zones
         if self.dem_parameters["nzone"] > 1:
+            
+            # initiate a table to fill with dimension of number of zone * number of strates
             SoilPhysProp = np.ones(
                 [self.dem_parameters["nzone"] * self.dem_parameters["nstr"], 8]
-            )
+                )
             k = 0
             for istr in range(self.dem_parameters["nstr"]):  # loop over strates
                 izoneSoil = np.zeros([self.dem_parameters["nzone"], 8])
@@ -1701,20 +1787,35 @@ class CATHY(object):
                     SoilPhysProp[ki:ke, :] = izoneSoil
                     # SoilPhysProp[self.dem_parameters['nzone']*istr*izone:self.dem_parameters['nzone']*istr*izone+self.dem_parameters['nzone'],:]=izoneSoil
                 k += self.dem_parameters["nzone"]
+        
+        # case if there is only one zone in the mesh
         else:
             izoneSoil = []
             for spp in SPP:
                 izoneSoil.append(SPP[spp])
-            # SoilPhysProp = np.ones([self.dem_parameters['nstr'],8])*izoneSoil
             izoneSoil = np.hstack(izoneSoil)
             SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
+            
+                
+    def _prepare_SOIL_vegetation_tb(self,FP):
+        '''
+        _prepare_SOIL_vegetation_tb
 
-        #%%  Vegetation properties
+        Parameters
+        ----------
+        FP : TYPE
+            DESCRIPTION.
 
-        # PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC
+        Returns
+        -------
+        None.
+
+        '''
+        # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
+        # --------------------------------------------------------------------
         # Read only if IVGHU=0
-        print(self.cathyH["MAXVEG"])
 
+        # check number of vegetation
         if self.cathyH["MAXVEG"] > 1:
             print(self.cathyH["MAXVEG"])
             FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
@@ -1729,6 +1830,8 @@ class CATHY(object):
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
+
+        # case where unique vegetation type
         else:
             FeddesParam = np.c_[
                 self.soil["PCANA"],
@@ -1738,8 +1841,25 @@ class CATHY(object):
                 self.soil["PZ"],
                 self.soil["OMGC"],
             ]
+            
 
-        #%% write soil file
+    def _write_SOIL_file(self,SoilPhysProp,FeddesParam):
+        '''
+        _write_SOIL_file
+
+        Parameters
+        ----------
+        SoilPhysProp : TYPE
+            DESCRIPTION.
+        FeddesParam : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+
         counth = 0
         header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
 
@@ -1771,8 +1891,9 @@ class CATHY(object):
             )
 
         soilfile.close()
-        pass
-
+        
+        
+                
     def update_root_map(self, root_depth=1, show=False):
         """
         Contains the raster map describing which type of vegetation every cell belongs to.
@@ -1824,7 +1945,7 @@ class CATHY(object):
         if show is not None:
             pltCT.rootMap_plot(root_depth)
 
-        pass
+        return root_depth
 
     def plant():
         # plant parameters only exist for CATHYv Manoli
@@ -2003,26 +2124,34 @@ class CATHY(object):
     #%% DATA ASSIMILATION FCTS
 
     
-    def create_DA(self,NUDN, NUDT=[],ENKFT=[]):
+    def prepare_DA(self,NENS=[],NUDN=[],
+                      ENKFT=[], var_per=[]):
         """
         
-        1. update cathyH file given NUDN, NUDT,ENKFT
-        2. create the processor cathy.exe
+        1. update cathyH file given NENS, ENKFT
+        
+        2. create the processor cathy_origin.exe
+        
         3. create directory tree for the ensemble
         
+        4. create panda dataframe for each perturbated variable
+        
+        5. update input files
+
         Parameters
         ----------
-        NUDN : TYPE
-            # of observation points for nudging (NUDN=0 for no nudging).
-        NUDT : TYPE
-            # of observation times for nudging.
-        ENKFT : TYPE
-            # of observation times for ensemble kalman filter (EnKF).
+        NENS : int
+            # Number of realizations in the ensemble kalman filter (EnKF) 
+        NUDN : int
+            #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
+        ENKFT : np.array([])
+            # Observation times for ensemble kalman filter (EnKF).
 
         Returns
         -------
         None.
 
+        Note: for now only implemented for EnkF DA
         """
         
         
@@ -2030,67 +2159,163 @@ class CATHY(object):
 
         # update nudging file
         # self.update_nudging(NUDN=NUDT)
-        self.nudging['NUDN':NUDN] # THIS IS TEMPORARY
+        # self.nudging = {'NUDN': NUDN}   # THIS IS TEMPORARY
+        self.NENS = NENS # THIS IS TEMPORARY
+        NUDN = len(ENKFT) # NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
         
         # update cathyH DA parameters
+        # ---------------------------------------------------------------------
         self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
 
         # run processor to create the cathy_origin.exe to paste in every folder
+        # ---------------------------------------------------------------------
         self.run_processor(runProcess=False)
         # OR self.recompileSrc(runProcess=False, NUDN=NUDN)
-        
-        
-        
+                     
         
         # create sub directories for each ensemble
-        if not os.path.exists(os.path.join(self.workdir, self.project_name, "DA/cathy_origin")):
-            os.makedirs(os.path.join(self.workdir, self.project_name, "DA/cathy_origin"))
+        # ---------------------------------------------------------------------
+        self._create_subfolders_ensemble(NENS)
+
+        # create initial dataframe DA_results_df for results
+        # ---------------------------------------------------------------------
+        self._init_DA_df(NENS,ENKFT,var_per)     
+
+
+        # update input files ensemble
+        # ---------------------------------------------------------------------
+        # self._update_input_ensemble(NENS,var_per)     
+        
+        
+        
+        return self.DA_df
+
+
+
+    def _create_subfolders_ensemble(self,NENS):
+
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, 
+                                           "DA_Ensemble/cathy_origin")):
+            os.makedirs(os.path.join(self.workdir, self.project_name, 
+                                     "DA_Ensemble/cathy_origin"))
             
             # copy input, output and vtk dir
             for dir2copy in enumerate(['input','output','vtk']):                
                 shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]), 
-                                os.path.join(self.workdir, self.project_name, "DA/cathy_origin", dir2copy[1])
+                                os.path.join(self.workdir, self.project_name, 
+                                             "DA_Ensemble/cathy_origin", dir2copy[1])
                 )
         
         try:
             # copy exe into cathy_origin folder
             shutil.move(
                 os.path.join(self.workdir, self.project_name, self.processor_name),
-                os.path.join(self.workdir, self.project_name, "DA/cathy_origin", self.processor_name)
+                os.path.join(self.workdir, self.project_name, 
+                             "DA_Ensemble/cathy_origin", self.processor_name)
             )
             # copy cathy.fnames into cathy_origin folder
             shutil.copy(
-                os.path.join(self.workdir, self.project_name, 'cathy.fnames'),
-                os.path.join(self.workdir, self.project_name, "DA/cathy_origin/cathy.fnames")
+                os.path.join(self.workdir, self.project_name, 
+                             'cathy.fnames'),
+                os.path.join(self.workdir, self.project_name, 
+                             "DA_Ensemble/cathy_origin/cathy.fnames")
             ) 
             # copy prepro into cathy_origin folder            
-            shutil.copytree(os.path.join(self.workdir,  self.project_name, 'prepro'),
-                        os.path.join(self.workdir, self.project_name, "DA/cathy_origin/prepro"))
+            shutil.copytree(os.path.join(self.workdir,  self.project_name, 
+                                         'prepro'),
+                        os.path.join(self.workdir, self.project_name, 
+                                     "DA_Ensemble/cathy_origin/prepro"))
                         
                         
         except:
             self.console.print(":worried_face: [b]processor exe not found[/b]")
 
             
-        path_origin = os.path.join(self.workdir, self.project_name, "DA/cathy_origin")
+        path_origin = os.path.join(self.workdir, self.project_name,
+                                   "DA_Ensemble/cathy_origin")
         
         # copy origin folder to each ensemble subfolders
-        for i in range(NUDN):
-            path_nudn_i =  os.path.join(self.workdir, self.project_name, "DA/cathy_" + str(i+1))  
+        for i in range(NENS):
+            path_nudn_i =  os.path.join(self.workdir, self.project_name, 
+                                        "DA_Ensemble/cathy_" + str(i+1))  
             
             if not os.path.exists(path_nudn_i):
                 shutil.copytree(
                     path_origin, path_nudn_i
                 )
-                
-             
-                
 
 
+
+    def _init_DA_df(self,NENS,ENKFT,var_per):
+        
+        # create initial dataframe DA_results_df for results
+        # ---------------------------------------------------------------------  
+        
+        
+        # boolean flag to indicate if the variable is updated (True) or not (False)
+        bool_updated = False*np.ones(NENS) 
+        
+        # time collumn and updated collumn flag
+        cols_root = ['time', 'updated_bool']
+        data_df_root = [ENKFT[0]*np.ones(NENS), bool_updated]
+
+        for key in var_per.items(): # loop over perturbated variable dict
+            cols_root.append(key[0])
+            data_df_root.append(var_per[key[0]]['perturbated'])
+               
+        # create dataframe
+        
+        #    Time   updated bool    var1_value    var2_value
+        # 0
+        # 1
+        # 2
+        self.DA_df = pd.DataFrame(np.transpose(data_df_root),
+                              columns=cols_root)
+        
+        self.DA_df['time'] = pd.to_timedelta(self.DA_df['time'],unit='s') 
+
+        
         pass
+    
 
+    def _update_input_ensemble(self,NENS,var_per):
+        
+        # create initial dataframe DA_results_df for results
+        # ---------------------------------------------------------------------  
+        
+        print('not yet implemented')
 
+        
+        pass
+    
 
+    def explore_ensemble_df():
+        
+        # create multiindex dataframe + some plots to explore the perturabated variables
+        # ---------------------------------------------------------------------  
+        
+        # DF = df.append(dft2)
+        
+        # DF['time'] = pd.to_timedelta(DF['time'],unit='s') 
+        
+        # # DF.index
+        # # df.index.name = 'ensemble #'
+        
+        # midx = DF.set_index(['time','updated_bool'], inplace=False)
+        # midx.sort_index(inplace=True)
+        
+        
+        # ax = DF.plot.hist(bins=NENS,y=["kss"], alpha=0.5)
+        # ax = DF.plot.hist(bins=NENS,y=["phi"], alpha=0.5)
+
+        
+        pass
+    
+
+        
+        
+        
+    
     def update_enkf():
         '''
         enkf (IIN40)

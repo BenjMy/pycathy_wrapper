@@ -6,217 +6,330 @@ Created on Thu Jul 29 12:12:41 2021
 @author: ben
 """
 
-import os
 import matplotlib.pyplot as plt
 import numpy as np
+from resipy import R2 # geophysics tools
+import pyvista as pv # if not installed : pip install with conda install pyvista (in a conda terminal)
+import numpy as np
+import os 
+
+# class DABase(object):
+
+#     """
+#     Base class for all importer classes
+#     """
+
+#     def _add_to_container(
+#             self, data_to_add, electrode_positions=None, topography=None):
+
+#         self._add_to_data(data_to_add)
+
+#     def _add_to_data(self, data):
+#         """Add data to the container
+#         Parameters
+#         ----------
+#         data : pandas.DataFrame
+#             Measurement data in the form of a DataFrame, must adhere to the
+#             container constraints (i.e., must have all required columns)
+#         """
+
+#     def _describe_data(self, df=None):
+#         """
+#         Print statistics on a DataFrame by calling its .describe() function
+#         Parameters
+#         ----------
+#         df : None|pandas.DataFrame, optional
+#             if not None, use this DataFrame. Otherwise use self.data
+#         """
+#         print(df_to_use[cols].describe())
+
+#     def add_dataframe(self, data, timestep=None, **kwargs):
+#         """Add data to the container using another DataFrame
+#         Parameters
+#         ----------
+#         data : pandas.DataFrame
+#             Measurement data in the form of a DataFrame, must adhere to the
+#             container constraints (i.e., must have all required columns) and
+#             electrode positions already registered must match.
+#         """
+#         if timestep is not None:
+#             data['timestep'] = timestep
+#         self._add_to_data(data)
+
+#     def merge_container(self, container):
+#         """Merge the data and electrode positions from another container into
+#         this one.
+#         """
+#         logger.debug('Merging containers')
+#         print(type(self))
+
+#         self._add_to_container(
+#             container.data,
+#             container.electrode_positions, container.topography)
 
 
-# elec.dat :
-# contiene le nuove posizioni degli elettrodi nella griglia grande
-# indicando il numero di elettrodi totali e, per ciascun elettrodo, il numero
-# di nodo ed il corrispettivo numero di elettrodo;
 
+        
+def create_ERT_survey(pathERT,elecsXYZ,mesh):
+    
+    #https://hkex.gitlab.io/resipy/api.html
 
-#%% Archie
+    pathERT = '/home/ben/Documents/CATHY/pyCATHY/DA_ERT/'
+    
+    os.chdir(pathERT)
+    
+    
+    elecs_raw = np.genfromtxt('./mesh/elecsXYZ.csv', delimiter=",",skip_header=1)
+    elecs = np.copy(elecs_raw)
+    
+    
+    ERT = R2(pathERT + 'ERT_fwdmodel', typ='R3t')
+    ERT.setTitle('Rhizo_synth')
+    
+    elecs= np.genfromtxt('./mesh/elecsXYZ.csv', delimiter=",",skip_header=1)
+    elecsFlag = np.concatenate([np.zeros(8),np.ones(len(elecs[:,2])-8)])
+    ERT.setElec(np.c_[elecs[:,0],elecs[:,2],elecs[:,1],elecsFlag])
+    # k.setElec(np.c_[elecs[:,0],elecs[:,1],elecs[:,2]])
+    
+    ERT.importMesh('./mesh/mesh_rhizo_resipy.msh')
+    ERT.addRegion(np.array([[0.1,0.1],[0.1,0.4],[0.3,0.4],[0.3,0.1],[0.1,0.1]]), 500, iplot=True)
+    ERT.importSequence('./sequences/ERT72.csv')
+    # -----------------------------------------------
 
-# src/ert_measure.f:C     Archie law = ELECTRC_NODI (for the 2D cross section only).
-# src/cathy_main.f:C   ARCHIE(4)          - parameters for the application of Archie low:
+def fwd_ERT_survey(ERT,noise,show=False):
 
-# src/ert_measure.f:     1                       ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
-# src/ert_measure.f:      REAL*8   ARCHIE(4),EN_ERT(MAXNUDN,*),ELECTRC_NODI(*)
-# src/ert_measure.f:      A_AR=ARCHIE(1)
-# src/ert_measure.f:      CW_AR=ARCHIE(2)
-# src/ert_measure.f:      M_AR=ARCHIE(3)
-# src/ert_measure.f:      N_AR=ARCHIE(4)
-# src/cathy_main.f:C   ARCHIE(4)          - parameters for the application of Archie low:
-# src/cathy_main.f:C                      - ARCHIE(1) = a
-# src/cathy_main.f:C                      - ARCHIE(2) = C_w
-# src/cathy_main.f:C                      - ARCHIE(3) = m
-# src/cathy_main.f:C                      - ARCHIE(4) = n
-# src/cathy_main.f:      REAL*8  ARCHIE(4)
-# src/cathy_main.f:                 CALL ERT_INIT(ARCHIE,NERT)
-# src/cathy_main.f:     1                             ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
-# src/cathy_main.f:     1                             ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
-# src/cathy_main.f:     1                             ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
-# src/ert_init.f:      SUBROUTINE ERT_INIT(ARCHIE,NERT)
-# src/ert_init.f:      REAL*8 ARCHIE(4)
-# src/ert_init.f:      READ(18,*) ARCHIE(1)
-# src/ert_init.f:      READ(18,*) ARCHIE(2)
-# src/ert_init.f:      READ(18,*) ARCHIE(3)
-# src/ert_init.f:      READ(18,*) ARCHIE(4)
-# src/ert_init.f:c      REAL*8 ARCHIE(4),ZRATIO(NSTR),BASE
+    # ----------#
+    # fwd modelling
+    # ---------------------------------------------------------#
 
+    ERT.forward(noise=0.05, iplot=show) # forward modelling with 5 % noise added to the output
 
-# -------------------------------------------------------------------#
-#%% ERT DATA
+def invert_ERT_survey(ERT,noise,show=False):
 
-# 2 files
-# ERT measure
-# ERT init
-
-def ERT_init(ARCHIE,NERT):
-    '''
+    # ---------------------------------------------------------#
+    # inversion
+    # ---------------------------------------------------------#
+    ERT.param['num_xy_poly'] = 0
+    ERT.param['zmin'] = -np.inf
+    ERT.param['zmax'] = np.inf
+    ERT.param['data_type'] = 1 # using log of resistitivy
+    ERT.err = False # if we want to use the error from the error models fitted before
+    ERT.param['a_wgt'] = 0.001
+    ERT.param['b_wgt'] = 0.05
+    
+    ERT.invert()
+    
+    if show==True:
+        ERT.showResults(index=0) # show the initial model
+        ERT.showResults(index=1, sens=False) # show the inverted model
     
 
-    Parameters
-    ----------
-    ARCHIE : TYPE
-        DESCRIPTION.
-    NERT : TYPE
-        DESCRIPTION.
 
+
+
+
+def Archie_sat(rho, rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
+    '''
+    rho: resistivity
+    𝑆𝑤 : water saturation
+    𝜙: the porosity of the soil
+    𝜎_{𝑤} is the conductivity of the pore fluid
+    𝑎, 𝑚, and 𝑛 are empirically derived parameters
+    𝑎 is the tortuosity factor
+    𝑚 is the cementation exponent
+    𝑛 is the saturation exponent
     Returns
     -------
-    None.
+    𝑆𝑤 : water saturation
+
 
     '''
-
-
-    OPEN(18,FILE='input/archie',status='old')
+    return  (rho/rFluid/porosity^-m)^(-1/n)
     
-    READ(18,*) ARCHIE(1)
-    READ(18,*) ARCHIE(2)
-    READ(18,*) ARCHIE(3)
-    READ(18,*) ARCHIE(4)
-    READ(18,*) NERT
-    CLOSE(18)
 
-    return
-
-
-
-def update_archie(A_AR, CW_AR, M_AR, N_AR):
+def Archie_rho(rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
     '''
-    
-
-    Parameters
-    ----------
-    A_AR : TYPE
-        DESCRIPTION.
-    CW_AR : TYPE
-        DESCRIPTION.
-    M_AR : TYPE
-        DESCRIPTION.
-    N_AR : TYPE
-        DESCRIPTION.
-
+    sat 𝑆𝑤 : water saturation
+    porosity phi 𝜙: the porosity of the soil
+    rFluid is the conductivity of the pore fluid
+    𝑎, 𝑚, and 𝑛 are empirically derived parameters
+    𝑎 is the tortuosity factor
+    𝑚 is the cementation exponent
+    𝑛 is the saturation exponent
     Returns
     -------
-    A_AR : TYPE
-        DESCRIPTION.
-    CW_AR : TYPE
-        DESCRIPTION.
-    M_AR : TYPE
-        DESCRIPTION.
-    N_AR : TYPE
-        DESCRIPTION.
+    Resistivity
 
     '''
+    return rFluid * a * porosity**(-m) * sat**(-n)
+
+
+
+
+
+# def ERT_init(ARCHIE,NERT):
+#     '''
     
-    A_AR=ARCHIE(1)
-    CW_AR=ARCHIE(2)
-    M_AR=ARCHIE(3)
-    N_AR=ARCHIE(4)
+
+#     Parameters
+#     ----------
+#     ARCHIE : TYPE
+#         DESCRIPTION.
+#     NERT : TYPE
+#         DESCRIPTION.
+
+#     Returns
+#     -------
+#     None.
+
+#     '''
+
+
+#     OPEN(18,FILE='input/archie',status='old')
+    
+#     READ(18,*) ARCHIE(1)
+#     READ(18,*) ARCHIE(2)
+#     READ(18,*) ARCHIE(3)
+#     READ(18,*) ARCHIE(4)
+#     READ(18,*) NERT
+#     CLOSE(18)
+
+#     return
+
+
+
+# def update_archie(A_AR, CW_AR, M_AR, N_AR):
+#     '''
+    
+
+#     Parameters
+#     ----------
+#     A_AR : TYPE
+#         DESCRIPTION.
+#     CW_AR : TYPE
+#         DESCRIPTION.
+#     M_AR : TYPE
+#         DESCRIPTION.
+#     N_AR : TYPE
+#         DESCRIPTION.
+
+#     Returns
+#     -------
+#     A_AR : TYPE
+#         DESCRIPTION.
+#     CW_AR : TYPE
+#         DESCRIPTION.
+#     M_AR : TYPE
+#         DESCRIPTION.
+#     N_AR : TYPE
+#         DESCRIPTION.
+
+#     '''
+    
+#     A_AR=ARCHIE(1)
+#     CW_AR=ARCHIE(2)
+#     M_AR=ARCHIE(3)
+#     N_AR=ARCHIE(4)
       
       
-    return A_AR, CW_AR, M_AR, N_AR
+#     return A_AR, CW_AR, M_AR, N_AR
 
 
 
-def ERT_measure(NLKP,N,NT,IVGHU,TETRA,TP,
-                            ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
-                            ENPT,NERT,NTRI,NENS,ELECTRC_NODI,
-                            PNEW,SNODI,PNODI,SW,CKRW,SWE,CKRWE):
-    '''
-    Reads pressure values, calculates saturation at the assimilation
-    time and calculates the electrical conductivity of the soil by the
-    Archie law = ELECTRC_NODI (for the 2D cross section only).
-    ELETRC_NODI is calculated for the expanded 2D grid -> input for
-    SAT2D
+# def ERT_measure(NLKP,N,NT,IVGHU,TETRA,TP,
+#                 ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
+#                 ENPT,NERT,NTRI,NENS,ELECTRC_NODI,
+#                 PNEW,SNODI,PNODI,SW,CKRW,SWE,CKRWE):
+#     '''
+#     Reads pressure values, calculates saturation at the assimilation
+#     time and calculates the electrical conductivity of the soil by the
+#     Archie law = ELECTRC_NODI (for the 2D cross section only).
+#     ELETRC_NODI is calculated for the expanded 2D grid -> input for
+#     SAT2D
 
-    Parameters
-    ----------
-    NLKP : TYPE
-        # of lookup values in the moisture curve tables for
-        IVGHU = -1. NLKP values of PCAP, SATC, and KRWC will be
-        read in for each zone (inner input loop) and for each layer
-        (outer input loop). NLKP must be at least 3, and for each
-        set of NLKP values, the PCAP values must be in ascending
-        order (e.g., -10.0, -9.9, -9.8, ..., -0.04, -0.02, 0.0)..
-    N : TYPE
-        DESCRIPTION.
-    NT : TYPE
-        DESCRIPTION.
-    IVGHU : TYPE
-        =-1 for moisture curve lookup table
-        =0 for van Genuchten moisture curves
-        =1 for extended van Genuchten moisture curves
-        =2 for moisture curves from Huyakorn et al (WRR 20(8) 1984,
-        WRR 22(13) 1986) with Kr=Se**n conductivity relationship
-        =3 for moisture curves from Huyakorn et al (WRR 20(8) 1984,
-        WRR 22(13) 1986) with conductivity relationship from
-        Table 3 of 1984 paper (log_10 Kr(Se) curve).
-    TETRA : TYPE
-        DESCRIPTION.
-    TP : TYPE
-        DESCRIPTION.
-    ENPNEW : TYPE
-        DESCRIPTION.
-    ENPNODI : TYPE
-        DESCRIPTION.
-    ENSNODI : TYPE
-        DESCRIPTION.
-    ARCHIE : TYPE
-        - parameters for the application of Archie low:
-        C_el= 1/a C_w PNODI^m SW^n
-        - ARCHIE(1) = a
-        - ARCHIE(2) = C_w
-        - ARCHIE(3) = m
-        - ARCHIE(4) = n
-    EN_ERT : TYPE
-        ERT measures associated with the ensemble.
-    ENPT : TYPE
-        DESCRIPTION.
-    NERT : TYPE
-        number of ERT observations (measurements) in the EnKF streamflow or ERT observation values .
-    NTRI : TYPE
-        DESCRIPTION.
-    NENS : TYPE
-        DESCRIPTION.
-    ELECTRC_NODI : TYPE
-        DESCRIPTION.
-    PNEW : TYPE
-        DESCRIPTION.
-    SNODI : TYPE
-        DESCRIPTION.
-    PNODI : TYPE
-        DESCRIPTION.
-    SW : TYPE
-        DESCRIPTION.
-    CKRW : TYPE
-        DESCRIPTION.
-    SWE : TYPE
-        DESCRIPTION.
-    CKRWE : TYPE
-        DESCRIPTION.
+#     Parameters
+#     ----------
+#     NLKP : TYPE
+#         # of lookup values in the moisture curve tables for
+#         IVGHU = -1. NLKP values of PCAP, SATC, and KRWC will be
+#         read in for each zone (inner input loop) and for each layer
+#         (outer input loop). NLKP must be at least 3, and for each
+#         set of NLKP values, the PCAP values must be in ascending
+#         order (e.g., -10.0, -9.9, -9.8, ..., -0.04, -0.02, 0.0)..
+#     N : TYPE
+#         DESCRIPTION.
+#     NT : TYPE
+#         DESCRIPTION.
+#     IVGHU : TYPE
+#         =-1 for moisture curve lookup table
+#         =0 for van Genuchten moisture curves
+#         =1 for extended van Genuchten moisture curves
+#         =2 for moisture curves from Huyakorn et al (WRR 20(8) 1984,
+#         WRR 22(13) 1986) with Kr=Se**n conductivity relationship
+#         =3 for moisture curves from Huyakorn et al (WRR 20(8) 1984,
+#         WRR 22(13) 1986) with conductivity relationship from
+#         Table 3 of 1984 paper (log_10 Kr(Se) curve).
+#     TETRA : TYPE
+#         DESCRIPTION.
+#     TP : TYPE
+#         DESCRIPTION.
+#     ENPNEW : TYPE
+#         DESCRIPTION.
+#     ENPNODI : TYPE
+#         DESCRIPTION.
+#     ENSNODI : TYPE
+#         DESCRIPTION.
+#     ARCHIE : TYPE
+#         - parameters for the application of Archie low:
+#         C_el= 1/a C_w PNODI^m SW^n
+#         - ARCHIE(1) = a
+#         - ARCHIE(2) = C_w
+#         - ARCHIE(3) = m
+#         - ARCHIE(4) = n
+#     EN_ERT : TYPE
+#         ERT measures associated with the ensemble.
+#     ENPT : TYPE
+#         DESCRIPTION.
+#     NERT : TYPE
+#         number of ERT observations (measurements) in the EnKF streamflow or ERT observation values .
+#     NTRI : TYPE
+#         DESCRIPTION.
+#     NENS : TYPE
+#         DESCRIPTION.
+#     ELECTRC_NODI : TYPE
+#         DESCRIPTION.
+#     PNEW : TYPE
+#         DESCRIPTION.
+#     SNODI : TYPE
+#         DESCRIPTION.
+#     PNODI : TYPE
+#         DESCRIPTION.
+#     SW : TYPE
+#         DESCRIPTION.
+#     CKRW : TYPE
+#         DESCRIPTION.
+#     SWE : TYPE
+#         DESCRIPTION.
+#     CKRWE : TYPE
+#         DESCRIPTION.
 
-    Returns
-    -------
-    None.
+#     Returns
+#     -------
+#     None.
 
-    '''
+#     '''
 
 
-    OPEN(18,FILE='input/archie',status='old')
+#     OPEN(18,FILE='input/archie',status='old')
     
-    READ(18,*) ARCHIE(1)
-    READ(18,*) ARCHIE(2)
-    READ(18,*) ARCHIE(3)
-    READ(18,*) ARCHIE(4)
-    READ(18,*) NERT
-    CLOSE(18)
+#     READ(18,*) ARCHIE(1)
+#     READ(18,*) ARCHIE(2)
+#     READ(18,*) ARCHIE(3)
+#     READ(18,*) ARCHIE(4)
+#     READ(18,*) NERT
+#     CLOSE(18)
 
-    return
+#     return
 
 
 
@@ -275,13 +388,6 @@ def ERT_measure(NLKP,N,NT,IVGHU,TETRA,TP,
 
 
     
-def set_elecs(self,filename='elecs.csv'):
-
-    self.elecs = np.loadtxt(filename,skiprows=1,delimiter=',')
-
-
-
-    pass
 
 
 
@@ -452,3 +558,46 @@ def set_elecs(self,filename='elecs.csv'):
 # src/timnxt.f:      NITERT=0
 # Binary file src/nudone.o matches
 
+
+# elec.dat :
+# contiene le nuove posizioni degli elettrodi nella griglia grande
+# indicando il numero di elettrodi totali e, per ciascun elettrodo, il numero
+# di nodo ed il corrispettivo numero di elettrodo;
+
+
+#%% Archie
+
+# src/ert_measure.f:C     Archie law = ELECTRC_NODI (for the 2D cross section only).
+# src/cathy_main.f:C   ARCHIE(4)          - parameters for the application of Archie low:
+
+# src/ert_measure.f:     1                       ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
+# src/ert_measure.f:      REAL*8   ARCHIE(4),EN_ERT(MAXNUDN,*),ELECTRC_NODI(*)
+# src/ert_measure.f:      A_AR=ARCHIE(1)
+# src/ert_measure.f:      CW_AR=ARCHIE(2)
+# src/ert_measure.f:      M_AR=ARCHIE(3)
+# src/ert_measure.f:      N_AR=ARCHIE(4)
+# src/cathy_main.f:C   ARCHIE(4)          - parameters for the application of Archie low:
+# src/cathy_main.f:C                      - ARCHIE(1) = a
+# src/cathy_main.f:C                      - ARCHIE(2) = C_w
+# src/cathy_main.f:C                      - ARCHIE(3) = m
+# src/cathy_main.f:C                      - ARCHIE(4) = n
+# src/cathy_main.f:      REAL*8  ARCHIE(4)
+# src/cathy_main.f:                 CALL ERT_INIT(ARCHIE,NERT)
+# src/cathy_main.f:     1                             ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
+# src/cathy_main.f:     1                             ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
+# src/cathy_main.f:     1                             ENPNEW,ENPNODI,ENSNODI,ARCHIE,EN_ERT,
+# src/ert_init.f:      SUBROUTINE ERT_INIT(ARCHIE,NERT)
+# src/ert_init.f:      REAL*8 ARCHIE(4)
+# src/ert_init.f:      READ(18,*) ARCHIE(1)
+# src/ert_init.f:      READ(18,*) ARCHIE(2)
+# src/ert_init.f:      READ(18,*) ARCHIE(3)
+# src/ert_init.f:      READ(18,*) ARCHIE(4)
+# src/ert_init.f:c      REAL*8 ARCHIE(4),ZRATIO(NSTR),BASE
+
+
+# -------------------------------------------------------------------#
+#%% ERT DATA
+
+# 2 files
+# ERT measure
+# ERT init

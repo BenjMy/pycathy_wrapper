@@ -12,3 +12,4 @@ natsort
 imageio
 style-doc
 black
+rich
