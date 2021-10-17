@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import os, warnings
 import subprocess
-import glob, os
+import glob
 from os import listdir
 from os.path import isfile, join
 import shutil
@@ -22,19 +22,21 @@ import pandas as pd
 # import meshtools as mt
 # import pyCATHY
 
+import time
+import rich.console
+from rich.progress import track
 
-# import plot_tools as pltCT
+# import cathy_plots as pltCT
 # from pltCT import *
 
-# from pyCATHY import cathy_utils as utilsCT
-from pyCATHY import cathy_DA as cathyDA
+from pyCATHY.plotters import cathy_plots as plt_CT
+# from pyCATHY import cathy_DA as cathyDA
+from pyCATHY.importers import cathy_outputs as out_CT
 
 
-from multiprocessing import Pool
-from multiprocessing.dummy import Pool as ThreadPool
+import multiprocessing
 
 
-import rich.console
 def make_console(verbose):
     """
     Start up the :class:`rich.console.Console` instance we'll use.
@@ -47,6 +49,19 @@ def make_console(verbose):
     return rich.console.Console(stderr=True, quiet=not verbose)
 
 
+def subprocess_run_multi(pathexe_list):
+    
+    # https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects
+    print(f"x= {pathexe_list}, PID = {os.getpid()}")
+    # self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
+
+    os.chdir(pathexe_list)
+    callexe = "./" + 'cathy'          
+    p = subprocess.run([callexe], text=True, capture_output=True)
+    
+    return p
+    
+    
 
 class CATHY(object):
     """ Main CATHY object
@@ -65,10 +80,10 @@ class CATHY(object):
         """
         Create CATHY object.
         
-        All variables in CAPITAL LETTERS use the semantic from the CATHY fortran codes, 
+        ::Note:: All variables in CAPITAL LETTERS use the semantic from the CATHY legacy fortran codes, 
         while the others are created exclusively for the wrapper.
         
-        All file variable are self dictionnary objects
+        ::Note:: All file variable are self dictionnary objects
         example: soil file is contained in self.soil
         """
 
@@ -98,23 +113,25 @@ class CATHY(object):
 
         # inputs dictionnary
         
-        # temporary create DAFLAG here
-        self.parm = {'DAFLAG': 0}  # dict of parm input parameters 
+        self.DAFLAG = False
+
+        # all the files content are saved as dict
+        self.parm = {}  # dict of parm input parameters
         self.soil = {}  # dict of soil input parameters
         self.ic = {}  # dict of ic input parameters
         self.cathyH = {} # dict of cathyH C header parameters 
-        self.nudging = {'NUDN': 0}   # Temporary
+        # self.nudging = {'NUDN': 0}   # Temporary
 
         
         # self.time = []
         # infitration
-        self.drippers = []
+        # self.drippers = []
 
         # ERT
-        self.elecs = []
+        # self.elecs = []
 
         # meshing
-        self.mesh_gmsh = []  # gmsh meshfile
+        # self.mesh_gmsh = []  # gmsh meshfile
 
         for key, value in kwargs.items():
 
@@ -223,12 +240,20 @@ class CATHY(object):
 
         pass
 
+
+# --------------------------------------------------------------------------- #
+# replace console cmd by a subprocess call
+# --------------------------------------------------------------------------- #
+        
+        
     def run_preprocessor(self, KeepOutlet=True, verbose=False, **kwargs):
         """
         Run cppp.exe
 
         1. updates cathy parameters prepo
+        
         2. recompile the source files prepo
+        
         3. run the preprocessor using bash cmd
 
         Returns ------- 
@@ -321,52 +346,52 @@ class CATHY(object):
 
         return
 
-    def recompileSrc(self, verbose=True):
+    def  recompileSrc(self, verbose=True):
         """
-        DEPRECATED in favor of self.run_processor(runProcess=False)
+        Other option is self.run_processor(runProcess=False)
 
         """
         
+        self.console.print(":hammer_and_wrench: [b]Recompile src files[/b]")
 
-        os.chdir(os.path.join(self.workdir, self.project_name, "src"))
-
-        print("recompileSrc")
-
-        # clean all files compiled
+        # clean all files previously compiled
         for file in glob.glob("*.o"):
             os.remove(file)
 
+        # list all the fortran files to compile and compile
         for file in glob.glob("*.f"):
             bashCommand = "gfortran -c " + str(file)
-
+            # gfortran -c *.f
+            # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
+        
             process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-            if verbose:
-                output, error = process.communicate()
+            output, error = process.communicate()
 
+        # list all the fortran compiled files to compile and run
         files = ""
         for file in glob.glob("*.o"):
             files += " " + str(file)
 
-        bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
+        bashCommand = (
+            "gfortran" + files + " -llapack -lblas -o " + self.processor_name
+        )
+        self.console.print(":fried_egg: [b]gfortran compilation[/b]")
+
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()
 
-        if verbose:
-            output, error = process.communicate()
-
-        # move to the directory where the source FORTRAN files are contained (cathy_main.f)
-        # and OVERWRITE IF ALREADY EXISTING (full path spacified)
-
-        os.chdir(os.path.join(self.workdir))
-        shutil.move(
-            os.path.join(self.project_name, "src", self.processor_name),
-            os.path.join(self.project_name, self.processor_name),
-        )
-
-        print(
-            "move " + self.processor_name + " into " + self.project_name + " directory"
-        )
-
-        os.chdir(os.path.join(self.project_name))
+        # os.chdir(os.path.join(self.workdir))
+        # try to move created executable to the project folder
+        try:
+            shutil.move(
+                os.path.join(self.workdir, self.project_name, "src", self.processor_name
+                ),
+                os.path.join(self.workdir, self.project_name, self.processor_name)
+            )
+        except:
+            # print("cannot find the new processsor:" + str(self.processor_name))
+            self.console.print(":pensive_face: [b]Cannot find the new processsor[/b]")
+            
         pass
 
 
@@ -376,14 +401,22 @@ class CATHY(object):
 
 
         1. updates cathy parameters and cathyH based on **kwargs
+        
         2. recompile the source files (set False for notebook) and create the executable
+        
         3. run the processor using bash cmd if runProcess is True
 
         Returns ------- type Description of returned object.
 
         """
 
-
+        # set parallel flag for mutirun (used for DA)
+        # --------------------------------------------------------------------
+        parallel = False 
+        for k, value in kwargs.items():
+            if k == 'parallel':
+                parallel = value
+            
 
         # update parm and cathyH
         # --------------------------------------------------------------------
@@ -398,56 +431,58 @@ class CATHY(object):
 
         # recompile
         # --------------------------------------------------------------------
-        # check location of the exe (should be in project_name folder)
         os.chdir(os.path.join(self.workdir, self.project_name, "src"))
 
         if recompile == True:
 
-            # self.recompileSrc()            
-            self.console.print(":hammer_and_wrench: [b]Recompile src files[/b]")
+            self.recompileSrc()            
+            # self.console.print(":hammer_and_wrench: [b]Recompile src files[/b]")
 
-            # gfortran -c *.f
-            # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
+            # # clean all files previously compiled
+            # for file in glob.glob("*.o"):
+            #     os.remove(file)
 
-            # clean all files compiled
-            for file in glob.glob("*.o"):
-                os.remove(file)
+            # # list all the fortran files to compile and compile
+            # for file in glob.glob("*.f"):
+            #     bashCommand = "gfortran -c " + str(file)
+            #     # gfortran -c *.f
+            #     # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
+            
+            #     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+            #     output, error = process.communicate()
 
-            for file in glob.glob("*.f"):
-                bashCommand = "gfortran -c " + str(file)
+            # # list all the fortran compiled files to compile and run
+            # files = ""
+            # for file in glob.glob("*.o"):
+            #     files += " " + str(file)
 
-                process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-                output, error = process.communicate()
+            # bashCommand = (
+            #     "gfortran" + files + " -llapack -lblas -o " + self.processor_name
+            # )
+            # self.console.print(":fried_egg: [b]gfortran compilation[/b]")
 
-            files = ""
-            for file in glob.glob("*.o"):
-                files += " " + str(file)
+            # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+            # output, error = process.communicate()
 
-            bashCommand = (
-                "gfortran" + files + " -llapack -lblas -o " + self.processor_name
-            )
-            self.console.print(":fried_egg: [b]gfortran compilation[/b]")
-
-            process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-            output, error = process.communicate()
-
-            # move to the directory where the source FORTRAN files are contained (cathy_main.f)
-            # and OVERWRITE IF ALREADY EXISTING (full path spacified)
-            os.chdir(os.path.join(self.workdir))
-
-            try:
-                shutil.move(
-                    os.path.join(self.workdir, self.project_name, "src", self.processor_name
-                    ),
-                    os.path.join(self.workdir, self.project_name, self.processor_name)
-                )
-            except:
-                print("cannot find the new processsor:" + str(self.processor_name))
+            # # os.chdir(os.path.join(self.workdir))
+            # # try to move created executable to the project folder
+            # try:
+            #     shutil.move(
+            #         os.path.join(self.workdir, self.project_name, "src", self.processor_name
+            #         ),
+            #         os.path.join(self.workdir, self.project_name, self.processor_name)
+            #     )
+            # except:
+            #     # print("cannot find the new processsor:" + str(self.processor_name))
+            #     self.console.print(":pensive_face: [b]Cannot find the new processsor[/b]")
 
 
+        # back to root dir 
         os.chdir(os.path.join(self.workdir, self.project_name))
 
 
+        # some checkings
+        # --------------------------------------------------------------------
         try:
             os.path.exists(os.path.join("inputs"))
         except OSError:
@@ -462,62 +497,27 @@ class CATHY(object):
         if not os.path.exists("vtk"):
             os.makedirs("vtk", exist_ok=True)
 
+
+
+        # run the processor
+        # --------------------------------------------------------------------
         if runProcess == True:
 
-            import time
             t0 = time.time() # executation time estimate 
 
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name          
-            # self.console.print(self.cathyH)
             
-            if self.nudging['NUDN'] != 0:
-             
-                
-                parallel_run = False
-                if parallel_run==True:
-                    print('paral')
-                    # https://stackoverflow.com/questions/41626089/python-spreading-subprocess-call-on-multiple-cpu-cores
-                    # Define a callable to do the work. It should take one work item.
-                    # def worker(tup):
-                    #     # Do the work.
-                    #     ...
-                    
-                    #     # Return any results.
-                    # with ThreadPool(4) as pool:
-                    #     work_results = pool.map(worker, work_items)
-                
-                else:
-    
-                    self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.parm['DAFLAG']))
-    
-                    # cathy_DA.run_DA()
-                    for ens_i in range(self.cathyH['MAXNUDN']):
-                        
-                        from rich.progress import track
-                        for ens_i in track(range(self.cathyH['MAXNUDN']), description="Processing..."):
-        
-                            self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
-                                                '/' + str(self.cathyH['MAXNUDN']))
-                            os.chdir(os.path.join(self.workdir,self.project_name,'DA/cathy_' + str(ens_i+1)))
-                            p = subprocess.run([callexe], text=True, capture_output=True)
-        
-                            if verbose == True:
-                                self.console.print(p.stdout)
-                                self.console.print(p.stderr)
-                       
+            # case of Data Assimilation DA
+            # ----------------------------------------------------------------
+            if self.DAFLAG:
+                self._run_DA(callexe,parallel,verbose)
 
-    
-                os.chdir(os.path.join(self.workdir))
-                
-                # cathy_DA.run_DA()
-                
+
+            # case of simple simulation
+            # ----------------------------------------------------------------
             else:
 
-
-                # process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
-                # if verbose:
-                #     output, error = process.communicate()
                 p = subprocess.run([callexe], text=True, capture_output=True)
     
                 if verbose == True:
@@ -526,20 +526,77 @@ class CATHY(object):
     
                 os.chdir(os.path.join(self.workdir))
     
+            t1 = time.time()
+            self.total = t1 - t0
+            
                 # try:
                 #    subprocess.call([callexe_path, '-ARG'], shell=True)
                 #    subprocess.Popen(["cathyEnv/bin/python"])
                 # except:
                 #    pass
-    
+                # process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
+                # if verbose:
+                #     output, error = process.communicate()
                 # print('timer')
-
-            t1 = time.time()
-            self.total = t1 - t0
 
         return
 
-    def time_run(self):
+
+    def _run_DA(self,callexe,parallel,verbose):
+
+        # multi run from the independant folders
+        if parallel==True:
+            pathexe_list=[]
+            for ens_i in range(self.NENS):
+                path_exe = os.path.join(self.workdir,self.project_name,'DA_Ensemble/cathy_' + str(ens_i+1))
+                pathexe_list.append(path_exe)
+        
+            with multiprocessing.Pool(processes=4) as pool:
+                result = pool.map(subprocess_run_multi,pathexe_list)
+                if verbose == True:
+                    self.console.print(result)
+                    # self.console.print(result.stderr)
+
+        # process each ensemble folder one by one
+        else:
+
+            self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
+                
+            for ens_i in track(range(self.NENS), description="Processing..."):
+
+                self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
+                                    '/' + str(self.NENS))
+                os.chdir(os.path.join(self.workdir,self.project_name,'DA_Ensemble/cathy_' + str(ens_i+1)))
+                p = subprocess.run([callexe], text=True, capture_output=True)
+
+                if verbose == True:
+                    self.console.print(p.stdout)
+                    self.console.print(p.stderr)
+               
+        os.chdir(os.path.join(self.workdir))
+                
+                
+    def create_output(self, output_dirname="output"):
+        """
+        Short summary.
+
+        Parameters ---------- output_dirname : type Description of parameter `output_dirname`.
+
+        Returns ------- type Description of returned object.
+
+        """
+
+        # create project_name/output folders
+        if not os.path.exists(os.path.join(self.project_name, output_dirname)):
+            os.mkdir(os.path.join(self.workdir, self.project_name, output_dirname))
+
+        if not os.path.exists(os.path.join(self.project_name, "vtk")):
+            os.mkdir(os.path.join(self.workdir, self.project_name, "vtk"))
+
+        # compute the processor (make clean make) using the Makefile
+        return        
+        
+    def display_time_run(self):
 
         print(self.total)
         print(self.cathyH["MAXCEL"])
@@ -548,6 +605,12 @@ class CATHY(object):
         # print(self.cathyH['TMAX'])
 
         pass
+
+
+# --------------------------------------------------------------------------- #
+# update input files
+# --------------------------------------------------------------------------- #
+        
 
     def update_cathyH(self, verbose=False, **kwargs):
         """
@@ -560,8 +623,14 @@ class CATHY(object):
 
         """
 
+        indent = ''
+        for kk, value in kwargs.items():
+            if kk == 'indent':
+                indent = value
+
+
         # if verbose == True:
-        self.console.print(":black_nib: [b]Update cathyH files[/b]")
+        self.console.print(indent + ":black_nib: [b]Update cathyH files[/b]")
 
         CATHYH_file = open(
             os.path.join(self.workdir, self.project_name, "src", "CATHY.H"), "r"
@@ -570,7 +639,6 @@ class CATHY(object):
         CATHYH_file.close()
 
 
-        print(self.parm)
         # check if hapin and parm exist
         # create them if not existing
         if hasattr(self, "hapin") is False:
@@ -579,6 +647,7 @@ class CATHY(object):
             self.update_parm()
         
         DEMRES = 1
+        
         
         if len(self.cathyH) == 0:
 
@@ -615,8 +684,7 @@ class CATHY(object):
                 "MAXIT": 30,
                 "NRMAX": self.parm["NR"],
                 "MAXPRT": self.parm["NPRT"],  # maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
-                "MAXVP": int(self.parm["NUMVP"]
-                ),  # maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
+                "MAXVP": int(self.parm["NUMVP"]),  # maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
                 "N1MAX": self.dem_parameters[
                     "n1"
                 ],  # maximum N1 (it is good to have N1 ≤ 20), N1 = maximum number of element connections to a node
@@ -636,13 +704,13 @@ class CATHY(object):
         # sys.exit()
 
         # create dictionnary from kwargs
-        for keykwargs, value in kwargs.items():
+        for kk, value in kwargs.items():
             # if verbose == True:
                 # self.console.print("modified:" + {keykwargs} + " | value:" + {value})
                 # self.console.print(f"modified: {keykwargs} | value: {value}")
                 # print(f"modified: {keykwargs} | value: {value}")
-            self.cathyH[keykwargs] = value
-            self.console.print(f"modified: {keykwargs} | value: {value}")
+            self.cathyH[kk] = value
+            self.console.print(f"modified: {kk} | value: {value}")
 
         # ---------------------------------------------------------------------
         # write new cathy H
@@ -728,25 +796,7 @@ class CATHY(object):
         CATHYH_file.close()
         pass
 
-    def create_output(self, output_dirname="output"):
-        """
-        Short summary.
 
-        Parameters ---------- output_dirname : type Description of parameter `output_dirname`.
-
-        Returns ------- type Description of returned object.
-
-        """
-
-        # create project_name/output folders
-        if not os.path.exists(os.path.join(self.project_name, output_dirname)):
-            os.mkdir(os.path.join(self.workdir, self.project_name, output_dirname))
-
-        if not os.path.exists(os.path.join(self.project_name, "vtk")):
-            os.mkdir(os.path.join(self.workdir, self.project_name, "vtk"))
-
-        # compute the processor (make clean make) using the Makefile
-        return
 
     def update_prepo_inputs(self, DEM=None, verbose=False, show=False, **kwargs):
         """
@@ -759,7 +809,6 @@ class CATHY(object):
 
         """
 
-        #%% hap.in
 
         # print("update hap.in")
         self.console.print(":black_nib: [b]Update hap.in file[/b]")
@@ -941,8 +990,8 @@ class CATHY(object):
         # self.update_transp(**kwargs)
 
         if show == True:
-            print("pltCT.dem_plot(self.workdir, self.project_name)")
-            # pltCT.dem_plot(self.workdir, self.project_name)
+            # print("pltCT.dem_plot(self.workdir, self.project_name)")
+            plt_CT.dem_plot(self.workdir, self.project_name)
 
         pass
 
@@ -1214,32 +1263,47 @@ class CATHY(object):
         # = 2 EnKF with parameters update
         # = 3 Particle filtering (SIR algorithm)
         # = 4 Particle filtering (SIR algorithm) with parameters update
-
+        
+        # if hasattr(self.parm, 'DAFLAG') is False:
+        #     # temporary create DAFLAG here
+        #     self.parm = {'DAFLAG': 0}  # dict of parm input parameters 
+            
+        
         # create dictionnary from kwargs
 
-        for keykwargs, value in kwargs.items():
+        for kk, value in kwargs.items():
             if verbose == True:
-                print(f"keykwargs: {keykwargs} | value: {value}")
-            if keykwargs == "TIMPRTi":
+                print(f"key: {kk} | value: {value}")
+            if kk == "TIMPRTi":
                 key = "(TIMPRT(I),I=1,NPRT)"
                 self.parm[key] = value
                 if len(value) != self.parm["NPRT"]:
                     self.parm["NPRT"] = len(value)
-
+            elif kk == "NODVP":
+                key = "(NODVP(I),I=1,NUMVP)"
+                self.parm[key] = value
+                if len(value) != self.parm["NUMVP"]:
+                    self.parm["NUMVP"] = len(value)
             else:
-                self.parm[keykwargs] = value
+                self.parm[kk] = value
 
         # write file
         header_fmt = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 2]
         counth = 0
 
-        for key, value in self.parm.items():
+        for kk, value in self.parm.items():
             if isinstance(value, list):
+                print(kk,value)
                 strlst = "\n ".join(str(e) for e in value)
-                self.parm[key] = strlst
-            if key == "NUMVP":
-                self.parm[key] = str(value) + " \n"
+                self.parm[kk] = strlst
+                print(kk,strlst)
+            if kk == "NUMVP":
+                self.parm[kk] = str(value)
 
+
+        # write parm file
+        # --------------------------------------------------------------------
+        
         with open(
             os.path.join(self.workdir, self.project_name, self.input_dirname, "parm"),
             "w+",
@@ -1305,16 +1369,23 @@ class CATHY(object):
 
         parmfile.close()
 
-        self.update_cathyH(MAXPRT=self.parm["NPRT"])
+        self.update_cathyH(MAXPRT=self.parm["NPRT"],
+                           MAXVP=self.parm["NUMVP"],                           
+                           indent='\t -->')
 
         pass
 
-    def update_ic(self, INDP=2, IPOND=0, WTPOSITION=[]):
-        """
-        Short summary.
+    def update_ic(self, INDP=2, IPOND=0, WTPOSITION=[], verbose=False):
+        '''
+        The initial conditions file contains the pressure heads distribution for the study area (INDP)
+        For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface, 
+        INDP=3 and WTHEIGHT=4.5 are selected
 
-        Parameters ---------- INDP : int Flag for pressure head initial conditions (all nodes)
 
+        Parameters
+        ----------
+        INDP : int, optional
+            Flag for pressure head initial conditions (all nodes). The default is 2.
             - =0 for input of uniform initial conditions (one value read in)
             - =1 for input of non-uniform IC's (one value read in for each node)
             - =2 for calculation of fully saturated vertical hydrostatic equilibrium IC's
@@ -1327,45 +1398,63 @@ class CATHY(object):
             - =4 for calculation of partially saturated vertical hydrostatic equilibrium IC's
               (calculated in subroutine ICVDWT) with the water table depth (relative to the surface
               of the 3‐d grid) given by parameter WTHEIGHT
-        WTPOSITION : type For the case INDP=3, specifies the initial water table height relative to
-        the base of the 3‐d grid IPOND : type Flag for ponding head initial conditions (surface
-        nodes)
-
+              
+        IPOND : TYPE, optional
+            Flag for ponding head initial conditions (surface nodes). The default is 0.
             - =0 no input of ponding head initial conditions; otherwise (IPOND = 1 or 2) ponding
               head initial conditions are read into PONDNOD, and, where PONDNOD > 0, these values
               are used to update the surface node values in PTIMEP read in according to the
               previous INDP flag
             - =1 uniform ponding head initial conditions (one value read in)
             - =2 non-uniform ponding head initial conditions (one value read in for each node)
+            
+        WTPOSITION : TYPE, optional
+            For the case INDP=3, specifies the initial water table height relative to
+            the base of the 3‐d grid. The default is [].
 
-        Returns ------- type Description of returned object.
+        Returns
+        -------
+        new ic file written/overwritten.
 
-        """
+        '''
 
-        # check value of WTPOSITION
+
+        #  check value of WTPOSITION
+        # --------------------------------------------------------------------
+        # For the case INDP=3, specifies the initial water table
+        # height relative to the base of the 3‐d grid
         # if WTPOSITION>0:
-        #     print('WTPOSITION must be negative - water table height relative to the base of the 3‐d grid')
+        #     print('WTPOSITION must be negative - water table height 
+                # relative to the base of the 3‐d grid')
         #     sys.exit()
+        
+        
 
         # set default parameters
+        # --------------------------------------------------------------------
         self.ic = {
             "INDP": INDP,
-            "WTPOSITION": WTPOSITION,  # For the case INDP=3, specifies the initial water table
-            # height relative to the base of the 3‐d grid
             "IPOND": IPOND,
-        }
+            # For the case INDP=3, specifies the initial water table
+            # height relative to the base of the 3‐d grid
+            "WTPOSITION": WTPOSITION  
+                }   
 
+
+        # write ic file
+        # --------------------------------------------------------------------
         with open(
             os.path.join(self.workdir, self.project_name, self.input_dirname, "ic"),
-            "w+",
-        ) as icfile:
-            icfile.write(
-                str(INDP) + "\t" + str(IPOND) + "\t" + "INDP" + "\t" + "IPOND" + "\n"
-            )
+            "w+") as icfile:
+            icfile.write(str(INDP) + "\t" + str(IPOND) + "\t" + "INDP" + "\t" + "IPOND" + "\n")
             icfile.write(str(WTPOSITION) + "\t" + "WTPOSITION" + "\n")
+        
         icfile.close()
 
         pass
+
+
+
 
     def update_atmbc(
         self,
@@ -1389,6 +1478,10 @@ class CATHY(object):
 
         """
 
+        # read existing input atmbc file
+        # --------------------------------------------------------------------
+        
+        
         # set default parameters
         self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "TIME": TIME, "VALUE": VALUE}
         vdiff = VALUE[0] - VALUE[1]
@@ -1458,6 +1551,9 @@ class CATHY(object):
 
         """
 
+        # read existing input nansfdirbc file
+        # --------------------------------------------------------------------
+        
         try:
             self.read_grid3d()
         except OSError:
@@ -1553,7 +1649,26 @@ class CATHY(object):
         pass
 
     def update_nansfneubc(self, TIME=[], NQ=0, ZERO=0):
+        '''
+        
 
+        Parameters
+        ----------
+        TIME : TYPE, optional
+            DESCRIPTION. The default is [].
+        NQ : TYPE, optional
+            DESCRIPTION. The default is 0.
+        ZERO : TYPE, optional
+            DESCRIPTION. The default is 0.
+
+        Returns
+        -------
+        None.
+
+        '''
+        # read existing input nansfneubc file
+        # --------------------------------------------------------------------
+        
         with open(
             os.path.join(
                 self.workdir, self.project_name, self.input_dirname, "nansfneubc"
@@ -1571,6 +1686,10 @@ class CATHY(object):
 
         nansfneubcfile.close()
 
+        # set default parameters
+        # --------------------------------------------------------------------
+        
+        
         # set default parameters
         # self.nansfneubc =	{
         #               "NDIR": HSPATM,
@@ -1602,7 +1721,7 @@ class CATHY(object):
 
         pass
 
-    def update_soil(self, IVGHU, FP=[], SPP=[], verbose=False, **kwargs):
+    def update_soil(self, IVGHU=[], FP=[], SPP=[], verbose=False, **kwargs):
         """
         Soil parameters (soil - IIN4). The porous media properties are defined in the soil file.
         
@@ -1644,17 +1763,18 @@ class CATHY(object):
         Returns ------- type write the soil file.
 
         """
-
-        # set default parameters
+        # set default parameters if "IVGHU": 0 and if SPP is not existing yet
         # --------------------------------------------------------------------
-        self.set_SOIL_defaults()
+        if len(SPP) == 0:  
+            SPP = self.set_SOIL_defaults()
+        # print(SPP)
         
 
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
         for keykwargs, value in kwargs.items():
             if verbose == True:
-                print(f"key kwargs: {keykwargs} | value: {value}")
+                print(f"new: {keykwargs} | value: {value}")
             self.soil[keykwargs] = value
             self.parm[keykwargs] = value
 
@@ -1675,14 +1795,14 @@ class CATHY(object):
 
         # Soil Physical Properties strat by strat
         # --------------------------------------------------------------------
-        SoilPhysProp = self._prepare_SOIL_Physical_Properties_tb()
+        SoilPhysProp = self._prepare_SOIL_Physical_Properties_tb(SPP)
    
 
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
         # Read only if IVGHU=0
         FeddesParam = self._prepare_SOIL_vegetation_tb(FP)
-        
+        # print(FeddesParam)
         
         # write soil file
         # --------------------------------------------------------------------
@@ -1690,7 +1810,7 @@ class CATHY(object):
 
         pass
 
-    def set_SOIL_defaults(self,SPP):
+    def set_SOIL_defaults(self):
 
         self.soil = {
             "PMIN": -5.0,
@@ -1721,24 +1841,25 @@ class CATHY(object):
         
         # set Soil Physical Properties defaults parameters
         # --------------------------------------------------------------------
-        if len(SPP) == 0:  
-            PERMX = PERMY = PERMZ = 1.88e-04
-            ELSTOR = 1.00e-05
-            POROS = 0.55
-            VGNCELL = 1.46
-            VGRMCCELL = 0.15
-            VGPSATCELL = 0.03125
+                       
+        PERMX = PERMY = PERMZ = 1.88e-04
+        ELSTOR = 1.00e-05
+        POROS = 0.55
+        VGNCELL = 1.46
+        VGRMCCELL = 0.15
+        VGPSATCELL = 0.03125
 
-            SPP = {
-                "PERMX": PERMX,
-                "PERMY": PERMY,
-                "PERMZ": PERMZ,
-                "ELSTOR": ELSTOR,
-                "POROS": POROS,
-                "VGNCELL": VGNCELL,
-                "VGRMCCELL": VGRMCCELL,
-                "VGPSATCELL": VGPSATCELL,
-            }
+        SPP = {
+            "PERMX": PERMX,
+            "PERMY": PERMY,
+            "PERMZ": PERMZ,
+            "ELSTOR": ELSTOR,
+            "POROS": POROS,
+            "VGNCELL": VGNCELL,
+            "VGRMCCELL": VGRMCCELL,
+            "VGPSATCELL": VGPSATCELL,
+        }
+        
 
 
         # set Soil Feddes Properties defaults parameters
@@ -1748,6 +1869,9 @@ class CATHY(object):
         #           'PCREF':self.soil['PCREF'],'PCWLT':self.soil['PCWLT'],
         #           'ZROOT':self.soil['ZROOT'],'PZ':self.soil['PZ'],
         #           'OMGC':self.soil['OMGC']}
+        
+        
+        return SPP
 
 
     def _prepare_SOIL_Physical_Properties_tb(self,SPP):
@@ -1796,6 +1920,7 @@ class CATHY(object):
             izoneSoil = np.hstack(izoneSoil)
             SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
             
+        return SoilPhysProp
                 
     def _prepare_SOIL_vegetation_tb(self,FP):
         '''
@@ -1803,13 +1928,23 @@ class CATHY(object):
 
         Parameters
         ----------
-        FP : TYPE
-            DESCRIPTION.
-
+        FP : dict 
+            dict containing Feddes parameters.
+            - 'PCANA': anaerobiosis point 
+            - 'PCREF': field capacity 
+            - 'PCWLT': wilting point 
+            - 'ZROOT': float root depth 
+            - 'PZ': ?? 
+            - 'OMGC': float ?? 
+            For details, see http://dx.doi.org/10.1002/2015WR017139
         Returns
         -------
-        None.
+        FeddesParam: numpy array
+            table or array describing Feddes parameters for a given DEM
 
+
+        
+        
         '''
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
@@ -1841,9 +1976,11 @@ class CATHY(object):
                 self.soil["PZ"],
                 self.soil["OMGC"],
             ]
+        
+        return FeddesParam
             
 
-    def _write_SOIL_file(self,SoilPhysProp,FeddesParam):
+    def _write_SOIL_file(self,SoilPhysProp,FeddesParam,**kwargs):
         '''
         _write_SOIL_file
 
@@ -1861,12 +1998,17 @@ class CATHY(object):
         '''
 
         counth = 0
+        
+        # number of side header for each row
         header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
-
-        with open(
-            os.path.join(self.workdir, self.project_name, self.input_dirname, "soil"),
-            "w+",
-        ) as soilfile:
+        
+        # open soil file
+        if self.DAFLAG:
+            soil_filepath =  os.path.join(os.getcwd(), self.input_dirname, "soil")
+        else:
+            soil_filepath = os.path.join(self.workdir, self.project_name, self.input_dirname, "soil")
+            
+        with open(os.path.join(soil_filepath),"w+") as soilfile:
             for i, h in enumerate(header_fmt_soil):
                 left = right = []
                 left = str(list(self.soil.values())[counth : counth + h])
@@ -1891,18 +2033,19 @@ class CATHY(object):
             )
 
         soilfile.close()
+        print('new SOIL file written')
         
         
                 
-    def update_root_map(self, root_depth=1, show=False):
+    def update_root_map(self, indice_veg=1, show=False, **kwargs):
         """
         Contains the raster map describing which type of vegetation every cell belongs to.
 
         Returns ------- type Description of returned object.
 
         """
-        if isinstance(root_depth, int):
-            root_depth = float(root_depth)
+        if isinstance(indice_veg, int):
+            indice_veg = float(indice_veg)
 
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
@@ -1922,78 +2065,33 @@ class CATHY(object):
             rootmapfile.write("rows:     " + str(self.hapin["M"]) + "\n")
             rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
 
-            if isinstance(root_depth, float):
+            if isinstance(indice_veg, float):
                 # if  root_depth>self.dem_parameters['base']:
                 #     print('max root mesh > max mesh depth')
                 #     sys.exit()
-                root_depth = (
+                indice_veg = (
                     np.c_[np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]
-                    * root_depth
+                    * indice_veg
                 )
-                np.savetxt(rootmapfile, root_depth, fmt="%1.2e")
+                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
             else:
                 # if np.shape(zone_xyz)== :
                 # if  max(max(root_depth))>self.dem_parameters['base']:
                 # print('max root mesh > max mesh depth')
                 # sys.exit()
-                np.savetxt(rootmapfile, root_depth, fmt="%1.2e")
+                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
 
         rootmapfile.close()
 
-        self.update_cathyH(MAXVEG=len(np.unique(root_depth)))
+        self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
 
         if show is not None:
-            pltCT.rootMap_plot(root_depth)
+            plt_CT.indice_veg_plot(indice_veg)
 
-        return root_depth
+        return indice_veg
 
-    def plant():
-        # plant parameters only exist for CATHYv Manoli
 
-        pass
 
-    #%% Meshtool functions
-
-    def read_grid3d(self):
-
-        print("reading grid3d")
-        grid3d_file = open(os.path.join(self.project_name, "output/grid3d"), "r")
-        # Lines = grid3d_file.readlines()
-        self.nnod, self.nnod3, self.nel = np.loadtxt(grid3d_file, max_rows=1)
-        grid3d_file.close()
-
-        grid3d_file = open(os.path.join(self.project_name, "output/grid3d"), "r")
-        mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(self.nel) - 1)
-        grid3d_file.close()
-
-        # mesh_tetra = np.loadtxt(grid3d_file,skiprows=1+int(self.nel)-1, max_rows=1+self.nel+self.nnod3-1)
-        grid3d_file = open(os.path.join(self.project_name, "output/grid3d"), "r")
-        mesh3d_nodes = np.loadtxt(
-            grid3d_file,
-            skiprows=1 + int(self.nel),
-            max_rows=1 + int(self.nel) + int(self.nnod3) - 1,
-        )
-        grid3d_file.close()
-
-        xyz_file = open(os.path.join(self.project_name, "output/xyz"), "r")
-        nodes_idxyz = np.loadtxt(xyz_file, skiprows=1)
-        xyz_file.close()
-
-        # self.xmesh = mesh_tetra[:,0]
-        # self.ymesh = mesh_tetra[:,1]
-        # self.zmesh = mesh_tetra[:,2]
-        # return mesh3d_nodes
-
-        self.grid = {
-            "nnod": self.nnod,  # number of surface nodes
-            "nnod3": self.nnod3,  # number of volume nodes
-            "nel": self.nel,
-            "mesh3d_nodes": mesh3d_nodes,
-            "mesh_tetra": mesh_tetra,
-            "nodes_idxyz": nodes_idxyz,
-        }
-
-        return self.grid
 
     def create_3dmesh_CATHY(
         self,
@@ -2114,8 +2212,8 @@ class CATHY(object):
             )
             gridfile.close()
 
-        for k, v in mesh_dict.items():  # TypeError: 'list' object is not callable
-            print(k)
+        # for k, v in mesh_dict.items():  # TypeError: 'list' object is not callable
+        #     print(k)
         # print(mesh_dict['elm_id'])
         # gridfile.write("durin's day\n")
         # copy mesh attribute to 'grid' files
@@ -2128,7 +2226,7 @@ class CATHY(object):
                       ENKFT=[], var_per=[]):
         """
         
-        1. update cathyH file given NENS, ENKFT
+        1. update cathyH file given NENS, ENKFT + flag self.parm['DAFLAG']==True
         
         2. create the processor cathy_origin.exe
         
@@ -2156,7 +2254,8 @@ class CATHY(object):
         
         
         # to do create a readme file inside DA folder to explain how the dir tree works
-
+        self.DAFLAG=True
+        
         # update nudging file
         # self.update_nudging(NUDN=NUDT)
         # self.nudging = {'NUDN': NUDN}   # THIS IS TEMPORARY
@@ -2177,6 +2276,7 @@ class CATHY(object):
         # ---------------------------------------------------------------------
         self._create_subfolders_ensemble(NENS)
 
+
         # create initial dataframe DA_results_df for results
         # ---------------------------------------------------------------------
         self._init_DA_df(NENS,ENKFT,var_per)     
@@ -2184,7 +2284,7 @@ class CATHY(object):
 
         # update input files ensemble
         # ---------------------------------------------------------------------
-        # self._update_input_ensemble(NENS,var_per)     
+        self._update_input_ensemble(NENS,var_per)     
         
         
         
@@ -2279,16 +2379,101 @@ class CATHY(object):
     
 
     def _update_input_ensemble(self,NENS,var_per):
+        '''
+        Write new variable perturbated value into corresponding input file
+
+        Parameters
+        ----------
+        NENS : int
+            size of the ensemble.
+        var_per : dict
+            dict of all perturbated variables holding values and metadata.
+
+        Returns
+        -------
+        New file written/overwritten into the input dir.
+
+        '''
         
-        # create initial dataframe DA_results_df for results
+        # update input files ensemble
         # ---------------------------------------------------------------------  
         
-        print('not yet implemented')
+        # !!! still in construction !!!
+        
+        # loop over dict of perturbated variable
+        for key in var_per.items(): # loop over perturbated variables dict
+        
+            # loop over ensemble files
+            for ens_nb in range(NENS):
+                
+                # change directory according to ensmble file nb
+                os.chdir(os.path.join(self.workdir, self.project_name,
+                                      './DA_Ensemble/cathy_'+ str(ens_nb+1)))
+
+                
+                # check variable to update
+                if key[0] in 'hietograph':
+                    print('hietograph perturbated not yet implemented')
+                    
+                    self.update_atmbc(verbose=True)
+
+                    
+                if key[0] in 'ic':
+                    # check if key contain self.ic args # NOT YET IMPLEMENTED
+                    # self.ic['INDP'] = 0
+                    # self.ic['INDP'] = 0
+                    self.update_ic(INDP=0,IPOND=0,
+                        WTPOSITION=var_per[key[0]]['perturbated'][ens_nb],
+                                               verbose=True)
+
+
+                if key[0] in 'kss':
+                    print('kss perturbated not yet implemented')
+
+                    self.update_soil(verbose=True)
+
+                
+                elif key[0] in ['PCANA','PCREF','PCWLT','ZROOT','PZ','OMGC']:
+                    
+                    FeddesParam = {'PCANA':self.soil["PCANA"],
+                                   'PCREF':self.soil["PCREF"],
+                                   'PCWLT':self.soil["PCWLT"],
+                                   'ZROOT':[var_per[key[0]]['perturbated'][ens_nb]],
+                                   'PZ':self.soil["PZ"],
+                                   'OMGC': self.soil["OMGC"]}        
+                    self.update_soil(FP=FeddesParam,verbose=True)
 
         
         pass
     
+    
+    def read_outputs(self,filename):
+        '''
+        
 
+        Parameters
+        ----------
+        filename : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        if filename == 'vp':
+            df = out_CT.read_vp(os.path.join(self.workdir,self.project_name, 'output', filename))
+            return df
+  
+                
+        else:
+            print('no file specified')
+        
+
+        pass
+
+        
     def explore_ensemble_df():
         
         # create multiindex dataframe + some plots to explore the perturabated variables
@@ -2312,46 +2497,13 @@ class CATHY(object):
         pass
     
 
-        
-        
-        
+
+    # -------------------------------------------------------------------#
+    #%% Explore output files
     
-    def update_enkf():
-        '''
-        enkf (IIN40)
-        input file contain data and is involved in the modeling when data assimilation (DA) schemes are used; 
-        otherwise they are empty files. 
-        The two DA schemes implemented in CATHY are dynamical relaxation (Newtonian nudging) 
-        and the ensemble Kalman filter (EnKF).
-
-        Returns
-        -------
-        None.
-
-        '''
-        
-        
-        pass
     
-    def update_nudging():
-        """
-        nudging (IIN50)
-        input file contain data and is involved in the modeling when data assimilation (DA) schemes are used; 
-        otherwise they are empty files. 
-        The two DA schemes implemented in CATHY are dynamical relaxation (Newtonian nudging) 
-        and the ensemble Kalman filter (EnKF).
-        
-        Returns
-        -------
-        None.
-
-        """
-        
-        
-        pass
-        
-
-
+    
+    
 
     # -------------------------------------------------------------------#
     #%% utils
