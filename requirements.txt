@@ -13,3 +13,4 @@ imageio
 style-doc
 black
 rich
+pandas
