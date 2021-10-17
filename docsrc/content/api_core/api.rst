@@ -14,7 +14,38 @@ API reference: The ``pyCATHY`` package
 ``pyCATHY.plotters``: plotters for results visualisation
 ========================================================
 
-.. automodule:: pyCATHY.plot_tools
+.. automodule:: pyCATHY.plotters.cathy_plots
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+``pyCATHY.importers``: importers
+================================
+
+.. automodule:: pyCATHY.importers.cathy_outputs
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+
+.. automodule:: pyCATHY.importers.cathy_inputs
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+``pyCATHY.DA``: Data Assimilation
+=================================
+
+.. automodule:: pyCATHY.DA.cathy_DA
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   
+``pyCATHY.ERT``: ERT
+====================
+
+.. automodule:: pyCATHY.ERT.cathy_ERT
    :members:
    :show-inheritance:
    :inherited-members:
