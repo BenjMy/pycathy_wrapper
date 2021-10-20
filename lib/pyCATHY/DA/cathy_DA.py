@@ -1,23 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 29 12:12:41 2021
-
-@author: ben
+"""Class managing Data Assimilation process
 """
 
 import os
 import matplotlib.pyplot as plt
 from matplotlib import pyplot
-
 import numpy as np
 import shutil
 
 from pyCATHY.cathy_tools import CATHY
 
 
-# -------------------------------------------------------------------#
-#%% DATA ASSIMILATION
 
 class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     def __init__(self, *args, **kwargs):
@@ -223,3 +215,23 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 )
         
     
+    def _prepare_measures(self,measure2prep):
+        '''
+        prepare measure before DA
+
+        Parameters
+        ----------
+        measure2prep : dict
+            dict containing measure data + metadata.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        '''
+               
+        # define measurement error covariance matrix, R
+        #---------------------------------------------------------------------
+        
+        return self.vars_per

@@ -35,7 +35,7 @@ def read_cumflowvol(filename,**kwargs):
     
     return CUMFLOWVOL
     
-def read_vp():
+def read_vp(filename):
     '''
     Vertical profile output in fixed nodes
 
@@ -44,7 +44,8 @@ def read_vp():
     None.
 
     '''
-    filename = 'vp'
+    
+    
     vp_file = open(filename, "r")
     lines = vp_file.readlines()
     
@@ -54,10 +55,11 @@ def read_vp():
     idx_nstep = []
     time_nstep = []
     
+    # loop over lines of file and identified NSTEP and SURFACE NODE line nb
+    # ------------------------------------------------------------------------
     for i, ll in enumerate(lines):
         if 'NSTEP' in ll:
             nstep.append(i)
-            # idx_nstep.append([int(s) for s in ll.split() if s.isdigit()])
             splt= ll.split(" ")
             wes = [string for string in splt if string != ""]
             idx_nstep.append(wes[0])
@@ -66,32 +68,112 @@ def read_vp():
         if 'SURFACE NODE =' in ll:
             surf_node.append([i,wes[1]])
             idx_s_node.append([int(s) for s in ll.split() if s.isdigit()])
-    idx_s_node = np.unique(idx_s_node)
+  
+    
+    # check if surf node is not empty
+    # ------------------------------------------------------------------------
+    # TO IMPLEMENT
+    # try:
+    #      surf_node
+    # except ValueError:
+    #      print("Oops!  That was no valid number.  Try again...")
+         
+                 
         
-    
     nstrat = abs(surf_node[0][0] - surf_node[1][0])- 3
+
     
+    # build a numpy array
+    # ------------------------------------------------------------------------
     dvp = []
     for i, sn_line in enumerate(surf_node):   
         tt = np.ones([nstrat])*float(sn_line[1])
-        nn = np.ones([nstrat])*sn_line[0]
+        nn = np.ones([nstrat])*idx_s_node[i]
         str_nb = np.arange(1,nstrat+1)
         dvp.append(np.vstack([tt.T, nn.T, str_nb,
                     np.loadtxt(filename,skiprows=sn_line[0]+2,max_rows=nstrat).T]).T)
         
     dvp_stack = np.vstack(np.reshape(dvp,[np.shape(dvp)[0]*np.shape(dvp)[1],9]))
     
-    cols_vp = ['time', 'node', 'str_nb',  'z', 'pressure_head', 'SW', 'CKRW', 'zeros', 'QTRANIE']
     
-    # Relative hydraulic conductivity output at all nodes
-    # Root‐zone water uptake at current time level always positive, changes sign in BCPIC
-    
+    # Vp collumns information
+    # -------------------------------------------------------------------------
+    cols_vp = ['time', 'node', 'str_nb',  'z', 'PH', 'SW', 'CKRW', 'zeros', 'QTRANIE']
+    # PH: pressure head
+    # SW: Soil Water
+    # CKRW: Relative hydraulic conductivity output at all nodes
+    # QTRANIE Root‐zone water uptake at current time level always positive, changes sign in BCPIC
+    # dict_vp = {'PH': 'pressure head'}
+
+
+    # transform a numpy array into panda df
+    # ------------------------------------------------------------------------
     df_vp = pd.DataFrame(dvp_stack,  columns=cols_vp)
-        
+    df_vp['time'] = pd.to_timedelta(df_vp['time'],unit='s') 
+
     return   df_vp  
+
+
+def read_hgraph(filename):
+    '''
+    IOUT41 hgraph Surface runoff hydrograph: plot the computed discharge at the outlet (streamflow)
+
+    Returns
+    -------
+    hgraph data numpy array.
+
+    '''
+    
+    
+    hgraph_file = open(filename, "r")
+    lines = hgraph_file.readlines()
+    hgraph_file.close()
+    
+    
+    nstep = len(lines)-2
+    
+    hgraph_file = open(filename, "r")
+    hgraph = np.loadtxt(hgraph_file, skiprows=2, usecols=range(5))
+    hgraph_file.close()
+
+    return hgraph  
+
+
+
+def read_dtcoupling(filename):
+    '''
+    CPU, time stepping, iteration and other diagnostics of the surface and subsurface modules at each time step
+    
+    Returns
+    -------
+    None.
+
+    '''
+    
+    dtcoupling_file = open(filename, "r")
+    lines = dtcoupling_file.readlines()
+    dtcoupling_file.close()
+    
+    
+    nstep = len(lines)-31
+    
+    dtcoupling_file = open(filename, "r")
+    dtcoupling = np.loadtxt(dtcoupling_file, skiprows=2,max_rows=2+nstep)
+    dtcoupling_file.close()
+    
+    df_dtcoupling = pd.DataFrame(dtcoupling)
+    
+    
+    df_dtcoupling.columns = ['Step','Deltat','Time','Back',' NL-l','NL-a','Sdt-l','Sdt-a',
+                  'Atmpot-vf','Atmpot-v',' Atmpot-r','Atmpot-d','Atmact-vf','Atmact-v','Atmact-r','Atmact-d',
+                  'Horton','Dunne','Ponded','Satur','CPU-sub','CPU-surf']
+    
+    return df_dtcoupling   
+
 
 def read_psi():
     '''
+    Pressure head output at all nodes
 
     Returns
     -------
@@ -105,6 +187,7 @@ def read_psi():
 
 def read_sw():
     '''
+    Water saturation output at all nodes (SW) for input to TRAN3D and DUAL3D groundwater contaminant transport
 
     Returns
     -------

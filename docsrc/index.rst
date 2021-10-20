@@ -31,15 +31,6 @@ If you use the pyCATHY code for you work, please cite this paper as:
    content/started/getting-started
 
 
-Gallery of examples
-===================
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Gallery of examples
-
-   auto_examples/index
-   
 API documentation
 =================
 
@@ -49,6 +40,18 @@ API documentation
 
    content/api_core/api
    
+   
+
+.. Gallery of examples
+.. ===================
+
+.. .. toctree::
+..   :maxdepth: 2
+..   :caption: Gallery of examples
+
+..   auto_examples/index
+   
+
 
 Indices and tables
 ==================

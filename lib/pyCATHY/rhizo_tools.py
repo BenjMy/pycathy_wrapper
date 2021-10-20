@@ -159,7 +159,7 @@ def atmbc_PRD(
             if key == "x_units":
                 x_units = value
 
-        pltCT.atmbc_inputs_plot(
+        pltCT.show_atmbc(
             t_atmbc, [v_atmbc, np.zeros(len(v_atmbc))], x_units=x_units
         )
 

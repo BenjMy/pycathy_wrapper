@@ -8,4 +8,4 @@ pyCATHY is a Python wrapper for CATHY allowing mesh creation, forward and invers
 The simpliest processing can be achieved with the python API::
 
 
-More examples are available in the Example gallery section.
+.. More examples are available in the Example gallery section.

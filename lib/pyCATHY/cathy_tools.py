@@ -30,8 +30,9 @@ from rich.progress import track
 # from pltCT import *
 
 from pyCATHY.plotters import cathy_plots as plt_CT
-# from pyCATHY import cathy_DA as cathyDA
+from pyCATHY.DA import cathy_DA as DA_CT
 from pyCATHY.importers import cathy_outputs as out_CT
+from pyCATHY.importers import cathy_inputs as in_CT
 
 
 import multiprocessing
@@ -79,12 +80,14 @@ class CATHY(object):
         **kwargs):
         """
         Create CATHY object.
+
+            
+        ..note:
+            All variables in CAPITAL LETTERS use the semantic from the CATHY legacy fortran codes, 
+            while the others are created exclusively for the wrapper.
         
-        ::Note:: All variables in CAPITAL LETTERS use the semantic from the CATHY legacy fortran codes, 
-        while the others are created exclusively for the wrapper.
-        
-        ::Note:: All file variable are self dictionnary objects
-        example: soil file is contained in self.soil
+        ..note:
+            All file variable are self dictionnary objects; example: soil file is contained in self.soil
         """
 
         self.console = make_console(verbose)
@@ -438,45 +441,6 @@ class CATHY(object):
             self.recompileSrc()            
             # self.console.print(":hammer_and_wrench: [b]Recompile src files[/b]")
 
-            # # clean all files previously compiled
-            # for file in glob.glob("*.o"):
-            #     os.remove(file)
-
-            # # list all the fortran files to compile and compile
-            # for file in glob.glob("*.f"):
-            #     bashCommand = "gfortran -c " + str(file)
-            #     # gfortran -c *.f
-            #     # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
-            
-            #     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-            #     output, error = process.communicate()
-
-            # # list all the fortran compiled files to compile and run
-            # files = ""
-            # for file in glob.glob("*.o"):
-            #     files += " " + str(file)
-
-            # bashCommand = (
-            #     "gfortran" + files + " -llapack -lblas -o " + self.processor_name
-            # )
-            # self.console.print(":fried_egg: [b]gfortran compilation[/b]")
-
-            # process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-            # output, error = process.communicate()
-
-            # # os.chdir(os.path.join(self.workdir))
-            # # try to move created executable to the project folder
-            # try:
-            #     shutil.move(
-            #         os.path.join(self.workdir, self.project_name, "src", self.processor_name
-            #         ),
-            #         os.path.join(self.workdir, self.project_name, self.processor_name)
-            #     )
-            # except:
-            #     # print("cannot find the new processsor:" + str(self.processor_name))
-            #     self.console.print(":pensive_face: [b]Cannot find the new processsor[/b]")
-
-
         # back to root dir 
         os.chdir(os.path.join(self.workdir, self.project_name))
 
@@ -511,6 +475,7 @@ class CATHY(object):
             # case of Data Assimilation DA
             # ----------------------------------------------------------------
             if self.DAFLAG:
+                
                 self._run_DA(callexe,parallel,verbose)
 
 
@@ -543,38 +508,94 @@ class CATHY(object):
 
 
     def _run_DA(self,callexe,parallel,verbose):
-
-        # multi run from the independant folders
-        if parallel==True:
-            pathexe_list=[]
-            for ens_i in range(self.NENS):
-                path_exe = os.path.join(self.workdir,self.project_name,'DA_Ensemble/cathy_' + str(ens_i+1))
-                pathexe_list.append(path_exe)
+        '''
+        Run Data Assimilation process
         
-            with multiprocessing.Pool(processes=4) as pool:
-                result = pool.map(subprocess_run_multi,pathexe_list)
-                if verbose == True:
-                    self.console.print(result)
-                    # self.console.print(result.stderr)
+        
+        Loop over the assimilation times, run the processor for each ensemble,
+        update the input file with ENKF
 
-        # process each ensemble folder one by one
-        else:
+        Parameters
+        ----------
+        callexe : TYPE
+            DESCRIPTION.
+        parallel : TYPE
+            DESCRIPTION.
+        verbose : TYPE
+            DESCRIPTION.
 
-            self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
-                
-            for ens_i in track(range(self.NENS), description="Processing..."):
+        Returns
+        -------
+        None.
 
-                self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
-                                    '/' + str(self.NENS))
-                os.chdir(os.path.join(self.workdir,self.project_name,'DA_Ensemble/cathy_' + str(ens_i+1)))
-                p = subprocess.run([callexe], text=True, capture_output=True)
+        '''
 
-                if verbose == True:
-                    self.console.print(p.stdout)
-                    self.console.print(p.stderr)
-               
-        os.chdir(os.path.join(self.workdir))
-                
+
+        # check that prepare DA has been properly done
+        # to write
+        
+        
+        
+        self.count_DA_cycle=0 # counter of the Assimilation Cycle
+        # Loop over assimilation cycle
+        # -------------------------------------------------------------------
+        for DA_cnb in self.CATHY['ENKFT']:
+            self.console.print('count DA cycle nb: ' + self.count_DA_cycle)
+
+            # multi run from the independant folders composing the ensemble
+            # ----------------------------------------------------------------
+            if parallel==True:
+                pathexe_list=[]
+                for ens_i in range(self.NENS):
+                    path_exe = os.path.join(self.workdir,
+                                            self.project_name,
+                                            'DA_Ensemble/cathy_' + str(ens_i+1))
+                    pathexe_list.append(path_exe)
+            
+                with multiprocessing.Pool(processes=4) as pool:
+                    result = pool.map(subprocess_run_multi,pathexe_list)
+                    if verbose == True:
+                        self.console.print(result)
+                        # self.console.print(result.stderr)
+        
+            # process each ensemble folder one by one
+            # ----------------------------------------------------------------
+            else:
+        
+                self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
+                    
+                for ens_i in track(range(self.NENS), description="Processing..."):
+        
+                    self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
+                                        '/' + str(self.NENS))
+                    os.chdir(os.path.join(self.workdir,
+                                          self.project_name,
+                                          'DA_Ensemble/cathy_' + str(ens_i+1)))
+                    p = subprocess.run([callexe], text=True, capture_output=True)
+        
+                    if verbose == True:
+                        self.console.print(p.stdout)
+                        self.console.print(p.stderr)
+                        
+                   
+            os.chdir(os.path.join(self.workdir))
+
+            
+            # check scenario 
+            # ----------------------------------------------------------------
+            self._check_DA_scenarii()
+            # and then create and applied the filter 
+
+
+            # update using ENKF (apply ENKF, create DA_results_df ,update input files ensemble)
+            # ----------------------------------------------------------------
+            self._update_DA(typ='ENKF')
+            
+            
+            
+
+        self.count_DA_cycle=+1 # counter of the Assimilation Cycle
+
                 
     def create_output(self, output_dirname="output"):
         """
@@ -598,13 +619,7 @@ class CATHY(object):
         
     def display_time_run(self):
 
-        print(self.total)
-        print(self.cathyH["MAXCEL"])
-        print(self.cathyH["MAXZON"])
-        print(self.cathyH["MAXSTR"])
-        # print(self.cathyH['TMAX'])
-
-        pass
+        return self.total
 
 
 # --------------------------------------------------------------------------- #
@@ -1274,14 +1289,28 @@ class CATHY(object):
         for kk, value in kwargs.items():
             if verbose == True:
                 print(f"key: {kk} | value: {value}")
+
+            # times of interest TIMPRTi    
+            # ----------------------------------------------------------------
             if kk == "TIMPRTi":
                 key = "(TIMPRT(I),I=1,NPRT)"
                 self.parm[key] = value
+                
+                # check if consistency between times of interest and 
+                # number of times of interest
+                # ------------------------------------------------------------
                 if len(value) != self.parm["NPRT"]:
                     self.parm["NPRT"] = len(value)
+                    
+            # points of interest NODVP    
+            # ----------------------------------------------------------------
             elif kk == "NODVP":
                 key = "(NODVP(I),I=1,NUMVP)"
                 self.parm[key] = value
+                
+                # check if consistency between node of interest and 
+                # number of nodes of interest
+                # ------------------------------------------------------------
                 if len(value) != self.parm["NUMVP"]:
                     self.parm["NUMVP"] = len(value)
             else:
@@ -1301,6 +1330,14 @@ class CATHY(object):
                 self.parm[kk] = str(value)
 
 
+        # update CATHYH
+        # --------------------------------------------------------------------
+        self.update_cathyH(MAXPRT=self.parm["NPRT"],
+                           MAXVP=self.parm["NUMVP"],                           
+                           indent='           :arrow_right_hook:')
+        
+        
+        
         # write parm file
         # --------------------------------------------------------------------
         
@@ -1369,9 +1406,7 @@ class CATHY(object):
 
         parmfile.close()
 
-        self.update_cathyH(MAXPRT=self.parm["NPRT"],
-                           MAXVP=self.parm["NUMVP"],                           
-                           indent='\t -->')
+
 
         pass
 
@@ -1456,36 +1491,54 @@ class CATHY(object):
 
 
 
-    def update_atmbc(
-        self,
-        HSPATM=0,
-        IETO=0,
-        TIME=None,
-        VALUE=[None, None],
-        show=False,
-        verbose=False,
-        **kwargs,
-    ):
-        """
-        Atmospheric forcing term (atmbc - IIN6).
+    def update_atmbc(self,HSPATM=0,IETO=0,TIME=None, VALUE=[None, None],
+                     show=False, verbose=False,**kwargs):
+        '''
+        Atmospheric forcing term (atmbc - IIN6)
 
-        Parameters ---------- HSPATM : int =0 for spatially variable atmospheric boundary condition
-        inputs; blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC's are
-        homogeneous in space. IETO : int =0 for linear interpolation of the atmospheric boundary
-        condition inputs between different ATMTIM; otherwise the inputs are assigned as a piecewise
-        constant function (ietograph). TIME : np.ndarray Time at current time level (seconds) VALUE
-        : np.ndarray (meters per seconds) Returns ------- type Description of returned object.
 
-        """
-
-        # read existing input atmbc file
-        # --------------------------------------------------------------------
+        ..note
         
+            
+        Parameters
+        ----------
+        HSPATM : int, optional
+            =0 for spatially variable atmospheric boundary condition inputs; 
+            blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC's are
+        homogeneous in space.
+        IETO : TYPE, optional
+            =0 for linear interpolation of the atmospheric boundary
+        condition inputs between different. The default is 0.
+        TIME : TYPE, optional
+            DESCRIPTION. The default is None.
+        VALUE : TYPE, optional
+            DESCRIPTION. The default is [None, None].
+        show : TYPE, optional
+            DESCRIPTION. The default is False.
+        verbose : TYPE, optional
+            DESCRIPTION. The default is False.
+        **kwargs : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+
+
         
         # set default parameters
+        # --------------------------------------------------------------------
+        
         self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "TIME": TIME, "VALUE": VALUE}
         vdiff = VALUE[0] - VALUE[1]
 
+
+        # overwrite existing input atmbc file
+        # --------------------------------------------------------------------
+        
         with open(
             os.path.join(self.workdir, self.project_name, self.input_dirname, "atmbc"),
             "w+",
@@ -1515,7 +1568,7 @@ class CATHY(object):
             for key, value in kwargs.items():
                 if key == "x_units":
                     x_units = value
-            pltCT.atmbc_inputs_plot(TIME, VALUE, x_units=x_units)
+            plt_CT.show_atmbc(TIME, VALUE, x_units=x_units)
 
         pass
 
@@ -1555,7 +1608,7 @@ class CATHY(object):
         # --------------------------------------------------------------------
         
         try:
-            self.read_grid3d()
+            self.grid3d = in_CT.read_grid3d(self.project_name)
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=2 first")
             # self.run_processor(verbose=True,IPRT1=2,TRAFLAG=0)
@@ -1722,47 +1775,71 @@ class CATHY(object):
         pass
 
     def update_soil(self, IVGHU=[], FP=[], SPP=[], verbose=False, **kwargs):
-        """
-        Soil parameters (soil - IIN4). The porous media properties are defined in the soil file.
+        '''
+        Soil parameters (soil - IIN4). The porous media properties.
         
-        1 - The first thing that must be decides is the type of relationship to describe the hydraulic
-        characteristics of the unsaturated soil (i.e. retention curves). This can be done through
-        the choice of the parameter **IVGHU** amongst the several options.
-
-        Parameters ----------
-
-        IVGHU: Type int
-        = -1 table look up for moisture curves
-        = 0 for van Genuchten moisture curves
-        = 1 for extended van Genuchten moisture curves
-        = 2 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with Kr=Se**n conductivity relationship
-        = 3 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with conductivity relationship from Table 3 of 1984 paper (log_10 Kr(Se) curve)
-        = 4 for Brooks‐Corey moisture curves    
+        ..note:
+            The first thing that must be decides is the type of relationship to describe the hydraulic
+            characteristics of the unsaturated soil (i.e. retention curves). This can be done through
+            the choice of the parameter **IVGHU** amongst the several options.
             
+
+        Parameters
+        ----------
+        IVGHU : int, optional
+        
+            = -1 table look up for moisture curves
             
-        FP: Feddes Parameters [PCANA PCREF PCWLT ZROOT PZ OMGC] : [float float float float float
-        float] 'PCANA': float anaerobiosis point 'PCREF': float field capacity 'PCWLT': float
-        wilting point 'ZROOT': float root depth 'PZ': float ?? 'OMGC': float ?? For details, see
-        http://dx.doi.org/10.1002/2015WR017139
+            = 0 for van Genuchten moisture curves
+            
+            = 1 for extended van Genuchten moisture curves
+            
+            = 2 for moisture curves from Huyakorn et al 
+                (WRR 20(8) 1984, WRR 22(13) 1986) 
+                with Kr=Se**n conductivity relationship
+                
+            = 3 for moisture curves from Huyakorn et al 
+                (WRR 20(8) 1984, WRR 22(13) 1986) 
+                with conductivity relationship from Table 3 of 1984 paper (log_10 Kr(Se) curve)
+                
+            = 4 for Brooks‐Corey moisture curves.
+            
+            The default is [].
+            
+        FP : list, optional
+        
+            Feddes Parameters. The default is [].
+            
+            [PCANA PCREF PCWLT ZROOT PZ OMGC] 
+            - 'PCANA': float anaerobiosis point 
+            - 'PCREF': float field capacity 
+            - 'PCWLT': float wilting point 
+            - 'ZROOT': float root depth 
+            - 'PZ': float ?? 
+            - 'OMGC': float ?? 
+            
+            .. note:
+                For details, see http://dx.doi.org/10.1002/2015WR017139
+            
+        SPP : list, optional
+            Soil Physical Properties. The default is [].
+            - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
+            - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy 
+            - 'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz 
+            - 'ELSTOR' (NSTR, NZONE): specific storage 
+            - 'POROS'  (NSTR, NZONE): porosity (moisture content at saturation)
+        
+        verbose : TYPE, optional
+            DESCRIPTION. The default is False.
+        **kwargs
 
+        Returns
+        -------
+        None.
 
-        SPP : Soil Physical Properties 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
-        'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy 'PERMZ' (NSTR, NZONE):
-        saturated hydraulic conductivity - zz 'ELSTOR' (NSTR, NZONE): specific storage 'POROS'
-        (NSTR, NZONE): porosity (moisture content at saturation)
-
-            Parameters for van Genuchten and extended van Genuchten moisture curves 'VGNCELL':
-            'VGRMCCELL': residual moisture content 'VGPSATCELL': saturated water content
-
-        **kwargs : type PMIN : int air dry' pressure head value (for switching control of
-        atmospheric boundary conditions during evaporation) [m sec] IPEAT : int Flag for peat soil
-        deformation =0 constant porosity (in unsaturated soil) =1 consider porosity variations with
-        water saturation SCF : int soil cover fraction (fraction of soil covered in vegetation)
-
-
-        Returns ------- type write the soil file.
-
-        """
+        '''
+        
+        
         # set default parameters if "IVGHU": 0 and if SPP is not existing yet
         # --------------------------------------------------------------------
         if len(SPP) == 0:  
@@ -1885,7 +1962,7 @@ class CATHY(object):
 
         Returns
         -------
-        None.
+        np.array describing the SoilPhysProp with rows corresponding to the layer.
 
         '''
         # check number of zones
@@ -2225,16 +2302,20 @@ class CATHY(object):
     def prepare_DA(self,NENS=[],NUDN=[],
                       ENKFT=[], var_per=[]):
         """
+        Initial preparation for DA
         
-        1. update cathyH file given NENS, ENKFT + flag self.parm['DAFLAG']==True
         
-        2. create the processor cathy_origin.exe
-        
-        3. create directory tree for the ensemble
-        
-        4. create panda dataframe for each perturbated variable
-        
-        5. update input files
+        .. note::
+
+            1. update cathyH file given NENS, ENKFT + flag self.parm['DAFLAG']==True
+            
+            2. create the processor cathy_origin.exe
+            
+            3. create directory tree for the ensemble
+            
+            4. create panda dataframe for each perturbated variable
+            
+            5. update input files
 
         Parameters
         ----------
@@ -2260,10 +2341,18 @@ class CATHY(object):
         # self.update_nudging(NUDN=NUDT)
         # self.nudging = {'NUDN': NUDN}   # THIS IS TEMPORARY
         self.NENS = NENS # THIS IS TEMPORARY
-        NUDN = len(ENKFT) # NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
         
         # update cathyH DA parameters
         # ---------------------------------------------------------------------
+        # NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
+        # NUDN = len(ENKFT)  # this is true only when DA is made inside CATHY
+        # self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
+        
+        # when DA is made outside CATHY we run step by step
+        NUDN = 1 
+        # TIMPRTi # time of interest for outputs
+        # TIMPRTi=times_of_interest, 
+        # NODVP=nodes_of_interest, 
         self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
 
         # run processor to create the cathy_origin.exe to paste in every folder
@@ -2279,7 +2368,7 @@ class CATHY(object):
 
         # create initial dataframe DA_results_df for results
         # ---------------------------------------------------------------------
-        self._init_DA_df(NENS,ENKFT,var_per)     
+        self._DA_df(NENS,ENKFT,var_per)     
 
 
         # update input files ensemble
@@ -2290,6 +2379,73 @@ class CATHY(object):
         
         return self.DA_df
 
+    def _check_DA_scenarii():
+        '''
+        CHECK which scenarios are OK and which are to be descarted
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        # condition 1: nrow(mbeconv)==0
+        # condition 2: mbeconv[h,3]==(deltaT)
+        
+        pass
+
+
+    def _update_DA(self,typ='ENKF',NENS=[],NUDN=[],
+                      ENKFT=[], var_per=[]):
+        """
+        Update enesmble using ENKF
+        
+        
+        
+        1. apply ENKF filter
+   
+        2. create panda dataframe for each perturbated variable
+        
+        3. update input files
+
+        Parameters
+        ----------
+        NENS : int
+            # Number of realizations in the ensemble kalman filter (EnKF) 
+        NUDN : int
+            #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
+        ENKFT : np.array([])
+            # Observation times for ensemble kalman filter (EnKF).
+
+        Returns
+        -------
+        None.
+
+        Note: for now only implemented for EnkF DA
+        """
+
+
+        # apply ENKF
+        # ---------------------------------------------------------------------
+        self.ENKF()   
+        
+        # create dataframe DA_results_df for results
+        # ---------------------------------------------------------------------
+        self._DA_df(NENS,ENKFT,var_per)     
+        
+        
+        # update input files ensemble
+        # ---------------------------------------------------------------------
+        self._update_input_ensemble(NENS,var_per)     
+        
+        return self.DA_df
+
+
+    def ENKF(self):
+        
+        self.console.print('ENKF')
+        
+        pass
 
 
     def _create_subfolders_ensemble(self,NENS):
@@ -2300,6 +2456,7 @@ class CATHY(object):
                                      "DA_Ensemble/cathy_origin"))
             
             # copy input, output and vtk dir
+            # ----------------------------------------------------------------
             for dir2copy in enumerate(['input','output','vtk']):                
                 shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]), 
                                 os.path.join(self.workdir, self.project_name, 
@@ -2308,22 +2465,27 @@ class CATHY(object):
         
         try:
             # copy exe into cathy_origin folder
+            # ----------------------------------------------------------------
             shutil.move(
                 os.path.join(self.workdir, self.project_name, self.processor_name),
                 os.path.join(self.workdir, self.project_name, 
                              "DA_Ensemble/cathy_origin", self.processor_name)
-            )
+                        )
+            
             # copy cathy.fnames into cathy_origin folder
+            # ----------------------------------------------------------------
             shutil.copy(
                 os.path.join(self.workdir, self.project_name, 
                              'cathy.fnames'),
                 os.path.join(self.workdir, self.project_name, 
                              "DA_Ensemble/cathy_origin/cathy.fnames")
-            ) 
+                        ) 
+            
             # copy prepro into cathy_origin folder            
+            # ----------------------------------------------------------------
             shutil.copytree(os.path.join(self.workdir,  self.project_name, 
                                          'prepro'),
-                        os.path.join(self.workdir, self.project_name, 
+                            os.path.join(self.workdir, self.project_name, 
                                      "DA_Ensemble/cathy_origin/prepro"))
                         
                         
@@ -2346,11 +2508,11 @@ class CATHY(object):
 
 
 
-    def _init_DA_df(self,NENS,ENKFT,var_per):
+    def _DA_df(self,NENS,ENKFT,var_per):
         
         # create initial dataframe DA_results_df for results
         # ---------------------------------------------------------------------  
-        
+        self.console.print('DA_results_df')
         
         # boolean flag to indicate if the variable is updated (True) or not (False)
         bool_updated = False*np.ones(NENS) 
@@ -2369,6 +2531,7 @@ class CATHY(object):
         # 0
         # 1
         # 2
+        
         self.DA_df = pd.DataFrame(np.transpose(data_df_root),
                               columns=cols_root)
         
@@ -2378,9 +2541,9 @@ class CATHY(object):
         pass
     
 
-    def _update_input_ensemble(self,NENS,var_per):
+    def _update_input_ensemble(self,NENS,var_per, **kwargs):
         '''
-        Write new variable perturbated value into corresponding input file
+        Write new variable perturbated/updated value into corresponding input file
 
         Parameters
         ----------
@@ -2394,16 +2557,31 @@ class CATHY(object):
         New file written/overwritten into the input dir.
 
         '''
-        
+
+        self.console.print('_update_input_ensemble')
+
+        # !!! still in construction !!!
         # update input files ensemble
         # ---------------------------------------------------------------------  
         
-        # !!! still in construction !!!
-        
+
+        for key in ('ENKFT'): # times for ETKF
+            if key in kwargs:
+                setattr(self, key, kwargs[key])
+                
+        # cathy and data assimilation are performed for a single time step       
+        # definition of the part of hyetograph to be applied in this step
+        # self.update_cathyH() ?
+        self.update_atmbc()
+
         # loop over dict of perturbated variable
+        #----------------------------------------------------------------------
         for key in var_per.items(): # loop over perturbated variables dict
         
+        
+        
             # loop over ensemble files
+            #------------------------------------------------------------------
             for ens_nb in range(NENS):
                 
                 # change directory according to ensmble file nb
@@ -2411,13 +2589,15 @@ class CATHY(object):
                                       './DA_Ensemble/cathy_'+ str(ens_nb+1)))
 
                 
-                # check variable to update
+            # check variable to update and update
+            #------------------------------------------------------------------
                 if key[0] in 'hietograph':
                     print('hietograph perturbated not yet implemented')
                     
                     self.update_atmbc(verbose=True)
 
-                    
+                # ic update
+                #--------------------------------------------------------------
                 if key[0] in 'ic':
                     # check if key contain self.ic args # NOT YET IMPLEMENTED
                     # self.ic['INDP'] = 0
@@ -2426,13 +2606,16 @@ class CATHY(object):
                         WTPOSITION=var_per[key[0]]['perturbated'][ens_nb],
                                                verbose=True)
 
-
+                # kss update
+                #--------------------------------------------------------------
                 if key[0] in 'kss':
                     print('kss perturbated not yet implemented')
 
                     self.update_soil(verbose=True)
 
-                
+
+                # FeddesParam update
+                #--------------------------------------------------------------
                 elif key[0] in ['PCANA','PCREF','PCWLT','ZROOT','PZ','OMGC']:
                     
                     FeddesParam = {'PCANA':self.soil["PCANA"],
@@ -2445,28 +2628,90 @@ class CATHY(object):
 
         
         pass
+
     
-    
+
+    def read_measures(self,filename):
+        '''
+        
+
+        Parameters
+        ----------
+        filename : str
+            name of the input CATHY file to read.
+
+        Returns
+        -------
+        A dataframe or a dict describing file data/entries.
+
+        '''
+        
+        if filename == 'atmbc':
+            df = in_CT.read_atmbc(os.path.join(self.workdir,self.project_name, 'input', filename))
+            return df
+  
+                
+        else:
+            print('no file specified')
+        
+
+        pass
+
+
+
+    def read_inputs(self,filename):
+        '''
+        
+
+        Parameters
+        ----------
+        filename : str
+            name of the input CATHY file to read.
+
+        Returns
+        -------
+        A dataframe or a dict describing file data/entries.
+
+        '''
+        
+        if filename == 'atmbc':
+            df = in_CT.read_atmbc(os.path.join(self.workdir,self.project_name, 'input', filename))
+            return df
+  
+                
+        else:
+            print('no file specified')
+        
+
+        pass
+
+
     def read_outputs(self,filename):
         '''
         
 
         Parameters
         ----------
-        filename : TYPE
-            DESCRIPTION.
+        filename : str
+            name of the output file to read.
 
         Returns
         -------
-        None.
+        A dataframe or a dict describing file data/entries.
 
         '''
+        
         
         if filename == 'vp':
             df = out_CT.read_vp(os.path.join(self.workdir,self.project_name, 'output', filename))
             return df
-  
-                
+        if filename == 'hgraph':
+            df = out_CT.read_hgraph(os.path.join(self.workdir,self.project_name, 'output', filename))
+            return df
+        if filename == 'dtcoupling':
+            df = out_CT.read_dtcoupling(os.path.join(self.workdir,self.project_name, 'output', filename))
+            return df
+        
         else:
             print('no file specified')
         
@@ -2508,7 +2753,44 @@ class CATHY(object):
     # -------------------------------------------------------------------#
     #%% utils
     
+    def find_nearest_node(self,node_coords):
+        '''
+        Find nearest mesh node
+
+        Parameters
+        ----------
+        node_coords : list
+            List of coordinates [[x,y,z],[x2,y2,z2]].
+
+        Returns
+        -------
+        closest_idx : list
+            Node indice in the grid3d.
+        closest : list
+            Node coordinate in the grid3d.
+
+        '''
+        
+        if len(node_coords)<1:
+            node_coords = [node_coords]
+
+        grid = in_CT.read_grid3d(self.project_name)
     
+        closest_idx = []
+        closest = []
+        for i, nc in enumerate(node_coords):
+            # euclidean distance
+            d = ( (grid['nodes_idxyz'][:,1] - nc[0]) ** 2 + 
+                   (grid['nodes_idxyz'][:,2]  - nc[1]) ** 2 +
+                   (grid['nodes_idxyz'][:,3]  - nc[2]) ** 2
+                   ) ** 0.5
+            
+            closest_idx.append(np.argmin(d))
+            closest.append(grid['nodes_idxyz'][closest_idx[i],1:])
+    
+        return closest_idx, closest
+
+
     def rich_create(self, **kwargs):
 
         # from rich.console import Console

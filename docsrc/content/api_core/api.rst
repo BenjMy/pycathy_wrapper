@@ -34,7 +34,7 @@ API reference: The ``pyCATHY`` package
    :inherited-members:
 
    
-``pyCATHY.DA``: Data Assimilation
+``pyCATHY.DA``: data assimilation
 =================================
 
 .. automodule:: pyCATHY.DA.cathy_DA

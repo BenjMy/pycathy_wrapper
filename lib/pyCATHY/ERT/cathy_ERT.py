@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+"""Class managing ERT data simulation and inversion + petrophysical transformation
 """
-Created on Thu Jul 29 12:12:41 2021
 
-@author: ben
-"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,61 +8,6 @@ from resipy import R2 # geophysics tools
 import pyvista as pv # if not installed : pip install with conda install pyvista (in a conda terminal)
 import numpy as np
 import os 
-
-# class DABase(object):
-
-#     """
-#     Base class for all importer classes
-#     """
-
-#     def _add_to_container(
-#             self, data_to_add, electrode_positions=None, topography=None):
-
-#         self._add_to_data(data_to_add)
-
-#     def _add_to_data(self, data):
-#         """Add data to the container
-#         Parameters
-#         ----------
-#         data : pandas.DataFrame
-#             Measurement data in the form of a DataFrame, must adhere to the
-#             container constraints (i.e., must have all required columns)
-#         """
-
-#     def _describe_data(self, df=None):
-#         """
-#         Print statistics on a DataFrame by calling its .describe() function
-#         Parameters
-#         ----------
-#         df : None|pandas.DataFrame, optional
-#             if not None, use this DataFrame. Otherwise use self.data
-#         """
-#         print(df_to_use[cols].describe())
-
-#     def add_dataframe(self, data, timestep=None, **kwargs):
-#         """Add data to the container using another DataFrame
-#         Parameters
-#         ----------
-#         data : pandas.DataFrame
-#             Measurement data in the form of a DataFrame, must adhere to the
-#             container constraints (i.e., must have all required columns) and
-#             electrode positions already registered must match.
-#         """
-#         if timestep is not None:
-#             data['timestep'] = timestep
-#         self._add_to_data(data)
-
-#     def merge_container(self, container):
-#         """Merge the data and electrode positions from another container into
-#         this one.
-#         """
-#         logger.debug('Merging containers')
-#         print(type(self))
-
-#         self._add_to_container(
-#             container.data,
-#             container.electrode_positions, container.topography)
-
 
 
         
@@ -156,6 +97,61 @@ def Archie_rho(rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
     return rFluid * a * porosity**(-m) * sat**(-n)
 
 
+
+
+# class DABase(object):
+
+#     """
+#     Base class for all importer classes
+#     """
+
+#     def _add_to_container(
+#             self, data_to_add, electrode_positions=None, topography=None):
+
+#         self._add_to_data(data_to_add)
+
+#     def _add_to_data(self, data):
+#         """Add data to the container
+#         Parameters
+#         ----------
+#         data : pandas.DataFrame
+#             Measurement data in the form of a DataFrame, must adhere to the
+#             container constraints (i.e., must have all required columns)
+#         """
+
+#     def _describe_data(self, df=None):
+#         """
+#         Print statistics on a DataFrame by calling its .describe() function
+#         Parameters
+#         ----------
+#         df : None|pandas.DataFrame, optional
+#             if not None, use this DataFrame. Otherwise use self.data
+#         """
+#         print(df_to_use[cols].describe())
+
+#     def add_dataframe(self, data, timestep=None, **kwargs):
+#         """Add data to the container using another DataFrame
+#         Parameters
+#         ----------
+#         data : pandas.DataFrame
+#             Measurement data in the form of a DataFrame, must adhere to the
+#             container constraints (i.e., must have all required columns) and
+#             electrode positions already registered must match.
+#         """
+#         if timestep is not None:
+#             data['timestep'] = timestep
+#         self._add_to_data(data)
+
+#     def merge_container(self, container):
+#         """Merge the data and electrode positions from another container into
+#         this one.
+#         """
+#         logger.debug('Merging containers')
+#         print(type(self))
+
+#         self._add_to_container(
+#             container.data,
+#             container.electrode_positions, container.topography)
 
 
 

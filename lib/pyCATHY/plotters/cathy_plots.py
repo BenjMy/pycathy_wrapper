@@ -6,56 +6,281 @@ Created on Thu Jul 29 12:12:41 2021
 @author: ben
 """
 
-import pyvista as pv
 import glob
 import time
 import os
+
+
+import pyvista as pv
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.dates import DateFormatter
+
+
 import panel as pn
-import numpy as np
 import ipywidgets as widgets
 import imageio
 import natsort
 from decimal import Decimal
 
+import pandas as pd
+import numpy as np
+
+
 # from pyvirtualdisplay import Display
 
 from pyCATHY.importers import cathy_outputs as out_CT
+from pyCATHY.cathy_utils import label_units
 
-def convert_time_units(t, x_units):
 
-    xlabel = " (s)"
+
+
+def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
+                x='time', y='SW', **kwargs):
+    '''
+    plot hgraph 
+    
+    
+
+    Parameters
+    ----------
+    workdir : TYPE
+        DESCRIPTION.
+    project_name : TYPE
+        DESCRIPTION.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    fig, ax 
+
+    '''
+    
+    # read hgraph file if df_hgraph not existing
+    # ------------------------------------------------------------------------
+    if len(df_hgraph)==0:
+        df_dtcoupling = out_CT.read_dtcoupling(filename='dtcoupling')
+
+
+    # create fig axis if not existing
+    # ------------------------------------------------------------------------
+    # if kwargs['ax'] == False:
+    #     fig, ax = plt.subplots()
+
+    nstep = len(df_dtcoupling['Atmpot-d'])
+    fig, ax = plt.subplots()
+    
+    jmax=max(df_dtcoupling['Atmact-vf'])
+    
+    timeatm = [df_dtcoupling['Deltat'][0]]
+    for i in np.arange(1,nstep+1):
+        # timeatm[i]=timeatm[i-1]+df_dtcoupling[i-1][1];
+        timeatm.append(timeatm[i-1]+df_dtcoupling['Deltat'][i-1])
+    
+    plt.step(timeatm, df_dtcoupling['Atmact-vf'], color="blue", where="post", label="test")
+    
+    
+    plt.step(timeatm, df_dtcoupling['Atmact-v'], color="blue", where="post", label="test")
+
+    return fig, ax 
+
+
+def show_vp(df_vp=[], workdir=[], project_name=[], 
+            index='time', x='time', y='SW', **kwargs):
+    '''
+    plot vp 
+    
+    
+
+    Parameters
+    ----------
+    workdir : TYPE
+        DESCRIPTION.
+    project_name : TYPE
+        DESCRIPTION.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    fig, ax 
+
+    '''
+    
+    # read vp file if df_atmbc not existing
+    # ------------------------------------------------------------------------
+    if len(df_vp)==0:
+        df_vp = out_CT.read_vp(filename='vp')
+
+
+    # create fig axis if not existing
+    # ------------------------------------------------------------------------
+    # if kwargs['ax'] == False:
+    #     fig, ax = plt.subplots()
+
+
+    node_uni = df_vp['node'].unique()
+
+    # plot panda df
+    # ------------------------------------------------------------------------
+    fig, ax = plt.subplots(1,len(node_uni))
+    
+    colors = cm.Reds(np.linspace(0.2, 0.8, len(df_vp['str_nb'].unique())))
+
+    for i, n in enumerate(node_uni):
+        
+        # select the node and the y attribute
+        df_vp_pivot = pd.pivot_table(df_vp,values=y,index=['time','node','str_nb'])
+        df_vp_pivot_nodei = df_vp_pivot.xs(n, level="node")
+        df_vp_pivot_nodei.unstack('str_nb').plot(ax=ax[i], 
+                                                 title='node: ' + str(n),
+                                                 color = colors)
+        
+        # time_form = DateFormatter("%d-%h")
+        # ax[i].xaxis.set_major_formatter(time_form)
+
+
+
+        ax[i].legend([]);
+        
+        label = label_units(y)
+        if i==0:
+            ax[i].set_ylabel(label);
+
+    return fig, ax 
+
+
+def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
+                x='time', y='SW', **kwargs):
+    '''
+    plot hgraph 
+    
+    
+
+    Parameters
+    ----------
+    workdir : TYPE
+        DESCRIPTION.
+    project_name : TYPE
+        DESCRIPTION.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    fig, ax 
+
+    '''
+    
+    # read hgraph file if df_hgraph not existing
+    # ------------------------------------------------------------------------
+    if len(df_hgraph)==0:
+        df_hgraph = out_CT.read_hgraph(filename='hgraph')
+
+
+    # create fig axis if not existing
+    # ------------------------------------------------------------------------
+    # if kwargs['ax'] == False:
+    #     fig, ax = plt.subplots()
+
+    fig, ax = plt.subplots()
+    
+    plt.plot(df_hgraph[:,0],df_hgraph[:,1])
+    plt.xlabel('time (s)')
+    plt.ylabel('streamflow ($m^3/s$)')
+
+    return fig, ax 
+
+
+def show_atmbc(t_atmbc, v_atmbc, **kwargs):
+    '''
+    Plot atmbc=f(time)
+
+    Parameters
+    ----------
+    t_atmbc : np.array
+        time where atmbc change.
+    v_atmbc : list of 2 arrays
+        v_atmbc[0] is the array of Rain/Irrigation change over the time;
+        v_atmbc[1] is the array of ET demand over the time;
+    **kwargs 
+
+    Returns
+    -------
+    fig, ax
+
+    '''
+
+    # NOT YET IMPLEMETED
+    # read atmbc file if df_atmbc not existing
+    # ------------------------------------------------------------------------
+    # df_atmbc = []
+    # if len(df_atmbc)==0:
+    #     df_atmbc = out_CT.read_atmbc(filename='vp')
+        
+        
+    xlabel = "time (s)"
+    for key, value in kwargs.items():
+        if key == "x_units":
+            x_units = value
+
     if x_units == "days":
-        xlabel = " (days)"
-        t_new = [x / (24 * 60 * 60) for x in t]
-        t_new = round(t_new[0], 2)
+        xlabel = "time (days)"
+        t_atmbc = [x / (24 * 60 * 60) for x in t_atmbc]
     if x_units == "hours":
-        xlabel = " (h)"
-        t_new = [x / (60 * 60) for x in t]
-        t_new = round(t_new[0], 1)
+        xlabel = "time (h)"
+        t_atmbc = [x / (60 * 60) for x in t_atmbc]
 
-    return xlabel, t_new
+    print(t_atmbc)
+    # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
+    vdiff = v_atmbc[0] - v_atmbc[1]
+
+    fig, ax = plt.subplots()
+    ax.plot(t_atmbc, vdiff, "k*")
+    ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
+    ax.grid()
+
+    plt.step(t_atmbc, v_atmbc[0], color="blue", where="post", label="Rain/Irr")
+    plt.step(t_atmbc, v_atmbc[1], color="red", where="post", label="ET")
+    plt.step(t_atmbc, vdiff, color="black", where="post", label="Diff")
+    ax.legend()
+
+    return fig, ax 
 
 
-def showvtk(
-    filename=None,
-    unit=None,
-    timeStep=0,
-    notebook=False,
-    path=None,
-    savefig=False,
-    **kwargs,
-):
-    """
-    Short summary.
 
-    Parameters ---------- filename : type Description of parameter `filename`. unit : str
-    ['pressure', 'TIME', 'saturation', 'permeability', 'velocity'] timeStep : type Description of
-    parameter `timeStep`.
 
-    Returns ------- type Description of returned object.
 
-    """
+def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
+             savefig=False,**kwargs):
+    '''
+    Plot pyvista vtk file.
+
+
+    Parameters
+    ----------
+    filename : TYPE, optional
+        DESCRIPTION. The default is None.
+    unit : str, optional
+        ['pressure', 'TIME', 'saturation', 'permeability', 'velocity'] . The default is None.
+    timeStep : TYPE, optional
+        DESCRIPTION. The default is 0.
+    notebook : TYPE, optional
+        DESCRIPTION. The default is False.
+    path : TYPE, optional
+        DESCRIPTION. The default is None.
+    savefig : TYPE, optional
+        DESCRIPTION. The default is False.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+
 
     if path is None:
         path = os.getcwd()
@@ -151,7 +376,7 @@ def showvtk(
     return
 
 
-def showvtkTL(
+def show_vtk_TL(
     filename=None,
     unit=None,
     timeStep="All",
@@ -250,37 +475,6 @@ def showvtkTL(
     return
 
 
-def atmbc_inputs_plot(t_atmbc, v_atmbc, **kwargs):
-
-    xlabel = "time (s)"
-    for key, value in kwargs.items():
-        if key == "x_units":
-            x_units = value
-
-    if x_units == "days":
-        xlabel = "time (days)"
-        t_atmbc = [x / (24 * 60 * 60) for x in t_atmbc]
-    if x_units == "hours":
-        xlabel = "time (h)"
-        t_atmbc = [x / (60 * 60) for x in t_atmbc]
-
-    print(t_atmbc)
-    # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
-    vdiff = v_atmbc[0] - v_atmbc[1]
-
-    fig, ax = plt.subplots()
-    ax.plot(t_atmbc, vdiff, "k*")
-    ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
-    ax.grid()
-
-    plt.step(t_atmbc, v_atmbc[0], color="blue", where="post", label="Rain/Irr")
-    plt.step(t_atmbc, v_atmbc[1], color="red", where="post", label="ET")
-    plt.step(t_atmbc, vdiff, color="black", where="post", label="Diff")
-    # ax.legend(['Rain/Irr','ET','diff'])
-    ax.legend()
-
-    pass
-
 
 def indice_veg_plot(veg_map, **kwargs):
     '''
@@ -291,12 +485,11 @@ def indice_veg_plot(veg_map, **kwargs):
     veg_map : np.array([])
         Indice of vegetation. The dimension of the vegetation map must match 
         the dimension of the DEM.
-    **kwargs : TYPE
-        DESCRIPTION.
+    **kwargs
 
     Returns
     -------
-    None.
+    fig, ax
 
     '''
 
@@ -336,6 +529,8 @@ def dem_plot_2d_top(df,parameter, **kwargs):
     ax.set_ylabel('y')
     ax.set_title('view from top (before extruding)')
     plt.show()
+    
+    return fig, ax 
     
     
 
@@ -392,22 +587,166 @@ def dem_plot(workdir, project_name, **kwargs):
 
 
 def COCumflowvol(workdir, project_name):
-    """
-    Processes Cumflowvol.
+    '''
+    plot COCumflowvol
 
-    Returns ------- type Description of returned object.
+    Parameters
+    ----------
+    workdir : TYPE
+        DESCRIPTION.
+    project_name : TYPE
+        DESCRIPTION.
 
-    """
+    Returns
+    -------
+    None.
+
+    '''
+
     
-    CT_out.read_cumflowvol(os.path.join(workdir, project_name, "output", "cumflowvol"))
+    # read file if df_cumflowvol not existing
+    # ------------------------------------------------------------------------
+    df_cumflowvol = []
+    if len(df_cumflowvol)==0:
+        df_cumflowvol = out_CT.read_cumflowvol(os.path.join(workdir, project_name, 
+                                                         "output", "cumflowvol"))
     
 
-
+    # plot Net Flow Volume (m^3) = f(time)
+    # ------------------------------------------------------------------------
     fig, ax = plt.subplots()
-    ax.plot(CUMFLOWVOL[:, 2], -CUMFLOWVOL[:, 7], "b-.")
-    ax.plot(CUMFLOWVOL[:, 2] / 3600, CUMFLOWVOL[:, 7])
+    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], "b-.")
+    ax.plot(df_cumflowvol[:, 2] / 3600, df_cumflowvol[:, 7])
     ax.set_title("Cumulative flow volume")
     ax.set(xlabel="Time (s)", ylabel="Net Flow Volume (m^3)")
     ax.legend(["Total flow volume", "nansfdir flow volume"])
 
-    return
+    return fig, ax
+
+
+
+
+
+
+
+# def mesh3d():
+
+
+#     % MESH3D creates a 3D representation of the 3D grid
+#     close all
+#     clear all
+#     load cape
+
+#     fgrid = fopen('/Users/campo/Work/papers/transcathy-num-diff/cathy/bea/output/grid3d','r');
+#     TETRA=[];
+#     NODES=[];
+#     NNOD=0;
+#     N=0;
+#     NT=0;
+
+#     A = fscanf(fgrid,'%u %u %u',3);
+#     NNOD = A(1);
+#     N = A(2);
+#     NT = A(3);
+#     TETRA = fscanf(fgrid,'%u',[5,NT]); % Read data
+#     TETRA = TETRA';
+#     TETRA = TETRA(:,1:4);
+#     NODES = fscanf(fgrid,'%g',[3,N]);
+#     NODES = NODES';
+#     % tetramesh(TETRA,NODES);%,'CData',NODES(:,3));
+#     % % colormap(map)
+#     % axis image;
+#     % set(gca,'FontSize',14)
+#     % xlabel('Easting (m)')
+#     % ylabel('Northing (m)')
+#     % zlabel('Elevation (m)')
+#     clear S
+
+#     S.Vertices = NODES;
+#     S.Faces = TETRA;
+#     S.FaceVertexCData = NODES(:,3);
+#     S.FaceColor = 'interp';
+#     % S.FaceAlpha = 0.5;
+#     % S.LineStyle = ':';
+#     S.LineWidth = 0.25;
+#     % S.EdgeColor = 'red';
+#     % S.LineWidth = 2;
+#     figure
+#     patch(S)
+#     axis image
+#     view(3)
+#     set(gca,'FontSize',14);
+#     xlabel('Easting (m)');
+#     ylabel('Northing (m)');
+#     zlabel('Elevation (m)');
+#     % colormap(map);
+#     colorbar;
+
+# return 
+
+
+
+# def dtcoupling(self):
+#     """
+#     processes the file dtcoupling and compares potential and actuale.
+
+#     Returns ------- type Description of returned object.
+
+#     """
+#     dtcoupling_file = open(os.path.join(self.workdir ,'output' ,'dtcoupling'), 'r')
+#     Lines = dtcoupling_file.readlines()
+#     count = len(Lines)
+#     dtcoupling_file.close()
+    
+#     # Using readline()
+#     dtcoupling_file = open(os.path.join(workdir ,'output' ,'dtcoupling'), 'r')
+#     nstep = count-31 # Number of timesteps
+#     # DT = np.(file,'%g',[22,nstep]); % Read data
+#     DT = np.loadtxt(dtcoupling_file,skiprows=22,max_rows=22+nstep)
+#     dtcoupling_file.close()
+    
+#     DT[-1]
+    
+#     fig, axs = plt.subplots(3, 2)
+    
+#     axs[0,0].plot(DT[:,2],DT[:,8],'k:')
+#     axs[0,0].set(xlabel='Time (h)', ylabel='Pot. & act. atm. fluxes (m^3/h)')
+#     # axs[0,0].set_xlim([0,max(time)])
+#     # axs[0,0].set_ylim([1000*(min(min(DT(:,11),DT(:,15)))),0])
+#     axs[0,0].plot(DT[:,2],DT[:,13],'k-')
+#     axs[0,0].legend(['Potential','Actual'])
+    
+#     axs[1,0].plot(DT[:,2],DT[:,16],'k:')
+#     axs[1,0].plot(DT[:,2],DT[:,17],'k--')
+#     axs[1,0].plot(DT[:,2],DT[:,18],'k-.')
+#     axs[1,0].plot(DT[:,2],DT[:,19],'k-')
+#     axs[1,0].set(xlabel='Time (h)', ylabel='Surface saturation fractions')
+#     axs[1,0].legend(['Horton','Dunne','Ponded','Saturated'])
+    
+#     axs[2,0].plot(DT[:,2],DT[:,6],'k-')
+#     axs[2,0].plot(DT[:,2],DT[:,7],'k-')
+#     axs[2,0].set(xlabel='Time (h)', ylabel='Surface routing time steps')
+#     axs[2,0].legend(['No backstep','Backstep'])
+    
+#     axs[0,1].plot(DT[:,2],DT[:,21]/DT[:,20],'k-')
+#     # axs[1,0].plot(DT[:,2],DT[:,21],'k-')
+#     axs[0,1].set(xlabel='Time (h)', ylabel='Surface/subsurface CPU')
+    
+#     axs[1,1].plot(DT[:,2],DT[:,1],'k-')
+#     # axs[1,0].plot(DT[:,2],DT[:,21],'k-')
+#     axs[1,1].set(xlabel='Time (h)', ylabel='Subsurface step size (h)')
+    
+#     axs[2,1].plot(DT[:,2],DT[:,4],'k-')
+#     axs[2,1].plot(DT[:,2],DT[:,5],'k:')
+#     axs[2,1].legend(['No backstep','Backstep'])
+#     axs[2,1].set(xlabel='Time (h)', ylabel='Nonlinear iterations')
+
+
+
+#     return
+
+
+
+
+
+
