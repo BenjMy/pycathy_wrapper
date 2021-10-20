@@ -3,6 +3,27 @@
 
 import os
 import numpy as np
+import pandas as pd
+
+
+def read_discharge(filename, **kwargs):
+    '''
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    # discharge_file = open(filename, "r")
+    # discharge = pd.read(discharge_file, skiprows=0, usecols=range(2))    
+    df_discharge = pd.read_csv(filename, sep="\t", header='infer')
+    # discharge_file.close()
+    
+    
+
+    
+    return df_discharge   
 
 
 

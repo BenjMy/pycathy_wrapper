@@ -215,23 +215,23 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 )
         
     
-    def _prepare_measures(self,measure2prep):
-        '''
-        prepare measure before DA
+    # def _prepare_measures(self,measure2prep):
+    #     '''
+    #     prepare measure before DA
 
-        Parameters
-        ----------
-        measure2prep : dict
-            dict containing measure data + metadata.
+    #     Parameters
+    #     ----------
+    #     measure2prep : dict
+    #         dict containing measure data + metadata.
 
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
+    #     Returns
+    #     -------
+    #     TYPE
+    #         DESCRIPTION.
 
-        '''
+    #     '''
                
-        # define measurement error covariance matrix, R
-        #---------------------------------------------------------------------
+    #     # define measurement error covariance matrix, R
+    #     #---------------------------------------------------------------------
         
-        return self.vars_per
+    #     return self.vars_per

@@ -136,7 +136,16 @@ def read_hgraph(filename):
     hgraph = np.loadtxt(hgraph_file, skiprows=2, usecols=range(5))
     hgraph_file.close()
 
-    return hgraph  
+    # hgraph collumns information
+    # -------------------------------------------------------------------------
+    cols_hgraph = ['time', 'streamflow', '',  '', '']
+    
+    
+    # transform a numpy array into panda df
+    # ------------------------------------------------------------------------
+    df_hgraph = pd.DataFrame(hgraph,  columns=cols_hgraph)
+
+    return df_hgraph  
 
 
 

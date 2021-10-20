@@ -33,6 +33,7 @@ from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.DA import cathy_DA as DA_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.importers import cathy_inputs as in_CT
+from pyCATHY.importers import sensors_measures as in_meas
 
 
 import multiprocessing
@@ -1421,6 +1422,7 @@ class CATHY(object):
         ----------
         INDP : int, optional
             Flag for pressure head initial conditions (all nodes). The default is 2.
+            
             - =0 for input of uniform initial conditions (one value read in)
             - =1 for input of non-uniform IC's (one value read in for each node)
             - =2 for calculation of fully saturated vertical hydrostatic equilibrium IC's
@@ -1434,8 +1436,9 @@ class CATHY(object):
               (calculated in subroutine ICVDWT) with the water table depth (relative to the surface
               of the 3‐d grid) given by parameter WTHEIGHT
               
-        IPOND : TYPE, optional
+        IPOND : int, optional
             Flag for ponding head initial conditions (surface nodes). The default is 0.
+            
             - =0 no input of ponding head initial conditions; otherwise (IPOND = 1 or 2) ponding
               head initial conditions are read into PONDNOD, and, where PONDNOD > 0, these values
               are used to update the surface node values in PTIMEP read in according to the
@@ -1443,7 +1446,7 @@ class CATHY(object):
             - =1 uniform ponding head initial conditions (one value read in)
             - =2 non-uniform ponding head initial conditions (one value read in for each node)
             
-        WTPOSITION : TYPE, optional
+        WTPOSITION : float, optional
             For the case INDP=3, specifies the initial water table height relative to
             the base of the 3‐d grid. The default is [].
 
@@ -1503,11 +1506,13 @@ class CATHY(object):
         Parameters
         ----------
         HSPATM : int, optional
-            =0 for spatially variable atmospheric boundary condition inputs; 
+        
+            - =0 for spatially variable atmospheric boundary condition inputs; 
             blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC's are
         homogeneous in space.
         IETO : TYPE, optional
-            =0 for linear interpolation of the atmospheric boundary
+        
+            - =0 for linear interpolation of the atmospheric boundary
         condition inputs between different. The default is 0.
         TIME : TYPE, optional
             DESCRIPTION. The default is None.
@@ -1828,6 +1833,11 @@ class CATHY(object):
             - 'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz 
             - 'ELSTOR' (NSTR, NZONE): specific storage 
             - 'POROS'  (NSTR, NZONE): porosity (moisture content at saturation)
+            
+            retention curves parameters VGN, VGRMC, and VGPSAT
+            - 'VGNCELL' (NSTR, NZONE)
+            - 'VGRMCCELL' (NSTR, NZONE)
+            - 'VGPSATCELL' (NSTR, NZONE):
         
         verbose : TYPE, optional
             DESCRIPTION. The default is False.
@@ -2074,27 +2084,39 @@ class CATHY(object):
 
         '''
 
-        counth = 0
         
         # number of side header for each row
         header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
         
         # open soil file
+        # --------------------------------------------------------------------
         if self.DAFLAG:
             soil_filepath =  os.path.join(os.getcwd(), self.input_dirname, "soil")
         else:
             soil_filepath = os.path.join(self.workdir, self.project_name, self.input_dirname, "soil")
-            
+        
         with open(os.path.join(soil_filepath),"w+") as soilfile:
-            for i, h in enumerate(header_fmt_soil):
+            
+            counth = 0 # count header index
+
+            # Write line by line according to header format 
+            # ----------------------------------------------------------------
+            for i, h in enumerate(header_fmt_soil): 
+                
+                # left = values
+                # ------------------------------------------------------------
                 left = right = []
                 left = str(list(self.soil.values())[counth : counth + h])
                 left = left.strip("[]").replace(",", "")
 
+                # right = keys
+                # ------------------------------------------------------------
                 right = str(list(self.soil.keys())[counth : counth + h])
                 right = right.strip("[]").replace(",", "")
                 right = right.replace("'", "")
 
+                # Line 4: write Feddes Parameters Table
+                # ------------------------------------------------------------
                 if i == 3:  # Feddes parameters
                     np.savetxt(soilfile, FeddesParam, fmt="%1.3e")
                     counth += h
@@ -2103,9 +2125,11 @@ class CATHY(object):
                     counth += h
                     soilfile.write(str(line))
 
+            # End of soil file: write Soil Properties Table
+            # ------------------------------------------------------------
             np.savetxt(soilfile, SoilPhysProp, fmt="%1.3e")
             soilfile.write(
-                "PERMX    PERMY    PERMZ    ELSTOR   POROS,VGNCELL,VGRMCCELL,VGPSATCELL"
+                "PERMX PERMY  PERMZ  ELSTOR POROS,VGNCELL,VGRMCCELL,VGPSATCELL"
                 + "\n"
             )
 
@@ -2298,6 +2322,28 @@ class CATHY(object):
     # -------------------------------------------------------------------#
     #%% DATA ASSIMILATION FCTS
 
+    def prepare_measures(self,dict_meas):
+        '''
+        prepare measure before DA
+
+        Parameters
+        ----------
+        dict_meas : dict
+            dict containing measure data + metadata.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        '''
+               
+        # define measurement error covariance matrix, R
+        #---------------------------------------------------------------------
+        
+        return self.vars_per
+        
+        pass
     
     def prepare_DA(self,NENS=[],NUDN=[],
                       ENKFT=[], var_per=[]):
@@ -2631,24 +2677,47 @@ class CATHY(object):
 
     
 
-    def read_measures(self,filename):
+    def read_measures(self,filename, data_type, data_err, show=True):
         '''
         
 
         Parameters
         ----------
-        filename : str
-            name of the input CATHY file to read.
+        filename : TYPE
+            DESCRIPTION.
+        data_type : TYPE
+            DESCRIPTION.
+        data_err : TYPE, optional
+            DESCRIPTION. The default is 0.05.
+        show : TYPE, optional
+            DESCRIPTION. The default is True.
 
         Returns
         -------
-        A dataframe or a dict describing file data/entries.
+        df : TYPE
+            DESCRIPTION.
 
         '''
+
         
-        if filename == 'atmbc':
-            df = in_CT.read_atmbc(os.path.join(self.workdir,self.project_name, 'input', filename))
-            return df
+        if data_type == 'discharge':
+            df = in_meas.read_discharge(filename)
+            
+            
+            
+            dict_meas = {'filename': filename, 
+                         'data_type': data_type, 
+                         'units': '$m^{3}/s$', # units
+                         'data': df,
+                         'data_err': data_err                   
+              }
+
+            
+            # if key in kwargs:
+            #     setattr(self, key, kwargs[key])
+                
+
+            return dict_meas
   
                 
         else:
