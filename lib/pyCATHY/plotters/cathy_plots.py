@@ -30,7 +30,7 @@ import numpy as np
 # from pyvirtualdisplay import Display
 
 from pyCATHY.importers import cathy_outputs as out_CT
-from pyCATHY.cathy_utils import label_units
+from pyCATHY.cathy_utils import label_units, transform2_time_delta
 
 
 
@@ -125,11 +125,14 @@ def show_vp(df_vp=[], workdir=[], project_name=[],
     # plot panda df
     # ------------------------------------------------------------------------
     fig, ax = plt.subplots(1,len(node_uni))
-    
+
+    if len(node_uni)<2:
+        ax = [ax]
+            
     colors = cm.Reds(np.linspace(0.2, 0.8, len(df_vp['str_nb'].unique())))
 
     for i, n in enumerate(node_uni):
-        
+                  
         # select the node and the y attribute
         df_vp_pivot = pd.pivot_table(df_vp,values=y,index=['time','node','str_nb'])
         df_vp_pivot_nodei = df_vp_pivot.xs(n, level="node")
@@ -186,9 +189,13 @@ def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
 
     fig, ax = plt.subplots()
     
-    plt.plot(df_hgraph[:,0],df_hgraph[:,1])
-    plt.xlabel('time (s)')
-    plt.ylabel('streamflow ($m^3/s$)')
+    if 'delta_t' in kwargs:
+        df_hgraph['time'] = pd.to_timedelta( df_hgraph['time'],unit='s') 
+        
+    df_hgraph.pivot_table(values='streamflow',index='time').plot(ax=ax,
+                                                                 ylabel='streamflow ($m^3/s$)',
+                                                                 xlabel='time (s)')
+
 
     return fig, ax 
 
@@ -201,7 +208,7 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
     ----------
     t_atmbc : np.array
         time where atmbc change.
-    v_atmbc : list of 2 arrays
+    v_atmbc : list of 1 or 2 arrays (when available)
         v_atmbc[0] is the array of Rain/Irrigation change over the time;
         v_atmbc[1] is the array of ET demand over the time;
     **kwargs 
@@ -225,31 +232,81 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         if key == "x_units":
             x_units = value
 
-    if x_units == "days":
-        xlabel = "time (days)"
-        t_atmbc = [x / (24 * 60 * 60) for x in t_atmbc]
-    if x_units == "hours":
-        xlabel = "time (h)"
-        t_atmbc = [x / (60 * 60) for x in t_atmbc]
+            if x_units == "days":
+                xlabel = "time (days)"
+                t_atmbc = [x / (24 * 60 * 60) for x in t_atmbc]
+            if x_units == "hours":
+                xlabel = "time (h)"
+                t_atmbc = [x / (60 * 60) for x in t_atmbc]
 
-    print(t_atmbc)
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
-    vdiff = v_atmbc[0] - v_atmbc[1]
+    
+    
+    if 'diff' in kwargs:
+        v_atmbc_p = v_atmbc[0] # positif
+        v_atmbc_n = v_atmbc[1] # positif
+        v_atmbc = v_atmbc[0] - v_atmbc[1]
+
+    
 
     fig, ax = plt.subplots()
-    ax.plot(t_atmbc, vdiff, "k*")
+    ax.plot(t_atmbc, v_atmbc, "k*")
     ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
     ax.grid()
 
-    plt.step(t_atmbc, v_atmbc[0], color="blue", where="post", label="Rain/Irr")
-    plt.step(t_atmbc, v_atmbc[1], color="red", where="post", label="ET")
-    plt.step(t_atmbc, vdiff, color="black", where="post", label="Diff")
+    if 'IETO' in kwargs:
+        if kwargs['IETO'] != 0:
+            plt.step(t_atmbc, v_atmbc, color="k", where="post")
+        elif kwargs['IETO'] == 0: # case of linear interpolation between points
+            ax.plot(t_atmbc, v_atmbc, "k--")
+
+        
+
+    if 'diff' in kwargs:
+        plt.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
+        plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
+        plt.step(t_atmbc, v_atmbc, color="black", where="post", label="Diff")
     ax.legend()
 
     return fig, ax 
 
 
 
+def show_atmbc_3d(df_atmbc):
+    '''
+    Temporary (must exist throught show_vtk only)
+
+    Parameters
+    ----------
+    df_atmbc : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    
+    # df_atmbc.set_index('time',inplace=True)
+    # df_atmbc.loc[0]
+
+    # filename = './vtk/100.vtk'
+    # mesh = pv.read(filename)
+    # mesh.add_field_data(df_atmbc.loc[0]['value'], 'atmbc')
+
+    # plotter = pv.Plotter(notebook=True)
+    # _ = plotter.add_mesh(mesh, show_edges=True, scalars='atmbc')
+
+    # # _ = plotter.add_legend(legend_entries)
+    # plotter.show_grid()
+    # cpos = plotter.show()
+    
+    show_vtk(new_field='atmbc')
+    
+    pass
+                
+                
 
 
 def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
@@ -285,19 +342,31 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
     if path is None:
         path = os.getcwd()
 
+
+    # Parse physical attribute + cmap from unit
+    # -------------------------------------------------------------------------
     if filename is None:
         if unit == "pressure":
             filename = "10" + str(timeStep) + ".vtk"
+            my_colormap = 'autumn'
+
         if unit == "saturation":
             filename = "cele20" + str(timeStep) + ".vtk"
+            my_colormap = 'Blues'
 
     mesh = pv.read(os.path.join(path, filename))
+
+
 
     if unit in list(mesh.array_names):
         print("plot " + str(unit))
     else:
         print("physcial property not existing")
 
+
+
+    # notebook = activate widgets 
+    # -------------------------------------------------------------------------
     if notebook == True:
         # pn.extension('vtk')  # this needs to be at the top of each cell for some reason
 
@@ -320,9 +389,17 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
                 # display.start()
 
                 plotter = pv.Plotter(notebook=True)
-                _ = plotter.add_mesh(mesh, scalars=PhysScalars[0])
+                _ = plotter.add_mesh(mesh, scalars=PhysScalars[0], cmap=my_colormap)
                 # plotter.show(True)
 
+                if unit == "saturation":
+                    plotter.update_scalar_bar_range([0,1])
+                
+                if 'clim' in kwargs:
+                    plotter.update_scalar_bar_range([kwargs['clim'][0],1])
+
+                    print(kwargs['clim'][0])
+            
                 legend_entries = []
                 legend_entries.append(["Time=" + str(mesh["TIME"]), "w"])
                 _ = plotter.add_legend(legend_entries)
@@ -345,17 +422,45 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
         plotvtk = widgets.VBox([choice, slider, out])
         plotvtk
 
+
+    # No notebook interaction
+    # -------------------------------------------------------------------------
     else:
 
         plotter = pv.Plotter(notebook=True)
-        _ = plotter.add_mesh(mesh, show_edges=True, scalars=unit)
+        _ = plotter.add_mesh(mesh, show_edges=True, scalars=unit, cmap=my_colormap)
+        
+        if unit == "saturation":
+            plotter.update_scalar_bar_range([0,1])
+        
+        # options to colorbar
+        # ---------------------------------------------------------------------
+        if 'clim' in kwargs:
+            plotter.update_scalar_bar_range([kwargs['clim'][0],kwargs['clim'][1]])
+
+        # add time stamp as legend
+        # ---------------------------------------------------------------------       
         legend_entries = []
-        legend_entries.append(["Time=" + str(mesh["TIME"]), "w"])
+        
+        time_delta = transform2_time_delta(mesh["TIME"],'s')
+        # print(mesh["TIME"])
+        
+        # legend_entries.append(["Time=" + str(mesh["TIME"]), "w"])
+        legend_entries.append(["Time=" + str(time_delta[0]), "w"])
+
+        
         _ = plotter.add_legend(legend_entries)
         plotter.show_grid()
+        
         # plotter.add_mesh_clip_box(mesh, color='white')
+        
+        # add scatter points to the plot 
+        # --------------------------------------------------------------------- 
         for key, value in kwargs.items():
-            print(f"key: {key} | value: {value}")
+
+
+            # add electrodes positions
+            # ----------------------------------------------------------------- 
             if key == "elecs":
                 poly_elecs = pv.PolyData(value)
                 poly_elecs["My Labels"] = [
@@ -365,11 +470,20 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
                     poly_elecs, "My Labels", point_size=20, font_size=36
                 )
 
+            # add tensiometers positions
+            # ----------------------------------------------------------------- 
+            
+            # add TDR probe positions
+            # ----------------------------------------------------------------- 
+            
+            
+        # savefig 
+        # --------------------------------------------------------------------- 
         if savefig is True:
             # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
             plotter.save_graphic(
-                filename + str(".pdf"), title="", raster=True, painter=True
-            )
+                filename + str(".svg"), title="", raster=True, painter=True)
+
 
         cpos = plotter.show()
 

@@ -20,4 +20,5 @@ dependencies:
   - sphinx-gallery
   - sphinx_bootstrap_theme
   - numpydoc
+  - PVGeo
 

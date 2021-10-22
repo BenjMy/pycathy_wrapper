@@ -11,8 +11,30 @@ import glob
 import time 
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
+
+
+
+def transform2_time_delta(t,x_units):
+    '''
+    Time to time delta
+
+    Returns
+    -------
+    None.
+
+    '''
+
+    delta_t = pd.to_timedelta(t,unit=x_units) 
+
+    return delta_t
+
+
+# t = [0]
+# dt = transform2_time_delta(t,'s')
+# print(dt[0])
 
 
 def convert_time_units(t, x_units):
@@ -23,7 +45,7 @@ def convert_time_units(t, x_units):
     ----------
     t : TYPE
         DESCRIPTION.
-    x_units : TYPE
+    x_units : str
         DESCRIPTION.
 
     Returns

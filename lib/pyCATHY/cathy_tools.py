@@ -76,9 +76,10 @@ class CATHY(object):
 
 
 
-    def __init__(
-        self, dirName, prjName="my_cathy_prj", notebook=False, version="1.0.0", verbose=True, 
-        **kwargs):
+    def __init__(self, dirName, prjName="my_cathy_prj", notebook=False, 
+                 version="1.0.0", 
+                 verbose=True,
+                 **kwargs):
         """
         Create CATHY object.
 
@@ -91,11 +92,19 @@ class CATHY(object):
             All file variable are self dictionnary objects; example: soil file is contained in self.soil
         """
 
+        # create project dir
+        # ---------------------------------------------------------------------
         self.console = make_console(verbose)
         self.console.print(":checkered_flag: [b]Initiate CATHY object:[/b]")
 
+
+        # flag for notebook execution
+        # ---------------------------------------------------------------------
         self.notebook = notebook  # flag if the script is run in a notebook
 
+
+        # create working and project dir
+        # ---------------------------------------------------------------------
         self.workdir = os.path.join(os.getcwd(), dirName)
 
         # change working directory
@@ -103,23 +112,23 @@ class CATHY(object):
             os.makedirs(self.workdir, exist_ok=True)
         os.chdir(self.workdir)
 
-
-        # create project dir
         self.project_name = prjName
 
         if not os.path.exists(os.path.join(self.workdir, self.project_name)):
             os.makedirs(os.path.join(self.workdir, self.project_name), exist_ok=True)
 
-        # convention for dir tree 
+
+
+        # convention for directory tree 
+        # ---------------------------------------------------------------------
         self.processor_name = "cathy"
         self.input_dirname = "input"
         self.output_dirname = "output"
-
-        # inputs dictionnary
         
-        self.DAFLAG = False
 
-        # all the files content are saved as dict
+        
+        # dict related to CATHY inputs files
+        # ---------------------------------------------------------------------
         self.parm = {}  # dict of parm input parameters
         self.soil = {}  # dict of soil input parameters
         self.ic = {}  # dict of ic input parameters
@@ -127,18 +136,19 @@ class CATHY(object):
         # self.nudging = {'NUDN': 0}   # Temporary
 
         
-        # self.time = []
-        # infitration
-        # self.drippers = []
+        # dict related to Data assimilation
+        # ---------------------------------------------------------------------
+        self.DAFLAG = False
+        self.dict_meas = {}
+        
+        
 
-        # ERT
-        # self.elecs = []
 
-        # meshing
-        # self.mesh_gmsh = []  # gmsh meshfile
 
         for key, value in kwargs.items():
 
+        # clear src files if required  
+        # ---------------------------------------------------------------------
             if key == "clear_src":  # clear src files
                 if value == True:
                     if os.path.exists(
@@ -159,6 +169,7 @@ class CATHY(object):
                         )
 
         # fetch src files if not existing from Gitbucket repo
+        # ---------------------------------------------------------------------
         if not os.path.exists(os.path.join(self.project_name, "src")):
             self.console.print(":worried_face: [b]src files not found[/b]")
             self.console.print("working directory is:" + str((self.workdir)))
@@ -226,6 +237,9 @@ class CATHY(object):
                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
                 )
 
+
+        # clear output files if required  
+        # ---------------------------------------------------------------------
         for key, value in kwargs.items():
             if key == "clear_outputs":
                 if value == True:
@@ -1192,32 +1206,15 @@ class CATHY(object):
 
     #%% INPUT FILES
 
-    def create_inputs(self, input_dirname="input"):
-        """
-        Short summary.
-
-        Parameters ---------- input_dirname : type Description of parameter `input_dirname`.
-
-        Returns ------- type Description of returned object.
-
-        """
-
-        # create project_name/output folders
-        if not os.path.exists(os.path.join(self.project_name, input_dirname)):
-            os.mkdir(os.path.join(self.project_name, input_dirname), mode=0o777)
-        # self.create_parm()
-        self.create_atmbc()
-        # self.create_nansfdirbc()
-        # compute the processor (make clean make) using the Makefile
-        return
 
     def update_parm(self, verbose=False, **kwargs):
 
         self.console.print(":black_nib: [b]update parm file [/b]")
 
         # set default parameters
+        # --------------------------------------------------------------------
         self.parm = {
-            "IPRT1": 2,
+            "IPRT1": 2, # Flag for output of input and coordinate data 
             "NCOUT": 0,
             "TRAFLAG": 1,
             "ISIMGR": 2,  # Flag for type of simulation and type of surface grid
@@ -1230,8 +1227,8 @@ class CATHY(object):
             "PSEL": -3.0,
             "PSER": -1.0,
             "PDSE1L": -3.0,
-            "PDSE1R": -1.0,
-            "PDSE2L": -3.0,
+            "PDSE1R": -2.5,
+            "PDSE2L": -1.5,
             "PDSE2R": -1.0,
             "ISFONE": 0,
             "ISFCVG": 0,
@@ -1248,9 +1245,9 @@ class CATHY(object):
             "ITUNS": 10,
             "ITUNS1": 5,
             "ITUNS2": 7,
-            "ISOLV": 10,
-            "ITMXCG": 5,
-            "TOLCG": 7,
+            "ISOLV": 2,
+            "ITMXCG": 500,
+            "TOLCG": 1.0e-10,
             "DELTAT": 0.01,
             "DTMIN": 0.00001,  # Minimum FLOW3D time step size allowed
             "DTMAX": 10.0,  # Maximum FLOW3D time step size allowed
@@ -1270,9 +1267,9 @@ class CATHY(object):
             "(ID_QOUT(I),I=1,NUM_QOUT)": [441],
         }
 
-        #%%
 
-        # DAFLAG:
+        # add DAFLAG ??
+        # --------------------------------------------------------------------
         # Flag for the choice of the data assimilation scheme:
         # = 0 nudging (if NUDN=0, no data assimilation)
         # = 1 EnKF with Evensen's algorithm (Ocean Dynamics, 2004)
@@ -1285,8 +1282,8 @@ class CATHY(object):
         #     self.parm = {'DAFLAG': 0}  # dict of parm input parameters 
             
         
-        # create dictionnary from kwargs
-
+        # create self.parm dictionnary from kwargs
+        # --------------------------------------------------------------------
         for kk, value in kwargs.items():
             if verbose == True:
                 print(f"key: {kk} | value: {value}")
@@ -1295,14 +1292,21 @@ class CATHY(object):
             # ----------------------------------------------------------------
             if kk == "TIMPRTi":
                 key = "(TIMPRT(I),I=1,NPRT)"
-                self.parm[key] = value
-                
+
+
                 # check if consistency between times of interest and 
                 # number of times of interest
                 # ------------------------------------------------------------
                 if len(value) != self.parm["NPRT"]:
                     self.parm["NPRT"] = len(value)
                     
+                    
+                # if len(value)>1:
+                #     value =  ' '.join(map(str, value))
+
+                self.parm[key] = value
+                
+                   
             # points of interest NODVP    
             # ----------------------------------------------------------------
             elif kk == "NODVP":
@@ -1314,21 +1318,22 @@ class CATHY(object):
                 # ------------------------------------------------------------
                 if len(value) != self.parm["NUMVP"]:
                     self.parm["NUMVP"] = len(value)
+                    
+            # other type of kwargs
+            # ----------------------------------------------------------------    
             else:
                 self.parm[kk] = value
 
-        # write file
-        header_fmt = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 2]
-        counth = 0
 
+
+
+        # transform array args to list
+        # --------------------------------------------------------------------
         for kk, value in self.parm.items():
-            if isinstance(value, list):
-                print(kk,value)
-                strlst = "\n ".join(str(e) for e in value)
-                self.parm[kk] = strlst
-                print(kk,strlst)
-            if kk == "NUMVP":
-                self.parm[kk] = str(value)
+            
+            if 'numpy' in str(type(value)):
+                value = list(value)
+                self.parm[kk] = value
 
 
         # update CATHYH
@@ -1338,80 +1343,63 @@ class CATHY(object):
                            indent='           :arrow_right_hook:')
         
         
-        
+
         # write parm file
         # --------------------------------------------------------------------
+        self._write_parm_file()
+        
+        pass
+
+
+    def _write_parm_file(self):
+        '''
+        Overwrite existing parm file
+
+        Returns
+        -------
+        New overwritten file.
+
+        '''
+        
+        header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 2]
+        counth = 0
         
         with open(
             os.path.join(self.workdir, self.project_name, self.input_dirname, "parm"),
             "w+",
         ) as parmfile:
-            for h in header_fmt:
-                if h == 4: # 4 variables in this lines
-                    parmfile.write(
-                        str(list(self.parm.values())[counth])
-                        + "\t"
-                        + str(list(self.parm.values())[counth + 1])
-                        + "\t"
-                        + str(list(self.parm.values())[counth + 2])
-                        + "\t"
-                        + str(list(self.parm.values())[counth + 3])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth + 1])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth + 2])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth + 3])
-                        + "\n"
-                    )
-                    counth += 4
-                if h == 3:
-                    parmfile.write(
-                        str(list(self.parm.values())[counth])
-                        + "\t"
-                        + str(list(self.parm.values())[counth + 1])
-                        + "\t"
-                        + str(list(self.parm.values())[counth + 2])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth + 1])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth + 2])
-                        + "\n"
-                    )
-                    counth += 3
+            
 
-                if h == 2:
-                    parmfile.write(
-                        str(list(self.parm.values())[counth])
-                        + "\t"
-                        + str(list(self.parm.values())[counth + 1])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth + 1])
-                        + "\n"
-                    )
-                    counth += 2
-                if h == 1:
-                    parmfile.write(
-                        str(list(self.parm.values())[counth])
-                        + "\t"
-                        + str(list(self.parm.keys())[counth])
-                        + "\n"
-                    )
-                    counth += 1
+            # Write line by line according to header format 
+            # ----------------------------------------------------------------
+            for i, h in enumerate(header_fmt_parm): 
+                left = right = []
+
+                # left = values
+                # ------------------------------------------------------------
+                left = str(list(self.parm.values())[counth : counth + h])
+                left = left.strip("[]").replace(",", "")
+                left = left.strip("[]").replace("[", "")
+
+                # right = keys
+                # ------------------------------------------------------------
+                right = str(list(self.parm.keys())[counth : counth + h])
+                right = right.strip("[]").replace(",", "")
+                right = right.replace("'", "")
+    
+                # add left + right
+                # ------------------------------------------------------------
+                line = left + "\t" + right + "\n"
+                counth += h
+                parmfile.write(str(line))
+                    
 
         parmfile.close()
-
-
-
+        
         pass
-
-    def update_ic(self, INDP=2, IPOND=0, WTPOSITION=[], verbose=False):
+            
+            
+    def update_ic(self, INDP=2, IPOND=0, WTPOSITION=[], verbose=False, **kwargs):
         '''
         The initial conditions file contains the pressure heads distribution for the study area (INDP)
         For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface, 
@@ -1481,9 +1469,13 @@ class CATHY(object):
 
         # write ic file
         # --------------------------------------------------------------------
-        with open(
-            os.path.join(self.workdir, self.project_name, self.input_dirname, "ic"),
-            "w+") as icfile:
+        
+        if 'filename' in kwargs:
+            filename = kwargs['filename']
+        else:
+            filename =  os.path.join(self.workdir, self.project_name, self.input_dirname, "ic")
+            
+        with open(filename,"w+") as icfile:
             icfile.write(str(INDP) + "\t" + str(IPOND) + "\t" + "INDP" + "\t" + "IPOND" + "\n")
             icfile.write(str(WTPOSITION) + "\t" + "WTPOSITION" + "\n")
         
@@ -1509,11 +1501,11 @@ class CATHY(object):
         
             - =0 for spatially variable atmospheric boundary condition inputs; 
             blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC's are
-        homogeneous in space.
+            homogeneous in space.
         IETO : TYPE, optional
-        
-            - =0 for linear interpolation of the atmospheric boundary
-        condition inputs between different. The default is 0.
+            - =0 for linear interpolation of the atmospheric boundary condition inputs between different
+            - otherwise the inputs are assigned as a piecewise constant function (ietograph).
+            The default is 0.
         TIME : TYPE, optional
             DESCRIPTION. The default is None.
         VALUE : TYPE, optional
@@ -1532,27 +1524,35 @@ class CATHY(object):
         '''
         
 
-
+        if 'diff' in kwargs:
+            v_atmbc = VALUE[0] - VALUE[1]
+        else:
+            v_atmbc = VALUE
+            
+        
         
         # set default parameters
         # --------------------------------------------------------------------
         
         self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "TIME": TIME, "VALUE": VALUE}
-        vdiff = VALUE[0] - VALUE[1]
+        
+
 
 
         # overwrite existing input atmbc file
         # --------------------------------------------------------------------
         
-        with open(
-            os.path.join(self.workdir, self.project_name, self.input_dirname, "atmbc"),
-            "w+",
-        ) as atmbcfile:
-            atmbcfile.write(
-                str(HSPATM) + "\t" + str(IETO) + "\t" + "HSPATM" + "\t" + "IETO" + "\n"
-            )
+        if 'filename' in kwargs:
+            filename = kwargs['filename']
+        else:
+            filename =  os.path.join(self.workdir, self.project_name, self.input_dirname, "atmbc")
+            
+        with open(filename,"w+") as atmbcfile:
+            atmbcfile.write(str(HSPATM) + "\t" + str(IETO) +
+                            "\t" + "HSPATM" + "\t" + "IETO" + "\n"
+                            )
 
-            for t, v in zip(TIME, vdiff):
+            for t, v in zip(TIME, v_atmbc):
 
                 if verbose == True:
                     print(t, v)
@@ -1562,7 +1562,11 @@ class CATHY(object):
         atmbcfile.close()
 
         self.update_parm(NPRT=len(TIME))
-        self.update_cathyH(MAXPRT=len(TIME))
+        
+        # don't need to update if sequential DA as the cathy.exe is already created
+        # ---------------------------------------------------------------------
+        if 'omit_cathyH' not in kwargs:            
+            self.update_cathyH(MAXPRT=len(TIME))
 
         if show == True:
             # if HSPATM !=0:
@@ -1576,6 +1580,8 @@ class CATHY(object):
             plt_CT.show_atmbc(TIME, VALUE, x_units=x_units)
 
         pass
+
+
 
     def update_nansfdirbc(
         self,
@@ -2337,13 +2343,17 @@ class CATHY(object):
             DESCRIPTION.
 
         '''
-               
+        
         # define measurement error covariance matrix, R
         #---------------------------------------------------------------------
         
-        return self.vars_per
+        self.dict_meas['cov_mat'] = np.ones([2,2])
         
-        pass
+        
+        
+        
+        return self.dict_meas
+        
     
     def prepare_DA(self,NENS=[],NUDN=[],
                       ENKFT=[], var_per=[]):
@@ -2369,7 +2379,7 @@ class CATHY(object):
             # Number of realizations in the ensemble kalman filter (EnKF) 
         NUDN : int
             #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
-        ENKFT : np.array([])
+        ENKFT : pandas df
             # Observation times for ensemble kalman filter (EnKF).
 
         Returns
@@ -2399,6 +2409,8 @@ class CATHY(object):
         # TIMPRTi # time of interest for outputs
         # TIMPRTi=times_of_interest, 
         # NODVP=nodes_of_interest, 
+        
+        # is this necessary ??
         self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
 
         # run processor to create the cathy_origin.exe to paste in every folder
@@ -2414,16 +2426,16 @@ class CATHY(object):
 
         # create initial dataframe DA_results_df for results
         # ---------------------------------------------------------------------
-        self._DA_df(NENS,ENKFT,var_per)     
+        self._DA_var_pert_df(NENS,ENKFT,var_per)     
 
 
         # update input files ensemble
         # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS,var_per)     
+        self._update_input_ensemble(NENS,ENKFT,var_per)     
         
         
         
-        return self.DA_df
+        return self.DA_var_pert_df
 
     def _check_DA_scenarii():
         '''
@@ -2434,6 +2446,7 @@ class CATHY(object):
         None.
 
         '''
+        print('check scenario')
         
         # condition 1: nrow(mbeconv)==0
         # condition 2: mbeconv[h,3]==(deltaT)
@@ -2442,17 +2455,18 @@ class CATHY(object):
 
 
     def _update_DA(self,typ='ENKF',NENS=[],NUDN=[],
-                      ENKFT=[], var_per=[]):
+                      ENKFT=[], var_per=[],update_var_list=['St. var.']):
         """
         Update enesmble using ENKF
         
         
-        
-        1. apply ENKF filter
+        1. prepare ENKF matrices
+
+        2. apply ENKF filter
    
-        2. create panda dataframe for each perturbated variable
+        3. create panda dataframe for each perturbated variable
         
-        3. update input files
+        4. update input files
 
         Parameters
         ----------
@@ -2461,7 +2475,7 @@ class CATHY(object):
         NUDN : int
             #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
         ENKFT : np.array([])
-            # Observation times for ensemble kalman filter (EnKF).
+            # Observation time for ensemble kalman filter (EnKF).
 
         Returns
         -------
@@ -2473,25 +2487,185 @@ class CATHY(object):
 
         # apply ENKF
         # ---------------------------------------------------------------------
-        self.ENKF()   
-        
-        # create dataframe DA_results_df for results
+        self._prepare_ENKF(update_var_list=['St. var.'])
+
+
+        # apply ENKF
         # ---------------------------------------------------------------------
-        self._DA_df(NENS,ENKFT,var_per)     
+        updated_psi, updated_var_per = self.ENKF()   
         
-        
-        # update input files ensemble
+        # create dataframe _DA_var_pert_df for results
         # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS,var_per)     
+        self._DA_var_pert_df(NENS,ENKFT,updated_var_per)     
         
-        return self.DA_df
+
+        # update input files ensemble (state variable = psi)
+        # ---------------------------------------------------------------------
+        self._update_input_ensemble(NENS,ENKFT,var_per)    
+            
+        # update input files ensemble (perturbated variables)
+        # ---------------------------------------------------------------------
+        self._update_input_ensemble(NENS,ENKFT,var_per)    
+        
+        
+        return self.DA_var_pert_df
+
+
+    def _prepare_ENKF(self,dict_data_measured, update_var_list=['St. var.']):
+        '''
+        Matrice operations before ENKF
+
+        Parameters
+        ----------
+        dict_data_measured : TYPE
+            DESCRIPTION.
+        dict_ensemble : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        A : np.array
+            matrix of ensemble anomalies.
+        D : np.array
+            Difference between the measurements .
+        Hx : np.array
+            Ensemble mean of the simulated observations.
+        X : np.array
+            Ensemble matrix of M rows and N columns. N is the number of 
+            realizations and M is the state dimension, i.e., the number of nodes in the finite element grid
+        Xa : np.array
+            Augmented by the number of parameters that are subject to up-
+            date.
+        x_mean : np.array
+            mean of the ensemble.
+
+        '''
+        
+        
+        A = []
+        D = []
+        Hx = []
+        x_mean = []
+        
+        # read grid to infer dimension of the ensemble X
+        # --------------------------------------------------------------------     
+        self.grid3d = {}
+        if len(self.grid3d) == 0: 
+            self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir, self.project_name))
+
+        M_rows = np.shape(self.grid3d['nodes_idxyz'])[0]
+        N_col = self.NENS
+        
+        
+        # Ensemble matrix of M rows and N  + fill with psi values
+        # --------------------------------------------------------------------
+        X = np.zeros([M_rows,N_col])
+
+        # state_var = 'pressure' # pressure head
+        
+        for j in range(self.NENS):
+            
+            df_psi = out_CT.read_psi(os.path.join(self.workdir, self.project_name, 
+                                               "DA_Ensemble/cathy_" + str(j+1),
+                                               'output/psi'))
+            print(np.shape(df_psi))
+            print(np.shape(X))
+            # X[:,j] = df_psi['pressure']
+            X[:,j] = df_psi[:,1]
+
+            # check if there is still zeros
+            if np.count_nonzero(X) != M_rows*N_col:
+                print('unconsistent filled X, missing values')
+
+
+        # mean of the ensemble x_mean
+        # --------------------------------------------------------------------
+        
+
+        # Init Augmented Ensemble matrix
+        # --------------------------------------------------------------------
+        Xa = X
+        if len(update_var_list)>1:
+            for i in range(update_var_list-1):
+                Xa = Xa.append(np.zeros([M_rows,1]))
+                
+
+        # Ensemble mean of the simulated observations Hx
+        # --------------------------------------------------------------------
+
+
+
+        # Matrix of ensemble anomalies A
+        # --------------------------------------------------------------------
+
+
+        # Difference between the measurements D
+        # --------------------------------------------------------------------
+
+
+        
+        
+        return A, D, Hx , X, Xa, x_mean
+
 
 
     def ENKF(self):
+        '''
+        ENKF from Sakov and Eversen (2009)
+        
+        .. math::
+
+            X^{u} = x^{u} + A^{u}
+
+        x: ensemble average
+        A: matrix of ensemble anomalies
+        superscript u means updated
+        
+        Returns
+        -------
+        None.
+
+        '''
         
         self.console.print('ENKF')
         
-        pass
+        # ensemble mean of the simulated observations
+        
+        
+
+
+        # %*% is matrix multiplication
+        # C = A.dot(B) in python
+        
+        # X be an ensemble matrix of M rows and N columns, where
+        # N is the number of realizations and M is the state dimen-
+        # sion, i.e., the number of nodes in the finite element grid, aug-
+        # mented by the number of parameters that are subject to up-
+        # date.
+        
+        # x: ensemble average
+        # A: matrix of ensemble anomalies
+        # suscript u means updated
+        
+        
+
+        # R: measurement error covariance matrix
+        # D: difference between the measurements,
+        # Hx: ensemble mean of the simulated observations
+        # S is the matrix of scaled ensemble innovation anomalies
+        # HA being the simulated measurement anomalies  
+        
+        # When updating the states only, the elements of X are the 
+        # pressure heads at each node of the finite element grid,
+
+        #STEP 1 Estimation matrix [A] which represents the difference 
+        # between matrix [X] and the mean values estimated over all the 
+        # scenarios
+        
+        # update_ic
+        
+
+        return updated_psi, updated_var_per
 
 
     def _create_subfolders_ensemble(self,NENS):
@@ -2554,18 +2728,18 @@ class CATHY(object):
 
 
 
-    def _DA_df(self,NENS,ENKFT,var_per):
+    def _DA_var_pert_df(self,NENS,ENKFT,var_per):
         
-        # create initial dataframe DA_results_df for results
+        # create initial dataframe _DA_var_pert_df storing perturbated ensemble evolution
         # ---------------------------------------------------------------------  
-        self.console.print('DA_results_df')
+        self.console.print('_DA_ens_df')
         
         # boolean flag to indicate if the variable is updated (True) or not (False)
         bool_updated = False*np.ones(NENS) 
         
         # time collumn and updated collumn flag
         cols_root = ['time', 'updated_bool']
-        data_df_root = [ENKFT[0]*np.ones(NENS), bool_updated]
+        data_df_root = [ENKFT.iloc[0]*np.ones(NENS), bool_updated]
 
         for key in var_per.items(): # loop over perturbated variable dict
             cols_root.append(key[0])
@@ -2578,16 +2752,16 @@ class CATHY(object):
         # 1
         # 2
         
-        self.DA_df = pd.DataFrame(np.transpose(data_df_root),
+        self.DA_var_pert_df = pd.DataFrame(np.transpose(data_df_root),
                               columns=cols_root)
         
-        self.DA_df['time'] = pd.to_timedelta(self.DA_df['time'],unit='s') 
+        # self.DA_var_pert_df['time'] = pd.to_timedelta(self.DA_var_pert_df['time'],unit='s') 
 
         
         pass
     
 
-    def _update_input_ensemble(self,NENS,var_per, **kwargs):
+    def _update_input_ensemble(self,NENS,ENKFT,var_per=[], **kwargs):
         '''
         Write new variable perturbated/updated value into corresponding input file
 
@@ -2611,29 +2785,65 @@ class CATHY(object):
         # ---------------------------------------------------------------------  
         
 
-        for key in ('ENKFT'): # times for ETKF
-            if key in kwargs:
-                setattr(self, key, kwargs[key])
+        # for key in ('ENKFT'): # times for ETKF
+        #     if key in kwargs:
+        #         setattr(self, key, kwargs[key])
                 
+
+        # resample atmbc file for the given DA window
+        #----------------------------------------------------------------------                
         # cathy and data assimilation are performed for a single time step       
         # definition of the part of hyetograph to be applied in this step
         # self.update_cathyH() ?
-        self.update_atmbc()
+        
+        try:      
+            time_window_atmbc_df = [ENKFT.iloc[self.count_DA_cycl],ENKFT.iloc[self.count_DA_cycl+1]]
+        except: # case where the simulation is not yet running (initial preparation)
+            time_window_atmbc_df = [ENKFT.iloc[0], ENKFT.iloc[1]]
 
+        # print(time_window_atmbc)
+        
+        # read full simulation atmbc and filter time window
+        #----------------------------------------------------------------------
+        df_atmbc, HSPATM, IETO = in_CT.read_atmbc(os.path.join(self.workdir, self.project_name,
+                              'input','atmbc'), grid=self.grid3d)
+
+        df_atmbc['time'] = pd.to_timedelta(df_atmbc['time'],unit='s') 
+
+        # need to resample if nb of atmbc points is too low with respect to data assimilation frequency
+        # ---------------------------------------------------------------------
+        resampling_mean = ENKFT.iloc[0]
+        df_atmbc_int = df_atmbc.set_index('time').resample(resampling_mean).mean().interpolate('linear')  
+        df_atmbc_int_filt = df_atmbc_int[(df_atmbc_int.index > time_window_atmbc_df[0]) & 
+                     (df_atmbc_int.index < time_window_atmbc_df[1])]
+
+
+    
         # loop over dict of perturbated variable
         #----------------------------------------------------------------------
         for key in var_per.items(): # loop over perturbated variables dict
         
-        
+            print(key)
         
             # loop over ensemble files
             #------------------------------------------------------------------
-            for ens_nb in range(NENS):
+            for ens_nb in track(range(NENS), description="updating ensemble file..."):
                 
+
                 # change directory according to ensmble file nb
                 os.chdir(os.path.join(self.workdir, self.project_name,
                                       './DA_Ensemble/cathy_'+ str(ens_nb+1)))
 
+
+                # (this is always done since Kalman Filter is Sequential)
+                # update atmbc file 
+                #--------------------------------------------------------------
+                # convert to numpy and convert to second / np.timedelta64(1, 's')
+                self.update_atmbc(HSPATM=0,IETO=0,TIME=df_atmbc_int_filt.index/np.timedelta64(1, 's'),
+                                  VALUE=df_atmbc_int_filt['value'].to_numpy(),
+                                  show=False,
+                                  filename=os.path.join(os.getcwd(),'input/atmbc')) # specify filename path
+                #--------------------------------------------------------------
                 
             # check variable to update and update
             #------------------------------------------------------------------
@@ -2647,17 +2857,19 @@ class CATHY(object):
                 if key[0] in 'ic':
                     # check if key contain self.ic args # NOT YET IMPLEMENTED
                     # self.ic['INDP'] = 0
-                    # self.ic['INDP'] = 0
+                    # self.ic['INDP'] = 0atmbc
                     self.update_ic(INDP=0,IPOND=0,
-                        WTPOSITION=var_per[key[0]]['perturbated'][ens_nb],
-                                               verbose=True)
+                                   WTPOSITION=var_per[key[0]]['perturbated'][ens_nb],
+                                   verbose=True,
+                                   filename=os.path.join(os.getcwd(),'input/ic')) # specify filename path
 
                 # kss update
                 #--------------------------------------------------------------
                 if key[0] in 'kss':
                     print('kss perturbated not yet implemented')
 
-                    self.update_soil(verbose=True)
+                    self.update_soil(verbose=True,
+                                     filename=os.path.join(os.getcwd(),'input/soil')) # specify filename path
 
 
                 # FeddesParam update
@@ -2670,61 +2882,75 @@ class CATHY(object):
                                    'ZROOT':[var_per[key[0]]['perturbated'][ens_nb]],
                                    'PZ':self.soil["PZ"],
                                    'OMGC': self.soil["OMGC"]}        
-                    self.update_soil(FP=FeddesParam,verbose=True)
-
+                    self.update_soil(FP=FeddesParam,
+                                     verbose=True,
+                                     filename=os.path.join(os.getcwd(),'input/soil')) # specify filename path
         
         pass
 
     
 
-    def read_measures(self,filename, data_type, data_err, show=True):
+    def read_measures(self,filename, data_type, data_err, show=False):
         '''
-        
+        read measures (real observations)
 
         Parameters
         ----------
-        filename : TYPE
-            DESCRIPTION.
-        data_type : TYPE
-            DESCRIPTION.
-        data_err : TYPE, optional
-            DESCRIPTION. The default is 0.05.
-        show : TYPE, optional
-            DESCRIPTION. The default is True.
+        filename : str
+            filename of the observation dataset.
+        data_type : str
+            key tring to identify what type of measure is to read.
+        data_err : float
+            % of error for a given measurement dataset. The default is 0.05.
+        show : Bool
+            plot measure graph. The default is False.
 
         Returns
         -------
-        df : TYPE
-            DESCRIPTION.
+        dict_meas : dict
+            dict merging all observations + metadatas.
 
         '''
 
-        
+        # discharge type read
+        # ---------------------------------------------------------------------
         if data_type == 'discharge':
             df = in_meas.read_discharge(filename)
-            
-            
-            
-            dict_meas = {'filename': filename, 
-                         'data_type': data_type, 
-                         'units': '$m^{3}/s$', # units
-                         'data': df,
-                         'data_err': data_err                   
-              }
+            units = '$m^{3}/s$'
 
+        # tensiometer type read
+        # ---------------------------------------------------------------------
+        elif data_type == 'tensiometers':
             
-            # if key in kwargs:
-            #     setattr(self, key, kwargs[key])
-                
+            df = in_meas.read_discharge(filename)         
 
-            return dict_meas
-  
-                
+        # no file specified (raise error)
+        # ---------------------------------------------------------------------
         else:
             print('no file specified')
         
+        # store measure data (df) + metadata into a dict
+        # ---------------------------------------------------------------------
+        dict_meas_2add = {'filename': filename, 
+                             'data_type': data_type, 
+                             'units': units, # units
+                             'data': df,
+                             'data_err': data_err                   
+                             }
 
-        pass
+        # concatenate dict
+        # ---------------------------------------------------------------------
+        self.dict_meas = self._add_to_meas_dict(dict_meas_2add)
+        
+        return self.dict_meas
+
+
+    def _add_to_meas_dict(self,dict_meas_2add):
+        
+        self.dict_meas = self.dict_meas | dict_meas_2add
+
+        return self.dict_meas 
+
 
 
 
@@ -2812,11 +3038,6 @@ class CATHY(object):
     
 
 
-    # -------------------------------------------------------------------#
-    #%% Explore output files
-    
-    
-    
     
 
     # -------------------------------------------------------------------#
@@ -2843,19 +3064,19 @@ class CATHY(object):
         if len(node_coords)<1:
             node_coords = [node_coords]
 
-        grid = in_CT.read_grid3d(self.project_name)
+        self.grid3d = in_CT.read_grid3d(self.project_name)
     
         closest_idx = []
         closest = []
         for i, nc in enumerate(node_coords):
             # euclidean distance
-            d = ( (grid['nodes_idxyz'][:,1] - nc[0]) ** 2 + 
-                   (grid['nodes_idxyz'][:,2]  - nc[1]) ** 2 +
-                   (grid['nodes_idxyz'][:,3]  - nc[2]) ** 2
+            d = ( (self.grid3d['nodes_idxyz'][:,1] - nc[0]) ** 2 + 
+                   (self.grid3d['nodes_idxyz'][:,2]  - nc[1]) ** 2 +
+                   (self.grid3d['nodes_idxyz'][:,3]  - nc[2]) ** 2
                    ) ** 0.5
             
             closest_idx.append(np.argmin(d))
-            closest.append(grid['nodes_idxyz'][closest_idx[i],1:])
+            closest.append(self.grid3d['nodes_idxyz'][closest_idx[i],1:])
     
         return closest_idx, closest
 
@@ -2919,75 +3140,3 @@ class CATHY(object):
 
 
 
-
-    # -------------------------------------------------------------------#
-    #%% Infitration DATA
-
-    def create_infitration(self, dirfiles):
-        self.set_drippers(dirfiles)
-
-        pass
-
-    def set_drippers(self, dirfiles, drip_pos="drippers.txt"):
-
-        print(os.getcwd())
-        if isinstance(drip_pos, str):
-            self.drippers = np.loadtxt(
-                os.path.join(self.project_name, dirfiles, drip_pos),
-                skiprows=1,
-                delimiter=",",
-            )
-        else:
-            self.drippers = drip_pos
-
-        # check drippers position against DEM
-        self.hapin
-        mesh_x_max = float(self.hapin["xllcorner"]) + float(
-            self.hapin["delta_x"]
-        ) * float(self.hapin["N"])
-        mesh_y_max = float(self.hapin["yllcorner"]) + float(
-            self.hapin["delta_y"]
-        ) * float(self.hapin["M"])
-
-        mesh_x = []
-        for xx in range(int(self.hapin["N"])):
-            mesh_x.append(
-                float(self.hapin["xllcorner"]) + float(self.hapin["delta_x"]) * xx
-            )
-
-        mesh_y = []
-        for yy in range(int(self.hapin["M"])):
-            mesh_y.append(
-                float(self.hapin["yllcorner"]) + float(self.hapin["delta_y"]) * yy
-            )
-
-        print(mesh_x)
-        print(mesh_y)
-
-        print(mesh_x_max)
-        print(max(self.drippers[:, 0]))
-
-        if mesh_x_max < max(self.drippers[:, 0]):
-            print(
-                "Error: max mesh_x="
-                + str(mesh_x_max)
-                + "; max dripper x pos="
-                + str(max(self.drippers[:, 0]))
-            )
-
-        if mesh_y_max < max(self.drippers[:, 1]):
-            print(
-                "Error: max mesh_x="
-                + str(mesh_y_max)
-                + "; max dripper y pos="
-                + str(max(self.drippers[:, 1]))
-            )
-
-        # for dd in self.drippers:
-        #     dd==
-
-        #  (A==B).all()
-
-        self.drippers_nodes = []
-
-        pass

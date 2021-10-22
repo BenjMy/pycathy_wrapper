@@ -3,29 +3,94 @@
 
 import os
 import numpy as np
+import pandas as pd
+from pyCATHY.plotters import cathy_plots as pltCT 
 
-#%% Meshtool functions
-
-
-
-def read_atmbc(filename):
+def read_atmbc(filename, grid, show=False, **kwargs):
     '''
-
+    read atmbc file 
+    
+    
     Returns
     -------
-    None.
+    atmbc dataframe.
 
     '''
     
+    # filename = './input/atmbc'
     atmbc_file = open(filename, "r")
+    lines = atmbc_file.readlines()
+    # lines = [ligne.strip() for ligne in lines] # avoid retour chariot
+    atmbc_file.close()
 
-    
-    atmbcfile.close()
-    
-    
+    # read header flags
+    Line0_header = [int(word) for word in lines[0].split() if word.isdigit()]
+    HSPATM = Line0_header[0]
+    IETO = Line0_header[1]
 
+
+    t = []
+    value = []
+    tstep_idx = []
+    # loop over lines
+    for i, ll in enumerate(lines):
+        if i>0:
+            if 'TIME' in ll:
+                tstep_idx.append(i)
+                splt= ll.split()
+                t.append(float(splt[0]))
+
+            # two cases (according to file formatting): 
+            # numerical values + flag of value
+            # -----------------------------------------------------------------
+            # 1/ value (numeric) + 'VALUE'
+            elif 'VALUE' in ll:
+                
+                value.append(float(ll.split()[0]))
+
+            # only numerical values
+            # 2/ value (numeric)
+            # -----------------------------------------------------------------
+            else:
+                # take care of the additionnal empty lines (retour chariot)
+                # in the end of the file
+                value.append(float(ll.split()[0]))
+
+    if HSPATM != 0: #homogeneous on all surf mesh nodes
+              
+        d_atmbc = []
+        for i in range(len(t)):
+           d_atmbc.append(np.column_stack((t[i]*np.ones(int(grid["nnod3"])),
+                      value[i]*np.ones(int(grid["nnod3"])),
+                      grid['nodes_idxyz'])))
+        d_atmbc= np.vstack(d_atmbc)
     
-    pass   
+    else:
+        
+        print('HSPATM == 0')
+        print(np.shape(t))
+        print(np.shape(value))
+        print(np.shape( grid['nodes_idxyz']))
+        d_atmbc = []
+
+        
+        
+    
+    cols_atmbc = ['time', 'value', 'nodeidx', 'x', 'y', 'z']
+    df_atmbc =  pd.DataFrame(d_atmbc,  columns=cols_atmbc)
+    
+    if show==True:
+
+        pltCT.show_atmbc(t,value,IETO=IETO)   
+        
+        try:
+            pltCT.show_atmbc_3d(df_atmbc)
+        except:
+            print('no vtk file found')
+
+
+
+    return df_atmbc, HSPATM, IETO
 
 
 

@@ -22,7 +22,9 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                             ensemble_size = 128, show=False):
         """
         Perturbate variable for the generation of the ensemble
-        Possible perturbations:
+        
+        
+        Possible variable to perturbate:
             - initial conditions
             - hyetograph
             - van Genuchten retention curves parameters
@@ -52,7 +54,11 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     
         """
     
-    
+
+        def Evensen2003():
+            print('not yet implemented - see Botto 2018')
+            
+            pass
         # add Johnson1970 transformation in kwargs 
         
         # check if parameters in part of van Genuchten retention curves
@@ -66,7 +72,8 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             # distributed variables via the Johnson system (Johnson, 1970)
             def Johnson1970():
                 print('not yet implemented - see Botto 2018')
-        
+
+                        
         # all parameters except Van Genuchten
         else:
     

@@ -12,22 +12,43 @@ from pyCATHY.plotters import cathy_plots as pltCT
 import os
 
 
-def atmbc_PRD(
-    workdir,
-    project_name,
-    grid,
-    x_min=[],
-    x_max=[],
-    y_min=[],
-    y_max=[],
-    flux=1.11111e-06,
-    time_drying0=2,
-    irr_days=1,
-    lg_PRD=2,
-    show=False,
-    **kwargs
-):
+def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
+    '''
+    
 
+    Parameters
+    ----------
+    workdir : TYPE
+        DESCRIPTION.
+    project_name : TYPE
+        DESCRIPTION.
+    dict_PRD : TYPE
+        DESCRIPTION.
+    show : TYPE, optional
+        DESCRIPTION. The default is False.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    t_irr : TYPE
+        DESCRIPTION.
+    t_atmbc : TYPE
+        DESCRIPTION.
+    v_atmbc : TYPE
+        DESCRIPTION.
+
+    '''
+
+    
+    grid = dict_PRD['grid']
+    time_drying0 = dict_PRD['time_drying0']
+    irr_days = dict_PRD['irr_days']
+    flux = dict_PRD['flux']
+    lg_PRD = dict_PRD['lg_PRD']
+    lg_PRD = dict_PRD['lg_PRD']
+
+    
     x_min = max(grid["nodes_idxyz"][:, 1]) / 2
     x_max = max(grid["nodes_idxyz"][:, 1])
     y_min = min(grid["nodes_idxyz"][:, 2])
@@ -48,9 +69,9 @@ def atmbc_PRD(
     sec_h = 3600
     days2sec = 24 * 3600
 
-    time_drying0 = (
-        time_drying0 * sec_h
-    )  # days2sec # let the system dry out during 30days
+
+
+    time_drying0 = (time_drying0 * sec_h)  # days2sec # let the system dry out during 30days
     # irr_days = 1 # irrigate on left side during 10days
     # lg_PRD = 2 # 2 hours length of irrigation during the morning
     no_irr = 0
@@ -181,3 +202,75 @@ def atmbc_PRD(
 # rhizo.create_DA(drippersPos=[],RWU=False)
 #     # closestnode
 #     # simu.create_parm()
+
+# -------------------------------------------------------------------#
+#%% Infitration DATA
+
+def create_infitration(self, dirfiles):
+    self.set_drippers(dirfiles)
+
+    pass
+
+def set_drippers(self, dirfiles, drip_pos="drippers.txt"):
+
+    print(os.getcwd())
+    if isinstance(drip_pos, str):
+        self.drippers = np.loadtxt(
+            os.path.join(self.project_name, dirfiles, drip_pos),
+            skiprows=1,
+            delimiter=",",
+        )
+    else:
+        self.drippers = drip_pos
+
+    # check drippers position against DEM
+    self.hapin
+    mesh_x_max = float(self.hapin["xllcorner"]) + float(
+        self.hapin["delta_x"]
+    ) * float(self.hapin["N"])
+    mesh_y_max = float(self.hapin["yllcorner"]) + float(
+        self.hapin["delta_y"]
+    ) * float(self.hapin["M"])
+
+    mesh_x = []
+    for xx in range(int(self.hapin["N"])):
+        mesh_x.append(
+            float(self.hapin["xllcorner"]) + float(self.hapin["delta_x"]) * xx
+        )
+
+    mesh_y = []
+    for yy in range(int(self.hapin["M"])):
+        mesh_y.append(
+            float(self.hapin["yllcorner"]) + float(self.hapin["delta_y"]) * yy
+        )
+
+    print(mesh_x)
+    print(mesh_y)
+
+    print(mesh_x_max)
+    print(max(self.drippers[:, 0]))
+
+    if mesh_x_max < max(self.drippers[:, 0]):
+        print(
+            "Error: max mesh_x="
+            + str(mesh_x_max)
+            + "; max dripper x pos="
+            + str(max(self.drippers[:, 0]))
+        )
+
+    if mesh_y_max < max(self.drippers[:, 1]):
+        print(
+            "Error: max mesh_x="
+            + str(mesh_y_max)
+            + "; max dripper y pos="
+            + str(max(self.drippers[:, 1]))
+        )
+
+    # for dd in self.drippers:
+    #     dd==
+
+    #  (A==B).all()
+
+    self.drippers_nodes = []
+
+    pass

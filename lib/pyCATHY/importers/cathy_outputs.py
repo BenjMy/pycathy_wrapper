@@ -67,7 +67,9 @@ def read_vp(filename):
     
         if 'SURFACE NODE =' in ll:
             surf_node.append([i,wes[1]])
-            idx_s_node.append([int(s) for s in ll.split() if s.isdigit()])
+            
+            # here we exctract only numeric value types
+            idx_s_node.append([int(s) for s in ll.split() if s.isdigit()]) 
   
     
     # check if surf node is not empty
@@ -180,7 +182,7 @@ def read_dtcoupling(filename):
     return df_dtcoupling   
 
 
-def read_psi():
+def read_psi(filename):
     '''
     Pressure head output at all nodes
 
@@ -189,9 +191,39 @@ def read_psi():
     None.
 
     '''
+
+    psi_file = open(filename, "r")
+    lines = psi_file.readlines()
+    psi_file.close()
+    
+    # nstep = len(lines)-2
+    
+    idx=[]
+    step_i = []
+    time_i = []
+    
+    # loop over lines of file and identified NSTEP and TIME line nb
+    # ------------------------------------------------------------------------
+    for i, ll in enumerate(lines):
+        if 'TIME' in ll:
+            idx.append(i)
+            splt= ll.split()
+            step_i.append(splt[0])
+            time_i.append(splt[1])
     
     
-    pass   
+    d_psi_t = []
+    for i, ind in enumerate(idx):
+        psi_file = open(filename, "r")
+        psi_sub = np.loadtxt(psi_file, skiprows=idx[i]+1,max_rows=idx[1]-2)
+        d_psi_t.append(psi_sub)
+        psi_file.close()
+    
+    d_psi_t = np.vstack(d_psi_t)
+
+    
+    
+    return  d_psi_t
 
 
 def read_sw():
