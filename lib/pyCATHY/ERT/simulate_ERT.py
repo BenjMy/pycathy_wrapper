@@ -37,7 +37,9 @@ def fwd_ERT_survey(ERT,noise,show=False):
 
     ERT.forward(noise=0.05, iplot=show) # forward modelling with 5 % noise added to the output
 
-def invert_ERT_survey(ERT,noise,show=False):
+
+
+def invert_ERT_survey(ERT,show=False):
 
     # ---------------------------------------------------------#
     # inversion
@@ -59,8 +61,23 @@ def invert_ERT_survey(ERT,noise,show=False):
 
 
 
+# def computeAttribute():
 
+#     for i, m in enumerate(self.meshResults):
+#     cols = m.df.columns
+#     vals = [m.df[c].values for c in cols]
+#     # DANGER ZONE =================================
+#     try:
+#         m.df[name] = eval(formula)
+#         dump('{:s} computation successful on meshResults[{:d}]\n'.format(name, i))
+#     except Exception as e:
+#         print('Error in meshResults[{:d}]:'.format(i), e)
+#         dump('{:s} computation failed on meshResults[{:d}]: {:s}\n'.format(name, i, str(e)))
+#         pass
 
+    
+    
+    
 def Archie_sat(rho, rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
     '''
     rho: resistivity

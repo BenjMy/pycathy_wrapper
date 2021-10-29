@@ -202,7 +202,9 @@ def read_psi(filename):
     step_i = []
     time_i = []
     
-    # loop over lines of file and identified NSTEP and TIME line nb
+  
+    
+    # loop over lines of file and identified NSTEP and SURFACE NODE line nb
     # ------------------------------------------------------------------------
     for i, ll in enumerate(lines):
         if 'TIME' in ll:
@@ -210,25 +212,44 @@ def read_psi(filename):
             splt= ll.split()
             step_i.append(splt[0])
             time_i.append(splt[1])
+    idx.append(i+1) 
+
+
+
+    psi_sub  = []
+    for j, ind in enumerate(idx):
+        for i, ll in enumerate(lines):
+            if i>idx[j] and i<idx[j+1]:
+                splt= ll.split()
+                psi_sub.append([float(k) for k in splt])
     
-    
-    d_psi_t = []
-    for i, ind in enumerate(idx):
-        psi_file = open(filename, "r")
-        psi_sub = np.loadtxt(psi_file, skiprows=idx[i]+1,max_rows=idx[1]-2)
-        d_psi_t.append(psi_sub)
-        psi_file.close()
-    
-    d_psi_t = np.vstack(d_psi_t)
+    psi_sub = np.hstack(psi_sub)
+    d_psi_t = np.reshape(psi_sub,[len(idx)-1,
+                                  int(np.shape(psi_sub)[0]/(len(idx)-1))]
+                         )
 
     
     
     return  d_psi_t
 
-
 def read_sw():
     '''
     Water saturation output at all nodes (SW) for input to TRAN3D and DUAL3D groundwater contaminant transport
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    
+    pass   
+
+
+
+def read_hgsfdet():
+    '''
+    Detailed seepage face hydrograph output (Incoming and outgoing flows at the seepage face)
 
     Returns
     -------

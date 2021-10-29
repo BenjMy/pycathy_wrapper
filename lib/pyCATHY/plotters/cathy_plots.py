@@ -242,9 +242,9 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
     
     
-    if 'diff' in kwargs:
+    if np.shape(t_atmbc) != np.shape(v_atmbc):
         v_atmbc_p = v_atmbc[0] # positif
-        v_atmbc_n = v_atmbc[1] # positif
+        v_atmbc_n = v_atmbc[1] # negatif
         v_atmbc = v_atmbc[0] - v_atmbc[1]
 
     
@@ -262,7 +262,7 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
 
         
 
-    if 'diff' in kwargs:
+    if len(v_atmbc_p)>0:
         plt.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
         plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
         plt.step(t_atmbc, v_atmbc, color="black", where="post", label="Diff")

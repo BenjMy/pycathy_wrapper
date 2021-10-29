@@ -144,7 +144,6 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
                             #     atmbcfile.write(str(flux/totarea))
                             # else:
                             atmbcfile.write(str(flux / totarea) + "\n")
-            print(count)
 
             t_atmbc.append(t_irr)
             t_irr += lg_PRD * sec_h
@@ -179,10 +178,9 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
         for key, value in kwargs.items():
             if key == "x_units":
                 x_units = value
-
+          
         pltCT.show_atmbc(
-            t_atmbc, [v_atmbc, np.zeros(len(v_atmbc))], x_units=x_units
-        )
+            t_atmbc, [v_atmbc, np.zeros(len(v_atmbc))], x_units=x_units)
 
     return t_irr, t_atmbc, v_atmbc
 

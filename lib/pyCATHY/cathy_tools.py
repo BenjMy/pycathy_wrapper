@@ -30,7 +30,9 @@ from rich.progress import track
 # from pltCT import *
 
 from pyCATHY.plotters import cathy_plots as plt_CT
-from pyCATHY.DA import cathy_DA as DA_CT
+from pyCATHY.DA.cathy_DA import DA
+
+
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import sensors_measures as in_meas
@@ -65,7 +67,7 @@ def subprocess_run_multi(pathexe_list):
     
     
 
-class CATHY(object):
+class CATHY(DA): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ?
     """ Main CATHY object
     
       When instantiated it creates the tree project directories with 'prjName' as root folder.
@@ -91,6 +93,7 @@ class CATHY(object):
         ..note:
             All file variable are self dictionnary objects; example: soil file is contained in self.soil
         """
+
 
         # create project dir
         # ---------------------------------------------------------------------
@@ -491,7 +494,28 @@ class CATHY(object):
             # ----------------------------------------------------------------
             if self.DAFLAG:
                 
-                self._run_DA(callexe,parallel,verbose)
+                
+                # type of assimillation
+                DA_type = 'Sakov'
+                if 'DA_type' in kwargs:
+                    DA_type = kwargs['DA_type']
+                
+                # what needs to be updated ? only model states or also model parameters?
+                update_var_list = ['St. var.']
+                if 'update_var_list' in kwargs:
+                    update_var_list = kwargs['update_var_list']
+
+                # what needs to be assimilated ?
+                assimilated_var_list = []
+                if 'assimilated_var_list' in kwargs:
+                    assimilated_var_list = kwargs['assimilated_var_list']
+
+
+
+                self._run_DA(callexe,parallel,verbose,
+                             DA_type,
+                             update_var_list,
+                             assimilated_var_list)
 
 
             # case of simple simulation
@@ -522,7 +546,10 @@ class CATHY(object):
         return
 
 
-    def _run_DA(self,callexe,parallel,verbose):
+    def _run_DA(self,callexe,parallel,verbose,
+                             DA_type,
+                             update_var_list,
+                             assimilated_var_list):
         '''
         Run Data Assimilation process
         
@@ -554,8 +581,8 @@ class CATHY(object):
         self.count_DA_cycle=0 # counter of the Assimilation Cycle
         # Loop over assimilation cycle
         # -------------------------------------------------------------------
-        for DA_cnb in self.CATHY['ENKFT']:
-            self.console.print('count DA cycle nb: ' + self.count_DA_cycle)
+        for DA_cnb in self.cathyH['ENKFT']:
+            self.console.print('count DA cycle nb: ' + str(self.count_DA_cycle))
 
             # multi run from the independant folders composing the ensemble
             # ----------------------------------------------------------------
@@ -602,10 +629,17 @@ class CATHY(object):
             # and then create and applied the filter 
 
 
-            # update using ENKF (apply ENKF, create DA_results_df ,update input files ensemble)
+            # analysis step
             # ----------------------------------------------------------------
-            self._update_DA(typ='ENKF')
+                
+            self._DA_analysis(typ=DA_type,
+                            update_var_list=update_var_list,
+                            assimilated_var_list='all')
             
+
+            # check analysis quality
+            # ----------------------------------------------------------------
+            df_RMSE = self._RMSE()
             
             
 
@@ -613,14 +647,19 @@ class CATHY(object):
 
                 
     def create_output(self, output_dirname="output"):
-        """
-        Short summary.
+        '''
+        Create output directories
+        
+        Parameters
+        ----------
+        output_dirname : str, optional
+            Name of the dir. The default is "output".
 
-        Parameters ---------- output_dirname : type Description of parameter `output_dirname`.
+        Returns
+        -------
+        None.
 
-        Returns ------- type Description of returned object.
-
-        """
+        '''       
 
         # create project_name/output folders
         if not os.path.exists(os.path.join(self.project_name, output_dirname)):
@@ -630,7 +669,9 @@ class CATHY(object):
             os.mkdir(os.path.join(self.workdir, self.project_name, "vtk"))
 
         # compute the processor (make clean make) using the Makefile
-        return        
+        pass
+
+        
         
     def display_time_run(self):
 
@@ -1888,7 +1929,7 @@ class CATHY(object):
 
         # Soil Physical Properties strat by strat
         # --------------------------------------------------------------------
-        SoilPhysProp = self._prepare_SOIL_Physical_Properties_tb(SPP)
+        SoilPhysProp = self._prepare_SPP_tb(SPP)
    
 
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
@@ -1967,7 +2008,7 @@ class CATHY(object):
         return SPP
 
 
-    def _prepare_SOIL_Physical_Properties_tb(self,SPP):
+    def _prepare_SPP_tb(self,SPP):
         '''
         _prepare_SOIL_Physical_Properties_tb
 
@@ -2199,7 +2240,1126 @@ class CATHY(object):
 
 
 
+    # -------------------------------------------------------------------#
+    #%% DATA ASSIMILATION FCTS
 
+    
+    def prepare_DA_init(self,NENS=[],NUDN=[],
+                      ENKFT=[], var_per=[]):
+        """
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        Initial preparation for DA
+        
+        
+        .. note::
+
+            1. update cathyH file given NENS, ENKFT + flag self.parm['DAFLAG']==True
+            
+            2. create the processor cathy_origin.exe
+            
+            3. create directory tree for the ensemble
+            
+            4. create panda dataframe for each perturbated variable
+            
+            5. update input files
+
+        Parameters
+        ----------
+        NENS : int
+            # Number of realizations in the ensemble kalman filter (EnKF) 
+        ENKFT : pandas df
+            # Observation times for ensemble kalman filter (EnKF).
+
+        Returns
+        -------
+        None.
+
+        Note: for now only implemented for EnkF DA
+        """
+        
+        
+        # to do create a readme file inside DA folder to explain how the dir tree works
+        self.DAFLAG=True
+        
+        # update nudging file
+        # self.update_nudging(NUDN=NUDT)
+        # self.nudging = {'NUDN': NUDN}   # THIS IS TEMPORARY
+        self.NENS = NENS # THIS IS TEMPORARY
+        
+        # update cathyH DA parameters
+        # ---------------------------------------------------------------------
+        # NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
+        # NUDN = len(ENKFT)  # this is true only when DA is made inside CATHY
+        # self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
+        
+        # when DA is made outside CATHY we run step by step
+
+        # TIMPRTi # time of interest for outputs
+        # TIMPRTi=times_of_interest, 
+        # NODVP=nodes_of_interest, 
+        
+        # THIS IS TEMPORARY, assimilation time should be infer from observation data directly
+        self.ENKFT = ENKFT
+        
+        # is this necessary ??
+        self.update_cathyH(MAXNUDN=1,ENKFT=ENKFT, verbose=True)
+
+        # run processor to create the cathy_origin.exe to paste in every folder
+        # ---------------------------------------------------------------------
+        self.run_processor(runProcess=False)
+        # OR self.recompileSrc(runProcess=False, NUDN=NUDN)
+                     
+        
+        # create sub directories for each ensemble
+        # ---------------------------------------------------------------------
+        self._create_subfolders_ensemble(NENS)
+
+
+        # create initial dataframe DA_results_df for results
+        # ---------------------------------------------------------------------
+        self._DA_var_pert_df(NENS,ENKFT,var_per)     
+
+
+        # update input files ensemble
+        # ---------------------------------------------------------------------
+        self._update_input_ensemble(NENS,ENKFT,var_per)     
+        
+        
+        
+        return self.DA_var_pert_df
+    
+    
+
+    def _check_DA_scenarii():
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        CHECK which scenarios are OK and which are to be descarted
+
+        Returns
+        -------
+        None.
+
+        '''
+        print('check scenario')
+        
+        # condition 1: nrow(mbeconv)==0
+        # condition 2: mbeconv[h,3]==(deltaT)
+        
+        pass
+
+
+    def _DA_analysis(self,typ='Sakov', 
+                      update_var_list=[],
+                      assimilated_var_list=[]):
+        """
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        Analysis ensemble using ENKF
+        
+        
+        1. prepare ENKF matrices
+
+        2. apply ENKF filter
+   
+        3. create panda dataframe for each perturbated variable
+        
+        4. update input files
+
+        Parameters
+        ----------
+        NENS : int
+            # Number of realizations in the ensemble kalman filter (EnKF) 
+        NUDN : int
+            #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
+        ENKFT : np.array([])
+            # Observation time for ensemble kalman filter (EnKF).
+
+        Returns
+        -------
+        None.
+
+        Note: for now only implemented for EnkF DA
+        """
+
+       
+        if typ == 'Sakov':
+            
+            
+            # map states to observation = apply H operator to state variable
+            # ---------------------------------------------------------------------    
+            Hx, Ha = self._map_states2Observations(assimilated_var_list)
+            
+            
+            # prepare ENKF
+            # ---------------------------------------------------------------------
+            X, X_augm, A, A_mean = self._prepare_ENKF(update_var_list=['St. var.'])
+            
+            # apply ENKF
+            # ---------------------------------------------------------------------
+            updated_psi, updated_var_per = self.ENKF(X, X_augm, A, A_mean, Hx, Ha)   
+            
+            # create dataframe _DA_var_pert_df holding the results of the DA update
+            # ---------------------------------------------------------------------
+            self._DA_var_pert_df(self.NENS,self.ENKFT,updated_var_per)     
+            
+    
+            # update input files ensemble (state variable = psi)
+            # ---------------------------------------------------------------------
+            # self._update_input_ensemble(NENS,ENKFT,var_per)  #var_per[0]=='ic'   
+                
+            # overwrite input files ensemble (perturbated variables)
+            # ---------------------------------------------------------------------
+            self._update_input_ensemble(self.NENS,self.ENKFT,var_per,
+                                        update_var_list=['St. var.'])    
+            
+        
+        return self.DA_var_pert_df
+
+
+    
+    def _map_states2Observations(self,assimilated_var_list):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        Apply H mapping operator to convert model to predicted value
+
+        Returns
+        -------
+        Hx : np.array
+            Ensemble mean of the simulated observations.
+        Ha : TYPE
+            DESCRIPTION.
+
+        '''
+
+
+        for key in assimilated_var_list:
+            
+            # case 1: pressure head assimilation (Hx_PH)
+            # --------------------------------------------------------------------
+            df_vp_PH = pd.table_pivot(index=[time,node],value='PH')
+            if key[0] in 'PH':
+                # filter the node if some of the instruments were not working
+                  df_vp_PH_filt = df_vp_PH.iloc('node1','node2')
+    
+                  Hx_PH = df_vp_PH_filt
+            
+            
+            # case 2: sw assimilation (Hx_SW)
+            # --------------------------------------------------------------------
+            if key[0] in 'SW':
+    
+                df_vp_SW = pd.table_pivot(index=[time,node],value='SW')
+                # filter the node if some of the instruments were not working
+                df_vp_SW_filt = df_vp_SW.iloc('node1','node2')
+                
+                Hx_SW = df_vp_SW_filt * porosity
+                
+                # note: the value of the porosity can be unique or not depending on the soil physical properties defined
+            
+            # case 3: discharge
+            # need to read the hgsfdet file (Hx_Q)
+            # --------------------------------------------------------------------
+            if key[0] in 'discharge':
+                
+                # derivation of the dircharge, Q from file 'hgsfdet'
+                Hx_Q = []
+                
+            
+            # case 4: ERT
+            # --------------------------------------------------------------------
+            if key[0] in 'ERT':
+    
+                # mapping: transform SWC to ER using Archie
+                Hx_ERT = self.PH_2_ERT(verbose=True)
+            
+
+
+        
+        return Hx, Ha
+
+
+
+    def _prepare_ENKF(self,dict_data_measured, update_var_list=['St. var.']):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+        
+        Matrice operations before ENKF
+
+        Parameters
+        ----------
+        dict_data_measured : TYPE
+            DESCRIPTION.
+        dict_ensemble : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        A : np.array
+            matrix of ensemble anomalies.
+        D : np.array
+            Difference between the measurements.
+        X : np.array
+            Ensemble matrix of M rows and N columns. N is the number of 
+            realizations and M is the state dimension, i.e., the number of nodes in the finite element grid
+        X_augm : np.array
+            Augmented by the number of parameters that are subject to up-
+            date.
+        x_mean : np.array
+            mean of the ensemble.
+
+        '''
+        
+        
+        A = []
+        D = []
+        x_mean = []
+        
+        # read grid to infer dimension of the ensemble X
+        # --------------------------------------------------------------------     
+        self.grid3d = {}
+        if len(self.grid3d) == 0: 
+            self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir, self.project_name))
+
+        M_rows = np.shape(self.grid3d['nodes_idxyz'])[0]
+        N_col = self.NENS
+        
+        
+        # Ensemble matrix X of M rows and N  + fill with psi values
+        # --------------------------------------------------------------------
+        X = np.zeros([M_rows,N_col])
+
+        # state_var = 'pressure' # pressure head
+        # read psi cathy output file to infer pressure head valies
+        for j in range(self.NENS):
+            df_psi = out_CT.read_psi(os.path.join(self.workdir, self.project_name, 
+                                               "DA_Ensemble/cathy_" + str(j+1),
+                                               'output/psi'))
+            # X[:,j] = df_psi['pressure']
+            X[:,j] = df_psi[-1,:]
+
+        # check if there is still zeros
+        if np.count_nonzero(X) != M_rows*N_col:
+            print('unconsistent filled X, missing values')
+
+        
+        # Init Augmented Ensemble matrix
+        # --------------------------------------------------------------------
+        # combine the Ensemble and Param arrays.
+        X_augm = X
+        if len(update_var_list)>1:
+            for i in range(update_var_list-1):
+                X_augm = X_augm.append(np.zeros([M_rows,1]))
+        
+
+        # mean of the ensemble x_mean
+        # --------------------------------------------------------------------
+        # # Calculate mean
+        # X_mean = (1./float(N_col))*np.tile(X.sum(1), (N_col,1)).transpose()
+        
+        ones = np.ones(N_col)
+        XI=X_augm.dot(ones)
+        X_augm_mean = (1/N_col)*(XI)   #this is the mean value estimated over the whole number of scenarios
+        
+        
+        # Matrix of ensemble anomalies A (ensemble perturbation from mean)
+        # --------------------------------------------------------------------
+        A=X_augm-(X_augm_mean.dot(np.ones(np.shape(X)[0]))) # these are the anomalies (difference)
+
+
+        # # Data perturbation from ensemble measurements
+        # # --------------------------------------------------------------------
+        # # D should be (MeasSize)x(EnSize)
+        # D = Data - Observation
+        
+        
+        # Ensemble mean of the simulated observations Hx
+        # --------------------------------------------------------------------
+
+
+
+        # Matrix of ensemble anomalies A
+        # --------------------------------------------------------------------
+
+
+        # Difference between the measurements D
+        # --------------------------------------------------------------------
+
+
+
+        
+        return X, X_augm, A, A_mean
+    
+    
+        # # Collect data sizes.
+        # EnSize = Ensemble.shape[1]
+        # SimSize = Ensemble.shape[0] 
+        # MeaSize = Data.shape[0]
+
+        # # First combine the Ensemble and Param arrays.
+        # # X is (SimSize+ParSize)x(EnSize)
+        # X = np.vstack([Ensemble, Param.transpose()])
+
+
+
+        # # Calculate ensemble perturbation from mean
+        # # Apert should be (SimSize+ParSize)x(EnSize)
+        # A = X - X_mean
+
+        # # Data perturbation from ensemble measurements
+        # # dD should be (MeasSize)x(EnSize)
+        # dD = Data - Observation
+
+        # # Ensemble measurement perturbation from ensemble measurement mean.
+        # # S is (MeasSize)x(EnSize)
+        # MeasAvg = (1./float(EnSize))*np.tile(Observation.reshape(MeaSize,EnSize).sum(1), (EnSize,1)).transpose()
+        # S = Observation - MeasAvg
+
+        # # Set up measurement covariance matrix
+        # # COV is (MeasSize)x(MeasSize)
+        # COV = (1./float(EnSize-1))*np.dot(S,S.transpose()) + DataCov
+    
+        # # Compute inv(COV)*dD
+        # # Should be (MeasSize)x(EnSize)
+        # B = np.linalg.solve(COV,dD)
+
+        # # Adjust ensemble perturbations
+        # # Should be (SimSize+ParSize)x(MeasSize)
+        # dAS = (1./float(EnSize-1))*np.dot(A,S.transpose())
+
+
+
+
+
+    def ENKF(self,A,dAS,B):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        ENKF from Sakov and Eversen (2009)
+        
+        .. math::
+
+            X^{u} = x^{u} + A^{u}
+
+        x: ensemble average
+        A: matrix of ensemble anomalies
+        superscript u means updated
+        
+        Returns
+        -------
+        None.
+
+        '''
+        
+        self.console.print('ENKF')
+        
+        # ensemble mean of the simulated observations
+        
+        
+
+        # Compute analysis
+        # Analysis is (SimSize+ParSize)x(EnSize)
+        X_augm_analysis = A + np.dot(dAS,B)
+
+        # Separate and return Analyzed Ensemble and Analyzed Parameters.
+        # AnalysisParam = Analysis[SimSize:,:].transpose()
+        # Analysis = Analysis[0:SimSize,:]
+        
+        
+        
+        
+        # %*% is matrix multiplication
+        # C = A.dot(B) in python
+        
+        # X be an ensemble matrix of M rows and N columns, where
+        # N is the number of realizations and M is the state dimen-
+        # sion, i.e., the number of nodes in the finite element grid, aug-
+        # mented by the number of parameters that are subject to up-
+        # date.
+        
+        # x: ensemble average
+        # A: matrix of ensemble anomalies
+        # suscript u means updated
+        
+        
+
+        # R: measurement error covariance matrix
+        # D: difference between the measurements,
+        # Hx: ensemble mean of the simulated observations
+        # S is the matrix of scaled ensemble innovation anomalies
+        # HA being the simulated measurement anomalies  
+        
+        # When updating the states only, the elements of X are the 
+        # pressure heads at each node of the finite element grid,
+
+        #STEP 1 Estimation matrix [A] which represents the difference 
+        # between matrix [X] and the mean values estimated over all the 
+        # scenarios
+        
+        # update_ic
+        # X_u = []
+        
+        
+        return X_a
+
+
+    def _create_subfolders_ensemble(self,NENS):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+
+        Parameters
+        ----------
+        NENS : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, 
+                                           "DA_Ensemble/cathy_origin")):
+            os.makedirs(os.path.join(self.workdir, self.project_name, 
+                                     "DA_Ensemble/cathy_origin"))
+            
+            # copy input, output and vtk dir
+            # ----------------------------------------------------------------
+            for dir2copy in enumerate(['input','output','vtk']):                
+                shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]), 
+                                os.path.join(self.workdir, self.project_name, 
+                                             "DA_Ensemble/cathy_origin", dir2copy[1])
+                )
+        
+        try:
+            # copy exe into cathy_origin folder
+            # ----------------------------------------------------------------
+            shutil.move(
+                os.path.join(self.workdir, self.project_name, self.processor_name),
+                os.path.join(self.workdir, self.project_name, 
+                             "DA_Ensemble/cathy_origin", self.processor_name)
+                        )
+            
+            # copy cathy.fnames into cathy_origin folder
+            # ----------------------------------------------------------------
+            shutil.copy(
+                os.path.join(self.workdir, self.project_name, 
+                             'cathy.fnames'),
+                os.path.join(self.workdir, self.project_name, 
+                             "DA_Ensemble/cathy_origin/cathy.fnames")
+                        ) 
+            
+            # copy prepro into cathy_origin folder            
+            # ----------------------------------------------------------------
+            shutil.copytree(os.path.join(self.workdir,  self.project_name, 
+                                         'prepro'),
+                            os.path.join(self.workdir, self.project_name, 
+                                     "DA_Ensemble/cathy_origin/prepro"))
+                        
+                        
+        except:
+            self.console.print(":worried_face: [b]processor exe not found[/b]")
+
+            
+        path_origin = os.path.join(self.workdir, self.project_name,
+                                   "DA_Ensemble/cathy_origin")
+        
+        # copy origin folder to each ensemble subfolders
+        for i in range(NENS):
+            path_nudn_i =  os.path.join(self.workdir, self.project_name, 
+                                        "DA_Ensemble/cathy_" + str(i+1))  
+            
+            if not os.path.exists(path_nudn_i):
+                shutil.copytree(
+                    path_origin, path_nudn_i
+                )
+
+
+
+    def _DA_var_pert_df(self,NENS,ENKFT,var_per):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+
+        Parameters
+        ----------
+        NENS : TYPE
+            DESCRIPTION.
+        ENKFT : TYPE
+            DESCRIPTION.
+        var_per : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        
+        # create initial dataframe _DA_var_pert_df storing perturbated ensemble evolution
+        # ---------------------------------------------------------------------  
+        self.console.print('_DA_ens_df')
+        
+        # boolean flag to indicate if the variable is updated (True) or not (False)
+        bool_updated = False*np.ones(NENS) 
+        
+        # time collumn and updated collumn flag
+        cols_root = ['time', 'updated_bool']
+        data_df_root = [ENKFT.iloc[0]*np.ones(NENS), bool_updated]
+
+        for key in var_per.items(): # loop over perturbated variable dict
+            cols_root.append(key[0])
+            data_df_root.append(var_per[key[0]]['perturbated'])
+               
+        # create dataframe
+        
+        #    Time   updated bool    var1_value    var2_value
+        # 0
+        # 1
+        # 2
+        
+        self.DA_var_pert_df = pd.DataFrame(np.transpose(data_df_root),
+                              columns=cols_root)
+        
+        # self.DA_var_pert_df['time'] = pd.to_timedelta(self.DA_var_pert_df['time'],unit='s') 
+
+        
+        pass
+    
+
+    def _update_input_ensemble(self,NENS,ENKFT,
+                               var_per=[],
+                               update_var_list=['St. var.'], 
+                               **kwargs):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+
+        Select the time window of the hietograph. 
+        Write new variable perturbated/updated value into corresponding input file
+
+        Parameters
+        ----------
+        NENS : int
+            size of the ensemble.
+        var_per : dict
+            dict of all perturbated variables holding values and metadata.
+
+        Returns
+        -------
+        New file written/overwritten into the input dir.
+
+        '''
+
+        self.console.print('_update_input_ensemble')
+
+        # resample atmbc file for the given DA window
+        # ---------------------------------------------------------------------
+        self.selec_atmbc_window(NENS,ENKFT)
+        
+        # ---------------------------------------------------------------------         
+        self.update_ENS_files(var_per,update_var_list)
+
+        pass
+
+
+
+    def selec_atmbc_window(self,NENS,ENKFT):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+
+        Select the time window of the hietograph.
+
+        Parameters
+        ----------
+        NENS : TYPE
+            DESCRIPTION.
+        ENKFT : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        # resample atmbc file for the given DA window
+        #----------------------------------------------------------------------                
+        # cathy and data assimilation are performed for a single time step       
+        # definition of the part of hyetograph to be applied in this step
+        # self.update_cathyH() ?
+        
+        try:      
+            time_window_atmbc_df = [ENKFT.iloc[self.count_DA_cycl],ENKFT.iloc[self.count_DA_cycl+1]]
+        except: # case where the simulation is not yet running (initial preparation)
+            time_window_atmbc_df = [ENKFT.iloc[0], ENKFT.iloc[1]]
+
+        # print(time_window_atmbc)
+        
+        # read full simulation atmbc and filter time window
+        #----------------------------------------------------------------------
+        df_atmbc, HSPATM, IETO = in_CT.read_atmbc(os.path.join(self.workdir, self.project_name,
+                              'input','atmbc'), grid=self.grid3d)
+
+        df_atmbc['time'] = pd.to_timedelta(df_atmbc['time'],unit='s') 
+
+        # need to resample if nb of atmbc points is too low with respect to data assimilation frequency
+        # ---------------------------------------------------------------------
+        resampling_mean = ENKFT.iloc[0]
+        df_atmbc_int = df_atmbc.set_index('time').resample(resampling_mean).mean().interpolate('linear')  
+        df_atmbc_int_filt = df_atmbc_int[(df_atmbc_int.index > time_window_atmbc_df[0]) & 
+                     (df_atmbc_int.index < time_window_atmbc_df[1])]
+        
+        for ens_nb in track(range(NENS), description="updating ensemble file..."):
+            
+
+            # change directory according to ensmble file nb
+            os.chdir(os.path.join(self.workdir, self.project_name,
+                                  './DA_Ensemble/cathy_'+ str(ens_nb+1)))
+
+
+            # (this is always done since Kalman Filter is Sequential)
+            # update atmbc file 
+            #--------------------------------------------------------------
+            # convert to numpy and convert to second / np.timedelta64(1, 's')
+            self.update_atmbc(HSPATM=0,IETO=0,TIME=df_atmbc_int_filt.index/np.timedelta64(1, 's'),
+                              VALUE=df_atmbc_int_filt['value'].to_numpy(),
+                              show=False,
+                              filename=os.path.join(os.getcwd(),'input/atmbc')) # specify filename path
+            
+    
+    
+    
+    
+    def update_ENS_files(self,var_per, update_var_list, NENS,**kwargs):
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        Overwrite ensemble files after analysis step
+
+        Returns
+        -------
+        Overwritten files.
+
+        '''
+        
+        
+        # (this is always done since psi are state variable to update)
+
+
+
+        # loop over dict of perturbated variable
+        #----------------------------------------------------------------------
+        for key in var_per.items(): # loop over perturbated variables dict
+        
+            print(key)
+        
+            # loop over ensemble files
+            #------------------------------------------------------------------
+            for ens_nb in track(range(NENS), description="updating ensemble file..."):
+                
+
+                
+            # check variable to update and update
+            #------------------------------------------------------------------               
+                                      
+                if key[0] in 'hietograph':
+                    print('hietograph perturbated not yet implemented')
+                    
+                    self.update_atmbc(verbose=True)
+
+                # ic update
+                #--------------------------------------------------------------
+                if key[0] in 'ic':
+                    # check if key contain self.ic args # NOT YET IMPLEMENTED
+                    # self.ic['INDP'] = 0
+                    # self.ic['INDP'] = 0atmbc
+                    self.update_ic(INDP=0,IPOND=0,
+                                   WTPOSITION=var_per[key[0]]['perturbated'][ens_nb],
+                                   verbose=True,
+                                   filename=os.path.join(os.getcwd(),'input/ic')) # specify filename path
+
+                # kss update
+                #--------------------------------------------------------------
+                if key[0] in 'kss':
+                    print('kss perturbated not yet implemented')
+
+                    self.update_soil(verbose=True,
+                                     filename=os.path.join(os.getcwd(),'input/soil')) # specify filename path
+
+
+                # FeddesParam update
+                #--------------------------------------------------------------
+                elif key[0] in ['PCANA','PCREF','PCWLT','ZROOT','PZ','OMGC']:
+                    
+                    FeddesParam = {'PCANA':self.soil["PCANA"],
+                                   'PCREF':self.soil["PCREF"],
+                                   'PCWLT':self.soil["PCWLT"],
+                                   'ZROOT':[var_per[key[0]]['perturbated'][ens_nb]],
+                                   'PZ':self.soil["PZ"],
+                                   'OMGC': self.soil["OMGC"]}        
+                    self.update_soil(FP=FeddesParam,
+                                     verbose=True,
+                                     filename=os.path.join(os.getcwd(),'input/soil')) # specify filename path
+    
+
+    def _RMSE():
+        '''
+        THIS SHOULD BE MOVED TO DA CLASS 
+
+        (Normalized) root mean square errors (NRMSEs)
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        # N0 = number of observation at a given time
+
+        # RMSE_WC
+        # RMSE_PH
+        # RMSE_Q
+        
+        # RMSE[t]
+        
+        pass
+
+    def read_measures(self,filename, data_type, data_err, show=False):
+        '''
+        read measures (real observations)
+        
+        Infer assimilation time for ENKF
+
+        Parameters
+        ----------
+        filename : str
+            filename of the observation dataset.
+        data_type : str
+            key tring to identify what type of measure is to read.
+        data_err : float
+            % of error for a given measurement dataset. The default is 0.05.
+        show : Bool
+            plot measure graph. The default is False.
+
+        Returns
+        -------
+        dict_meas : dict
+            dict merging all observations + metadatas.
+
+        '''
+
+        # discharge type read
+        # ---------------------------------------------------------------------
+        if data_type == 'discharge':
+            df = in_meas.read_discharge(filename)
+            units = '$m^{3}/s$'
+
+        # tensiometer type read
+        # ---------------------------------------------------------------------
+        elif data_type == 'tensiometers':
+            
+            df = in_meas.read_discharge(filename)  
+            
+            # add time stamp if not contained in the file
+            
+        elif data_type == 'ERT':
+            
+            df = in_meas.read_ERT(filename)  
+            
+            # add time stamp if not contained in the file
+            
+            
+        # no file specified (raise error)
+        # ---------------------------------------------------------------------
+        else:
+            print('no file specified')
+        
+        # store measure data (df) + metadata into a dict
+        # ---------------------------------------------------------------------
+        dict_meas_2add = {'filename': filename, 
+                             'data_type': data_type, 
+                             'units': units, # units
+                             'data': df,
+                             'data_err': data_err                  
+                             }
+
+        # concatenate dict
+        # ---------------------------------------------------------------------
+        self.dict_meas = self._add_to_meas_dict(dict_meas_2add)
+        
+                
+        return self.dict_meas
+
+
+    def _add_to_meas_dict(self,dict_meas_2add):
+        
+        self.dict_meas = self.dict_meas | dict_meas_2add
+
+        return self.dict_meas 
+
+
+    def prepare_measures(self,dict_meas,Bishop=False):
+        '''
+        prepare measure before DA
+        
+        
+        1. Measurement perturbation
+        2. Compute matrice covariance and normalise data if necessary
+
+        Parameters
+        ----------
+        dict_meas : dict
+            dict containing measure data + metadata.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        '''
+        
+        # The EnKF algorithm implemented here is actually an en-
+        # semble transform Kalman filter (Bishop et al., 2001) that
+        # does not require the perturbation of observations. On the
+        # other hand, the measurement error covariance matrix, R,
+        # must be assumed to be known a priori.
+
+        # (Bishop et al., 2001) --> not require the perturbation of observations
+        # taking advantage of the high time resolution of the collected data.
+        #---------------------------------------------------------------------
+        
+
+        
+        # unit conversion (?)
+        #------------------------------------------------------------------
+        
+        
+        # When assimilating multiple variables, proper normaliza-
+        # tion of the measurement error covariance matrices, anoma-
+        # lies of the simulated data, and innovation vectors were per-
+        # formed, using values of 0.6 m, 0.58, and 4.17 × 10 −5 m 3 s −1
+        # for pressure head, water content and subsurface outflow,
+        # respectively. The normalization ensures that in multivari-
+        # ate assimilation scenarios the covariance matrices in the
+        # Kalman gain are not ill-conditioned (Evensen, 2003; Cam-
+        # porese et al., 2009b).
+
+        
+        # normalisation
+        #------------------------------------------------------------------
+           
+            
+        if Bishop==True:
+
+    
+            # define measurement error covariance matrix, R
+            #------------------------------------------------------------------
+            
+            self._meas_cov_matrice()
+            
+
+        else:
+        # pertubate measurements
+        #----------------------------------------------------------------------
+            self.perturbate_var()
+            self.console.print('need to perturbate the measurements first')
+        
+        
+        return self.dict_meas
+    
+    
+    
+
+    def _meas_cov_matrice(self):
+        '''
+        compute measurement cov matrice and add it to dict_meas
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        # R:  measurement error covariance matrix, R
+        self.R = []
+        self.dict_meas['cov_mat'] = self.R
+        
+        
+        pass
+    
+
+    def read_inputs(self,filename):
+        '''
+        
+
+        Parameters
+        ----------
+        filename : str
+            name of the input CATHY file to read.
+
+        Returns
+        -------
+        A dataframe or a dict describing file data/entries.
+
+        '''
+        
+        if filename == 'atmbc':
+            df = in_CT.read_atmbc(os.path.join(self.workdir,self.project_name, 'input', filename))
+            return df
+  
+                
+        else:
+            print('no file specified')
+        
+
+        pass
+
+
+    def read_outputs(self,filename):
+        '''
+        
+
+        Parameters
+        ----------
+        filename : str
+            name of the output file to read.
+
+        Returns
+        -------
+        A dataframe or a dict describing file data/entries.
+
+        '''
+        
+        
+        if filename == 'vp':
+            df = out_CT.read_vp(os.path.join(self.workdir,self.project_name, 'output', filename))
+            return df
+        if filename == 'hgraph':
+            df = out_CT.read_hgraph(os.path.join(self.workdir,self.project_name, 'output', filename))
+            return df
+        if filename == 'dtcoupling':
+            df = out_CT.read_dtcoupling(os.path.join(self.workdir,self.project_name, 'output', filename))
+            return df
+        
+        else:
+            print('no file specified')
+        
+
+        pass
+
+        
+  
+
+    # -------------------------------------------------------------------#
+    #%% utils
+    
+    def find_nearest_node(self,node_coords):
+        '''
+        Find nearest mesh node
+
+        Parameters
+        ----------
+        node_coords : list
+            List of coordinates [[x,y,z],[x2,y2,z2]].
+
+        Returns
+        -------
+        closest_idx : list
+            Node indice in the grid3d.
+        closest : list
+            Node coordinate in the grid3d.
+
+        '''
+        
+        if len(node_coords)<1:
+            node_coords = [node_coords]
+
+        self.grid3d = in_CT.read_grid3d(self.project_name)
+    
+        closest_idx = []
+        closest = []
+        for i, nc in enumerate(node_coords):
+            # euclidean distance
+            d = ( (self.grid3d['nodes_idxyz'][:,1] - nc[0]) ** 2 + 
+                   (self.grid3d['nodes_idxyz'][:,2]  - nc[1]) ** 2 +
+                   (self.grid3d['nodes_idxyz'][:,3]  - nc[2]) ** 2
+                   ) ** 0.5
+            
+            closest_idx.append(np.argmin(d))
+            closest.append(self.grid3d['nodes_idxyz'][closest_idx[i],1:])
+            
+            threshold = 1e-1
+            if d[np.argmin(d)]>threshold:
+                self.console.print('no node close to the required points')
+                print(d[np.argmin(d)])
+                print(self.grid3d['nodes_idxyz'][closest_idx[i],1:])
+                print(nc)
+
+        return closest_idx, closest
+
+
+    def rich_create(self, **kwargs):
+
+        # from rich.console import Console
+        # from rich.table import Table
+        
+        # table = Table(title="Star Wars Movies")
+        
+        # table.add_column("Released", justify="right", style="cyan", no_wrap=True)
+        # table.add_column("Title", style="magenta")
+        # table.add_column("Box Office", justify="right", style="green")
+        
+        # table.add_row("Dec 20, 2019", "Star Wars: The Rise of Skywalker", "$952,110,690")
+        # table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
+        # table.add_row("Dec 15, 2017", "Star Wars Ep. V111: The Last Jedi", "$1,332,539,889")
+        # table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,889")
+        
+        dict_name = 'test'
+        
+        dict_rich = {
+            'definition': None,
+            'perturbation_dict': None,
+            'damping_value': None,
+            'assimilated': False,
+            'assimilation_times': None
+        }
+        
+        self.console.print(dict_rich)
+        
+        
+        
+    def rich_display(self, title="Star Wars Movies", **kwargs):
+        """
+        Describe the variable state and fate during the simulation with a rich table
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        # Assimilated Yes/No
+        
+        # from rich.console import Console
+        # from rich.table import Table
+        
+        # table = Table(title=title)
+
+        # console = Console(record=True)
+        self.console.print(eval('self.' + str(title)))
+        
+        # console.save_text('test.txt')
+        # console.save_html('test.html')
+               
+        
+        
     def create_3dmesh_CATHY(
         self,
         gmsh_mesh=[],
@@ -2324,817 +3484,7 @@ class CATHY(object):
         # print(mesh_dict['elm_id'])
         # gridfile.write("durin's day\n")
         # copy mesh attribute to 'grid' files
-
-    # -------------------------------------------------------------------#
-    #%% DATA ASSIMILATION FCTS
-
-    def prepare_measures(self,dict_meas):
-        '''
-        prepare measure before DA
-
-        Parameters
-        ----------
-        dict_meas : dict
-            dict containing measure data + metadata.
-
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
-
-        '''
-        
-        # define measurement error covariance matrix, R
-        #---------------------------------------------------------------------
-        
-        self.dict_meas['cov_mat'] = np.ones([2,2])
-        
-        
-        
-        
-        return self.dict_meas
-        
-    
-    def prepare_DA(self,NENS=[],NUDN=[],
-                      ENKFT=[], var_per=[]):
-        """
-        Initial preparation for DA
-        
-        
-        .. note::
-
-            1. update cathyH file given NENS, ENKFT + flag self.parm['DAFLAG']==True
-            
-            2. create the processor cathy_origin.exe
-            
-            3. create directory tree for the ensemble
-            
-            4. create panda dataframe for each perturbated variable
-            
-            5. update input files
-
-        Parameters
-        ----------
-        NENS : int
-            # Number of realizations in the ensemble kalman filter (EnKF) 
-        NUDN : int
-            #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
-        ENKFT : pandas df
-            # Observation times for ensemble kalman filter (EnKF).
-
-        Returns
-        -------
-        None.
-
-        Note: for now only implemented for EnkF DA
-        """
-        
-        
-        # to do create a readme file inside DA folder to explain how the dir tree works
-        self.DAFLAG=True
-        
-        # update nudging file
-        # self.update_nudging(NUDN=NUDT)
-        # self.nudging = {'NUDN': NUDN}   # THIS IS TEMPORARY
-        self.NENS = NENS # THIS IS TEMPORARY
-        
-        # update cathyH DA parameters
-        # ---------------------------------------------------------------------
-        # NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
-        # NUDN = len(ENKFT)  # this is true only when DA is made inside CATHY
-        # self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
-        
-        # when DA is made outside CATHY we run step by step
-        NUDN = 1 
-        # TIMPRTi # time of interest for outputs
-        # TIMPRTi=times_of_interest, 
-        # NODVP=nodes_of_interest, 
-        
-        # is this necessary ??
-        self.update_cathyH(MAXNUDN=NUDN,ENKFT=ENKFT, verbose=True)
-
-        # run processor to create the cathy_origin.exe to paste in every folder
-        # ---------------------------------------------------------------------
-        self.run_processor(runProcess=False)
-        # OR self.recompileSrc(runProcess=False, NUDN=NUDN)
-                     
-        
-        # create sub directories for each ensemble
-        # ---------------------------------------------------------------------
-        self._create_subfolders_ensemble(NENS)
-
-
-        # create initial dataframe DA_results_df for results
-        # ---------------------------------------------------------------------
-        self._DA_var_pert_df(NENS,ENKFT,var_per)     
-
-
-        # update input files ensemble
-        # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS,ENKFT,var_per)     
-        
-        
-        
-        return self.DA_var_pert_df
-
-    def _check_DA_scenarii():
-        '''
-        CHECK which scenarios are OK and which are to be descarted
-
-        Returns
-        -------
-        None.
-
-        '''
-        print('check scenario')
-        
-        # condition 1: nrow(mbeconv)==0
-        # condition 2: mbeconv[h,3]==(deltaT)
-        
-        pass
-
-
-    def _update_DA(self,typ='ENKF',NENS=[],NUDN=[],
-                      ENKFT=[], var_per=[],update_var_list=['St. var.']):
-        """
-        Update enesmble using ENKF
-        
-        
-        1. prepare ENKF matrices
-
-        2. apply ENKF filter
-   
-        3. create panda dataframe for each perturbated variable
-        
-        4. update input files
-
-        Parameters
-        ----------
-        NENS : int
-            # Number of realizations in the ensemble kalman filter (EnKF) 
-        NUDN : int
-            #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
-        ENKFT : np.array([])
-            # Observation time for ensemble kalman filter (EnKF).
-
-        Returns
-        -------
-        None.
-
-        Note: for now only implemented for EnkF DA
-        """
-
-
-        # apply ENKF
-        # ---------------------------------------------------------------------
-        self._prepare_ENKF(update_var_list=['St. var.'])
-
-
-        # apply ENKF
-        # ---------------------------------------------------------------------
-        updated_psi, updated_var_per = self.ENKF()   
-        
-        # create dataframe _DA_var_pert_df for results
-        # ---------------------------------------------------------------------
-        self._DA_var_pert_df(NENS,ENKFT,updated_var_per)     
-        
-
-        # update input files ensemble (state variable = psi)
-        # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS,ENKFT,var_per)    
-            
-        # update input files ensemble (perturbated variables)
-        # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS,ENKFT,var_per)    
-        
-        
-        return self.DA_var_pert_df
-
-
-    def _prepare_ENKF(self,dict_data_measured, update_var_list=['St. var.']):
-        '''
-        Matrice operations before ENKF
-
-        Parameters
-        ----------
-        dict_data_measured : TYPE
-            DESCRIPTION.
-        dict_ensemble : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        A : np.array
-            matrix of ensemble anomalies.
-        D : np.array
-            Difference between the measurements .
-        Hx : np.array
-            Ensemble mean of the simulated observations.
-        X : np.array
-            Ensemble matrix of M rows and N columns. N is the number of 
-            realizations and M is the state dimension, i.e., the number of nodes in the finite element grid
-        Xa : np.array
-            Augmented by the number of parameters that are subject to up-
-            date.
-        x_mean : np.array
-            mean of the ensemble.
-
-        '''
-        
-        
-        A = []
-        D = []
-        Hx = []
-        x_mean = []
-        
-        # read grid to infer dimension of the ensemble X
-        # --------------------------------------------------------------------     
-        self.grid3d = {}
-        if len(self.grid3d) == 0: 
-            self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir, self.project_name))
-
-        M_rows = np.shape(self.grid3d['nodes_idxyz'])[0]
-        N_col = self.NENS
-        
-        
-        # Ensemble matrix of M rows and N  + fill with psi values
-        # --------------------------------------------------------------------
-        X = np.zeros([M_rows,N_col])
-
-        # state_var = 'pressure' # pressure head
-        
-        for j in range(self.NENS):
-            
-            df_psi = out_CT.read_psi(os.path.join(self.workdir, self.project_name, 
-                                               "DA_Ensemble/cathy_" + str(j+1),
-                                               'output/psi'))
-            print(np.shape(df_psi))
-            print(np.shape(X))
-            # X[:,j] = df_psi['pressure']
-            X[:,j] = df_psi[:,1]
-
-            # check if there is still zeros
-            if np.count_nonzero(X) != M_rows*N_col:
-                print('unconsistent filled X, missing values')
-
-
-        # mean of the ensemble x_mean
-        # --------------------------------------------------------------------
-        
-
-        # Init Augmented Ensemble matrix
-        # --------------------------------------------------------------------
-        Xa = X
-        if len(update_var_list)>1:
-            for i in range(update_var_list-1):
-                Xa = Xa.append(np.zeros([M_rows,1]))
-                
-
-        # Ensemble mean of the simulated observations Hx
-        # --------------------------------------------------------------------
-
-
-
-        # Matrix of ensemble anomalies A
-        # --------------------------------------------------------------------
-
-
-        # Difference between the measurements D
-        # --------------------------------------------------------------------
-
-
-        
-        
-        return A, D, Hx , X, Xa, x_mean
-
-
-
-    def ENKF(self):
-        '''
-        ENKF from Sakov and Eversen (2009)
-        
-        .. math::
-
-            X^{u} = x^{u} + A^{u}
-
-        x: ensemble average
-        A: matrix of ensemble anomalies
-        superscript u means updated
-        
-        Returns
-        -------
-        None.
-
-        '''
-        
-        self.console.print('ENKF')
-        
-        # ensemble mean of the simulated observations
-        
-        
-
-
-        # %*% is matrix multiplication
-        # C = A.dot(B) in python
-        
-        # X be an ensemble matrix of M rows and N columns, where
-        # N is the number of realizations and M is the state dimen-
-        # sion, i.e., the number of nodes in the finite element grid, aug-
-        # mented by the number of parameters that are subject to up-
-        # date.
-        
-        # x: ensemble average
-        # A: matrix of ensemble anomalies
-        # suscript u means updated
-        
-        
-
-        # R: measurement error covariance matrix
-        # D: difference between the measurements,
-        # Hx: ensemble mean of the simulated observations
-        # S is the matrix of scaled ensemble innovation anomalies
-        # HA being the simulated measurement anomalies  
-        
-        # When updating the states only, the elements of X are the 
-        # pressure heads at each node of the finite element grid,
-
-        #STEP 1 Estimation matrix [A] which represents the difference 
-        # between matrix [X] and the mean values estimated over all the 
-        # scenarios
-        
-        # update_ic
-        
-
-        return updated_psi, updated_var_per
-
-
-    def _create_subfolders_ensemble(self,NENS):
-
-        if not os.path.exists(os.path.join(self.workdir, self.project_name, 
-                                           "DA_Ensemble/cathy_origin")):
-            os.makedirs(os.path.join(self.workdir, self.project_name, 
-                                     "DA_Ensemble/cathy_origin"))
-            
-            # copy input, output and vtk dir
-            # ----------------------------------------------------------------
-            for dir2copy in enumerate(['input','output','vtk']):                
-                shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]), 
-                                os.path.join(self.workdir, self.project_name, 
-                                             "DA_Ensemble/cathy_origin", dir2copy[1])
-                )
-        
-        try:
-            # copy exe into cathy_origin folder
-            # ----------------------------------------------------------------
-            shutil.move(
-                os.path.join(self.workdir, self.project_name, self.processor_name),
-                os.path.join(self.workdir, self.project_name, 
-                             "DA_Ensemble/cathy_origin", self.processor_name)
-                        )
-            
-            # copy cathy.fnames into cathy_origin folder
-            # ----------------------------------------------------------------
-            shutil.copy(
-                os.path.join(self.workdir, self.project_name, 
-                             'cathy.fnames'),
-                os.path.join(self.workdir, self.project_name, 
-                             "DA_Ensemble/cathy_origin/cathy.fnames")
-                        ) 
-            
-            # copy prepro into cathy_origin folder            
-            # ----------------------------------------------------------------
-            shutil.copytree(os.path.join(self.workdir,  self.project_name, 
-                                         'prepro'),
-                            os.path.join(self.workdir, self.project_name, 
-                                     "DA_Ensemble/cathy_origin/prepro"))
-                        
-                        
-        except:
-            self.console.print(":worried_face: [b]processor exe not found[/b]")
-
-            
-        path_origin = os.path.join(self.workdir, self.project_name,
-                                   "DA_Ensemble/cathy_origin")
-        
-        # copy origin folder to each ensemble subfolders
-        for i in range(NENS):
-            path_nudn_i =  os.path.join(self.workdir, self.project_name, 
-                                        "DA_Ensemble/cathy_" + str(i+1))  
-            
-            if not os.path.exists(path_nudn_i):
-                shutil.copytree(
-                    path_origin, path_nudn_i
-                )
-
-
-
-    def _DA_var_pert_df(self,NENS,ENKFT,var_per):
-        
-        # create initial dataframe _DA_var_pert_df storing perturbated ensemble evolution
-        # ---------------------------------------------------------------------  
-        self.console.print('_DA_ens_df')
-        
-        # boolean flag to indicate if the variable is updated (True) or not (False)
-        bool_updated = False*np.ones(NENS) 
-        
-        # time collumn and updated collumn flag
-        cols_root = ['time', 'updated_bool']
-        data_df_root = [ENKFT.iloc[0]*np.ones(NENS), bool_updated]
-
-        for key in var_per.items(): # loop over perturbated variable dict
-            cols_root.append(key[0])
-            data_df_root.append(var_per[key[0]]['perturbated'])
-               
-        # create dataframe
-        
-        #    Time   updated bool    var1_value    var2_value
-        # 0
-        # 1
-        # 2
-        
-        self.DA_var_pert_df = pd.DataFrame(np.transpose(data_df_root),
-                              columns=cols_root)
-        
-        # self.DA_var_pert_df['time'] = pd.to_timedelta(self.DA_var_pert_df['time'],unit='s') 
-
-        
-        pass
-    
-
-    def _update_input_ensemble(self,NENS,ENKFT,var_per=[], **kwargs):
-        '''
-        Write new variable perturbated/updated value into corresponding input file
-
-        Parameters
-        ----------
-        NENS : int
-            size of the ensemble.
-        var_per : dict
-            dict of all perturbated variables holding values and metadata.
-
-        Returns
-        -------
-        New file written/overwritten into the input dir.
-
-        '''
-
-        self.console.print('_update_input_ensemble')
-
-        # !!! still in construction !!!
-        # update input files ensemble
-        # ---------------------------------------------------------------------  
-        
-
-        # for key in ('ENKFT'): # times for ETKF
-        #     if key in kwargs:
-        #         setattr(self, key, kwargs[key])
-                
-
-        # resample atmbc file for the given DA window
-        #----------------------------------------------------------------------                
-        # cathy and data assimilation are performed for a single time step       
-        # definition of the part of hyetograph to be applied in this step
-        # self.update_cathyH() ?
-        
-        try:      
-            time_window_atmbc_df = [ENKFT.iloc[self.count_DA_cycl],ENKFT.iloc[self.count_DA_cycl+1]]
-        except: # case where the simulation is not yet running (initial preparation)
-            time_window_atmbc_df = [ENKFT.iloc[0], ENKFT.iloc[1]]
-
-        # print(time_window_atmbc)
-        
-        # read full simulation atmbc and filter time window
-        #----------------------------------------------------------------------
-        df_atmbc, HSPATM, IETO = in_CT.read_atmbc(os.path.join(self.workdir, self.project_name,
-                              'input','atmbc'), grid=self.grid3d)
-
-        df_atmbc['time'] = pd.to_timedelta(df_atmbc['time'],unit='s') 
-
-        # need to resample if nb of atmbc points is too low with respect to data assimilation frequency
-        # ---------------------------------------------------------------------
-        resampling_mean = ENKFT.iloc[0]
-        df_atmbc_int = df_atmbc.set_index('time').resample(resampling_mean).mean().interpolate('linear')  
-        df_atmbc_int_filt = df_atmbc_int[(df_atmbc_int.index > time_window_atmbc_df[0]) & 
-                     (df_atmbc_int.index < time_window_atmbc_df[1])]
-
-
-    
-        # loop over dict of perturbated variable
-        #----------------------------------------------------------------------
-        for key in var_per.items(): # loop over perturbated variables dict
-        
-            print(key)
-        
-            # loop over ensemble files
-            #------------------------------------------------------------------
-            for ens_nb in track(range(NENS), description="updating ensemble file..."):
-                
-
-                # change directory according to ensmble file nb
-                os.chdir(os.path.join(self.workdir, self.project_name,
-                                      './DA_Ensemble/cathy_'+ str(ens_nb+1)))
-
-
-                # (this is always done since Kalman Filter is Sequential)
-                # update atmbc file 
-                #--------------------------------------------------------------
-                # convert to numpy and convert to second / np.timedelta64(1, 's')
-                self.update_atmbc(HSPATM=0,IETO=0,TIME=df_atmbc_int_filt.index/np.timedelta64(1, 's'),
-                                  VALUE=df_atmbc_int_filt['value'].to_numpy(),
-                                  show=False,
-                                  filename=os.path.join(os.getcwd(),'input/atmbc')) # specify filename path
-                #--------------------------------------------------------------
-                
-            # check variable to update and update
-            #------------------------------------------------------------------
-                if key[0] in 'hietograph':
-                    print('hietograph perturbated not yet implemented')
-                    
-                    self.update_atmbc(verbose=True)
-
-                # ic update
-                #--------------------------------------------------------------
-                if key[0] in 'ic':
-                    # check if key contain self.ic args # NOT YET IMPLEMENTED
-                    # self.ic['INDP'] = 0
-                    # self.ic['INDP'] = 0atmbc
-                    self.update_ic(INDP=0,IPOND=0,
-                                   WTPOSITION=var_per[key[0]]['perturbated'][ens_nb],
-                                   verbose=True,
-                                   filename=os.path.join(os.getcwd(),'input/ic')) # specify filename path
-
-                # kss update
-                #--------------------------------------------------------------
-                if key[0] in 'kss':
-                    print('kss perturbated not yet implemented')
-
-                    self.update_soil(verbose=True,
-                                     filename=os.path.join(os.getcwd(),'input/soil')) # specify filename path
-
-
-                # FeddesParam update
-                #--------------------------------------------------------------
-                elif key[0] in ['PCANA','PCREF','PCWLT','ZROOT','PZ','OMGC']:
-                    
-                    FeddesParam = {'PCANA':self.soil["PCANA"],
-                                   'PCREF':self.soil["PCREF"],
-                                   'PCWLT':self.soil["PCWLT"],
-                                   'ZROOT':[var_per[key[0]]['perturbated'][ens_nb]],
-                                   'PZ':self.soil["PZ"],
-                                   'OMGC': self.soil["OMGC"]}        
-                    self.update_soil(FP=FeddesParam,
-                                     verbose=True,
-                                     filename=os.path.join(os.getcwd(),'input/soil')) # specify filename path
-        
-        pass
-
-    
-
-    def read_measures(self,filename, data_type, data_err, show=False):
-        '''
-        read measures (real observations)
-
-        Parameters
-        ----------
-        filename : str
-            filename of the observation dataset.
-        data_type : str
-            key tring to identify what type of measure is to read.
-        data_err : float
-            % of error for a given measurement dataset. The default is 0.05.
-        show : Bool
-            plot measure graph. The default is False.
-
-        Returns
-        -------
-        dict_meas : dict
-            dict merging all observations + metadatas.
-
-        '''
-
-        # discharge type read
-        # ---------------------------------------------------------------------
-        if data_type == 'discharge':
-            df = in_meas.read_discharge(filename)
-            units = '$m^{3}/s$'
-
-        # tensiometer type read
-        # ---------------------------------------------------------------------
-        elif data_type == 'tensiometers':
-            
-            df = in_meas.read_discharge(filename)         
-
-        # no file specified (raise error)
-        # ---------------------------------------------------------------------
-        else:
-            print('no file specified')
-        
-        # store measure data (df) + metadata into a dict
-        # ---------------------------------------------------------------------
-        dict_meas_2add = {'filename': filename, 
-                             'data_type': data_type, 
-                             'units': units, # units
-                             'data': df,
-                             'data_err': data_err                   
-                             }
-
-        # concatenate dict
-        # ---------------------------------------------------------------------
-        self.dict_meas = self._add_to_meas_dict(dict_meas_2add)
-        
-        return self.dict_meas
-
-
-    def _add_to_meas_dict(self,dict_meas_2add):
-        
-        self.dict_meas = self.dict_meas | dict_meas_2add
-
-        return self.dict_meas 
-
-
-
-
-    def read_inputs(self,filename):
-        '''
-        
-
-        Parameters
-        ----------
-        filename : str
-            name of the input CATHY file to read.
-
-        Returns
-        -------
-        A dataframe or a dict describing file data/entries.
-
-        '''
-        
-        if filename == 'atmbc':
-            df = in_CT.read_atmbc(os.path.join(self.workdir,self.project_name, 'input', filename))
-            return df
-  
-                
-        else:
-            print('no file specified')
-        
-
-        pass
-
-
-    def read_outputs(self,filename):
-        '''
-        
-
-        Parameters
-        ----------
-        filename : str
-            name of the output file to read.
-
-        Returns
-        -------
-        A dataframe or a dict describing file data/entries.
-
-        '''
-        
-        
-        if filename == 'vp':
-            df = out_CT.read_vp(os.path.join(self.workdir,self.project_name, 'output', filename))
-            return df
-        if filename == 'hgraph':
-            df = out_CT.read_hgraph(os.path.join(self.workdir,self.project_name, 'output', filename))
-            return df
-        if filename == 'dtcoupling':
-            df = out_CT.read_dtcoupling(os.path.join(self.workdir,self.project_name, 'output', filename))
-            return df
-        
-        else:
-            print('no file specified')
-        
-
-        pass
-
-        
-    def explore_ensemble_df():
-        
-        # create multiindex dataframe + some plots to explore the perturabated variables
-        # ---------------------------------------------------------------------  
-        
-        # DF = df.append(dft2)
-        
-        # DF['time'] = pd.to_timedelta(DF['time'],unit='s') 
-        
-        # # DF.index
-        # # df.index.name = 'ensemble #'
-        
-        # midx = DF.set_index(['time','updated_bool'], inplace=False)
-        # midx.sort_index(inplace=True)
-        
-        
-        # ax = DF.plot.hist(bins=NENS,y=["kss"], alpha=0.5)
-        # ax = DF.plot.hist(bins=NENS,y=["phi"], alpha=0.5)
-
-        
-        pass
-    
-
-
-    
-
-    # -------------------------------------------------------------------#
-    #%% utils
-    
-    def find_nearest_node(self,node_coords):
-        '''
-        Find nearest mesh node
-
-        Parameters
-        ----------
-        node_coords : list
-            List of coordinates [[x,y,z],[x2,y2,z2]].
-
-        Returns
-        -------
-        closest_idx : list
-            Node indice in the grid3d.
-        closest : list
-            Node coordinate in the grid3d.
-
-        '''
-        
-        if len(node_coords)<1:
-            node_coords = [node_coords]
-
-        self.grid3d = in_CT.read_grid3d(self.project_name)
-    
-        closest_idx = []
-        closest = []
-        for i, nc in enumerate(node_coords):
-            # euclidean distance
-            d = ( (self.grid3d['nodes_idxyz'][:,1] - nc[0]) ** 2 + 
-                   (self.grid3d['nodes_idxyz'][:,2]  - nc[1]) ** 2 +
-                   (self.grid3d['nodes_idxyz'][:,3]  - nc[2]) ** 2
-                   ) ** 0.5
-            
-            closest_idx.append(np.argmin(d))
-            closest.append(self.grid3d['nodes_idxyz'][closest_idx[i],1:])
-    
-        return closest_idx, closest
-
-
-    def rich_create(self, **kwargs):
-
-        # from rich.console import Console
-        # from rich.table import Table
-        
-        # table = Table(title="Star Wars Movies")
-        
-        # table.add_column("Released", justify="right", style="cyan", no_wrap=True)
-        # table.add_column("Title", style="magenta")
-        # table.add_column("Box Office", justify="right", style="green")
-        
-        # table.add_row("Dec 20, 2019", "Star Wars: The Rise of Skywalker", "$952,110,690")
-        # table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
-        # table.add_row("Dec 15, 2017", "Star Wars Ep. V111: The Last Jedi", "$1,332,539,889")
-        # table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,889")
-        
-        dict_name = 'test'
-        
-        dict_rich = {
-            'definition': None,
-            'perturbation_dict': None,
-            'damping_value': None,
-            'assimilated': False,
-            'assimilation_times': None
-        }
-        
-        self.console.print(dict_rich)
-        
-        
-        
-    def rich_display(self, title="Star Wars Movies", **kwargs):
-        """
-        Describe the variable state and fate during the simulation with a rich table
-
-        Returns
-        -------
-        None.
-
-        """
-        
-        # Assimilated Yes/No
-        
-        # from rich.console import Console
-        # from rich.table import Table
-        
-        # table = Table(title=title)
-
-        # console = Console(record=True)
-        self.console.print(eval('self.' + str(title)))
-        
-        # console.save_text('test.txt')
-        # console.save_html('test.html')
-               
-        
+    pass
 
 
 
