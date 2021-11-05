@@ -5,6 +5,63 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+
+def SW_2_ERa():
+    
+    pass
+
+
+def Archie_sat(rho, rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
+    '''
+    
+    rho: resistivity
+    𝑆𝑤 : water saturation
+    𝜙: the porosity of the soil
+    𝜎_{𝑤} is the conductivity of the pore fluid
+    𝑎, 𝑚, and 𝑛 are empirically derived parameters
+    𝑎 is the tortuosity factor
+    𝑚 is the cementation exponent
+    𝑛 is the saturation exponent
+    Returns
+    -------
+    𝑆𝑤 : water saturation
+
+
+    '''
+    return  (rho/rFluid/porosity^-m)^(-1/n)
+    
+
+def Archie_rho(rFluid, sat, porosity, a=1.0, m=2.0, n=2.0):
+    '''
+    Compute ER values at each mesh nodes
+
+    Parameters
+    ----------
+    rFluid : int
+        conductivity of the pore fluid.
+    sat : np.array
+        water saturation.
+    porosity : int or np.array
+        DESCRIPTION.
+    a : float, optional
+        tortuosity factor. The default is 1.0.
+    m : float, optional
+        cementation exponent. The default is 2.0.(usually in the range 1.3 -- 2.5 for sandstones)
+    n : float, optional
+        saturation exponent. The default is 2.0. 
+
+    Returns
+    -------
+    TYPE
+        Electrical Resistivity (Ohm.m).
+
+    '''
+
+    return rFluid * a * porosity**(-m) * sat**(-n)
+
+
+
 # import pygimli as pg
 # import pygimli.meshtools as mt
 

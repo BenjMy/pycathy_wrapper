@@ -11,19 +11,32 @@ import os
 
 
         
-def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh):
+def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):
     
     #https://hkex.gitlab.io/resipy/api.html
 
-    os.chdir(pathERT) 
+    # os.chdir(pathERT) 
+    
+    isExist = os.path.exists(pathERT)
+
+    if not isExist:
+      
+      # Create a new directory because it does not exist 
+      os.makedirs(pathERT) 
     
     ERT = R2(pathERT + 'ERT_fwdmodel', typ='R3t')
     ERT.setTitle('Rhizo_synth')
+    
+    
 
     ERT.setElec(np.c_[elecsXYZ[:,0],elecsXYZ[:,2],elecsXYZ[:,1],elecsXYZ[:,3]])
     
     ERT.importMesh(mesh)
-    ERT.addRegion(np.array([[0.1,0.1],[0.1,0.4],[0.3,0.4],[0.3,0.1],[0.1,0.1]]), 500, iplot=True)
+    
+    if 'res0' in kwargs:
+        ERT.setRefModel(kwargs['res0'])
+
+    ERT.addRegion(np.array([[0.1,0.1],[0.1,0.4],[0.3,0.4],[0.3,0.1],[0.1,0.1]]), 500, iplot=False)
     ERT.importSequence(sequence)
     # -----------------------------------------------
     
@@ -60,126 +73,39 @@ def invert_ERT_survey(ERT,show=False):
     
 
 
-
-# def computeAttribute():
-
-#     for i, m in enumerate(self.meshResults):
-#     cols = m.df.columns
-#     vals = [m.df[c].values for c in cols]
-#     # DANGER ZONE =================================
-#     try:
-#         m.df[name] = eval(formula)
-#         dump('{:s} computation successful on meshResults[{:d}]\n'.format(name, i))
-#     except Exception as e:
-#         print('Error in meshResults[{:d}]:'.format(i), e)
-#         dump('{:s} computation failed on meshResults[{:d}]: {:s}\n'.format(name, i, str(e)))
-#         pass
-
-    
-    
-    
-def Archie_sat(rho, rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
+def Archie_ERT(ERT,rFluid,porosity,m,n):
     '''
-    rho: resistivity
-    𝑆𝑤 : water saturation
-    𝜙: the porosity of the soil
-    𝜎_{𝑤} is the conductivity of the pore fluid
-    𝑎, 𝑚, and 𝑛 are empirically derived parameters
-    𝑎 is the tortuosity factor
-    𝑚 is the cementation exponent
-    𝑛 is the saturation exponent
+    Archie transformation
+    (only possible on inverted values)
+
+    Parameters
+    ----------
+    ERT : TYPE
+        DESCRIPTION.
+
     Returns
     -------
-    𝑆𝑤 : water saturation
-
+    None.
 
     '''
-    return  (rho/rFluid/porosity^-m)^(-1/n)
     
-
-def Archie_rho(rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
-    '''
-    sat 𝑆𝑤 : water saturation
-    porosity phi 𝜙: the porosity of the soil
-    rFluid is the conductivity of the pore fluid
-    𝑎, 𝑚, and 𝑛 are empirically derived parameters
-    𝑎 is the tortuosity factor
-    𝑚 is the cementation exponent
-    𝑛 is the saturation exponent
-    Returns
-    -------
-    Resistivity
-
-    '''
-    return rFluid * a * porosity**(-m) * sat**(-n)
-
+    
+    # (rho/rFluid/porosity^-m)^(-1/n)
+    rFluid=1
+    porosity=0.55
+    m = 1
+    n = 1
+    
+    str_formula = f"(x['Resistivity']* {rFluid} * {porosity} **(-m))**(-1/ {n})"
+    # print(str_formula)
+       
+    
+    # only possible on inverted mesh (meshResults)
+    ERT.computeAttribute(str_formula, name='saturation')
+    
+    pass
 
 
-
-# class DABase(object):
-
-#     """
-#     Base class for all importer classes
-#     """
-
-#     def _add_to_container(
-#             self, data_to_add, electrode_positions=None, topography=None):
-
-#         self._add_to_data(data_to_add)
-
-#     def _add_to_data(self, data):
-#         """Add data to the container
-#         Parameters
-#         ----------
-#         data : pandas.DataFrame
-#             Measurement data in the form of a DataFrame, must adhere to the
-#             container constraints (i.e., must have all required columns)
-#         """
-
-#     def _describe_data(self, df=None):
-#         """
-#         Print statistics on a DataFrame by calling its .describe() function
-#         Parameters
-#         ----------
-#         df : None|pandas.DataFrame, optional
-#             if not None, use this DataFrame. Otherwise use self.data
-#         """
-#         print(df_to_use[cols].describe())
-
-#     def add_dataframe(self, data, timestep=None, **kwargs):
-#         """Add data to the container using another DataFrame
-#         Parameters
-#         ----------
-#         data : pandas.DataFrame
-#             Measurement data in the form of a DataFrame, must adhere to the
-#             container constraints (i.e., must have all required columns) and
-#             electrode positions already registered must match.
-#         """
-#         if timestep is not None:
-#             data['timestep'] = timestep
-#         self._add_to_data(data)
-
-#     def merge_container(self, container):
-#         """Merge the data and electrode positions from another container into
-#         this one.
-#         """
-#         logger.debug('Merging containers')
-#         print(type(self))
-
-#         self._add_to_container(
-#             container.data,
-#             container.electrode_positions, container.topography)
-
-
-
-# function [swe,theta,kr] = vangen(x,thetar,thetas,n,psis)
-# swe=[];
-# theta=[];
-# kr=[];
-# m=1-1/n;
-# swe=(1+(x/psis).^n).^(-m);
-# kr=swe.^0.5.*(1-(1-swe.^(1/m)).^m).^2;
-# theta=thetar+swe*(thetas-thetar);
 
 
 # def ERT_init(ARCHIE,NERT):

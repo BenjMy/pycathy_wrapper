@@ -34,6 +34,56 @@ from pyCATHY.cathy_utils import label_units, transform2_time_delta
 
 
 
+def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):
+    '''
+    plot hgsfdet 
+    
+    
+
+    Parameters
+    ----------
+    workdir : TYPE
+        DESCRIPTION.
+    project_name : TYPE
+        DESCRIPTION.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    fig, ax 
+
+    '''
+    
+    # read hgraph file if df_hgraph not existing
+    # ------------------------------------------------------------------------
+    if len(df_hgsfdeth)==0:
+        df_dtcoupling = out_CT.read_hgsfdet(filename='hgsfdeth')
+
+
+    # create fig axis if not existing
+    # ------------------------------------------------------------------------
+    # if kwargs['ax'] == False:
+    #     fig, ax = plt.subplots()
+    
+    fig, ax = plt.subplots(2,1)
+    
+    
+
+
+    if 'delta_t' in kwargs:
+        df_hgsfdeth['time'] = pd.to_timedelta(df_hgsfdeth['time'],unit='s') 
+        
+    df_hgsfdeth.pivot_table(values='NET SEEPFACE VOL',index='time').plot(ax=ax[0],
+                                                                 ylabel='NET SEEPFACE VOL',
+                                                                 xlabel='time (s)')
+
+    df_hgsfdeth.pivot_table(values='NET SEEPFACE FLX',index='time').plot(ax=ax[1],
+                                                                 ylabel='NET SEEPFACE FLX',
+                                                                 xlabel='time (s)')
+    
+    return fig, ax 
+
 
 def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
                 x='time', y='SW', **kwargs):
@@ -154,7 +204,7 @@ def show_vp(df_vp=[], workdir=[], project_name=[],
     return fig, ax 
 
 
-def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
+def show_hgraph_2(df_hgraph=[], workdir=[], project_name=[],
                 x='time', y='SW', **kwargs):
     '''
     plot hgraph 
@@ -309,7 +359,7 @@ def show_atmbc_3d(df_atmbc):
                 
 
 
-def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
+def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
              savefig=False,**kwargs):
     '''
     Plot pyvista vtk file.
@@ -320,7 +370,7 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
     filename : TYPE, optional
         DESCRIPTION. The default is None.
     unit : str, optional
-        ['pressure', 'TIME', 'saturation', 'permeability', 'velocity'] . The default is None.
+        ['pressure', 'TIME', 'saturation', 'permeability', 'velocity'] . The default is pressure.
     timeStep : TYPE, optional
         DESCRIPTION. The default is 0.
     notebook : TYPE, optional
@@ -339,6 +389,8 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
     '''
 
 
+    my_colormap = 'viridis'
+    
     if path is None:
         path = os.getcwd()
 
@@ -350,9 +402,15 @@ def show_vtk(filename=None,unit=None,timeStep=0,notebook=False,path=None,
             filename = "10" + str(timeStep) + ".vtk"
             my_colormap = 'autumn'
 
-        if unit == "saturation":
+        elif unit == "saturation":
             filename = "cele20" + str(timeStep) + ".vtk"
             my_colormap = 'Blues'
+
+        elif 'ER' in unit:
+            filename = "ER" + str(timeStep) + ".vtk"
+            my_colormap = 'viridis'
+
+
 
     mesh = pv.read(os.path.join(path, filename))
 

@@ -6,16 +6,221 @@ Created on Wed Jul 28 18:03:04 2021
 @author: ben
 """
 
+import os 
+import numpy as np
+
+def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
+    '''
+    Trace meshIN on meshOUT using nearest neigbour interpolation
+
+    Parameters
+    ----------
+    meshIN : TYPE
+        DESCRIPTION.
+    meshOUT : TYPE
+        DESCRIPTION.
+    threshold : TYPE, optional
+        DESCRIPTION. The default is 1e-1.
+
+    Returns
+    -------
+    out_data : TYPE
+        DESCRIPTION.
+    '''
+    
+    # print('mean(meshIN.get_array(scalar))')
+    # print(np.mean(meshIN.get_array(scalar)))
+
+    in_nodes_mod = np.array(meshIN.points)
+    if 'in_nodes_mod' in kwargs:
+        in_nodes_mod = kwargs['in_nodes_mod']
+
+    out_data = []
+    closest_idx = []
+    # for pos in meshOUT.points:
+        
+        # closest_idx, closest = find_nearest_nodes(pos,in_nodes_mod,
+        #                                              threshold)
+
+
+    cellOUT_centers = meshOUT.cell_centers()
+
+    for pos in cellOUT_centers.points:
+
+        closest_idx, closest = find_nearest_node(pos,in_nodes_mod,
+                                                     threshold)
+
+        if 'nan' in closest:
+            out_data.append('nan')
+        else:
+            out_data.append(meshIN.get_array(scalar)[closest_idx])
+    
+    out_data = np.hstack(out_data)
+    print(np.mean(out_data))
+
+    
+    return out_data
+    
+
+# def find_nearest_cellcenter(node_coord,meshIN_nodes_coords,threshold=1e-1, 
+#                        **kwargs):
+#     '''
+#     Find nearest mesh node between two meshes
+
+#     Parameters
+#     ----------
+#     node_coord : np.array
+    
+#     meshIN_nodes_coords : np.array
+
+#     threshold : float
+#         if distance > threshold --> closest = nan
+
+#     Returns
+#     -------
+#     closest_idx : list
+#         Node indice in the mesh_node.
+#     closest : list
+#         Node coordinate in the mesh_node.
+
+#     '''
+    
+#     closest_idx = []
+#     closest = []
+#     # for i, nc in enumerate(cell_coords):
+#         # euclidean distance
+        
+#     d = ( (meshIN_nodes_coords[:,0] - node_coord[0]) ** 2 + 
+#            (meshIN_nodes_coords[:,1]  - node_coord[1]) ** 2 +
+#            (meshIN_nodes_coords[:,2]  - node_coord[2]) ** 2
+#            ) ** 0.5
+    
+#     closest_idx.append(np.argmin(d))
+#     closest.append(np.vstack(meshIN_nodes_coords[closest_idx,:]))
+                
+#     if d[np.argmin(d)]>threshold:
+#         closest = 'nan'
+
+#     return closest_idx, closest
+
+
+def find_nearest_node(node_coord,meshIN_nodes_coords,threshold=1e-1, 
+                       **kwargs):
+    '''
+    Find nearest mesh node between two meshes
+
+    Parameters
+    ----------
+    node_coord : np.array
+    
+    meshIN_nodes_coords : np.array
+
+    threshold : float
+        if distance > threshold --> closest = nan
+
+    Returns
+    -------
+    closest_idx : list
+        Node indice in the mesh_node.
+    closest : list
+        Node coordinate in the mesh_node.
+
+    '''
+    
+    closest_idx = []
+    closest = []
+    # for i, nc in enumerate(cell_coords):
+        # euclidean distance
+        
+    d = ( (meshIN_nodes_coords[:,0] - node_coord[0]) ** 2 + 
+           (meshIN_nodes_coords[:,1]  - node_coord[1]) ** 2 +
+           (meshIN_nodes_coords[:,2]  - node_coord[2]) ** 2
+           ) ** 0.5
+    
+    closest_idx.append(np.argmin(d))
+    closest.append(np.vstack(meshIN_nodes_coords[closest_idx,:]))
+                
+    if d[np.argmin(d)]>threshold:
+        closest = 'nan'
+
+    return closest_idx, closest
+
+
+
+def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
+    '''
+    add a new mesh attribute to a vtk file
+
+    Parameters
+    ----------
+    data : TYPE
+        DESCRIPTION.
+    mesh : TYPE
+        DESCRIPTION.
+    name : TYPE
+        DESCRIPTION.
+    overwrite : TYPE, optional
+        DESCRIPTION. The default is True.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    mesh.add_field_data(data, name)
+    
+    meshname = name+ '.vtk'
+    
+    # full_path = os.getcwd()
+    # if 'full_path' in kwargs:
+    #     full_path = kwargs['full_path']
+
+    if 'time' in kwargs:
+        time = kwargs['time']
+        meshname = name  + str(time) +'.vtk'
+        mesh.save(meshname)
+    else:
+        mesh.save(name+ '.vtk')
+                
+    # if overwrite==True:
+    #     mesh.save(full_path)
+
+    return mesh
+
+
+
 
 def mshParse(self, gmsh_mesh=None):
-    """
+    '''
     Forked from Resipy 'meshtool' lib
+    
 
-    Parameters ---------- gmsh_mesh : type Description of parameter `gmsh_mesh`.
+    import and parse gmsh mesh
+    Parameters
+    ----------
+    gmsh_mesh : TYPE, optional
+        DESCRIPTION. The default is None.
 
-    Returns ------- type Description of returned object.
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+    ValueError
+        DESCRIPTION.
 
-    """
+    Returns
+    -------
+    mesh_dict : TYPE
+        DESCRIPTION.
+    con_matrix : TYPE
+        DESCRIPTION.
+    TYPE
+        DESCRIPTION.
+
+    '''
 
     if not isinstance(gmsh_mesh, str):
         raise Exception("expected a string argument for msh_parser")

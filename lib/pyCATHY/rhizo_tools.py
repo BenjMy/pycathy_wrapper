@@ -7,10 +7,11 @@ import numpy as np
 
 from pyCATHY import cathy_tools as CT
 from pyCATHY.plotters import cathy_plots as pltCT
+from pyCATHY import meshtools as mt
 
 
 import os
-
+import pyvista as pv
 
 def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     '''
@@ -153,7 +154,6 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
             # atmbcfile.write("\n")
             atmbcfile.write(str(t_irr) + "\t" + "TIME" + "\n")
             t_atmbc.append(t_irr)
-
             # break during the resting hours
             count = 0
             for i in range(int(grid["nnod3"])):
@@ -200,6 +200,72 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
 # rhizo.create_DA(drippersPos=[],RWU=False)
 #     # closestnode
 #     # simu.create_parm()
+
+#%% meshes interpolation
+
+
+
+def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwargs):
+ 
+
+    # flip y and z axis as CATHY and Resipy have different convention for axis
+    # ------------------------------------------------------------------------
+    in_nodes_mod = np.array(mesh_CATHY.points)
+    in_nodes_mod[:,2] = -np.flipud(in_nodes_mod[:,2])
+    in_nodes_mod[:,1] = -np.flipud(in_nodes_mod[:,1])
+
+
+    # check with a plot positon of the nodes for both meshes
+    # ------------------------------------------------------------------------
+    # p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+    # p.add_mesh(mesh_CATHY)
+    # _ = p.add_points(np.array(mesh_CATHY.points), render_points_as_spheres=True,
+    #                         color='red', point_size=20)
+    # _ = p.add_points(in_nodes_mod, render_points_as_spheres=True,
+    #                         color='blue', point_size=20)
+    # _ = p.show_bounds(grid='front', all_edges=True, font_size=50)
+    # cpos = p.show(True)
+    
+
+    data_OUT = mt.trace_mesh(mesh_CATHY,mesh_Resipy,
+                            scalar=scalar,
+                            threshold=1e-1,
+                            in_nodes_mod=in_nodes_mod)
+    
+    scalar_new = scalar + '_nearIntrp'
+    
+    # print(np.mean(data_OUT))
+    # len()
+    if 'time' in kwargs:
+        time = kwargs['time']
+        mesh_new_attr = mt.add_attribute_2mesh(data_OUT, 
+                               mesh_Resipy, 
+                               scalar_new, 
+                               overwrite=True,
+                               time=time)
+    else:
+        mesh_new_attr = mt.add_attribute_2mesh(data_OUT, 
+                               mesh_Resipy, 
+                               scalar_new, 
+                               overwrite=True)
+    
+    if show == True:
+
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_new_attr,scalars=scalar_new)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+        
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_CATHY, scalars=scalar)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+    
+    return mesh_new_attr, scalar_new
+
+
+
+
 
 # -------------------------------------------------------------------#
 #%% Infitration DATA

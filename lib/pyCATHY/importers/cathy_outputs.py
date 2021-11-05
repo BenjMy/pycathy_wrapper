@@ -182,6 +182,67 @@ def read_dtcoupling(filename):
     return df_dtcoupling   
 
 
+def read_sw(filename, **kwargs):
+    '''
+    Water Saturation output at all nodes
+
+    Returns
+    -------
+    None.
+
+    '''
+
+    sw_file = open(filename, "r")
+    lines = sw_file.readlines()
+    sw_file.close()
+    
+    # nstep = len(lines)-2
+    
+    idx=[]
+    step_i = []
+    time_i = []
+    
+  
+    
+    # loop over lines of file and identified NSTEP and SURFACE NODE line nb
+    # ------------------------------------------------------------------------
+    for i, ll in enumerate(lines):
+        if 'TIME' in ll:
+            idx.append(i)
+            splt= ll.split()
+            step_i.append(splt[0])
+            time_i.append(splt[1])
+    idx.append(i+1) 
+
+
+
+    sw_sub  = []
+    for j, ind in enumerate(idx):
+        for i, ll in enumerate(lines):
+            if i>idx[j] and i<idx[j+1]:
+                splt= ll.split()
+                sw_sub.append([float(k) for k in splt])
+    
+    sw_sub = np.hstack(sw_sub)
+    d_sw_t = np.reshape(sw_sub,[len(idx)-1,
+                                  int(np.shape(sw_sub)[0]/(len(idx)-1))]
+                         )
+
+    
+    
+    # cols_sw = ['NSTEP', 'DELTAT', 'time',  'NET SEEPFACE VOL', 'NET SEEPFACE FLX']
+    # df_sw_t = pd.DataFrame(d_sw_t, cols=cols_sw)
+    
+    # if 'delta_t' in kwargs:
+    #     d_sw_t['time'] = pd.to_timedelta(df_hgsfdeth['time'],unit='s') 
+        
+    # df_hgsfdeth.pivot_table(values='NET SEEPFACE VOL',index='time').plot(ax=ax[0],
+    #                                                               ylabel='NET SEEPFACE VOL',
+    #                                                               xlabel='time (s)')
+    
+    
+    return  d_sw_t
+
 def read_psi(filename):
     '''
     Pressure head output at all nodes
@@ -232,22 +293,8 @@ def read_psi(filename):
     
     return  d_psi_t
 
-def read_sw():
-    '''
-    Water saturation output at all nodes (SW) for input to TRAN3D and DUAL3D groundwater contaminant transport
 
-    Returns
-    -------
-    None.
-
-    '''
-    
-    
-    pass   
-
-
-
-def read_hgsfdet():
+def read_hgsfdet(filename):
     '''
     Detailed seepage face hydrograph output (Incoming and outgoing flows at the seepage face)
 
@@ -257,7 +304,79 @@ def read_hgsfdet():
 
     '''
     
+    # hgsfdet_file = open(filename, "r")
+    # lines = hgsfdet_file.readlines()
+    # hgsfdet_file.close()
     
-    pass   
+    # nstep = len(lines)-2
+    
+    hgsfdet_file = open(filename, "r")
+    hgsfdet = np.loadtxt(hgsfdet_file, skiprows=5, usecols=range(5))
+    hgsfdet_file.close()
+
+    # hgraph collumns information
+    # -------------------------------------------------------------------------
+    cols_hgsfdet = ['NSTEP', 'DELTAT', 'time',  'NET SEEPFACE VOL', 'NET SEEPFACE FLX']
+    
+    
+    # transform a numpy array into panda df
+    # ------------------------------------------------------------------------
+    df_hgsfdet = pd.DataFrame(hgsfdet,  columns=cols_hgsfdet)
+
+    return df_hgsfdet  
+
+    
+
+#%% READ PSI
+
+# filename = '/home/ben/Documents/CATHY/pyCATHY/weil_exemple_withDA/test_withVp/output/psi'
+# psi_file = open(filename, "r")
+# lines = psi_file.readlines()
+# psi_file.close()
+
+# # nstep = len(lines)-2
+
+# idx=[]
+# step_i = []
+# time_i = []
+
+# # loop over lines of file and identified NSTEP and SURFACE NODE line nb
+# # ------------------------------------------------------------------------
+# for i, ll in enumerate(lines):
+#     if 'TIME' in ll:
+#         idx.append(i)
+#         splt= ll.split()
+#         step_i.append(splt[0])
+#         time_i.append(splt[1])
+# idx.append(i+1) 
+
+# psi_sub  = []
+# for j, ind in enumerate(idx):
+#     for i, ll in enumerate(lines):
+#         if i>idx[j] and i<idx[j+1]:
+#             splt= ll.split()
+#             psi_sub.append([float(k) for k in splt])
+
+# psi_sub = np.hstack(psi_sub)
+# d_psi_t = np.reshape(psi_sub,[len(idx)-1,
+#                               int(np.shape(psi_sub)[0]/(len(idx)-1))]
+#                      )
 
 
+# np.shape(d_psi_t)
+
+
+# d_psi_t = []
+# for i, ind in enumerate(idx):
+#     psi_file = open(filename, "r")
+#     psi_sub = np.loadtxt(psi_file, skiprows=idx[i]+1,max_rows=idx[1]-2)
+#     psi_sub = np.reshape(psi_sub,[1,np.shape(psi_sub)[0]*np.shape(psi_sub)[1]])
+#     # psi
+#     psi_sub.append(np.loadtxt(psi_file, 
+#                               skiprows=idx[i]+1+idx[1]-2,
+#                               max_rows=1))
+#     d_psi_t.append(psi_sub)
+#     psi_file.close()
+
+# d_psi_t = np.vstack(d_psi_t)
+# np.shape(psi_sub)

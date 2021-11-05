@@ -3,15 +3,15 @@
 
 import os
 import matplotlib.pyplot as plt
-from matplotlib import pyplot
+# from matplotlib import pyplot
 import numpy as np
 import shutil
-
+# import matplotlib.pyplot as plt 
 from pyCATHY.cathy_tools import CATHY
 
 
 
-class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
+class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     def __init__(self, *args, **kwargs):
 
         self.vars_per = {} # dict of dict of perturbated variables parameters
@@ -19,7 +19,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         pass
     
     def perturbate_var(self, var, parameter, mean, sd, per_type, sampling_type = 'lognormal',
-                            ensemble_size = 128, show=False):
+                            ensemble_size = 128, show=False, **kwargs):
         """
         Perturbate variable for the generation of the ensemble
         
@@ -94,14 +94,19 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             
             if show == True:
                 
-                pyplot.hist(var_sampling, ensemble_size, alpha=0.5, label='sampling')
-                pyplot.hist(var_per_array, ensemble_size, alpha=0.5, label='perturbated')
-                pyplot.legend(loc='upper right')
-                pyplot.xlabel(var[parameter + '_units'])
-                pyplot.ylabel('Probability')
-                pyplot.title('Histogram of ' + parameter)
-                pyplot.axvline(x=var[parameter+'_nominal'],linestyle='--', color='red')
-                pyplot.show()
+                fig = plt.figure(figsize=(6, 3), dpi=150)
+                plt.hist(var_sampling, ensemble_size, alpha=0.5, label='sampling')
+                plt.hist(var_per_array, ensemble_size, alpha=0.5, label='perturbated')
+                plt.legend(loc='upper right')
+                plt.xlabel(var[parameter + '_units'])
+                plt.ylabel('Probability')
+                plt.title('Histogram of ' + parameter)
+                plt.axvline(x=var[parameter+'_nominal'],linestyle='--', color='red')
+                plt.show()
+                
+                if 'savefig' in kwargs:
+                    fig.savefig(kwargs['savefig'],dpi=350)
+                
 
     
         # copy initiail variable dict and add 'sampling' and 'perturbated' attributes
