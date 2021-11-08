@@ -12,6 +12,9 @@ import os
 
 
 import pyvista as pv
+# pv.global_theme.background = 'white'
+pv.set_plot_theme('document')
+
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.dates import DateFormatter
@@ -30,7 +33,7 @@ import numpy as np
 # from pyvirtualdisplay import Display
 
 from pyCATHY.importers import cathy_outputs as out_CT
-from pyCATHY.cathy_utils import label_units, transform2_time_delta
+from pyCATHY.cathy_utils import label_units, transform2_time_delta, convert_time_units
 
 
 
@@ -539,8 +542,10 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
         # --------------------------------------------------------------------- 
         if savefig is True:
             # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
-            plotter.save_graphic(
-                filename + str(".svg"), title="", raster=True, painter=True)
+            print(os.path.join(path, 'vtk', filename + '.svg'))
+            plotter.view_xz()
+            plotter.save_graphic(os.path.join(path,filename + '.svg'),
+                                 title="", raster=True, painter=True)
 
 
         cpos = plotter.show()
@@ -676,7 +681,7 @@ def indice_veg_plot(veg_map, **kwargs):
     
     return fig, ax
 
-def dem_plot_2d_top(df,parameter, **kwargs):
+def dem_plot_2d_top(parameter, **kwargs):
     '''
     View from top of the a given parameter
 

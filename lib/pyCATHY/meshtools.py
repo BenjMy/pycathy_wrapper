@@ -56,7 +56,6 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
             out_data.append(meshIN.get_array(scalar)[closest_idx])
     
     out_data = np.hstack(out_data)
-    print(np.mean(out_data))
 
     
     return out_data
@@ -172,18 +171,24 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
     
     mesh.add_field_data(data, name)
     
-    meshname = name+ '.vtk'
-    
-    # full_path = os.getcwd()
-    # if 'full_path' in kwargs:
-    #     full_path = kwargs['full_path']
+    meshname = name + '.vtk'
 
+
+    path = os.getcwd()
+    if 'path' in kwargs:
+        path = kwargs['path']
+
+    print(path)
+    
+    
     if 'time' in kwargs:
         time = kwargs['time']
         meshname = name  + str(time) +'.vtk'
-        mesh.save(meshname)
+        print(meshname)
+
+        mesh.save(path + meshname)
     else:
-        mesh.save(name+ '.vtk')
+        mesh.save(path + name + '.vtk')
                 
     # if overwrite==True:
     #     mesh.save(full_path)

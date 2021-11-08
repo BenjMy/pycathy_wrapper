@@ -226,6 +226,9 @@ def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwarg
     # _ = p.show_bounds(grid='front', all_edges=True, font_size=50)
     # cpos = p.show(True)
     
+    path = os.getcwd()
+    if 'path' in kwargs:
+        path = kwargs['path']
 
     data_OUT = mt.trace_mesh(mesh_CATHY,mesh_Resipy,
                             scalar=scalar,
@@ -242,12 +245,14 @@ def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwarg
                                mesh_Resipy, 
                                scalar_new, 
                                overwrite=True,
-                               time=time)
+                               time=time,
+                               path=path)
     else:
         mesh_new_attr = mt.add_attribute_2mesh(data_OUT, 
                                mesh_Resipy, 
                                scalar_new, 
-                               overwrite=True)
+                               overwrite=True,
+                               path=path)
     
     if show == True:
 

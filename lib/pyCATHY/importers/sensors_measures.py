@@ -6,6 +6,23 @@ import numpy as np
 import pandas as pd
 
 
+
+def read_ERT(filename, **kwargs):
+    '''
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    
+    df_ERT = pd.read_csv(filename, sep="\t", header='infer')
+
+    
+    return df_ERT   
+
+
 def read_discharge(filename, **kwargs):
     '''
 

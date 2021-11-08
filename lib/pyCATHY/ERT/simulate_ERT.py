@@ -24,7 +24,7 @@ def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):
       # Create a new directory because it does not exist 
       os.makedirs(pathERT) 
     
-    ERT = R2(pathERT + 'ERT_fwdmodel', typ='R3t')
+    ERT = R2(pathERT, typ='R3t') #+ 'ERT_fwdmodel'
     ERT.setTitle('Rhizo_synth')
     
     
@@ -43,12 +43,32 @@ def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):
     return ERT
 
 def fwd_ERT_survey(ERT,noise,show=False):
+    '''
+    Fwd ERT model
+
+    Parameters
+    ----------
+    ERT : TYPE
+        DESCRIPTION.
+    noise : TYPE
+        DESCRIPTION.
+    show : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    ERT : TYPE
+        DESCRIPTION.
+
+    '''
 
     # ----------#
     # fwd modelling
     # ---------------------------------------------------------#
 
     ERT.forward(noise=0.05, iplot=show) # forward modelling with 5 % noise added to the output
+    
+    return ERT
 
 
 

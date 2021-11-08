@@ -786,7 +786,7 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
                 # self.console.print("modified:" + {keykwargs} + " | value:" + {value})
                 # self.console.print(f"modified: {keykwargs} | value: {value}")
                 # print(f"modified: {keykwargs} | value: {value}")
-            if hasattr(self.cathyH, kk):
+            if kk in self.cathyH.keys():
                 self.cathyH[kk] = value
                 self.console.print(f"modified: {kk} | value: {value}")
 
@@ -1370,7 +1370,11 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
             # other type of kwargs
             # ----------------------------------------------------------------    
             else:
-                if hasattr(self.parm,kk):
+                if kk in self.parm.keys():
+                # print(self.parm)
+                    # print(kk)
+                # print(hasattr(self.parm,kk))
+                # if hasattr(self.parm,kk):
                     self.parm[kk] = value
 
 
@@ -1379,8 +1383,9 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
         # transform array args to list
         # --------------------------------------------------------------------
         for kk, value in self.parm.items():
-            
-            if 'numpy' in str(type(value)):
+            if 'numpy.array' in str(type(value)):
+                print(kk)
+                print(value)
                 value = list(value)
                 self.parm[kk] = value
 
@@ -2200,7 +2205,7 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
         
         
                 
-    def update_root_map(self, indice_veg=1, show=False, **kwargs):
+    def update_veg_map(self, indice_veg=1, show=False, **kwargs):
         '''
         Contains the raster map describing which type of vegetation every cell belongs to.
         
@@ -2479,63 +2484,66 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
         for key in obs2map:
             print(key)
 
-            
-            # need to read the vp file
-            # --------------------------------------------------------------------
-            df_vp = self.read_outputs(filename='vp')
-                # PH: pressure head
-                # SW: Soil Water
-                # CKRW: Relative hydraulic conductivity output at all nodes
-            # groupby df_vp['node'] to elect a given node information
-                        
-            # node = self.dict_obs[key]['position']
-            # time = self.dict_obs[key]['time']
-
-            if 'PH' in key:
-                # case 1: pressure head assimilation (Hx_PH)
-                # --------------------------------------------------------------------
-                df_vp_PH = df_vp.table_pivot(index=[time,node],value='PH')
-                if key[0] in 'PH':
-                    # filter the node if some of the instruments were not working
-                      df_vp_PH_filt = df_vp_PH.iloc('node1','node2')
-        
-                      Hx_PH = df_vp_PH_filt
-                      Hx.vstack(Hx_PH)
+            # loop over ensemble files
+            # -----------------------------------------------------------------
+            for ens in NENS:
                 
-            if 'SW' in key:
-                # case 2: sw assimilation (Hx_SW)
+                # need to read the vp file
                 # --------------------------------------------------------------------
-                if key[0] in 'SW':
-        
-                    df_vp_SW = df_vp.table_pivot(index=[time,node],value='SW')
-                    # filter the node if some of the instruments were not working
-                    df_vp_SW_filt = df_vp_SW.iloc('node1','node2')
-                    
-                    Hx_SW = df_vp_SW_filt * porosity
-                    Hx.vstack(Hx_SW)
+                df_vp = self.read_outputs(filename='vp')
+                    # PH: pressure head
+                    # SW: Soil Water
+                    # CKRW: Relative hydraulic conductivity output at all nodes
+                # groupby df_vp['node'] to elect a given node information
+                            
+                # node = self.dict_obs[key]['position']
+                # time = self.dict_obs[key]['time']
     
-                    # note: the value of the porosity can be unique or not depending on the soil physical properties defined
-
-            if 'discharge' in key:
-                # case 3: discharge
-                # need to read the hgsfdet file (Hx_Q)
-                # --------------------------------------------------------------------
-                if key[0] in 'discharge':
+                if 'PH' in key:
+                    # case 1: pressure head assimilation (Hx_PH)
+                    # --------------------------------------------------------------------
+                    df_vp_PH = df_vp.table_pivot(index=[time,node],value='PH')
+                    if key[0] in 'PH':
+                        # filter the node if some of the instruments were not working
+                          df_vp_PH_filt = df_vp_PH.iloc('node1','node2')
+            
+                          Hx_PH = df_vp_PH_filt
+                          Hx.vstack(Hx_PH)
                     
-                    # derivation of the dircharge, Q from file 'hgsfdet'
-                    Hx_Q = []
-                    Hx.vstack(Hx_Q)
-
-            if 'ERT' in key:
-                # case 4: ERT
-                # --------------------------------------------------------------------
-                if key[0] in 'ERT':
+                if 'SW' in key:
+                    # case 2: sw assimilation (Hx_SW)
+                    # --------------------------------------------------------------------
+                    if key[0] in 'SW':
+            
+                        df_vp_SW = df_vp.table_pivot(index=[time,node],value='SW')
+                        # filter the node if some of the instruments were not working
+                        df_vp_SW_filt = df_vp_SW.iloc('node1','node2')
+                        
+                        Hx_SW = df_vp_SW_filt * porosity
+                        Hx.vstack(Hx_SW)
         
-                    # mapping: transform SWC to ER using Archie
-                    Hx_ERT = Archie.SW_2_ERa(verbose=True)
-                    Hx.vstack(Hx_ERT)
-
-
+                        # note: the value of the porosity can be unique or not depending on the soil physical properties defined
+    
+                if 'discharge' in key:
+                    # case 3: discharge
+                    # need to read the hgsfdet file (Hx_Q)
+                    # --------------------------------------------------------------------
+                    if key[0] in 'discharge':
+                        
+                        # derivation of the dircharge, Q from file 'hgsfdet'
+                        Hx_Q = []
+                        Hx.vstack(Hx_Q)
+    
+                if 'ERT' in key:
+                    # case 4: ERT
+                    # --------------------------------------------------------------------
+                    if key[0] in 'ERT':
+            
+                        # mapping: transform SWC to ER using Archie
+                        Hx_ERT = Archie.SW_2_ERa(verbose=True)
+                        Hx.vstack(Hx_ERT)
+    
+    
 
         
         return Hx, Hx_mean
@@ -3152,7 +3160,7 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
         
         pass
 
-    def read_observations(self,filename, position, data_type, data_err, show=False):
+    def read_observations(self,filename, data_type, data_err, show=False, **kwargs):
         '''
         read measures (real observations)
         
@@ -3162,14 +3170,15 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
         ----------
         filename : str
             filename of the observation dataset.
-        position : list
-            xyz position of the observation
         data_type : str
             key tring to identify what type of measure is to read.
         data_err : float
             % of error for a given measurement dataset. The default is 0.05.
         show : Bool
             plot measure graph. The default is False.
+        kwargs**:
+            position : list
+                xyz position of the observation
 
         Returns
         -------
@@ -3177,6 +3186,13 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
             dict merging all observations + metadatas.
 
         '''
+
+
+        # specify assimilation time if not contained in the file
+        # ---------------------------------------------------------------------
+        tA = []
+        if 'tA' in kwargs:
+            tA = kwargs['tA']
 
         # discharge type read
         # ---------------------------------------------------------------------
@@ -3193,9 +3209,9 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
             # add time stamp if not contained in the file
             
         elif data_type == 'ERT':
-            
             df = in_meas.read_ERT(filename)  
-            
+            units = '$\Omega$'
+
             # add time stamp if not contained in the file
 
             
@@ -3212,13 +3228,16 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
         
         # store measure data (df) + metadata into a dict
         # ---------------------------------------------------------------------
+        
+        self.dict_obs = {}
+        
         dict_obs_2add = {'filename': filename, 
                         'data_type': data_type, 
                         'units': units, # units
                         'data': df,
                         'data_err': data_err,              
                         'mesh_nodes': [],                  
-                        'assimilation_times': df['time']                  
+                        'assimilation_times': tA                
                         }
 
         # concatenate dict
