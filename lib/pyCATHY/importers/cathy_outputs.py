@@ -208,6 +208,7 @@ def read_sw(filename, **kwargs):
     # ------------------------------------------------------------------------
     for i, ll in enumerate(lines):
         if 'TIME' in ll:
+            # print('TIME')
             idx.append(i)
             splt= ll.split()
             step_i.append(splt[0])

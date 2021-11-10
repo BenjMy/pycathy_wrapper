@@ -28,7 +28,10 @@ def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):
     ERT.setTitle('Rhizo_synth')
     
     
-
+    if type(elecsXYZ) is str:
+        # elecsXYZ = np.loadtxt(elecsXYZ, delimiter='\t')
+        elecsXYZ= np.genfromtxt(elecsXYZ, delimiter=",",skip_header=1)
+        
     ERT.setElec(np.c_[elecsXYZ[:,0],elecsXYZ[:,2],elecsXYZ[:,1],elecsXYZ[:,3]])
     
     ERT.importMesh(mesh)

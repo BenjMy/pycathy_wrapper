@@ -4,33 +4,79 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import pyvista as pv
+from pyCATHY import meshtools as mt 
+from pyCATHY.rhizo_tools import CATHY_2_Resipy
+from pyCATHY.ERT import simulate_ERT as simuERT
 
-
-
-def SW_2_ERa():
+def SW_2_ERa(df_sw,workdir,project_name,
+             porosity,
+             path_CATHY,
+             pathERT, meshERT, elecs, sequenceERT):
     
-    pass
-
-
-def Archie_sat(rho, rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
-    '''
     
-    rho: resistivity
-    𝑆𝑤 : water saturation
-    𝜙: the porosity of the soil
-    𝜎_{𝑤} is the conductivity of the pore fluid
-    𝑎, 𝑚, and 𝑛 are empirically derived parameters
-    𝑎 is the tortuosity factor
-    𝑚 is the cementation exponent
-    𝑛 is the saturation exponent
-    Returns
-    -------
-    𝑆𝑤 : water saturation
+   
+    ER_converted_ti = Archie_rho(rFluid=1, 
+                                sat = df_sw[-1],
+                                porosity=porosity, 
+                                a=1.0, m=2.0, n=2.0)
 
-
-    '''
-    return  (rho/rFluid/porosity^-m)^(-1/n)
+    # read in CATHY mesh data
+    # ------------------------------------------------------------------------
+    # path_CATHY = '/home/ben/Documents/CATHY/pyCATHY/mary_rhizo_withDA/rhizo_ET_irr_PRD_withVp/vtk/'
+    # path_CATHY = os.path.join(workdir, project_name , 'vtk/')
+    mesh_CATHY = pv.read(path_CATHY + '100.vtk')
     
+    # print(ER_converted_ti)
+
+    # add attribute converted to CATHY mesh
+    # ------------------------------------------------------------------------
+    mesh_CATHY_new_attr = mt.add_attribute_2mesh(ER_converted_ti,
+                            mesh_CATHY,
+                            'ER_converted',
+                            overwrite=True, 
+                            path = path_CATHY)
+
+    # print(mesh_CATHY)
+    # print(mesh_CATHY_new_attr)
+
+    # copy attribute to resipy mesh
+    # ------------------------------------------------------------------------
+    mesh_Resipy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted',
+                   show=False, path= os.path.join(workdir, project_name, 'vtk/'))
+
+    # fwd ERT data
+    # ------------------------------------------------------------------------
+    res0 = mesh_Resipy_new_attr.get_array(scalar_new)
+    # mesh_Resipy_new_attr.cell_data[scalar_new] 
+    # mesh_Resipy_new_attr.array_names
+
+    # ERT.mesh
+    # res = ERT.mesh.df['res0']
+    ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT, project_name,'predicted'), 
+                                                elecs, 
+                                                sequenceERT, 
+                                                meshERT, 
+                                                res0=res0)
+    ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
+    df_ERT_predicted = ERT_predicted.surveys[0].df
+
+    # save to dataframe and export file
+    # ------------------------------------------------------------------------
+    filename = 'ER_predicted.csv'
+    
+    isExist = os.path.exists(os.path.join(pathERT, project_name))
+    if not isExist:
+        os.makedirs(os.path.join(pathERT, project_name))
+
+    df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
+    # ERT_predicted[]
+    # simuERT.invert_ERT_survey(ERT)
+    
+    
+    return df_ERT_predicted
+  
 
 def Archie_rho(rFluid, sat, porosity, a=1.0, m=2.0, n=2.0):
     '''
@@ -60,6 +106,26 @@ def Archie_rho(rFluid, sat, porosity, a=1.0, m=2.0, n=2.0):
 
     return rFluid * a * porosity**(-m) * sat**(-n)
 
+
+
+def Archie_sat(rho, rFluid, porosity, a=1.0, m=2.0, sat=1.0, n=2.0):
+    '''
+    
+    rho: resistivity
+    𝑆𝑤 : water saturation
+    𝜙: the porosity of the soil
+    𝜎_{𝑤} is the conductivity of the pore fluid
+    𝑎, 𝑚, and 𝑛 are empirically derived parameters
+    𝑎 is the tortuosity factor
+    𝑚 is the cementation exponent
+    𝑛 is the saturation exponent
+    Returns
+    -------
+    𝑆𝑤 : water saturation
+
+
+    '''
+    return  (rho/rFluid/porosity^-m)^(-1/n)
 
 
 # import pygimli as pg

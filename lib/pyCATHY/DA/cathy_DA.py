@@ -14,14 +14,14 @@ from pyCATHY.cathy_tools import CATHY
 class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     def __init__(self, *args, **kwargs):
 
-        self.vars_per = {} # dict of dict of perturbated variables parameters
+        self.var_per_list = {} # dict of dict of perturbated variables parameters
 
         pass
     
-    def perturbate_var(self, var, parameter, mean, sd, per_type, sampling_type = 'lognormal',
+    def perturbate_parm(self, parm, type_parm, mean, sd, per_type, sampling_type = 'lognormal',
                             ensemble_size = 128, show=False, **kwargs):
         """
-        Perturbate variable for the generation of the ensemble
+        Perturbate parameter for the generation of the ensemble
         
         
         Possible variable to perturbate:
@@ -32,9 +32,9 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     
         Parameters
         ----------
-        var : dict
+        parm : dict
             DESCRIPTION.
-        parameter : str
+        type_parm : str
             specify the parameter type.
         mean : TYPE
             DESCRIPTION.
@@ -62,7 +62,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         # add Johnson1970 transformation in kwargs 
         
         # check if parameters in part of van Genuchten retention curves
-        if parameter in ['Alpha', 'n', 'thethaR']: #van Genuchten retention curves
+        if type_parm in ['Alpha', 'n', 'thethaR']: #van Genuchten retention curves
             
             print('The parameters of the van Genuchten retention curves α,' + 
                   'n, and θ r are perturbed taking into account their mutual cor-' + 
@@ -78,30 +78,30 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         else:
     
             if sampling_type == 'lognormal':
-                var_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
+                parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
             elif sampling_type == 'normal':
-                var_sampling = np.random.normal(mean, sd, size=ensemble_size)
+                parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
     
         
-            var_mat = np.ones(ensemble_size)*var[parameter+'_nominal']
+            parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             
             if per_type == 'multiplicative':
-                var_per_array = var_mat*var_sampling
+                parm_per_array = parm_mat*parm_sampling
             elif per_type == 'additive':
-                var_per_array = var_mat+var_sampling
+                parm_per_array = parm_mat+parm_sampling
         
         
             
             if show == True:
                 
                 fig = plt.figure(figsize=(6, 3), dpi=150)
-                plt.hist(var_sampling, ensemble_size, alpha=0.5, label='sampling')
-                plt.hist(var_per_array, ensemble_size, alpha=0.5, label='perturbated')
+                plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
+                plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
                 plt.legend(loc='upper right')
-                plt.xlabel(var[parameter + '_units'])
+                plt.xlabel(parm[type_parm + '_units'])
                 plt.ylabel('Probability')
-                plt.title('Histogram of ' + parameter)
-                plt.axvline(x=var[parameter+'_nominal'],linestyle='--', color='red')
+                plt.title('Histogram of ' + type_parm)
+                plt.axvline(x=parm[type_parm+'_nominal'],linestyle='--', color='red')
                 plt.show()
                 
                 if 'savefig' in kwargs:
@@ -109,34 +109,34 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 
 
     
-        # copy initiail variable dict and add 'sampling' and 'perturbated' attributes
+        # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
         # -------------------------------------------------------------------------
         var_per = {}
-        var_per[parameter] = var 
+        var_per[type_parm] = parm 
         
         key = 'sampling_type'
-        var_per[parameter][key] = sampling_type
+        var_per[type_parm][key] = sampling_type
     
         key = 'sampling_mean'
-        var_per[parameter][key] = mean
+        var_per[type_parm][key] = mean
     
         key = 'sampling_sd'
-        var_per[parameter][key] = sd
+        var_per[type_parm][key] = sd
     
         key = 'sampling'
-        var_per[parameter][key] = var_sampling
+        var_per[type_parm][key] = parm_sampling
     
         key = 'per_type'
-        var_per[parameter][key] = per_type
+        var_per[type_parm][key] = per_type
     
-        key = 'perturbated'
-        var_per[parameter][key] = var_per_array
+        key = 'ini_perturbation'
+        var_per[type_parm][key] = parm_per_array
     
         self._add_to_perturbated_dict(var_per)
         
         
         
-        return self.vars_per 
+        return self.var_per_list 
     
     
     def _add_to_perturbated_dict(self,var_per_2add):
@@ -155,9 +155,9 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         '''
                
-        self.vars_per = self.vars_per | var_per_2add
+        self.var_per_list = self.var_per_list | var_per_2add
         
-        return self.vars_per
+        return self.var_per_list
 
 
     def _create_subfolders_ensemble(self,NENS):

@@ -8,6 +8,7 @@ Created on Wed Jul 28 18:03:04 2021
 
 import os 
 import numpy as np
+import pyvista as pv
 
 def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     '''
@@ -42,6 +43,11 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         # closest_idx, closest = find_nearest_nodes(pos,in_nodes_mod,
         #                                              threshold)
 
+    if type(meshOUT) is str:
+        # print('read vtk file using pv')
+        meshOUT = pv.read(meshOUT)
+    # print('lenScalar' + str(len(meshIN.get_array(scalar))))
+    # print(meshOUT)
 
     cellOUT_centers = meshOUT.cell_centers()
 
@@ -169,6 +175,10 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
 
     '''
     
+    if type(mesh) is str:
+        mesh = pv.read(mesh)
+        
+        
     mesh.add_field_data(data, name)
     
     meshname = name + '.vtk'
@@ -178,13 +188,11 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
     if 'path' in kwargs:
         path = kwargs['path']
 
-    print(path)
-    
+    print('meshpath=' + path)
     
     if 'time' in kwargs:
         time = kwargs['time']
         meshname = name  + str(time) +'.vtk'
-        print(meshname)
 
         mesh.save(path + meshname)
     else:

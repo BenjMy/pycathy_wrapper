@@ -9,6 +9,7 @@ import pandas as pd
 
 def read_ERT(filename, **kwargs):
     '''
+    Reader for csv exported resipy data container type
 
     Returns
     -------
@@ -17,9 +18,22 @@ def read_ERT(filename, **kwargs):
     '''
     
     
-    df_ERT = pd.read_csv(filename, sep="\t", header='infer')
+    df_ERT = pd.read_csv(filename, sep=",", header='infer')    
+    # PH: pressure head
+    # SW: Soil Water
+    # CKRW: Relative hydraulic conductivity output at all nodes
+    # QTRANIE Root‐zone water uptake at current time level always positive, changes sign in BCPIC
+    # dict_vp = {'PH': 'pressure head'}
 
+
+    # transform a numpy array into panda df
+    # ------------------------------------------------------------------------    
     
+    
+    dict_ERT = {}
+    dict_ERT['electrodesXYZ'] = []
+    dict_ERT['sequenceABMN'] = []
+
     return df_ERT   
 
 
