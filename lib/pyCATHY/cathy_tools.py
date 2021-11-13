@@ -2545,8 +2545,12 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
 
         [self.Analysis,self.AnalysisParam] = enkf.enkf_analysis(Data,DataCov,Param,Ensemble,Observation)
         
-        self.count_DA_cycle=+1
-        
+        print('------------self.count_DA_cycle----------------------------')
+        print(self.count_DA_cycle)
+        self.count_DA_cycle = self.count_DA_cycle +1
+        print('self.count_DA_cycle')
+        print(self.count_DA_cycle)
+
         update_key = 'ini_perturbation'       
         if self.count_DA_cycle>0:
             update_key = 'update_nb' + str(self.count_DA_cycle)
@@ -3132,8 +3136,9 @@ class CATHY(): # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould be
                 #--------------------------------------------------------------
 
                 if key in 'St. var.':
-                    print('!Update state variable!')
                     if kwargs['cycle_nb']>0:
+                            print('!Update state variable!')
+
                             self.update_ic(INDP=1, IPOND=0, 
                                            pressure_head_ini=self.Analysis,
                                            filename=os.path.join(os.getcwd(),'input/ic'))
