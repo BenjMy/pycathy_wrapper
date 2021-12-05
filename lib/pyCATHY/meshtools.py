@@ -47,6 +47,9 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         # print('read vtk file using pv')
         meshOUT = pv.read(meshOUT)
     # print('lenScalar' + str(len(meshIN.get_array(scalar))))
+    # print('meshIN')
+    # print(meshIN)
+    # print('meshOUT')
     # print(meshOUT)
 
     cellOUT_centers = meshOUT.cell_centers()
@@ -59,7 +62,11 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         if 'nan' in closest:
             out_data.append('nan')
         else:
-            out_data.append(meshIN.get_array(scalar)[closest_idx])
+            # print(scalar)
+            # print(closest_idx)
+            # print(meshIN.active_scalars)
+            # get_array(mesh, name, preference='cell'
+            out_data.append(meshIN.active_scalars[closest_idx])
     
     out_data = np.hstack(out_data)
 
@@ -152,7 +159,8 @@ def find_nearest_node(node_coord,meshIN_nodes_coords,threshold=1e-1,
 
 
 
-def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
+def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, 
+                        savefig=True, **kwargs):
     '''
     add a new mesh attribute to a vtk file
 
@@ -177,12 +185,22 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
     
     if type(mesh) is str:
         mesh = pv.read(mesh)
-        
-        
-    mesh.add_field_data(data, name)
     
-    meshname = name + '.vtk'
+    # print(mesh)
+    # print(name)
+    
+    # print(len(data))
+    
+    # if 
 
+    # mesh.add_field_data(data, name)
+    
+    try:
+        mesh.point_data[name] = data
+    except:
+        mesh.cell_data[name] = data
+
+    meshname = name + '.vtk'
 
     path = os.getcwd()
     if 'path' in kwargs:
@@ -193,15 +211,18 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, **kwargs):
     if 'time' in kwargs:
         time = kwargs['time']
         meshname = name  + str(time) +'.vtk'
-
+    # if 'DAcount' in kwargs:
+    #     DAcount = kwargs['DAcount']
+    #     meshname = name  + str(time) +'.vtk'      
+        
         mesh.save(path + meshname)
     else:
         mesh.save(path + name + '.vtk')
                 
     # if overwrite==True:
     #     mesh.save(full_path)
-
-    return mesh
+        
+    return mesh, name
 
 
 

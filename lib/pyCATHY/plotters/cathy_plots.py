@@ -542,7 +542,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
         # --------------------------------------------------------------------- 
         if savefig is True:
             # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
-            print(os.path.join(path, 'vtk', filename + '.svg'))
+            # print(os.path.join(path, 'vtk', filename + '.svg'))
             plotter.view_xz()
             plotter.save_graphic(os.path.join(path,filename + '.svg'),
                                  title="", raster=True, painter=True)

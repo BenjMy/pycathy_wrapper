@@ -9,6 +9,28 @@ import shutil
 
 
 def enkf_analysis(Data,DataCov,Param,Ensemble,Observation):
+    '''
+    https://github.com/hickmank/pyda/blob/7a2f04bd752e9c75bc8dcd2a45b21ff549736fa6/pyda/analysis_generator/kf/enkf1.py
+
+    Parameters
+    ----------
+    Data : TYPE
+        DESCRIPTION.
+    DataCov : TYPE
+        DESCRIPTION.
+    Param : TYPE
+        DESCRIPTION.
+    Ensemble : TYPE
+        DESCRIPTION.
+    Observation : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    list
+        DESCRIPTION.
+
+    '''
     # Collect data sizes.
     EnSize = Ensemble.shape[1]
     SimSize = Ensemble.shape[0] 
@@ -54,7 +76,8 @@ def enkf_analysis(Data,DataCov,Param,Ensemble,Observation):
     AnalysisParam = Analysis[SimSize:,:].transpose()
     Analysis = Analysis[0:SimSize,:]
             
-    return [Analysis,AnalysisParam]
+    # return [Analysis,AnalysisParam]
+    return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, AnalysisParam]
 
 
 def ENKF(self,A,dAS,B):

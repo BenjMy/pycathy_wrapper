@@ -9,56 +9,112 @@ import pyvista as pv
 from pyCATHY import meshtools as mt 
 from pyCATHY.rhizo_tools import CATHY_2_Resipy
 from pyCATHY.ERT import simulate_ERT as simuERT
+import pandas as pd
 
-def SW_2_ERa(df_sw,workdir,project_name,
+def SW_2_ERa(df_sw,
+             workdir,
+             project_name,
              porosity,
-             path_CATHY,
-             pathERT, meshERT, elecs, sequenceERT):
+             # path_CATHY,
+             pathERT, meshERT, elecs, sequenceERT,
+             savefig=True,
+             **kwargs):
     
     
-   
-    ER_converted_ti = Archie_rho(rFluid=1, 
-                                sat = df_sw[-1],
-                                porosity=porosity, 
-                                a=1.0, m=2.0, n=2.0)
+    
+    # Some flag for DA assimilation
+    # ------------------------------------------------------------------------
+    DA_cnb = ''
+    if 'DA_cnb' in kwargs:
+        DA_cnb = kwargs['DA_cnb']
+        
+    Ens_nb = ''
+    if 'Ens_nb' in kwargs:
+        Ens_nb = kwargs['Ens_nb']
+        
+        
+    # if type(meshERT) is str:
+    #     meshERTpv = pv.read(meshERT)
+    
+    # plotter = pv.Plotter(notebook=True)
+    # _ = plotter.add_mesh(meshERTpv,show_edges=True)
+    # plotter.view_xz(negative=False)
+    # plotter.show_grid()
+    # plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'), 
+    #                      title='ERT'+ str(DA_cnb), 
+    #                      raster=True, 
+    #                      painter=True)
+    
 
-    # read in CATHY mesh data
     # ------------------------------------------------------------------------
     # path_CATHY = '/home/ben/Documents/CATHY/pyCATHY/mary_rhizo_withDA/rhizo_ET_irr_PRD_withVp/vtk/'
     # path_CATHY = os.path.join(workdir, project_name , 'vtk/')
-    mesh_CATHY = pv.read(path_CATHY + '100.vtk')
+    
+    # mesh_CATHY = pv.read(path_CATHY + '100.vtk')
+    
+    # cele200
+    print('workdir: ' + str(workdir))
+    path_CATHY = os.path.join(workdir,'vtk/')
+    print('path_CATHY: ' + str(path_CATHY))
+    print('meshERT: ' + str(meshERT))
+    print('pathERT: ' + str(pathERT))
+
+    mesh_CATHY = pv.read(path_CATHY + 'cele200.vtk')
+
+    sw2convert = mesh_CATHY['saturation']
+    ER_converted_ti = Archie_rho(rFluid=1, 
+                                sat = sw2convert, #df_sw[-1],
+                                porosity=porosity, 
+                                a=1.0, m=2.0, n=2.0)
+
+    df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','EC','porosity'])
+    df_Archie['time'] = DA_cnb
+    df_Archie['ens_nb'] = Ens_nb
+    df_Archie['sw'] = sw2convert
+    df_Archie['EC'] = ER_converted_ti
+
+    # fig = plt.figure()
+    # ax = plt.subplot()
+    # ax.plot(df_sw[-1])
+    # ax.plot(ER_converted_ti)
+    # read in CATHY mesh data
+    
     
     # print(ER_converted_ti)
 
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
-    mesh_CATHY_new_attr = mt.add_attribute_2mesh(ER_converted_ti,
+    mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(ER_converted_ti,
                             mesh_CATHY,
-                            'ER_converted',
+                            'ER_converted' + str(DA_cnb),
                             overwrite=True, 
                             path = path_CATHY)
 
     # print(mesh_CATHY)
     # print(mesh_CATHY_new_attr)
 
+       
+       
     # copy attribute to resipy mesh
     # ------------------------------------------------------------------------
-    mesh_Resipy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted',
-                   show=False, path= os.path.join(workdir, project_name, 'vtk/'))
+    mesh_Resipy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
+                   show=False, path= os.path.join(workdir, 'vtk/'))
 
     # fwd ERT data
     # ------------------------------------------------------------------------
-    res0 = mesh_Resipy_new_attr.get_array(scalar_new)
+    # res0 = mesh_Resipy_new_attr.get_array(scalar_new)
+    res0 = mesh_Resipy_new_attr[scalar_new]
     # mesh_Resipy_new_attr.cell_data[scalar_new] 
     # mesh_Resipy_new_attr.array_names
 
     # ERT.mesh
     # res = ERT.mesh.df['res0']
-    ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT, project_name,'predicted'), 
+    ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT,project_name,'predicted'), 
                                                 elecs, 
                                                 sequenceERT, 
                                                 meshERT, 
                                                 res0=res0)
+    
     ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
     df_ERT_predicted = ERT_predicted.surveys[0].df
 
@@ -74,8 +130,40 @@ def SW_2_ERa(df_sw,workdir,project_name,
     # ERT_predicted[]
     # simuERT.invert_ERT_survey(ERT)
     
+    if savefig is True:
+        
+       plotter = pv.Plotter(shape=(1, 3),notebook=True)
+       
+       plotter.subplot(0, 0)
+       mesh_CATHY.set_active_scalars('saturation')
+       _ = plotter.add_mesh(mesh_CATHY,show_edges=True)
+       plotter.show_grid()
+       plotter.view_xz()
+
+       plotter.subplot(0, 1)
+       mesh_CATHY_new_attr.set_active_scalars(active_attr)
+       _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
+       plotter.show_grid()
+       plotter.view_xz()
+       
+       plotter.subplot(0, 2)
+       mesh_Resipy_new_attr.set_active_scalars(scalar_new)
+       _ = plotter.add_mesh(mesh_Resipy_new_attr,show_edges=True)
+       plotter.show_grid()
+       plotter.view_xz()
+       
+
+       plotname ='suplot'+ str(DA_cnb)
+
+        
+       plotter.save_graphic(path_CATHY + plotname + str('.svg'), 
+                            title='', 
+                            raster=True, 
+                            painter=True)   
+       
+       
     
-    return df_ERT_predicted
+    return df_ERT_predicted, df_Archie
   
 
 def Archie_rho(rFluid, sat, porosity, a=1.0, m=2.0, n=2.0):

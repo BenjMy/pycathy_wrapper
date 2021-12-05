@@ -200,6 +200,98 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
 # rhizo.create_DA(drippersPos=[],RWU=False)
 #     # closestnode
 #     # simu.create_parm()
+def update_rhizo_inputs(simu_DA):
+    '''
+    
+
+    Returns
+    -------
+    None.
+
+    '''
+    pmin = -1.0E+20
+    dem_synth=np.ones([9,10])*1e-3
+    dem_synth[-1,-1]=0.99e-3
+    zb = np.arange(0,0.5+0.1,0.05)
+    nstr=len(zb)-1
+    zr=list((np.ones(len(zb)))/(nstr))
+    
+    simu_DA.update_prepo_inputs(delta_x=0.05,delta_y=0.003, DEM=dem_synth,
+                              N=np.shape(dem_synth)[1],
+                              M=np.shape(dem_synth)[0],
+                              N_celle=np.shape(dem_synth)[0]*np.shape(dem_synth)[1],
+                              nstr=nstr, zratio=zr,  base=max(zb),dr=0.05,show=True)
+    
+    simu_DA.workdir
+    simu_DA.run_preprocessor(verbose=True,KeepOutlet=False) #,show=True)
+    
+
+    simu_DA.update_parm()
+    simu_DA.update_veg_map()
+    simu_DA.update_soil()
+    simu_DA.run_processor(IPRT1=3,TRAFLAG=0,verbose=False)
+    
+    simu_DA.update_ic(INDP=3,WTPOSITION=0)
+    
+    from pyCATHY.rhizo_tools import atmbc_PRD #create_infitration # create_DA
+    flux=1.11111e-06
+    
+    time_of_interest = list(np.arange(0,12*3600,3600))
+    
+    simu_DA.update_atmbc(HSPATM=1,IETO=1,TIME=time_of_interest,
+                      VALUE=[np.zeros(len(time_of_interest)),np.ones(len(time_of_interest))*flux],
+                      show=True,x_units='hours',diff=True) # just read new file and update parm and cathyH
+    
+    
+    """### 3- Boundary conditions"""
+    
+    simu_DA.update_nansfdirbc(noflow=True,TIME=time_of_interest) # Dirichlet uniform by default
+    simu_DA.update_nansfneubc(TIME=time_of_interest) # Neumann (rain)
+    simu_DA.update_sfbc(TIME=time_of_interest)
+    
+    """### 4- Soil and roots inputs"""
+    
+    PERMX = PERMY = PERMZ =[1.88E-04]
+    ELSTOR = [1.00E-05]
+    POROS = [0.55]
+    VGNCELL = [1.46]
+    VGRMCCELL = [0.15]
+    VGPSATCELL =  [0.03125]
+    
+    SoilPhysProp = {'PERMX':PERMX,'PERMY':PERMY,'PERMZ':PERMZ,
+                    'ELSTOR':ELSTOR,'POROS':POROS,
+                    'VGNCELL':VGNCELL,'VGRMCCELL':VGRMCCELL,'VGPSATCELL':VGPSATCELL}
+    
+    """We could also used the predefined Van-Genuchten function (located in cathy_utils) to generate a set of soil physical properties"""
+    
+    #SoilPhysProp = utils.VanG()
+    
+    """The trick to defining a heterogeneous density of roots into the 3d medium from a single plant, 
+    we defined different vegetation areas which are independent with varying root depth and Feddes parameters."""
+    
+    PCANA=[0.0]        
+    PCREF=[-4.0]
+    PCWLT=[-150]
+    ZROOT=[0.4]
+    PZ = [1.0]
+    OMGC =[1.0] 
+    
+    
+    FeddesParam = {'PCANA':PCANA,'PCREF':PCREF,'PCWLT':PCWLT,
+                   'ZROOT':ZROOT,'PZ':PZ,
+                   'OMGC':OMGC}
+    
+    veg_map = np.ones([int(simu_DA.hapin['M']),int(simu_DA.hapin['N'])])
+    simu_DA.update_veg_map(root_depth=veg_map, show=True)
+    
+    """The choice of PMIN conditionne the switching condition"""
+    
+    simu_DA.update_soil(PMINsimu_DA=pmin,
+                      SPP=SoilPhysProp,
+                      FP=FeddesParam,
+                      verbose=True)
+
+    return simu_DA
 
 #%% meshes interpolation
 
@@ -235,24 +327,26 @@ def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwarg
                             threshold=1e-1,
                             in_nodes_mod=in_nodes_mod)
     
-    scalar_new = scalar + '_nearIntrp'
-    
-    # print(np.mean(data_OUT))
-    # len()
+    # print(len(data_OUT))
+    scalar_new = scalar + '_nearIntrp2Resipymsh'
+    # print(mesh_Resipy)
+    # get_array(mesh, name, preference='cell'
+              
+
     if 'time' in kwargs:
         time = kwargs['time']
-        mesh_new_attr = mt.add_attribute_2mesh(data_OUT, 
-                               mesh_Resipy, 
-                               scalar_new, 
-                               overwrite=True,
-                               time=time,
-                               path=path)
+        mesh_new_attr, name_new_attr = mt.add_attribute_2mesh(data_OUT, 
+                                                                mesh_Resipy, 
+                                                                scalar_new, 
+                                                                overwrite=True,
+                                                                time=time,
+                                                                path=path)
     else:
-        mesh_new_attr = mt.add_attribute_2mesh(data_OUT, 
-                               mesh_Resipy, 
-                               scalar_new, 
-                               overwrite=True,
-                               path=path)
+        mesh_new_attr, name_new_attr = mt.add_attribute_2mesh(data_OUT, 
+                                                                mesh_Resipy, 
+                                                                scalar_new, 
+                                                                overwrite=True,
+                                                                path=path)
     
     if show == True:
 
@@ -265,6 +359,21 @@ def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwarg
         p.add_mesh(mesh_CATHY, scalars=scalar)
         _ = p.add_bounding_box(line_width=5, color='black')
         cpos = p.show(True)
+        
+    # if type(meshERT) is str:
+    #     meshERTpv = pv.read(meshERT)
+    
+    # if savefig == True:
+    
+    #     plotter = pv.Plotter(notebook=True)
+    #     _ = plotter.add_mesh(mesh_new_attr,show_edges=True)
+    #     plotter.view_xz(negative=False)
+    #     plotter.show_grid()
+    #     plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'), 
+    #                           title='ERT'+ str(DA_cnb), 
+    #                           raster=True, 
+    #                           painter=True)
+            
     
     return mesh_new_attr, scalar_new
 

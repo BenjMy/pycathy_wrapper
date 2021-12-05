@@ -155,7 +155,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         '''
                
-        self.var_per_list = self.var_per_list | var_per_2add
+        self.var_per_list = self.var_per_list | var_per_2add # only for python 3.9
+        #self.var_per_list.update(var_per_2add)
         
         return self.var_per_list
 
