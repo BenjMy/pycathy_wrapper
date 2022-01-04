@@ -63,7 +63,7 @@ jobs:
       # we set || true, in case, nothing really changes
       - name: Commit to gh-pages
         run: |
-          find ./
-          git add docs/*
+          find docs
+          git add .
           git commit -m "Update documentation" -a || true
           git push
