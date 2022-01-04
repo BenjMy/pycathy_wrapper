@@ -1,7 +1,7 @@
-Getting Started
-===============
+# Getting Started
 
-.. The getting-started should show some primary use cases in more detail. The reader will follow a step-by-step procedure to set-up a working prototype -->
+
+<!-- The getting-started should show some primary use cases in more detail. The reader will follow a step-by-step procedure to set-up a working prototype -->
 
 pyCATHY is a Python wrapper for CATHY allowing mesh creation, forward and inverse modeling, and simple output visualization of CATHY simulations
 

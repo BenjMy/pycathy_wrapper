@@ -51,13 +51,10 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',
-    'numpydoc',
-    #'nbsphinx', # to include jupyter notebook as sphinx doc page
-    'sphinx_gallery.gen_gallery', # to generate the gallery
-    #'sphinx_nbexamples', # needs pandoc (apt-get install pandoc)
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.viewcode'
+    'numpydoc'
+    # 'sphinxcontrib.bibtex',
+    # 'nbsphinx',
+    # 'sphinx_nbexamples',
 ]
 
 
@@ -65,24 +62,6 @@ extensions = [
 autosummary_generate = True
 autodoc_default_flags = ['members', 'inherited-members']
 
-sphinx_gallery_conf = {
-    # path to your examples scripts
-    'examples_dirs': ['../examples'],
-    # path where to save gallery generated examples
-    'gallery_dirs': 'auto_examples',
-    'filename_pattern': '\.ipynb',
-    # Remove the "Download all examples" button from the top level gallery
-    'download_all_examples': False,
-    # Sort gallery example by file name instead of number of lines (default)
-    # 'within_subsection_order': FileNameSortKey,
-    # directory where function granular galleries are stored
-    # 'backreferences_dir': False,
-    # Modules for which function level galleries are created.  In
-    # this case sphinx_gallery and numpy in a tuple of strings.
-    # 'doc_module': 'harmonica',
-    # Insert links to documentation of objects in the examples
-    # 'reference_url': {'harmonica': None},
-}
 
 # Configure the inline plots from matplotlib plot_directive
 plot_formats = [("png", 90)]
@@ -95,8 +74,8 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+#source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -134,7 +113,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

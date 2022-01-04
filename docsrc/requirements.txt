@@ -5,6 +5,7 @@ itkwidgets
 jupyter
 sphinx
 sphinx-gallery
+sphinx-rtd-theme
 sphinx_bootstrap_theme
 numpydoc
 panel
