@@ -206,7 +206,7 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
     if 'path' in kwargs:
         path = kwargs['path']
 
-    print('meshpath=' + path)
+    # print('meshpath=' + path)
     
     if 'time' in kwargs:
         time = kwargs['time']

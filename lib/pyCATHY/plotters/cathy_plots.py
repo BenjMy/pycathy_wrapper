@@ -608,9 +608,10 @@ def show_vtk_TL(
     if savefig == True:
         plotter.open_gif(unit + ".gif")
 
+    legend_entry = "Time= " +str(mesh["TIME"])
     if x_units is not None:
         xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
-    legend_entry = "Time=" + str(t_lgd) + xlabel
+        legend_entry = "Time=" + str(t_lgd) + xlabel
 
     plotter.show_grid()
     # cpos = plotter.show(interactive_update=True, auto_close=False)
@@ -632,7 +633,7 @@ def show_vtk_TL(
 
         if x_units is not None:
             xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
-        legend_entry = "Time=" + str(t_lgd) + xlabel
+            legend_entry = "Time=" + str(t_lgd) + xlabel
         plotter.update_scalars(array_new, render=True)
         plotter.add_text(legend_entry, name="time-label")
 
@@ -923,7 +924,95 @@ def COCumflowvol(workdir, project_name):
 #     return
 
 
+def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis, 
+                       savefig=False,**kwargs):
+    
 
+    fig = plt.figure()
+    ax1 = fig.add_subplot(2,5,1)
+    cax = ax1.matshow(EnsembleX, aspect='auto') #,
+          #cmap=cm.rainbow, norm=colors.LogNorm())
+    ax1.set_title('Prior')
+    ax1.set_ylabel('Parameters #')
+    ax1.set_xlabel('Members #')
+    cbar = fig.colorbar(cax, location='bottom')
+    
+    ax = fig.add_subplot(2,5,6)
+    cax = ax.matshow(np.cov(EnsembleX), 
+                      aspect='auto')
+    ax1.set_title('cov(Prior)')
+    ax1.set_xlabel('Parameters #')
+    ax1.set_ylabel('Parameters #')
+    cbar = fig.colorbar(cax, location='bottom')
+    ax.set_yticks([])  
+    
+    
+    ax = fig.add_subplot(2,5,2)
+    cax = ax.matshow(np.tile(Data,(3,1)).T, 
+                      aspect='auto')
+    ax.set_title('App. Res')
+    ax.set_ylabel('Meas')
+    ax.set_xlabel('Members #')
+    cbar = fig.colorbar(cax, location='bottom')
+    ax.set_yticks([])  
+    
+    # DataCov = np.diag(key_value[1]['data']['recipError'].to_numpy() )
+    # DataCov.max()
+    # DataCov.mean()
+    # DataCov.min()
+    ax = fig.add_subplot(2,5,7)
+    cax = ax.matshow(DataCov, 
+                      aspect='auto')
+                      # cmap=cm.rainbow, norm=colors.LogNorm())
+                      # vmin=0, vmax=1e-29)
+    ax.set_title('cov(meas)')
+    ax.set_ylabel('Meas')
+    ax.set_xlabel('Meas')
+    cbar = fig.colorbar(cax, location='bottom')
+    ax.set_yticks([])  
+    
+    
+    ax = fig.add_subplot(2,5,3)
+    cax = ax.matshow(dD.T, 
+                     aspect='auto',
+                     cmap='jet')
+    ax.set_title('Meas - Sim')
+    ax.set_ylabel('Meas')
+    ax.set_xlabel('Members #')
+    cbar = fig.colorbar(cax, location='bottom')
+    ax.set_yticks([])  
+    
+    
+    ax = fig.add_subplot(2,5,4,sharey=ax1)
+    cax = ax.matshow(np.dot(dAS,B), 
+                      aspect='auto',
+                      cmap='jet')
+    ax.set_title('Correction')
+    ax1.set_ylabel('Parameters #')
+    ax.set_xlabel('Members #')
+    cbar = fig.colorbar(cax, location='bottom')
+    ax.set_yticks([])  
+    
+    
+    ax = fig.add_subplot(2,5,5,sharey=ax1)
+    cax = ax.matshow(Analysis, 
+                     aspect='auto')
+    ax.set_title('Posterior')
+    ax1.set_ylabel('Parameters #')
+    ax.set_xlabel('Members #')
+    cbar = fig.colorbar(cax, location='bottom')
+    ax.set_yticks([])  
+    
+    
+    savename = 'showDA_process_ens'
+    if 'savename' in kwargs:
+        savename = kwargs['savename']
+        
+    if savefig==True:
+    
+        plt.savefig(savename +'.png', dpi=300)
 
-
+    
+    return fig, ax
+    
 

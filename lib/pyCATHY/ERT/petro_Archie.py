@@ -15,20 +15,56 @@ def SW_2_ERa(df_sw,
              workdir,
              project_name,
              porosity,
-             # path_CATHY,
              pathERT, meshERT, elecs, sequenceERT,
              savefig=True,
              **kwargs):
+    '''
+    
+
+    Parameters
+    ----------
+    df_sw : pd df
+        saturation mesh values to convert
+    workdir : str
+        DESCRIPTION.
+    project_name : str
+        DESCRIPTION.
+    porosity : np.array([])
+        medium porosity.
+    pathERT : str
+        path of the ERT forward mesh.
+    meshERT : str
+        filename of the ERT fwd mesh.
+    elecs : TYPE
+        electrode positions.
+    sequenceERT : TYPE
+        ERT sequence.
+    savefig : TYPE, optional
+        DESCRIPTION. The default is True.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    df_ERT_predicted : TYPE
+        DESCRIPTION.
+    df_Archie : TYPE
+        DESCRIPTION.
+
+    '''
     
     
+    
+    # df_sw = out_CT.read_sw(os.path.join(workdir,'output/sw'))
+
     
     # Some flag for DA assimilation
     # ------------------------------------------------------------------------
-    DA_cnb = ''
+    DA_cnb = []
     if 'DA_cnb' in kwargs:
         DA_cnb = kwargs['DA_cnb']
         
-    Ens_nb = ''
+    Ens_nb = []
     if 'Ens_nb' in kwargs:
         Ens_nb = kwargs['Ens_nb']
         
@@ -53,24 +89,26 @@ def SW_2_ERa(df_sw,
     # mesh_CATHY = pv.read(path_CATHY + '100.vtk')
     
     # cele200
-    print('workdir: ' + str(workdir))
+    # print('workdir: ' + str(workdir))
+    
+    
     path_CATHY = os.path.join(workdir,'vtk/')
-    print('path_CATHY: ' + str(path_CATHY))
-    print('meshERT: ' + str(meshERT))
-    print('pathERT: ' + str(pathERT))
+    # print('path_CATHY: ' + str(path_CATHY))
+    # print('meshERT: ' + str(meshERT))
+    # print('pathERT: ' + str(pathERT))
 
     mesh_CATHY = pv.read(path_CATHY + 'cele200.vtk')
 
-    sw2convert = mesh_CATHY['saturation']
+    #sw2convert = mesh_CATHY['saturation']
     ER_converted_ti = Archie_rho(rFluid=1, 
-                                sat = sw2convert, #df_sw[-1],
+                                sat = df_sw[-1],
                                 porosity=porosity, 
                                 a=1.0, m=2.0, n=2.0)
 
     df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','EC','porosity'])
     df_Archie['time'] = DA_cnb
     df_Archie['ens_nb'] = Ens_nb
-    df_Archie['sw'] = sw2convert
+    df_Archie['sw'] = df_sw[-1]
     df_Archie['EC'] = ER_converted_ti
 
     # fig = plt.figure()
