@@ -14,4 +14,4 @@ style-doc
 black
 rich
 pandas
-PVGeo
+resipy
