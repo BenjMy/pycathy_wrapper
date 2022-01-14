@@ -9,6 +9,59 @@ import pyvista as pv # if not installed : pip install with conda install pyvista
 import numpy as np
 import os 
 
+import pygimli as pg
+from pygimli.physics import ert
+import pygimli.meshtools as mt
+
+# runParallel
+
+def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
+
+    isExist = os.path.exists(pathERT)
+    if not isExist:
+      # Create a new directory because it does not exist 
+      os.makedirs(pathERT) 
+      
+      
+    # fname_mesh = './ERT_fwd_DA_sol_rhizo/test_pg/BaseRhizo_Vrte.msh'
+    # mesh3d=  mt.readGmsh(mesh, verbose=False)
+    
+    # pre, ext = os.path.splitext(mesh)
+    # print(os.rename(mesh, pre + '.msh'))
+
+    try:
+        pre, ext = os.path.splitext(mesh)
+        mesh3d=  mt.readGmsh(pre + '.msh', verbose=True)
+    except:
+        mesh3d=  pg.load(mesh, verbose=True)
+
+    # fname_seq = '/ERT_fwd_DA_sol_rhizo/test_pg/SequenceERT_Rhizo_72Elecs.shm'
+    
+    # shm = pg.load(fname_seq)
+    shm = pg.load(sequence)
+    
+    hom = ert.simulate(mesh3d, res=1.0, scheme=shm, sr=False,
+                       calcOnly=True, verbose=False)
+    
+    hom.save('homogeneous.ohm', 'a b m n u')
+    
+    res0 = 1
+    if 'res0' in kwargs:
+        res0 = kwargs['res0']
+
+    # het = ert.simulate(mesh3d, res=res0, scheme=shm, sr=False, noiseLevel=5,
+    #                    calcOnly=True, verbose=True)
+    # het.set('k', 1.0/ (hom('u') / hom('i')))
+    # het.set('rhoa', het('k') * het('u') / het('i'))
+    # het.save('simulated.dat', 'a b m n rhoa k u i')
+    
+    
+    het = ert.simulate(mesh3d, res=res0, scheme=shm, 
+                       calcOnly=False, verbose=True, noiseLevel=5)
+
+
+
+    return het
 
         
 def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):

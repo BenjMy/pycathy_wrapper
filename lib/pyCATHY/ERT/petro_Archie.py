@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import os
 import pyvista as pv
 from pyCATHY import meshtools as mt 
-from pyCATHY.rhizo_tools import CATHY_2_Resipy
+from pyCATHY.rhizo_tools import CATHY_2_Resipy, CATHY_2_pg
 from pyCATHY.ERT import simulate_ERT as simuERT
 import pandas as pd
 
@@ -68,6 +68,10 @@ def SW_2_ERa(df_sw,
     if 'Ens_nb' in kwargs:
         Ens_nb = kwargs['Ens_nb']
         
+    mesh_time_key = []
+    if 'mesh_time_key' in kwargs:
+        mesh_time_key = kwargs['mesh_time_key']
+        
         
     # if type(meshERT) is str:
     #     meshERTpv = pv.read(meshERT)
@@ -91,13 +95,29 @@ def SW_2_ERa(df_sw,
     # cele200
     # print('workdir: ' + str(workdir))
     
-    
+    # print('workdir')
+    # print(workdir)
     path_CATHY = os.path.join(workdir,'vtk/')
-    # print('path_CATHY: ' + str(path_CATHY))
-    # print('meshERT: ' + str(meshERT))
-    # print('pathERT: ' + str(pathERT))
 
-    mesh_CATHY = pv.read(path_CATHY + 'cele200.vtk')
+    # backup mesh cele200 for a given time step
+    # print('path_CATHY')
+    # print(path_CATHY)
+
+    if mesh_time_key:
+        
+        if mesh_time_key<10:
+            name_mesh= 'cele20' + str(mesh_time_key) + '.vtk'
+        else:
+            name_mesh= 'cele2' + str(mesh_time_key) + '.vtk'
+            
+        mesh_CATHY_ref = pv.read(path_CATHY + name_mesh)       
+        name_mesh_backup = name_mesh + 'backup_t_ass'  + str(DA_cnb) +'.vtk'
+        
+    else:
+        mesh_CATHY_ref = pv.read(os.path.join(path_CATHY + 'cele200.vtk'))
+        name_mesh_backup = 'cele200_backup_t_ass'  + str(DA_cnb) +'.vtk'
+    
+    mesh_CATHY_ref.save(path_CATHY + name_mesh_backup)
 
     #sw2convert = mesh_CATHY['saturation']
     ER_converted_ti = Archie_rho(rFluid=1, 
@@ -123,61 +143,121 @@ def SW_2_ERa(df_sw,
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(ER_converted_ti,
-                            mesh_CATHY,
-                            'ER_converted' + str(DA_cnb),
-                            overwrite=True, 
-                            path = path_CATHY)
+                                                                mesh_CATHY_ref,
+                                                                'ER_converted' + str(DA_cnb),
+                                                                overwrite=True, 
+                                                                path = path_CATHY)
 
     # print(mesh_CATHY)
     # print(mesh_CATHY_new_attr)
 
-       
-       
-    # copy attribute to resipy mesh
-    # ------------------------------------------------------------------------
-    mesh_Resipy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
-                   show=False, path= os.path.join(workdir, 'vtk/'))
 
-    # fwd ERT data
-    # ------------------------------------------------------------------------
-    # res0 = mesh_Resipy_new_attr.get_array(scalar_new)
-    res0 = mesh_Resipy_new_attr[scalar_new]
-    # mesh_Resipy_new_attr.cell_data[scalar_new] 
-    # mesh_Resipy_new_attr.array_names
-
-    # ERT.mesh
-    # res = ERT.mesh.df['res0']
-    ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT,project_name,'predicted'), 
-                                                elecs, 
-                                                sequenceERT, 
-                                                meshERT, 
-                                                res0=res0)
+    pg = True   
+    if pg==True:
+        # copy attribute to simpeg mesh
+        # ------------------------------------------------------------------------
+        mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
+                       show=False, path= os.path.join(workdir, 'vtk/'))
     
-    ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
-    df_ERT_predicted = ERT_predicted.surveys[0].df
-
-    # save to dataframe and export file
-    # ------------------------------------------------------------------------
-    filename = 'ER_predicted.csv'
     
-    isExist = os.path.exists(os.path.join(pathERT, project_name))
-    if not isExist:
-        os.makedirs(os.path.join(pathERT, project_name))
+        # fwd ERT data
+        # ------------------------------------------------------------------------
+        
+        # USING PYGIMLI
+        # ------------------------------------------------------------------------
+        res0 = mesh_geophy_new_attr.get_array(scalar_new)
+    
+        ERT_predicted = simuERT.create_ERT_survey_pg(os.path.join(pathERT,project_name,'predicted'), 
+                                                    sequence=sequenceERT, 
+                                                    mesh=meshERT, 
+                                                    res0=res0)
+        d = {'a':ERT_predicted['a'], 
+              'b':ERT_predicted['b'], 
+              'k':ERT_predicted['k'], 
+              'm':ERT_predicted['m'], 
+              'n':ERT_predicted['n'], 
+              'rhoa':ERT_predicted['rhoa'], 
+              'valid':ERT_predicted['valid']}
+        df_ERT_predicted = pd.DataFrame(data=d)
+        
+    # pg = True   
+    # if simpeg==True:
+    #     # copy attribute to simpeg mesh
+    #     # ------------------------------------------------------------------------
+        
+    
+    else:
+        # copy attribute to resipy mesh
+        # ------------------------------------------------------------------------
+        mesh_geophy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
+                       show=False, path= os.path.join(workdir, 'vtk/'))
 
-    df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
-    # ERT_predicted[]
-    # simuERT.invert_ERT_survey(ERT)
+        # fwd ERT data
+        # ------------------------------------------------------------------------
+        
+        # USING RESIPY
+        # ------------------------------------------------------------------------
+        res0 = mesh_geophy_new_attr.get_array(scalar_new)
+        # res0 = mesh_geophy_new_attr[scalar_new]
+        # mesh_Resipy_new_attr.cell_data[scalar_new] 
+        # mesh_Resipy_new_attr.array_names
+    
+        # ERT.mesh
+        # res = ERT.mesh.df['res0']
+        ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT,project_name,'predicted'), 
+                                                    elecs, 
+                                                    sequenceERT, 
+                                                    meshERT, 
+                                                    res0=res0)
+        
+        ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
+        df_ERT_predicted = ERT_predicted.surveys[0].df
+
+
+
+
+
+
+        # # save to dataframe and export file
+        # # ------------------------------------------------------------------------
+        # filename = 'ER_predicted.csv'
+        
+        # isExist = os.path.exists(os.path.join(pathERT, project_name))
+        # if not isExist:
+        #     os.makedirs(os.path.join(pathERT, project_name))
+    
+        # df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
+        # # ERT_predicted[]
+        # # simuERT.invert_ERT_survey(ERT)
+        
+        
     
     if savefig is True:
         
        plotter = pv.Plotter(shape=(1, 3),notebook=True)
-       
        plotter.subplot(0, 0)
-       mesh_CATHY.set_active_scalars('saturation')
-       _ = plotter.add_mesh(mesh_CATHY,show_edges=True)
+       mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(df_sw[-1], 
+                                                                    mesh_CATHY_ref, 
+                                                                    'saturation_df', 
+                                                                    overwrite=True)
+       mesh_CATHY_df.set_active_scalars('saturation_df')
+       my_colormap = 'Blues'
+       _ = plotter.add_mesh(mesh_CATHY_ref,show_edges=True, cmap=my_colormap)
+
+       plotter.update_scalar_bar_range([0,1]) # max saturation is 1
        plotter.show_grid()
        plotter.view_xz()
 
+       plotname ='suplot'+ str(DA_cnb)
+
+        
+       plotter.save_graphic(path_CATHY + plotname + str('.svg'), 
+                            title='', 
+                            raster=True, 
+                            painter=True)   
+       
+       
+       plotter = pv.Plotter(shape=(1, 3),notebook=True)
        plotter.subplot(0, 1)
        mesh_CATHY_new_attr.set_active_scalars(active_attr)
        _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
@@ -185,13 +265,17 @@ def SW_2_ERa(df_sw,
        plotter.view_xz()
        
        plotter.subplot(0, 2)
-       mesh_Resipy_new_attr.set_active_scalars(scalar_new)
-       _ = plotter.add_mesh(mesh_Resipy_new_attr,show_edges=True)
+       mesh_geophy_new_attr.set_active_scalars(scalar_new)
+       _ = plotter.add_mesh(mesh_geophy_new_attr,show_edges=True)
        plotter.show_grid()
-       plotter.view_xz()
+       
+       if pg:
+           plotter.view_xy()
+       else:      
+           plotter.view_xz()
        
 
-       plotname ='suplot'+ str(DA_cnb)
+       plotname ='suplot_ER'+ str(DA_cnb)
 
         
        plotter.save_graphic(path_CATHY + plotname + str('.svg'), 

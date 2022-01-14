@@ -43,6 +43,7 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         # closest_idx, closest = find_nearest_nodes(pos,in_nodes_mod,
         #                                              threshold)
 
+    # print(meshOUT)
     if type(meshOUT) is str:
         # print('read vtk file using pv')
         meshOUT = pv.read(meshOUT)
@@ -201,26 +202,27 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
         mesh.cell_data[name] = data
 
     meshname = name + '.vtk'
-
-    path = os.getcwd()
-    if 'path' in kwargs:
-        path = kwargs['path']
-
-    # print('meshpath=' + path)
     
-    if 'time' in kwargs:
-        time = kwargs['time']
-        meshname = name  + str(time) +'.vtk'
-    # if 'DAcount' in kwargs:
-    #     DAcount = kwargs['DAcount']
-    #     meshname = name  + str(time) +'.vtk'      
+    if savefig:
+        path = os.getcwd()
+        if 'path' in kwargs:
+            path = kwargs['path']
+    
+        # print('meshpath=' + path)
         
-        mesh.save(path + meshname)
-    else:
-        mesh.save(path + name + '.vtk')
-                
-    # if overwrite==True:
-    #     mesh.save(full_path)
+        if 'time' in kwargs:
+            time = kwargs['time']
+            meshname = name  + str(time) +'.vtk'
+        # if 'DAcount' in kwargs:
+        #     DAcount = kwargs['DAcount']
+        #     meshname = name  + str(time) +'.vtk'      
+            
+            mesh.save(path + meshname)
+        else:
+            mesh.save(path + name + '.vtk')
+                    
+        # if overwrite==True:
+        #     mesh.save(full_path)
         
     return mesh, name
 

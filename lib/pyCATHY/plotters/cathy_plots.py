@@ -29,6 +29,7 @@ from decimal import Decimal
 import pandas as pd
 import numpy as np
 
+import natsort
 
 # from pyvirtualdisplay import Display
 
@@ -538,17 +539,17 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
             # ----------------------------------------------------------------- 
             
             
-        # savefig 
-        # --------------------------------------------------------------------- 
-        if savefig is True:
-            # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
-            # print(os.path.join(path, 'vtk', filename + '.svg'))
-            plotter.view_xz()
-            plotter.save_graphic(os.path.join(path,filename + '.svg'),
-                                 title="", raster=True, painter=True)
+    # savefig 
+    # --------------------------------------------------------------------- 
+    if savefig is True:
+        # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
+        # print(os.path.join(path, 'vtk', filename + '.svg'))
+        plotter.view_xz()
+        plotter.save_graphic(os.path.join(path,filename + '.svg'),
+                             title="", raster=True, painter=True)
 
-
-        cpos = plotter.show()
+        print('figure saved' + os.path.join(path,filename + '.svg'))
+    cpos = plotter.show()
 
     return
 
@@ -581,16 +582,22 @@ def show_vtk_TL(
             print(x_units)
 
     if path is None:
-        path = os.getcwd()
-
+        path = os.getcwd()          
+            
     if filename is None:
         if unit == "pressure":
             filename = "10*.vtk"
             filename0 = "100.vtk"
-        if unit == "saturation":
+            my_colormap = 'autumn'
+        elif unit == "saturation":
+            my_colormap = 'Blues'
             filename = "cele20*.vtk"
             filename0 = "cele200.vtk"
-
+        elif 'ER' in unit:
+            filename = "ER" + str(timeStep) + ".vtk"
+            my_colormap = 'viridis'
+            
+            
     mesh = pv.read(os.path.join(path, filename0))
 
     if unit in list(mesh.array_names):
@@ -603,10 +610,16 @@ def show_vtk_TL(
         offscreen = True
 
     plotter = pv.Plotter(notebook=False, off_screen=offscreen)
-    plotter.add_mesh(mesh, show_edges=True)
+    plotter.add_mesh(mesh, show_edges=True,cmap=my_colormap)
 
     if savefig == True:
-        plotter.open_gif(unit + ".gif")
+        plotter.open_gif(os.path.join(path + unit + ".gif"))
+
+
+    # options to colorbar
+    # ---------------------------------------------------------------------
+    if 'clim' in kwargs:
+        plotter.update_scalar_bar_range([kwargs['clim'][0],kwargs['clim'][1]])
 
     legend_entry = "Time= " +str(mesh["TIME"])
     if x_units is not None:
@@ -623,7 +636,6 @@ def show_vtk_TL(
     for file in glob.glob(os.path.join(path, filename)):
         files.append(file)
 
-    import natsort
 
     print(natsort.natsorted(files, reverse=False))
 
@@ -643,10 +655,11 @@ def show_vtk_TL(
     if savefig == True:
         # gif_original = filename + '.gif'
         # gif_speed_down = filename + 'new.gif'
-        gif_original = unit + ".gif"
-        gif_speed_down = unit + "_slow.gif"
+        gif_original = os.path.join(path + unit + ".gif")
+        gif_speed_down = os.path.join(path + unit + "_slow.gif")
         gif = imageio.mimread(gif_original)
         imageio.mimsave(gif_speed_down, gif, fps=0.8)
+        print('gif saved' + os.path.join(path,gif_original))
 
     plotter.close()
 
@@ -928,7 +941,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
                        savefig=False,**kwargs):
     
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 6), dpi=300)
     ax1 = fig.add_subplot(2,5,1)
     cax = ax1.matshow(EnsembleX, aspect='auto') #,
           #cmap=cm.rainbow, norm=colors.LogNorm())
@@ -939,16 +952,16 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
     ax = fig.add_subplot(2,5,6)
     cax = ax.matshow(np.cov(EnsembleX), 
-                      aspect='auto')
-    ax1.set_title('cov(Prior)')
-    ax1.set_xlabel('Parameters #')
-    ax1.set_ylabel('Parameters #')
+                      aspect='auto',cmap='gray')
+    ax.set_title('cov(Prior)')
+    ax.set_xlabel('Parameters #')
+    ax.set_ylabel('Parameters #')
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
     
     
     ax = fig.add_subplot(2,5,2)
-    cax = ax.matshow(np.tile(Data,(3,1)).T, 
+    cax = ax.matshow(np.tile(Data,(np.shape(EnsembleX)[1],1)).T, 
                       aspect='auto')
     ax.set_title('App. Res')
     ax.set_ylabel('Meas')
@@ -962,7 +975,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     # DataCov.min()
     ax = fig.add_subplot(2,5,7)
     cax = ax.matshow(DataCov, 
-                      aspect='auto')
+                      aspect='auto',cmap='gray')
                       # cmap=cm.rainbow, norm=colors.LogNorm())
                       # vmin=0, vmax=1e-29)
     ax.set_title('cov(meas)')
@@ -1016,3 +1029,134 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     return fig, ax
     
 
+
+def DA_plot_time_dynamic(nodes_of_interest, DA, savefig=False, **kwargs):
+        
+    isOL = DA.loc[DA['Ensemble_nb']==999]
+    isENS = DA.loc[DA['Ensemble_nb']<999]
+    
+    isENS_time_Ens = isENS.set_index(['time','Ensemble_nb'])
+    isOL_time_Ens = isOL.set_index(['time','Ensemble_nb'])
+    
+    
+    # isENS_time_Ens.take([-1])
+    # simu_DA.grid3d
+    nodes_of_interest = [0]
+    print(nodes_of_interest)
+    # take nodes of interests
+    
+    NENS = np.shape(DA)[1]
+    # -----------------------------#
+    if nodes_of_interest:
+    
+        isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time'])+1))),int(max(isOL['time']+1))), True)
+        select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
+        select_isOL = select_isOL.set_index(['time','idnode'])
+        select_isOL = select_isOL.reset_index()
+    
+        # valuei_time_ens = DA_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].take([0])
+        # is_OL =  mean_time_ens['Ensemble_nb']==2
+        
+        
+        # nodes_isOL_time_ens = isOL_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_']
+        # nodes_isOL_time_ens
+        
+        
+        # nodes_isOL_time_ens = (nodes_isOL_time_ens.reset_index(level=1,drop=True)
+        #                                             .reset_index(level=1,drop=False,name="idx")
+        #                                             .reset_index(name="aft_update_")
+        #                                             )
+                               
+                                
+        isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),int(max(isENS['time']))*NENS), True)
+        select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
+    
+        select_isENS = select_isENS.set_index(['time','idnode'])
+        # nodes_isENS_time_ens = nodes_isENS_time_ens.groupby(level=['time','idnode'])['aft_update_']
+        select_isENS = select_isENS.reset_index()
+    
+                    
+        # nodes_isENS_time_ens = isENS_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].take(nodes_of_interest)
+        # nodes_isENS_time_ens = (nodes_isENS_time_ens.reset_index(level=1,drop=True)
+        #                                             .reset_index(level=1,drop=True)
+        #                                             .reset_index(name="aft_update_")
+        #                         )                                           
+        # nodes_isENS_time_ens = nodes_isENS_time_ens.reset_index()
+            
+    
+    
+    else:
+        # take the spatial average mean
+        # -----------------------------#
+        
+        spatial_mean_isOL_time_ens = isOL_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].mean()
+        spatial_mean_isOL_time_ens = spatial_mean_isOL_time_ens.reset_index()
+        
+        spatial_mean_isENS_time_ens = isENS_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].mean()
+        spatial_mean_isENS_time_ens = spatial_mean_isENS_time_ens.reset_index()
+        
+        select_isOL = spatial_mean_isOL_time_ens
+        select_isENS = spatial_mean_isENS_time_ens
+    
+    
+    # take the ensemble mean
+    # -----------------------------#
+    ens_mean_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                            .groupby(level=['time','idnode'])['aft_update_']
+                            .mean()
+                            )
+    ens_mean_isENS_time = ens_mean_isENS_time.reset_index(name='mean(ENS)')
+    
+    ens_min_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                            .groupby(level=['time','idnode'])['aft_update_']
+                            .min()
+                            )
+    ens_min_isENS_time = ens_min_isENS_time.reset_index(name='min(ENS)')
+    
+    
+    ens_max_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                            .groupby(level=['time','idnode'])['aft_update_']
+                            .max()
+                            )
+    ens_max_isENS_time = ens_max_isENS_time.reset_index(name='max(ENS)')
+    
+    
+    
+    # ens_mean_isENS_time.rename({'aft_update_': 'mean(ENS)'},inplace=True)
+    select_isOL.rename({'aft_update_': 'open_loop'}, axis=1, inplace=True)
+    # ens_mean_isENS_time.rename({'aft_update_': 'mean(ENS)'}, axis=1, inplace=True)
+    
+    
+    ax = select_isOL.pivot(index="time", 
+                      # columns=["Ensemble_nb",'idnode'], 
+                      columns=['idnode'], 
+                      values=["open_loop"]).plot(style=['-'],color='red',label='open loop',
+                                                    ylabel='pressure head $\psi$ (m)',) # water saturation (-)
+    
+    ens_mean_isENS_time.pivot(index="time", 
+                        columns=['idnode'], 
+                      # columns=['idnode'], 
+                      values=["mean(ENS)"]).plot(ax=ax,style=['.-'],color='grey')
+    
+    ens_max_isENS_time.pivot(index="time", 
+                        columns=['idnode'], 
+                      # columns=['idnode'], 
+                      values=["max(ENS)"]).plot(ax=ax,style=['.-'],color='magenta')
+    
+    ens_min_isENS_time.pivot(index="time", 
+                        columns=['idnode'], 
+                      # columns=['idnode'], 
+                      values=["min(ENS)"]).plot(ax=ax,style=['.-'],color='blue',
+                                                    xlabel= '(assimilation) time - (h)',
+                                                    ylabel='pressure head $\psi$ (m)')
+
+    savename = 'showDA_dynamic'
+    if 'savename' in kwargs:
+        savename = kwargs['savename']
+        
+    if savefig==True:
+    
+        plt.savefig(savename +'.png', dpi=300)
+
+    
+    return  ax

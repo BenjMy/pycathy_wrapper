@@ -18,23 +18,25 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         pass
     
-    def perturbate_parm(self, parm, type_parm, mean, sd, per_type, sampling_type = 'lognormal',
-                            ensemble_size = 128, show=False, **kwargs):
-        """
+    def perturbate_parm(self, parm, type_parm, mean, sd, per_type, transf_type, 
+                        sampling_type = 'lognormal',
+                        ensemble_size = 128, 
+                        show=False, 
+                        **kwargs):
+        '''
         Perturbate parameter for the generation of the ensemble
-        
-        
         Possible variable to perturbate:
             - initial conditions
             - hyetograph
             - van Genuchten retention curves parameters
             - Feddes parameters
     
+
         Parameters
         ----------
-        parm : dict
+        parm : TYPE
             DESCRIPTION.
-        type_parm : str
+        type_parm : TYPE
             specify the parameter type.
         mean : TYPE
             DESCRIPTION.
@@ -42,18 +44,24 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             DESCRIPTION.
         per_type : TYPE
             DESCRIPTION.
+        transf_type : TYPE
+            Parameter transformation.
         sampling_type : TYPE, optional
             DESCRIPTION. The default is 'lognormal'.
         ensemble_size : TYPE, optional
             DESCRIPTION. The default is 128.
-    
+        show : TYPE, optional
+            DESCRIPTION. The default is False.
+        **kwargs : TYPE
+            DESCRIPTION.
+
         Returns
         -------
         var_per : dict
-            Perturbated variable
-    
-        """
-    
+            Perturbated variabl
+
+        '''
+
 
         def Evensen2003():
             print('not yet implemented - see Botto 2018')
@@ -85,6 +93,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             
+            if per_type == 'None':
+                parm_per_array = parm_mat
             if per_type == 'multiplicative':
                 parm_per_array = parm_mat*parm_sampling
             elif per_type == 'additive':
@@ -105,7 +115,10 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 plt.show()
                 
                 if 'savefig' in kwargs:
-                    fig.savefig(kwargs['savefig'],dpi=350)
+                    fig.savefig(os.path.join(os.getcwd(),
+                                             kwargs['savefig']),
+                                dpi=350
+                                )
                 
 
     

@@ -9,6 +9,8 @@ from pyCATHY import cathy_tools as CT
 from pyCATHY.plotters import cathy_plots as pltCT
 from pyCATHY import meshtools as mt
 
+import matplotlib.pyplot as plt
+
 
 import os
 import pyvista as pv
@@ -200,7 +202,7 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
 # rhizo.create_DA(drippersPos=[],RWU=False)
 #     # closestnode
 #     # simu.create_parm()
-def update_rhizo_inputs(simu_DA):
+def update_rhizo_inputs(simu_DA, **kwargs):
     '''
     
 
@@ -209,6 +211,9 @@ def update_rhizo_inputs(simu_DA):
     None.
 
     '''
+    
+    # from pyCATHY.rhizo_tools import atmbc_PRD #create_infitration # create_DA
+
     pmin = -1.0E+20
     dem_synth=np.ones([9,10])*1e-3
     dem_synth[-1,-1]=0.99e-3
@@ -233,7 +238,6 @@ def update_rhizo_inputs(simu_DA):
     
     simu_DA.update_ic(INDP=3,WTPOSITION=0)
     
-    from pyCATHY.rhizo_tools import atmbc_PRD #create_infitration # create_DA
     flux=1.11111e-06
     
     time_of_interest = list(np.arange(0,12*3600,3600))
@@ -272,7 +276,7 @@ def update_rhizo_inputs(simu_DA):
     PCANA=[0.0]        
     PCREF=[-4.0]
     PCWLT=[-150]
-    ZROOT=[0.4]
+    ZROOT=[0.2]
     PZ = [1.0]
     OMGC =[1.0] 
     
@@ -295,6 +299,99 @@ def update_rhizo_inputs(simu_DA):
 
 #%% meshes interpolation
 
+def CATHY_2_Simpeg(mesh_CATHY,mesh_Simpeg,scalar='saturation',show=False,**kwargs):
+    pass
+
+def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
+    
+    
+    
+    # flip y and z axis as CATHY and pg have different convention for axis
+    # ------------------------------------------------------------------------
+    in_nodes_mod = np.array(mesh_CATHY.points)
+    # in_nodes_mod_pg = np.array(mesh_pg.points)
+    
+    idx = np.array([0, 2, 1])
+    in_nodes_mod_m = in_nodes_mod[:, idx]
+        
+    in_nodes_mod_m = in_nodes_mod[:, idx]
+    in_nodes_mod_m[:,2] = -np.flipud(in_nodes_mod_m[:,2])
+    in_nodes_mod_m[:,1] = -np.flipud(in_nodes_mod_m[:,1])
+
+
+    # fig = plt.figure()
+    # ax = fig.add_subplot(projection='3d')
+    # ax.plot(in_nodes_mod_m[:,0],in_nodes_mod_m[:,1],in_nodes_mod_m[:,2])
+    # ax.set_xlabel('x')
+    # ax.set_ylabel('y')
+    
+    
+    # fig = plt.figure()
+    # ax = fig.add_subplot(projection='3d')
+    # ax.plot(in_nodes_mod_pg[:,0],in_nodes_mod_pg[:,1],in_nodes_mod_pg[:,2])
+    # ax.set_xlabel('x')
+    # ax.set_ylabel('y')    
+    
+    
+    
+    path = os.getcwd()
+    if 'path' in kwargs:
+        path = kwargs['path']
+
+    data_OUT = mt.trace_mesh(mesh_CATHY,mesh_pg,
+                            scalar=scalar,
+                            threshold=1e-1,
+                            in_nodes_mod=in_nodes_mod_m)
+    
+    # print(data_OUT)
+    scalar_new = scalar + '_nearIntrp2_pg_msh'
+    # print(mesh_Resipy)
+    # get_array(mesh, name, preference='cell'
+              
+
+    if 'time' in kwargs:
+        time = kwargs['time']
+        mesh_new_attr, name_new_attr = mt.add_attribute_2mesh(data_OUT, 
+                                                                mesh_pg, 
+                                                                scalar_new, 
+                                                                overwrite=True,
+                                                                time=time,
+                                                                path=path)
+    else:
+        mesh_new_attr, name_new_attr = mt.add_attribute_2mesh(data_OUT, 
+                                                                mesh_pg, 
+                                                                scalar_new, 
+                                                                overwrite=True,
+                                                                path=path)
+    
+    if show == True:
+
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_new_attr,scalars=scalar_new)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+        
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_CATHY, scalars=scalar)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+        
+    # if type(meshERT) is str:
+    #     meshERTpv = pv.read(meshERT)
+    
+    # if savefig == True:
+    
+    #     plotter = pv.Plotter(notebook=True)
+    #     _ = plotter.add_mesh(mesh_new_attr,show_edges=True)
+    #     plotter.view_xz(negative=False)
+    #     plotter.show_grid()
+    #     plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'), 
+    #                           title='ERT'+ str(DA_cnb), 
+    #                           raster=True, 
+    #                           painter=True)
+            
+    
+    return mesh_new_attr, scalar_new
 
 
 def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwargs):
