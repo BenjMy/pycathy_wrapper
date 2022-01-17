@@ -73,12 +73,6 @@ def SW_2_ERa(df_sw,
         mesh_time_key = kwargs['mesh_time_key']
         
         
-    data_format = []
-    if 'data_format' in kwargs:
-        data_format = kwargs['data_format']
-        
-        
-        
     # if type(meshERT) is str:
     #     meshERTpv = pv.read(meshERT)
     
@@ -158,7 +152,8 @@ def SW_2_ERa(df_sw,
     # print(mesh_CATHY_new_attr)
 
 
-    if 'pygimli' in data_format:
+    pg = True   
+    if pg==True:
         # copy attribute to simpeg mesh
         # ------------------------------------------------------------------------
         mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
@@ -274,7 +269,7 @@ def SW_2_ERa(df_sw,
        _ = plotter.add_mesh(mesh_geophy_new_attr,show_edges=True)
        plotter.show_grid()
        
-       if 'pygimli' in data_format:
+       if pg:
            plotter.view_xy()
        else:      
            plotter.view_xz()
