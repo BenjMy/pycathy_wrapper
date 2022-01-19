@@ -9,16 +9,102 @@ import shutil
 # import matplotlib.pyplot as plt 
 from pyCATHY.cathy_tools import CATHY
 
+from pyCATHY.DA import enkf
 
 
+
+def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
+    '''
+    Perform the DA analysis step 
+
+    Parameters
+    ----------
+    typ : str
+        type of analysis i.e ENKF or Particul filters.
+    data : np.array([])
+        measured data.
+    dataCov : np.array([]) or int
+        measured data covariance matrice.
+    param : np.array([])
+        model parameters to update.
+    ensemble_state : np.array([])
+        pressure head at each nodes.
+    prediction : np.array([])
+        predicted observation (after mapping).
+
+    Returns
+    -------
+    A : TYPE
+        DESCRIPTION.
+    Amean : TYPE
+        DESCRIPTION.
+    dA : TYPE
+        DESCRIPTION.
+    dD : TYPE
+        DESCRIPTION.
+    MeasAvg : TYPE
+        DESCRIPTION.
+    S : TYPE
+        DESCRIPTION.
+    COV : TYPE
+        DESCRIPTION.
+    B : TYPE
+        DESCRIPTION.
+    dAS : TYPE
+        DESCRIPTION.
+    analysis : TYPE
+        DESCRIPTION.
+    analysis_param : TYPE
+        DESCRIPTION.
+
+    '''
+    
+    
+    if typ=='enkf_Evensen2009_Sakov':
+        
+        [A, Amean, dA, 
+         dD, MeasAvg, S, 
+         COV, B, dAS, 
+         analysis, 
+         analysis_param] = enkf.enkf_analysis(data, 
+                                              dataCov, 
+                                              param, 
+                                              ensembleX, 
+                                              prediction)
+    if typ=='enkf_analysis_inflation':
+
+        [A, Amean, dA, 
+         dD, MeasAvg, S, 
+         COV, B, dAS, 
+         analysis, 
+         analysis_param] = enkf.enkf_analysis_inflation(data,
+                                                        dataCov,
+                                                        param,
+                                                        ensembleX,
+                                                        prediction)
+
+    elif typ=='pf_analysis':
+        print('not yet implemented')
+        
+        
+    return  (A, Amean, dA, 
+              dD, MeasAvg, S, 
+              COV, B, dAS, 
+              analysis, 
+              analysis_param
+             )
+        
+    
+    
 class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     def __init__(self, *args, **kwargs):
 
         self.var_per_list = {} # dict of dict of perturbated variables parameters
 
         pass
-    
-    def perturbate_parm(self, parm, type_parm, mean, sd, per_type, transf_type, 
+               
+            
+    def perturbate_parm(self, parm, type_parm, mean, sd, per_type, 
                         sampling_type = 'lognormal',
                         ensemble_size = 128, 
                         show=False, 
@@ -44,8 +130,6 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             DESCRIPTION.
         per_type : TYPE
             DESCRIPTION.
-        transf_type : TYPE
-            Parameter transformation.
         sampling_type : TYPE, optional
             DESCRIPTION. The default is 'lognormal'.
         ensemble_size : TYPE, optional
@@ -65,36 +149,56 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         var_per = {}
 
 
+        # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
+        # -------------------------------------------------------------------------
+        var_per[type_parm] = parm 
         
-        
+        key = 'sampling_type'
+        var_per[type_parm][key] = sampling_type
+    
+        key = 'sampling_mean'
+        var_per[type_parm][key] = mean
+    
+        key = 'sampling_sd'
+        var_per[type_parm][key] = sd
+    
+        key = 'per_type'
+        var_per[type_parm][key] = per_type
+    
+
+        # Parameter perturbation rules
+        #----------------------------------------------------------------------
+
         def Evensen2003():
             print('not yet implemented - see Botto 2018')
             
             pass
-        # add Johnson1970 transformation in kwargs 
-        
+        # add Johnson1970 transformation in kwargs         
+        # transformed them into normally
+        # distributed variables via the Johnson system (Johnson, 1970)
+        def Johnson1970():
+            print('not yet implemented - see Botto 2018')
+
+
         # check if parameters in part of van Genuchten retention curves
+        #----------------------------------------------------------------------
         if type_parm in ['Alpha', 'n', 'thethaR']: #van Genuchten retention curves
             
             print('The parameters of the van Genuchten retention curves α,' + 
                   'n, and θ r are perturbed taking into account their mutual cor-' + 
                   'relation according to Carsel and Parrish (1988)')
             
-            # transformed them into normally
-            # distributed variables via the Johnson system (Johnson, 1970)
-            def Johnson1970():
-                print('not yet implemented - see Botto 2018')
 
                         
         # all parameters except Van Genuchten
+        #----------------------------------------------------------------------
         else:
     
             if sampling_type == 'lognormal':
                 parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
             elif sampling_type == 'normal':
                 parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
-    
-        
+
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             
             if per_type == 'None':
@@ -103,8 +207,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 parm_per_array = parm_mat*parm_sampling
             elif per_type == 'additive':
                 parm_per_array = parm_mat+parm_sampling
-        
-        
+     
             
             if show == True:
                 
@@ -123,58 +226,34 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                              kwargs['savefig']),
                                 dpi=350
                                 )
-                
+
+        key = 'ini_perturbation'
+        var_per[type_parm][key] = parm_per_array
+        
+        
+        key = 'sampling'
+        var_per[type_parm][key] = parm_sampling
+    
+        
 
         # transf_type = '' 
         # Parameter tranformation
         # --------------------------------------------------------------------
+        
         if 'transf_type' in kwargs:
-            transf_type = kwargs['transf_type']
-            
-            if 'Log' in transf_type:
-                parm_per_array = np.log(parm_per_array)
-                
-                if show == True:
-                    
-                    fig = plt.figure(figsize=(6, 3), dpi=150)
-                    plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
-                    plt.legend(loc='upper right')
-                    plt.xlabel(parm[type_parm + '_units'])
-                    plt.ylabel('Probability')
-                    plt.title('Histogram of LOG ' + type_parm)
-                    plt.show()
-                key = 'Log_transformation'
-                var_per[type_parm][key] = sampling_type
-            
+            var_per[type_parm]['transf_type'] = kwargs['transf_type']
+        else:
+            var_per[type_parm]['transf_type'] = None
+
         # Parameter spatial extension
         # --------------------------------------------------------------------
         if '2dsurf' in kwargs:
             nb_surf_nodes = kwargs['2dsurf']
             parm_per_array = np.tile(parm_per_array,nb_surf_nodes)
-            print(parm_per_array)
+            var_per[type_parm]['2dsurf'] = kwargs['2dsurf']
 
         
-        # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
-        # -------------------------------------------------------------------------
-        var_per[type_parm] = parm 
-        
-        key = 'sampling_type'
-        var_per[type_parm][key] = sampling_type
-    
-        key = 'sampling_mean'
-        var_per[type_parm][key] = mean
-    
-        key = 'sampling_sd'
-        var_per[type_parm][key] = sd
-    
-        key = 'sampling'
-        var_per[type_parm][key] = parm_sampling
-    
-        key = 'per_type'
-        var_per[type_parm][key] = per_type
-    
-        key = 'ini_perturbation'
-        var_per[type_parm][key] = parm_per_array
+
     
         self._add_to_perturbated_dict(var_per)
         

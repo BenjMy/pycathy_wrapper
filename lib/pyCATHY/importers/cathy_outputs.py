@@ -254,6 +254,8 @@ def read_psi(filename):
 
     '''
 
+    print(filename)
+
     psi_file = open(filename, "r")
     lines = psi_file.readlines()
     psi_file.close()

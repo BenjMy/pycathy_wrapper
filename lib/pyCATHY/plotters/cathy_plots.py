@@ -1033,57 +1033,81 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
 def DA_plot_time_dynamic(nodes_of_interest, DA, savefig=False, **kwargs):
         
     isOL = DA.loc[DA['OL']==True]
+    
     isENS = DA.loc[DA['OL']==False]
     
     isENS_time_Ens = isENS.set_index(['time','Ensemble_nb'])
     isOL_time_Ens = isOL.set_index(['time','Ensemble_nb'])
     
     
-    # isENS_time_Ens.take([-1])
-    # simu_DA.grid3d
     nodes_of_interest = [0]
     print(nodes_of_interest)
     # take nodes of interests
     
-    NENS = np.shape(DA)[1]
+    NENS = int(max(DA['Ensemble_nb'].unique()))
+    
     # -----------------------------#
     if nodes_of_interest:
     
-        isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time'])+1))),int(max(isOL['time']+1))), True)
+        isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/((max(isOL['time'])+1)*NENS))),
+                                         int(max(isOL['time'])+1)*NENS), True)
         select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
         select_isOL = select_isOL.set_index(['time','idnode'])
         select_isOL = select_isOL.reset_index()
-    
-        # valuei_time_ens = DA_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].take([0])
-        # is_OL =  mean_time_ens['Ensemble_nb']==2
-        
-        
-        # nodes_isOL_time_ens = isOL_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_']
-        # nodes_isOL_time_ens
-        
-        
-        # nodes_isOL_time_ens = (nodes_isOL_time_ens.reset_index(level=1,drop=True)
-        #                                             .reset_index(level=1,drop=False,name="idx")
-        #                                             .reset_index(name="aft_update_")
-        #                                             )
-                               
                                 
-        isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),int(max(isENS['time']))*NENS), True)
+        # print(select_isOL)
+        
+        isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),
+                                          int(max(isENS['time']))*NENS), True)
         select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
-    
         select_isENS = select_isENS.set_index(['time','idnode'])
-        # nodes_isENS_time_ens = nodes_isENS_time_ens.groupby(level=['time','idnode'])['aft_update_']
         select_isENS = select_isENS.reset_index()
-    
-                    
-        # nodes_isENS_time_ens = isENS_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].take(nodes_of_interest)
-        # nodes_isENS_time_ens = (nodes_isENS_time_ens.reset_index(level=1,drop=True)
-        #                                             .reset_index(level=1,drop=True)
-        #                                             .reset_index(name="aft_update_")
-        #                         )                                           
-        # nodes_isENS_time_ens = nodes_isENS_time_ens.reset_index()
-            
-    
+        
+        
+        # mean, min and max of Open Loop
+        # --------------------------------------------------------------------------
+        ens_mean_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
+                                .groupby(level=['time','idnode'])['aft_update_']
+                                .mean()
+                                )
+        ens_mean_isOL_time = ens_mean_isOL_time.reset_index(name='mean(ENS)_OL')
+        
+        ens_min_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
+                                .groupby(level=['time','idnode'])['aft_update_']
+                                .min()
+                                )
+        ens_min_isOL_time = ens_min_isOL_time.reset_index(name='min(ENS)_OL')
+        
+        
+        ens_max_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
+                                .groupby(level=['time','idnode'])['aft_update_']
+                                .max()
+                                )
+        ens_max_isOL_time = ens_max_isOL_time.reset_index(name='max(ENS)_OL')
+        
+        
+        # mean, min and max of Open Loop
+        # --------------------------------------------------------------------------
+        ens_mean_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                                .groupby(level=['time','idnode'])['aft_update_']
+                                .mean()
+                                )
+        ens_mean_isENS_time = ens_mean_isENS_time.reset_index(name='mean(ENS)')
+        
+        ens_min_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                                .groupby(level=['time','idnode'])['aft_update_']
+                                .min()
+                                )
+        ens_min_isENS_time = ens_min_isENS_time.reset_index(name='min(ENS)')
+        
+        
+        ens_max_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                                .groupby(level=['time','idnode'])['aft_update_']
+                                .max()
+                                )
+        ens_max_isENS_time = ens_max_isENS_time.reset_index(name='max(ENS)')
+        
+ 
     
     else:
         # take the spatial average mean
@@ -1097,41 +1121,26 @@ def DA_plot_time_dynamic(nodes_of_interest, DA, savefig=False, **kwargs):
         
         select_isOL = spatial_mean_isOL_time_ens
         select_isENS = spatial_mean_isENS_time_ens
+
     
     
-    # take the ensemble mean
-    # -----------------------------#
-    ens_mean_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
-                            .groupby(level=['time','idnode'])['aft_update_']
-                            .mean()
-                            )
-    ens_mean_isENS_time = ens_mean_isENS_time.reset_index(name='mean(ENS)')
-    
-    ens_min_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
-                            .groupby(level=['time','idnode'])['aft_update_']
-                            .min()
-                            )
-    ens_min_isENS_time = ens_min_isENS_time.reset_index(name='min(ENS)')
-    
-    
-    ens_max_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
-                            .groupby(level=['time','idnode'])['aft_update_']
-                            .max()
-                            )
-    ens_max_isENS_time = ens_max_isENS_time.reset_index(name='max(ENS)')
-    
-    
-    
-    # ens_mean_isENS_time.rename({'aft_update_': 'mean(ENS)'},inplace=True)
-    select_isOL.rename({'aft_update_': 'open_loop'}, axis=1, inplace=True)
-    # ens_mean_isENS_time.rename({'aft_update_': 'mean(ENS)'}, axis=1, inplace=True)
-    
-    
-    ax = select_isOL.pivot(index="time", 
+    # Plot
+    # --------------------------------------------------------------------------
+    ax = ens_mean_isOL_time.pivot(index="time", 
                       # columns=["Ensemble_nb",'idnode'], 
                       columns=['idnode'], 
-                      values=["open_loop"]).plot(style=['-'],color='red',label='open loop',
-                                                    ylabel='pressure head $\psi$ (m)',) # water saturation (-)
+                      values=["mean(ENS)_OL"]).plot(style=['-'],color='red',label='open loop',
+                                                   ylabel='pressure head $\psi$ (m)',) # water saturation (-)
+    ens_min_isOL_time.pivot(index="time", 
+                        columns=['idnode'], 
+                      # columns=['idnode'], 
+                      values=["min(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
+    
+    ens_max_isOL_time.pivot(index="time", 
+                        columns=['idnode'], 
+                      # columns=['idnode'], 
+                      values=["max(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
+    
     
     ens_mean_isENS_time.pivot(index="time", 
                         columns=['idnode'], 

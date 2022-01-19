@@ -171,6 +171,9 @@ def SW_2_ERa(df_sw,
         # USING PYGIMLI
         # ------------------------------------------------------------------------
         res0 = mesh_geophy_new_attr.get_array(scalar_new)
+        
+        print(len(res0))
+        print(res0)
     
         ERT_predicted = simuERT.create_ERT_survey_pg(os.path.join(pathERT,project_name,'predicted'), 
                                                     sequence=sequenceERT, 
@@ -239,7 +242,7 @@ def SW_2_ERa(df_sw,
     
     if savefig is True:
         
-       plotter = pv.Plotter(shape=(1, 3),notebook=True)
+       plotter = pv.Plotter(shape=(1, 3),off_screen=True) # notebook = True
        plotter.subplot(0, 0)
        mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(df_sw[-1], 
                                                                     mesh_CATHY_ref, 
@@ -261,8 +264,9 @@ def SW_2_ERa(df_sw,
                             raster=True, 
                             painter=True)   
        
+       plotter.close()
        
-       plotter = pv.Plotter(shape=(1, 3),notebook=True)
+       plotter = pv.Plotter(shape=(1, 3),off_screen=True) # notebook = True
        plotter.subplot(0, 1)
        mesh_CATHY_new_attr.set_active_scalars(active_attr)
        _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
@@ -288,7 +292,7 @@ def SW_2_ERa(df_sw,
                             raster=True, 
                             painter=True)   
        
-       
+       plotter.close()
     
     return df_ERT_predicted, df_Archie
   

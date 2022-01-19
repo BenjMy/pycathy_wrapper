@@ -421,6 +421,7 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
         _ = p.add_bounding_box(line_width=5, color='black')
         cpos = p.show(True)
         
+        
         p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
         p.add_mesh(mesh_CATHY, scalars=scalar)
         _ = p.add_bounding_box(line_width=5, color='black')
