@@ -54,9 +54,6 @@ def enkf_analysis(Data,DataCov,Param,Ensemble,Observation):
     # Data perturbation from ensemble measurements
     # dD should be (MeasSize)x(EnSize)
     dD = Data - Observation.T
-    
-    print('dD')
-    print(dD)
 
     # Ensemble measurement perturbation from ensemble measurement mean.
     # S is (MeasSize)x(EnSize)
@@ -70,9 +67,9 @@ def enkf_analysis(Data,DataCov,Param,Ensemble,Observation):
     if np.shape(DataCov)[1]>1:
         COV = DataCov
     else:
-        print(np.shape( (1./float(EnSize-1))*np.dot(S,S.transpose())))
+        # print(np.shape( (1./float(EnSize-1))*np.dot(S,S.transpose())))
         COV = (1./float(EnSize-1))*np.dot(S,S.transpose()) + DataCov
-        print(np.shape(COV))
+        # print(np.shape(COV))
 
         
     # Compute inv(COV)*dD

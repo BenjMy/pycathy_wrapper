@@ -67,11 +67,9 @@ def read_tensiometers(filename, **kwargs):
 
     '''
     
-    tensio_file = open(filename, "r")
-
-    
+    tensio_file = open(filename, "r") 
     tensio_file.close()
-    
+            
     
 
     

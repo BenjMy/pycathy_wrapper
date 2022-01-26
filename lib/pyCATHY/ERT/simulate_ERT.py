@@ -40,10 +40,10 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     # shm = pg.load(fname_seq)
     shm = pg.load(sequence)
     
-    hom = ert.simulate(mesh3d, res=1.0, scheme=shm, sr=False,
-                       calcOnly=True, verbose=False)
+    # hom = ert.simulate(mesh3d, res=1.0, scheme=shm, sr=False,
+    #                    calcOnly=True, verbose=False)
     
-    hom.save('homogeneous.ohm', 'a b m n u')
+    # hom.save('homogeneous.ohm', 'a b m n u')
     
     res0 = 1
     if 'res0' in kwargs:

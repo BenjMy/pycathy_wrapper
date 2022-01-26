@@ -9,7 +9,7 @@ import shutil
 # import matplotlib.pyplot as plt 
 from pyCATHY.cathy_tools import CATHY
 
-from pyCATHY.DA import enkf
+from pyCATHY.DA import enkf, pf
 
 
 
@@ -71,6 +71,14 @@ def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
                                               param, 
                                               ensembleX, 
                                               prediction)
+                                              
+        return [A, Amean, dA, 
+         dD, MeasAvg, S, 
+         COV, B, dAS, 
+         analysis, 
+         analysis_param] 
+    
+    
     if typ=='enkf_analysis_inflation':
 
         [A, Amean, dA, 
@@ -82,17 +90,22 @@ def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
                                                         param,
                                                         ensembleX,
                                                         prediction)
-
+                                                        
+        return [A, Amean, dA, 
+         dD, MeasAvg, S, 
+         COV, B, dAS, 
+         analysis, 
+         analysis_param] 
+        
+        
     elif typ=='pf_analysis':
         print('not yet implemented')
         
+        [Analysis,AnalysisParam] = pf.pf_analysis(data,dataCov,param,ensembleX,prediction)
         
-    return  (A, Amean, dA, 
-              dD, MeasAvg, S, 
-              COV, B, dAS, 
-              analysis, 
-              analysis_param
-             )
+        
+        return Analysis,AnalysisParam
+
         
     
     
@@ -201,8 +214,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             
-            if per_type == 'None':
-                parm_per_array = parm_mat
+            if per_type == None:
+                parm_per_array = parm_sampling
             if per_type == 'multiplicative':
                 parm_per_array = parm_mat*parm_sampling
             elif per_type == 'additive':
@@ -219,7 +232,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 plt.ylabel('Probability')
                 plt.title('Histogram of ' + type_parm)
                 plt.axvline(x=parm[type_parm+'_nominal'],linestyle='--', color='red')
-                plt.show()
+                plt.show(block=False)
                 
                 if 'savefig' in kwargs:
                     fig.savefig(os.path.join(os.getcwd(),
@@ -247,10 +260,10 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         # Parameter spatial extension
         # --------------------------------------------------------------------
-        if '2dsurf' in kwargs:
-            nb_surf_nodes = kwargs['2dsurf']
+        if 'surf_param' in kwargs:
+            nb_surf_nodes = kwargs['surf_param']
             parm_per_array = np.tile(parm_per_array,nb_surf_nodes)
-            var_per[type_parm]['2dsurf'] = kwargs['2dsurf']
+            var_per[type_parm]['surf_param'] = kwargs['surf_param']
 
         
 

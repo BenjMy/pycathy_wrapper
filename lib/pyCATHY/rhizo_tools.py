@@ -255,9 +255,8 @@ def update_rhizo_inputs(simu_DA, **kwargs):
     
     time_of_interest = list(np.arange(0,12*3600,3600))
     
-    simu_DA.update_ic(INDP=3,WTPOSITION=0)
+    simu_DA.update_ic(INDP=2,WTPOSITION=0)
     flux=1.11111e-06
-    
     
     # time_of_interest = list(np.arange(0,2000,1000))
     # np.arange(0,1,2)
@@ -287,13 +286,19 @@ def update_rhizo_inputs(simu_DA, **kwargs):
     
     """### 4- Soil and roots inputs"""
     
-    PERMX = PERMY = PERMZ =[1.88E-04]
+    if 'Ks' in kwargs:
+        PERMX = PERMY = PERMZ = kwargs['Ks']
+        
+    else:   
+        PERMX = PERMY = PERMZ =[1.88E-04]
+        
+        
     ELSTOR = [1.00E-05]
     POROS = [0.55]
     VGNCELL = [1.46]
     VGRMCCELL = [0.15]
     VGPSATCELL =  [0.03125]
-    
+
     SoilPhysProp = {'PERMX':PERMX,'PERMY':PERMY,'PERMZ':PERMZ,
                     'ELSTOR':ELSTOR,'POROS':POROS,
                     'VGNCELL':VGNCELL,'VGRMCCELL':VGRMCCELL,'VGPSATCELL':VGPSATCELL}
@@ -322,7 +327,7 @@ def update_rhizo_inputs(simu_DA, **kwargs):
     
     """The choice of PMIN conditionne the switching condition"""
     
-    simu_DA.update_soil(  PMINsimu_DA=pmin,
+    simu_DA.update_soil(  PMIN=pmin,
                           SPP=SoilPhysProp,
                           FP=FeddesParam,
                           verbose=True

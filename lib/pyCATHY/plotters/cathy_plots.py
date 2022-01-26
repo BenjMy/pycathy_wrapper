@@ -322,7 +322,7 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         plt.step(t_atmbc, v_atmbc, color="black", where="post", label="Diff")
     ax.legend()
 
-    return fig, ax 
+    return plt, ax 
 
 
 
@@ -411,9 +411,14 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
             my_colormap = 'Blues'
 
         elif 'ER' in unit:
-            filename = "ER" + str(timeStep) + ".vtk"
+            filename = "ER_converted" + str(timeStep) + ".vtk"
             my_colormap = 'viridis'
+            unit = 'ER_converted' + str(timeStep)
 
+        elif 'ER_int' in unit:
+            filename = "ER_converted" + str(timeStep) + '_nearIntrp2_pg_msh.vtk'
+            my_colormap = 'viridis'
+            unit = 'ER_converted' + str(timeStep) + '_nearIntrp2_pg_msh'
 
 
     mesh = pv.read(os.path.join(path, filename))
@@ -685,12 +690,13 @@ def indice_veg_plot(veg_map, **kwargs):
     '''
 
     fig, ax = plt.subplots()
-    cf = ax.pcolormesh(veg_map, edgecolors="black")
+    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap='tab20')
     fig.colorbar(cf, ax=ax, label='indice of vegetation')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title('view from top (before extruding)')
-    plt.show()
+    plt.show(block=False)
+    plt.close()
     
     
     return fig, ax
@@ -719,8 +725,9 @@ def dem_plot_2d_top(parameter, **kwargs):
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title('view from top (before extruding)')
-    plt.show()
-    
+    plt.show(block=False)
+    plt.close()
+
     return fig, ax 
     
     
@@ -733,6 +740,17 @@ def dem_plot(workdir, project_name, **kwargs):
     """
     length = 1
     width = 1
+    
+    delta_x = 1 
+    if 'delta_x' in kwargs:
+        delta_x = kwargs['delta_x']
+        
+    
+    delta_y = 1 
+    if 'delta_y' in kwargs:
+        delta_y = kwargs['delta_y']
+        
+        
 
     # Read the Header
     # str_hd_dem = {'north':0,'south':0,'east':0,'west':0,'rows':0,'cols':0}
@@ -747,18 +765,32 @@ def dem_plot(workdir, project_name, **kwargs):
                 str_hd_dem[str_hd.replace(":", "")] = value_hd
             count += 1
 
-    dem_file = open(os.path.join(workdir, project_name, "prepro/dem"), "r")
-    dem_mat = np.loadtxt(dem_file, skiprows=6)
+    # dem_file = open(os.path.join(workdir, project_name, "prepro/dem"), "r")
+    # dem_mat = np.loadtxt(dem_file, skiprows=6)
+    # dem_file.close()
+
+    dem_file = open(os.path.join(workdir, project_name, "prepro/dtm_13.val"), "r")
+    dem_mat = np.loadtxt(dem_file, skiprows=0)
     dem_file.close()
+    
+    # x = np.zeros(int(str_hd_dem["rows"]))
+    # y = np.zeros(int(str_hd_dem["cols"]))
 
-    x = np.zeros(int(str_hd_dem["rows"]))
-    y = np.zeros(int(str_hd_dem["cols"]))
+    x = np.zeros(dem_mat.shape[0])
+    y = np.zeros(dem_mat.shape[1])
 
-    for a in range(int(str_hd_dem["rows"])):
-        x[a] = float(str_hd_dem["west"]) + length * a
+    # for a in range(int(str_hd_dem["rows"])):
+    #     x[a] = float(str_hd_dem["west"]) + length * a
 
-    for a in range(int(str_hd_dem["cols"])):
-        y[a] = float(str_hd_dem["south"]) + width * a
+    # for a in range(int(str_hd_dem["cols"])):
+    #     y[a] = float(str_hd_dem["south"]) + width * a
+
+
+    for a in range(dem_mat.shape[0]):
+        x[a] = float(str_hd_dem["west"]) + delta_x * a
+
+    for a in range(dem_mat.shape[1]):
+        y[a] = float(str_hd_dem["south"]) + delta_y * a
 
     # x=x-width/2
     # y=y-length/2
@@ -774,7 +806,8 @@ def dem_plot(workdir, project_name, **kwargs):
                         label='Elevation (m)')
 
     ax.set(xlabel="Easting (m)", ylabel="Northing (m)", zlabel="Elevation (m)")
-    plt.show()
+    plt.show(block=False)
+    plt.close()
 
 
 def COCumflowvol(workdir, project_name):
@@ -946,7 +979,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cax = ax1.matshow(EnsembleX, aspect='auto') #,
           #cmap=cm.rainbow, norm=colors.LogNorm())
     ax1.set_title('Prior')
-    ax1.set_ylabel('Parameters #')
+    ax1.set_ylabel(r'$\psi$ params #')
     ax1.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
     
@@ -954,8 +987,8 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cax = ax.matshow(np.cov(EnsembleX), 
                       aspect='auto',cmap='gray')
     ax.set_title('cov(Prior)')
-    ax.set_xlabel('Parameters #')
-    ax.set_ylabel('Parameters #')
+    ax.set_xlabel(r'$\psi$ params #')
+    ax.set_ylabel(r'$\psi$ params #')
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
     
@@ -975,7 +1008,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     # DataCov.min()
     ax = fig.add_subplot(2,5,7)
     cax = ax.matshow(DataCov, 
-                      aspect='auto',cmap='gray')
+                      aspect='auto',cmap='gray_r')
                       # cmap=cm.rainbow, norm=colors.LogNorm())
                       # vmin=0, vmax=1e-29)
     ax.set_title('cov(meas)')
@@ -1001,7 +1034,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
                       aspect='auto',
                       cmap='jet')
     ax.set_title('Correction')
-    ax1.set_ylabel('Parameters #')
+    ax.set_ylabel(r'$\psi$ params #')
     ax.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
@@ -1011,12 +1044,12 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cax = ax.matshow(Analysis, 
                      aspect='auto')
     ax.set_title('Posterior')
-    ax1.set_ylabel('Parameters #')
+    ax.set_ylabel(r'$\psi$ params #')
     ax.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
     
-    
+    plt.show(block=False)
     savename = 'showDA_process_ens'
     if 'savename' in kwargs:
         savename = kwargs['savename']
@@ -1025,7 +1058,8 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
         plt.savefig(savename +'.png', dpi=300)
 
-    
+    plt.close()
+
     return fig, ax
     
 

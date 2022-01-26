@@ -10,7 +10,7 @@ import numpy as np
 import numpy.random as rn
 
 
-def weight(self,Data,DataCov,Ensemble,Observation):
+def weight(Data,DataCov,Ensemble,Observation):
     
     # Collect data sizes.
     EnSize = Ensemble.shape[1]
@@ -21,21 +21,23 @@ def weight(self,Data,DataCov,Ensemble,Observation):
 
     # Calculate data perturbations from ensemble measurements
     # Dpert = (MeasSize)x(EnSize)
-    Dpert = Data - Observation
+    Dpert = Data - Observation.T
 
     # Compute inv(DataCov)*Dpert
     # Should be (MeasSize)x(EnSize)
-    B = np.linalg.solve(DataCov,Dpert)
+    B = np.linalg.solve(DataCov,Dpert.T)
 
     # Calculate un-normalized weight for each particle using observations
-    NormArg = np.diag(np.dot(Dpert.transpose(),B))
+    NormArg = np.diag(np.dot(Dpert,B))
     W = np.exp(-(0.5)*(NormArg))
 
     # Now normalize weights
     W = W/np.sum(W)
 
     # Weight the ensemble
-    self.W = W
+    # self.W = W
+    
+    return W
 
 # Resampling functions use the Ensemble and Parameter arrays,
 # along with weights calulated with one of the Particle filters,
@@ -45,17 +47,17 @@ def weight(self,Data,DataCov,Ensemble,Observation):
 # This will reduce filter collapse.
 
 
-def resample(self,Ensemble,Param):
+def resample(Ensemble,Param, W, sigma):
     # Get ensemble size
     EnSize = Ensemble.shape[1]
     
     # Generate resampled indices
     index = range(EnSize)
-    resamp_index = np.random.choice(index,size=EnSize,replace=True,p=self.W)
+    resamp_index = np.random.choice(index,size=EnSize,replace=True,p=W)
 
     # Create analysis ensembles
-    AnalysisEnsemble = Ensemble[:,resamp_index] + self.sigma*rn.randn(Ensemble.shape[0],EnSize)
-    AnalysisParams = Param[resamp_index,:] + self.sigma*rn.randn(EnSize,Param.shape[1])
+    AnalysisEnsemble = Ensemble[:,resamp_index] + sigma*rn.randn(Ensemble.shape[0],EnSize)
+    AnalysisParams = Param[resamp_index,:] + sigma*rn.randn(EnSize,Param.shape[1])
 
     return [AnalysisEnsemble,AnalysisParams]
 
@@ -64,11 +66,11 @@ def resample(self,Ensemble,Param):
 # AnalysisParam = (Parameter Size + Initialization Size)x(EnSize) numpy array
 
 
-def pf_analysis(self,Data,DataCov,Param,Ensemble,Observation):
+def pf_analysis(Data,DataCov,Param,Ensemble,Observation, sigma=1):
     # Weight the ensemble by data likelihood
-    self.weight(Data,DataCov,Ensemble,Observation)
+    W = weight(Data,DataCov,Ensemble,Observation)
     
     # Resample ensemble by weights
-    [Analysis,AnalysisParam] = self.resample(Ensemble,Param)
+    [Analysis,AnalysisParam] = resample(Ensemble,Param, W, sigma)
             
     return [Analysis,AnalysisParam]

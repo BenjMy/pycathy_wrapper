@@ -12,6 +12,7 @@ import glob
 from os import listdir
 from os.path import isfile, join
 import shutil
+import pickle 
 
 from collections import OrderedDict
 
@@ -91,74 +92,56 @@ def subprocess_run_multi(pathexe_list):
     return p
 
 
-def ERTmapping_run_multi(workdir,
-                         dict_obs, 
-                         count_DA_cycle, 
-                         porosity, 
-                         # path_CATHY,
-                         forward_mesh_vtk_file,
-                         output_dirname,
-                         project_name):
-    '''
+# def ERTmapping_run_multi(workdir,
+#                          dict_obs, 
+#                          count_DA_cycle, 
+#                          porosity, 
+#                          forward_mesh_vtk_file,
+#                          output_dirname,
+#                          project_name):
+#     '''
     
 
-    Parameters
-    ----------
-    list : TYPE
-        DESCRIPTION.
+#     Parameters
+#     ----------
+#     list : TYPE
+#         DESCRIPTION.
 
-    Returns
-    -------
-    p : TYPE
-        DESCRIPTION.
+#     Returns
+#     -------
+#     p : TYPE
+#         DESCRIPTION.
 
-    '''
+#     '''
 
-    # not yet implemented\
+#     # not yet implemented\
         
-    # case 4: ERT
-    # --------------------------------------------------------------------
-    # if key[0] in 'ERT':
+#     # case 4: ERT
+#     # --------------------------------------------------------------------
+#     # if key[0] in 'ERT':
         
-    # print(workdir)
-    pathERT = os.path.split(dict_obs[0]['filename'])[0]
-    print('*** ERT MAPPING // run ****')
-    print(f"x= {workdir}, PID = {os.getpid()}")
+#     # print(workdir)
+#     pathERT = os.path.split(dict_obs[0]['filename'])[0]
+#     print('*** ERT MAPPING // run ****')
+#     print(f"x= {workdir}, PID = {os.getpid()}")
 
-    # print(count_DA_cycle)
-    forward_mesh_vtk_file = glob.glob(
-    pathERT + "/**/*forward_model*", recursive=True)
-    # electrodes = glob.glob(pathERT + "/**/*electrodes.dat", recursive = True)
-    electrodes = glob.glob(
-    pathERT + "/**/*elecsXYZ.csv", recursive=True)
-    # seq = glob.glob(pathERT + "/**/*protocol.dat", recursive = True)
-    seq = glob.glob(pathERT + "/**/*ERT72.csv", recursive=True)
     
-    # df_sw = CATHY.read_outputs(filename='sw',
-    #                   path=os.path.join(os.getcwd(),
-    #                                     output_dirname))
-    
-    
-    print('need to pass this into SW_2_ERa')
-    df_sw = out_CT.read_sw(os.path.join(workdir,'output/sw'))
-    
-    Hx_ERT, df_Archie = Archie.SW_2_ERa(df_sw, 
-                                        workdir, 
-                                        project_name,
-                                        porosity,
-                                        pathERT,
-                                        meshERT=forward_mesh_vtk_file[0],
-                                        elecs=electrodes[0],
-                                        sequenceERT=seq[0],
-                                        DA_cnb=count_DA_cycle)
-    
-    
-    # print(Hx_ERT)
-    # self._add_2_ensemble_Hx(Hx, Hx_ERT['resist'])
+#     Hx_ERT, df_Archie = Archie.SW_2_ERa(state[1], 
+#                                           path_fwd_CATHY, 
+#                                           self.project_name,
+#                                           porosity,
+#                                           pathERT,
+#                                           meshERT=forward_mesh_vtk_file,
+#                                           elecs=electrodes,
+#                                           sequenceERT=seq,
+#                                           savefig=savefig,
+#                                           DA_cnb=self.count_DA_cycle,
+#                                           Ens_nb=ens_nb,
+#                                           data_format= self.dict_obs[0]['data_format']
+#                                         )
 
-    # p = []
 
-    return Hx_ERT
+#     return Hx_ERT
 
     
 # -----------------------------------------------------------------------------
@@ -456,7 +439,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             print(p.stderr)
             
         # p.close()
-
+        if "DEM resolution is not a multiple of the rivulet spacing!" in p.stdout:
+            print("DEM resolution is not a multiple of the rivulet spacing!")
+            sys.exit()
+        
         if "catchment with more than one outlet cell!" in p.stdout:
             print("catchment with more than one outlet cell!")
             sys.exit()
@@ -536,7 +522,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         pass
 
+
     def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
+
         """
         Run cathy.exe
 
@@ -686,99 +674,304 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # print('timer')
 
         return
+
     
-    def _DA_openLoop(self,ENS_Times,list_assimilated_obs,
-                     run=True, 
+    def _parse_ERT_metadata(self,key_value):
+        
+        # Load ERT metadata information form obs dict
+        # -------------------------------------------
+        forward_mesh_vtk_file = key_value[1]['forward_mesh_vtk_file'] 
+        pathERT = os.path.split(self.dict_obs[0]['filename'])[0]
+        seq = key_value[1]['sequenceERT'] 
+        electrodes = key_value[1]['elecs'] 
+        porosity = self.soil['SPP'][:, 4][0]
+        
+        return forward_mesh_vtk_file, pathERT, seq, electrodes, porosity
+        
+        
+    def _map_states2Observations_ERT_parallel(self, 
+                                              path_fwd_CATHY_list,
+                                              list_assimilated_obs='all', 
+                                              verbose = False,
+                                              **kwargs):
+        
+
+        savefig = True
+        if 'savefig' in kwargs:
+           savefig = kwargs['savefig'] 
+        
+        ENS_times = []
+        if 'ENS_times' in kwargs:
+           ENS_times = kwargs['ENS_times'] 
+        
+        DA_cnb = []
+        if 'DA_cnb' in kwargs:
+           DA_cnb = kwargs['DA_cnb'] 
+           
+           
+        # search key value to identify time and method
+        tuple_list_obs = list(self.dict_obs.items())
+        key_value = tuple_list_obs[self.count_DA_cycle]
+        
+        
+        # Load ERT metadata information form obs dict
+        # -------------------------------------------
+        (forward_mesh_vtk_file, 
+         pathERT, seq, electrodes, 
+         porosity) = self._parse_ERT_metadata(key_value)
+        
+        
+        if len(ENS_times)>0: # case of the open Loop
+        
+        
+            prediction = []
+            for t in range(len(ENS_times)-1):
+    
+                
+                # freeze fixed arguments of Archie.SW_2_ERa       
+                # -----------------------------------------------------------------
+                ERTmapping_args = partial(Archie.SW_2_ERa, 
+                                          self.project_name,
+                                          porosity, 
+                                          pathERT,
+                                          forward_mesh_vtk_file,
+                                          electrodes,
+                                          seq,
+                                          data_format= self.dict_obs[0]['data_format'],
+                                          time_ass = t,
+                                          savefig=True
+                                          ) 
+                
+            
+                # // run using ensemble subfolders path as a list    
+                # -----------------------------------------------------------------
+                with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                                              
+                    results_mapping_time_i = pool.map(ERTmapping_args, 
+                                                path_fwd_CATHY_list
+                                                  )
+                    
+                    print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+        
+                    # print(len(results_mapping_time))
+                    # print(results_mapping_time[0][0].shape)
+                
+                # Hx_ERT_time_i =  results_mapping_time_i[1][0]
+                
+                Hx_ERT_ens = []
+                for ens_i in range(len(path_fwd_CATHY_list)):
+                    
+                    Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]
+        
+                    if 'pygimli' in self.dict_obs[0]['data_format']:
+                        Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['rhoa'])
+                    else:
+                        Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['resist'])
+                       
+                prediction.append(np.vstack(Hx_ERT_ens).T)  # (times * data size * EnSize)
+                       
+                                       
+        else:
+            
+             Hx_ERT_ens = []
+
+             # freeze fixed arguments of Archie.SW_2_ERa       
+             # -----------------------------------------------------------------
+             ERTmapping_args = partial(Archie.SW_2_ERa, 
+                                       self.project_name,
+                                       porosity, 
+                                       pathERT,
+                                       forward_mesh_vtk_file,
+                                       electrodes,
+                                       seq,
+                                       data_format= self.dict_obs[0]['data_format'],
+                                       DA_cnb = DA_cnb,
+                                       savefig=True
+                                       ) 
+             
+            
+             # // run using ensemble subfolders path as a list    
+             # -----------------------------------------------------------------
+             with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                                           
+                results_mapping = pool.map(ERTmapping_args, 
+                                             path_fwd_CATHY_list
+                                               )
+                 
+                print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+                 
+                len(results_mapping)
+             
+                Hx_ERT_ens = []
+                for ens_i in range(len(path_fwd_CATHY_list)):
+                    
+                    Hx_ERT_i =  results_mapping[ens_i][0]
+        
+                    if 'pygimli' in self.dict_obs[0]['data_format']:
+                        Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_i['rhoa'])
+                    else:
+                        Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_i['resist'])
+                 
+                prediction = np.vstack(Hx_ERT_ens).T  # (EnSize)
+            
+        return prediction
+                
+                
+    def _DA_openLoop(self,ENS_times,list_assimilated_obs,
                      parallel=True,
                      verbose=False):
+        '''
+        Run open Loop (no update) hydro simulation for an ensemble of realisation
+        Evaluate the performance by comparison with measured data after mapping
+
+        Parameters
+        ----------
+        ENS_times : TYPE
+            DESCRIPTION.
+        list_assimilated_obs : TYPE
+            DESCRIPTION.
+        run : TYPE, optional
+            DESCRIPTION. The default is True.
+        parallel : TYPE, optional
+            DESCRIPTION. The default is True.
+        verbose : TYPE, optional
+            DESCRIPTION. The default is False.
+
+        Returns
+        -------
+        None.
+
+        '''
         
-        if run == True:
              
 
-            # multi run CATHY hydrological model from the independant folders composing the ensemble
-            # ----------------------------------------------------------------
-            if parallel == True:
-                pathexe_list = []
-                for ens_i in range(self.NENS):
-                    path_exe = os.path.join(self.workdir,
-                                            self.project_name,
-                                            'DA_Ensemble/cathy_' + str(ens_i+1))
-                    pathexe_list.append(path_exe)
-
-            
-        
-                with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-                    result = pool.map(subprocess_run_multi, pathexe_list)
-                    
-                    if verbose == True:
-                        self.console.print(result)
-                        # self.console.print(result.stderr)
-            
-            # Loop over ensemble realisations
-            # ------------------------------------------------------------
-            else:
-
-                for ens_i in range(self.NENS):
-                      
-                    
-                    os.chdir(os.path.join(self.workdir,
-                                          self.project_name, 
-                                          'DA_Ensemble/cathy_' + str(ens_i+1)))
-
-                    self._run_hydro_DA_openLoop(time_of_interest=ENS_Times,
-                                      nodes_of_interest=[],
-                                      simu_time_max=max(ENS_Times),
-                                      ens_nb=ens_i+1                                 
-                                      )
-                    
-                    
-        
-            # map states 2 observation for performance evaluation
-            # -----------------------------------------------------------------
-            Hx_ens = [] # predicted observations
-
+        # multi run CATHY hydrological model from the independant folders 
+        # composing the ensemble
+        # ----------------------------------------------------------------
+        if parallel == True:
+            pathexe_list = []
             for ens_i in range(self.NENS):
+                path_exe = os.path.join(self.workdir,
+                                        self.project_name,
+                                        'DA_Ensemble/cathy_' + str(ens_i+1))
+                pathexe_list.append(path_exe)
+
+        
     
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                result = pool.map(subprocess_run_multi, pathexe_list)
+                
+                if verbose == True:
+                    self.console.print(result)
+                    # self.console.print(result.stderr)
+        
+        # Loop over ensemble realisations one by one
+        # ------------------------------------------------------------
+        else:
+            for ens_i in range(self.NENS):
                 os.chdir(os.path.join(self.workdir,
                                       self.project_name, 
                                       'DA_Ensemble/cathy_' + str(ens_i+1)))
+
+                self._run_hydro_DA_openLoop(time_of_interest=ENS_times,
+                                  nodes_of_interest=[],
+                                  simu_time_max=max(ENS_times),
+                                  ens_nb=ens_i+1                                 
+                                  )
                 
-                df_psi = self.read_outputs(filename='psi',
-                                           path=os.path.join(os.getcwd(), 'output'))
+
+        # save into the DA_df dataframe
+        # -----------------------------------------------------------------
+        for ens_i in range(self.NENS):
+
+            os.chdir(os.path.join(self.workdir,
+                                  self.project_name, 
+                                  'DA_Ensemble/cathy_' + str(ens_i+1)))
+            
+            df_psi = self.read_outputs(filename='psi',
+                                       path=os.path.join(os.getcwd(),
+                                                         'output'))
+            for t in range(len(ENS_times)):
+                self._DA_df(state=df_psi[t,:], 
+                            t_ass=t, 
+                            openLoop=True,
+                            ens_nb=ens_i+1)
                 
-                path_fwd_CATHY = os.path.join(self.workdir,
-                                      self.project_name, 
-                                      'DA_Ensemble/cathy_' + str(ens_i+1))      
-                df_sw = self.read_outputs(filename='sw',
-                                          path=os.path.join(path_fwd_CATHY,
-                                                            self.output_dirname)
-                                                 )
+
+
+
+
+    
+        # map states 2 observation for performance evaluation
+        # -----------------------------------------------------------------
+        if parallel==True: # // for each ensemble steps (NOT FOR EACH time steps)
+            
+            # list path to run in parallel //
+            path_fwd_CATHY_list = []
+            for ens_i in range(self.NENS):
                 
-                # save into DA dataframe
-                # -------------------------------------------------------------- 
-                for t in range(len(ENS_Times)):
-                    self._DA_df(state=df_psi[t,:], 
-                                t_ass=t, 
-                                openLoop=True,
-                                ens_nb=ens_i+1)
-        
-                # performance assessement for each observation steps
-                # ----------------------------------------------------------------
-                for t in range(len(ENS_Times)-1):
+                path_fwd_CATHY_list.append(os.path.join(self.workdir,
+                                            self.project_name, 
+                                            'DA_Ensemble/cathy_' + str(ens_i+1)))
+            
+            # _map_states2Observations_ERT_par is looping over times
+            # -------------------------------------------------------------
+            prediction = self._map_states2Observations_ERT_parallel(path_fwd_CATHY_list, 
+                                                                     ENS_times=ENS_times,
+                                                                     savefig=True)
+
+            # prediction is a 3d matrice of dimension (data_size * ens_size * assimilation_times_size) 
+    
+            # print(np.shape(predictions))
+            # input('press to continue')
+    
+            # performance assessement for each observation steps
+            # ----------------------------------------------------------
+            for ens_i in range(self.NENS):
+                
+                for t in range(len(ENS_times)-1):
                     
                     key_value =  list(self.dict_obs.items())[t]     
                     if 'pygimli' in self.dict_obs[0]['data_format']:
                         data = key_value[1]['data']['rhoa'].to_numpy()  # (MeasSize)
                     else:
                         data = key_value[1]['data']['resist'].to_numpy()  # (MeasSize)
-    
+                    
+
+                    self._performance_assessement(list_assimilated_obs, 
+                                                  data, 
+                                                  prediction[t], 
+                                                  t_obs=t,
+                                                  openLoop=True)
+                    
+                    
+            
+            
+            
+        else: # Don't run parallel mapping
+        
+            Hx_ens = [] # predicted observations
+            for ens_i in range(self.NENS):
+
+                # performance assessement for each observation steps
+                # ----------------------------------------------------------------
+                for t in range(len(ENS_times)-1):
+                    
+                    path_fwd_CATHY = os.path.join(self.workdir,
+                                          self.project_name, 
+                                          'DA_Ensemble/cathy_' + str(ens_i+1))      
+                    df_sw = self.read_outputs(filename='sw',
+                                              path=os.path.join(path_fwd_CATHY,
+                                                                self.output_dirname)
+                                                     )                    
                     
                     # Apply operator H on measured data x --> Hx
                     # ---------------------------------------------------------
                     Hx = self._map_states2Observations([None, df_sw[t,:]],
                                                        list_assimilated_obs,
                                                        path_fwd_CATHY=path_fwd_CATHY,
-                                                       ens_nb=ens_i+1) 
+                                                       ens_nb=ens_i+1,
+                                                       savefig=False) 
                     
                     
                     if 'pygimli' in self.dict_obs[0]['data_format']:
@@ -793,13 +986,22 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
               
             # mb of data x ensemble size x nb of obs times
-            prediction_times = np.reshape(prediction,[prediction.shape[0],
-                                                       self.NENS,
-                                                       int(prediction.shape[1]/self.NENS)
-                                                       ]
-                                              )
+            prediction_times = np.reshape(prediction,
+                                          [prediction.shape[0],
+                                            self.NENS,
+                                            int(prediction.shape[1]/self.NENS)
+                                            ]
+                                          )
+            
                 
-            for t in range(len(ENS_Times)-1):
+            for t in range(len(ENS_times)-1):
+                
+                key_value =  list(self.dict_obs.items())[t]     
+                if 'pygimli' in self.dict_obs[0]['data_format']:
+                    data = key_value[1]['data']['rhoa'].to_numpy()  # (MeasSize)
+                else:
+                    data = key_value[1]['data']['resist'].to_numpy()  # (MeasSize)
+                        
 
                 self._performance_assessement(list_assimilated_obs, 
                                               data, 
@@ -877,14 +1079,14 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         for name in self.dict_parm_pert:
             NENS = len(self.dict_parm_pert[name]['ini_perturbation'])
 
-        # Infer ensemble update times ENS_Times from observation dictionnary
+        # Infer ensemble update times ENS_times from observation dictionnary
         # -------------------------------------------------------------------
-        ENS_Times = []
+        ENS_times = []
         for ti in self.dict_obs:
-            ENS_Times.append(float(ti))
+            ENS_times.append(float(ti))
             
-        if self.parm['TMAX']> max(ENS_Times):
-            ENS_Times.append(self.parm['TMAX'])
+        if self.parm['TMAX']> max(ENS_times):
+            ENS_times.append(self.parm['TMAX'])
         # else:
         #     pass
         
@@ -896,19 +1098,17 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # initiate DA
         # -------------------------------------------------------------------
         self._DA_init(NENS=NENS, # ensemble size
-                      ENS_Times=ENS_Times, # assimilation times
+                      ENS_times=ENS_times, # assimilation times
                       parm_pert=dict_parm_pert)
         
-        # print(dict_parm_pert)
         # input("Please press the Enter key to proceed")
 
         # open Loop for comparison
         # -------------------------------------------------------------------
         # openLoopDA = True
         
-        
-        self._DA_openLoop(ENS_Times,list_assimilated_obs,
-                          run=kwargs['open_loop_run'])
+        if kwargs['open_loop_run']:
+            self._DA_openLoop(ENS_times,list_assimilated_obs)
        
                 
         # end of Open loop - start DA
@@ -917,24 +1117,24 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # update input files ensemble
         # ---------------------------------------------------------------------
         self._update_input_ensemble(NENS, 
-                                    ENS_Times, 
+                                    ENS_times, 
                                     dict_parm_pert, 
                                     update_parm_list='all') 
         
         
-        # self.sequential_DA(update_key)
+        # -----------------------------------
+        # Run hydrological model sequentially
+        # -----------------------------------
         
-        
+        # self.sequential_DA(update_key)       
         # def sequential_DA(self,update_key):
             
-        
+            
         # Loop over assimilation cycle
         # -------------------------------------------------------------------
-        for DA_cnb in range(len(ENS_Times)-1):
-        # for DA_cnb in track(range(len(ENS_Times)), description="Assimilation step..."):
-            # self.console.print('count DA cycle nb: ' +
-            #                    str(self.count_DA_cycle))
-            
+        for DA_cnb in range(len(ENS_times)-1):
+
+
             # multi run CATHY hydrological model from the independant folders composing the ensemble
             # ----------------------------------------------------------------
             if parallel == True:
@@ -978,44 +1178,94 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     # p.close()
 
             os.chdir(os.path.join(self.workdir))
+            
+            
 
             # check scenario (result of the hydro simulation)
             # ----------------------------------------------------------------
             self._check_before_analysis(update_key)
             # and then create and applied the filter
-                        
+            
+            
 
+            # map states to observation = apply H operator to state variable
+            # ---------------------------------------------------------------------
+            
+            
+            # self._map_states2Observations()
+            
+            if parallel == True:
+                print('not yet tested')
+                
+                path_fwd_CATHY_list = []
+                for ens_i in range(self.NENS):
+                    
+                    path_fwd_CATHY_list.append(os.path.join(self.workdir,
+                                                self.project_name, 
+                                                'DA_Ensemble/cathy_' + str(ens_i+1)))
+                
+                # _map_states2Observations_ERT_par
+                # -------------------------------------------------------------
+                prediction = self._map_states2Observations_ERT_parallel(path_fwd_CATHY_list,
+                                                                        savefig=True,
+                                                                        DA_cnb=self.count_DA_cycle)
+                
+                
+            else:
+                
+                Hx_ens = []
+                for ens_nb in range(self.NENS): # loop over ensemble files
+        
+                    path_fwd_CATHY = os.path.join(self.workdir, self.project_name,
+                                          './DA_Ensemble/cathy_' + str(ens_nb+1))
+        
+                    df_sw = self.read_outputs(filename='sw',
+                                              path=os.path.join(path_fwd_CATHY,
+                                                                self.output_dirname)
+                                             )
+                    backup = True
+                    if backup == True:
+                        dst_dir = os.path.join(path_fwd_CATHY,'output/sw') + str(self.count_DA_cycle)
+                        shutil.copy(os.path.join(path_fwd_CATHY,'output/sw'),dst_dir) 
+        
+                        dst_dir = os.path.join(path_fwd_CATHY,'output/psi') + str(self.count_DA_cycle)
+                        shutil.copy(os.path.join(path_fwd_CATHY,'output/psi'),dst_dir) 
+                       
+                    # Apply operator H on measured data x --> Hx
+                    # ---------------------------------------------------------         
+                    Hx = self._map_states2Observations([None, df_sw],
+                                                       list_assimilated_obs,
+                                                       path_fwd_CATHY=path_fwd_CATHY,
+                                                       ens_nb=ens_nb)
+                    
+                    
+                    # THIS SHOULD GO INTO _map_states2Observations
+                    # -----------------------------------------------------------------
+                    if 'pygimli' in self.dict_obs[0]['data_format']:
+                        Hx_ens = self._add_2_ensemble_Hx(Hx_ens, Hx['rhoa'])
+                    else:
+                        Hx_ens = self._add_2_ensemble_Hx(Hx_ens, Hx['resist'])
+        
+                prediction = Hx_ens  # (EnSize)
+                Hx_ens = np.vstack(Hx_ens).T
+                prediction = np.vstack(prediction).T
+            
+        
+        
             # analysis step
             # ----------------------------------------------------------------
             
             (prediction,
              ensembleX, 
              data, dataCov, 
-             A, Amean, dA, 
-             dD, MeasAvg, S, 
-             COV, B, dAS, 
              analysis, 
-             analysis_param) = self._DA_analysis(DA_type,
+             analysis_param) = self._DA_analysis(prediction,
+                                                 DA_type,
                                                  list_update_parm,
                                                  list_assimilated_obs='all')
                 
-            # self.dict_analysis = {}
-            # self.dict_analysis.update(ensembleX,
-            #                           data,
-            #                           dataCov,
-            #                           dD,
-            #                           dAS,
-            #                           B,
-            #                           analysis)
-            
-            
-            plt_CT.show_DA_process_ens(ensembleX,data,dataCov,dD,dAS,B,analysis, 
-                                       savefig=True, 
-                                       savename= os.path.join(self.workdir,self.project_name,'DA_Matrices_t' 
-                                       +str(self.count_DA_cycle)))
-            
-            
-            
+                
+                
             # plt_CT.show_RMSE()
             self._check_after_analysis(update_key,list_update_parm)
             
@@ -1070,13 +1320,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # overwrite input files ensemble (perturbated variables)
             # ---------------------------------------------------------------------
              
-            if self.count_DA_cycle<len(ENS_Times)-1: # -1 cause ENS_Times include TMAX
+            if self.count_DA_cycle<len(ENS_times)-1: # -1 cause ENS_Times include TMAX
+            
                 self._update_input_ensemble(self.NENS, 
-                                            ENS_Times, 
+                                            ENS_times, 
                                             self.dict_parm_pert,
                                             update_parm_list=list_update_parm, 
                                             analysis=analysis)
-                input("Please press the Enter key to proceed")
 
             else:
                 print('------ end of DA ------')
@@ -1088,15 +1338,29 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
         # export summary results of DA
         # ----------------------------------------------------------------
-        self.df_DA.to_csv('DA_df.csv')
-        self.df_performance.to_csv('performance.csv')
+        self.backup_results()
+        
+    
+   
+    def backup_results(self):
+        '''
+        
 
-        # input("Please press the Enter key to proceed")
+        Returns
+        -------
+        None.
 
-
-        # return self.DA_var_pert_df
-        # return Analysis, AnalysisParam
-            
+        '''
+        
+        
+        with open(os.path.join(self.workdir, self.project_name + '.pkl'), 'wb') as f:
+            pickle.dump(self.dict_parm_pert,f)
+            pickle.dump(self.df_DA,f)
+            pickle.dump(self.df_performance,f)
+        
+        f.close()
+        
+        
 
     def _run_hydro_DA_openLoop(self,time_of_interest,nodes_of_interest,simu_time_max, ens_nb):
         '''
@@ -1116,17 +1380,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         None.
 
         '''
-        
-        
 
-        
-    
-        #     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        #         result = pool.map(subprocess_run_multi, pathexe_list)
-        #         if verbose == True:
-        #             self.console.print(result)
-        #             # self.console.print(result.stderr)
-                        
         
         cwd = os.getcwd()
 
@@ -1140,7 +1394,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                            path_CATHY_folder= cwd
                            ) #TMAX=simu_time_max
         
-        # df_sw = self.read_outputs(filename='sw')
         df_psi = self.read_outputs(filename='psi',
                                    path=os.path.join(cwd, 'output'))
             
@@ -1150,7 +1403,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         openLoop=True,
                         ens_nb=ens_nb)
             
-        # return df_psi
         
 
     def create_output(self, output_dirname="output"):
@@ -1481,6 +1733,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if self.hapin["dr"] != self.hapin["delta_x"]:
             print("adapt rivulet param to dem resolution")
             self.hapin["dr"] = self.hapin["delta_x"]
+            # sys.exit()
 
         # if (mod(delta_x,dr).gt.epsilon(delta_x/dr)) then:
 
@@ -1506,15 +1759,21 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # print(self.hapin)
 
         count = 0
+        # Loop over hap.in file lines
+        # --------------------------------------------------------------------
         for i, line in enumerate(Lines):
             xnew = line.strip().split("=")
             if len(xnew) > 1:  # skip lines with no =
+            
+                # loop over hapin dictionnary
+                # -----------------------------------
                 for key, value in self.hapin.items():
-                    if count < len(hapin):  # only consider structural parameters
-                        # print(count)
+                    if count < len(hapin): 
+                    
                         if key == hapin[tmp_lnb[count]]:
-                            # print(f'key: {key} | value: {value}')
                             if value != tmp_param_value[count]:
+                                print(key)
+                                print(value)
                                 if isinstance(value, list):
                                     value_str = "/t".join(value)
                                     xnew[1] = value_str
@@ -1522,7 +1781,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                     xnew[1] = value
                                 line = xnew[0] + "=              " + \
                                     str(xnew[1]) + "\n"
-                                # print(line)
                         tmp_param_value_new.append(value)
 
                 count += 1  # count line nb
@@ -1569,12 +1827,17 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # use exponential notation
                 np.savetxt(f, self.DEM, fmt="%1.4e")
 
+            # print("update dem")
+            # with open(os.path.join(self.project_name, "prepro/dem"), "w+") as f:
+            #     # use exponential notation
+            #     np.savetxt(f, self.DEM, fmt="%1.4e")
+                
         self.update_dem_parameters(**kwargs)
-        # self.update_transp(**kwargs)
 
         if show == True:
-            # print("pltCT.dem_plot(self.workdir, self.project_name)")
-            plt_CT.dem_plot(self.workdir, self.project_name)
+            plt_CT.dem_plot(self.workdir, self.project_name,
+                            delta_x=self.hapin['delta_x'],
+                            delta_y=self.hapin['delta_y'])
 
         pass
 
@@ -2059,28 +2322,22 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if backup == True:
            dst_dir = filename + str(self.count_DA_cycle-1)
            shutil.copy(filename,dst_dir) 
-            
-        if INDP == 0:
-            with open(filename, "w+") as icfile:
+        
+           
+        with open(filename, "w+") as icfile:
+
+            if INDP in [0,2,3]:
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
                 icfile.write(str(WTPOSITION) + "\t" + "WTPOSITION" + "\n")
-
-            icfile.close()
-        elif INDP == 1:
-
-            pressure_head_ini = kwargs['pressure_head_ini']
-            # print(pressure_head_ini)
-
-            with open(filename, "w+") as icfile:
+    
+            elif INDP == 1:
+                pressure_head_ini = kwargs['pressure_head_ini']    
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
-                # icfile.write(pressure_head_ini)
                 np.savetxt(icfile, pressure_head_ini, fmt="%1.3e")
 
-            icfile.close()
-            
-
+        icfile.close()
            
 
         pass
@@ -2142,10 +2399,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             filename = os.path.join(
                 self.workdir, self.project_name, self.input_dirname, "atmbc")
 
-        # print('????????????????????????????/')
-        # print(filename)
-        # print(TIME)
-        # print(v_atmbc)
+
         backup = False
         if 'backup' in kwargs:
             backup = kwargs['backup']
@@ -2166,7 +2420,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
                 if verbose == True:
                     print(t, v)
-                atmbcfile.write(str(t) + "\t" + "TIME" + "\n")
+                atmbcfile.write("{:.3e}".format(t) + "\t" + "TIME" + "\n")
                 # atmbcfile.close()
 
                 if isinstance(v, float):
@@ -2195,36 +2449,49 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             for key, value in kwargs.items():
                 if key == "x_units":
                     x_units = value
-            plt_CT.show_atmbc(TIME, VALUE, x_units=x_units)
+            plt, ax = plt_CT.show_atmbc(TIME, VALUE, x_units=x_units)
 
+            return plt, ax
+        
         pass
 
     def update_nansfdirbc(
-        self,
-        TIME=[],
-        NDIR=0,
-        NDIRC=0,
-        NQ3=None,
-        noflow=True,
-        bound_xyz=None,
-        pressureHead=[],
-    ):
+                            self,
+                            TIME=[],
+                            NDIR=0,
+                            NDIRC=0,
+                            NQ3=None,
+                            noflow=True,
+                            bound_xyz=None,
+                            pressureHead=[],
+                        ):
         """
-        Boundary conditions (nansfdirbc - IIN8, nansfneubc - IIN9, sfbc - IIN7) The boundary
-        conditions are defined in the nansfdirbc (Dirichlet), nansfneubc (Neumann), and sfbc
-        (seepage face) files. To simulate the no-flow boundaries conditions for the bottom and
-        vertical sides of the domain it is necessary to set NDIR and NDIRC equal to zero. To
-        simulate different boundary conditions, it is necessary to indicate the number of selected
-        nodes through NDIR or NDIRC, then to specify the node ID’s that you want to consider and
-        eventually the value of pressure head or flux that you want to assign.
+        Boundary conditions 
+        (nansfdirbc - IIN8, nansfneubc - IIN9, sfbc - IIN7) 
+        The boundary conditions are defined in the nansfdirbc (Dirichlet), 
+        nansfneubc (Neumann), and sfbc (seepage face) files. 
+        
+        - To simulate the no-flow boundaries conditions for the bottom and 
+          vertical sides of the domain it is necessary to set NDIR and NDIRC 
+          equal to zero. 
+        - To simulate different boundary conditions, it is necessary to 
+          indicate the number of selected nodes through NDIR or NDIRC, 
+          then to specify the node ID’s that you want to consider and
+          eventually the value of pressure head or flux that you want to assign.
 
          !!! update_nansfdirbc use the grid3d
 
-        Parameters ---------- NDIR : int Number of non-atmospheric, non‐seepage face Dirichlet
+        Parameters ---------- 
+        
+        NDIR : int Number of non-atmospheric, non‐seepage face Dirichlet
         nodes in 2-d mesh. The BC's assigned to these surface nodes are replicated vertically
-        (compare NDIRC) NDIRC : int Number of 'fixed' non-atmospheric, non-seepage face Dirichlet
+        (compare NDIRC) 
+        
+        NDIRC : int Number of 'fixed' non-atmospheric, non-seepage face Dirichlet
         nodes in 3‐d mesh ('fixed' in the sense that these BC's are not replicated to other nodes ‐
-        compare NDIR) NQ3 : int Number of non-atmospheric, non‐seepage face Neumann nodes in 3‐d
+        compare NDIR) 
+        
+        NQ3 : int Number of non-atmospheric, non‐seepage face Neumann nodes in 3‐d
         mesh.
 
         Returns ------- type Description of returned object.
@@ -2478,6 +2745,15 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             SPP = self.set_SOIL_defaults()
         # print(SPP)
 
+        if len(FP) == 0:
+            # set Soil Feddes Properties defaults parameters
+            # --------------------------------------------------------------------
+            FP = {'PCANA':self.soil['PCANA'],
+                  'PCREF':self.soil['PCREF'],'PCWLT':self.soil['PCWLT'],
+                  'ZROOT':self.soil['ZROOT'],'PZ':self.soil['PZ'],
+                  'OMGC':self.soil['OMGC']}
+            
+            
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
         for keykwargs, value in kwargs.items():
@@ -2506,6 +2782,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
         # Read only if IVGHU=0
+        
+
         FeddesParam = self._prepare_SOIL_vegetation_tb(FP)
         # print(FeddesParam)
         self.soil['FP'] = FeddesParam
@@ -2566,13 +2844,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             "VGPSATCELL": VGPSATCELL,
         }
 
-        # set Soil Feddes Properties defaults parameters
-        # --------------------------------------------------------------------
-        # if len(FP)==0:
-        #     FP = {'PCANA':self.soil['PCANA'],
-        #           'PCREF':self.soil['PCREF'],'PCWLT':self.soil['PCWLT'],
-        #           'ZROOT':self.soil['ZROOT'],'PZ':self.soil['PZ'],
-        #           'OMGC':self.soil['OMGC']}
+
 
         return SPP
 
@@ -2660,9 +2932,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if self.cathyH["MAXVEG"] > 1:
             print(self.cathyH["MAXVEG"])
             FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
-            for iveg in range(
-                self.cathyH["MAXVEG"]
-            ):  # loop over veg zones within a strate
+            for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
                 for sfp in FP:
                     izoneVeg_tmp.append(FP[sfp][iveg])
@@ -2826,7 +3096,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     # -------------------------------------------------------------------#
     # %% DATA ASSIMILATION FCTS
 
-    def _DA_init(self, NENS=[], ENS_Times=[], parm_pert=[]):
+    def _DA_init(self, NENS=[], ENS_times=[], parm_pert=[]):
         """
         THIS SHOULD BE MOVED TO DA CLASS
 
@@ -2835,7 +3105,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         .. note::
 
-            1. update cathyH file given NENS, ENS_Times + flag self.parm['DAFLAG']==True
+            1. update cathyH file given NENS, ENS_times + flag self.parm['DAFLAG']==True
 
             2. create the processor cathy_origin.exe
 
@@ -2849,7 +3119,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         ----------
         NENS : int
             # Number of realizations in the ensemble
-        ENS_Times : int
+        ENS_times : int
             # Observation times
 
         Returns
@@ -2945,9 +3215,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # self.dict_parm_pert[pp[1]][update_key] = AnalysisParam
 
                 # ckeck if new value of Zroot is feasible
-                if (self.dict_parm_pert[pp[1]][update_key] < min(self.grid3d['nodes_idxyz'][:, -1])).any:
+                if not (self.dict_parm_pert[pp[1]][update_key] > abs(min(self.grid3d['nodes_idxyz'][:, -1]))).any:
                     print('impossible value of zroot')
-                    self.dict_parm_pert[pp[1]][update_key] = self.dict_parm_pert[pp[1]]['ini_perturbation']-0.01*self.count_DA_cycle
+                    print(self.dict_parm_pert[pp[1]][update_key])
+                    print(min(self.grid3d['nodes_idxyz'][:, -1]))
+                    sys.exit()
+                    # self.dict_parm_pert[pp[1]][update_key] = self.dict_parm_pert[pp[1]]['ini_perturbation']-0.01*self.count_DA_cycle
 
             # print(self.dict_parm_pert)
 
@@ -2956,9 +3229,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         pass
 
-    def _DA_analysis(self, typ='enkf_Evensen2009_Sakov',
-                              list_update_parm=['St. var.'],
-                              list_assimilated_obs=[]):
+    def _DA_analysis(self, prediction, 
+                     typ='enkf_Evensen2009_Sakov',
+                     list_update_parm=['St. var.'],
+                     list_assimilated_obs=[]):
         """
         THIS SHOULD BE MOVED TO DA CLASS
 
@@ -2977,7 +3251,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             type of Data Assimilation
         NUDN : int
             #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
-        ENS_Times : np.array([])
+        ENS_times : np.array([])
             # Observation time for ensemble kalman filter (EnKF).
 
         Returns
@@ -2990,51 +3264,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         update_key = 'ini_perturbation'
         if self.count_DA_cycle > 0:
             update_key = 'update_nb' + str(self.count_DA_cycle)
-
-        # map states to observation = apply H operator to state variable
-        # ---------------------------------------------------------------------
-
-        Hx_ens = []
-        for ens_nb in range(self.NENS): # loop over ensemble files
-
-            # change directory according to ensmble file nb
-            # os.chdir(os.path.join(self.workdir, self.project_name,
-            #                       './DA_Ensemble/cathy_' + str(ens_nb+1)))
-            path_fwd_CATHY = os.path.join(self.workdir, self.project_name,
-                                  './DA_Ensemble/cathy_' + str(ens_nb+1))
-
-            df_sw = self.read_outputs(filename='sw',
-                                      path=os.path.join(path_fwd_CATHY,
-                                                        self.output_dirname)
-                                     )
-            backup = True
-            if backup == True:
-                dst_dir = os.path.join(path_fwd_CATHY,'output/sw') + str(self.count_DA_cycle)
-                shutil.copy(os.path.join(path_fwd_CATHY,'output/sw'),dst_dir) 
-
-                dst_dir = os.path.join(path_fwd_CATHY,'output/psi') + str(self.count_DA_cycle)
-                shutil.copy(os.path.join(path_fwd_CATHY,'output/psi'),dst_dir) 
-               
-            # Apply operator H on measured data x --> Hx
-            # ---------------------------------------------------------         
-            Hx = self._map_states2Observations([None, df_sw],
-                                               list_assimilated_obs,
-                                               path_fwd_CATHY=path_fwd_CATHY,
-                                               ens_nb=ens_nb)
-            
-            
-            # print(np.shape(Hx))
-            # pg = True
-            # THIS SHOULD GO INTO _map_states2Observations
-            # -----------------------------------------------------------------
-            if 'pygimli' in self.dict_obs[0]['data_format']:
-                Hx_ens = self._add_2_ensemble_Hx(Hx_ens, Hx['rhoa'])
-            else:
-                Hx_ens = self._add_2_ensemble_Hx(Hx_ens, Hx['resist'])
-
-        prediction = Hx_ens  # (EnSize)
-        Hx_ens = np.vstack(Hx_ens).T
-        prediction = np.vstack(prediction).T
 
 
         # prepare parameters
@@ -3057,13 +3286,21 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     print('log transformation')
                     param = np.log(self.dict_parm_pert[pp[1]][update_key])
  
-            
+     
         # prepare states
         # ---------------------------------------------------------------------
         ensembleX, N_col, M_rows = self._read_state_ensemble()
 
-
+        # self.ensembleX_test = ensembleX
+        # print(ensembleX)
+        # print(self.count_DA_cycle)
+        # print(max(np.cov(self.ensembleX_test)[0]))
         
+        # plt.plot(ensembleX[:,0])
+        # plt.show()
+
+        # input("Please once you checked the ensemble (before analysis)")
+
         # prepare data
         # ---------------------------------------------------------------------
 
@@ -3078,16 +3315,37 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
         dataCov = key_value[1]['dataCov']  # (MeasSize)
 
+        # self.prediction_test = prediction
+        # self.param_test = param
+        
+        
+        print(np.shape(prediction))
 
+        
+        # print(param)
         # run Analysis
         # ---------------------------------------------------------------------
 
-        [A, Amean, dA, 
-          dD, MeasAvg, S, 
-          COV, B, dAS, 
-          analysis, 
-          analysis_param] = cathy_DA.run_analysis(typ,data,dataCov,param, ensembleX,prediction)
+        result_analysis = cathy_DA.run_analysis(typ,data,dataCov,param,
+                                                  ensembleX,prediction)
           
+        # enkf
+        if len(result_analysis)>2:
+            [A, Amean, dA, 
+             dD, MeasAvg, S, 
+             COV, B, dAS, 
+             analysis, 
+             analysis_param]  = result_analysis
+        
+            plt_CT.show_DA_process_ens(ensembleX,data,dataCov,dD,dAS,B,analysis, 
+                                       savefig=True, 
+                                       savename= os.path.join(self.workdir,self.project_name,'DA_Matrices_t' 
+                                       +str(self.count_DA_cycle)))
+        # particule filter
+        else:
+            [analysis, 
+             analysis_param]  = result_analysis
+            
 
         # Back-transformation of the parameters
         # ---------------------------------------------------------------------
@@ -3096,25 +3354,22 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 pass 
             else:                               
                 if self.dict_parm_pert[pp[1]]['transf_type'] == 'Log':
-                    
-                    print(analysis_param)
                     print('back log transformation')
                     analysis_param = np.exp(analysis_param)
+                    # self.dict_parm_pert[pp[1]][update_key]=analysis_param
                     print(analysis_param)
 
                     
-
+                    
         # return EnsembleX, Analysis, AnalysisParam, Data, DataCov
         # ---------------------------------------------------------------------
-        return(prediction, ensembleX, data, dataCov, A, Amean, dA, 
-                 dD, MeasAvg, S, 
-                 COV, B, dAS, 
-                 analysis, 
+        return(prediction, ensembleX, data, dataCov,  analysis, 
                  analysis_param)
 
 
 
-
+                            
+                            
 
     def _map_states2Observations(self, state=[None, None],
                                  list_assimilated_obs='all', 
@@ -3122,6 +3377,20 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                  verbose = False,
                                  **kwargs):
         '''
+        Parameters
+        ----------
+        state : np.array([])
+            [pressure heads, saturation] for each mesh nodes. The default is [None, None].
+        list_assimilated_obs : TYPE, optional
+            DESCRIPTION. The default is 'all'.
+        parallel : Bool, optional
+            DESCRIPTION. The default is False.
+        verbose : Bool, optional
+            DESCRIPTION. The default is False.
+        **kwargs : TYPE
+            DESCRIPTION.
+            
+            
         THIS SHOULD BE MOVED TO DA CLASS
 
         Apply H mapping operator: convert model to predicted value
@@ -3198,11 +3467,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # Hx.vstack(Hx_Q)
                  print('Not yet implemented')
 
+        
 
             if 'ERT' in obs_key:
-                
-                
-                df_sw = state[1]
                 
                 path_fwd_CATHY = ''
                 if 'path_fwd_CATHY' in kwargs:
@@ -3211,96 +3478,48 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 ens_nb = []
                 if 'ens_nb' in kwargs:
                    ens_nb = kwargs['ens_nb'] 
-                       
-                # print(path_fwd_CATHY)        
+                   
+                   
+                savefig = True
+                if 'savefig' in kwargs:
+                   savefig = kwargs['savefig'] 
                 
-                
-
-
-                # Load ERT metadata information form obs dict
-                # -------------------------------------------
                 
                 # search key value to identify time and method
                 tuple_list_obs = list(self.dict_obs.items())
                 key_value = tuple_list_obs[self.count_DA_cycle]
-
-
-                pathERT = os.path.split(self.dict_obs[0]['filename'])[0]
-
-
-
+                
+                
+                # Load ERT metadata information form obs dict
+                # -------------------------------------------
                 forward_mesh_vtk_file = key_value[1]['forward_mesh_vtk_file'] 
+                pathERT = os.path.split(self.dict_obs[0]['filename'])[0]
                 seq = key_value[1]['sequenceERT'] 
                 electrodes = key_value[1]['elecs'] 
-
-
                 porosity = self.soil['SPP'][:, 4][0]
-                Hx_ERT, df_Archie = Archie.SW_2_ERa(df_sw, 
-                                                     path_fwd_CATHY, 
-                                                     self.project_name,
-                                                     porosity,
-                                                     pathERT,
-                                                     meshERT=forward_mesh_vtk_file,
-                                                     elecs=electrodes,
-                                                     sequenceERT=seq,
-                                                     DA_cnb=self.count_DA_cycle,
-                                                     Ens_nb=ens_nb,
-                                                     data_format= self.dict_obs[0]['data_format']
+
+                            # project_name,
+                            # porosity,
+                            # pathERT, meshERT, elecs, sequenceERT,
+                            # path_fwd_CATHY,
+                            
+                            
+                Hx_ERT, df_Archie = Archie.SW_2_ERa(#state[1], 
+                                                      path_fwd_CATHY, 
+                                                      self.project_name,
+                                                      porosity,
+                                                      pathERT,
+                                                      forward_mesh_vtk_file,
+                                                      electrodes,
+                                                      seq,
+                                                      savefig=savefig,
+                                                      DA_cnb=self.count_DA_cycle,
+                                                      Ens_nb=ens_nb,
+                                                      data_format= self.dict_obs[0]['data_format'],
+                                                      df_sw = state[1]
                                                     )
+                
 
-                # print(Hx_ERT)
-                        
-                        
-                        
-
-            # print(obs_key)
-
-            # if parallel == True:
-
-            #     pathERT = os.path.split(self.dict_obs[0]['filename'])[0]
-            #     forward_mesh_vtk_file = glob.glob(
-            #         pathERT + "/**/*forward_model*", recursive=True)
-
-            #     if 'ERT' in obs_key:
-            #         for ens_nb in range(self.NENS):
-            #             path_fwd_ERT_list = []
-            #             path_fwd_ERT = os.path.join(self.workdir, self.project_name,
-            #                                         './DA_Ensemble/cathy_' + str(ens_nb+1))
-            #             path_fwd_ERT_list.append(path_fwd_ERT)
-            #             # path_CATHY = os.path.join(path_fwd_ERT, 'vtk/')
-                        
-            #             # print(path_fwd_ERT_list)
-
-            #     with multiprocessing.Pool(processes=4) as pool:
-                    
-            #         # Parallel run of a function with multiple arguments
-            #         # set constant values to all arguments which are not changed 
-            #         # during parallel processing
- 
-            #         ERTmapping_args = partial(ERTmapping_run_multi, 
-            #                                  dict_obs = self.dict_obs,
-            #                                  count_DA_cycle = self.count_DA_cycle,
-            #                                  # path_CATHY = path_CATHY,
-            #                                  porosity = self.soil['SPP'][:, 4][0], 
-            #                                  forward_mesh_vtk_file = forward_mesh_vtk_file[0],
-            #                                  output_dirname =  self.output_dirname,
-            #                                  project_name = self.project_name 
-            #                                  ) 
-                    
-            #         # print(ERTmapping_args)
-                    
-            #         Hx_ERT = pool.map(ERTmapping_args, 
-            #                           path_fwd_ERT_list
-            #                           )
-            #         print(Hx_ERT)
-            #         # self._add_2_ensemble_Hx(Hx, Hx_ERT['resist'])
-            #         # print(Hx)
-            #         if verbose == True:
-            #             self.console.print(Hx)
-            #             # self.console.print(result.stderr)
-        
-            # else:    
-            # Hx = np.vstack(Hx).T
 
 
         return Hx_ERT 
@@ -3338,11 +3557,17 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # state_var = 'pressure' # pressure head
         # read psi cathy output file to infer pressure head valies
         for j in range(self.NENS):
+            
+            print(j)
+            print(os.path.join(self.workdir, self.project_name,
+                                               "DA_Ensemble/cathy_" + str(j+1),
+                                               'output/psi'))
             df_psi = out_CT.read_psi(os.path.join(self.workdir, self.project_name,
                                                "DA_Ensemble/cathy_" + str(j+1),
                                                'output/psi'))
-            # X[:,j] = df_psi['pressure']
             X[:, j] = df_psi[-1, :]
+            
+            # input('press again here')
 
         # check if there is still zeros
         if np.count_nonzero(X) != M_rows*N_col:
@@ -3515,7 +3740,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
 
 
-    def _update_input_ensemble(self, NENS, ENS_Times,
+    def _update_input_ensemble(self, NENS, ENS_times,
                                parm_pert=[],
                                update_parm_list=['St. var.'],
                                **kwargs):
@@ -3543,7 +3768,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # resample atmbc file for the given DA window
         # ---------------------------------------------------------------------
-        self.selec_atmbc_window(NENS, ENS_Times)
+        self.selec_atmbc_window(NENS, ENS_times)
 
         # ---------------------------------------------------------------------
         
@@ -3558,7 +3783,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         pass
 
-    def selec_atmbc_window(self, NENS, ENS_Times):
+    def selec_atmbc_window(self, NENS, ENS_times):
         '''
         THIS SHOULD BE MOVED TO DA CLASS
 
@@ -3570,7 +3795,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         ----------
         NENS : TYPE
             DESCRIPTION.
-        ENS_Times : TYPE
+        ENS_times : TYPE
             DESCRIPTION.
 
         Returns
@@ -3598,81 +3823,23 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if self.count_DA_cycle is not None:
             try:
                 time_window_atmbc = [
-                    ENS_Times[self.count_DA_cycle], ENS_Times[self.count_DA_cycle+1]]
+                    ENS_times[self.count_DA_cycle], ENS_times[self.count_DA_cycle+1]]
             except:
                 pass
         else:
-                time_window_atmbc = [ENS_Times[0], ENS_Times[1]]
+                time_window_atmbc = [ENS_times[0], ENS_times[1]]
 
-            
-        # try:
-        #     # time_window_atmbc_df = [ENS_Times.iloc[self.count_DA_cycl],ENS_Times.iloc[self.count_DA_cycl+1]]
-        #     time_window_atmbc = [
-        #         ENS_Times[self.count_DA_cycl], ENS_Times[self.count_DA_cycl+1]]
 
-        # # case where the simulation is not yet running (initial preparation)
-        # except:
-        #     print('try failed use 0 and 1')
-        #     # time_window_atmbc_df = [ENS_Times.iloc[0], ENS_Times.iloc[1]]
-        #     time_window_atmbc = [ENS_Times[0], ENS_Times[1]]
-
-        # print(time_window_atmbc)
-        # df_atmbc = df_atmbc.set_index('time')
 
         df_atmbc_window = df_atmbc[(df_atmbc.index >= time_window_atmbc[0]) &
                       (df_atmbc.index <= time_window_atmbc[1])]
 
-        # df_atmbc_window['time'] = pd.to_timedelta(df_atmbc_window['time'],unit='s')
-
-        # print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        # print(self.count_DA_cycle)
-        # print(ENS_Times)
-        # print(time_window_atmbc)
-        # print(df_atmbc_window['time'])
-        # print(df_atmbc_window['value'].to_numpy())
-        # print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-
-        # print(df_atmbc)
-        # # need to resample if nb of atmbc points is too low with respect to data assimilation frequency
-        # # ---------------------------------------------------------------------
-        # resampling_mean = ENS_Times[1]
-        # df_atmbc_int = df_atmbc.set_index('time').resample(resampling_mean).mean().interpolate('linear')
-        # df_atmbc_int_filt = df_atmbc_int[(df_atmbc_int.index > time_window_atmbc[0]) &
-        #              (df_atmbc_int.index < time_window_atmbc[1])]
-
-        # print(df_atmbc_int)
-        # print(df_atmbc_int_filt)
 
         for ens_nb in range(NENS):
 
             # change directory according to ensmble file nb
             os.chdir(os.path.join(self.workdir, self.project_name,
                                   './DA_Ensemble/cathy_' + str(ens_nb+1)))
-
-            # (this is always done since Kalman Filter is Sequential)
-            # update atmbc file
-            # --------------------------------------------------------------
-            # convert to numpy and convert to second / np.timedelta64(1, 's')
-            # self.update_atmbc(HSPATM=0,IETO=0,TIME=df_atmbc_int_filt.index/np.timedelta64(1, 's'),
-            #                   VALUE=df_atmbc_int_filt['value'].to_numpy(),
-            #                   show=False,
-            #                   filename=os.path.join(os.getcwd(),'input/atmbc')) # specify filename path
-            # self.update_atmbc(HSPATM=0,IETO=0,TIME=df_atmbc_int_filt.index/np.timedelta64(1, 's'),
-            #                   VALUE=df_atmbc_int_filt['value'].to_numpy(),
-            #                   show=False,
-            #                   filename=os.path.join(os.getcwd(),'input/atmbc')) # specify filename path
-
-            # time_window_atmbc_abs= [number - max(time_window_atmbc) for number in time_window_atmbc]
-
-            # df_atmbc_window_abs = 
-            
-            # self.update_atmbc(HSPATM=1, IETO=1, TIME=time_window_atmbc_abs,
-            #                   VALUE= np.tile(df_atmbc_window['value'].to_numpy(),
-            #                                  (len(time_window_atmbc),1)),
-            #                   show=False,
-            #                   filename=os.path.join(os.getcwd(), 'input/atmbc'),
-            #                   backup=True)  # specify filename path
-            # "(TIMPRT(I),I=1,NPRT)"
             
             diff_time = time_window_atmbc[1] - time_window_atmbc[0]
             
@@ -3779,22 +3946,23 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
                 # kss update
                 # --------------------------------------------------------------
-                if key in 'kss':
-                    print('kss perturbated not yet implemented')
+                if key in 'Ks':
+                    # print('Ks perturbated not yet implemented')
+                    
+                    SPP = self.set_SOIL_defaults()
+                    
+                    SPP.update(PERMX= [parm_pert[key][update_key][ens_nb]],
+                               PERMY=[parm_pert[key][update_key][ens_nb]],
+                               PERMZ= [parm_pert[key][update_key][ens_nb]])
+                    
 
-                    self.update_soil(verbose=True,
+                    self.update_soil(SPP=SPP,
+                                     verbose=True,
                                      filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
 
                 # FeddesParam update
                 # --------------------------------------------------------------
-                elif key in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:
-
-                    # parm_pert[key[0]][update_key][ens_nb] =
-                    # print()
-                    # print(self.count_DA_cycle)
-                    # print(update_key)
-                    # print(parm_pert[key[0]])
-                    
+                elif key in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:                   
                     
                     FeddesParam = {'PCANA': self.soil["PCANA"],
                                    'PCREF': self.soil["PCREF"],
@@ -3802,8 +3970,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                    'ZROOT': [parm_pert[key][update_key][ens_nb]],
                                    'PZ': self.soil["PZ"],
                                    'OMGC': self.soil["OMGC"]}
-                    print(parm_pert[key][update_key])
-                    # input("Please press the Enter key to proceed")
+                    
 
                     self.update_soil(FP=FeddesParam,
                                      verbose=False,
@@ -3839,6 +4006,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         '''
 
 
+        OL_bool = False
+        if 'openLoop' in kwargs:          
+            OL_bool = True
+            
+            
         # NAs default     
         # -------------------------------------------------------------
         RMSE = np.nan # root mean square error (RMSE)
@@ -3857,30 +4029,21 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # number of observation at a given time
         # for ERT number of observation = is the number of grid cells
         n_obs = len(prediction)
-        
-        
-        data_Obs_diff_mat = np.zeros(np.shape(prediction))
 
-        print(np.shape(data))
-        print(np.shape(prediction))
-        # print(prediction)
-        
+        data_Obs_diff_mat = np.zeros(np.shape(prediction))
         for i in range(len(data)):
-            # try: # case with ensemble
             for j in range(np.shape(prediction)[1]): # Loop over ensemble collumns
                 data_Obs_diff_mat[i,j] = abs(data[i]-prediction[i,j])
-            # except: # case open loop simulation (no ensemble)
-            #         data_Obs_diff_mat[i] = abs(data[i]-prediction[i])
 
         # average differences over the number of observations
         data_Obs_diff_avg = np.sum(data_Obs_diff_mat,axis=0)*(1/n_obs)
         
-        print(np.shape(data_Obs_diff_avg))
+
 
         # average differences over the number of observations
         RMSE = np.sum(data_Obs_diff_avg,axis=0)*(1/len(data))
         
-        print(np.shape(RMSE))
+
 
 
         try:
@@ -3891,29 +4054,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             self.df_performance = pd.DataFrame()   
             self.RMSE = []
         
-            
-        OL_bool = False
-        if 'openLoop' in kwargs:          
-            OL_bool = True
-            
-        #     if t_obs==0:
-        #         # initiate if simulation just started             
-        #         # -------------------------------------------------------------
-        #         self.df_performance = pd.DataFrame()   
-        #         self.RMSE = []
-                
-            
+
         self.RMSE.append(RMSE) 
-        
         NMRMSE = (1/(t_obs+1))*np.sum(self.RMSE)
 
-        # print('NMRMSE')
-        # print(NMRMSE)
-        # print('RMSE')
-        # print(RMSE)
-        
-        
-        # for ens_nb in range(self.NENS):
+
 
         # root names for the collumns name                
         # -------------------------------------------------------------
@@ -3941,7 +4086,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         self.df_performance= pd.concat([self.df_performance, df_performance_ti], 
                                    axis=0, 
                                    ignore_index=True)
-        # print(self.df_performance)
             
 
         return self.df_performance
@@ -3957,8 +4101,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         Parameters
         ----------
-        filename : str
-            filename of the observation dataset.
+        filename : str or dataframe
+            filename (or data) of the observation dataset.
         data_type : str
             key tring to identify what type of measure is to read.
         data_err : float
@@ -3997,9 +4141,14 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # tensiometer type read
         # ---------------------------------------------------------------------
-        elif data_type == 'tensiometers':
+        elif data_type == 'tensiometer':
 
-            df = in_meas.read_tensiometers(filename)
+            
+            if isinstance(filename, str):
+                df = in_meas.read_tensiometers(filename)
+            else:
+                filename = []
+                df = filename
 
             # add time stamp if not contained in the file
 
@@ -4275,7 +4424,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # print(dict_obs)
             DataCov = np.diag(1/abs(dict_obs['data']['recipError'].to_numpy()))
         elif obs_cov_type == 'data_err':
-            DataCov = np.array([[np.power(dict_obs['data_err'], 2.0)]])
+            
+            err_arr = np.tile(dict_obs['data_err'],len(dict_obs['data']['a']))
+            DataCov = np.diag(err_arr)
+            
             
 
 
