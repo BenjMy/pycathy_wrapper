@@ -13,7 +13,7 @@ from pyCATHY.DA import enkf, pf
 
 
 
-def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
+def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
     '''
     Perform the DA analysis step 
 
@@ -23,7 +23,7 @@ def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
         type of analysis i.e ENKF or Particul filters.
     data : np.array([])
         measured data.
-    dataCov : np.array([]) or int
+    data_cov : np.array([]) or int
         measured data covariance matrice.
     param : np.array([])
         model parameters to update.
@@ -67,7 +67,7 @@ def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
          COV, B, dAS, 
          analysis, 
          analysis_param] = enkf.enkf_analysis(data, 
-                                              dataCov, 
+                                              data_cov, 
                                               param, 
                                               ensembleX, 
                                               prediction)
@@ -86,7 +86,7 @@ def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
          COV, B, dAS, 
          analysis, 
          analysis_param] = enkf.enkf_analysis_inflation(data,
-                                                        dataCov,
+                                                        data_cov,
                                                         param,
                                                         ensembleX,
                                                         prediction)
@@ -101,7 +101,7 @@ def run_analysis(typ,data,dataCov,param,ensembleX,prediction):
     elif typ=='pf_analysis':
         print('not yet implemented')
         
-        [Analysis,AnalysisParam] = pf.pf_analysis(data,dataCov,param,ensembleX,prediction)
+        [Analysis,AnalysisParam] = pf.pf_analysis(data,data_cov,param,ensembleX,prediction)
         
         
         return Analysis,AnalysisParam

@@ -18,6 +18,7 @@ pv.set_plot_theme('document')
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.dates import DateFormatter
+import matplotlib.dates as mdates
 
 
 import panel as pn
@@ -293,6 +294,11 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
                 xlabel = "time (h)"
                 t_atmbc = [x / (60 * 60) for x in t_atmbc]
 
+    if 'datetime' in kwargs:
+        t_atmbc = kwargs['datetime']
+        xlabel = "date"
+
+        
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
     
     
@@ -303,24 +309,32 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
 
     
 
-    fig, ax = plt.subplots()
-    ax.plot(t_atmbc, v_atmbc, "k*")
+    fig, ax = plt.subplots(figsize=(6,3))
+    ax.plot(t_atmbc, v_atmbc, "k.")
     ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
     ax.grid()
 
+
     if 'IETO' in kwargs:
         if kwargs['IETO'] != 0:
-            plt.step(t_atmbc, v_atmbc, color="k", where="post")
+            plt.step(t_atmbc, v_atmbc, color="k.", where="post")
         elif kwargs['IETO'] == 0: # case of linear interpolation between points
-            ax.plot(t_atmbc, v_atmbc, "k--")
+            ax.plot(t_atmbc, v_atmbc, "k.")
 
         
 
+    # if np.shape(t_atmbc) != np.shape(v_atmbc):
     if len(v_atmbc_p)>0:
+        plt.step(t_atmbc, v_atmbc, color="green", where="post", label="Diff",marker='.')
         plt.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
         plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
-        plt.step(t_atmbc, v_atmbc, color="black", where="post", label="Diff")
     ax.legend()
+    # ax.set_yscale('symlog')
+    
+    # if 'datetime' in kwargs:
+    #     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
+    #     ax.xaxis.set_minor_locator(mdates.MonthLocator())
+    #     ax.grid(True)
 
     return plt, ax 
 
@@ -403,11 +417,19 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
     # -------------------------------------------------------------------------
     if filename is None:
         if unit == "pressure":
-            filename = "10" + str(timeStep) + ".vtk"
+            if timeStep<10:
+                filename = "10" + str(timeStep) + ".vtk"
+            else:
+                filename = "1" + str(timeStep) + ".vtk"
+
             my_colormap = 'autumn'
 
         elif unit == "saturation":
-            filename = "cele20" + str(timeStep) + ".vtk"
+            if timeStep<10:
+                filename = "cele20" + str(timeStep) + ".vtk"
+            else:
+                filename = "cele2" + str(timeStep) + ".vtk"
+
             my_colormap = 'Blues'
 
         elif 'ER' in unit:
@@ -494,7 +516,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
     # -------------------------------------------------------------------------
     else:
 
-        plotter = pv.Plotter(notebook=True)
+        plotter = pv.Plotter(notebook=False)
         _ = plotter.add_mesh(mesh, show_edges=True, scalars=unit, cmap=my_colormap)
         
         if unit == "saturation":
@@ -517,9 +539,10 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
 
         
         _ = plotter.add_legend(legend_entries)
-        plotter.show_grid()
+        #plotter.show_grid()
         
-        # plotter.add_mesh_clip_box(mesh, color='white')
+        _ = plotter.show_bounds(minor_ticks=True,font_size=1)
+        #plotter.add_mesh_clip_box(mesh, color='white')
         
         # add scatter points to the plot 
         # --------------------------------------------------------------------- 
@@ -551,7 +574,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
         # print(os.path.join(path, 'vtk', filename + '.svg'))
         plotter.view_xz()
         plotter.save_graphic(os.path.join(path,filename + '.svg'),
-                             title="", raster=True, painter=True)
+                              title="", raster=True, painter=True)
 
         print('figure saved' + os.path.join(path,filename + '.svg'))
     cpos = plotter.show()
@@ -591,12 +614,12 @@ def show_vtk_TL(
             
     if filename is None:
         if unit == "pressure":
-            filename = "10*.vtk"
+            filename = "1*.vtk"
             filename0 = "100.vtk"
             my_colormap = 'autumn'
         elif unit == "saturation":
             my_colormap = 'Blues'
-            filename = "cele20*.vtk"
+            filename = "cele2*.vtk"
             filename0 = "cele200.vtk"
         elif 'ER' in unit:
             filename = "ER" + str(timeStep) + ".vtk"
@@ -642,11 +665,13 @@ def show_vtk_TL(
         files.append(file)
 
 
-    print(natsort.natsorted(files, reverse=False))
+    # print(natsort.natsorted(files, reverse=False))
 
     for ff in natsort.natsorted(files, reverse=False):
+        print(ff)
         mesh = pv.read(ff)
         array_new = mesh.get_array(unit)
+        print(mesh["TIME"])
 
         if x_units is not None:
             xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
@@ -689,8 +714,10 @@ def indice_veg_plot(veg_map, **kwargs):
 
     '''
 
+    # colors =  plt.cm.Vega20c( (4./3*np.arange(20*3/4)).astype(int) )
+
     fig, ax = plt.subplots()
-    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap='tab20')
+    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap='tab10')
     fig.colorbar(cf, ax=ax, label='indice of vegetation')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
@@ -700,8 +727,10 @@ def indice_veg_plot(veg_map, **kwargs):
     
     
     return fig, ax
+  
 
-def dem_plot_2d_top(parameter, **kwargs):
+
+def dem_plot_2d_top(parameter, label='', **kwargs):
     '''
     View from top of the a given parameter
 
@@ -720,15 +749,15 @@ def dem_plot_2d_top(parameter, **kwargs):
     '''
 
     fig, ax = plt.subplots()
-    cf = ax.pcolormesh(veg_map, edgecolors="black")
-    fig.colorbar(cf, ax=ax, label='indice of vegetation')
+    cf = ax.pcolormesh(parameter, edgecolors="black")
+    fig.colorbar(cf, ax=ax, label=label)
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title('view from top (before extruding)')
     plt.show(block=False)
     plt.close()
 
-    return fig, ax 
+    return plt, ax 
     
     
 
@@ -849,8 +878,37 @@ def COCumflowvol(workdir, project_name):
 
 
 
+def plot_mesh_bounds(mesh_bound_cond_df):
 
 
+    m = np.array(['o','+'])
+    
+    mvalue = []
+    alpha = []
+    for bound_val in mesh_bound_cond_df['bound']:
+        if bound_val == True:
+            mvalue.append(1)
+            alpha.append(1)
+        else:
+            mvalue.append(0)
+            alpha.append(0.1)
+    
+            
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    ax.scatter(mesh_bound_cond_df['x'], 
+               mesh_bound_cond_df['y'], 
+               mesh_bound_cond_df['z'], 
+               c=mvalue)
+                                            
+    
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+    
+    plt.show()                    
+
+    return fig, ax
 
 
 # def mesh3d():

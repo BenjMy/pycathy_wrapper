@@ -49,7 +49,6 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     irr_days = dict_PRD['irr_days']
     flux = dict_PRD['flux']
     lg_PRD = dict_PRD['lg_PRD']
-    lg_PRD = dict_PRD['lg_PRD']
 
     
     x_min = max(grid["nodes_idxyz"][:, 1]) / 2

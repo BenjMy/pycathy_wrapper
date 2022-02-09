@@ -1,4 +1,4 @@
-"""Class managing Data Assimilation process analysis using enkf
+"""Class managing data Assimilation process analysis using enkf
 """
 # Credit to:     https://github.com/hickmank/pyda/blob/7a2f04bd752e9c75bc8dcd2a45b21ff549736fa6/pyda/analysis_generator/kf/enkf1.py
 
@@ -9,20 +9,20 @@ import numpy as np
 import shutil
 
 
-def enkf_analysis(Data,DataCov,Param,Ensemble,Observation):
+def enkf_analysis(data,data_cov,param,ensemble,observation):
     '''
 
-    Parameters
+    parameters
     ----------
-    Data : TYPE
+    data : TYPE
         DESCRIPTION.
-    DataCov : TYPE
+    data_cov : TYPE
         DESCRIPTION.
-    Param : TYPE
+    param : TYPE
         DESCRIPTION.
-    Ensemble : TYPE
+    ensemble : TYPE
         DESCRIPTION.
-    Observation : TYPE
+    observation : TYPE
         DESCRIPTION.
 
     Returns
@@ -32,129 +32,129 @@ def enkf_analysis(Data,DataCov,Param,Ensemble,Observation):
 
     '''
     # Collect data sizes.
-    EnSize = Ensemble.shape[1]
-    SimSize = Ensemble.shape[0] 
-    MeaSize = Data.shape[0]
+    ens_size = ensemble.shape[1]
+    sim_size = ensemble.shape[0] 
+    meas_size = np.array([data]).T.shape[0]
 
-    # First combine the Ensemble and Param arrays.
+    # First combine the ensemble and param arrays.
    
-    if len(Param)>0:
-        A = np.vstack([Ensemble, Param.transpose()])
+    if len(param)>0:
+        A = np.vstack([ensemble, param.transpose()])
     else:
-        A = Ensemble
+        A = ensemble
 
 
     # Calculate mean of the ensemble
-    Amean = (1./float(EnSize))*np.tile(A.sum(1), (EnSize,1)).transpose()
+    Amean = (1./float(ens_size))*np.tile(A.sum(1), (ens_size,1)).transpose()
                     
     # Calculate ensemble perturbation from mean
-    # Apert should be (SimSize+ParSize)x(EnSize)
+    # Apert should be (sim_size+ParSize)x(ens_size)
     dA = A - Amean
 
-    # Data perturbation from ensemble measurements
-    # dD should be (MeasSize)x(EnSize)
-    dD = Data - Observation.T
+    # data perturbation from ensemble measurements
+    # dD should be (MeasSize)x(ens_size)
+    dD = data - observation
 
-    # Ensemble measurement perturbation from ensemble measurement mean.
-    # S is (MeasSize)x(EnSize)
-    MeasAvg = (1./float(EnSize))*np.tile(Observation.reshape(MeaSize,EnSize).sum(1), (EnSize,1)).transpose()
-    S = Observation - MeasAvg
+    # ensemble measurement perturbation from ensemble measurement mean.
+    # S is (MeasSize)x(ens_size)
+    MeasAvg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1))
+    S = observation - MeasAvg
 
     # Set up measurement covariance matrix
     # COV is (MeasSize)x(MeasSize)
-    # print(DataCov)
-    # DataCov = []
-    if np.shape(DataCov)[1]>1:
-        COV = DataCov
+    # print(data_cov)
+    # data_cov = []
+    if np.shape(data_cov)[1]>1:
+        COV = data_cov
     else:
-        # print(np.shape( (1./float(EnSize-1))*np.dot(S,S.transpose())))
-        COV = (1./float(EnSize-1))*np.dot(S,S.transpose()) + DataCov
+        # print(np.shape( (1./float(ens_size-1))*np.dot(S,S.transpose())))
+        COV = (1./float(ens_size-1))*np.dot(S,S.transpose()) + data_cov
         # print(np.shape(COV))
 
         
     # Compute inv(COV)*dD
-    # Should be (MeasSize)x(EnSize)
+    # Should be (MeasSize)x(ens_size)
     B = np.linalg.solve(COV,dD.T)
 
     # Adjust ensemble perturbations
-    # Should be (SimSize+ParSize)x(MeasSize)
-    dAS = (1./float(EnSize-1))*np.dot(dA,S.transpose())
+    # Should be (sim_size+ParSize)x(MeasSize)
+    dAS = (1./float(ens_size-1))*np.dot(dA,S)
 
     # Compute analysis
-    # Analysis is (SimSize+ParSize)x(EnSize)
+    # Analysis is (sim_size+ParSize)x(ens_size)
     Analysis = A + np.dot(dAS,B)
 
-    # Separate and return Analyzed Ensemble and Analyzed Parameters.
-    AnalysisParam = Analysis[SimSize:,:].transpose()
-    Analysis = Analysis[0:SimSize,:]
+    # Separate and return Analyzed ensemble and Analyzed parameters.
+    Analysisparam = Analysis[sim_size:,:].transpose()
+    Analysis = Analysis[0:sim_size,:]
     
             
-    # return [Analysis,AnalysisParam]
-    return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, AnalysisParam]
+    # return [Analysis,Analysisparam]
+    return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
 
     
 
-def enkf_analysis_inflation(Data,DataCov,Param,Ensemble,Observation):
+def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
 
     alpha = 1  #<alpha> = (scalar) covariance inflation parameter. Usually alpha >= 1.
     
     # Collect data sizes.
-    EnSize = Ensemble.shape[1]
-    SimSize = Ensemble.shape[0] 
-    MeaSize = Data.shape[0]
+    ens_size = ensemble.shape[1]
+    sim_size = ensemble.shape[0] 
+    meas_size = data.shape[0]
 
-    # First combine the Ensemble and Param arrays.
-    # A is (SimSize+ParSize)x(EnSize)
-    A = np.vstack([Ensemble, Param.transpose()])
+    # First combine the ensemble and param arrays.
+    # A is (sim_size+ParSize)x(ens_size)
+    A = np.vstack([ensemble, param.transpose()])
 
     # Calculate ensemble mean
-    Amean = (1./float(EnSize))*np.tile(A.sum(1), (EnSize,1)).transpose()
+    Amean = (1./float(ens_size))*np.tile(A.sum(1), (ens_size,1)).transpose()
 
     # Calculate ensemble observation mean
-    MeasAvg = (1./float(EnSize))*np.tile(Observation.reshape(MeaSize,EnSize).sum(1), (EnSize,1)).transpose()
+    MeasAvg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1)).transpose()
     
     # Inflate only the simulation ensemble, not the parameter ensemble 
-    A[:(SimSize+1),:] = np.sqrt(alpha)*(A[:(SimSize+1),:] - Amean[:(SimSize+1),:]) + Amean[:(SimSize+1),:]
+    A[:(sim_size+1),:] = np.sqrt(alpha)*(A[:(sim_size+1),:] - Amean[:(sim_size+1),:]) + Amean[:(sim_size+1),:]
 
     # Inflate the ensemble observations
-    Observation = np.sqrt(alpha)*(Observation - MeasAvg) + MeasAvg
+    observation = np.sqrt(alpha)*(observation - MeasAvg) + MeasAvg
 
     # Calculate ensemble perturbation from mean
-    # Apert should be (SimSize+ParSize)x(EnSize)
+    # Apert should be (sim_size+ParSize)x(ens_size)
     dA = A - Amean
 
-    # Data perturbation from ensemble measurements
-    # dD should be (MeasSize)x(EnSize)
-    dD = Data - Observation
+    # data perturbation from ensemble measurements
+    # dD should be (MeasSize)x(ens_size)
+    dD = data - observation
 
-    # Ensemble measurement perturbation from ensemble measurement mean.
-    # S is (MeasSize)x(EnSize)
-    S = Observation - MeasAvg
+    # ensemble measurement perturbation from ensemble measurement mean.
+    # S is (MeasSize)x(ens_size)
+    S = observation - MeasAvg
 
     # Set up measurement covariance matrix
     # COV is (MeasSize)x(MeasSize)
     try:
-        np.shape(DataCov)[1]
-        COV = DataCov
+        np.shape(data_cov)[1]
+        COV = data_cov
     except:
-        COV = (1./float(EnSize-1))*np.dot(S,S.transpose()) + DataCov
+        COV = (1./float(ens_size-1))*np.dot(S,S.transpose()) + data_cov
 
     # Compute inv(COV)*dD
-    # Should be (MeasSize)x(EnSize)
+    # Should be (MeasSize)x(ens_size)
     B = np.linalg.solve(COV,dD)
 
     # Adjust ensemble perturbations
-    # Should be (SimSize+ParSize)x(MeasSize)
-    dAS = (1./float(EnSize-1))*np.dot(dA,S.transpose())
+    # Should be (sim_size+ParSize)x(MeasSize)
+    dAS = (1./float(ens_size-1))*np.dot(dA,S.transpose())
 
     # Compute analysis
-    # Analysis is (SimSize+ParSize)x(EnSize)
+    # Analysis is (sim_size+ParSize)x(ens_size)
     Analysis = A + np.dot(dAS,B)
 
-    # Separate and return Analyzed Ensemble and Analyzed Parameters.
-    AnalysisParam = Analysis[SimSize:,:].transpose()
-    Analysis = Analysis[0:SimSize,:]
+    # Separate and return Analyzed ensemble and Analyzed parameters.
+    Analysisparam = Analysis[sim_size:,:].transpose()
+    Analysis = Analysis[0:sim_size,:]
             
-    return  [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, AnalysisParam]
+    return  [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
 
 
