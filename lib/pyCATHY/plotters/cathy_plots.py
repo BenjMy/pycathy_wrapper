@@ -388,7 +388,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
     filename : TYPE, optional
         DESCRIPTION. The default is None.
     unit : str, optional
-        ['pressure', 'TIME', 'saturation', 'permeability', 'velocity'] . The default is pressure.
+        ['pressure', 'saturation', 'ER', 'permeability', 'velocity'] . The default is pressure.
     timeStep : TYPE, optional
         DESCRIPTION. The default is 0.
     notebook : TYPE, optional
@@ -416,6 +416,10 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
     # Parse physical attribute + cmap from unit
     # -------------------------------------------------------------------------
     if filename is None:
+        
+        
+        # for surface/subsurface hydrology
+        # --------------------------------------------------------------------
         if unit == "pressure":
             if timeStep<10:
                 filename = "10" + str(timeStep) + ".vtk"
@@ -426,12 +430,22 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
 
         elif unit == "saturation":
             if timeStep<10:
-                filename = "cele20" + str(timeStep) + ".vtk"
+                filename = "10" + str(timeStep) + ".vtk"
             else:
-                filename = "cele2" + str(timeStep) + ".vtk"
+                filename = "1" + str(timeStep) + ".vtk"
 
             my_colormap = 'Blues'
 
+
+        # for transport
+        # --------------------------------------------------------------------
+        elif unit == "celerity":
+            raise NotImplementedError('Transport vtk file output not yet implemented')
+
+        
+        
+        # for ERT
+        # --------------------------------------------------------------------
         elif 'ER' in unit:
             filename = "ER_converted" + str(timeStep) + ".vtk"
             my_colormap = 'viridis'
@@ -486,8 +500,6 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
                 
                 if 'clim' in kwargs:
                     plotter.update_scalar_bar_range([kwargs['clim'][0],1])
-
-                    print(kwargs['clim'][0])
             
                 legend_entries = []
                 legend_entries.append(["Time=" + str(mesh["TIME"]), "w"])
@@ -582,25 +594,36 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
     return
 
 
-def show_vtk_TL(
-    filename=None,
-    unit=None,
-    timeStep="All",
-    notebook=False,
-    path=None,
-    savefig=False,
-    show=True,
-    **kwargs,
-):
-    """
-    Short summary.
+def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False, 
+                path=None,savefig=False, show=True,**kwargs):
+    '''
+    Time lapse animation of selected time steps
 
-    Parameters ---------- filename : type Description of parameter `filename`. unit : type
-    Description of parameter `unit`. timeStep : type Description of parameter `timeStep`.
+    Parameters
+    ----------
+    filename : str, optional
+        DESCRIPTION. The default is None.
+    unit : str, optional
+        pressure/saturation/ER. The default is None.
+    timeStep : list, optional
+        DESCRIPTION. The default is "all".
+    notebook : Bool, optional
+        pyvista notebook option. The default is False.
+    path : str, optional
+        path to the dir containing the vtk files. The default is None.
+    savefig : Bool, optional
+        save figure. The default is False.
+    show : Bool, optional
+        show plot. The default is True.
+    **kwargs : TYPE
+        DESCRIPTION.
 
-    Returns ------- type Description of returned object.
+    Returns
+    -------
+    None.
 
-    """
+    '''
+    
 
     x_units = None
     xlabel = "s"
@@ -619,8 +642,8 @@ def show_vtk_TL(
             my_colormap = 'autumn'
         elif unit == "saturation":
             my_colormap = 'Blues'
-            filename = "cele2*.vtk"
-            filename0 = "cele200.vtk"
+            filename = "1*.vtk"
+            filename0 = "100.vtk"
         elif 'ER' in unit:
             filename = "ER" + str(timeStep) + ".vtk"
             my_colormap = 'viridis'
@@ -681,7 +704,10 @@ def show_vtk_TL(
 
         plotter.render()
         plotter.write_frame()
-
+        if unit == "saturation":
+            plotter.update_scalar_bar_range([0,1])
+            
+            
     if savefig == True:
         # gif_original = filename + '.gif'
         # gif_speed_down = filename + 'new.gif'
@@ -736,8 +762,8 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
 
     Parameters
     ----------
-    veg_map : np.array([])
-        Indice of vegetation. The dimension of the vegetation map must match 
+    parameter : np.array([]) or dict
+        The dimension of the vegetation map must match 
         the dimension of the DEM.
     **kwargs : TYPE
         DESCRIPTION.
@@ -748,16 +774,33 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
 
     '''
 
-    fig, ax = plt.subplots()
-    cf = ax.pcolormesh(parameter, edgecolors="black")
-    fig.colorbar(cf, ax=ax, label=label)
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_title('view from top (before extruding)')
-    plt.show(block=False)
-    plt.close()
+    if label=='all':
+        
+        fig, axs = plt.subplots(int(len(parameter.keys())/2),
+                                int(len(parameter.keys())/3),
+                                sharex=True,sharey=True)
+        # fig.set_title('view from top (before extruding)')
 
-    return plt, ax 
+        for ax, p in zip(axs.reshape(-1),parameter.keys()): 
+            cf = ax.pcolormesh(parameter[p], edgecolors="black")
+            fig.colorbar(cf, ax=ax, label=p,fraction=0.046, pad=0.04, shrink=0.8)
+            ax.set_xlabel('x')
+            ax.set_ylabel('y')
+            ax.set_aspect('auto', 'box')
+
+        plt.tight_layout()
+        # plt.show(block=False)
+        
+    else:
+        fig, ax = plt.subplots()
+        cf = ax.pcolormesh(parameter, edgecolors="black")
+        fig.colorbar(cf, ax=ax, label=label)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_title('view from top (before extruding)')
+        # plt.show(block=False)
+
+    return fig, ax 
     
     
 

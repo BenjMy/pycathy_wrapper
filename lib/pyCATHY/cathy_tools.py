@@ -588,6 +588,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name
             # case of Data Assimilation DA
+            
+            
             # ----------------------------------------------------------------
             if self.DAFLAG:
 
@@ -647,19 +649,27 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # p.close()
 
                 os.chdir(os.path.join(self.workdir))
+                
+                
+                # extract and save vtk saturation
+                # ----------------------------------------------------------------
+                # df_sw = self.read_outputs(filename='sw',path=os.path.join(self.workdir, 
+                #                                                           self.project_name, 
+                #                                                           self.output_dirname)
+                #                           )
+                # if len(df_sw)>1:
+                #     for t in range(len(df_sw)):
+                #         self.update_mesh_vtk('saturation',
+                #                              df_sw[t], 
+                #                              meshname='sat'+ str(t))
 
+
+
+            # computation time
+            # ----------------------------------------------------------------
             t1 = time.time()
-            self.total = t1 - t0
-
-                # try:
-                #    subprocess.call([callexe_path, '-ARG'], shell=True)
-                #    subprocess.Popen(["cathyEnv/bin/python"])
-                # except:
-                #    pass
-                # process = subprocess.Popen(callexe.split(), stdout=subprocess.PIPE)
-                # if verbose:
-                #     output, error = process.communicate()
-                # print('timer')
+            self.total_computation_time = t1 - t0
+            
 
         return
 
@@ -885,6 +895,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                          'output'))
             
             shift = len(df_psi)-len(ENS_times)
+            if shift<0:
+                raise ValueError('Error on the simulation:' 
+                                 'nb of times contained in the outputs files is too small;' 
+                                 'Check DELTAT')
             for t in range(len(ENS_times)):
                 self._DA_df(state=df_psi[t+shift,:], 
                             t_ass=t, 
@@ -961,7 +975,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                      )                    
                     
                     # shift between vtkfiles and real assimilation times
-                    # CATHY produce 100.vtk and 101.vtk indentical
+                    # CATHY produce 100.vtk and 101.vtk indentical (??)
                     # ---------------------------------------------------------
                     shift = len(df_sw)-len(ENS_times)
 
@@ -1836,7 +1850,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
     def update_dem_parameters(self, **kwargs):
         '''
-        
+        Update DEM parameters
 
         Parameters
         ----------
@@ -1903,6 +1917,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             "w+",
         ) as dem_parametersfile:
 
+            # Write values first
+            # -----------------------
             counth = 0
             for h in header_fmt:
                 if h == 3:
@@ -1917,12 +1933,15 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     )
                     counth += 3
                 if h == 1:
+                    print(str(list(self.dem_parameters.values())[counth]))
                     dem_parametersfile.write(
                         str(list(self.dem_parameters.values())
                             [counth]) + "\t" + "\n"
                     )
                     counth += 1
 
+           # Write keys 
+           # -----------------------
             counth = 0
             for h in header_fmt:
                 if h == 3:
@@ -2030,7 +2049,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             self.parm = {
                 "IPRT1": 3,  # Flag for output of input and coordinate data
                 "NCOUT": 0,
-                "TRAFLAG": 1,
+                "TRAFLAG": 0, # Flag for transport
                 "ISIMGR": 2,  # Flag for type of simulation and type of surface grid
                 "PONDH_MIN": 0.00,  # Minimum ponding head
                 "VELREC": 0,
@@ -2065,6 +2084,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 "DELTAT": 0.01,
                 "DTMIN": 0.00001,  # Minimum FLOW3D time step size allowed
                 "DTMAX": 10.0,  # Maximum FLOW3D time step size allowed
+                
                 # Time at end of simulation (TMAX is set to 0.0 for steady state problem)
                 "TMAX": 3600.0,
                 "DTMAGA": 0.0,
@@ -2072,8 +2092,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 "DTREDS": 0.0,
                 "DTREDM": 0.5,
                 "IPRT": 4,
-                "VTKF": 1,
+                
+                # What is included into the output vtk file, CATHY default is pressure heads 1; 
+                # to add saturation VTKF>=2
+                "VTKF": 2, 
                 "NPRT": 3,
+                
+                # Output times to record
                 "(TIMPRT(I),I=1,NPRT)": [1800.0, 3600.0, 7200.0],
                 "NUMVP": 1,
                 "(NODVP(I),I=1,NUMVP)": [0],
@@ -2094,18 +2119,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             if kk == "TIMPRTi":
                 key = "(TIMPRT(I),I=1,NPRT)"
 
-                self.parm[key] = value
-
-                # check if consistency between times of interest and
-                # number of times of interest
-                # ------------------------------------------------------------
-                if len(value) != self.parm["NPRT"]:
-                    self.parm["NPRT"] = len(value)                    
-                    
-                # if len(value)>1:
-                #     value =  ' '.join(map(str, value))
-
-
+                self.parm[key] = value      
+                
             # points of interest NODVP
             # ----------------------------------------------------------------
             elif kk == "NODVP":
@@ -2130,16 +2145,37 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         if self.parm["TMAX"] < max(self.parm['(TIMPRT(I),I=1,NPRT)']):
                             self.parm["TMAX"] = max(self.parm['(TIMPRT(I),I=1,NPRT)']) 
                     
-                # check if consistency between DELTAT, DTMIN, and DTMAX
-                # ------------------------------------------------------------
-                if self.parm["DELTAT"] < self.parm["DTMIN"]:
-                   warnings.warn('adjusting DTMIN == DELTAT')
-                   self.parm["DTMIN"] = self.parm["DELTAT"]
-               
-                if self.parm["DELTAT"] > self.parm["DTMAX"]:
-                   warnings.warn('adjusting DTMAX == DELTAT')
-                   self.parm["DTMAX"] = self.parm["DELTAT"]       
+                    
+                    
+                    
+        # check if consistency between times of interest and
+        # number of times of interest
+        # ------------------------------------------------------------
+        if len(self.parm['(TIMPRT(I),I=1,NPRT)']) != self.parm["NPRT"]:
+            warnings.warn('adjusting NPRT with respect to time of interests requested')
+            self.parm["NPRT"] = len(self.parm['(TIMPRT(I),I=1,NPRT)'])     
+                
+        # check if consistency between DELTAT, DTMIN, and DTMAX
+        # ------------------------------------------------------------
+        if (self.parm["DELTAT"] > min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)'])) or
+            self.parm["DELTAT"] > 1e-2*min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))
+            ):
+           warnings.warn('adjusting DELTAT with respect to time of interests requested')
+           self.parm["DELTAT"] = min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))/1e2
+           
+           
+        if self.parm["DELTAT"] < self.parm["DTMIN"]:
+           warnings.warn('adjusting 2*DTMIN == DELTAT: ' + str(self.parm["DTMIN"]))
+           self.parm["DTMIN"] = self.parm["DELTAT"]/2
+       
+        if self.parm["DELTAT"] >= self.parm["DTMAX"]:
+           warnings.warn('adjusting DTMAX == 2*DELTAT')
+           self.parm["DTMAX"] = 2*self.parm["DELTAT"]   
                         
+                    
+                    
+                    
+                    
                     
 
         # transform array args to list
@@ -2519,10 +2555,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # self.update_nansfneubc()
         # self.update_sfbc()
         
-        self.search_mesh_bounds(self.grid3d['nodes_idxyz'])
-        plt_CT.plot_mesh_bounds(self.mesh_bound_cond_df)
-        
-        self.create_mesh_vtk()
+        try:
+            self.search_mesh_bounds(self.grid3d['nodes_idxyz'])
+            plt_CT.plot_mesh_bounds(self.mesh_bound_cond_df)
+            self.create_mesh_vtk()
+        except:
+            pass
         
         pass
         
@@ -2615,19 +2653,21 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 self.update_parm()
                 self.update_cathyH()
                 
-                bool_Dirichlet = []
-                bool_Dirichlet_val = []                
-                for id_node in self.mesh_bound_cond_df['id_node']:
-                    if self.mesh_bound_cond_df['bound'].loc[int(id_node-1)] == True:
-                        bool_Dirichlet.append('Dirichlet')
-                        bool_Dirichlet_val.append(1)
-                    else:
-                        bool_Dirichlet.append('Neumann')
-                        bool_Dirichlet_val.append(0)
-
-                self.update_mesh_bounds(bound_type='bound_type',
-                                        bound_bool=bool_Dirichlet)
-                self.update_mesh_vtk('bound_type',bool_Dirichlet_val)
+                
+                if hasattr(self,'mesh_bound_cond_df'):
+                    bool_Dirichlet = []
+                    bool_Dirichlet_val = []                
+                    for id_node in self.mesh_bound_cond_df['id_node']:
+                        if self.mesh_bound_cond_df['bound'].loc[int(id_node-1)] == True:
+                            bool_Dirichlet.append('Dirichlet')
+                            bool_Dirichlet_val.append(1)
+                        else:
+                            bool_Dirichlet.append('Neumann')
+                            bool_Dirichlet_val.append(0)
+    
+                    self.update_mesh_bounds(bound_type='bound_type',
+                                            bound_bool=bool_Dirichlet)
+                    self.update_mesh_vtk('bound_type',bool_Dirichlet_val)
                 
                 # len(bool_Dirichlet)
                 # len(self.mesh_bound_cond_df['id_node'])
@@ -2887,7 +2927,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         
 
-    def update_mesh_vtk(self, prop='', prop_value=[], savevtk=True):
+    def update_mesh_vtk(self, prop='', prop_value=[], savevtk=True, **kwargs):
         '''
         https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data
 
@@ -2904,12 +2944,16 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         '''
         
+        meshname = self.project_name
+        if 'meshname' in kwargs:
+            meshname = kwargs['meshname']
+        
         self.mesh_pv_attributes.add_field_data(prop_value, prop)
         self.mesh_pv_attributes.save(os.path.join(self.workdir, 
                                self.project_name, 
                                'vtk/',
-                               self.project_name +
-                               '.vtk'))
+                               meshname +
+                               '.vtk'), binary=False)
         
         pass
             
@@ -3053,13 +3097,23 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         self.soil_FP = {}
         self.soil_FP['FP'] = FeddesParam
         self.soil_FP['FP_map'] = FP # mapping with respect to zones
-
+        
+        if show:
+            
+            update_map_veg = self.map_prop_veg(FP)
+            fig, ax = plt_CT.dem_plot_2d_top(update_map_veg,
+                                              label='all')
+            fig.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
+            
         # write soil file
         # --------------------------------------------------------------------
         self._write_SOIL_file(SoilPhysProp, FeddesParam)
         
-        if show:
-            raise NotImplementedError('show for soil not yet implemented')
+        # if show:
+        #     plt.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
+        #     plt.close()  
+            
+        #     raise NotImplementedError('show for soil not yet implemented')
             
         #     SPP_zones = self.map_prop2zone(SPP,prop=show)
         #     plt, ax = plt_CT.dem_plot_2d_top(SPP_zones,
@@ -3214,14 +3268,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # loop over strates
             # -----------------------------------------------------------------
             for istr in range(self.dem_parameters["nstr"]):
-                    
+                izoneSoil = np.zeros([self.dem_parameters["nzone"], 8])
+    
                 #  loop over zones (defined in the zone file)
                 # --------------------------------------------------------------
-                for izone in range(self.dem_parameters["nzone"]):
-                    izoneSoil = np.zeros([self.dem_parameters["nstr"], 8])
-                   
+                for izone in range(self.dem_parameters["nzone"]):                  
                     for i, spp in enumerate(SPP):
-                        izoneSoil[:,i] = np.ones(self.dem_parameters["nstr"])*SPP[spp][izone]
+                        izoneSoil[izone,i] = SPP[spp][izone]
                         
                 SoilPhysProp.append(izoneSoil)
             SoilPhysProp = np.vstack(SoilPhysProp)
@@ -3783,6 +3836,28 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                  verbose = False,
                                  **kwargs):
         '''
+        Translate (map) the state values (pressure head or saturation) to observations (or predicted) values
+        
+        
+        In other words: apply H mapping operator to convert model to predicted value Hx
+        
+        In practice, for each assimilation time, loop over the observation 
+        dictionnary and infer observation type. Stack Hx.
+        Hx = [Hx0,Hx1,Hx_nb_of_observation]
+        
+        .. note:
+        
+            - For ERT data, H is Archie law, SWC --> ER0 --> ERapp
+            - For SWC data, H is a multiplicator (porosity)
+            - For tensiometer data, no mapping needed 
+            - For discharge, no mapping needed
+
+        .. note:
+        
+            - For ERT data each ERT mesh node is an observation
+
+        THIS SHOULD BE MOVED TO DA CLASS
+
         Parameters
         ----------
         state : np.array([])
@@ -3795,24 +3870,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             DESCRIPTION. The default is False.
         **kwargs : TYPE
             DESCRIPTION.
-            
-            
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Apply H mapping operator: convert model to predicted value
-        
-        
-        .. note:
-        
-            - For ERT data, H is Archie law, SWC --> ER0 --> ERapp
-            - For SWC data, no mapping needed (only calibration)
-            - For tensiometer data, no mapping needed 
-            - For discharge, no mapping needed
 
         Returns
         -------
         Hx : np.array
-            Ensemble of the simulated observations.
+            Ensemble of the simulated (predicted) observations.
         '''
         
 
@@ -4968,6 +5030,26 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         
         pass
 
+
+    def map_prop_veg(self,dict_props):
+               
+        if hasattr(self,'veg_map')==False:
+            warnings.warn('no known existing vegetation map.')
+            pass
+        
+        else:
+            map_veg_dict = {}
+            update_map_veg = {}
+          
+            for d in dict_props.keys():
+                map_veg = np.zeros(np.shape(self.veg_map))
+                for i, value in enumerate(dict_props[d]):
+                    map_veg[self.veg_map == i+1]=value
+                update_map_veg[d] = map_veg
+            
+            return update_map_veg
+        
+        
     def map_prop2zone(self,dict_props, prop):
                
         if hasattr(self,'zone_xyz')==False:
@@ -5089,7 +5171,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     # %% utils
     # -------------------------------------------------------------------#
 
-    def find_nearest_node(self, node_coords):
+    def find_nearest_node(self, node_coords, grid3d=[]):
         '''
         Find nearest mesh node
 
@@ -5111,27 +5193,28 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if np.array(node_coords).ndim <= 1:
             node_coords=[node_coords]
 
-        self.grid3d=in_CT.read_grid3d(self.project_name)
+        if len(grid3d)==0:
+            grid3d=in_CT.read_grid3d(self.project_name)
+ 
 
         closest_idx=[]
         closest=[]
+        
         for i, nc in enumerate(node_coords):
             # euclidean distance
-            d=((self.grid3d['nodes_idxyz'][:, 1] - nc[0]) ** 2 +
-                   (self.grid3d['nodes_idxyz'][:, 2] - nc[1]) ** 2 +
-                   (self.grid3d['nodes_idxyz'][:, 3] - nc[2]) ** 2
+            d=((grid3d['nodes_idxyz'][:, 1] - nc[0]) ** 2 +
+                   (grid3d['nodes_idxyz'][:, 2] - nc[1]) ** 2 +
+                   (abs(grid3d['nodes_idxyz'][:, 3]) - abs(nc[2])) ** 2
                    ) ** 0.5
 
-            min(self.grid3d['mesh3d_nodes'][:, 2])
-            min(self.grid3d['mesh3d_nodes'][:, 1])
             closest_idx.append(np.argmin(d))
-            closest.append(self.grid3d['nodes_idxyz'][closest_idx[i], 1:])
+            closest.append(grid3d['nodes_idxyz'][closest_idx[i], 1:])
 
-            threshold=1e-1
+            threshold=5e-1
             if d[np.argmin(d)] > threshold:
                 self.console.print('no node close to the required points')
                 print(d[np.argmin(d)])
-                print(self.grid3d['nodes_idxyz'][closest_idx[i], 1:])
+                print(grid3d['nodes_idxyz'][closest_idx[i], 1:])
                 print(nc)
 
         return closest_idx, closest
