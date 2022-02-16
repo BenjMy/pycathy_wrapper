@@ -31,7 +31,8 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
         pressure head at each nodes.
     prediction : np.array([])
         predicted observation (after mapping).
-
+    rejected_ens : list
+        list of ensemble to reject
     Returns
     -------
     A : TYPE
@@ -70,7 +71,8 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
                                               data_cov, 
                                               param, 
                                               ensembleX, 
-                                              prediction)
+                                              prediction
+                                              )
                                               
         return [A, Amean, dA, 
          dD, MeasAvg, S, 
@@ -222,23 +224,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 parm_per_array = parm_mat+parm_sampling
      
             
-            if show == True:
-                
-                fig = plt.figure(figsize=(6, 3), dpi=150)
-                plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
-                plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
-                plt.legend(loc='upper right')
-                plt.xlabel(parm[type_parm + '_units'])
-                plt.ylabel('Probability')
-                plt.title('Histogram of ' + type_parm)
-                plt.axvline(x=parm[type_parm+'_nominal'],linestyle='--', color='red')
-                plt.show(block=False)
-                
-                if 'savefig' in kwargs:
-                    fig.savefig(os.path.join(os.getcwd(),
-                                             kwargs['savefig']),
-                                dpi=350
-                                )
+
 
         key = 'ini_perturbation'
         var_per[type_parm][key] = parm_per_array
@@ -264,13 +250,40 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             nb_surf_nodes = kwargs['surf_param']
             parm_per_array = np.tile(parm_per_array,nb_surf_nodes)
             var_per[type_parm]['surf_param'] = kwargs['surf_param']
-
-        
-
     
         self._add_to_perturbated_dict(var_per)
         
-        
+
+        if show == True:
+            
+            fig = plt.figure(figsize=(6, 3), dpi=150)
+            
+            if var_per[type_parm]['transf_type'] is not None:
+                if 'log'.casefold() in var_per[type_parm]['transf_type'].casefold():
+                    plt.hist(np.log10(parm_sampling), ensemble_size, alpha=0.5, label='sampling')
+                    plt.hist(np.log10(parm_per_array), ensemble_size, alpha=0.5, label='ini_perturbation')
+                    plt.axvline(x=np.log10(parm[type_parm+'_nominal']),linestyle='--', color='red')
+            else:
+                plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
+                plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
+                plt.axvline(x=parm[type_parm+'_nominal'],linestyle='--', color='red')
+
+            plt.legend(loc='upper right')
+            plt.xlabel(parm[type_parm + '_units'])
+            plt.ylabel('Probability')
+            plt.title('Histogram of ' + type_parm)
+            
+
+                
+            plt.show(block=False)
+            
+            
+            if 'savefig' in kwargs:
+                fig.savefig(os.path.join(os.getcwd(),
+                                         kwargs['savefig']),
+                            dpi=350
+                            )
+                
         
         return self.var_per_list 
     

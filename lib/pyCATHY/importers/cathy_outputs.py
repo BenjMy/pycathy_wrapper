@@ -331,58 +331,37 @@ def read_hgsfdet(filename):
 
     return df_hgsfdet  
 
+
+def read_mbeconv(filename):
+    '''
+    Mass balance and convergence behaviour at each time step 
+    (REL. MBE (%) should be as small as possible)
+
+    Returns
+    -------
+    None.
+
+    '''
+    mbeconv_file = open(filename, "r")
+    lines = mbeconv_file.readlines()
+    mbeconv_file.close()
+    nstep = len(lines)-2
+    mbeconv_file = open(filename, "r")
+    mbeconv = np.loadtxt(mbeconv_file, skiprows=2, usecols=range(19))
+    mbeconv_file.close()
     
-
-#%% READ PSI
-
-# filename = '/home/ben/Documents/CATHY/pyCATHY/weil_exemple_withDA/test_withVp/output/psi'
-# psi_file = open(filename, "r")
-# lines = psi_file.readlines()
-# psi_file.close()
-
-# # nstep = len(lines)-2
-
-# idx=[]
-# step_i = []
-# time_i = []
-
-# # loop over lines of file and identified NSTEP and SURFACE NODE line nb
-# # ------------------------------------------------------------------------
-# for i, ll in enumerate(lines):
-#     if 'TIME' in ll:
-#         idx.append(i)
-#         splt= ll.split()
-#         step_i.append(splt[0])
-#         time_i.append(splt[1])
-# idx.append(i+1) 
-
-# psi_sub  = []
-# for j, ind in enumerate(idx):
-#     for i, ll in enumerate(lines):
-#         if i>idx[j] and i<idx[j+1]:
-#             splt= ll.split()
-#             psi_sub.append([float(k) for k in splt])
-
-# psi_sub = np.hstack(psi_sub)
-# d_psi_t = np.reshape(psi_sub,[len(idx)-1,
-#                               int(np.shape(psi_sub)[0]/(len(idx)-1))]
-#                      )
-
-
-# np.shape(d_psi_t)
-
-
-# d_psi_t = []
-# for i, ind in enumerate(idx):
-#     psi_file = open(filename, "r")
-#     psi_sub = np.loadtxt(psi_file, skiprows=idx[i]+1,max_rows=idx[1]-2)
-#     psi_sub = np.reshape(psi_sub,[1,np.shape(psi_sub)[0]*np.shape(psi_sub)[1]])
-#     # psi
-#     psi_sub.append(np.loadtxt(psi_file, 
-#                               skiprows=idx[i]+1+idx[1]-2,
-#                               max_rows=1))
-#     d_psi_t.append(psi_sub)
-#     psi_file.close()
-
-# d_psi_t = np.vstack(d_psi_t)
-# np.shape(psi_sub)
+    # hgraph collumns information
+    # -------------------------------------------------------------------------
+    cols_mbeconv = ['NSTEP','DELTAT','TIME','NLIN', 'AVG.LIN','STORE1','STORE2',
+                    'DSTORE','CUM.DSTORE','VIN','CUM. VIN','VOUT',
+                    'CUM.VOUT','VIN+VOUT','CUM. VIN','M.BAL.ERR','REL. MBE','CUM. MBE', 'CUM.'
+                    ]  
+    # transform a numpy array into panda df
+    # ------------------------------------------------------------------------
+    df_mbeconv = pd.DataFrame(mbeconv,columns=cols_mbeconv)
+    
+    # plt.plot(df_mbeconv['TIME'],df_mbeconv['CUM. MBE'])
+    # plt.xlabel('Time (hours)')
+    # plt.ylabel('Relative mass balance error (%)')
+    
+    return df_mbeconv 

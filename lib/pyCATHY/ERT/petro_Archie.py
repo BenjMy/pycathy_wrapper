@@ -12,8 +12,7 @@ from pyCATHY.ERT import simulate_ERT as simuERT
 import pandas as pd
 from pyCATHY.importers import cathy_outputs as out_CT
 
-def SW_2_ERa(
-             project_name,
+def SW_2_ERa(project_name,
              porosity,
              pathERT, meshERT, elecs, sequenceERT,
              path_fwd_CATHY,
@@ -24,8 +23,6 @@ def SW_2_ERa(
     Parameters
     ----------
 
-    path_fwd_CATHY : str
-        DESCRIPTION.
     project_name : str
         DESCRIPTION.
     porosity : np.array([])
@@ -38,6 +35,8 @@ def SW_2_ERa(
         electrode positions.
     sequenceERT : TYPE
         ERT sequence.
+    path_fwd_CATHY: list
+        Use for // simulations
     **kwargs : 
         df_sw : pd df
             saturation mesh values to convert
@@ -57,18 +56,13 @@ def SW_2_ERa(
         
     # Some flag for DA assimilation
     # ------------------------------------------------------------------------
-    DA_cnb = []
+    DA_cnb = None
     if 'DA_cnb' in kwargs:
         DA_cnb = kwargs['DA_cnb']
         
-    Ens_nb = []
+    Ens_nb = None
     if 'Ens_nb' in kwargs:
         Ens_nb = kwargs['Ens_nb']
-        
-    mesh_time_key = []
-    if 'mesh_time_key' in kwargs:
-        mesh_time_key = kwargs['mesh_time_key']
-        
         
     data_format = []
     if 'data_format' in kwargs:
@@ -80,6 +74,7 @@ def SW_2_ERa(
         savefig = kwargs['savefig']
         
         
+
         
         
     # Get the state vector from kwargs if existing otherwise read output
@@ -103,55 +98,26 @@ def SW_2_ERa(
             # (in case the sw file contains intermediate times for plotting observations)
 
 
-        
-
-
-
-
-
-    print('---------------------------------------------------')
-
-    print('os.path.join(path_fwd_CATHY/output/sw')
-    print(os.path.join(path_fwd_CATHY,'output/sw'))
-
-    print('DA_cnb')
-    print(DA_cnb)
-    
-    print('savefig')
-    print(savefig)
-    
-    print('df_sw')
-    print(df_sw)
-    
-        
-    print('np.shape(df_sw)')
-    print(np.shape(df_sw))
-    
-    
-    print('df_sw[-1,:]')
-    print(df_sw[-1])
-    print('---------------------------------------------------')
 
     
         
     path_CATHY = os.path.join(path_fwd_CATHY,'vtk/')
+    # print(os.getcwd())
+    print(path_fwd_CATHY)
+    # print(path_CATHY)
+    print('*************')
 
+        
 
-    if mesh_time_key:
-        
-        if mesh_time_key<10:
-            name_mesh= 'cele20' + str(mesh_time_key) + '.vtk'
-        else:
-            name_mesh= 'cele2' + str(mesh_time_key) + '.vtk'
-            
-        mesh_CATHY_ref = pv.read(path_CATHY + name_mesh)       
-        name_mesh_backup = name_mesh + 'backup_t_ass'  + str(DA_cnb) +'.vtk'
-        
+    if DA_cnb is not None:
+        mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, 'vtk/100.vtk'))
+        # name_mesh_backup = '100_backup_t_ass'  + str(DA_cnb) +'.vtk'
     else:
-        mesh_CATHY_ref = pv.read(os.path.join(path_CATHY + 'cele200.vtk'))
-        name_mesh_backup = 'cele200_backup_t_ass'  + str(DA_cnb) +'.vtk'
+        mesh_CATHY_ref = pv.read(os.path.join('vtk/100.vtk'))
     
-    mesh_CATHY_ref.save(path_CATHY + name_mesh_backup)
+    
+    
+    # mesh_CATHY_ref.save(path_fwd_CATHY + name_mesh_backup)
 
     #sw2convert = mesh_CATHY['saturation']
     ER_converted_ti = Archie_rho(rFluid=1, 
@@ -171,7 +137,7 @@ def SW_2_ERa(
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(ER_converted_ti,
                                                                 mesh_CATHY_ref,
                                                                 'ER_converted' + str(DA_cnb),
-                                                                overwrite=True, 
+                                                                overwrite=True,
                                                                 path = path_CATHY)
 
     
@@ -180,7 +146,7 @@ def SW_2_ERa(
         # copy attribute to simpeg mesh
         # ------------------------------------------------------------------------
         mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
-                       show=False, path= os.path.join(path_fwd_CATHY, 'vtk/'))
+                       show=False,path= path_CATHY)
     
     
         # fwd ERT data
@@ -214,7 +180,7 @@ def SW_2_ERa(
         # copy attribute to resipy mesh
         # ------------------------------------------------------------------------
         mesh_geophy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
-                       show=False, path= os.path.join(path_fwd_CATHY, 'vtk/'))
+                       show=False, path= path_CATHY)
 
         # fwd ERT data
         # ------------------------------------------------------------------------
@@ -259,11 +225,11 @@ def SW_2_ERa(
     if savefig is True:
         
         
-        fig = plt.figure()
+        # fig = plt.figure()
         
-        plt.scatter(np.arange(0,len(df_sw)), df_sw)
-        plotname ='suplot'+ str(DA_cnb)
-        plt.savefig(path_CATHY + plotname + '.png', dpi=300)
+        # plt.scatter(np.arange(0,len(df_sw)), df_sw)
+        # plotname ='suplot'+ str(DA_cnb)
+        # plt.savefig(path_CATHY + plotname + '.png', dpi=300)
                 
         # plotter0 = pv.Plotter(shape=(1, 1),off_screen=True) # notebook = True
         # plotter0.subplot(0, 0)
@@ -310,6 +276,10 @@ def SW_2_ERa(
 
         plotname ='suplot_ER'+ str(DA_cnb)
 
+        # plotter.save_graphic(plotname + str('.svg'), 
+        #                     title='', 
+        #                     raster=True, 
+        #                     painter=True)   
         
         plotter.save_graphic(path_CATHY + plotname + str('.svg'), 
                             title='', 

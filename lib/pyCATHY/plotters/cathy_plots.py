@@ -328,9 +328,11 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         plt.step(t_atmbc, v_atmbc, color="green", where="post", label="Diff",marker='.')
         plt.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
         plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
+        
     ax.legend()
     # ax.set_yscale('symlog')
-    
+    plt.show(block=False)
+
     # if 'datetime' in kwargs:
     #     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
     #     ax.xaxis.set_minor_locator(mdates.MonthLocator())
@@ -741,9 +743,13 @@ def indice_veg_plot(veg_map, **kwargs):
     '''
 
     # colors =  plt.cm.Vega20c( (4./3*np.arange(20*3/4)).astype(int) )
+    
+    cmap='tab10'
+    if 'cmap' in kwargs: 
+        cmap = kwargs['cmap']
 
     fig, ax = plt.subplots()
-    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap='tab10')
+    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap=cmap)
     fig.colorbar(cf, ax=ax, label='indice of vegetation')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
@@ -782,14 +788,14 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
         # fig.set_title('view from top (before extruding)')
 
         for ax, p in zip(axs.reshape(-1),parameter.keys()): 
-            cf = ax.pcolormesh(parameter[p], edgecolors="black")
+            cf = ax.pcolormesh(parameter[p]) # edgecolors="black"
             fig.colorbar(cf, ax=ax, label=p,fraction=0.046, pad=0.04, shrink=0.8)
             ax.set_xlabel('x')
             ax.set_ylabel('y')
             ax.set_aspect('auto', 'box')
 
         plt.tight_layout()
-        # plt.show(block=False)
+        plt.show(block=False)
         
     else:
         fig, ax = plt.subplots()
@@ -798,7 +804,7 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_title('view from top (before extruding)')
-        # plt.show(block=False)
+        plt.show(block=False)
 
     return fig, ax 
     
@@ -949,133 +955,26 @@ def plot_mesh_bounds(mesh_bound_cond_df):
     ax.set_ylabel('Y Label')
     ax.set_zlabel('Z Label')
     
-    plt.show()                    
+    plt.show(block=False)
+          
 
     return fig, ax
+   
 
-
-# def mesh3d():
-
-
-#     % MESH3D creates a 3D representation of the 3D grid
-#     close all
-#     clear all
-#     load cape
-
-#     fgrid = fopen('/Users/campo/Work/papers/transcathy-num-diff/cathy/bea/output/grid3d','r');
-#     TETRA=[];
-#     NODES=[];
-#     NNOD=0;
-#     N=0;
-#     NT=0;
-
-#     A = fscanf(fgrid,'%u %u %u',3);
-#     NNOD = A(1);
-#     N = A(2);
-#     NT = A(3);
-#     TETRA = fscanf(fgrid,'%u',[5,NT]); % Read data
-#     TETRA = TETRA';
-#     TETRA = TETRA(:,1:4);
-#     NODES = fscanf(fgrid,'%g',[3,N]);
-#     NODES = NODES';
-#     % tetramesh(TETRA,NODES);%,'CData',NODES(:,3));
-#     % % colormap(map)
-#     % axis image;
-#     % set(gca,'FontSize',14)
-#     % xlabel('Easting (m)')
-#     % ylabel('Northing (m)')
-#     % zlabel('Elevation (m)')
-#     clear S
-
-#     S.Vertices = NODES;
-#     S.Faces = TETRA;
-#     S.FaceVertexCData = NODES(:,3);
-#     S.FaceColor = 'interp';
-#     % S.FaceAlpha = 0.5;
-#     % S.LineStyle = ':';
-#     S.LineWidth = 0.25;
-#     % S.EdgeColor = 'red';
-#     % S.LineWidth = 2;
-#     figure
-#     patch(S)
-#     axis image
-#     view(3)
-#     set(gca,'FontSize',14);
-#     xlabel('Easting (m)');
-#     ylabel('Northing (m)');
-#     zlabel('Elevation (m)');
-#     % colormap(map);
-#     colorbar;
-
-# return 
-
-
-
-# def dtcoupling(self):
-#     """
-#     processes the file dtcoupling and compares potential and actuale.
-
-#     Returns ------- type Description of returned object.
-
-#     """
-#     dtcoupling_file = open(os.path.join(self.workdir ,'output' ,'dtcoupling'), 'r')
-#     Lines = dtcoupling_file.readlines()
-#     count = len(Lines)
-#     dtcoupling_file.close()
-    
-#     # Using readline()
-#     dtcoupling_file = open(os.path.join(workdir ,'output' ,'dtcoupling'), 'r')
-#     nstep = count-31 # Number of timesteps
-#     # DT = np.(file,'%g',[22,nstep]); % Read data
-#     DT = np.loadtxt(dtcoupling_file,skiprows=22,max_rows=22+nstep)
-#     dtcoupling_file.close()
-    
-#     DT[-1]
-    
-#     fig, axs = plt.subplots(3, 2)
-    
-#     axs[0,0].plot(DT[:,2],DT[:,8],'k:')
-#     axs[0,0].set(xlabel='Time (h)', ylabel='Pot. & act. atm. fluxes (m^3/h)')
-#     # axs[0,0].set_xlim([0,max(time)])
-#     # axs[0,0].set_ylim([1000*(min(min(DT(:,11),DT(:,15)))),0])
-#     axs[0,0].plot(DT[:,2],DT[:,13],'k-')
-#     axs[0,0].legend(['Potential','Actual'])
-    
-#     axs[1,0].plot(DT[:,2],DT[:,16],'k:')
-#     axs[1,0].plot(DT[:,2],DT[:,17],'k--')
-#     axs[1,0].plot(DT[:,2],DT[:,18],'k-.')
-#     axs[1,0].plot(DT[:,2],DT[:,19],'k-')
-#     axs[1,0].set(xlabel='Time (h)', ylabel='Surface saturation fractions')
-#     axs[1,0].legend(['Horton','Dunne','Ponded','Saturated'])
-    
-#     axs[2,0].plot(DT[:,2],DT[:,6],'k-')
-#     axs[2,0].plot(DT[:,2],DT[:,7],'k-')
-#     axs[2,0].set(xlabel='Time (h)', ylabel='Surface routing time steps')
-#     axs[2,0].legend(['No backstep','Backstep'])
-    
-#     axs[0,1].plot(DT[:,2],DT[:,21]/DT[:,20],'k-')
-#     # axs[1,0].plot(DT[:,2],DT[:,21],'k-')
-#     axs[0,1].set(xlabel='Time (h)', ylabel='Surface/subsurface CPU')
-    
-#     axs[1,1].plot(DT[:,2],DT[:,1],'k-')
-#     # axs[1,0].plot(DT[:,2],DT[:,21],'k-')
-#     axs[1,1].set(xlabel='Time (h)', ylabel='Subsurface step size (h)')
-    
-#     axs[2,1].plot(DT[:,2],DT[:,4],'k-')
-#     axs[2,1].plot(DT[:,2],DT[:,5],'k:')
-#     axs[2,1].legend(['No backstep','Backstep'])
-#     axs[2,1].set(xlabel='Time (h)', ylabel='Nonlinear iterations')
-
-
-
-#     return
+# -----------------------------------------------------------------------------
+# -----------------Plot results DATA ASSIMILATION------------------------------
+# -----------------------------------------------------------------------------
 
 
 def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis, 
                        savefig=False,**kwargs):
     
 
-    fig = plt.figure(figsize=(8, 6), dpi=300)
+    label_sensor = 'raw data'
+    if 'label_sensor' in kwargs:
+        label_sensor = kwargs['label_sensor']
+        
+    fig = plt.figure(figsize=(12, 6), dpi=300)
     ax1 = fig.add_subplot(2,5,1)
     cax = ax1.matshow(EnsembleX, aspect='auto') #,
           #cmap=cm.rainbow, norm=colors.LogNorm())
@@ -1097,7 +996,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     ax = fig.add_subplot(2,5,2)
     cax = ax.matshow(np.tile(Data,(np.shape(EnsembleX)[1],1)).T, 
                       aspect='auto')
-    ax.set_title('App. Res')
+    ax.set_title(label_sensor)
     ax.set_ylabel('Meas')
     ax.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
@@ -1157,15 +1056,44 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
         
     if savefig==True:
     
-        plt.savefig(savename +'.png', dpi=300)
+        fig.savefig(savename +'.png', dpi=300)
 
     plt.close()
 
     return fig, ax
+
+def DA_plot_parm_dynamic(parm = 'ks', 
+                         dict_parm_pert={}, 
+                         nb_of_assimilation_times = [],
+                         savefig=False, 
+                         **kwargs):
+    
+    ensemble_size = len(dict_parm_pert[parm]['ini_perturbation'])
+    # nb_times = len(df_DA['time'].unique())
+
+    fig = plt.figure(figsize=(6, 3), dpi=150)
+    ax = fig.add_subplot()
+    ax.hist(dict_parm_pert[parm]['sampling'],
+              ensemble_size, alpha=0.5, label='sampling')
+    ax.hist(dict_parm_pert[parm]['ini_perturbation'],
+              ensemble_size, alpha=0.5, label='ini_perturbation')
+    plt.legend(loc='upper right')
+    plt.ylabel('Probability')
+    # plt.axvline(x=dict_parm_pert[parm]['ZROOT_nominal'],linestyle='--', color='red')
+
+    for nt in range(nb_of_assimilation_times):
+        try:
+            ax.hist(dict_parm_pert[parm]['update_nb'+str(nt+1)],
+                      ensemble_size, alpha=0.5, label='update nb' + str(nt+1))
+        except:
+            pass
+        plt.legend(loc='upper right')
+        plt.ylabel('Probability')
+    plt.show()
+
     
 
-
-def DA_plot_time_dynamic(nodes_of_interest, DA, savefig=False, **kwargs):
+def DA_plot_time_dynamic(DA, nodes_of_interest=0, savefig=False, **kwargs):
         
     isOL = DA.loc[DA['OL']==True]
     
@@ -1175,8 +1103,8 @@ def DA_plot_time_dynamic(nodes_of_interest, DA, savefig=False, **kwargs):
     isOL_time_Ens = isOL.set_index(['time','Ensemble_nb'])
     
     
-    nodes_of_interest = [0]
-    print(nodes_of_interest)
+    # nodes_of_interest = [0]
+    # print(nodes_of_interest)
     # take nodes of interests
     
     NENS = int(max(DA['Ensemble_nb'].unique()))
