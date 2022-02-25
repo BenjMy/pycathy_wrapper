@@ -9,6 +9,20 @@ Created on Wed Jul 28 18:03:04 2021
 import os 
 import numpy as np
 import pyvista as pv
+import pygimli as pg
+import pygimli.meshtools as mt
+
+
+def trace_mesh_pg(meshIN,meshOUT,method='spline', **kwargs):
+    
+    # Specify interpolation method 'linear, 'spline', 'harmonic'
+    meshIN = pg.load(meshIN)
+    meshOUT = pg.load(meshOUT)
+
+    out_data = pg.interpolate(meshIN['ER_converted_CATHYmsh*'], meshOUT, method=method)
+    
+    return out_data
+    
 
 def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     '''
@@ -29,48 +43,52 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         DESCRIPTION.
     '''
     
-    # print('mean(meshIN.get_array(scalar))')
+    print(np.mean(meshIN.get_array(scalar)))
     # print(np.mean(meshIN.get_array(scalar)))
 
     in_nodes_mod = np.array(meshIN.points)
     if 'in_nodes_mod' in kwargs:
         in_nodes_mod = kwargs['in_nodes_mod']
 
-    out_data = []
-    closest_idx = []
-    # for pos in meshOUT.points:
-        
-        # closest_idx, closest = find_nearest_nodes(pos,in_nodes_mod,
-        #                                              threshold)
+    # out_data = []
+    # closest_idx = []
 
-    # print(meshOUT)
-    if type(meshOUT) is str:
-        # print('read vtk file using pv')
-        meshOUT = pv.read(meshOUT)
-    # print('lenScalar' + str(len(meshIN.get_array(scalar))))
-    # print('meshIN')
-    # print(meshIN)
-    # print('meshOUT')
-    # print(meshOUT)
+    # if type(meshOUT) is str:
+    #     meshOUT = pv.read(meshOUT)
 
-    cellOUT_centers = meshOUT.cell_centers()
 
-    for pos in cellOUT_centers.points:
+    # cellOUT_centers = meshOUT.cell_centers()
 
-        closest_idx, closest = find_nearest_node(pos,in_nodes_mod,
-                                                     threshold)
+    # for pos in cellOUT_centers.points:
 
-        if 'nan' in closest:
-            out_data.append('nan')
-        else:
-            # print(scalar)
-            # print(closest_idx)
-            # print(meshIN.active_scalars)
-            # get_array(mesh, name, preference='cell'
-            out_data.append(meshIN.active_scalars[closest_idx])
+    #     closest_idx, closest = find_nearest_node(pos,in_nodes_mod,
+    #                                                   threshold)
+
+    #     if 'nan' in closest:
+    #         out_data.append('nan')
+    #     else:
+    #         out_data.append(meshIN.active_scalars[closest_idx])
     
-    out_data = np.hstack(out_data)
+    # out_data = np.hstack(out_data)
+    # len(out_data)   
+    
+    print(meshIN.active_scalars_info)
+    
+    meshIN.set_active_scalars(scalar)
+    
+    meshIN.points = in_nodes_mod
+    
+    rd= min([abs(min(np.diff(meshIN.points[:,0]))),
+         abs(min(np.diff(meshIN.points[:,1]))),
+         abs(min(np.diff(meshIN.points[:,2])))
+         ]
+        )
 
+    result = meshOUT.interpolate(meshIN, radius=rd*25, sharpness=0.01, pass_point_data=True)
+    result = result.point_data_to_cell_data()
+    out_data = result[scalar]
+
+    # result.save('test.vtk',binary=False)
     
     return out_data
     
@@ -161,7 +179,7 @@ def find_nearest_node(node_coord,meshIN_nodes_coords,threshold=1e-1,
 
 
 def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True, 
-                        savefig=True, **kwargs):
+                        saveMesh=True, **kwargs):
     '''
     add a new mesh attribute to a vtk file
 
@@ -187,15 +205,7 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
     if type(mesh) is str:
         mesh = pv.read(mesh)
     
-    # print(mesh)
-    # print(name)
-    
-    # print(len(data))
-    
-    # if 
 
-    # mesh.add_field_data(data, name)
-    
     try:
         mesh.point_data[name] = data
     except:
@@ -203,23 +213,17 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
 
     meshname = name + '.vtk'
     
-    if savefig:
+    if saveMesh:
         path = os.getcwd()
         if 'path' in kwargs:
             path = kwargs['path']
-    
-        # print('meshpath=' + path)
-        
+           
         if 'time' in kwargs:
             time = kwargs['time']
-            meshname = name  + str(time) +'.vtk'
-        # if 'DAcount' in kwargs:
-        #     DAcount = kwargs['DAcount']
-        #     meshname = name  + str(time) +'.vtk'      
-            
-            mesh.save(path + meshname)
+            meshname = name  + str(time) +'.vtk' 
+            mesh.save(path + meshname, binary=False)
         else:
-            mesh.save(path + name + '.vtk')
+            mesh.save(path + meshname, binary=False)
                     
         # if overwrite==True:
         #     mesh.save(full_path)

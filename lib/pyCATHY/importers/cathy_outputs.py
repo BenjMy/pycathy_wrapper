@@ -253,24 +253,13 @@ def read_psi(filename):
     None.
 
     '''
-
-    print(filename)
-
     psi_file = open(filename, "r")
     lines = psi_file.readlines()
     psi_file.close()
-    
-    # nstep = len(lines)-2
-    
-    import os
-    print(os.getcwd())
-    
     idx=[]
     step_i = []
     time_i = []
-    
-  
-    
+   
     # loop over lines of file and identified NSTEP and SURFACE NODE line nb
     # ------------------------------------------------------------------------
     for i, ll in enumerate(lines):
@@ -280,8 +269,6 @@ def read_psi(filename):
             step_i.append(splt[0])
             time_i.append(splt[1])
     idx.append(i+1) 
-
-
 
     psi_sub  = []
     for j, ind in enumerate(idx):
@@ -294,9 +281,6 @@ def read_psi(filename):
     d_psi_t = np.reshape(psi_sub,[len(idx)-1,
                                   int(np.shape(psi_sub)[0]/(len(idx)-1))]
                          )
-
-    
-    
     return  d_psi_t
 
 

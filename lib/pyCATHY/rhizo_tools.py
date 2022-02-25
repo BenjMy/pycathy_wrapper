@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 import os
 import pyvista as pv
+import pygimli as pg
 
 def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     '''
@@ -63,7 +64,7 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     zmesh = grid["nodes_idxyz"][:, 3]
 
     HSPATM = 0
-    IETO = 1
+    IETO = 0
 
     # flux = 1.11111E-06
     totarea = 1  # 0.0
@@ -201,7 +202,9 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
 # rhizo.create_DA(drippersPos=[],RWU=False)
 #     # closestnode
 #     # simu.create_parm()
-def update_rhizo_inputs(simu_DA, **kwargs):
+
+
+def update_rhizo_inputs(simu_DA, nb_of_days,**kwargs):
     '''
     
 
@@ -234,46 +237,28 @@ def update_rhizo_inputs(simu_DA, **kwargs):
     simu_DA.update_veg_map()
     simu_DA.update_soil()
     
-   
-    
+       
     simu_DA.run_processor(IPRT1=3,
                           TRAFLAG=0,
                           verbose=False)
 
-    
-    
+       
     
     if 'tobs' in kwargs:
-        # time_of_interest=kwargs['tobs']
-        time_of_interest= list(np.arange(0,2*1200,1200))
-        # simu_DA.update_parm(TIMPRTi=time_of_interest,
-        #                     TMAX=time_of_interest[-1])
+        time_of_interest=kwargs['tobs']
+        # time_of_interest= tobs
+
         
     else:
-        time_of_interest = list(np.arange(0,12*3600,3600))
-    
-    time_of_interest = list(np.arange(0,12*3600,3600))
+        # time_of_interest = list(np.arange(0,tobs*3600,3600))
+        time_of_interest = list(np.arange(0,nb_of_days*3600,3600))
     
     simu_DA.update_ic(INDP=2,WTPOSITION=0)
-    flux=1.11111e-06
-    
-    # time_of_interest = list(np.arange(0,2000,1000))
-    # np.arange(0,1,2)
-    # fake time of interest to quickly create the mesh
-    # time_of_interest = [0,0.1]
-    # simu_DA.update_parm(TIMPRTi=time_of_interest,
-    #                     TMAX=time_of_interest[-1])
-            
+    flux=5.500e-08
+               
     simu_DA.update_atmbc(HSPATM=1,IETO=1,TIME=time_of_interest,
                       VALUE=[np.zeros(len(time_of_interest)),np.ones(len(time_of_interest))*flux],
                       show=True,x_units='hours',diff=True) # just read new file and update parm and cathyH
-
-
-    # input('press')
-    # simu_DA.workdir
-    # - here we just want to create the mesh
-
-
     
 
     """### 3- Boundary conditions"""
@@ -285,19 +270,34 @@ def update_rhizo_inputs(simu_DA, **kwargs):
     
     """### 4- Soil and roots inputs"""
     
-    if 'Ks' in kwargs:
-        PERMX = PERMY = PERMZ = kwargs['Ks']
-        
-    else:   
-        PERMX = PERMY = PERMZ =[1.88E-04]
-        
-        
+    
+    # # Sand
+    # # -------------------------------
+    # ELSTOR = [1e-3]
+    # POROS = [0.58]
+    # VGNCELL = [1.88]
+    # VGRMCCELL = [0.070]
+    # VGPSATCELL =  [0.03125]
+
+    # Clay
+    # -------------------------------
+        # 1.88E-04 1.88E-04 1.88E-04 1.00E-05 0.55 1.46 0.15 0.03125
+
+    # Unbiased scenario
+    # -------------------------------
+    PERMX = PERMY = PERMZ =[1.88E-04]
     ELSTOR = [1.00E-05]
     POROS = [0.55]
     VGNCELL = [1.46]
     VGRMCCELL = [0.15]
     VGPSATCELL =  [0.03125]
-
+    
+    if 'Ks' in kwargs:
+        PERMX = PERMY = PERMZ = kwargs['Ks']
+    
+    else:   
+        PERMX = PERMY = PERMZ =[1.88E-04]
+    
     SoilPhysProp = {'PERMX':PERMX,'PERMY':PERMY,'PERMZ':PERMZ,
                     'ELSTOR':ELSTOR,'POROS':POROS,
                     'VGNCELL':VGNCELL,'VGRMCCELL':VGRMCCELL,'VGPSATCELL':VGPSATCELL}
@@ -333,21 +333,6 @@ def update_rhizo_inputs(simu_DA, **kwargs):
                           
                         )
 
-
-    
-    # if 'tobs' in kwargs:
-    #     print('tobs')
-    #     simu_DA.update_parm(TIMPRTi=kwargs['tobs'],
-    #                         TMAX=kwargs['TMAX'])
-    #     time_of_interest=kwargs['tobs']
-    # else:
-    #     time_of_interest = list(np.arange(0,12*3600,3600))
-
-
-    # if 'TMAX' in kwargs:
-    #     simu_DA.update_parm()
-
-
     return simu_DA
 
 
@@ -357,12 +342,45 @@ def CATHY_2_Simpeg(mesh_CATHY,mesh_Simpeg,scalar='saturation',show=False,**kwarg
     pass
 
 def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
+    '''
+    This should be moved to CATHY meshtools
+
+    Parameters
+    ----------
+    mesh_CATHY : TYPE
+        DESCRIPTION.
+    mesh_pg : TYPE
+        DESCRIPTION.
+    scalar : TYPE, optional
+        DESCRIPTION. The default is 'saturation'.
+    show : TYPE, optional
+        DESCRIPTION. The default is False.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    mesh_new_attr : TYPE
+        DESCRIPTION.
+    scalar_new : TYPE
+        DESCRIPTION.
+
+    '''
+            
     
     
-    
+    mesh_IN = mesh_CATHY
+    if type(mesh_CATHY) is str:
+        mesh_IN = pv.read(mesh_CATHY)
+
+    if type(mesh_pg) is str:
+        mesh_OUT = pv.read(mesh_pg)
+        
+        
+        
     # flip y and z axis as CATHY and pg have different convention for axis
     # ------------------------------------------------------------------------
-    in_nodes_mod = np.array(mesh_CATHY.points)
+    in_nodes_mod = np.array(mesh_IN.points)
     # in_nodes_mod_pg = np.array(mesh_pg.points)
     
     idx = np.array([0, 2, 1])
@@ -372,48 +390,28 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
     in_nodes_mod_m[:,2] = -np.flipud(in_nodes_mod_m[:,2])
     in_nodes_mod_m[:,1] = -np.flipud(in_nodes_mod_m[:,1])
 
-
-    # fig = plt.figure()
-    # ax = fig.add_subplot(projection='3d')
-    # ax.plot(in_nodes_mod_m[:,0],in_nodes_mod_m[:,1],in_nodes_mod_m[:,2])
-    # ax.set_xlabel('x')
-    # ax.set_ylabel('y')
-    
-    
-    # fig = plt.figure()
-    # ax = fig.add_subplot(projection='3d')
-    # ax.plot(in_nodes_mod_pg[:,0],in_nodes_mod_pg[:,1],in_nodes_mod_pg[:,2])
-    # ax.set_xlabel('x')
-    # ax.set_ylabel('y')    
-    
-    
-    
     path = os.getcwd()
     if 'path' in kwargs:
         path = kwargs['path']
 
-    data_OUT = mt.trace_mesh(mesh_CATHY,mesh_pg,
+
+    data_OUT = mt.trace_mesh(mesh_IN,mesh_OUT,
                             scalar=scalar,
                             threshold=1e-1,
                             in_nodes_mod=in_nodes_mod_m)
-    
-    # print(data_OUT)
-    scalar_new = scalar + '_nearIntrp2_pg_msh'
-    # print(mesh_Resipy)
-    # get_array(mesh, name, preference='cell'
-              
 
+    scalar_new = scalar + '_nearIntrp2_pg_msh' 
     if 'time' in kwargs:
         time = kwargs['time']
         mesh_new_attr, name_new_attr = mt.add_attribute_2mesh(data_OUT, 
-                                                                mesh_pg, 
+                                                                mesh_OUT, 
                                                                 scalar_new, 
                                                                 overwrite=True,
                                                                 time=time,
                                                                 path=path)
     else:
         mesh_new_attr, name_new_attr = mt.add_attribute_2mesh(data_OUT, 
-                                                                mesh_pg, 
+                                                                mesh_OUT, 
                                                                 scalar_new, 
                                                                 overwrite=True,
                                                                 path=path)
@@ -427,7 +425,7 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
         
         
         p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
-        p.add_mesh(mesh_CATHY, scalars=scalar)
+        p.add_mesh(mesh_IN, scalars=scalar)
         _ = p.add_bounding_box(line_width=5, color='black')
         cpos = p.show(True)
         

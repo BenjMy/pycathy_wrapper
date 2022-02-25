@@ -17,10 +17,10 @@ import pygimli.meshtools as mt
 
 def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
 
-    isExist = os.path.exists(pathERT)
-    if not isExist:
-      # Create a new directory because it does not exist 
-      os.makedirs(pathERT) 
+    # isExist = os.path.exists(pathERT)
+    # if not isExist:
+    #   # Create a new directory because it does not exist 
+    #   os.makedirs(pathERT) 
       
       
     # fname_mesh = './ERT_fwd_DA_sol_rhizo/test_pg/BaseRhizo_Vrte.msh'

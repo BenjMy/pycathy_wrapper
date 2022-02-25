@@ -13,6 +13,7 @@ import pandas as pd
 from pyCATHY.importers import cathy_outputs as out_CT
 
 def SW_2_ERa(project_name,
+             ArchieParms,
              porosity,
              pathERT, meshERT, elecs, sequenceERT,
              path_fwd_CATHY,
@@ -24,7 +25,9 @@ def SW_2_ERa(project_name,
     ----------
 
     project_name : str
-        DESCRIPTION.
+        name of the current project.
+    ArchieParms : dict
+        Archie params.
     porosity : np.array([])
         medium porosity.
     pathERT : str
@@ -35,7 +38,7 @@ def SW_2_ERa(project_name,
         electrode positions.
     sequenceERT : TYPE
         ERT sequence.
-    path_fwd_CATHY: list
+    path_fwd_CATHY: list of folder containing CATHY simulation outputs
         Use for // simulations
     **kwargs : 
         df_sw : pd df
@@ -44,10 +47,10 @@ def SW_2_ERa(project_name,
             DESCRIPTION. The default is True.
     Returns
     -------
-    df_ERT_predicted : TYPE
+    df_ERT_predicted : pd df
         DESCRIPTION.
-    df_Archie : TYPE
-        DESCRIPTION.
+    df_Archie : pd df
+        Dataframe of the current (given ensemble and given assimilation time) Archie relationship.
 
     '''
     
@@ -60,7 +63,7 @@ def SW_2_ERa(project_name,
     if 'DA_cnb' in kwargs:
         DA_cnb = kwargs['DA_cnb']
         
-    Ens_nb = None
+    Ens_nb = int(path_fwd_CATHY[-1])
     if 'Ens_nb' in kwargs:
         Ens_nb = kwargs['Ens_nb']
         
@@ -91,23 +94,22 @@ def SW_2_ERa(project_name,
             df_sw = df_sw[time_ass,:]
             DA_cnb = time_ass
 
-        # case of sequential assimilatio
+        # case of sequential assimilation
         # -------------------------------------------------------------------
         else:
             df_sw = df_sw[-1,:] # take the last time 
             # (in case the sw file contains intermediate times for plotting observations)
 
 
-
     
         
     path_CATHY = os.path.join(path_fwd_CATHY,'vtk/')
     # print(os.getcwd())
-    print(path_fwd_CATHY)
+    # print(path_fwd_CATHY)
     # print(path_CATHY)
-    print('*************')
-
-        
+    # print('*************')
+    
+       
 
     if DA_cnb is not None:
         mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, 'vtk/100.vtk'))
@@ -120,16 +122,26 @@ def SW_2_ERa(project_name,
     # mesh_CATHY_ref.save(path_fwd_CATHY + name_mesh_backup)
 
     #sw2convert = mesh_CATHY['saturation']
-    ER_converted_ti = Archie_rho(rFluid=1, 
+    ER_converted_ti = Archie_rho(rFluid=ArchieParms['rFluid'], 
                                 sat = df_sw,
                                 porosity=porosity, 
-                                a=1.0, m=2.0, n=2.0)
+                                a=ArchieParms['a'], 
+                                m=ArchieParms['m'],
+                                n=ArchieParms['n'])
 
-    df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','EC','porosity'])
-    df_Archie['time'] = DA_cnb
-    df_Archie['ens_nb'] = Ens_nb
-    df_Archie['sw'] = df_sw[-1]
-    df_Archie['EC'] = ER_converted_ti
+    df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','ER_converted'])
+    df_Archie['time'] = DA_cnb*np.ones(len(ER_converted_ti))
+    df_Archie['ens_nb'] = Ens_nb*np.ones(len(ER_converted_ti))
+    df_Archie['sw'] = df_sw
+    df_Archie['ER_converted'] = ER_converted_ti
+    # df_Archie['porosity'] = ER_converted_ti
+    
+
+    
+    
+    # plot here archie
+    # --------------------
+    # df_Archie
 
 
     # add attribute converted to CATHY mesh
@@ -145,8 +157,11 @@ def SW_2_ERa(project_name,
     if 'pygimli' in data_format:
         # copy attribute to simpeg mesh
         # ------------------------------------------------------------------------
-        mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
-                       show=False,path= path_CATHY)
+        mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,
+                                                      meshERT,
+                                                      scalar='ER_converted'+ str(DA_cnb),
+                                                      show=False,path= path_CATHY
+                                                      )
     
     
         # fwd ERT data
@@ -260,7 +275,7 @@ def SW_2_ERa(project_name,
         mesh_CATHY_new_attr.set_active_scalars(active_attr)
         _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
         # plotter.show_grid()
-        plotter.view_xz()
+        # plotter.view_xz()
        
         plotter.subplot(0, 1)
         mesh_geophy_new_attr.set_active_scalars(scalar_new)

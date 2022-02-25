@@ -37,6 +37,18 @@ import natsort
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.cathy_utils import label_units, transform2_time_delta, convert_time_units
 
+import matplotlib.font_manager
+import matplotlib.style
+import matplotlib as mpl
+mpl.style.use('default')
+
+mpl.rcParams['grid.color'] = 'k'
+mpl.rcParams['grid.linestyle'] = ':'
+mpl.rcParams['grid.linewidth'] = 0.25
+mpl.rcParams['font.family'] = 'Avenir'
+plt.rcParams['font.size'] = 12
+plt.rcParams['axes.linewidth'] = 0.75
+
 
 
 def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):
@@ -587,7 +599,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
         # The supported formats are: ‘.svg’, ‘.eps’, ‘.ps’, ‘.pdf’, ‘.tex’
         # print(os.path.join(path, 'vtk', filename + '.svg'))
         plotter.view_xz()
-        plotter.save_graphic(os.path.join(path,filename + '.svg'),
+        plotter.save_graphic(os.path.join(path,filename + unit + '.svg'),
                               title="", raster=True, painter=True)
 
         print('figure saved' + os.path.join(path,filename + '.svg'))
@@ -715,7 +727,7 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
         # gif_speed_down = filename + 'new.gif'
         gif_original = os.path.join(path + unit + ".gif")
         gif_speed_down = os.path.join(path + unit + "_slow.gif")
-        gif = imageio.mimread(gif_original)
+        gif = imageio.get_reader(gif_original)
         imageio.mimsave(gif_speed_down, gif, fps=0.8)
         print('gif saved' + os.path.join(path,gif_original))
 
@@ -1019,7 +1031,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
     
     ax = fig.add_subplot(2,5,3)
-    cax = ax.matshow(dD.T, 
+    cax = ax.matshow(dD, 
                      aspect='auto',
                      cmap='jet')
     ax.set_title('Meas - Sim')
@@ -1049,6 +1061,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
     
+    plt.tight_layout()
     plt.show(block=False)
     savename = 'showDA_process_ens'
     if 'savename' in kwargs:
@@ -1062,9 +1075,36 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
 
     return fig, ax
 
+
+
+def DA_RMS(df_performance,sensorName):
+    
+    header = ['time', 'ObsType','RMSE'+sensorName,'OL']   
+    df_perf_plot = df_performance[header]   
+    df_perf_plot['RMSE'+sensorName] = df_perf_plot['RMSE'+sensorName].astype('float64')
+    # df_perf_plot.NMRMSE = df_perf_plot.NMRMSE.astype('float64')
+    df_perf_plot.OL = df_perf_plot.OL.astype('str')
+    
+    # df_perf_plot['RMSE']
+    
+    
+    
+    p0 = df_perf_plot.pivot(index='time',columns='OL', values='RMSE'+sensorName)
+    # p1 = df_perf_plot.pivot(index='time',columns='OL', values='NMRMSE')
+    
+    fig, ax = plt.subplots(2,1)
+    p0.plot(xlabel='time',ylabel='RMSE'+sensorName, ax=ax[0],style=['.-'])
+    # p1.plot(xlabel='time',ylabel='NMRMSE', ax=ax[1],style=['.-'])
+    
+    
+    plt.savefig('performanceDA.png', dpi=300)
+    
+    return ax
+
+
 def DA_plot_parm_dynamic(parm = 'ks', 
                          dict_parm_pert={}, 
-                         nb_of_assimilation_times = [],
+                         list_assimilation_times = [],
                          savefig=False, 
                          **kwargs):
     
@@ -1081,7 +1121,7 @@ def DA_plot_parm_dynamic(parm = 'ks',
     plt.ylabel('Probability')
     # plt.axvline(x=dict_parm_pert[parm]['ZROOT_nominal'],linestyle='--', color='red')
 
-    for nt in range(nb_of_assimilation_times):
+    for nt in list_assimilation_times:
         try:
             ax.hist(dict_parm_pert[parm]['update_nb'+str(nt+1)],
                       ensemble_size, alpha=0.5, label='update nb' + str(nt+1))
@@ -1090,137 +1130,201 @@ def DA_plot_parm_dynamic(parm = 'ks',
         plt.legend(loc='upper right')
         plt.ylabel('Probability')
     plt.show()
+    
+    return ax
 
+
+
+def DA_plot_parm_dynamic_scatter(parm = 'ks', 
+                                 dict_parm_pert={}, 
+                                 list_assimilation_times = [],
+                                 savefig=False,
+                                 **kwargs):
+    
+    
+    ensemble_size = len(dict_parm_pert[parm]['ini_perturbation'])
+
+    fig = plt.figure(figsize=(6, 3), dpi=350)
+    ax = fig.add_subplot()
+
+    mean_t = [np.mean(dict_parm_pert[parm]['ini_perturbation'])]
+    mean_t_yaxis=np.mean(dict_parm_pert[parm]['ini_perturbation'])
+    cloud_t = np.zeros([ensemble_size,len(list_assimilation_times)])
+    cloud_t[:,0]= np.array(dict_parm_pert[parm]['ini_perturbation'])
+    np.shape(cloud_t)
+    
+    try:
+        for nt in list_assimilation_times[1:]:
+            # print(np.shape(np.hstack(dict_parm_pert[parm]['update_nb'+str(int(nt))])))
+            # mean_t.append(np.mean(dict_parm_pert[parm]['update_nb'+str(int(nt+1))]))
+            print(int(nt))
+            cloud_t[:,int(nt)]= np.hstack(dict_parm_pert[parm]['update_nb'+str(int(nt))])
+    except:
+        pass
+
+    np.shape(cloud_t)
+    for nt in range(len(cloud_t)-1):
+        plt.scatter(np.arange(0,len(cloud_t[0,:])),cloud_t[nt,:],label='ens_nb' + str(nt+1))
+    
+    plt.ylabel(parm)
+    plt.ylim([mean_t_yaxis-mean_t_yaxis/2,mean_t_yaxis+mean_t_yaxis/2])
+
+    plt.xlabel('assimilation time')
+    plt.legend(loc='upper right')
+    plt.grid(visible=True, which='major', axis='both')
+
+    plt.show()
+    plt.savefig('update_parm.png', dpi=300)
+
+    return ax
+    
     
 
-def DA_plot_time_dynamic(DA, nodes_of_interest=0, savefig=False, **kwargs):
+def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, **kwargs):
+    
+    if 'ax' in kwargs:
+        ax = kwargs['ax']
+    else:
+        fig = plt.figure(figsize=(6, 3), dpi=350)
+        ax = fig.add_subplot()
         
     isOL = DA.loc[DA['OL']==True]
-    
     isENS = DA.loc[DA['OL']==False]
     
     isENS_time_Ens = isENS.set_index(['time','Ensemble_nb'])
     isOL_time_Ens = isOL.set_index(['time','Ensemble_nb'])
     
-    
+    if type(nodes_of_interest) != list:
+        nodes_of_interest = [nodes_of_interest]
     # nodes_of_interest = [0]
-    # print(nodes_of_interest)
+    print(nodes_of_interest)
     # take nodes of interests
     
     NENS = int(max(DA['Ensemble_nb'].unique()))
     
-    # -----------------------------#
-    if nodes_of_interest:
     
-        isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/((max(isOL['time'])+1)*NENS))),
-                                         int(max(isOL['time'])+1)*NENS), True)
-        select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
-        select_isOL = select_isOL.set_index(['time','idnode'])
-        select_isOL = select_isOL.reset_index()
+    # key2plot = 'psi_bef_update'
+    key2plot = 'analysis'
+    # -----------------------------#
+    if len(nodes_of_interest)>0:
+    
+        if len(isOL)>0:
+            isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/((max(isOL['time'])+1)*NENS))),
+                                             int(max(isOL['time'])+1)*NENS), True)
+            select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
+            select_isOL = select_isOL.set_index(['time','idnode'])
+            select_isOL = select_isOL.reset_index()
+            
+            # mean, min and max of Open Loop
+            # --------------------------------------------------------------------------
+            ens_mean_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
+                                    .groupby(level=['time','idnode'])[key2plot]
+                                    .mean()
+                                    )
+            ens_mean_isOL_time = ens_mean_isOL_time.reset_index(name='mean(ENS)_OL')
+            
+            ens_min_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
+                                    .groupby(level=['time','idnode'])[key2plot]
+                                    .min()
+                                    )
+            ens_min_isOL_time = ens_min_isOL_time.reset_index(name='min(ENS)_OL')
+            
+            
+            ens_max_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
+                                    .groupby(level=['time','idnode'])[key2plot]
+                                    .max()
+                                    )
+            ens_max_isOL_time = ens_max_isOL_time.reset_index(name='max(ENS)_OL')
+
                                 
         # print(select_isOL)
-        
-        isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),
-                                          int(max(isENS['time']))*NENS), True)
-        select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
-        select_isENS = select_isENS.set_index(['time','idnode'])
-        select_isENS = select_isENS.reset_index()
-        
-        
-        # mean, min and max of Open Loop
-        # --------------------------------------------------------------------------
-        ens_mean_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
-                                .groupby(level=['time','idnode'])['aft_update_']
-                                .mean()
-                                )
-        ens_mean_isOL_time = ens_mean_isOL_time.reset_index(name='mean(ENS)_OL')
-        
-        ens_min_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
-                                .groupby(level=['time','idnode'])['aft_update_']
-                                .min()
-                                )
-        ens_min_isOL_time = ens_min_isOL_time.reset_index(name='min(ENS)_OL')
-        
-        
-        ens_max_isOL_time = (select_isOL.set_index(['time','Ensemble_nb','idnode'])
-                                .groupby(level=['time','idnode'])['aft_update_']
-                                .max()
-                                )
-        ens_max_isOL_time = ens_max_isOL_time.reset_index(name='max(ENS)_OL')
-        
-        
-        # mean, min and max of Open Loop
-        # --------------------------------------------------------------------------
-        ens_mean_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
-                                .groupby(level=['time','idnode'])['aft_update_']
-                                .mean()
-                                )
-        ens_mean_isENS_time = ens_mean_isENS_time.reset_index(name='mean(ENS)')
-        
-        ens_min_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
-                                .groupby(level=['time','idnode'])['aft_update_']
-                                .min()
-                                )
-        ens_min_isENS_time = ens_min_isENS_time.reset_index(name='min(ENS)')
-        
-        
-        ens_max_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
-                                .groupby(level=['time','idnode'])['aft_update_']
-                                .max()
-                                )
-        ens_max_isENS_time = ens_max_isENS_time.reset_index(name='max(ENS)')
-        
- 
+        if len(isENS)>0:
+    
+            isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),
+                                              int(max(isENS['time']))*NENS), True)
+            select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
+            select_isENS = select_isENS.set_index(['time','idnode'])
+            select_isENS = select_isENS.reset_index()
+                  
+            # mean, min and max of Open Loop
+            # --------------------------------------------------------------------------
+            ens_mean_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                                    .groupby(level=['time','idnode'])[key2plot]
+                                    .mean()
+                                    )
+            ens_mean_isENS_time = ens_mean_isENS_time.reset_index(name='mean(ENS)')
+            
+            ens_min_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                                    .groupby(level=['time','idnode'])[key2plot]
+                                    .min()
+                                    )
+            ens_min_isENS_time = ens_min_isENS_time.reset_index(name='min(ENS)')
+            
+            
+            ens_max_isENS_time = (select_isENS.set_index(['time','Ensemble_nb','idnode'])
+                                    .groupby(level=['time','idnode'])[key2plot]
+                                    .max()
+                                    )
+            ens_max_isENS_time = ens_max_isENS_time.reset_index(name='max(ENS)')
+            
+     
     
     else:
         # take the spatial average mean
         # -----------------------------#
         
-        spatial_mean_isOL_time_ens = isOL_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].mean()
+        spatial_mean_isOL_time_ens = isOL_time_Ens.groupby(level=['time','Ensemble_nb'])['analysis'].mean()
         spatial_mean_isOL_time_ens = spatial_mean_isOL_time_ens.reset_index()
         
-        spatial_mean_isENS_time_ens = isENS_time_Ens.groupby(level=['time','Ensemble_nb'])['aft_update_'].mean()
+        spatial_mean_isENS_time_ens = isENS_time_Ens.groupby(level=['time','Ensemble_nb'])['analysis'].mean()
         spatial_mean_isENS_time_ens = spatial_mean_isENS_time_ens.reset_index()
         
         select_isOL = spatial_mean_isOL_time_ens
         select_isENS = spatial_mean_isENS_time_ens
 
     
+
+
     
     # Plot
     # --------------------------------------------------------------------------
-    ax = ens_mean_isOL_time.pivot(index="time", 
-                      # columns=["Ensemble_nb",'idnode'], 
-                      columns=['idnode'], 
-                      values=["mean(ENS)_OL"]).plot(style=['-'],color='red',label='open loop',
-                                                   ylabel='pressure head $\psi$ (m)',) # water saturation (-)
-    ens_min_isOL_time.pivot(index="time", 
-                        columns=['idnode'], 
-                      # columns=['idnode'], 
-                      values=["min(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
     
-    ens_max_isOL_time.pivot(index="time", 
-                        columns=['idnode'], 
-                      # columns=['idnode'], 
-                      values=["max(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
+    if len(isENS)>0:
+        ens_mean_isENS_time.pivot(index="time", 
+                            columns=['idnode'], 
+                          # columns=['idnode'], 
+                          values=["mean(ENS)"]).plot(ax=ax, style=['.-'],color='grey')
+        
+        ens_max_isENS_time.pivot(index="time", 
+                            columns=['idnode'], 
+                          # columns=['idnode'], 
+                          values=["max(ENS)"]).plot(ax=ax,style=['.-'],color='magenta')
+        
+        ens_min_isENS_time.pivot(index="time", 
+                            columns=['idnode'], 
+                          # columns=['idnode'], 
+                          values=["min(ENS)"]).plot(ax=ax,style=['.-'],color='blue',
+                                                        xlabel= '(assimilation) time - (h)',
+                                                        ylabel='pressure head $\psi$ (m)')
+                                                
+    if len(isOL)>0:
+        ens_mean_isOL_time.pivot(index="time", 
+                          # columns=["Ensemble_nb",'idnode'], 
+                          columns=['idnode'], 
+                          values=["mean(ENS)_OL"]).plot(ax=ax, style=['-'],color='red',label='open loop',
+                                                       ylabel='pressure head $\psi$ (m)',) # water saturation (-)
+        ens_min_isOL_time.pivot(index="time", 
+                            columns=['idnode'], 
+                          # columns=['idnode'], 
+                          values=["min(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
+        
+        ens_max_isOL_time.pivot(index="time", 
+                            columns=['idnode'], 
+                          # columns=['idnode'], 
+                          values=["max(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
     
-    
-    ens_mean_isENS_time.pivot(index="time", 
-                        columns=['idnode'], 
-                      # columns=['idnode'], 
-                      values=["mean(ENS)"]).plot(ax=ax,style=['.-'],color='grey')
-    
-    ens_max_isENS_time.pivot(index="time", 
-                        columns=['idnode'], 
-                      # columns=['idnode'], 
-                      values=["max(ENS)"]).plot(ax=ax,style=['.-'],color='magenta')
-    
-    ens_min_isENS_time.pivot(index="time", 
-                        columns=['idnode'], 
-                      # columns=['idnode'], 
-                      values=["min(ENS)"]).plot(ax=ax,style=['.-'],color='blue',
-                                                    xlabel= '(assimilation) time - (h)',
-                                                    ylabel='pressure head $\psi$ (m)')
+    ax.set_xlabel('time (h)')
+    ax.set_ylabel('pressure head (m)')
 
     savename = 'showDA_dynamic'
     if 'savename' in kwargs:
@@ -1231,4 +1335,26 @@ def DA_plot_time_dynamic(DA, nodes_of_interest=0, savefig=False, **kwargs):
         plt.savefig(savename +'.png', dpi=300)
 
     
-    return  ax
+    return  ax, plt
+
+
+def DA_plot_Archie(df_Archie,savefig=False,**kwargs):
+    
+    plt.scatter(df_Archie['sw'],df_Archie['ER_converted'])
+    plt.xlabel('saturation')
+    plt.ylabel('ER_converted')
+    plt.show()
+
+
+    if 'porosity' in kwargs:
+        plt.scatter(df_Archie['sw']*kwargs['porosity'],
+                    df_Archie['ER_converted'])
+        plt.xlabel('swc')
+        plt.ylabel('ER_converted')
+    
+    
+    if savefig==True:
+        plt.savefig('Archie.png', dpi=300)
+        
+    
+    

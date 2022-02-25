@@ -7,23 +7,34 @@ import matplotlib.pyplot as plt
 from matplotlib import pyplot
 import numpy as np
 import shutil
+import rich.console
+from rich.progress import track
+from rich import print
 
 
 def enkf_analysis(data,data_cov,param,ensemble,observation):
     '''
+    Case with non linear observation operator:
+        
+    ..note::
+        $ K_{t} = P^{f}_{t}H^{T}(HP^{f}_{t}H^{T} + R^{T})^{-1} $
+        
+        H is the linear observation operator matrix $[N_{obs}\times N_{u}]$, 
+        $P^f$ is the forecast error covariance matrix $[N_{u}\times N_{u}]$, 
+        and R the measurement error covariance matrix $[N_{obs}\times N_{obs}]$.
 
     parameters
     ----------
-    data : TYPE
-        DESCRIPTION.
+    data : np.array([])
+        stacked measured data.
     data_cov : TYPE
-        DESCRIPTION.
+        measured data covariance matrice.
     param : TYPE
-        DESCRIPTION.
-    ensemble : TYPE
-        DESCRIPTION.
+        model parameters (perturbated and to update).
+    ensemble : np.array([])
+        state values (can be either pressure heads or saturation water).
     observation : TYPE
-        DESCRIPTION.
+        stacked predicted observation (after mapping) in the same physical quantity than data.
 
     Returns
     -------
@@ -34,63 +45,78 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     # Collect data sizes.
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0] 
-    meas_size = np.array([data]).T.shape[0]
+    
+    
+    observation = observation.T
+    data = np.array([data]).T
+    meas_size = data.shape[0]
 
     # First combine the ensemble and param arrays.
-   
+    
+    ensemble_mean = (1./float(ens_size))*np.tile(ensemble.sum(1), (ens_size,1)).transpose()
+    
     if len(param)>0:
-        A = np.vstack([ensemble, param.transpose()])
+        param_mean = (1./float(ens_size))*np.tile(param.sum(0), (ens_size,1)).transpose()
+    
+    if len(param)>0:
+        augm_state_mean = np.vstack([ensemble_mean, param_mean])
+        augm_state = np.vstack([ensemble, param.T])
     else:
-        A = ensemble
+        augm_state_mean = ensemble_mean
+        augm_state = ensemble
 
 
-    # Calculate mean of the ensemble
-    Amean = (1./float(ens_size))*np.tile(A.sum(1), (ens_size,1)).transpose()
-                    
     # Calculate ensemble perturbation from mean
-    # Apert should be (sim_size+ParSize)x(ens_size)
-    dA = A - Amean
-
+    # augm_state_pert should be (sim_size+ParSize)x(ens_size)
+    augm_state_pert = augm_state - augm_state_mean
+    
     # data perturbation from ensemble measurements
-    # dD should be (MeasSize)x(ens_size)
-    dD = data - observation
+    # data_pert should be (MeasSize)x(ens_size)
+    data_pert = data - observation
 
-    # ensemble measurement perturbation from ensemble measurement mean.
-    # S is (MeasSize)x(ens_size)
-    MeasAvg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1))
-    S = observation - MeasAvg
-
+    # S = ensemble measurement perturbation from ensemble measurement mean.
+    # S is (MeasSize)x(ens_size)        
+    meas_avg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1)).transpose()
+    obs_pert = observation - meas_avg
+    
+    
+    if obs_pert.mean() == 0:
+        print('Ensemble measurement perturbation from ensemble'
+                'measurement mean is too small (=0):'
+                '- Increase perturbation!'
+                '- Check if the system is not in steady state'
+                )
+        
     # Set up measurement covariance matrix
     # COV is (MeasSize)x(MeasSize)
-    # print(data_cov)
-    # data_cov = []
-    if np.shape(data_cov)[1]>1:
-        COV = data_cov
-    else:
-        # print(np.shape( (1./float(ens_size-1))*np.dot(S,S.transpose())))
-        COV = (1./float(ens_size-1))*np.dot(S,S.transpose()) + data_cov
-        # print(np.shape(COV))
+    # if np.shape(data_cov)[1]>1:
+    #     COV = data_cov
+    # else:
+    # print(np.shape( (1./float(ens_size-1))*np.dot(S,S.transpose())))
+    COV = (1./float(ens_size-1))*np.dot(obs_pert,obs_pert.transpose()) + data_cov.transpose()
+    # print(np.shape(COV))
 
-        
+    # np.shape(data_pert)
     # Compute inv(COV)*dD
     # Should be (MeasSize)x(ens_size)
-    B = np.linalg.solve(COV,dD.T)
+    inv_data_pert = np.linalg.solve(COV,data_pert)
 
     # Adjust ensemble perturbations
     # Should be (sim_size+ParSize)x(MeasSize)
-    dAS = (1./float(ens_size-1))*np.dot(dA,S)
+    pert = (1./float(ens_size-1))*np.dot(augm_state_pert,obs_pert.T)
 
     # Compute analysis
     # Analysis is (sim_size+ParSize)x(ens_size)
-    Analysis = A + np.dot(dAS,B)
+    analysis = augm_state + np.dot(pert,inv_data_pert)
 
     # Separate and return Analyzed ensemble and Analyzed parameters.
-    Analysisparam = Analysis[sim_size:,:].transpose()
-    Analysis = Analysis[0:sim_size,:]
+    analysis_param = analysis[sim_size:,:].transpose()
+    analysis = analysis[0:sim_size,:]
     
             
     # return [Analysis,Analysisparam]
-    return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
+    return [augm_state, augm_state_mean, augm_state_pert, data_pert, meas_avg, 
+            obs_pert, COV, inv_data_pert, pert, analysis, analysis_param]
 
     
 
@@ -101,6 +127,10 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     # Collect data sizes.
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0] 
+    
+    
+    observation = observation.T
+    data = np.array([data]).T
     meas_size = data.shape[0]
 
     # First combine the ensemble and param arrays.

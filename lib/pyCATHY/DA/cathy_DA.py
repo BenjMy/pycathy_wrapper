@@ -13,7 +13,7 @@ from pyCATHY.DA import enkf, pf
 
 
 
-def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
+def run_analysis(typ,data,data_cov,param,ensembleX,prediction, default_state='psi'):
     '''
     Perform the DA analysis step 
 
@@ -28,7 +28,7 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
     param : np.array([])
         model parameters to update.
     ensemble_state : np.array([])
-        pressure head at each nodes.
+        [pressure head, saturation water] at each nodes.
     prediction : np.array([])
         predicted observation (after mapping).
     rejected_ens : list
@@ -60,6 +60,10 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
 
     '''
     
+    id_state = 0
+    if default_state == 'sw':
+        id_state = 1
+        
     
     if typ=='enkf_Evensen2009_Sakov':
         
@@ -70,7 +74,7 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
          analysis_param] = enkf.enkf_analysis(data, 
                                               data_cov, 
                                               param, 
-                                              ensembleX, 
+                                              ensembleX[id_state], 
                                               prediction
                                               )
                                               
@@ -90,7 +94,7 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction):
          analysis_param] = enkf.enkf_analysis_inflation(data,
                                                         data_cov,
                                                         param,
-                                                        ensembleX,
+                                                        ensembleX[id_state],
                                                         prediction)
                                                         
         return [A, Amean, dA, 
@@ -212,7 +216,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             if sampling_type == 'lognormal':
                 parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
             elif sampling_type == 'normal':
-                parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
+                # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
+                parm_sampling = np.random.normal(mean,sigma=sd, size=ensemble_size)
 
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             
@@ -222,9 +227,6 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 parm_per_array = parm_mat*parm_sampling
             elif per_type == 'additive':
                 parm_per_array = parm_mat+parm_sampling
-     
-            
-
 
         key = 'ini_perturbation'
         var_per[type_parm][key] = parm_per_array
@@ -264,7 +266,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                     plt.hist(np.log10(parm_per_array), ensemble_size, alpha=0.5, label='ini_perturbation')
                     plt.axvline(x=np.log10(parm[type_parm+'_nominal']),linestyle='--', color='red')
             else:
-                plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
+                # plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
                 plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
                 plt.axvline(x=parm[type_parm+'_nominal'],linestyle='--', color='red')
 
@@ -274,8 +276,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             plt.title('Histogram of ' + type_parm)
             
 
-                
-            plt.show(block=False)
+            plt.title('Histogram of ' + type_parm)
+            plt.tight_layout()
             
             
             if 'savefig' in kwargs:
