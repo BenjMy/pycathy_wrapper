@@ -16,8 +16,46 @@ import os
 import pyvista as pv
 import pygimli as pg
 
+
+class rhizotron(object):
+    '''rhizotron class'''
+    
+    def __init__(self):
+        self.Archie_rhizo = []
+        self.VGN_rhizo = []
+        self.weight_rhizo = []
+        self.dates_rhizo = []
+
+        
+        pass
+
+    def Archie_rhizo(self):
+        pass
+    
+    def VGN_rhizo(self):
+        pass
+    
+    def weight_sensor(self):
+        '''
+        Import load sensor data in order to estimate atmbc
+    
+        Returns
+        -------
+        None.
+    
+        '''
+        irr = []
+        ET = []
+        
+        return irr, ET
+        
+    
+    
+    
+    
 def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     '''
+    Synthetic PRD
     
 
     Parameters
@@ -187,24 +225,10 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     return t_irr, t_atmbc, v_atmbc
 
 
-# class RHIZO(object):
-#     '''Main RHIZO object.'''
-# def __init__(self,dirName,prjName='my_cathy_prj'):
-
-# rhizo.create_infitration(drippersPos=[],RWU=False)
-#     # closestnode
-#     # simu.create_parm()
-#     # simu.create_soil()
-#     # simu.create_ic()
-#     # simu.create_atmbc()
-#     # simu.create_nansfdirbc()
-
-# rhizo.create_DA(drippersPos=[],RWU=False)
-#     # closestnode
-#     # simu.create_parm()
 
 
-def update_rhizo_inputs(simu_DA, nb_of_days,**kwargs):
+
+def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     '''
     
 
@@ -213,10 +237,11 @@ def update_rhizo_inputs(simu_DA, nb_of_days,**kwargs):
     None.
 
     '''
-    
-    # from pyCATHY.rhizo_tools import atmbc_PRD #create_infitration # create_DA
+     
 
-    pmin = -1.0E+20
+    # MESH 
+    # *****
+    
     dem_synth=np.ones([9,10])*1e-3
     dem_synth[-1,-1]=0.99e-3
     zb = np.arange(0,0.5+0.1,0.05)
@@ -253,12 +278,32 @@ def update_rhizo_inputs(simu_DA, nb_of_days,**kwargs):
         # time_of_interest = list(np.arange(0,tobs*3600,3600))
         time_of_interest = list(np.arange(0,nb_of_days*3600,3600))
     
-    simu_DA.update_ic(INDP=2,WTPOSITION=0)
-    flux=5.500e-08
-               
+    
+    
+    # INITIAL CONDITIONS
+    # ******************
+    # Unbiased scenario
+    # -------------------------------
+    simu_DA.update_ic(INDP=solution['INDP'],
+                      IPOND=solution['IPOND'],
+                      WTPOSITION=solution['WTPOSITION'],
+                      pressure_head_ini=solution['pressure_head_ini']
+                      )
+    
+    # biased scenario
+    # -------------------------------
+    
+    
+    # ATMBC CONDITIONS
+    # ******************
     simu_DA.update_atmbc(HSPATM=1,IETO=1,TIME=time_of_interest,
-                      VALUE=[np.zeros(len(time_of_interest)),np.ones(len(time_of_interest))*flux],
-                      show=True,x_units='hours',diff=True) # just read new file and update parm and cathyH
+                      VALUE=np.ones(len(time_of_interest))*solution['forcing'],
+                      show=True,x_units='hours') # just read new file and update parm and cathyH
+    
+    
+    # simu_DA.update_atmbc(HSPATM=1,IETO=1,TIME=time_of_interest,
+    #                   VALUE=[np.zeros(len(time_of_interest)),np.ones(len(time_of_interest))*flux],
+    #                   show=True,x_units='hours',diff=True) # just read new file and update parm and cathyH
     
 
     """### 3- Boundary conditions"""
@@ -270,53 +315,47 @@ def update_rhizo_inputs(simu_DA, nb_of_days,**kwargs):
     
     """### 4- Soil and roots inputs"""
     
-    
-    # # Sand
-    # # -------------------------------
-    # ELSTOR = [1e-3]
-    # POROS = [0.58]
-    # VGNCELL = [1.88]
-    # VGRMCCELL = [0.070]
-    # VGPSATCELL =  [0.03125]
-
-    # Clay
-    # -------------------------------
-        # 1.88E-04 1.88E-04 1.88E-04 1.00E-05 0.55 1.46 0.15 0.03125
-
     # Unbiased scenario
     # -------------------------------
-    PERMX = PERMY = PERMZ =[1.88E-04]
+    PERMX = PERMY = PERMZ =[solution['PERMX']]
     ELSTOR = [1.00E-05]
-    POROS = [0.55]
-    VGNCELL = [1.46]
-    VGRMCCELL = [0.15]
-    VGPSATCELL =  [0.03125]
+    POROS = [solution['POROS']]
+    VGNCELL = [solution['VGNCELL']]
+    VGRMCCELL = [solution['VGRMCCELL']]
+    VGPSATCELL =  [solution['VGPSATCELL']]
     
+    # biased scenario
+    # -------------------------------
     if 'Ks' in kwargs:
         PERMX = PERMY = PERMZ = kwargs['Ks']
-    
-    else:   
-        PERMX = PERMY = PERMZ =[1.88E-04]
+
     
     SoilPhysProp = {'PERMX':PERMX,'PERMY':PERMY,'PERMZ':PERMZ,
                     'ELSTOR':ELSTOR,'POROS':POROS,
                     'VGNCELL':VGNCELL,'VGRMCCELL':VGRMCCELL,'VGPSATCELL':VGPSATCELL}
     
-    """We could also used the predefined Van-Genuchten function (located in cathy_utils) to generate a set of soil physical properties"""
+    """We could also used the predefined Van-Genuchten function
+    (located in cathy_utils) 
+    to generate a set of soil physical properties"""
     
     #SoilPhysProp = utils.VanG()
     
-    """The trick to defining a heterogeneous density of roots into the 3d medium from a single plant, 
-    we defined different vegetation areas which are independent with varying root depth and Feddes parameters."""
+    """The trick to defining a heterogeneous density of roots 
+    into the 3d medium from a single plant, 
+    we defined different vegetation areas which are independent 
+    with varying root depth and Feddes parameters."""
     
-    PCANA=[0.0]        
-    PCREF=[-4.0]
-    PCWLT=[-150]
-    ZROOT=[0.2]
-    PZ = [1.0]
-    OMGC =[1.0] 
+    PCANA=[solution['PCANA']]        
+    PCREF=[solution['PCREF']]
+    PCWLT=[solution['PCWLT']]
+    ZROOT=[solution['ZROOT']]
+    PZ = [solution['PZ']]
+    OMGC =[solution['OMGC']] 
     
-    
+    if 'Ks' in kwargs:
+        ZROOT=[kwargs['ZROOT']]
+        
+        
     FeddesParam = {'PCANA':PCANA,'PCREF':PCREF,'PCWLT':PCWLT,
                    'ZROOT':ZROOT,'PZ':PZ,
                    'OMGC':OMGC}
@@ -326,6 +365,8 @@ def update_rhizo_inputs(simu_DA, nb_of_days,**kwargs):
     
     """The choice of PMIN conditionne the switching condition"""
     
+    pmin = solution['pmin']
+
     simu_DA.update_soil(  PMIN=pmin,
                           SPP=SoilPhysProp,
                           FP=FeddesParam,
@@ -343,7 +384,8 @@ def CATHY_2_Simpeg(mesh_CATHY,mesh_Simpeg,scalar='saturation',show=False,**kwarg
 
 def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
     '''
-    This should be moved to CATHY meshtools
+    Convert CATHY mesh attribute to pygimli
+    Need to flip axis because convention for CATHY and pygimli are different
 
     Parameters
     ----------
@@ -577,6 +619,8 @@ def set_drippers(self, dirfiles, drip_pos="drippers.txt"):
 
     print(mesh_x_max)
     print(max(self.drippers[:, 0]))
+
+
 
     if mesh_x_max < max(self.drippers[:, 0]):
         print(

@@ -21,7 +21,7 @@ def weight(Data,DataCov,Ensemble,Observation):
 
     # Calculate data perturbations from ensemble measurements
     # Dpert = (MeasSize)x(EnSize)
-    Dpert = Data - Observation.T
+    Dpert = Data - Observation
 
     # Compute inv(DataCov)*Dpert
     # Should be (MeasSize)x(EnSize)
@@ -53,11 +53,15 @@ def resample(Ensemble,Param, W, sigma):
     
     # Generate resampled indices
     index = range(EnSize)
-    resamp_index = np.random.choice(index,size=EnSize,replace=True,p=W)
+    
+    if np.all(np.isnan(W)) == False:
+        resamp_index = np.random.choice(index,size=EnSize,replace=True,p=W)
+    else:
+        resamp_index = index
 
     # Create analysis ensembles
     AnalysisEnsemble = Ensemble[:,resamp_index] + sigma*rn.randn(Ensemble.shape[0],EnSize)
-    AnalysisParams = Param[resamp_index,:] + sigma*rn.randn(EnSize,Param.shape[1])
+    AnalysisParams = Param[resamp_index] + sigma*rn.randn(EnSize,1).T
 
     return [AnalysisEnsemble,AnalysisParams]
 
@@ -68,6 +72,7 @@ def resample(Ensemble,Param, W, sigma):
 
 def pf_analysis(Data,DataCov,Param,Ensemble,Observation, sigma=1):
     # Weight the ensemble by data likelihood
+
     W = weight(Data,DataCov,Ensemble,Observation)
     
     # Resample ensemble by weights

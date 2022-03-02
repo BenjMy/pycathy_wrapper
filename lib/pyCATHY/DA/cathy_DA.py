@@ -13,13 +13,13 @@ from pyCATHY.DA import enkf, pf
 
 
 
-def run_analysis(typ,data,data_cov,param,ensembleX,prediction, default_state='psi'):
+def run_analysis(DA_type,data,data_cov,param,ensembleX,prediction, default_state='psi'):
     '''
     Perform the DA analysis step 
 
     Parameters
     ----------
-    typ : str
+    DA_type : str
         type of analysis i.e ENKF or Particul filters.
     data : np.array([])
         measured data.
@@ -65,7 +65,7 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction, default_state='ps
         id_state = 1
         
     
-    if typ=='enkf_Evensen2009_Sakov':
+    if DA_type=='enkf_Evensen2009_Sakov':
         
         [A, Amean, dA, 
          dD, MeasAvg, S, 
@@ -85,7 +85,7 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction, default_state='ps
          analysis_param] 
     
     
-    if typ=='enkf_analysis_inflation':
+    if DA_type=='enkf_analysis_inflation':
 
         [A, Amean, dA, 
          dD, MeasAvg, S, 
@@ -104,10 +104,14 @@ def run_analysis(typ,data,data_cov,param,ensembleX,prediction, default_state='ps
          analysis_param] 
         
         
-    elif typ=='pf_analysis':
+    elif DA_type=='pf':
         print('not yet implemented')
         
-        [Analysis,AnalysisParam] = pf.pf_analysis(data,data_cov,param,ensembleX,prediction)
+        [Analysis,AnalysisParam] = pf.pf_analysis(data,
+                                                  data_cov,
+                                                  param,
+                                                  ensembleX[id_state],
+                                                  prediction)
         
         
         return Analysis,AnalysisParam
@@ -213,6 +217,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         #----------------------------------------------------------------------
         else:
     
+            np.random.seed(1)
             if sampling_type == 'lognormal':
                 parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
             elif sampling_type == 'normal':
@@ -243,6 +248,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         
         if 'transf_type' in kwargs:
             var_per[type_parm]['transf_type'] = kwargs['transf_type']
+            if 'transf_bounds' in kwargs:
+                var_per[type_parm]['transf_bounds'] = kwargs['transf_bounds']
         else:
             var_per[type_parm]['transf_type'] = None
 

@@ -12,6 +12,9 @@ from pyCATHY.ERT import simulate_ERT as simuERT
 import pandas as pd
 from pyCATHY.importers import cathy_outputs as out_CT
 
+
+
+
 def SW_2_ERa(project_name,
              ArchieParms,
              porosity,
@@ -134,14 +137,9 @@ def SW_2_ERa(project_name,
     df_Archie['ens_nb'] = Ens_nb*np.ones(len(ER_converted_ti))
     df_Archie['sw'] = df_sw
     df_Archie['ER_converted'] = ER_converted_ti
-    # df_Archie['porosity'] = ER_converted_ti
+    df_Archie['porosity'] = porosity*np.ones(len(ER_converted_ti))
     
 
-    
-    
-    # plot here archie
-    # --------------------
-    # df_Archie
 
 
     # add attribute converted to CATHY mesh
@@ -160,7 +158,8 @@ def SW_2_ERa(project_name,
         mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,
                                                       meshERT,
                                                       scalar='ER_converted'+ str(DA_cnb),
-                                                      show=False,path= path_CATHY
+                                                      show=False,
+                                                      path= path_CATHY
                                                       )
     
     
@@ -191,117 +190,117 @@ def SW_2_ERa(project_name,
     #     # ------------------------------------------------------------------------
         
     
-    else:
-        # copy attribute to resipy mesh
-        # ------------------------------------------------------------------------
-        mesh_geophy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
-                       show=False, path= path_CATHY)
+    # else:
+    #     # copy attribute to resipy mesh
+    #     # ------------------------------------------------------------------------
+    #     mesh_geophy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
+    #                     show=False, path= path_CATHY)
 
-        # fwd ERT data
-        # ------------------------------------------------------------------------
+    #     # fwd ERT data
+    #     # ------------------------------------------------------------------------
         
-        # USING RESIPY
-        # ------------------------------------------------------------------------
-        res0 = mesh_geophy_new_attr.get_array(scalar_new)
-        # res0 = mesh_geophy_new_attr[scalar_new]
-        # mesh_Resipy_new_attr.cell_data[scalar_new] 
-        # mesh_Resipy_new_attr.array_names
+    #     # USING RESIPY
+    #     # ------------------------------------------------------------------------
+    #     res0 = mesh_geophy_new_attr.get_array(scalar_new)
+    #     # res0 = mesh_geophy_new_attr[scalar_new]
+    #     # mesh_Resipy_new_attr.cell_data[scalar_new] 
+    #     # mesh_Resipy_new_attr.array_names
     
-        # ERT.mesh
-        # res = ERT.mesh.df['res0']
-        ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT,project_name,'predicted'), 
-                                                    elecs, 
-                                                    sequenceERT, 
-                                                    meshERT, 
-                                                    res0=res0)
+    #     # ERT.mesh
+    #     # res = ERT.mesh.df['res0']
+    #     ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT,project_name,'predicted'), 
+    #                                                 elecs, 
+    #                                                 sequenceERT, 
+    #                                                 meshERT, 
+    #                                                 res0=res0)
         
-        ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
-        df_ERT_predicted = ERT_predicted.surveys[0].df
+    #     ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
+    #     df_ERT_predicted = ERT_predicted.surveys[0].df
 
 
 
 
 
 
-        # # save to dataframe and export file
-        # # ------------------------------------------------------------------------
-        # filename = 'ER_predicted.csv'
+        # save to dataframe and export file
+        # ------------------------------------------------------------------------
+        filename = 'ER_predicted.csv'
         
-        # isExist = os.path.exists(os.path.join(pathERT, project_name))
-        # if not isExist:
-        #     os.makedirs(os.path.join(pathERT, project_name))
+        isExist = os.path.exists(os.path.join(pathERT, project_name))
+        if not isExist:
+            os.makedirs(os.path.join(pathERT, project_name))
     
-        # df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
-        # # ERT_predicted[]
-        # # simuERT.invert_ERT_survey(ERT)
+        df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
+        # ERT_predicted[]
+        # simuERT.invert_ERT_survey(ERT)
         
         
     
-    if savefig is True:
+    # if savefig is True:
         
         
-        # fig = plt.figure()
+    #     # fig = plt.figure()
         
-        # plt.scatter(np.arange(0,len(df_sw)), df_sw)
-        # plotname ='suplot'+ str(DA_cnb)
-        # plt.savefig(path_CATHY + plotname + '.png', dpi=300)
+    #     # plt.scatter(np.arange(0,len(df_sw)), df_sw)
+    #     # plotname ='suplot'+ str(DA_cnb)
+    #     # plt.savefig(path_CATHY + plotname + '.png', dpi=300)
                 
-        # plotter0 = pv.Plotter(shape=(1, 1),off_screen=True) # notebook = True
-        # plotter0.subplot(0, 0)
-        # mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(df_sw[-1], 
-        #                                                             mesh_CATHY_ref, 
-        #                                                             'saturation_df', 
-        #                                                             overwrite=True)
-        # mesh_CATHY_df.set_active_scalars('saturation_df')
-        # my_colormap = 'Blues'
-        # _ = plotter0.add_mesh(mesh_CATHY_ref,show_edges=True, cmap=my_colormap)
+    #     # plotter0 = pv.Plotter(shape=(1, 1),off_screen=True) # notebook = True
+    #     # plotter0.subplot(0, 0)
+    #     # mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(df_sw[-1], 
+    #     #                                                             mesh_CATHY_ref, 
+    #     #                                                             'saturation_df', 
+    #     #                                                             overwrite=True)
+    #     # mesh_CATHY_df.set_active_scalars('saturation_df')
+    #     # my_colormap = 'Blues'
+    #     # _ = plotter0.add_mesh(mesh_CATHY_ref,show_edges=True, cmap=my_colormap)
 
-        # plotter0.update_scalar_bar_range([0,1]) # max saturation is 1
-        # plotter0.show_grid()
-        # plotter0.view_xz()
+    #     # plotter0.update_scalar_bar_range([0,1]) # max saturation is 1
+    #     # plotter0.show_grid()
+    #     # plotter0.view_xz()
 
-        # plotname ='suplot'+ str(DA_cnb)
+    #     # plotname ='suplot'+ str(DA_cnb)
 
         
-        # plotter0.save_graphic(path_CATHY + plotname + str('.svg'), 
-        #                     title='', 
-        #                     raster=True, 
-        #                     painter=True)   
+    #     # plotter0.save_graphic(path_CATHY + plotname + str('.svg'), 
+    #     #                     title='', 
+    #     #                     raster=True, 
+    #     #                     painter=True)   
        
-        # plotter0.close()
+    #     # plotter0.close()
        
-        plotter = pv.Plotter(shape=(1, 2),off_screen=True) # notebook = True
-        plotter.subplot(0, 0)
-        mesh_CATHY_new_attr.set_active_scalars(active_attr)
-        _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
-        # plotter.show_grid()
-        # plotter.view_xz()
+    #     plotter = pv.Plotter(shape=(1, 2),off_screen=True) # notebook = True
+    #     plotter.subplot(0, 0)
+    #     mesh_CATHY_new_attr.set_active_scalars(active_attr)
+    #     _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
+    #     # plotter.show_grid()
+    #     # plotter.view_xz()
        
-        plotter.subplot(0, 1)
-        mesh_geophy_new_attr.set_active_scalars(scalar_new)
-        _ = plotter.add_mesh(mesh_geophy_new_attr,show_edges=True)
+    #     plotter.subplot(0, 1)
+    #     mesh_geophy_new_attr.set_active_scalars(scalar_new)
+    #     _ = plotter.add_mesh(mesh_geophy_new_attr,show_edges=True)
        
-        if 'pygimli' in data_format:
-            plotter.view_xy()
-        else:      
-            plotter.view_xz()
+    #     if 'pygimli' in data_format:
+    #         plotter.view_xy()
+    #     else:      
+    #         plotter.view_xz()
        
-        plotter.show_grid()
+    #     plotter.show_grid()
 
 
-        plotname ='suplot_ER'+ str(DA_cnb)
+    #     plotname ='suplot_ER'+ str(DA_cnb)
 
-        # plotter.save_graphic(plotname + str('.svg'), 
-        #                     title='', 
-        #                     raster=True, 
-        #                     painter=True)   
+    #     # plotter.save_graphic(plotname + str('.svg'), 
+    #     #                     title='', 
+    #     #                     raster=True, 
+    #     #                     painter=True)   
         
-        plotter.save_graphic(path_CATHY + plotname + str('.svg'), 
-                            title='', 
-                            raster=True, 
-                            painter=True)   
+    #     plotter.save_graphic(path_CATHY + plotname + str('.svg'), 
+    #                         title='', 
+    #                         raster=True, 
+    #                         painter=True)   
        
-        plotter.close()
+    #     plotter.close()
     
 
     return df_ERT_predicted, df_Archie

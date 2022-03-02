@@ -73,7 +73,9 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     # data perturbation from ensemble measurements
     # data_pert should be (MeasSize)x(ens_size)
     data_pert = data - observation
-
+    
+    if np.max(abs(data_pert))>1e3:
+        raise ValueError('predictions are too far from observations')
     # S = ensemble measurement perturbation from ensemble measurement mean.
     # S is (MeasSize)x(ens_size)        
     meas_avg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1)).transpose()
@@ -93,7 +95,12 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     #     COV = data_cov
     # else:
     # print(np.shape( (1./float(ens_size-1))*np.dot(S,S.transpose())))
-    COV = (1./float(ens_size-1))*np.dot(obs_pert,obs_pert.transpose()) + data_cov.transpose()
+    
+    Sakov = False
+    if Sakov:
+        COV = data_cov.transpose()
+    else:
+        COV = (1./float(ens_size-1))*np.dot(obs_pert,obs_pert.transpose()) + data_cov.transpose()
     # print(np.shape(COV))
 
     # np.shape(data_pert)

@@ -314,13 +314,13 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
     
     
-    if np.shape(t_atmbc) != np.shape(v_atmbc):
+    if isinstance(v_atmbc, list):
         v_atmbc_p = v_atmbc[0] # positif
         v_atmbc_n = v_atmbc[1] # negatif
         v_atmbc = v_atmbc[0] - v_atmbc[1]
 
     
-
+    # v_atmbc = 
     fig, ax = plt.subplots(figsize=(6,3))
     ax.plot(t_atmbc, v_atmbc, "k.")
     ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
@@ -329,14 +329,14 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
 
     if 'IETO' in kwargs:
         if kwargs['IETO'] != 0:
-            plt.step(t_atmbc, v_atmbc, color="k.", where="post")
+            plt.step(t_atmbc, v_atmbc, color="k", where="post")
         elif kwargs['IETO'] == 0: # case of linear interpolation between points
             ax.plot(t_atmbc, v_atmbc, "k.")
 
         
 
     # if np.shape(t_atmbc) != np.shape(v_atmbc):
-    if len(v_atmbc_p)>0:
+    if isinstance(v_atmbc, list):
         plt.step(t_atmbc, v_atmbc, color="green", where="post", label="Diff",marker='.')
         plt.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
         plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
@@ -1142,10 +1142,15 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
                                  **kwargs):
     
     
+    if 'ax' in kwargs:
+        ax = kwargs['ax']
+    else:
+        fig = plt.figure(figsize=(6, 3), dpi=350)
+        ax = fig.add_subplot()
+        
     ensemble_size = len(dict_parm_pert[parm]['ini_perturbation'])
 
-    fig = plt.figure(figsize=(6, 3), dpi=350)
-    ax = fig.add_subplot()
+
 
     mean_t = [np.mean(dict_parm_pert[parm]['ini_perturbation'])]
     mean_t_yaxis=np.mean(dict_parm_pert[parm]['ini_perturbation'])
@@ -1163,18 +1168,53 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
         pass
 
     np.shape(cloud_t)
-    for nt in range(len(cloud_t)-1):
-        plt.scatter(np.arange(0,len(cloud_t[0,:])),cloud_t[nt,:],label='ens_nb' + str(nt+1))
     
+
+    # -------------------------------    
+    
+
+    
+    dict_parm_new = {}
+    name= []
+    i = 0
+    for k in dict_parm_pert[parm].keys():
+        if 'upd' in k:
+            dict_parm_new[parm+'_'+k]=np.hstack(dict_parm_pert[parm][k])
+            name.append(str(i+1))
+            i = i +1
+
+            
+    df = pd.DataFrame()      
+    df = pd.DataFrame(data=dict_parm_new)
+    df.index.name = 'Ensemble_nb'
+    # df=df.reset_index()
+
+    boxplot = df.boxplot()  
+    
+    
+    boxplot.set_xticklabels(name, rotation=90)
     plt.ylabel(parm)
-    plt.ylim([mean_t_yaxis-mean_t_yaxis/2,mean_t_yaxis+mean_t_yaxis/2])
-
     plt.xlabel('assimilation time')
-    plt.legend(loc='upper right')
-    plt.grid(visible=True, which='major', axis='both')
+    plt.yscale('log')
 
-    plt.show()
-    plt.savefig('update_parm.png', dpi=300)
+    # -------------------------------    
+
+    # fig = plt.figure(figsize=(6, 3), dpi=350)
+    # ax = fig.add_subplot()
+    
+    # for nt in range(len(cloud_t)-1):
+    #     plt.scatter(np.arange(0,len(cloud_t[0,:])),cloud_t[nt,:],label='ens_nb' + str(nt+1))
+    
+    
+    # plt.ylabel(parm)
+    # # plt.ylim([mean_t_yaxis-mean_t_yaxis/2,mean_t_yaxis+mean_t_yaxis/2])
+    # plt.grid(which='minor')
+    # plt.xlabel('assimilation time')
+    # # plt.legend(loc='upper right')
+    # plt.grid(visible=True, which='major', axis='both')
+
+    # plt.show()
+    # plt.savefig('update_parm.png', dpi=300)
 
     return ax
     
@@ -1205,12 +1245,15 @@ def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, *
     
     # key2plot = 'psi_bef_update'
     key2plot = 'analysis'
+    
+    isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
+    len(isOL)
     # -----------------------------#
     if len(nodes_of_interest)>0:
     
         if len(isOL)>0:
-            isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/((max(isOL['time'])+1)*NENS))),
-                                             int(max(isOL['time'])+1)*NENS), True)
+            isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time']+1)*NENS))),
+                                             int(max(isOL['time']+1)*NENS)), True)
             select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
             select_isOL = select_isOL.set_index(['time','idnode'])
             select_isOL = select_isOL.reset_index()
@@ -1239,7 +1282,10 @@ def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, *
                                 
         # print(select_isOL)
         if len(isENS)>0:
-    
+            
+            if len(isOL)<1:
+                NENS = int(max(DA['Ensemble_nb'].unique()))-1
+
             isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),
                                               int(max(isENS['time']))*NENS), True)
             select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
@@ -1293,36 +1339,55 @@ def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, *
         ens_mean_isENS_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
-                          values=["mean(ENS)"]).plot(ax=ax, style=['.-'],color='grey')
+                          values=["mean(ENS)"]).plot(ax=ax, style=['.-'],color='blue')
         
         ens_max_isENS_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
-                          values=["max(ENS)"]).plot(ax=ax,style=['.-'],color='magenta')
-        
+                          values=["max(ENS)"]).plot(ax=ax,style=['.-'],color='blue')
+               
         ens_min_isENS_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
                           values=["min(ENS)"]).plot(ax=ax,style=['.-'],color='blue',
                                                         xlabel= '(assimilation) time - (h)',
                                                         ylabel='pressure head $\psi$ (m)')
+                                                    
+        lgd= ax.fill_between(ens_min_isENS_time['time'], 
+                        ens_min_isENS_time['min(ENS)'], 
+                        ens_max_isENS_time['max(ENS)'], 
+                        alpha=0.2,
+                        color='blue',
+                        label='minmax DA')
+
                                                 
     if len(isOL)>0:
         ens_mean_isOL_time.pivot(index="time", 
                           # columns=["Ensemble_nb",'idnode'], 
                           columns=['idnode'], 
-                          values=["mean(ENS)_OL"]).plot(ax=ax, style=['-'],color='red',label='open loop',
+                          values=["mean(ENS)_OL"]).plot(ax=ax, style=['-'],color='grey',label=None,
                                                        ylabel='pressure head $\psi$ (m)',) # water saturation (-)
         ens_min_isOL_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
-                          values=["min(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
+                          values=["min(ENS)_OL"]).plot(ax=ax,style=['--'],
+                                                       color='grey',
+                                                       label=None)
         
         ens_max_isOL_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
-                          values=["max(ENS)_OL"]).plot(ax=ax,style=['--'],color='red')
+                          values=["max(ENS)_OL"]).plot(ax=ax,style=['--'],
+                                                       color='grey',
+                                                       label=None)
     
+        ax.fill_between(ens_mean_isOL_time['time'], 
+                        ens_min_isOL_time['min(ENS)_OL'], 
+                        ens_max_isOL_time['max(ENS)_OL'], 
+                        alpha=0.2,
+                        color='grey',
+                        label='minmax OL')
+        
     ax.set_xlabel('time (h)')
     ax.set_ylabel('pressure head (m)')
 
