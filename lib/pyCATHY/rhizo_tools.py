@@ -352,9 +352,11 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     PZ = [solution['PZ']]
     OMGC =[solution['OMGC']] 
     
-    if 'Ks' in kwargs:
+    if 'ZROOT' in kwargs:
         ZROOT=[kwargs['ZROOT']]
         
+    if 'PCREF' in kwargs:
+        PCREF=[kwargs['PCREF']]     
         
     FeddesParam = {'PCANA':PCANA,'PCREF':PCREF,'PCWLT':PCWLT,
                    'ZROOT':ZROOT,'PZ':PZ,

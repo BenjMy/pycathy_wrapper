@@ -602,10 +602,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
             # ----------------------------------------------------------------
             if self.DAFLAG:
-
+                
+                verbose = False
                 # define Data Assimilation default parameters
                 # -------------------------------------------------------------
-
+                
                 # type of assimillation
                 DA_type = 'enkf_Evensen2009_Sakov' # Default DA type
                 if 'DA_type' in kwargs:
@@ -636,6 +637,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     open_loop_run = kwargs['open_loop_run']
                     
                     
+                threshold_rejected = 10
+                if 'threshold_rejected' in kwargs:
+                    threshold_rejected = kwargs['threshold_rejected']
+                    
                     
                 self._run_DA(callexe, parallel, 
                              DA_type,
@@ -643,8 +648,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                              list_update_parm,
                              dict_parm_pert,
                              list_assimilated_obs,
-                             verbose=True,
-                             open_loop_run=open_loop_run
+                             open_loop_run,
+                             threshold_rejected,
+                             verbose
                              )
 
             # case of simple simulation
@@ -1118,9 +1124,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         list_update_parm,
                         dict_parm_pert,
                         list_assimilated_obs,
+                        open_loop_run,
+                        threshold_rejected,
                         verbose,
                         **kwargs
                         ):
+                                    
+                             
         '''
         
         Run Data Assimilation 
@@ -1212,7 +1222,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                               cycle_nb=self.count_DA_cycle)
         
         # -------------------------------------------------------------------
-        if kwargs['open_loop_run']:
+        if open_loop_run:
             self._DA_openLoop(ENS_times,list_assimilated_obs)     
         # end of Open loop - start DA
         
@@ -1238,6 +1248,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             if parallel == True:
                 pathexe_list = []
                 # for ens_i in range(self.NENS):
+                    
                 for ens_i in self.ens_valid:
                     path_exe = os.path.join(self.workdir,
                                             self.project_name,
@@ -1269,9 +1280,15 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         self.console.print(p.stderr)      
             os.chdir(os.path.join(self.workdir))
             
+            
+            
+            
+            
             # check scenario (result of the hydro simulation)
-            # ----------------------------------------------------------------
-            rejected_ens = self._check_before_analysis(update_key,self.ens_valid)
+            # ----------------------------------------------------------------       
+            rejected_ens = self._check_before_analysis(update_key,
+                                                       self.ens_valid,
+                                                       threshold_rejected)
             id_valid= ~np.array(rejected_ens)          
             self.ens_valid = np.arange(0,self.NENS)[id_valid]
     
@@ -1387,8 +1404,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
             # check after analysis
             # ----------------------------------------------------------------
-            self._check_after_analysis(update_key,list_update_parm)
-                
+            id_valid_after = self._check_after_analysis(update_key,
+                                                      list_update_parm)
+            intersection_set = set.intersection(set(id_valid_after), set(self.ens_valid))
+            self.ens_valid = list(intersection_set)
+
+
+            
             # create dataframe _DA_var_pert_df holding the results of the DA update
             # ---------------------------------------------------------------------
             
@@ -1416,7 +1438,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 print('------ end of DA ------')
                 pass   
             print('------ end of update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)-1) + '------')
+            print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
+            print(self.ens_valid)
             
+            plt.close('all')
+            
+
             
         
 
@@ -3705,7 +3732,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # return self.DA_var_pert_df
         pass
 
-    def _check_before_analysis(self,update_key, ens_valid=[]):
+    def _check_before_analysis(self,update_key, ens_valid=[],
+                               threshold_rejected=10):
         '''
         Filter is applied only on selected ensemble
 
@@ -3734,26 +3762,30 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     df_mbeconv = out_CT.read_mbeconv(os.path.join(self.workdir, self.project_name,
                                                        "DA_Ensemble/cathy_" + str(n+1),
                                                        'output/mbeconv'))
+                    if df_mbeconv['CUM.'].isnull().values.any():
+                        rejected_ens_new.append(True)
+                        self.console.print(":x: [b]df_mbeconv['CUM.'][/b]" + str(df_mbeconv['CUM.'].isnull().values.any())+ ', ens_nb:' + str(n+1))
+        
+                    elif (np.round(df_mbeconv['TIME'].iloc[-1]))<np.round(self.parm['(TIMPRT(I),I=1,NPRT)'][-1]) - self.parm['DELTAT']:
+                        rejected_ens_new.append(True)
+                        self.console.print(":x: [b]df_mbeconv['TIME'][/b]" + str(df_mbeconv['TIME'].iloc[-1]) + ', ens_nb:' + str(n+1))
+        
+                    elif len(df_mbeconv) == 0:
+                        rejected_ens_new.append(True)
+                        self.console.print(":x: [b]len(df_mbeconv)['TIME'][/b]" + str(len(df_mbeconv))+ ', ens_nb:' + str(n+1))
+        
+                    else:
+                        rejected_ens_new.append(False)                  
+                    
                 except:
+                    rejected_ens_new.append(True)
                     print('cannot read mbeconv')
+                    pass
+                    # UnboundLocalError: local variable 'df_mbeconv' referenced before assignment
 
-                
-                if df_mbeconv['CUM.'].isnull().values.any():
-                    rejected_ens_new.append(True)
-                    self.console.print(":x: [b]df_mbeconv['CUM.'][/b]" + str(df_mbeconv['CUM.'].isnull().values.any())+ ', ens_nb:' + str(n+1))
-    
-                elif (np.round(df_mbeconv['TIME'].iloc[-1]))<np.round(self.parm['(TIMPRT(I),I=1,NPRT)'][-1]) - self.parm['DELTAT']:
-                    rejected_ens_new.append(True)
-                    self.console.print(":x: [b]df_mbeconv['TIME'][/b]" + str(df_mbeconv['TIME'].iloc[-1]) + ', ens_nb:' + str(n+1))
-    
-                elif len(df_mbeconv) == 0:
-                    rejected_ens_new.append(True)
-                    self.console.print(":x: [b]len(df_mbeconv)['TIME'][/b]" + str(len(df_mbeconv))+ ', ens_nb:' + str(n+1))
-    
-                else:
-                    rejected_ens_new.append(False)
             else:
                 rejected_ens_new.append(True)
+
                 
 
 
@@ -3770,7 +3802,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         #check whether the number of discarded scenarios is major than the 10% of the total number [N]; 
         #if the answer is yes than the execution stops
         # --------------------------------------------------------------------
-        if sum(rejected_ens_new)>=0.1*self.NENS:
+        if sum(rejected_ens_new)>=(threshold_rejected/100)*self.NENS:
             print('new parameters (if updated)')
             print(self.dict_parm_pert)
             print(update_key)
@@ -3795,6 +3827,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         '''
         self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
 
+        id_valid = list(np.arange(0,self.NENS))
+        
         for pp in enumerate(list_update_parm[:]):
             if 'St. var.' in pp[1]:
                 pass
@@ -3804,23 +3838,38 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # if (self.dict_parm_pert[pp[1]][update_key] < 0).any==True:
                 #     raise ValueError('impossible value of ' + str(pp[1]) 
                 #                      + ' too large standart deviation?')
-                    
-                    
-                if sum(self.dict_parm_pert[pp[1]][update_key] < 0)>0:
-                    self.dict_parm_pert[pp[1]][update_key]
-                    raise ValueError('impossible value of ' + str(pp[1]) 
-                                     + ' too large standart deviation?')
+                # self.dict_parm_pert[pp[1]][update_key][2] = -1    
+                
+                if 'Ks'.casefold() in pp[1].casefold():
+                    if sum(self.dict_parm_pert[pp[1]][update_key] < 0)>0:
+                        print(self.dict_parm_pert[pp[1]][update_key])
+                                               
+                    id_nonvalid = list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0])
+                    id_valid = list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0])
+                                   
 
+                    for i in id_nonvalid:
+                        self.console.print(":x: [b]negative parameter:[/b]" + str(self.dict_parm_pert[pp[1]][update_key][i])+ ', ens_nb:' + str(i))
+    
+                    
+                if 'PCREF'.casefold() in pp[1].casefold():
+                    print('not yet implemented')
 
 
                 # ckeck if new value of Zroot is feasible
                 # ------------------------------------------------------------
-                if 'Zroot' in pp[1]:
-                    if not (self.dict_parm_pert[pp[1]][update_key] > abs(min(self.grid3d['nodes_idxyz'][:, -1]))).any==True:
-                        raise ValueError('impossible value of' + str(pp[1]))
+                if 'Zroot'.casefold() in pp[1].casefold():
+                    id_nonvalid = list(np.where(self.dict_parm_pert[pp[1]][update_key]> abs(min(self.grid3d['nodes_idxyz'][:, -1])))[0])
+                    id_valid = list(np.where(self.dict_parm_pert[pp[1]][update_key]< abs(min(self.grid3d['nodes_idxyz'][:, -1])))[0])
+                    
+                    for i in id_nonvalid:
+                        self.console.print(":x: [b]unfeasible root depth:[/b]" + str(self.dict_parm_pert[pp[1]][update_key][i])+ ', ens_nb:' + str(i))
+    
+                    # if not (self.dict_parm_pert[pp[1]][update_key] > abs(min(self.grid3d['nodes_idxyz'][:, -1]))).any==True:
+                    #     raise ValueError('impossible value of' + str(pp[1]))
 
 
-        pass
+        return id_valid
 
 
 
@@ -4787,15 +4836,21 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # --------------------------------------------------------------
                 elif key in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:                   
                     
+                    # FeddesParam = self.soil_FP['FP_map']
+                    SPP =  self.soil_SPP['SPP_map'] 
+
                     FeddesParam = {'PCANA': self.soil["PCANA"],
-                                   'PCREF': self.soil["PCREF"],
-                                   'PCWLT': self.soil["PCWLT"],
-                                   'ZROOT': [parm_pert[key][update_key][ens_nb]],
-                                   'PZ': self.soil["PZ"],
-                                   'OMGC': self.soil["OMGC"]}
+                                    'PCREF': self.soil["PCREF"],
+                                    'PCWLT': self.soil["PCWLT"],
+                                    'ZROOT': self.soil["ZROOT"],
+                                    'PZ': self.soil["PZ"],
+                                    'OMGC': self.soil["OMGC"]}
                     
+                    FeddesParam[key]=[parm_pert[key][update_key][ens_nb]]
+
 
                     self.update_soil(FP=FeddesParam,
+                                     SPP=SPP,
                                      verbose=False,
                                      filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
                     

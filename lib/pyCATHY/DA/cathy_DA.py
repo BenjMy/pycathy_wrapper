@@ -222,7 +222,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
             elif sampling_type == 'normal':
                 # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
-                parm_sampling = np.random.normal(mean,sigma=sd, size=ensemble_size)
+                parm_sampling = np.random.normal(mean,scale=sd, size=ensemble_size)
 
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             

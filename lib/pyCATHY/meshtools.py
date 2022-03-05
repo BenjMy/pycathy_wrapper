@@ -203,6 +203,10 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
 
     '''
     
+    # for k in kwargs:
+    #     print(k)
+    # print(mesh)
+    
     if type(mesh) is str:
         mesh = pv.read(mesh)
     
@@ -213,7 +217,7 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
         mesh.cell_data[name] = data
 
     meshname = name + '.vtk'
-    
+
     if saveMesh:
         path = os.getcwd()
         if 'path' in kwargs:

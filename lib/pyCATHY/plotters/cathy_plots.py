@@ -721,6 +721,10 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
         if unit == "saturation":
             plotter.update_scalar_bar_range([0,1])
             
+            if 'clim' in kwargs:
+                plotter.update_scalar_bar_range([kwargs['clim'][0],kwargs['clim'][1]])
+
+            
             
     if savefig == True:
         # gif_original = filename + '.gif'
@@ -1195,7 +1199,9 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
     boxplot.set_xticklabels(name, rotation=90)
     plt.ylabel(parm)
     plt.xlabel('assimilation time')
-    plt.yscale('log')
+    
+    if 'ylog' in kwargs:
+        plt.yscale('log')
 
     # -------------------------------    
 
@@ -1220,7 +1226,11 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
     
     
 
-def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, **kwargs):
+def DA_plot_time_dynamic(DA, 
+                         state='psi', 
+                         nodes_of_interest=[], 
+                         savefig=False, 
+                         **kwargs):
     
     if 'ax' in kwargs:
         ax = kwargs['ax']
@@ -1244,10 +1254,14 @@ def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, *
     
     
     # key2plot = 'psi_bef_update'
-    key2plot = 'analysis'
     
-    isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
-    len(isOL)
+    key2plot = 'analysis'
+    if 'sw' in state:
+        key2plot = 'sw_bef_update_'
+
+    
+    # isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
+    
     # -----------------------------#
     if len(nodes_of_interest)>0:
     
@@ -1282,12 +1296,9 @@ def DA_plot_time_dynamic(DA, state='psi', nodes_of_interest=[], savefig=False, *
                                 
         # print(select_isOL)
         if len(isENS)>0:
-            
-            if len(isOL)<1:
-                NENS = int(max(DA['Ensemble_nb'].unique()))-1
-
-            isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*NENS))),
-                                              int(max(isENS['time']))*NENS), True)
+                     
+            isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+                                              int(max(isENS['time']))*(NENS+1)), True)
             select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
             select_isENS = select_isENS.set_index(['time','idnode'])
             select_isENS = select_isENS.reset_index()
