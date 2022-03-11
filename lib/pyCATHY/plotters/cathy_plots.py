@@ -40,6 +40,8 @@ from pyCATHY.cathy_utils import label_units, transform2_time_delta, convert_time
 import matplotlib.font_manager
 import matplotlib.style
 import matplotlib as mpl
+import matplotlib.dates as mdates
+
 mpl.style.use('default')
 
 mpl.rcParams['grid.color'] = 'k'
@@ -325,6 +327,7 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
     ax.plot(t_atmbc, v_atmbc, "k.")
     ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
     ax.grid()
+    
 
 
     if 'IETO' in kwargs:
@@ -342,6 +345,20 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
         
     ax.legend()
+    
+    # dateFormat = '%d-%H'
+    if 'dateFormat' in kwargs:
+        dateFormat = kwargs['dateFormat']
+    
+    if 'date_locator' in kwargs:
+        interval = kwargs['date_locator'][1]
+        if 'HourLocator' in kwargs['date_locator'][0]:
+            ax.xaxis.set_major_locator(mdates.HourLocator(interval=8))
+
+        ax.xaxis.set_major_formatter(mdates.DateFormatter(dateFormat))
+        plt.gcf().autofmt_xdate()
+        
+    
     # ax.set_yscale('symlog')
     plt.show(block=False)
 
@@ -1083,22 +1100,25 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
 
 def DA_RMS(df_performance,sensorName):
     
-    header = ['time', 'ObsType','RMSE'+sensorName,'OL']   
+    
+    header = ['time', 'ObsType','RMSE'+sensorName,'NMRMSE'+sensorName,'OL']   
     df_perf_plot = df_performance[header]   
     df_perf_plot['RMSE'+sensorName] = df_perf_plot['RMSE'+sensorName].astype('float64')
-    # df_perf_plot.NMRMSE = df_perf_plot.NMRMSE.astype('float64')
+    df_perf_plot['NMRMSE'+sensorName] = df_perf_plot['NMRMSE'+sensorName].astype('float64')
     df_perf_plot.OL = df_perf_plot.OL.astype('str')
     
     # df_perf_plot['RMSE']
+    df_perf_plot.dropna(inplace=True)
     
-    
-    
+    # sensorName = ['swc','swc1','sw2']
     p0 = df_perf_plot.pivot(index='time',columns='OL', values='RMSE'+sensorName)
-    # p1 = df_perf_plot.pivot(index='time',columns='OL', values='NMRMSE')
+    # p0 = df_perf_plot.pivot(index='time',columns='OL', values='ObsType')
+    p1 = df_perf_plot.pivot(index='time',columns='OL', values='NMRMSE'+sensorName)
+    # p0.plot()
     
     fig, ax = plt.subplots(2,1)
     p0.plot(xlabel='time',ylabel='RMSE'+sensorName, ax=ax[0],style=['.-'])
-    # p1.plot(xlabel='time',ylabel='NMRMSE', ax=ax[1],style=['.-'])
+    p1.plot(xlabel='time',ylabel='NMRMSE'+sensorName, ax=ax[1],style=['.-'])
     
     
     plt.savefig('performanceDA.png', dpi=300)
@@ -1167,7 +1187,7 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
             # print(np.shape(np.hstack(dict_parm_pert[parm]['update_nb'+str(int(nt))])))
             # mean_t.append(np.mean(dict_parm_pert[parm]['update_nb'+str(int(nt+1))]))
             print(int(nt))
-            cloud_t[:,int(nt)]= np.hstack(dict_parm_pert[parm]['update_nb'+str(int(nt))])
+            cloud_t[:,int(nt+1)]= np.hstack(dict_parm_pert[parm]['update_nb'+str(int(nt))])
     except:
         pass
 
@@ -1255,9 +1275,12 @@ def DA_plot_time_dynamic(DA,
     
     # key2plot = 'psi_bef_update'
     
+    ylabel = 'pressure head (m)'
     key2plot = 'analysis'
     if 'sw' in state:
         key2plot = 'sw_bef_update_'
+        ylabel = 'water saturation'
+
 
     
     # isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
@@ -1293,12 +1316,30 @@ def DA_plot_time_dynamic(DA,
                                     )
             ens_max_isOL_time = ens_max_isOL_time.reset_index(name='max(ENS)_OL')
 
-                                
-        # print(select_isOL)
+                                    
+        
         if len(isENS)>0:
-                     
-            isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+
+            try:
+                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS)))),
+                                                  int(max(isENS['time']))*(NENS)), True)
+            except:
+                pass
+            
+            try:
+                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+                                                  int(max(isENS['time']))*(NENS)), True)
+            except:
+                pass
+            
+            try:
+                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
                                               int(max(isENS['time']))*(NENS+1)), True)
+            except:
+                pass
+                  
+               
+                        
             select_isENS =     isENS[isENS["idnode"].isin(nodes_of_interest)]
             select_isENS = select_isENS.set_index(['time','idnode'])
             select_isENS = select_isENS.reset_index()
@@ -1400,7 +1441,8 @@ def DA_plot_time_dynamic(DA,
                         label='minmax OL')
         
     ax.set_xlabel('time (h)')
-    ax.set_ylabel('pressure head (m)')
+    # ax.set_ylabel('pressure head (m)')
+    ax.set_ylabel(ylabel)
 
     savename = 'showDA_dynamic'
     if 'savename' in kwargs:

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from pyCATHY.plotters import cathy_plots as pltCT 
 
-def read_atmbc(filename, grid, show=False, **kwargs):
+def read_atmbc(filename, grid=[], show=False, **kwargs):
     '''
     read atmbc file 
     
@@ -59,28 +59,22 @@ def read_atmbc(filename, grid, show=False, **kwargs):
     if HSPATM != 0: #homogeneous on all surf mesh nodes
               
         d_atmbc = []
+        d_atmbc= np.vstack([t,value])
+        cols_atmbc = ['time', 'value']
+        df_atmbc =  pd.DataFrame(d_atmbc.T,  columns=cols_atmbc)
+        
+    else:
+        
+        d_atmbc = []
         for i in range(len(t)):
            d_atmbc.append(np.column_stack((t[i]*np.ones(int(grid["nnod3"])),
                       value[i]*np.ones(int(grid["nnod3"])),
                       grid['nodes_idxyz'])))
-        d_atmbc= np.vstack(d_atmbc)
-    
-    else:
-        
-        print('HSPATM == 0')
-        print(np.shape(t))
-        print(np.shape(value))
-        print(np.shape( grid['nodes_idxyz']))
-        d_atmbc = []
-
-        
-        
-    
-    cols_atmbc = ['time', 'value', 'nodeidx', 'x', 'y', 'z']
-    df_atmbc =  pd.DataFrame(d_atmbc,  columns=cols_atmbc)
+        d_atmbc= np.vstack(d_atmbc)    
+        cols_atmbc = ['time', 'value', 'nodeidx', 'x', 'y', 'z']
+        df_atmbc =  pd.DataFrame(d_atmbc,  columns=cols_atmbc)
     
     if show==True:
-
         pltCT.show_atmbc(t,value,IETO=IETO)   
         
         try:

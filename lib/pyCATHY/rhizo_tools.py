@@ -26,7 +26,6 @@ class rhizotron(object):
         self.weight_rhizo = []
         self.dates_rhizo = []
 
-        
         pass
 
     def Archie_rhizo(self):
@@ -48,10 +47,191 @@ class rhizotron(object):
         ET = []
         
         return irr, ET
+    
+    def atmbc_PRD(self):
+        pass
+    
+    def prepare_DA(self):
+        self.set_drippers()
+        self.create_infitration()
+        self.update_rhizo_inputs()
+        self.perturbate()
+    
+    
+def perturbate_rhizo(cathyDA,scenarii,prj_name,NENS):
+    
+    
+    if 'ic' in scenarii[prj_name].keys():
+
+    
+        # ic = {'ic_nominal': 0.45, #nominal value
+        #               'ZROOT_units': '$m$', # units
+        #                   }
+
+        ic_nom = scenarii[prj_name]['mean_ic'] #1e-4
+        ic_mean = ic_nom # sampling mean
+        ic_sd = scenarii[prj_name]['sigma_ic']  #1.53
+        ic_pert = {'ic_nominal': ic_nom, #nominal value 45
+                    'ic_units': '$m$' }
         
+        # https://reader.elsevier.com/reader/sd/pii/S0309170812001613?token=BA251E74494F63C0A9178284911E63F94D1B09FF1215259263D74EAA8C1DFA1CB98A6E5A63ADF52B1DD1C0E6EA8CF057&originRegion=us-east-1&originCreation=20220303065046
+        # The initial state of a single realization xi
+        # 0 (i ¼ 1; . . . ; N) is a spatially
+        # homogeneous perturbation of the nominal initial state. In this way
+        # every realization represents a physically consistent state, at the
+        # same time ensuring that the realizations are well differentiated
+        # at the beginning of the simulation.
+        
+        # need to call perturbate_var as many times as variable to perturbate
+        # return a dict merging all variable perturbate to parse into prepare_DA
+        parm_per = cathyDA.perturbate_parm(parm=ic_pert, 
+                                            type_parm = 'ic', # can also be VAN GENUCHTEN PARAMETERS
+                                            mean = scenarii[prj_name]['ic'],
+                                            sd = scenarii[prj_name]['sigma_ic'],
+                                            sampling_type = 'normal',
+                                            ensemble_size = NENS, # size of the ensemble
+                                            per_type=scenarii[prj_name]['per_type'],
+                                            transf_type=scenarii[prj_name]['transf_type'], # LN, SB, SU
+                                            show=True,
+                                            savefig=os.path.join(prj_name +'_DA',
+                                                                 prj_name+ 'ic_hist.png')
+                                            )
+                                            
+        min(parm_per['ic']['ini_perturbation'])
+        max(parm_per['ic']['ini_perturbation'])
+        np.mean(parm_per['ic']['ini_perturbation'])             
     
     
     
+    if 'Ks' in scenarii[prj_name].keys():
+        
+        # VGN, trans_Carsel_Parrish_1988 = utils.Carsel_Parrish_1988(soilTexture='S')
+        Ks_nom = scenarii[prj_name]['mean_ks'] #1e-4
+        Ks_mean = Ks_nom # sampling mean
+        Ks_sd = scenarii[prj_name]['sigma_Ks']  #1.53
+        Ks_pert = {'Ks_nominal': Ks_nom, #nominal value 45
+                    'Ks_units': '$m.s^{-1}$' }
+        
+        
+        parm_per = cathyDA.perturbate_parm(parm=Ks_pert, 
+                                            type_parm = 'Ks', # can also be VAN GENUCHTEN PARAMETERS
+                                            mean = scenarii[prj_name]['Ks'],
+                                            sd = scenarii[prj_name]['sigma_Ks'],
+                                            sampling_type = 'normal',
+                                            ensemble_size = NENS, # size of the ensemble
+                                            per_type=scenarii[prj_name]['per_type'],
+                                            transf_type=scenarii[prj_name]['transf_type'], # LN, SB, SU
+                                            # transf_bounds = {'A':trans_Carsel_Parrish_1988.loc['Ks']['A'],
+                                            #                  'B':trans_Carsel_Parrish_1988.loc['Ks']['B']},
+                                            show=True,
+                                            savefig=os.path.join(prj_name +'_DA',
+                                                                 prj_name+ 'Ks_hist.png')
+                                            )
+        min(parm_per['Ks']['ini_perturbation'])
+        max(parm_per['Ks']['ini_perturbation'])
+        np.mean(parm_per['Ks']['ini_perturbation'])
+        
+        
+    if 'PCREF' in scenarii[prj_name].keys():
+        
+        # VGN, trans_Carsel_Parrish_1988 = utils.Carsel_Parrish_1988(soilTexture='S')
+        PCREF_nom = scenarii[prj_name]['PCREF'] #1e-4
+        PCREF_mean =  PCREF_nom # sampling mean
+        PCREF_sd = scenarii[prj_name]['sigma_PCREF']  #1.53
+        PCREF_pert = {'PCREF_nominal': PCREF_nom, #nominal value 45
+                      'PCREF_units': '$m$' }
+        
+        parm_per = cathyDA.perturbate_parm(parm= PCREF_pert, 
+                                            type_parm = 'PCREF', # can also be VAN GENUCHTEN PARAMETERS
+                                            mean = scenarii[prj_name]['PCREF'],
+                                            sd = scenarii[prj_name]['sigma_PCREF'],
+                                            sampling_type = 'normal',
+                                            ensemble_size = NENS, # size of the ensemble
+                                            per_type=scenarii[prj_name]['per_type'],
+                                            transf_type='log', # LN, SB, SU
+                                            show=True,
+                                            savefig=os.path.join(prj_name +'_DA',
+                                                                 prj_name+ 'PCREF_hist.png')
+                                            )
+        
+        min(parm_per['PCREF']['ini_perturbation'])
+        max(parm_per['PCREF']['ini_perturbation'])
+        np.mean(parm_per['PCREF']['ini_perturbation'])
+        
+        
+        
+    if 'ZROOT' in scenarii[prj_name].keys():
+        
+        # # # In this latter case, the desired parameters (e.g., hydraulic conductivity, parameters of the retention
+        # # # curves), transformed as described in Sect. 4.2, are added to X # and updated based on their correlation with the system states
+        # # # (e.g., Erdal et al., 2015).
+        root_depth = {'ZROOT_nominal': scenarii[prj_name]['ZROOT'], #nominal value 45
+                      'ZROOT_units': '$m$', # units
+                          }
+        # grid3d = in_CT.read_grid3d('/home/ben/Documents/CATHY/pyCATHY/mary_rhizo_withDA/S2_DA/DA_Ensemble/cathy_1/')
+        # nb_surf_nodes = grid3d['nnod']
+        nb_surf_nodes = 110
+        # need to call perturbate_var as many times as variable to perturbate
+        # return a dict merging all variable perturbate to parse into prepare_DA
+        parm_per = cathyDA.perturbate_parm(parm=root_depth, 
+                                            type_parm = 'ZROOT', # can also be VAN GENUCHTEN PARAMETERS
+                                            mean = scenarii[prj_name]['ZROOT'],
+                                            sd = scenarii[prj_name]['sigma_ZROOT'],
+                                            sampling_type = 'lognormal',
+                                            ensemble_size = NENS, # size of the ensemble
+                                            per_type=scenarii[prj_name]['per_type'],
+                                            transf_type= None, # LN, SB, SU, Log
+                                            show=True,
+                                            savefig=os.path.join(prj_name +'_DA',
+                                                                  prj_name+ 'ZROOT_hist.png')
+                                            )
+                                            # surf_param= nb_surf_nodes,
+        # print(parm_per)
+        # # 2dsurf= nb_surf_nodes
+        # 2d parameters
+        # parm_per['ZROOT']
+        # transf_type
+        min(parm_per['ZROOT']['ini_perturbation'])
+        max(parm_per['ZROOT']['ini_perturbation'])
+        np.mean(parm_per['ZROOT']['ini_perturbation'])
+        
+        
+        # DA with ZROOT as perturbated variable
+        # if 'ZROOT' in scenarii[prj_name].keys():
+            
+        #     # # # In this latter case, the desired parameters (e.g., hydraulic conductivity, parameters of the retention
+        #     # # # curves), transformed as described in Sect. 4.2, are added to X # and updated based on their correlation with the system states
+        #     # # # (e.g., Erdal et al., 2015).
+        #     root_depth = {'ZROOT_nominal': scenarii[prj_name]['ZROOT'], #nominal value 45
+        #                   'ZROOT_units': '$m$', # units
+        #                       }
+        #     # grid3d = in_CT.read_grid3d('/home/ben/Documents/CATHY/pyCATHY/mary_rhizo_withDA/S2_DA/DA_Ensemble/cathy_1/')
+        #     # nb_surf_nodes = grid3d['nnod']
+        #     nb_surf_nodes = 110
+        #     # need to call perturbate_var as many times as variable to perturbate
+        #     # return a dict merging all variable perturbate to parse into prepare_DA
+        #     parm_per = cathyDA.perturbate_parm(parm=root_depth, 
+        #                                         type_parm = 'ZROOT', # can also be VAN GENUCHTEN PARAMETERS
+        #                                         sampling_type = 'uniform',
+        #                                         ensemble_size = NENS, # size of the ensemble
+        #                                         show=True,
+        #                                         savefig=os.path.join(prj_name +'_DA',
+        #                                                               prj_name+ 'ZROOT_hist.png'),
+        #                                         minmax_uni = [0,0.55]
+        #                                         )
+        #                                         # surf_param= nb_surf_nodes,
+        #     # print(parm_per)
+        #     # # 2dsurf= nb_surf_nodes
+        #     # 2d parameters
+        #     # parm_per['ZROOT']
+        #     # transf_type
+        #     min(parm_per['ZROOT']['ini_perturbation'])
+        #     max(parm_per['ZROOT']['ini_perturbation'])
+        #     np.mean(parm_per['ZROOT']['ini_perturbation'])
+        
+    return parm_per
+        
+        
     
 def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
     '''
@@ -230,12 +410,7 @@ def atmbc_PRD(workdir,project_name,dict_PRD,show=False,**kwargs):
 
 def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     '''
-    
-
-    Returns
-    -------
-    None.
-
+    Update rhizotron simulation input parameters 
     '''
      
 
@@ -247,17 +422,13 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     zb = np.arange(0,0.5+0.1,0.05)
     nstr=len(zb)-1
     zr=list((np.ones(len(zb)))/(nstr))
-    
     simu_DA.update_prepo_inputs(delta_x=0.05,delta_y=0.003, DEM=dem_synth,
                               N=np.shape(dem_synth)[1],
                               M=np.shape(dem_synth)[0],
                               N_celle=np.shape(dem_synth)[0]*np.shape(dem_synth)[1],
                               nstr=nstr, zratio=zr,  base=max(zb),dr=0.05,show=True)
-    
-
     simu_DA.run_preprocessor(verbose=True,
                              KeepOutlet=False) #,show=True)
-    
     simu_DA.update_parm()
     simu_DA.update_veg_map()
     simu_DA.update_soil()
@@ -270,14 +441,9 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
        
     
     if 'tobs' in kwargs:
-        time_of_interest=kwargs['tobs']
-        # time_of_interest= tobs
-
-        
+        time_of_interest=kwargs['tobs']       
     else:
-        # time_of_interest = list(np.arange(0,tobs*3600,3600))
         time_of_interest = list(np.arange(0,nb_of_days*3600,3600))
-    
     
     
     # INITIAL CONDITIONS
@@ -292,8 +458,6 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     
     # biased scenario
     # -------------------------------
-    
-    
     # ATMBC CONDITIONS
     # ******************
     simu_DA.update_atmbc(HSPATM=1,IETO=1,TIME=time_of_interest,
@@ -326,8 +490,8 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     
     # biased scenario
     # -------------------------------
-    if 'Ks' in kwargs:
-        PERMX = PERMY = PERMZ = kwargs['Ks']
+    # if 'Ks' in kwargs:
+    #     PERMX = PERMY = PERMZ = kwargs['Ks']
 
     
     SoilPhysProp = {'PERMX':PERMX,'PERMY':PERMY,'PERMZ':PERMZ,
@@ -352,11 +516,11 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     PZ = [solution['PZ']]
     OMGC =[solution['OMGC']] 
     
-    if 'ZROOT' in kwargs:
-        ZROOT=[kwargs['ZROOT']]
+    # if 'ZROOT' in kwargs:
+    #     ZROOT=[kwargs['ZROOT']]
         
-    if 'PCREF' in kwargs:
-        PCREF=[kwargs['PCREF']]     
+    # if 'PCREF' in kwargs:
+    #     PCREF=[kwargs['PCREF']]     
         
     FeddesParam = {'PCANA':PCANA,'PCREF':PCREF,'PCWLT':PCWLT,
                    'ZROOT':ZROOT,'PZ':PZ,
@@ -375,17 +539,69 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
                           verbose=True
                           
                         )
+    
+    simu_DA.update_parm(TIMPRTi=time_of_interest,
+                        TMAX=time_of_interest[-1],
+                        IPRT1=2)
+    
 
     return simu_DA
 
 
 #%% meshes interpolation
 
+def plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m):
+    
+    import matplotlib.pylab as plt
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+
+    ax.scatter(
+                in_nodes_mod_m[:,0],
+                in_nodes_mod_m[:,1],
+                in_nodes_mod_m[:,2]
+                )
+    ax.scatter(
+                np.array(mesh_OUT.points)[:,0],
+                np.array(mesh_OUT.points)[:,1],
+                np.array(mesh_OUT.points)[:,2]
+                )
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    plt.show()
+    
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+
+    ax.scatter(
+                in_nodes_mod_m[:,0],
+                in_nodes_mod_m[:,1],
+                in_nodes_mod_m[:,2]
+                )
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+
+    ax.scatter(
+                np.array(mesh_OUT.points)[:,0],
+                np.array(mesh_OUT.points)[:,1],
+                np.array(mesh_OUT.points)[:,2]
+                )
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    pass
+
 def CATHY_2_Simpeg(mesh_CATHY,mesh_Simpeg,scalar='saturation',show=False,**kwargs):
     pass
 
 def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
     '''
+    THIS SHOULD BE MOVED TO MESHTOOLS
+    
     Convert CATHY mesh attribute to pygimli
     Need to flip axis because convention for CATHY and pygimli are different
 
@@ -415,25 +631,30 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
     
     mesh_IN = mesh_CATHY
     if type(mesh_CATHY) is str:
-        mesh_IN = pv.read(mesh_CATHY)
+        mesh_IN_tmp = pv.read(mesh_CATHY)
 
     if type(mesh_pg) is str:
         mesh_OUT = pv.read(mesh_pg)
-        
-        
-        
+    
+    
     # flip y and z axis as CATHY and pg have different convention for axis
     # ------------------------------------------------------------------------
     in_nodes_mod = np.array(mesh_IN.points)
     # in_nodes_mod_pg = np.array(mesh_pg.points)
-    
     idx = np.array([0, 2, 1])
     in_nodes_mod_m = in_nodes_mod[:, idx]
-        
     in_nodes_mod_m = in_nodes_mod[:, idx]
     in_nodes_mod_m[:,2] = -np.flipud(in_nodes_mod_m[:,2])
     in_nodes_mod_m[:,1] = -np.flipud(in_nodes_mod_m[:,1])
 
+    if 'dict_ERT' in kwargs:
+        if 'mesh_nodes_modif' in kwargs['dict_ERT'].keys():
+            in_nodes_mod_m = kwargs['dict_ERT']['mesh_nodes_modif']
+        
+
+    plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m)
+    
+    
     path = os.getcwd()
     if 'path' in kwargs:
         path = kwargs['path']
@@ -443,6 +664,7 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
                             scalar=scalar,
                             threshold=1e-1,
                             in_nodes_mod=in_nodes_mod_m)
+    
 
     scalar_new = scalar + '_nearIntrp2_pg_msh' 
     if 'time' in kwargs:

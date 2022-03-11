@@ -127,7 +127,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         pass
                
             
-    def perturbate_parm(self, parm, type_parm, mean, sd, per_type, 
+    def perturbate_parm(self, parm, type_parm, mean=[], sd=[], per_type=None, 
                         sampling_type = 'lognormal',
                         ensemble_size = 128, 
                         show=False, 
@@ -192,10 +192,36 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         # Parameter perturbation rules
         #----------------------------------------------------------------------
 
-        def Evensen2003():
-            print('not yet implemented - see Botto 2018')
+        def Evensen2003(qk_0, wk,deltaT,Tau, time):
+            '''
+            Ensemble Generation of time-variable atmospheric forcing rates.
+
+            Parameters
+            ----------
+            wk : np.array([])
+                is a sequence of
+                white noise drawn from the standard normal distribution.
+            deltaT : float
+                assimilation interval in sec
+            Tau : np.array([])
+                the specified time decorrelation length
+            time : int
+                assimilation time index
+                
+            Returns
+            -------
+            Ensemble of time-variable atmospheric forcing rates.
+
+            '''
             
-            pass
+            gamma = 1 - deltaT/Tau
+            print('not yet implemented - see Botto 2018')
+            qk1 = gamma * qk_0 + np.sqrt(1-gamma*gamma) * wk
+            
+            return qk1
+        
+        
+        
         # add Johnson1970 transformation in kwargs         
         # transformed them into normally
         # distributed variables via the Johnson system (Johnson, 1970)
@@ -223,7 +249,11 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             elif sampling_type == 'normal':
                 # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
                 parm_sampling = np.random.normal(mean,scale=sd, size=ensemble_size)
-
+            elif sampling_type == 'uniform':
+                minmax_uni = kwargs['minmax_uni']
+                parm_sampling = np.random.uniform(minmax_uni[0],minmax_uni[1],ensemble_size)
+                
+                
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
             
             if per_type == None:

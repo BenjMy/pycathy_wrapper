@@ -107,24 +107,16 @@ def SW_2_ERa(project_name,
     
         
     path_CATHY = os.path.join(path_fwd_CATHY,'vtk/')
-    # print(os.getcwd())
-    # print(path_fwd_CATHY)
-    # print(path_CATHY)
-    # print('*************')
+
     
        
 
     if DA_cnb is not None:
         mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, 'vtk/100.vtk'))
-        # name_mesh_backup = '100_backup_t_ass'  + str(DA_cnb) +'.vtk'
     else:
         mesh_CATHY_ref = pv.read(os.path.join('vtk/100.vtk'))
     
     
-    
-    # mesh_CATHY_ref.save(path_fwd_CATHY + name_mesh_backup)
-
-    #sw2convert = mesh_CATHY['saturation']
     ER_converted_ti = Archie_rho(rFluid=ArchieParms['rFluid'], 
                                 sat = df_sw,
                                 porosity=porosity, 
@@ -155,11 +147,14 @@ def SW_2_ERa(project_name,
     if 'pygimli' in data_format:
         # copy attribute to simpeg mesh
         # ------------------------------------------------------------------------
+        
+        
         mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,
                                                       meshERT,
                                                       scalar='ER_converted'+ str(DA_cnb),
                                                       show=False,
-                                                      path= path_CATHY
+                                                      path= path_CATHY,
+                                                      **kwargs
                                                       )
     
     
@@ -170,11 +165,14 @@ def SW_2_ERa(project_name,
         # ------------------------------------------------------------------------
         res0 = mesh_geophy_new_attr.get_array(scalar_new)
         
-    
-        ERT_predicted = simuERT.create_ERT_survey_pg(os.path.join(pathERT,project_name,'predicted'), 
-                                                    sequence=sequenceERT, 
-                                                    mesh=meshERT, 
-                                                    res0=res0)
+                    
+        ERT_predicted = simuERT.create_ERT_survey_pg(os.path.join(pathERT,
+                                                                  project_name,
+                                                                  'predicted'), 
+                                                     sequence=sequenceERT, 
+                                                     mesh=meshERT, 
+                                                     res0=res0,
+                                                     **kwargs)
         d = {'a':ERT_predicted['a'], 
               'b':ERT_predicted['b'], 
               'k':ERT_predicted['k'], 
@@ -184,44 +182,6 @@ def SW_2_ERa(project_name,
               'valid':ERT_predicted['valid']}
         df_ERT_predicted = pd.DataFrame(data=d)
         
-    # pg = True   
-    # if simpeg==True:
-    #     # copy attribute to simpeg mesh
-    #     # ------------------------------------------------------------------------
-        
-    
-    # else:
-    #     # copy attribute to resipy mesh
-    #     # ------------------------------------------------------------------------
-    #     mesh_geophy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,meshERT,scalar='ER_converted'+ str(DA_cnb),
-    #                     show=False, path= path_CATHY)
-
-    #     # fwd ERT data
-    #     # ------------------------------------------------------------------------
-        
-    #     # USING RESIPY
-    #     # ------------------------------------------------------------------------
-    #     res0 = mesh_geophy_new_attr.get_array(scalar_new)
-    #     # res0 = mesh_geophy_new_attr[scalar_new]
-    #     # mesh_Resipy_new_attr.cell_data[scalar_new] 
-    #     # mesh_Resipy_new_attr.array_names
-    
-    #     # ERT.mesh
-    #     # res = ERT.mesh.df['res0']
-    #     ERT_predicted = simuERT.create_ERT_survey(os.path.join(pathERT,project_name,'predicted'), 
-    #                                                 elecs, 
-    #                                                 sequenceERT, 
-    #                                                 meshERT, 
-    #                                                 res0=res0)
-        
-    #     ERT_predicted = simuERT.fwd_ERT_survey(ERT_predicted, noise=10)
-    #     df_ERT_predicted = ERT_predicted.surveys[0].df
-
-
-
-
-
-
         # save to dataframe and export file
         # ------------------------------------------------------------------------
         filename = 'ER_predicted.csv'

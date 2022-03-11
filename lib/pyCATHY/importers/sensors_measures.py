@@ -4,10 +4,11 @@
 import os
 import numpy as np
 import pandas as pd
+import pygimli as pg
 
 
 
-def read_ERT(filename, **kwargs):
+def read_ERT(filename, data_format, **kwargs):
     '''
     Reader for csv exported resipy data container type
 
@@ -17,24 +18,26 @@ def read_ERT(filename, **kwargs):
 
     '''
     
-    
-    df_ERT = pd.read_csv(filename, sep=",", header='infer')    
-    # PH: pressure head
-    # SW: Soil Water
-    # CKRW: Relative hydraulic conductivity output at all nodes
-    # QTRANIE Root‐zone water uptake at current time level always positive, changes sign in BCPIC
-    # dict_vp = {'PH': 'pressure head'}
-
-
-    # transform a numpy array into panda df
-    # ------------------------------------------------------------------------    
-    
-    
     dict_ERT = {}
-    dict_ERT['electrodesXYZ'] = []
-    dict_ERT['sequenceABMN'] = []
+    
+    if 'resipy' in data_format:
+        df_ERT = pd.read_csv(filename, sep=",", header='infer')       
+        # dict_ERT = {}
+        # dict_ERT['electrodesXYZ'] = []
+        # dict_ERT['sequenceABMN'] = []
+    elif 'pygimli' in data_format:
+        df_ERT = pg.load(filename)  
+        # df_ERT['a']
+        dict_ERT['elecs'] = np.array(df_ERT.sensorPositions())
+        # df_ERT.sensors()
+        # np.array(df_ERT.sensorPositions())
+        
+        
+    else:
+        raise ValueError('ERT data format not recognized')
+        
 
-    return df_ERT   
+    return df_ERT, dict_ERT 
 
 
 def read_discharge(filename, **kwargs):

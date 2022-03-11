@@ -46,8 +46,7 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0] 
     
-    
-    observation = observation.T
+    observation = observation
     data = np.array([data]).T
     meas_size = data.shape[0]
 
@@ -73,6 +72,9 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     # data perturbation from ensemble measurements
     # data_pert should be (MeasSize)x(ens_size)
     data_pert = data - observation
+    
+    # len(data)
+    # len(observation)
     
     if np.max(abs(data_pert))>1e3:
         raise ValueError('predictions are too far from observations')

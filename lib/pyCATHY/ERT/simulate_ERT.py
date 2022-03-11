@@ -4,6 +4,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from resipy import R2 # geophysics tools
 import pyvista as pv # if not installed : pip install with conda install pyvista (in a conda terminal)
 import numpy as np
@@ -29,21 +30,38 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     # pre, ext = os.path.splitext(mesh)
     # print(os.rename(mesh, pre + '.msh'))
 
+    pre, ext = os.path.splitext(mesh)
+    
     try:
-        pre, ext = os.path.splitext(mesh)
-        mesh3d=  mt.readGmsh(pre + '.msh', verbose=True)
+        mesh3d =  mt.readGmsh(pre + '.msh', verbose=True)
     except:
-        mesh3d=  pg.load(mesh, verbose=True)
+        try:
+            mesh3d =  pg.load(pre + '.bms', verbose=True)
+        except:
+            raise ValueError('Cannot read '+ mesh + ': valid extensions are .msh and .bms')
 
     # fname_seq = '/ERT_fwd_DA_sol_rhizo/test_pg/SequenceERT_Rhizo_72Elecs.shm'
     
     # shm = pg.load(fname_seq)
-    shm = pg.load(sequence)
     
-    # hom = ert.simulate(mesh3d, res=1.0, scheme=shm, sr=False,
-    #                    calcOnly=True, verbose=False)
+    if 'shm' in sequence:
+        scheme = pg.load(sequence)
+    elif 'txt' in sequence:
+        shm = pd.read_csv(sequence, delimiter=' ')
+        shm = shm.to_numpy()
+        shm_new = np.subtract(shm,1)
+        scheme = pg.DataContainerERT()
+        if 'dict_ERT' in kwargs:
+            scheme.setSensorPositions(kwargs['dict_ERT']['elecs'])
+        for i, elec in enumerate("abmn"):
+                scheme[elec] = shm_new[:,i]
+    else:
+        raise ValueError('Sequence file format not recognized use .shm or .txt as a list of quadrupoles')
+
+        
+
     
-    # hom.save('homogeneous.ohm', 'a b m n u')
+    # scheme["k"] = ert.createGeometricFactors(scheme)
     
     res0 = 1
     if 'res0' in kwargs:
@@ -55,11 +73,25 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     # het.set('rhoa', het('k') * het('u') / het('i'))
     # het.save('simulated.dat', 'a b m n rhoa k u i')
     
+    noise_level = 5
+    if noiseLevel in kwargs:
+        noise_level = kwargs['noiseLevel']
     
-    het = ert.simulate(mesh3d, res=res0, scheme=shm, 
-                       calcOnly=False, verbose=True, noiseLevel=5)
+    if len(res0) != len(mesh3d.cells()):
+        raise ValueError('wrong initial resistivity input')
+    
+    
+    # plt.plot(res0)
+    het = ert.simulate(mesh3d, res=res0, scheme=scheme, 
+                        calcOnly=False, verbose=False, 
+                        noiseLevel=noise_level)
 
 
+    # het = ert.simulate(mesh3d, res=np.ones(len(mesh3d.cells())), scheme=scheme, 
+    #                    calcOnly=False, verbose=False, 
+    #                    noiseLevel=noise_level)
+    
+    # het['rhoa']
 
     return het
 

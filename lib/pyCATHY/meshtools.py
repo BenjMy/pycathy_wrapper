@@ -43,12 +43,14 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         DESCRIPTION.
     '''
     
-    print(np.mean(meshIN.get_array(scalar)))
+    # print(np.mean(meshIN.get_array(scalar)))
     # print(np.mean(meshIN.get_array(scalar)))
 
     in_nodes_mod = np.array(meshIN.points)
     if 'in_nodes_mod' in kwargs:
         in_nodes_mod = kwargs['in_nodes_mod']
+
+    
 
     # out_data = []
     # closest_idx = []
@@ -78,18 +80,29 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     
     meshIN.points = in_nodes_mod
     
-    rd= min([abs(min(np.diff(meshIN.points[:,0]))),
-         abs(min(np.diff(meshIN.points[:,1]))),
-         abs(min(np.diff(meshIN.points[:,2])))
-         ]
-        )
+    # rd= min([abs(min(np.diff(meshIN.points[:,0]))),
+    #      abs(min(np.diff(meshIN.points[:,1]))),
+    #      abs(min(np.diff(meshIN.points[:,2])))
+    #      ]
+    #     )
 
+
+    rd = max(np.diff(meshIN.points[:,0]))
     
-    result = meshOUT.interpolate(meshIN, radius=rd*25, pass_point_data=True)
+    # result = meshOUT.interpolate(meshIN, radius=rd*250, pass_point_data=True)
+    result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
     result = result.point_data_to_cell_data()
     out_data = result[scalar]
 
-    # result.save('test.vtk',binary=False)
+    meshIN.save('meshIN.vtk',binary=False)
+    result.save('test.vtk',binary=False)
+    os.getcwd()
+    
+    # Attention replace zeros by ones here 
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print('!!!interpolation created 0 values - replacing them by 1!!!')
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    out_data = np.where(out_data == 0, 1, out_data)
     
     return out_data
     
