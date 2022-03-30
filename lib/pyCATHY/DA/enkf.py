@@ -12,7 +12,7 @@ from rich.progress import track
 from rich import print
 
 
-def enkf_analysis(data,data_cov,param,ensemble,observation):
+def enkf_analysis(data,data_cov,param,list_update_parm,ensemble,observation):
     '''
     Case with non linear observation operator:
         
@@ -46,8 +46,8 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0] 
     
-    observation = observation
-    data = np.array([data]).T
+    observation = observation # (MeasSize)x(ens_size)
+    data = data # (MeasSize)
     meas_size = data.shape[0]
 
     # First combine the ensemble and param arrays.
@@ -55,11 +55,20 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     ensemble_mean = (1./float(ens_size))*np.tile(ensemble.sum(1), (ens_size,1)).transpose()
     
     if len(param)>0:
-        param_mean = (1./float(ens_size))*np.tile(param.sum(0), (ens_size,1)).transpose()
+        
+        param_mean = []
+        for l in range(len(param)):
+            param_mean.append((1./float(ens_size))*np.tile(param[l,:].sum(0), (ens_size,1)).transpose())
     
+        param_mean = np.vstack(param_mean)
+        
     if len(param)>0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
-        augm_state = np.vstack([ensemble, param.T])
+        augm_state = np.vstack([ensemble, param])
+        # augm_data =  np.vstack([data, param.T])
+        # np.shape(augm_state)
+        # np.shape(data)
+        # np.shape(observation)
     else:
         augm_state_mean = ensemble_mean
         augm_state = ensemble
@@ -71,11 +80,8 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     
     # data perturbation from ensemble measurements
     # data_pert should be (MeasSize)x(ens_size)
-    data_pert = data - observation
-    
-    # len(data)
-    # len(observation)
-    
+    data_pert = (data - observation.T).T
+        
     if np.max(abs(data_pert))>1e3:
         raise ValueError('predictions are too far from observations')
     # S = ensemble measurement perturbation from ensemble measurement mean.

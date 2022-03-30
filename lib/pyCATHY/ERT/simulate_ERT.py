@@ -47,7 +47,7 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     if 'shm' in sequence:
         scheme = pg.load(sequence)
     elif 'txt' in sequence:
-        shm = pd.read_csv(sequence, delimiter=' ')
+        shm = pd.read_csv(sequence, delimiter=' ', header=None)
         shm = shm.to_numpy()
         shm_new = np.subtract(shm,1)
         scheme = pg.DataContainerERT()
@@ -73,6 +73,8 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     # het.set('rhoa', het('k') * het('u') / het('i'))
     # het.save('simulated.dat', 'a b m n rhoa k u i')
     
+    
+
     noise_level = 5
     if noiseLevel in kwargs:
         noise_level = kwargs['noiseLevel']
@@ -80,8 +82,6 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     if len(res0) != len(mesh3d.cells()):
         raise ValueError('wrong initial resistivity input')
     
-    
-    # plt.plot(res0)
     het = ert.simulate(mesh3d, res=res0, scheme=scheme, 
                         calcOnly=False, verbose=False, 
                         noiseLevel=noise_level)
@@ -92,6 +92,7 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     #                    noiseLevel=noise_level)
     
     # het['rhoa']
+    
 
     return het
 

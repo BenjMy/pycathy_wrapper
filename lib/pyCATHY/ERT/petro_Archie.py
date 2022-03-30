@@ -14,6 +14,54 @@ from pyCATHY.importers import cathy_outputs as out_CT
 
 
 
+def SW_2_ERa_test(project_name, 
+                  ArchieParms,
+                  porosity,
+                  pathERT, meshERT, elecs, sequenceERT,
+                  path_fwd_CATHY,
+                  **kwargs):
+    
+    '''
+    
+
+    Parameters
+    ----------
+
+    project_name : str
+        name of the current project.
+    ArchieParms : dict
+        Archie params.
+    porosity : np.array([])
+        medium porosity.
+    pathERT : str
+        path of the ERT forward mesh.
+    meshERT : str
+        filename of the ERT fwd mesh.
+    elecs : TYPE
+        electrode positions.
+    sequenceERT : TYPE
+        ERT sequence.
+    path_fwd_CATHY: list of folder containing CATHY simulation outputs
+        Use for // simulations
+    **kwargs : 
+        df_sw : pd df
+            saturation mesh values to convert
+        savefig : TYPE, optional
+            DESCRIPTION. The default is True.
+    Returns
+    -------
+    df_ERT_predicted : pd df
+        DESCRIPTION.
+    df_Archie : pd df
+        Dataframe of the current (given ensemble and given assimilation time) Archie relationship.
+
+    '''
+    
+    print(path_fwd_CATHY)
+    
+
+    
+    pass
 
 def SW_2_ERa(project_name,
              ArchieParms,
@@ -164,7 +212,6 @@ def SW_2_ERa(project_name,
         # USING PYGIMLI
         # ------------------------------------------------------------------------
         res0 = mesh_geophy_new_attr.get_array(scalar_new)
-        
                     
         ERT_predicted = simuERT.create_ERT_survey_pg(os.path.join(pathERT,
                                                                   project_name,
@@ -195,6 +242,7 @@ def SW_2_ERa(project_name,
         # simuERT.invert_ERT_survey(ERT)
         
         
+    # mesh_geophy_new_attr
     
     # if savefig is True:
         

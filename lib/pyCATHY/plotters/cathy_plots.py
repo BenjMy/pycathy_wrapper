@@ -20,6 +20,7 @@ from matplotlib import cm
 from matplotlib.dates import DateFormatter
 import matplotlib.dates as mdates
 
+from matplotlib.colors import LogNorm
 
 import panel as pn
 import ipywidgets as widgets
@@ -47,9 +48,19 @@ mpl.style.use('default')
 mpl.rcParams['grid.color'] = 'k'
 mpl.rcParams['grid.linestyle'] = ':'
 mpl.rcParams['grid.linewidth'] = 0.25
-mpl.rcParams['font.family'] = 'Avenir'
+# mpl.rcParams['font.family'] = 'Avenir'
 plt.rcParams['font.size'] = 12
 plt.rcParams['axes.linewidth'] = 0.75
+
+
+# These parameters can also be put into the style or matplotlibrc.
+# This is the dynamic approach of changing parameters.
+nice_fonts = {
+    "font.family": "serif",
+    "font.serif" : "Times New Roman",
+}
+matplotlib.rcParams.update(nice_fonts)
+
 
 
 
@@ -315,36 +326,62 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html#sphx-glr-gallery-lines-bars-and-markers-stairs-demo-py
     
-    
+    v_atmbc_n =[]
     if isinstance(v_atmbc, list):
         v_atmbc_p = v_atmbc[0] # positif
         v_atmbc_n = v_atmbc[1] # negatif
         v_atmbc = v_atmbc[0] - v_atmbc[1]
 
     
-    # v_atmbc = 
-    fig, ax = plt.subplots(figsize=(6,3))
-    ax.plot(t_atmbc, v_atmbc, "k.")
-    ax.set(xlabel=xlabel, ylabel="Q (m/s)", title="atmbc inputs")
-    ax.grid()
+
     
 
 
-    if 'IETO' in kwargs:
-        if kwargs['IETO'] != 0:
-            plt.step(t_atmbc, v_atmbc, color="k", where="post")
-        elif kwargs['IETO'] == 0: # case of linear interpolation between points
-            ax.plot(t_atmbc, v_atmbc, "k.")
 
         
 
     # if np.shape(t_atmbc) != np.shape(v_atmbc):
-    if isinstance(v_atmbc, list):
-        plt.step(t_atmbc, v_atmbc, color="green", where="post", label="Diff",marker='.')
-        plt.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
-        plt.step(t_atmbc, v_atmbc_n, color="red", where="post", label="ET")
+    if len(v_atmbc_n)>0:
+        fig, ax = plt.subplots(2,1, sharex=True)
         
-    ax.legend()
+        (ax1,ax2) = (ax[0], ax[1])
+        
+        color = 'tab:blue'
+        ax1.set_xlabel('time (h)')
+        ax1.set_ylabel('Rain/Irr', color=color)
+
+        # ax1.step(t_atmbc, v_atmbc, color="green", where="post", label="net (diff)",marker='.')
+        ax1.step(t_atmbc, v_atmbc_p, color="blue", where="post", label="Rain/Irr")
+        
+       
+        color = 'tab:red'
+        ax2.set_ylabel('ET', color=color)  # we already handled the x-label with ax1
+        ax2.step(t_atmbc, -v_atmbc_n, color=color, where="post", label="ET")
+        # ax2.bar(t_atmbc, -v_atmbc_n, color=color)
+        
+        ax2.tick_params(axis='y', labelcolor=color)
+
+        fig.tight_layout()  # otherwise the right y-label is slightly clipped
+        plt.show(block=False)
+    else:
+        # v_atmbc = 
+        fig, ax = plt.subplots(figsize=(6,3))
+        ax.plot(t_atmbc, v_atmbc, "k.")
+        ax.set(xlabel=xlabel, ylabel="net Q (m/s)", title="atmbc inputs")
+        ax.grid()
+        plt.show(block=False)
+        
+        if 'IETO' in kwargs:
+            if kwargs['IETO'] != 0:
+                plt.step(t_atmbc, v_atmbc, color="k", where="post")
+            elif kwargs['IETO'] == 0: # case of linear interpolation between points
+                ax.plot(t_atmbc, v_atmbc, "k.")
+
+
+
+
+        
+    # ax.legend()
     
     # dateFormat = '%d-%H'
     if 'dateFormat' in kwargs:
@@ -1017,12 +1054,21 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cbar = fig.colorbar(cax, location='bottom')
     
     ax = fig.add_subplot(2,5,6)
+    # cax = ax.matshow(np.cov(EnsembleX), 
+    #                   aspect='auto',cmap='gray',
+    #                   norm=LogNorm(vmin=np.matrix(EnsembleX).min(), 
+    #                                vmax=np.matrix(EnsembleX).max())
+    #                   )
     cax = ax.matshow(np.cov(EnsembleX), 
-                      aspect='auto',cmap='gray')
+                      aspect='auto',cmap='gray',
+                      norm=LogNorm()
+                      )
     ax.set_title('cov(Prior)')
     ax.set_xlabel(r'$\psi$ params #')
     ax.set_ylabel(r'$\psi$ params #')
-    cbar = fig.colorbar(cax, location='bottom')
+    # cbar = fig.colorbar(cax, location='bottom')
+    cbar = fig.colorbar(cax, format="$%.1f$", location='bottom')
+
     ax.set_yticks([])  
     
     
@@ -1123,7 +1169,7 @@ def DA_RMS(df_performance,sensorName):
     
     plt.savefig('performanceDA.png', dpi=300)
     
-    return ax
+    return ax, plt
 
 
 def DA_plot_parm_dynamic(parm = 'ks', 
@@ -1320,23 +1366,23 @@ def DA_plot_time_dynamic(DA,
         
         if len(isENS)>0:
 
-            try:
-                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS)))),
-                                                  int(max(isENS['time']))*(NENS)), True)
-            except:
-                pass
+            # try:
+            # isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS)))),
+            #                                       int(max(isENS['time']))*(NENS)), True)
+            # except:
+            #     pass
             
-            try:
-                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
-                                                  int(max(isENS['time']))*(NENS)), True)
-            except:
-                pass
+            # try:
+            #     isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+            #                                       int(max(isENS['time']))*(NENS)), True)
+            # except:
+            #     pass
             
-            try:
-                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
-                                              int(max(isENS['time']))*(NENS+1)), True)
-            except:
-                pass
+            # try:
+            isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+                                          int(max(isENS['time']))*(NENS+1)), True)
+            # except:
+            #     pass
                   
                
                         

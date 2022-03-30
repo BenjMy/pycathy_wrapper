@@ -21,23 +21,26 @@ def read_ERT(filename, data_format, **kwargs):
     dict_ERT = {}
     
     if 'resipy' in data_format:
-        df_ERT = pd.read_csv(filename, sep=",", header='infer')       
-        # dict_ERT = {}
-        # dict_ERT['electrodesXYZ'] = []
-        # dict_ERT['sequenceABMN'] = []
+        df_ERT_new = pd.read_csv(filename, sep=",", header='infer')       
     elif 'pygimli' in data_format:
         df_ERT = pg.load(filename)  
-        # df_ERT['a']
+        
+        df_ERT_new = pd.DataFrame([df_ERT['a'],df_ERT['b'],
+                              df_ERT['k'],df_ERT['m'],
+                              df_ERT['n'],df_ERT['r'],
+                              df_ERT['rhoa'],df_ERT['valid']
+                              ]
+                              )
+        df_ERT_new = df_ERT_new.T
+        df_ERT_new.columns=['a', 'b', 'k', 'm', 'n', 'r', 'rhoa', 'valid']
         dict_ERT['elecs'] = np.array(df_ERT.sensorPositions())
-        # df_ERT.sensors()
-        # np.array(df_ERT.sensorPositions())
         
         
     else:
         raise ValueError('ERT data format not recognized')
         
 
-    return df_ERT, dict_ERT 
+    return df_ERT_new, dict_ERT 
 
 
 def read_discharge(filename, **kwargs):

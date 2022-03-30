@@ -61,173 +61,109 @@ class rhizotron(object):
 def perturbate_rhizo(cathyDA,scenarii,prj_name,NENS):
     
     
-    if 'ic' in scenarii[prj_name].keys():
+    list_pert = []
+    if 'ic' in scenarii[prj_name]['per_name']:      
+        
+        index = scenarii[prj_name]['per_name'].index('ic')
 
+        ic = {
+              'type_parm': 'ic',
+              'ic_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
+              'mean':  scenarii[prj_name]['per_mean'][index],
+              'sd':  scenarii[prj_name]['per_sigma'][index],
+              'ic_units': 'pressure head $(m)$', # units
+              'sampling_type': 'normal',
+              'ensemble_size': NENS, # size of the ensemble
+              'per_type': scenarii[prj_name]['per_type'][index],
+              'savefig': 'ic.png',
+              'show': True,
+              }    
+        list_pert.append(ic)
     
-        # ic = {'ic_nominal': 0.45, #nominal value
-        #               'ZROOT_units': '$m$', # units
-        #                   }
+    
+    
+    if 'ks' in scenarii[prj_name]['per_name']:
+        index = scenarii[prj_name]['per_name'].index('ks')
 
-        ic_nom = scenarii[prj_name]['mean_ic'] #1e-4
-        ic_mean = ic_nom # sampling mean
-        ic_sd = scenarii[prj_name]['sigma_ic']  #1.53
-        ic_pert = {'ic_nominal': ic_nom, #nominal value 45
-                    'ic_units': '$m$' }
+        ks = {
+              'type_parm': 'ks',
+              'ks_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
+              'mean':  scenarii[prj_name]['per_mean'][index],
+              'sd':  scenarii[prj_name]['per_sigma'][index],
+              'ks_units': '$m.s^{-1}$', # units
+              'sampling_type': 'normal',
+              'ensemble_size': NENS, # size of the ensemble
+              'per_type': scenarii[prj_name]['per_type'][index],
+              'savefig': 'ks.png',
+              'show': True,
+              }    
+        list_pert.append(ks)
         
-        # https://reader.elsevier.com/reader/sd/pii/S0309170812001613?token=BA251E74494F63C0A9178284911E63F94D1B09FF1215259263D74EAA8C1DFA1CB98A6E5A63ADF52B1DD1C0E6EA8CF057&originRegion=us-east-1&originCreation=20220303065046
-        # The initial state of a single realization xi
-        # 0 (i ¼ 1; . . . ; N) is a spatially
-        # homogeneous perturbation of the nominal initial state. In this way
-        # every realization represents a physically consistent state, at the
-        # same time ensuring that the realizations are well differentiated
-        # at the beginning of the simulation.
-        
-        # need to call perturbate_var as many times as variable to perturbate
-        # return a dict merging all variable perturbate to parse into prepare_DA
-        parm_per = cathyDA.perturbate_parm(parm=ic_pert, 
-                                            type_parm = 'ic', # can also be VAN GENUCHTEN PARAMETERS
-                                            mean = scenarii[prj_name]['ic'],
-                                            sd = scenarii[prj_name]['sigma_ic'],
-                                            sampling_type = 'normal',
-                                            ensemble_size = NENS, # size of the ensemble
-                                            per_type=scenarii[prj_name]['per_type'],
-                                            transf_type=scenarii[prj_name]['transf_type'], # LN, SB, SU
-                                            show=True,
-                                            savefig=os.path.join(prj_name +'_DA',
-                                                                 prj_name+ 'ic_hist.png')
-                                            )
-                                            
-        min(parm_per['ic']['ini_perturbation'])
-        max(parm_per['ic']['ini_perturbation'])
-        np.mean(parm_per['ic']['ini_perturbation'])             
     
-    
-    
-    if 'Ks' in scenarii[prj_name].keys():
-        
-        # VGN, trans_Carsel_Parrish_1988 = utils.Carsel_Parrish_1988(soilTexture='S')
-        Ks_nom = scenarii[prj_name]['mean_ks'] #1e-4
-        Ks_mean = Ks_nom # sampling mean
-        Ks_sd = scenarii[prj_name]['sigma_Ks']  #1.53
-        Ks_pert = {'Ks_nominal': Ks_nom, #nominal value 45
-                    'Ks_units': '$m.s^{-1}$' }
         
         
-        parm_per = cathyDA.perturbate_parm(parm=Ks_pert, 
-                                            type_parm = 'Ks', # can also be VAN GENUCHTEN PARAMETERS
-                                            mean = scenarii[prj_name]['Ks'],
-                                            sd = scenarii[prj_name]['sigma_Ks'],
-                                            sampling_type = 'normal',
-                                            ensemble_size = NENS, # size of the ensemble
-                                            per_type=scenarii[prj_name]['per_type'],
-                                            transf_type=scenarii[prj_name]['transf_type'], # LN, SB, SU
-                                            # transf_bounds = {'A':trans_Carsel_Parrish_1988.loc['Ks']['A'],
-                                            #                  'B':trans_Carsel_Parrish_1988.loc['Ks']['B']},
-                                            show=True,
-                                            savefig=os.path.join(prj_name +'_DA',
-                                                                 prj_name+ 'Ks_hist.png')
-                                            )
-        min(parm_per['Ks']['ini_perturbation'])
-        max(parm_per['Ks']['ini_perturbation'])
-        np.mean(parm_per['Ks']['ini_perturbation'])
+    if 'PCREF' in scenarii[prj_name]['per_name']:
+        index = scenarii[prj_name]['per_name'].index('PCREF')
+
+        PCREF = {
+              'type_parm': 'PCREF',
+              'PCREF_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
+              'mean':  scenarii[prj_name]['per_mean'][index],
+              'sd':  scenarii[prj_name]['per_sigma'][index],
+              'PCREF_units': '$m$', # units
+              'sampling_type': 'normal',
+              'ensemble_size': NENS, # size of the ensemble
+              'per_type': scenarii[prj_name]['per_type'][index],
+              'savefig': 'PCREF.png',
+              'show': True,
+              }    
+        list_pert.append(PCREF)
+               
         
         
-    if 'PCREF' in scenarii[prj_name].keys():
-        
-        # VGN, trans_Carsel_Parrish_1988 = utils.Carsel_Parrish_1988(soilTexture='S')
-        PCREF_nom = scenarii[prj_name]['PCREF'] #1e-4
-        PCREF_mean =  PCREF_nom # sampling mean
-        PCREF_sd = scenarii[prj_name]['sigma_PCREF']  #1.53
-        PCREF_pert = {'PCREF_nominal': PCREF_nom, #nominal value 45
-                      'PCREF_units': '$m$' }
-        
-        parm_per = cathyDA.perturbate_parm(parm= PCREF_pert, 
-                                            type_parm = 'PCREF', # can also be VAN GENUCHTEN PARAMETERS
-                                            mean = scenarii[prj_name]['PCREF'],
-                                            sd = scenarii[prj_name]['sigma_PCREF'],
-                                            sampling_type = 'normal',
-                                            ensemble_size = NENS, # size of the ensemble
-                                            per_type=scenarii[prj_name]['per_type'],
-                                            transf_type='log', # LN, SB, SU
-                                            show=True,
-                                            savefig=os.path.join(prj_name +'_DA',
-                                                                 prj_name+ 'PCREF_hist.png')
-                                            )
-        
-        min(parm_per['PCREF']['ini_perturbation'])
-        max(parm_per['PCREF']['ini_perturbation'])
-        np.mean(parm_per['PCREF']['ini_perturbation'])
-        
-        
-        
-    if 'ZROOT' in scenarii[prj_name].keys():
-        
-        # # # In this latter case, the desired parameters (e.g., hydraulic conductivity, parameters of the retention
-        # # # curves), transformed as described in Sect. 4.2, are added to X # and updated based on their correlation with the system states
-        # # # (e.g., Erdal et al., 2015).
-        root_depth = {'ZROOT_nominal': scenarii[prj_name]['ZROOT'], #nominal value 45
-                      'ZROOT_units': '$m$', # units
-                          }
-        # grid3d = in_CT.read_grid3d('/home/ben/Documents/CATHY/pyCATHY/mary_rhizo_withDA/S2_DA/DA_Ensemble/cathy_1/')
-        # nb_surf_nodes = grid3d['nnod']
+    if 'ZROOT' in scenarii[prj_name]['per_name']:
+        index = scenarii[prj_name]['per_name'].index('ZROOT')
+
+        ZROOT = {
+              'type_parm': 'ZROOT',
+              'ZROOT_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
+              'mean':  scenarii[prj_name]['per_mean'][index],
+              'sd':  scenarii[prj_name]['per_sigma'][index],
+              'ZROOT_units': '$m.s^{-1}$', # units
+              'sampling_type': 'lognormal',
+              'ensemble_size': NENS, # size of the ensemble
+              'per_type': scenarii[prj_name]['per_type'][index],
+              'savefig': 'ZROOT.png',
+              'show': True,
+              }    
+        list_pert.append(ZROOT)
         nb_surf_nodes = 110
+
+        
+    
+    for dp in list_pert:
+        
         # need to call perturbate_var as many times as variable to perturbate
         # return a dict merging all variable perturbate to parse into prepare_DA
-        parm_per = cathyDA.perturbate_parm(parm=root_depth, 
-                                            type_parm = 'ZROOT', # can also be VAN GENUCHTEN PARAMETERS
-                                            mean = scenarii[prj_name]['ZROOT'],
-                                            sd = scenarii[prj_name]['sigma_ZROOT'],
-                                            sampling_type = 'lognormal',
-                                            ensemble_size = NENS, # size of the ensemble
-                                            per_type=scenarii[prj_name]['per_type'],
-                                            transf_type= None, # LN, SB, SU, Log
-                                            show=True,
-                                            savefig=os.path.join(prj_name +'_DA',
-                                                                  prj_name+ 'ZROOT_hist.png')
+        parm_per = cathyDA.perturbate_parm(parm=dp, 
+                                            type_parm = dp['type_parm'], # can also be VAN GENUCHTEN PARAMETERS
+                                            mean =  dp['mean'],
+                                            sd =  dp['sd'],
+                                            sampling_type =  dp['sampling_type'],
+                                            ensemble_size =  dp['ensemble_size'], # size of the ensemble
+                                            per_type= dp['per_type'],
+                                            show= dp['show'],
+                                            savefig= os.path.join(prj_name +'_DA',
+                                                                  prj_name + dp['savefig'])
                                             )
-                                            # surf_param= nb_surf_nodes,
-        # print(parm_per)
-        # # 2dsurf= nb_surf_nodes
-        # 2d parameters
-        # parm_per['ZROOT']
-        # transf_type
-        min(parm_per['ZROOT']['ini_perturbation'])
-        max(parm_per['ZROOT']['ini_perturbation'])
-        np.mean(parm_per['ZROOT']['ini_perturbation'])
+        print(len(list_pert))
+        
+        # min(parm_per['ic']['ini_perturbation'])
+        # max(parm_per['ic']['ini_perturbation'])
+        # np.mean(parm_per['ic']['ini_perturbation'])        
         
         
-        # DA with ZROOT as perturbated variable
-        # if 'ZROOT' in scenarii[prj_name].keys():
-            
-        #     # # # In this latter case, the desired parameters (e.g., hydraulic conductivity, parameters of the retention
-        #     # # # curves), transformed as described in Sect. 4.2, are added to X # and updated based on their correlation with the system states
-        #     # # # (e.g., Erdal et al., 2015).
-        #     root_depth = {'ZROOT_nominal': scenarii[prj_name]['ZROOT'], #nominal value 45
-        #                   'ZROOT_units': '$m$', # units
-        #                       }
-        #     # grid3d = in_CT.read_grid3d('/home/ben/Documents/CATHY/pyCATHY/mary_rhizo_withDA/S2_DA/DA_Ensemble/cathy_1/')
-        #     # nb_surf_nodes = grid3d['nnod']
-        #     nb_surf_nodes = 110
-        #     # need to call perturbate_var as many times as variable to perturbate
-        #     # return a dict merging all variable perturbate to parse into prepare_DA
-        #     parm_per = cathyDA.perturbate_parm(parm=root_depth, 
-        #                                         type_parm = 'ZROOT', # can also be VAN GENUCHTEN PARAMETERS
-        #                                         sampling_type = 'uniform',
-        #                                         ensemble_size = NENS, # size of the ensemble
-        #                                         show=True,
-        #                                         savefig=os.path.join(prj_name +'_DA',
-        #                                                               prj_name+ 'ZROOT_hist.png'),
-        #                                         minmax_uni = [0,0.55]
-        #                                         )
-        #                                         # surf_param= nb_surf_nodes,
-        #     # print(parm_per)
-        #     # # 2dsurf= nb_surf_nodes
-        #     # 2d parameters
-        #     # parm_per['ZROOT']
-        #     # transf_type
-        #     min(parm_per['ZROOT']['ini_perturbation'])
-        #     max(parm_per['ZROOT']['ini_perturbation'])
-        #     np.mean(parm_per['ZROOT']['ini_perturbation'])
+
         
     return parm_per
         
@@ -552,7 +488,6 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
 
 def plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m):
     
-    import matplotlib.pylab as plt
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
@@ -593,6 +528,8 @@ def plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m):
                 )
     ax.set_xlabel('x')
     ax.set_ylabel('y')
+    
+    
     pass
 
 def CATHY_2_Simpeg(mesh_CATHY,mesh_Simpeg,scalar='saturation',show=False,**kwargs):
@@ -652,7 +589,7 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
             in_nodes_mod_m = kwargs['dict_ERT']['mesh_nodes_modif']
         
 
-    plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m)
+    # plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m)
     
     
     path = os.getcwd()

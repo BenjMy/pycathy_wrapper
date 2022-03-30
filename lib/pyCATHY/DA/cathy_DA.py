@@ -13,7 +13,11 @@ from pyCATHY.DA import enkf, pf
 
 
 
-def run_analysis(DA_type,data,data_cov,param,ensembleX,prediction, default_state='psi'):
+def run_analysis(DA_type,
+                 data,data_cov,
+                 param,list_update_parm,
+                 ensembleX,prediction, 
+                 default_state='psi'):
     '''
     Perform the DA analysis step 
 
@@ -74,6 +78,7 @@ def run_analysis(DA_type,data,data_cov,param,ensembleX,prediction, default_state
          analysis_param] = enkf.enkf_analysis(data, 
                                               data_cov, 
                                               param, 
+                                              list_update_parm,
                                               ensembleX[id_state], 
                                               prediction
                                               )
@@ -189,18 +194,19 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         var_per[type_parm][key] = per_type
     
 
+
+
         # Parameter perturbation rules
         #----------------------------------------------------------------------
 
-        def Evensen2003(qk_0, wk,deltaT,Tau, time):
+        def Evensen2003(qk_0, wk,deltaT,Tau):
             '''
             Ensemble Generation of time-variable atmospheric forcing rates.
 
             Parameters
             ----------
             wk : np.array([])
-                is a sequence of
-                white noise drawn from the standard normal distribution.
+                is a sequence of white noise drawn from the standard normal distribution.
             deltaT : float
                 assimilation interval in sec
             Tau : np.array([])
@@ -210,16 +216,20 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 
             Returns
             -------
-            Ensemble of time-variable atmospheric forcing rates.
+            qki : Ensemble of time-variable atmospheric forcing rates at time i 
 
             '''
             
+            if Tau<deltaT:
+                raise ValueError('Time decorrelation length is too small; should be at least>=' + str(deltaT))
+                
+                
             gamma = 1 - deltaT/Tau
-            print('not yet implemented - see Botto 2018')
-            qk1 = gamma * qk_0 + np.sqrt(1-gamma*gamma) * wk
+            qki = gamma * qk_0 + np.sqrt(1-gamma*gamma) * wk
             
-            return qk1
+            return qki
         
+                
         
         
         # add Johnson1970 transformation in kwargs         
@@ -236,13 +246,13 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             print('The parameters of the van Genuchten retention curves α,' + 
                   'n, and θ r are perturbed taking into account their mutual cor-' + 
                   'relation according to Carsel and Parrish (1988)')
-            
-
                         
+            
         # all parameters except Van Genuchten
         #----------------------------------------------------------------------
         else:
     
+            # sampling
             np.random.seed(1)
             if sampling_type == 'lognormal':
                 parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
@@ -253,22 +263,61 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 minmax_uni = kwargs['minmax_uni']
                 parm_sampling = np.random.uniform(minmax_uni[0],minmax_uni[1],ensemble_size)
                 
-                
+            # pertubate
             parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
-            
             if per_type == None:
                 parm_per_array = parm_sampling
             if per_type == 'multiplicative':
                 parm_per_array = parm_mat*parm_sampling
             elif per_type == 'additive':
                 parm_per_array = parm_mat+parm_sampling
+                
+
+        
+        
+            if 'atmbc' in type_parm: 
+                
+                var_per[type_parm] = parm 
+                
+                key = 'data'
+                var_per[type_parm][key] = sampling_type
+                
+                
+                time = list(parm['data2assimilate'].keys())
+                Tau = parm['time_decorrelation_len']
+                wk = parm_per_array
+
+                parm['data2assimilate']['time']
+                parm['data2assimilate']['value']
+                
+                parm_per_array_time_variable = []
+                for i, t in enumerate(time):
+                    
+                    if i==0:
+                        qk_0 = parm_per_array
+                    else:
+                        qk_0 = parm_per_array_time_variable[i-1]
+                        
+                    deltaT = abs(time[i] - time[i-1])
+                        
+                    qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
+                    parm_per_array_time_variable.append(qk_i)
+                
+                key = 'time_variable_perturbation'
+                var_per[type_parm][key] = parm_per_array_time_variable
+
+
+                
+                
+
 
         key = 'ini_perturbation'
         var_per[type_parm][key] = parm_per_array
         
-        
         key = 'sampling'
         var_per[type_parm][key] = parm_sampling
+        
+        
     
         
 
