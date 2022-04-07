@@ -58,23 +58,23 @@ class rhizotron(object):
         self.perturbate()
     
     
-def perturbate_rhizo(cathyDA,scenarii,prj_name,NENS):
+def perturbate_rhizo(cathyDA,simu_DA,scenario,prj_name,NENS):
     
     
     list_pert = []
-    if 'ic' in scenarii[prj_name]['per_name']:      
+    if 'ic' in scenario['per_name']:      
         
-        index = scenarii[prj_name]['per_name'].index('ic')
+        index = scenario['per_name'].index('ic')
 
         ic = {
               'type_parm': 'ic',
-              'ic_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
-              'mean':  scenarii[prj_name]['per_mean'][index],
-              'sd':  scenarii[prj_name]['per_sigma'][index],
-              'ic_units': 'pressure head $(m)$', # units
+              'nominal':  scenario['per_nom'][index], #nominal value
+              'mean':  scenario['per_mean'][index],
+              'sd':  scenario['per_sigma'][index],
+              'units': 'pressure head $(m)$', # units
               'sampling_type': 'normal',
               'ensemble_size': NENS, # size of the ensemble
-              'per_type': scenarii[prj_name]['per_type'][index],
+              'per_type': scenario['per_type'][index],
               'savefig': 'ic.png',
               'show': True,
               }    
@@ -82,62 +82,90 @@ def perturbate_rhizo(cathyDA,scenarii,prj_name,NENS):
     
     
     
-    if 'ks' in scenarii[prj_name]['per_name']:
-        index = scenarii[prj_name]['per_name'].index('ks')
-
-        ks = {
-              'type_parm': 'ks',
-              'ks_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
-              'mean':  scenarii[prj_name]['per_mean'][index],
-              'sd':  scenarii[prj_name]['per_sigma'][index],
-              'ks_units': '$m.s^{-1}$', # units
-              'sampling_type': 'normal',
-              'ensemble_size': NENS, # size of the ensemble
-              'per_type': scenarii[prj_name]['per_type'][index],
-              'savefig': 'ks.png',
-              'show': True,
-              }    
-        list_pert.append(ks)
+    if 'ks' in scenario['per_name']:
+        index = scenario['per_name'].index('ks')
         
+        
+        
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+        scenario_sd = scenario['per_sigma'][index]
+        
+        for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
+            if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
+
+            ks = {
+                  'type_parm': 'ks'+ str(nz),
+                  'nominal':  scenario_nom, #nominal value
+                  'mean':  scenario_mean,
+                  'sd':  scenario_sd,
+                  'units': '$m.s^{-1}$', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'ks'+ str(nz) + '.png',
+                  'show': True,
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(ks)
+            
     
         
         
-    if 'PCREF' in scenarii[prj_name]['per_name']:
-        index = scenarii[prj_name]['per_name'].index('PCREF')
+    if 'PCREF' in scenario['per_name']:
+        index = scenario['per_name'].index('PCREF')
+        
+        for nz in range(len(simu_DA.soil['PCREF'])):
 
-        PCREF = {
-              'type_parm': 'PCREF',
-              'PCREF_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
-              'mean':  scenarii[prj_name]['per_mean'][index],
-              'sd':  scenarii[prj_name]['per_sigma'][index],
-              'PCREF_units': '$m$', # units
-              'sampling_type': 'normal',
-              'ensemble_size': NENS, # size of the ensemble
-              'per_type': scenarii[prj_name]['per_type'][index],
-              'savefig': 'PCREF.png',
-              'show': True,
-              }    
-        list_pert.append(PCREF)
-               
+            PCREF = {
+                  'type_parm': 'PCREF'+ str(nz),
+                  'nominal':  scenario['per_nom'][index], #nominal value
+                  'mean':  scenario['per_mean'][index],
+                  'sd':  scenario['per_sigma'][index],
+                  'units': '$m$', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'PCREF.png',
+                  'show': True,
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(PCREF)
+                   
         
         
-    if 'ZROOT' in scenarii[prj_name]['per_name']:
-        index = scenarii[prj_name]['per_name'].index('ZROOT')
+    if 'ZROOT' in scenario['per_name']:
+        index = scenario['per_name'].index('ZROOT')
 
-        ZROOT = {
-              'type_parm': 'ZROOT',
-              'ZROOT_nominal':  scenarii[prj_name]['per_nom'][index], #nominal value
-              'mean':  scenarii[prj_name]['per_mean'][index],
-              'sd':  scenarii[prj_name]['per_sigma'][index],
-              'ZROOT_units': '$m.s^{-1}$', # units
-              'sampling_type': 'lognormal',
-              'ensemble_size': NENS, # size of the ensemble
-              'per_type': scenarii[prj_name]['per_type'][index],
-              'savefig': 'ZROOT.png',
-              'show': True,
-              }    
-        list_pert.append(ZROOT)
-        nb_surf_nodes = 110
+
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+
+        
+        for nz in range(len(simu_DA.soil['ZROOT'])):
+            
+            if len(simu_DA.soil['ZROOT'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+            
+            ZROOT = {
+                  'type_parm': 'ZROOT'+ str(nz),
+                  'nominal': scenario_nom, #nominal value
+                  'mean': scenario_mean,
+                  'sd':  scenario['per_sigma'][index],
+                  'units': '$m.s^{-1}$', # units
+                  'sampling_type': 'lognormal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'ZROOT' + str(nz) + '.png',
+                  'show': True,
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(ZROOT)
+            # nb_surf_nodes = 110
 
         
     
@@ -153,10 +181,10 @@ def perturbate_rhizo(cathyDA,scenarii,prj_name,NENS):
                                             ensemble_size =  dp['ensemble_size'], # size of the ensemble
                                             per_type= dp['per_type'],
                                             show= dp['show'],
-                                            savefig= os.path.join(prj_name +'_DA',
+                                            savefig= os.path.join(prj_name,
                                                                   prj_name + dp['savefig'])
                                             )
-        print(len(list_pert))
+        # print(len(list_pert))
         
         # min(parm_per['ic']['ini_perturbation'])
         # max(parm_per['ic']['ini_perturbation'])
@@ -417,12 +445,12 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     
     # Unbiased scenario
     # -------------------------------
-    PERMX = PERMY = PERMZ =[solution['PERMX']]
-    ELSTOR = [1.00E-05]
-    POROS = [solution['POROS']]
-    VGNCELL = [solution['VGNCELL']]
-    VGRMCCELL = [solution['VGRMCCELL']]
-    VGPSATCELL =  [solution['VGPSATCELL']]
+    PERMX = PERMY = PERMZ =solution['PERMX']
+    ELSTOR = solution['ELSTOR']
+    POROS = solution['POROS']
+    VGNCELL = solution['VGNCELL']
+    VGRMCCELL = solution['VGRMCCELL']
+    VGPSATCELL =  solution['VGPSATCELL']
     
     # biased scenario
     # -------------------------------
@@ -445,12 +473,12 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     we defined different vegetation areas which are independent 
     with varying root depth and Feddes parameters."""
     
-    PCANA=[solution['PCANA']]        
-    PCREF=[solution['PCREF']]
-    PCWLT=[solution['PCWLT']]
-    ZROOT=[solution['ZROOT']]
-    PZ = [solution['PZ']]
-    OMGC =[solution['OMGC']] 
+    PCANA=solution['PCANA']       
+    PCREF=solution['PCREF']
+    PCWLT=solution['PCWLT']
+    ZROOT=solution['ZROOT']
+    PZ = solution['PZ']
+    OMGC = solution['OMGC']
     
     # if 'ZROOT' in kwargs:
     #     ZROOT=[kwargs['ZROOT']]
@@ -463,11 +491,28 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
                    'OMGC':OMGC}
     
     veg_map = np.ones([int(simu_DA.hapin['M']),int(simu_DA.hapin['N'])])
-    simu_DA.update_veg_map(root_depth=veg_map, show=True)
+    
+    if len(solution['ZROOT'])>1:
+        veg_map[:,[0,9]]=1
+        veg_map[:,[1,8]]=2
+        veg_map[:,[2,7]]=3
+        veg_map[:,[3,6]]=4
+        veg_map[:,[4,5]]=5
+        
+        
+    simu_DA.update_veg_map(indice_veg=veg_map, show=True)
     
     """The choice of PMIN conditionne the switching condition"""
     
     pmin = solution['pmin']
+    
+    
+    
+    soil_zone_map = np.ones([int(simu_DA.hapin['M']),int(simu_DA.hapin['N'])])
+    
+    if len(PERMX)>1:
+        soil_zone_map[:,list(np.arange(5,10))]=2
+        simu_DA.update_zone(soil_zone_map)
 
     simu_DA.update_soil(  PMIN=pmin,
                           SPP=SoilPhysProp,

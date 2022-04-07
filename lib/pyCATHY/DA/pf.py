@@ -21,14 +21,30 @@ def weight(Data,DataCov,Ensemble,Observation):
 
     # Calculate data perturbations from ensemble measurements
     # Dpert = (MeasSize)x(EnSize)
-    Dpert = Data - Observation
+    Dpert = (Data - Observation.T).T
+    # np.shape(Dpert)
+    
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    cax = ax.matshow(Dpert, aspect='auto')
+    cbar = fig.colorbar(cax, location='bottom')
+
+
 
     # Compute inv(DataCov)*Dpert
     # Should be (MeasSize)x(EnSize)
-    B = np.linalg.solve(DataCov,Dpert.T)
+    B = np.linalg.solve(1/DataCov,Dpert)
+
+
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    cax = ax.matshow(B, aspect='auto')
+    cbar = fig.colorbar(cax, location='bottom')
+
+
 
     # Calculate un-normalized weight for each particle using observations
-    NormArg = np.diag(np.dot(Dpert,B))
+    NormArg = np.diag(np.dot(Dpert.T,B))
     W = np.exp(-(0.5)*(NormArg))
 
     # Now normalize weights

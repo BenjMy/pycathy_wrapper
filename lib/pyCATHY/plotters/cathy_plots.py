@@ -489,22 +489,26 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
         # for surface/subsurface hydrology
         # --------------------------------------------------------------------
         if unit == "pressure":
-            if timeStep<10:
-                filename = "10" + str(timeStep) + ".vtk"
-            else:
-                filename = "1" + str(timeStep) + ".vtk"
-
             my_colormap = 'autumn'
 
         elif unit == "saturation":
-            if timeStep<10:
-                filename = "10" + str(timeStep) + ".vtk"
-            else:
-                filename = "1" + str(timeStep) + ".vtk"
-
             my_colormap = 'Blues'
 
 
+
+        if timeStep<10:    
+            filename = "10" + str(timeStep) + ".vtk"
+        elif timeStep<100:
+            filename = "1" + str(timeStep) + ".vtk"
+        elif timeStep<200:
+            newnb = [int(x) for x in str(timeStep)]
+            filename = "2" + str(newnb[1]) + str(newnb[2])  + ".vtk"
+        elif timeStep<300:
+            newnb = [int(x) for x in str(timeStep)]
+            filename = "3" + str(newnb[1]) + str(newnb[2])  + ".vtk"
+            
+            
+        
         # for transport
         # --------------------------------------------------------------------
         elif unit == "celerity":
@@ -728,7 +732,7 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
     if show == False:
         offscreen = True
 
-    plotter = pv.Plotter(notebook=False, off_screen=offscreen)
+    plotter = pv.Plotter(notebook=notebook, off_screen=offscreen)
     plotter.add_mesh(mesh, show_edges=True,cmap=my_colormap)
 
     if savefig == True:
@@ -1373,8 +1377,8 @@ def DA_plot_time_dynamic(DA,
             #     pass
             
             # try:
-            #     isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
-            #                                       int(max(isENS['time']))*(NENS)), True)
+                # isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+                #                                   int(max(isENS['time']))*(NENS)), True)
             # except:
             #     pass
             
@@ -1463,21 +1467,21 @@ def DA_plot_time_dynamic(DA,
         ens_mean_isOL_time.pivot(index="time", 
                           # columns=["Ensemble_nb",'idnode'], 
                           columns=['idnode'], 
-                          values=["mean(ENS)_OL"]).plot(ax=ax, style=['-'],color='grey',label=None,
+                          values=["mean(ENS)_OL"]).plot(ax=ax, style=['-'],color='grey',label=False,
                                                        ylabel='pressure head $\psi$ (m)',) # water saturation (-)
         ens_min_isOL_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
                           values=["min(ENS)_OL"]).plot(ax=ax,style=['--'],
                                                        color='grey',
-                                                       label=None)
+                                                       label=False)
         
         ens_max_isOL_time.pivot(index="time", 
                             columns=['idnode'], 
                           # columns=['idnode'], 
                           values=["max(ENS)_OL"]).plot(ax=ax,style=['--'],
                                                        color='grey',
-                                                       label=None)
+                                                       label=False)
     
         ax.fill_between(ens_mean_isOL_time['time'], 
                         ens_min_isOL_time['min(ENS)_OL'], 

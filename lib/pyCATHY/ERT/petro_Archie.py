@@ -166,11 +166,11 @@ def SW_2_ERa(project_name,
     
     
     ER_converted_ti = Archie_rho(rFluid=ArchieParms['rFluid'], 
-                                sat = df_sw,
-                                porosity=porosity, 
-                                a=ArchieParms['a'], 
-                                m=ArchieParms['m'],
-                                n=ArchieParms['n'])
+                                sat = [df_sw],
+                                porosity=[porosity], 
+                                a=[ArchieParms['a']], 
+                                m=[ArchieParms['m']],
+                                n=[ArchieParms['n']])
 
     df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','ER_converted'])
     df_Archie['time'] = DA_cnb*np.ones(len(ER_converted_ti))
@@ -314,7 +314,7 @@ def SW_2_ERa(project_name,
     return df_ERT_predicted, df_Archie
   
 
-def Archie_rho(rFluid, sat, porosity, a=1.0, m=2.0, n=2.0):
+def Archie_rho(rFluid=[], sat=[], porosity=[], a=[1.0], m=[2.0], n=[2.0]):
     '''
     Compute ER values at each mesh nodes
 
@@ -339,8 +339,8 @@ def Archie_rho(rFluid, sat, porosity, a=1.0, m=2.0, n=2.0):
         Electrical Resistivity (Ohm.m).
 
     '''
-
-    return rFluid * a * porosity**(-m) * sat**(-n)
+    
+    return rFluid[0] * a[0] * porosity[0]**(-m[0]) * sat[0]**(-n[0])
 
 
 

@@ -15,6 +15,7 @@ import shutil
 import pickle 
 import re
 
+from collections import defaultdict
 from collections import OrderedDict
 
 import git
@@ -744,7 +745,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         
         
             Hx_ERT_ens = []
-            for t in range(len(ENS_times)-1):
+            for t in range(len(ENS_times)):
                 print('t_openLoop mapping:' + str(t))
     
                 
@@ -802,7 +803,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
             prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
                                                     len(Hx_ERT_ens[0]),
-                                                    len(ENS_times)-1])  # (EnSize * data size * times)
+                                                    len(ENS_times)])  # (EnSize * data size * times)
             
                                        
         else:
@@ -988,6 +989,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 prediction_ERT = self._map_states2Observations_ERT_parallel(path_fwd_CATHY_list, 
                                                                             ENS_times=ENS_times,
                                                                             savefig=True)
+                # len(ENS_times)
                 
                 # prediction is a 3d matrice of dimension (data_size * ens_size * assimilation_times_size)     
                 prediction_ERT = np.reshape(prediction_ERT,[
@@ -1009,7 +1011,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
                 # performance assessement for each observation steps
                 # -------------------------------------------------------------
-                for t in range(len(ENS_times)-1):
+                for t in range(len(ENS_times)):
                     
                     path_fwd_CATHY = os.path.join(self.workdir,
                                           self.project_name, 
@@ -1030,6 +1032,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     # CATHY produce 100.vtk and 101.vtk indentical (??)
                     # ---------------------------------------------------------
                     shift = len(df_sw)-len(ENS_times)
+                    # print(shift)
 
                     # Apply operator H on simulated data x --> Hx
                     # ---------------------------------------------------------
@@ -1055,29 +1058,22 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                          
             prediction_OL.append(prediction_times)
 
-            # ----------------------
-            # Performance evaluation
-            # ----------------------
-            for t in range(len(ENS_times)):
-                 
-                # # Loop trought observation dictionnary for a given assimilation time (t)
-                # # -----------------------------------------------------------------
-                # data = []    # data dict 2 map
-                # if list_assimilated_obs == 'all':
-                #     items_dict = list(self.dict_obs.items())
-                #     # There can be multiple sensors measuring at the same time
-                #     # -----------------------------------------------------------------
-                #     for sensors in items_dict[t][1].keys():                
-                #         data.append(items_dict[t][1][sensors]['data'])   
-                
-                data_t = self._get_selected_data(list_assimilated_obs,
-                                                 time_ass=t)                    
 
-                self._performance_assessement(list_assimilated_obs, 
-                                              data_t, 
-                                              np.vstack(prediction_OL)[:,:,t], 
-                                              t_obs=t,
-                                              openLoop=True)
+        # ----------------------
+        # Performance evaluation
+        # ----------------------
+        for t in range(len(ENS_times)):
+             
+            np.shape(prediction_OL)
+            
+            data_t, _  = self._get_selected_data(list_assimilated_obs,
+                                             time_ass=t)                    
+
+            self._performance_assessement(list_assimilated_obs, 
+                                          data_t, 
+                                          np.vstack(prediction_OL)[:,:,t], 
+                                          t_obs=t,
+                                          openLoop=True)
                 
         # ------------------------------------------------------
         # END of Open Loop simulation and performance evaluation
@@ -1233,10 +1229,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         
         # initiate DA
         # -------------------------------------------------------------------
-        self._DA_init(NENS=NENS, # ensemble size
-                      ENS_times=ENS_times, # assimilation times
-                      parm_pert=dict_parm_pert)
-        
+        list_update_parm = self._DA_init(NENS=NENS, # ensemble size
+                                          ENS_times=ENS_times, # assimilation times
+                                          parm_pert=dict_parm_pert,
+                                          update_parm_list = list_update_parm)
+                            
         
         # initiate mapping petro
         # -------------------------------------------------------------------
@@ -1262,6 +1259,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                     dict_parm_pert, 
                                     update_parm_list='all')  #list_update_parm
         
+        
+
         # -----------------------------------
         # Run hydrological model sequentially
         # -----------------------------------
@@ -1317,8 +1316,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             rejected_ens = self._check_before_analysis(update_key,
                                                        self.ens_valid,
                                                        threshold_rejected)
+            print(rejected_ens)
             id_valid= ~np.array(rejected_ens)          
-            self.ens_valid = np.arange(0,self.NENS)[id_valid]
+            self.ens_valid = list(np.arange(0,self.NENS)[id_valid])
     
             # map states to observation = apply H operator to state variable
             # ---------------------------------------------------------------------                                 
@@ -1336,7 +1336,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                  DA_type,
                                                  list_update_parm,
                                                  list_assimilated_obs,
-                                                 ens_valid=self.ens_valid)                              
+                                                 ens_valid=self.ens_valid)
+                                                 
+            
             (prediction_valid, 
              ensemble_psi_valid, 
              ensemble_sw_valid,
@@ -1347,6 +1349,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                                 ensemble_sw,
                                                                 analysis,
                                                                 analysis_param)
+                                                                
+
             # check analysis quality
             # ----------------------------------------------------------------
             # len(data)
@@ -1368,6 +1372,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         pass
                     else:
                         update_key = 'update_nb' + str(self.count_DA_cycle)
+                        
+                        # zp = 1
+                        # if 'surf_zones_param' in self.dict_parm_pert[pp]:
+                        #     zp = self.dict_parm_pert[pp]['surf_zones_param']
+                        
+                        # self.dict_parm_pert[pp][update_key] = analysis_param_valid[iu-1:iu-1+zp-1]
                         self.dict_parm_pert[pp][update_key] = analysis_param_valid[iu-1]
                         iu = iu + 1
 
@@ -2222,10 +2232,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             self.parm["NPRT"] = len(self.parm['(TIMPRT(I),I=1,NPRT)'])     
                 
         # check if consistency between DELTAT, DTMIN, and DTMAX
-        # ------------------------------------------------------------
-        print(self.parm["DELTAT"])
-        print(self.parm['(TIMPRT(I),I=1,NPRT)'])
-        
+        # ------------------------------------------------------------        
         if (self.parm["DELTAT"] > min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)'])) or
             self.parm["DELTAT"] > 1e-2*min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))
             ):
@@ -2240,12 +2247,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if self.parm["DELTAT"] >= self.parm["DTMAX"]:
            warnings.warn('adjusting DTMAX == 2*DELTAT')
            self.parm["DTMAX"] = 2*self.parm["DELTAT"]   
-                        
-                    
-                    
-                    
-                    
-                    
+           
 
         # transform array args to list
         # --------------------------------------------------------------------
@@ -3143,8 +3145,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 raise ValueError
         else:
             if len(SPP['PERMX'])!=self.dem_parameters["nzone"]:
-                raise ValueError("Wrong number of zones: PERMX size is" + str(len(SPP['PERMX'])) 
-                                 + 'while nzone is' + str(self.dem_parameters["nzone"]))
+                raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX'])) 
+                                 + 'while nzone is ' + str(self.dem_parameters["nzone"]))
             
             
 
@@ -3332,11 +3334,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         '''
         
-        # heteregeneity_dim = 1
-        # if 'soil_het_dim' in kwargs:
-        #     heteregeneity_dim = kwargs['soil_het_dim']
-            
-            
+           
         # check number of zones
         if self.dem_parameters["nzone"] > 1:
             
@@ -3348,18 +3346,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 pass
                     
 
-                
+            # check size of the heteregeneity of SPP
+            # ----------------------------------------
+            # 1d --> uniform
+            # 2d --> lateral variations due to zones defined in surface
+            # 3d --> lateral + vertical variations due to zones and strates
             
-        # check size of the heteregeneity of SPP
-        # ----------------------------------------
-        # 1d --> uniform
-        # 2d --> lateral variations due to zones defined in surface
-        # 3d --> lateral + vertical variations due to zones and strates
-        
-        # if heteregeneity_dim > 1:
-                       
-            # if (heteregeneity_dim==2|heteregeneity_dim==3):
-                # raise NotImplementedError
+
             SoilPhysProp = []
 
 
@@ -3376,37 +3369,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         
                 SoilPhysProp.append(izoneSoil)
             SoilPhysProp = np.vstack(SoilPhysProp)
-
-
-            # SoilPhysProp_zone = np.ones([self.dem_parameters["nstr"],8])
-            # SoilPhysProp_zone = np.ones([8,self.dem_parameters["nstr"]])
-            # SoilPhysProp = []
-            # #  loop over zones (defined in the zone file)
-            # # --------------------------------------------------------------
-            # for izone in range(self.dem_parameters["nzone"]):
-            #     # loop over strates
-            #     # -----------------------------------------------------------------
-            #     for istr in range(self.dem_parameters["nstr"]):
-                    
-            #         for i, spp in enumerate(SPP):
-            #             SoilPhysProp_zone[i,:] = np.ones(self.dem_parameters["nstr"])*SPP[spp][izone]
-            
-            #     SoilPhysProp.append(SoilPhysProp_zone)
-            
-            # SoilPhysProp = np.reshape(SoilPhysProp,[8*self.dem_parameters["nstr"],self.dem_parameters["nzone"]])
-                    
-            # np.shape(SoilPhysProp)
-                #     izoneSoil_tmp = []
-                #     for spp in SPP:
-                #         izoneSoil_tmp.append(SPP[spp][izone])
-                #     izoneSoil_tmp = np.hstack(izoneSoil_tmp)
-                #     izoneSoil[izone, :] = izoneSoil_tmp
-                #     ki = k
-                #     ke = k + self.dem_parameters["nzone"]
-                #     SoilPhysProp[ki:ke, :] = izoneSoil
-                #     # SoilPhysProp[self.dem_parameters['nzone']*istr*izone:self.dem_parameters['nzone']*istr*izone+self.dem_parameters['nzone'],:]=izoneSoil
-                # k += self.dem_parameters["nzone"]
-                
                 
         # case if there is only one zone in the mesh
         else:
@@ -3634,7 +3596,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     # -------------------------------------------------------------------#
     # %% DATA ASSIMILATION FCTS
 
-    def _DA_init(self, NENS=[], ENS_times=[], parm_pert=[]):
+    def _DA_init(self, NENS=[], ENS_times=[], parm_pert=[],update_parm_list='all'):
         """
         THIS SHOULD BE MOVED TO DA CLASS
 
@@ -3668,6 +3630,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         """
 
         self.NENS = NENS  # THIS IS TEMPORARY
+        # updated_parm_list - update_parm_list
 
 
         if hasattr(self,'ens_valid') is False:
@@ -3676,8 +3639,19 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # create sub directories for each ensemble
         # ---------------------------------------------------------------------
         self._create_subfolders_ensemble(NENS)
+        
+        
+        # update list of updated parameters based on problem heterogeneity
+        # ---------------------------------------------------------------------
+        
+        updated_parm_list = ['St. var.']
+        for d in self.dict_parm_pert.keys():
+            for l in update_parm_list:
+                if l in d:
+                    updated_parm_list.append(d)
+        
+        return updated_parm_list
 
-        pass
 
     def _check_before_analysis(self,update_key, ens_valid=[],
                                threshold_rejected=10):
@@ -3774,7 +3748,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         '''
         self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
 
-        id_valid = list(np.arange(0,self.NENS))
+        id_valid = [list(np.arange(0,self.NENS))]
         # id_valid = []
         
         for pp in enumerate(list_update_parm[:]):
@@ -3825,10 +3799,46 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                            str(self.dict_parm_pert[pp[1]][update_key][i])+ ', ens_nb:' + str(i))
     
 
+        id_valid_flat = [item for sublist in id_valid for item in sublist]
+        
+        
+        return list(np.unique(id_valid_flat))
 
-        return list(np.unique(id_valid))
 
+    def spatialize_parameters(self,list_update_parm,parm):
+        '''
+        Extend the number of parameters according to the number of zones
+        (useful for the heteregeneous case)
 
+        Parameters
+        ----------
+        list_update_parm : TYPE
+            DESCRIPTION.
+        parm : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        parm_extended : TYPE
+            DESCRIPTION.
+
+        '''
+        i=0
+        parm_extended = []
+        for l in list_update_parm:
+            print(l)
+            if 'St. var.' in l:
+                pass
+            else:
+                nb_of_zones = 1
+                if 'surf_zones_param' in self.dict_parm_pert[l]:
+                    nb_of_zones =  self.dict_parm_pert[l]['surf_zones_param']
+                    print(nb_of_zones)
+                    parm_extended.append(np.tile(parm[i,:],(nb_of_zones,1)))
+                i = i + 1
+        parm_extended = np.vstack(parm_extended)
+        return parm_extended
+        
 
     def transform_parameters(self,list_update_parm,
                              update_key=None,
@@ -3910,15 +3920,14 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 
             if len(param_new)>0:
                 np.vstack(param_new)
-                
-            
+               
                    
-        return param_new
+        return np.array(param_new)
                 
     
                                 
 
-    def _get_selected_data(self,list_assimilated_obs,time_ass=[],match=False):
+    def _get_selected_data(self,list_assimilated_obs,time_ass=None,match=False):
         '''
         Loop over observation dictionnary and select corresponding data for a given assimilation time
 
@@ -3949,7 +3958,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     
                     
                     
-        if len(time_ass)==0:
+        if time_ass is None:
             time_ass = self.count_DA_cycle
 
         obskey2map = [] # data type 2 map
@@ -4061,8 +4070,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # the state augmentation technique is used when also updat-
         # ing the parameters
         param = self.transform_parameters(list_update_parm,update_key)
-        
-        
+            
+        # if update_key == 'ini_perturbation':
+        #     param = self.spatialize_parameters(list_update_parm,param)
+
         param_valid = []
         if len(param)>0:          
             param_valid = param[:, ens_valid]  
@@ -4783,6 +4794,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # loop over ensemble files to update ic --> 
         # this is always done since psi are state variable to update
         # ------------------------------------------------------------------
+
+
+
+        # FeddesParam = {} # initiate dict of FeddesParam
+        # FeddesParam = np.ones(5,self.NENS) # initiate dict of FeddesParam
+
         for ens_nb in range(self.NENS):
 
             # change directory according to ensmble file nb
@@ -4818,15 +4835,20 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # loop over dict of perturbated variable
         # ----------------------------------------------------------------------
-        
-        FeddesParam_ensi = [{}] * self.NENS
-        
+
+        FeddesParam_mat_ens = []
+        PERMX_het_ens = []
+
         for parm_i, key in enumerate(update_parm_list):  # loop over perturbated variables dict
 
             # FeddesParam_ensi = []
             # loop over ensemble files
+            key_root = re.split('(\d+)', key)  
+
             # ------------------------------------------------------------------
             for ens_nb in range(self.NENS):
+                
+
 
                 # change directory according to ensmble file nb
                 os.chdir(os.path.join(self.workdir, self.project_name,
@@ -4862,90 +4884,56 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     
                 # kss update
                 # --------------------------------------------------------------
-                elif key.casefold() in 'ks'.casefold():
-                    # print('Ks perturbated not yet implemented')
+                elif key_root[0].casefold() in 'ks'.casefold():
+
+                    if len(PERMX_het_ens)==0:   
+                        SPP =  self.soil_SPP['SPP_map'] 
+                        PERMX_het_ens = np.ones([len(SPP['PERMX']),self.NENS])
+
+                    PERMX_het_ens[int(key_root[1]),ens_nb]=parm_pert[key][update_key][ens_nb]
                     
-                    # SPP = self.set_SOIL_defaults(SPP_default=True)
-                    # check soil heterogeneity dimension 
-                    # -----------------------------------
-                    
-                    # def check_soil_heteregeneity_dim(self):
-                    #     dim_soil_het = []
-                    #     return dim_soil_het
-                    # dim_soil_het = self.check_soil_heteregeneity_dim()
-                    
-                    # check soil heterogeneity dimension 
-                    # -----------------------------------
-                    dim_soil_het = int(len(parm_pert[key][update_key])/self.NENS)
-                    
-                    
-                    # !!!!!!!! this should go to check after analysis
-                    # -------------------------------------------------
-                    if parm_pert[key][update_key][ens_nb]<0:
-                        raise ValueError('Impossible value of ks')
+                    SPP_ensi = []
+                    for es in range(self.NENS):
+                        spd = dict()
+                        spd['PERMX'] = list(PERMX_het_ens[:,ens_nb])
+                        spd['PERMY'] = list(PERMX_het_ens[:,ens_nb])
+                        spd['PERMZ'] = list(PERMX_het_ens[:,ens_nb])
+                        SPP_ensi.append(spd)
                         
-                    SPP =  self.soil_SPP['SPP_map'] 
+                    SPP.update(SPP_ensi[ens_nb])
                     
-                    SPP.update(PERMX=parm_pert[key][update_key][ens_nb],
-                               PERMY=parm_pert[key][update_key][ens_nb],
-                               PERMZ=parm_pert[key][update_key][ens_nb])
-                    
-                    
-                    # FeddesParam = {'PCANA': self.soil["PCANA"],
-                    #                 'PCREF': self.soil["PCREF"],
-                    #                 'PCWLT': self.soil["PCWLT"],
-                    #                 'ZROOT': [parm_pert[key][update_key][ens_nb]],
-                    #                 'PZ': self.soil["PZ"],
-                    #                 'OMGC': self.soil["OMGC"]}
 
                     self.update_soil(SPP=SPP,
-                                     FP=self.soil_FP['FP_map'],
-                                     verbose=True,
-                                     filename=os.path.join(os.getcwd(), 'input/soil')
-                                     )  # specify filename path
+                                      FP=self.soil_FP['FP_map'],
+                                      verbose=True,
+                                      filename=os.path.join(os.getcwd(), 'input/soil')
+                                      )  # specify filename path
 
                 # FeddesParam update
                 # --------------------------------------------------------------
                 
-                
-                elif key in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:                   
-                    
-                    # FeddesParam = self.soil_FP['FP_map']
+                elif key_root[0] in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:                   
                     SPP =  self.soil_SPP['SPP_map'] 
-                    
-                    
-                    # self.soil_FP
-                    FeddesParam = {}
+                                        
+                    if len(FeddesParam_mat_ens)==0:                       
+                        FeddesParam_mat = self.soil_FP['FP']
+                        FeddesParam_mat_ens = np.repeat(FeddesParam_mat, self.NENS, axis=0)
+                        FeddesParam_mat_ens = np.reshape(FeddesParam_mat_ens,(self.NENS,self.cathyH["MAXVEG"],6))
 
-                    # FeddesParam = {'PCANA': self.soil["PCANA"],
-                    #                 'PCREF': self.soil["PCREF"],
-                    #                 'PCWLT': self.soil["PCWLT"],
-                    #                 'ZROOT': self.soil["ZROOT"],
-                    #                 'PZ': self.soil["PZ"],
-                    #                 'OMGC': self.soil["OMGC"]}
-                    
-
-                    # print(parm_pert[key][update_key])
-                    
-                    
-
-                    # if parm_pert[key][update_key].ndim>1:
-                    #     index2correct = update_parm_list.index(key)
-                    #     # print(parm_i)
-                    #     # print(update_key)
-                    #     # print(ens_nb)
-                    #     # print(index2correct)
-                    #     # print(key)
                         
-                    #     FeddesParam[key]=[parm_pert[key][update_key][index2correct-1][ens_nb]]
-                    # else:
-                    FeddesParam[key]=[parm_pert[key][update_key][ens_nb]]
+                    idFeddes = ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC'].index(key_root[0])
+                    FeddesParam_mat_ens[:,int(key_root[1]),idFeddes] = parm_pert[key][update_key]
+                    
+                    
+                    
+                    FeddesParam_ensi = []
 
-                    
-                    f2upd = FeddesParam_ensi[ens_nb]                    
-                    f2upd= f2upd | FeddesParam                                       
-                    FeddesParam_ensi[ens_nb]=f2upd
-                    
+                    for es in range(self.NENS):
+                        fed = dict()
+                        for i, f in  enumerate(['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']):
+                            fed[f] = list(FeddesParam_mat_ens[es,:,i])
+                        FeddesParam_ensi.append(fed)
+
                     self.update_soil(FP=FeddesParam_ensi[ens_nb],
                                      SPP=SPP,
                                      verbose=False,
@@ -5015,6 +5003,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         for i in range(len(data)):
             for j in range(np.shape(prediction)[1]): # Loop over ensemble collumns
                 all_Obs_diff_mat[i,j] = abs(data[i]-prediction[i,j])
+                # all_Obs_diff_mat[:,j] = abs(data[i]-prediction[i,j])
         
         all_Obs_diff_avg = np.nansum(all_Obs_diff_mat,axis=1)*(1/len(prediction))
 
@@ -5044,19 +5033,14 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             n_obs = len(obs2eval)
             prediction2eval = prediction[start_line_obs:start_line_obs+n_obs]
             obs2eval_diff_mat = np.zeros(np.shape(prediction2eval))
-            
-            print(name_sensor)
-            print(n_obs)
-            
+                        
             for i in range(len(obs2eval)):
                 for j in range(np.shape(prediction2eval)[1]): # Loop over ensemble collumns
                     obs2eval_diff_mat[i,j] = abs(obs2eval[i]-prediction2eval[i,j])
     
             obs2eval_diff_avg = np.nansum(obs2eval_diff_mat,axis=1)*(1/len(prediction2eval))
 
-            print(name_sensor)
             start_line_obs = start_line_obs + n_obs
-            print('n_obs:' + str(n_obs))
             
             if 'ERT' in name_sensor:
                 RMSE_sensor_ti = np.sum(obs2eval_diff_avg,axis=0)*(1/len(data))

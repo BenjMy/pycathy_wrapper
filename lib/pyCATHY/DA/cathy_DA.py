@@ -78,7 +78,6 @@ def run_analysis(DA_type,
          analysis_param] = enkf.enkf_analysis(data, 
                                               data_cov, 
                                               param, 
-                                              list_update_parm,
                                               ensembleX[id_state], 
                                               prediction
                                               )
@@ -264,7 +263,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 parm_sampling = np.random.uniform(minmax_uni[0],minmax_uni[1],ensemble_size)
                 
             # pertubate
-            parm_mat = np.ones(ensemble_size)*parm[type_parm+'_nominal']
+            parm_mat = np.ones(ensemble_size)*parm['nominal']
             if per_type == None:
                 parm_per_array = parm_sampling
             if per_type == 'multiplicative':
@@ -334,10 +333,11 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         # Parameter spatial extension
         # --------------------------------------------------------------------
-        if 'surf_param' in kwargs:
-            nb_surf_nodes = kwargs['surf_param']
-            parm_per_array = np.tile(parm_per_array,nb_surf_nodes)
-            var_per[type_parm]['surf_param'] = kwargs['surf_param']
+        
+        if 'surf_zones_param' in kwargs:
+            nb_surf_zones = kwargs['surf_zones_param']
+            # parm_per_array = np.tile(parm_per_array,nb_surf_zones)
+            var_per[type_parm]['surf_zones_param'] = kwargs['surf_zones_param']
     
         self._add_to_perturbated_dict(var_per)
         
@@ -354,10 +354,10 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             else:
                 # plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
                 plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
-                plt.axvline(x=parm[type_parm+'_nominal'],linestyle='--', color='red')
+                plt.axvline(x=parm['nominal'],linestyle='--', color='red')
 
             plt.legend(loc='upper right')
-            plt.xlabel(parm[type_parm + '_units'])
+            plt.xlabel(parm['units'])
             plt.ylabel('Probability')
             plt.title('Histogram of ' + type_parm)
             

@@ -12,7 +12,7 @@ from rich.progress import track
 from rich import print
 
 
-def enkf_analysis(data,data_cov,param,list_update_parm,ensemble,observation):
+def enkf_analysis(data,data_cov,param,ensemble,observation):
     '''
     Case with non linear observation operator:
         
@@ -56,9 +56,12 @@ def enkf_analysis(data,data_cov,param,list_update_parm,ensemble,observation):
     
     if len(param)>0:
         
+        # Take the mean line by line i.e. each line is an independant parameter to update
+        
         param_mean = []
         for l in range(len(param)):
             param_mean.append((1./float(ens_size))*np.tile(param[l,:].sum(0), (ens_size,1)).transpose())
+            # param_mean.append((1./float(ens_size))*np.tile(param[:,:].sum(0), (ens_size,1)).transpose())
     
         param_mean = np.vstack(param_mean)
         
@@ -145,12 +148,12 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     
     
     observation = observation.T
-    data = np.array([data]).T
+    # data = np.array([data]).T
     meas_size = data.shape[0]
 
     # First combine the ensemble and param arrays.
     # A is (sim_size+ParSize)x(ens_size)
-    A = np.vstack([ensemble, param.transpose()])
+    A = np.vstack([ensemble, param])
 
     # Calculate ensemble mean
     Amean = (1./float(ens_size))*np.tile(A.sum(1), (ens_size,1)).transpose()
@@ -162,32 +165,30 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     A[:(sim_size+1),:] = np.sqrt(alpha)*(A[:(sim_size+1),:] - Amean[:(sim_size+1),:]) + Amean[:(sim_size+1),:]
 
     # Inflate the ensemble observations
-    observation = np.sqrt(alpha)*(observation - MeasAvg) + MeasAvg
+    observation = np.sqrt(alpha)*(observation - MeasAvg.transpose()) + MeasAvg.transpose()
 
     # Calculate ensemble perturbation from mean
     # Apert should be (sim_size+ParSize)x(ens_size)
     dA = A - Amean
-
+    #np.shape(dA)
     # data perturbation from ensemble measurements
     # dD should be (MeasSize)x(ens_size)
-    dD = data - observation
+    dD = (data - observation).T
+    # np.shape(dD)
 
     # ensemble measurement perturbation from ensemble measurement mean.
     # S is (MeasSize)x(ens_size)
-    S = observation - MeasAvg
+    S = observation.T - MeasAvg
 
     # Set up measurement covariance matrix
     # COV is (MeasSize)x(MeasSize)
-    try:
-        np.shape(data_cov)[1]
-        COV = data_cov
-    except:
-        COV = (1./float(ens_size-1))*np.dot(S,S.transpose()) + data_cov
+    COV = (1./float(ens_size-1))*np.dot(S,S.transpose()) + data_cov
 
     # Compute inv(COV)*dD
     # Should be (MeasSize)x(ens_size)
     B = np.linalg.solve(COV,dD)
-
+    # np.shape(B)
+    
     # Adjust ensemble perturbations
     # Should be (sim_size+ParSize)x(MeasSize)
     dAS = (1./float(ens_size-1))*np.dot(dA,S.transpose())
@@ -203,3 +204,5 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     return  [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
 
 
+# [augm_state, augm_state_mean, augm_state_pert, data_pert, meas_avg, 
+#         obs_pert, COV, inv_data_pert, pert, analysis, analysis_param]

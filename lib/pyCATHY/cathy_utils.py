@@ -127,6 +127,7 @@ def predict_unsat_soil_hydr_param(data=[[20,20,60]]):
 
     '''
     
+    
     # data = [[20,20,60]] # Sand, silt, and clay 
     soildata = SoilData.from_array(data)
     mean, stdev, codes = rosetta(3, soildata) # rosetta version 3
@@ -152,13 +153,17 @@ def predict_unsat_soil_hydr_param(data=[[20,20,60]]):
            
            
     VGP_predict_CATHY = {}
-    VGP_predict_CATHY['POROS']=  VGP_predict['theta_s']
+    VGP_predict_CATHY['POROS']=  VGP_predict['theta_r']
     VGP_predict_CATHY['VGNCELL']=  10**VGP_predict['log10(n)']
     VGP_predict_CATHY['VGRMCCELL']=  VGP_predict['theta_r'] 
     VGP_predict_CATHY['VGPSATCELL']=  (1/(10**VGP_predict['log10(alpha)']))*1e-3#  1/alpha
-    VGP_predict_CATHY['PERMX']=  10**(VGP_predict['log10(ksat)'])*(1e-3/86400)
+    VGP_predict_CATHY['PERMX']=  10**(VGP_predict['log10(ksat)']*(1e-3/86400))
     VGP_predict_CATHY['PERMY']=  10**(VGP_predict['log10(ksat)'])*(1e-3/86400)
     VGP_predict_CATHY['PERMZ']=  10**(VGP_predict['log10(ksat)'])*(1e-3/86400)
+    
+    import numpy as np
+    np.exp(1.169)*(1e-3/86400)
+    np.exp(2.808)*(1e-3/86400)
     
     return VGP_predict_CATHY
 
@@ -268,11 +273,7 @@ def Carsel_Parrish_1988(soilTexture=None):
 
     '''
     
-    soil_texture = ['S','SI','SIL']
-    
-    if soilTexture is not None:
-        if soilTexture not in soil_texture:
-            print('soil texture non existing')
+
             
     # Ks hydraulic Conductivity  Ks (cm/h)
     # theta_r, residual water content ()
@@ -308,8 +309,22 @@ def Carsel_Parrish_1988(soilTexture=None):
      # N            ..     ..    ..  ..
 
 
-
+    soil_texture = ['C', 'S','SI','SIL']
+    
+    if soilTexture is not None:
+        if soilTexture not in soil_texture:
+            print('soil texture non existing')
+            
     table = [ 
+        
+              [
+                [0.38, 0.09, 24.1, 400], 
+                [0.068, 0.034, 49.9, 353],
+                [0.20, 0.42, 210.3, 114],
+                [0.008, 0.012, 160.3, 400],
+                [1.09, 0.09, 7.9, 400]
+              ], 
+        
               [
                 [0.43, 0.06, 15.1, 246], 
                 [0.045, 0.010, 22.3, 246],
@@ -365,23 +380,26 @@ def Carsel_Parrish_1988(soilTexture=None):
     # transformations
     # ------------------------------------------------------------------------
     hydraulic_variable = ['Ks','theta_r','alpha','N']
-    soil_texture = ['S','SL']
+    soil_texture = ['C', 'S','SL']
     
     if soilTexture is not None:
         if soilTexture not in soil_texture:
             print('soil texture non existing')
     
     A = [
+        [0,0,0,0.9],
         [0,0,0,1.5],
         [0,0,0,1.35]
         ]
     
     B = [
+         [5,0.15,0.15,1.4],
          [70,0.1,0.25,4],
          [30,0.11,0.25,3]
         ]
     
     transf_type = [
+                    ['SB','SUt','SBt','LNt'],
                     ['SB','LN','SB','LN'],
                     ['SB','SB','LN','SB']
                     
@@ -416,10 +434,14 @@ def Carsel_Parrish_1988(soilTexture=None):
         
         VGP_predict_CATHY = {}
         
-        if soilTexture == 'S':
-            # [Allen, 1985]
-            VGP_predict_CATHY['POROS']=  0.36
+        # if soilTexture == 'S':
+        #     # [Allen, 1985]
+        #     VGP_predict_CATHY['POROS']=  0.36
+        # if soilTexture == 'C':
+        #     # [Allen, 1985]
+        #     VGP_predict_CATHY['POROS']=  0.36
             
+        VGP_predict_CATHY['POROS']=  df_Carsel_Parrish_1988_VGN['xmean']['theta_s']
         VGP_predict_CATHY['VGNCELL']=  df_Carsel_Parrish_1988_VGN['xmean']['N']
         VGP_predict_CATHY['VGRMCCELL']=  df_Carsel_Parrish_1988_VGN['xmean']['theta_r'] 
         VGP_predict_CATHY['VGPSATCELL']=  1/df_Carsel_Parrish_1988_VGN['xmean']['alpha']

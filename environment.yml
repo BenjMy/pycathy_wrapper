@@ -21,4 +21,5 @@ dependencies:
   - sphinx_bootstrap_theme
   - numpydoc
   - PVGeo
+  - soiltexture
 
