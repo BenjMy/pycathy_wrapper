@@ -17,7 +17,9 @@ def run_analysis(DA_type,
                  data,data_cov,
                  param,list_update_parm,
                  ensembleX,prediction, 
-                 default_state='psi'):
+                 default_state='psi',
+                 **kwargs,
+                 ):
     '''
     Perform the DA analysis step 
 
@@ -99,7 +101,8 @@ def run_analysis(DA_type,
                                                         data_cov,
                                                         param,
                                                         ensembleX[id_state],
-                                                        prediction)
+                                                        prediction,
+                                                        **kwargs)
                                                         
         return [A, Amean, dA, 
          dD, MeasAvg, S, 
@@ -130,11 +133,31 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         pass
                
+    
+    
+    
+    # for dp in list_pert:
+        
+    #     # need to call perturbate_var as many times as variable to perturbate
+    #     # return a dict merging all variable perturbate to parse into prepare_DA
+    #     cathyDA = cathy_DA.DA()
+    #     parm_per = cathyDA.perturbate_parm(parm=dp, 
+    #                                         type_parm = dp['type_parm'], # can also be VAN GENUCHTEN PARAMETERS
+    #                                         mean =  dp['mean'],
+    #                                         sd =  dp['sd'],
+    #                                         sampling_type =  dp['sampling_type'],
+    #                                         ensemble_size =  dp['ensemble_size'], # size of the ensemble
+    #                                         per_type= dp['per_type'],
+    #                                         show= dp['show'],
+    #                                         savefig= os.path.join(prj_name,
+    #                                                               prj_name + dp['savefig'])
+    #                                         )
+        
             
     def perturbate_parm(self, parm, type_parm, mean=[], sd=[], per_type=None, 
                         sampling_type = 'lognormal',
                         ensemble_size = 128, 
-                        show=False, 
+                        show=False, seed=True,
                         **kwargs):
         '''
         Perturbate parameter for the generation of the ensemble
@@ -194,14 +217,36 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     
 
 
-
+        def sampling_dist(sampling_type,mean,sd,ensemble_size):
+            # sampling
+            np.random.seed(1)
+            if sampling_type == 'lognormal':
+                parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
+            elif sampling_type == 'normal':
+                # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
+                parm_sampling = np.random.normal(mean,scale=sd, size=ensemble_size)
+            elif sampling_type == 'uniform':
+                minmax_uni = kwargs['minmax_uni']
+                parm_sampling = np.random.uniform(minmax_uni[0],minmax_uni[1],ensemble_size)
+            return parm_sampling
+        
+        def perturbate_dist(parm,per_type,parm_sampling,ensemble_size):
+            # pertubate
+            parm_mat = np.ones(ensemble_size)*parm['nominal']
+            if per_type == None:
+                parm_per_array = parm_sampling
+            if per_type == 'multiplicative':
+                parm_per_array = parm_mat*parm_sampling
+            elif per_type == 'additive':
+                parm_per_array = parm_mat+parm_sampling
+            return parm_per_array
+            
         # Parameter perturbation rules
         #----------------------------------------------------------------------
 
         def Evensen2003(qk_0, wk,deltaT,Tau):
             '''
             Ensemble Generation of time-variable atmospheric forcing rates.
-
             Parameters
             ----------
             wk : np.array([])
@@ -218,17 +263,22 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             qki : Ensemble of time-variable atmospheric forcing rates at time i 
 
             '''
-            
             if Tau<deltaT:
                 raise ValueError('Time decorrelation length is too small; should be at least>=' + str(deltaT))
-                
-                
             gamma = 1 - deltaT/Tau
             qki = gamma * qk_0 + np.sqrt(1-gamma*gamma) * wk
             
             return qki
         
-                
+        # check if parameters in part of van Genuchten retention curves
+        #----------------------------------------------------------------------
+        # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
+        
+        def Carsel_Parrish_VGN_pert():
+
+            cholesky_diag_mat = np.diag(3)
+            # VGN_means =
+            VGN_parm_per = VGN_means + cholesky_diag_mat.T*z
         
         
         # add Johnson1970 transformation in kwargs         
@@ -238,76 +288,48 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             print('not yet implemented - see Botto 2018')
 
 
-        # check if parameters in part of van Genuchten retention curves
+            
+        # all parameters except Van Genuchten
         #----------------------------------------------------------------------
-        if type_parm in ['Alpha', 'n', 'thethaR']: #van Genuchten retention curves
+            
+        parm_sampling = sampling_dist(sampling_type,mean,sd,ensemble_size)
+        parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
+
+
+        if 'VGN' in type_parm: #van Genuchten retention curves
             
             print('The parameters of the van Genuchten retention curves α,' + 
                   'n, and θ r are perturbed taking into account their mutual cor-' + 
                   'relation according to Carsel and Parrish (1988)')
-                        
             
-        # all parameters except Van Genuchten
-        #----------------------------------------------------------------------
-        else:
-    
-            # sampling
-            np.random.seed(1)
-            if sampling_type == 'lognormal':
-                parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
-            elif sampling_type == 'normal':
-                # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
-                parm_sampling = np.random.normal(mean,scale=sd, size=ensemble_size)
-            elif sampling_type == 'uniform':
-                minmax_uni = kwargs['minmax_uni']
-                parm_sampling = np.random.uniform(minmax_uni[0],minmax_uni[1],ensemble_size)
-                
-            # pertubate
-            parm_mat = np.ones(ensemble_size)*parm['nominal']
-            if per_type == None:
-                parm_per_array = parm_sampling
-            if per_type == 'multiplicative':
-                parm_per_array = parm_mat*parm_sampling
-            elif per_type == 'additive':
-                parm_per_array = parm_mat+parm_sampling
-                
-
-        
-        
-            if 'atmbc' in type_parm: 
-                
-                var_per[type_parm] = parm 
-                
-                key = 'data'
-                var_per[type_parm][key] = sampling_type
-                
-                
-                time = list(parm['data2assimilate'].keys())
-                Tau = parm['time_decorrelation_len']
-                wk = parm_per_array
-
-                parm['data2assimilate']['time']
-                parm['data2assimilate']['value']
-                
-                parm_per_array_time_variable = []
-                for i, t in enumerate(time):
+            Carsel_Parrish_VGN_pert()
+            
+            
+            
+        elif 'atmbc' in type_parm: 
+            
+            var_per[type_parm] = parm                
+            Tau = parm['time_decorrelation_len']
+            wk0 = parm_per_array
+            atmbc_times = parm['data2assimilate']['TIME']
+            atmbc_values = parm['data2assimilate']['VALUE']
+            
+            parm_per_array_time_variable = []
+            for i, t in enumerate(atmbc_times):
+                if i==0:
+                    qk_0 = wk0
+                    parm_per_array_time_variable.append(qk_0)
+                else:
+                    qk_0 = parm_per_array_time_variable[i-1]
+                    parm['nominal'] = atmbc_values[i]
+                    wk = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
                     
-                    if i==0:
-                        qk_0 = parm_per_array
-                    else:
-                        qk_0 = parm_per_array_time_variable[i-1]
-                        
-                    deltaT = abs(time[i] - time[i-1])
-                        
+                    deltaT = abs(atmbc_times[i] - atmbc_times[i-1])
                     qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
                     parm_per_array_time_variable.append(qk_i)
-                
-                key = 'time_variable_perturbation'
-                var_per[type_parm][key] = parm_per_array_time_variable
-
-
-                
-                
+            
+            key = 'time_variable_perturbation'
+            var_per[type_parm][key] = parm_per_array_time_variable
 
 
         key = 'ini_perturbation'
@@ -315,10 +337,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         
         key = 'sampling'
         var_per[type_parm][key] = parm_sampling
-        
-        
-    
-        
+
 
         # transf_type = '' 
         # Parameter tranformation
@@ -348,7 +367,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             
             if var_per[type_parm]['transf_type'] is not None:
                 if 'log'.casefold() in var_per[type_parm]['transf_type'].casefold():
-                    plt.hist(np.log10(parm_sampling), ensemble_size, alpha=0.5, label='sampling')
+                    # plt.hist(np.log10(parm_sampling), ensemble_size, alpha=0.5, label='sampling')
                     plt.hist(np.log10(parm_per_array), ensemble_size, alpha=0.5, label='ini_perturbation')
                     plt.axvline(x=np.log10(parm[type_parm+'_nominal']),linestyle='--', color='red')
             else:

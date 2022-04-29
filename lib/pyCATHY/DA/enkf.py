@@ -12,7 +12,7 @@ from rich.progress import track
 from rich import print
 
 
-def enkf_analysis(data,data_cov,param,ensemble,observation):
+def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     '''
     Case with non linear observation operator:
         
@@ -30,7 +30,7 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     data_cov : TYPE
         measured data covariance matrice.
     param : TYPE
-        model parameters (perturbated and to update).
+        model parameters (perturbated and to update).kwrags
     ensemble : np.array([])
         state values (can be either pressure heads or saturation water).
     observation : TYPE
@@ -42,16 +42,25 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
         DESCRIPTION.
 
     '''
+    
+    # get kwargs optionnal arguments
+    # --------------------------------
+    localize = False
+    if 'localize' in kwargs:
+        localize = True
+        
+        
     # Collect data sizes.
+    #- -------------------------------
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0] 
-    
-    observation = observation # (MeasSize)x(ens_size)
-    data = data # (MeasSize)
     meas_size = data.shape[0]
 
+    # observation = observation # (MeasSize)x(ens_size)
+    # data = data # (MeasSize)
+
     # First combine the ensemble and param arrays.
-    
+    # ------------------------------------------------------------------------
     ensemble_mean = (1./float(ens_size))*np.tile(ensemble.sum(1), (ens_size,1)).transpose()
     
     if len(param)>0:
@@ -64,6 +73,9 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
             # param_mean.append((1./float(ens_size))*np.tile(param[:,:].sum(0), (ens_size,1)).transpose())
     
         param_mean = np.vstack(param_mean)
+        
+        print('mean pRam')
+        print(param_mean)
         
     if len(param)>0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
@@ -84,6 +96,12 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     # data perturbation from ensemble measurements
     # data_pert should be (MeasSize)x(ens_size)
     data_pert = (data - observation.T).T
+    
+    
+    print('data_pert')
+    print(data_pert)
+        
+        
         
     if np.max(abs(data_pert))>1e3:
         raise ValueError('predictions are too far from observations')
@@ -112,6 +130,8 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
         COV = data_cov.transpose()
     else:
         COV = (1./float(ens_size-1))*np.dot(obs_pert,obs_pert.transpose()) + data_cov.transpose()
+        # COV = data_cov.transpose()
+
     # print(np.shape(COV))
 
     # np.shape(data_pert)
@@ -131,16 +151,25 @@ def enkf_analysis(data,data_cov,param,ensemble,observation):
     analysis_param = analysis[sim_size:,:].transpose()
     analysis = analysis[0:sim_size,:]
     
-            
+
+    print('analysis_param')
+    print(analysis_param)
+    
+    
     # return [Analysis,Analysisparam]
     return [augm_state, augm_state_mean, augm_state_pert, data_pert, meas_avg, 
             obs_pert, COV, inv_data_pert, pert, analysis, analysis_param]
 
     
 
-def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
+def enkf_analysis_inflation(data,data_cov,param,ensemble,observation,**kwargs):
 
     alpha = 1  #<alpha> = (scalar) covariance inflation parameter. Usually alpha >= 1.
+    
+    if 'alpha' in kwargs:
+        alpha = kwargs['alpha']
+        
+    
     
     # Collect data sizes.
     ens_size = ensemble.shape[1]
@@ -155,6 +184,9 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     # A is (sim_size+ParSize)x(ens_size)
     A = np.vstack([ensemble, param])
 
+    # np.shape(ensemble)
+    # np.shape(param)
+    
     # Calculate ensemble mean
     Amean = (1./float(ens_size))*np.tile(A.sum(1), (ens_size,1)).transpose()
 
@@ -162,7 +194,8 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     MeasAvg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1)).transpose()
     
     # Inflate only the simulation ensemble, not the parameter ensemble 
-    A[:(sim_size+1),:] = np.sqrt(alpha)*(A[:(sim_size+1),:] - Amean[:(sim_size+1),:]) + Amean[:(sim_size+1),:]
+    # A[:(sim_size+1),:] = np.sqrt(alpha)*(A[:(sim_size+1),:] - Amean[:(sim_size+1),:]) + Amean[:(sim_size+1),:]
+    A[:,:] = np.sqrt(alpha)*(A[:,:] - Amean[:,:]) + Amean[:,:]
 
     # Inflate the ensemble observations
     observation = np.sqrt(alpha)*(observation - MeasAvg.transpose()) + MeasAvg.transpose()
@@ -200,6 +233,8 @@ def enkf_analysis_inflation(data,data_cov,param,ensemble,observation):
     # Separate and return Analyzed ensemble and Analyzed parameters.
     Analysisparam = Analysis[sim_size:,:].transpose()
     Analysis = Analysis[0:sim_size,:]
+    
+    print(np.shape(Analysisparam))
             
     return  [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
 

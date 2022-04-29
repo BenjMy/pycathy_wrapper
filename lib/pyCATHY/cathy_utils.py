@@ -182,8 +182,12 @@ def past_authors(selec=0):
     weil = [1.88E-04, 1.88E-04, 1.88E-04, 1.00E-05, 0.55, 1.46, 0.15, 0.03125]
     busato = [4.05278E-05,4.05278E-05,4.05278E-05,0.001,0.41,2.28,0.057,-0.0806]
     
+    botto_clay = [1e-4,1e-4,1e-4,5e-3,0.58,0.065,0.070,1.88]
+    botto_sand = [1e-7,1e-7,1e-7,5e-3,0.40,0.067,0.017,1.40]
+
     
-    data = [weil,busato]
+    
+    data = [weil,busato,botto_clay,botto_sand]
     VGP_predict_CATHY = {}
     VGP_predict_CATHY['POROS']= data[selec][4]
     VGP_predict_CATHY['VGNCELL']=  data[selec][5]
@@ -309,7 +313,7 @@ def Carsel_Parrish_1988(soilTexture=None):
      # N            ..     ..    ..  ..
 
 
-    soil_texture = ['C', 'S','SI','SIL']
+    soil_texture = ['C', 'S','SI','SIL','CL']
     
     if soilTexture is not None:
         if soilTexture not in soil_texture:
@@ -345,8 +349,14 @@ def Carsel_Parrish_1988(soilTexture=None):
                  [0.45, 1.23, 275.1, 1093],
                  [0.020, 0.012, 64.7, 1093],
                  [1.41, 0.12, 8.5, 1093]
-              ]
-
+              ],
+              [
+                 [0.41, 0.09, 22.4, 364],
+                 [0.095, 0.010, 10.1, 363],
+                 [0.26, 0.70, 267.2, 345],
+                 [0.019, 0.015, 77.9, 363],
+                 [1.31, 0.09, 7.2, 364]
+              ],
             ]
             
     dict_Carsel_Parrish_1988_VGN={}
@@ -366,6 +376,7 @@ def Carsel_Parrish_1988(soilTexture=None):
                                                     'n':table[i][j][3],
                                                     }
                         
+    # 29.7*1e-3
     
     df_Carsel_Parrish_1988_VGN = pd.DataFrame.from_dict(dict_Carsel_Parrish_1988_VGN).stack().to_frame()
     df_Carsel_Parrish_1988_VGN = pd.DataFrame(df_Carsel_Parrish_1988_VGN[0].values.T.tolist(), 
@@ -380,7 +391,7 @@ def Carsel_Parrish_1988(soilTexture=None):
     # transformations
     # ------------------------------------------------------------------------
     hydraulic_variable = ['Ks','theta_r','alpha','N']
-    soil_texture = ['C', 'S','SL']
+    soil_texture = ['C', 'S','SL','SIL','CL']
     
     if soilTexture is not None:
         if soilTexture not in soil_texture:
@@ -389,19 +400,25 @@ def Carsel_Parrish_1988(soilTexture=None):
     A = [
         [0,0,0,0.9],
         [0,0,0,1.5],
-        [0,0,0,1.35]
+        [0,0,0,1.35],
+        [1,0,0,1.35],        
+        [0,0,0,1],        
         ]
     
     B = [
          [5,0.15,0.15,1.4],
          [70,0.1,0.25,4],
-         [30,0.11,0.25,3]
+         [30,0.11,0.25,3],
+         [15,0.11,0.15,2],
+         [7.5,0.13,0.15,1.6],
         ]
     
     transf_type = [
                     ['SB','SUt','SBt','LNt'],
                     ['SB','LN','SB','LN'],
-                    ['SB','SB','LN','SB']
+                    ['SB','SB','LN','SB'],
+                    ['LN','SB','LN','SB'],
+                    ['SBtt','SU','LN','SB'],
                     
                   ]
     
@@ -451,7 +468,7 @@ def Carsel_Parrish_1988(soilTexture=None):
         
         
 
-    return df_Carsel_Parrish_1988_VGN, df_Carsel_Parrish_1988_transf,VGP_predict_CATHY
+    return df_Carsel_Parrish_1988_VGN, df_Carsel_Parrish_1988_transf, VGP_predict_CATHY
     
     
 
@@ -537,3 +554,15 @@ def Leij_etal_1996():
     None.
 
     '''
+
+#%%
+    
+def dictObs_2pd(obs2plot):
+    ''' transform Observation dictionnary to panda dataframe for a given observation'''
+    
+    df_obs = pd.DataFrame.from_dict(obs2plot).stack().to_frame()
+    df_obs = pd.DataFrame(df_obs[0].values.T.tolist(), 
+                            index=df_obs.index)
+    df_obs.index.names= ['sensorNameidx','assimilation time']
+    return df_obs
+

@@ -30,7 +30,24 @@ def SW_2_ERa_test(project_name,
     project_name : str
         name of the current project.
     ArchieParms : dict
-        Archie params.
+        Archie params.              'Noble_test_ERT_perArchie': {
+                                              'per_type': [None,'multiplicative',None],
+                                              'per_name':['ic','ks','archie'],
+                                              'per_nom':[-3.5,1.880e-06,{'rFluid':[3.81],
+                                                                         'n':[0.78]
+                                                                         }
+                                                         ],
+                                              'per_mean':[-0.1,-1,{'rFluid':[3.81],
+                                                                   'n':[0.78]
+                                                                   }
+                                                          ],
+                                              'per_sigma': [0.05,.17,{'rFluid':[1],
+                                                                      'n':[1]
+                                                                      }
+                                                            ],
+                                              'listUpdateParm': ['St. var.'], 
+                                              'listAssimilatedObs': ['ERT','rFluid','n'],
+                                              },
     porosity : np.array([])
         medium porosity.
     pathERT : str
@@ -63,6 +80,19 @@ def SW_2_ERa_test(project_name,
     
     pass
 
+def get_Archie_ens_i(ArchieParms,Ens_nb):
+        
+        ArchieParms2parse = {}
+        if len(ArchieParms['rFluid'])>1:
+            for p in ['rFluid','a','m','n']:
+                ArchieParms2parse[p] = [ArchieParms[p][Ens_nb]]
+        else:
+            ArchieParms2parse = ArchieParms
+            
+        return ArchieParms2parse
+    
+    
+    
 def SW_2_ERa(project_name,
              ArchieParms,
              porosity,
@@ -105,30 +135,22 @@ def SW_2_ERa(project_name,
 
     '''
     
-    
-    
         
     # Some flag for DA assimilation
     # ------------------------------------------------------------------------
     DA_cnb = None
+    Ens_nb = int(path_fwd_CATHY[-1])
+    data_format = []
+    savefig = False
+
     if 'DA_cnb' in kwargs:
         DA_cnb = kwargs['DA_cnb']
-        
-    Ens_nb = int(path_fwd_CATHY[-1])
     if 'Ens_nb' in kwargs:
         Ens_nb = kwargs['Ens_nb']
-        
-    data_format = []
     if 'data_format' in kwargs:
         data_format = kwargs['data_format']
-    
-    
-    savefig = False
     if 'savefig' in kwargs:
         savefig = kwargs['savefig']
-        
-        
-
         
         
     # Get the state vector from kwargs if existing otherwise read output
@@ -137,14 +159,12 @@ def SW_2_ERa(project_name,
         df_sw = kwargs['df_sw']
     else:
         df_sw = out_CT.read_sw(os.path.join(path_fwd_CATHY,'output/sw'))
-
         # case of open Loop where df_sw is list of nb of assimilation time length
         # -------------------------------------------------------------------
         if 'time_ass' in kwargs:
             time_ass = kwargs['time_ass']
             df_sw = df_sw[time_ass,:]
             DA_cnb = time_ass
-
         # case of sequential assimilation
         # -------------------------------------------------------------------
         else:
@@ -152,12 +172,7 @@ def SW_2_ERa(project_name,
             # (in case the sw file contains intermediate times for plotting observations)
 
 
-    
-        
     path_CATHY = os.path.join(path_fwd_CATHY,'vtk/')
-
-    
-       
 
     if DA_cnb is not None:
         mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, 'vtk/100.vtk'))
@@ -165,12 +180,19 @@ def SW_2_ERa(project_name,
         mesh_CATHY_ref = pv.read(os.path.join('vtk/100.vtk'))
     
     
-    ER_converted_ti = Archie_rho(rFluid=ArchieParms['rFluid'], 
+    
+    # Choose archie parameter for a given realisation (from the ensemble)
+    # --------------------------------------------------------------------
+    ArchieParms2parse = get_Archie_ens_i(ArchieParms,Ens_nb)
+        
+        
+    ER_converted_ti = Archie_rho(rFluid=ArchieParms2parse['rFluid'], 
                                 sat = [df_sw],
                                 porosity=[porosity], 
-                                a=[ArchieParms['a']], 
-                                m=[ArchieParms['m']],
-                                n=[ArchieParms['n']])
+                                a=ArchieParms2parse['a'], 
+                                m=ArchieParms2parse['m'],
+                                n=ArchieParms2parse['n'],
+                                pert_sigma=ArchieParms['pert_sigma'])
 
     df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','ER_converted'])
     df_Archie['time'] = DA_cnb*np.ones(len(ER_converted_ti))
@@ -180,8 +202,6 @@ def SW_2_ERa(project_name,
     df_Archie['porosity'] = porosity*np.ones(len(ER_converted_ti))
     
 
-
-
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(ER_converted_ti,
@@ -190,13 +210,9 @@ def SW_2_ERa(project_name,
                                                                 overwrite=True,
                                                                 path = path_CATHY)
 
-    
-    
     if 'pygimli' in data_format:
-        # copy attribute to simpeg mesh
+        # copy attribute to pg mesh
         # ------------------------------------------------------------------------
-        
-        
         mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,
                                                       meshERT,
                                                       scalar='ER_converted'+ str(DA_cnb),
@@ -205,10 +221,8 @@ def SW_2_ERa(project_name,
                                                       **kwargs
                                                       )
     
-    
         # fwd ERT data
         # ------------------------------------------------------------------------
-        
         # USING PYGIMLI
         # ------------------------------------------------------------------------
         res0 = mesh_geophy_new_attr.get_array(scalar_new)
@@ -231,13 +245,13 @@ def SW_2_ERa(project_name,
         
         # save to dataframe and export file
         # ------------------------------------------------------------------------
-        filename = 'ER_predicted.csv'
+        # filename = 'ER_predicted.csv'
         
-        isExist = os.path.exists(os.path.join(pathERT, project_name))
-        if not isExist:
-            os.makedirs(os.path.join(pathERT, project_name))
+        # isExist = os.path.exists(os.path.join(pathERT, project_name))
+        # if not isExist:
+        #     os.makedirs(os.path.join(pathERT, project_name))
     
-        df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
+        # df_ERT_predicted.to_csv(os.path.join(pathERT, project_name, filename))
         # ERT_predicted[]
         # simuERT.invert_ERT_survey(ERT)
         
@@ -314,7 +328,8 @@ def SW_2_ERa(project_name,
     return df_ERT_predicted, df_Archie
   
 
-def Archie_rho(rFluid=[], sat=[], porosity=[], a=[1.0], m=[2.0], n=[2.0]):
+def Archie_rho(rFluid=[], sat=[], porosity=[], a=[1.0], m=[2.0], n=[2.0],
+               pert_sigma=[None]):
     '''
     Compute ER values at each mesh nodes
 
@@ -340,7 +355,18 @@ def Archie_rho(rFluid=[], sat=[], porosity=[], a=[1.0], m=[2.0], n=[2.0]):
 
     '''
     
-    return rFluid[0] * a[0] * porosity[0]**(-m[0]) * sat[0]**(-n[0])
+    # Loop over soil type
+    # -----------------------------------------------
+    for i in range(len(rFluid)):
+        
+        rho = rFluid[i] * a[i] * porosity[i]**(-m[i]) * sat[i]**(-n[i])
+        
+        if pert_sigma[i] is not None:
+            noise = np.random.normal(0,pert_sigma*rho*rho,len(rho)) # See eq. 4.4 thesis Isabelle p.95
+            rho = rho + noise
+        
+    
+    return rho
 
 
 

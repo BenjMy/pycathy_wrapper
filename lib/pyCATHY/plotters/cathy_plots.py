@@ -18,7 +18,6 @@ pv.set_plot_theme('document')
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.dates import DateFormatter
-import matplotlib.dates as mdates
 
 from matplotlib.colors import LogNorm
 
@@ -88,7 +87,7 @@ def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):
     # read hgraph file if df_hgraph not existing
     # ------------------------------------------------------------------------
     if len(df_hgsfdeth)==0:
-        df_dtcoupling = out_CT.read_hgsfdet(filename='hgsfdeth')
+        df_hgsfdeth = out_CT.read_hgsfdet(filename='hgsfdeth')
 
 
     # create fig axis if not existing
@@ -328,8 +327,8 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
     
     v_atmbc_n =[]
     if isinstance(v_atmbc, list):
-        v_atmbc_p = v_atmbc[0] # positif
-        v_atmbc_n = v_atmbc[1] # negatif
+        v_atmbc_p = v_atmbc[1] # positif
+        v_atmbc_n = v_atmbc[0] # negatif
         v_atmbc = v_atmbc[0] - v_atmbc[1]
 
     
@@ -1203,6 +1202,11 @@ def DA_plot_parm_dynamic(parm = 'ks',
             pass
         plt.legend(loc='upper right')
         plt.ylabel('Probability')
+        
+
+    if 'ylog' in kwargs:
+        plt.yscale('log')
+        
     plt.show()
     
     return ax
@@ -1370,11 +1374,19 @@ def DA_plot_time_dynamic(DA,
         
         if len(isENS)>0:
 
-            # try:
-            # isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS)))),
-            #                                       int(max(isENS['time']))*(NENS)), True)
-            # except:
-            #     pass
+            if len(isOL)>0:
+
+                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS)))),
+                                          int(max(isENS['time']))*(NENS)), True)
+            else:
+            
+                isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+                                          int(max(isENS['time']))*(NENS+1)), True)
+            
+            # isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+            #                                   int(max(isENS['time']))*(NENS)), True)
+
+                
             
             # try:
                 # isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
@@ -1383,8 +1395,8 @@ def DA_plot_time_dynamic(DA,
             #     pass
             
             # try:
-            isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
-                                          int(max(isENS['time']))*(NENS+1)), True)
+            # isENS.insert(2, "idnode", np.tile(np.arange(int(len(isENS)/(max(isENS['time'])*(NENS+1)))),
+            #                               int(max(isENS['time']))*(NENS+1)), True)
             # except:
             #     pass
                   

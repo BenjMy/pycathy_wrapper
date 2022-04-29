@@ -43,69 +43,88 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
         DESCRIPTION.
     '''
     
-    # print(np.mean(meshIN.get_array(scalar)))
-    # print(np.mean(meshIN.get_array(scalar)))
-
     in_nodes_mod = np.array(meshIN.points)
     if 'in_nodes_mod' in kwargs:
-        in_nodes_mod = kwargs['in_nodes_mod']
-
-    
-
-    # out_data = []
-    # closest_idx = []
-
-    # if type(meshOUT) is str:
-    #     meshOUT = pv.read(meshOUT)
-
-
-    # cellOUT_centers = meshOUT.cell_centers()
-
-    # for pos in cellOUT_centers.points:
-
-    #     closest_idx, closest = find_nearest_node(pos,in_nodes_mod,
-    #                                                   threshold)
-
-    #     if 'nan' in closest:
-    #         out_data.append('nan')
-    #     else:
-    #         out_data.append(meshIN.active_scalars[closest_idx])
-    
-    # out_data = np.hstack(out_data)
-    # len(out_data)   
-    
-    # print(meshIN.active_scalars_info)
-    
+        in_nodes_mod = kwargs['in_nodes_mod']    
     meshIN.set_active_scalars(scalar)
-    
     meshIN.points = in_nodes_mod
+    
+    # set_interpolation_radius()
+    
+    rd = max(np.diff(meshIN.points[:,0]))
+    result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
+    
+    # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result)
+
+
+    result = result.point_data_to_cell_data()
+    out_data = result[scalar]
+    
+    warm_0 = ''
+    if len(np.where(out_data == 0))>0:
+        warm_0 = 'interpolation created 0 values - replacing them by min value of input CATHY predicted ER mesh'
+        
+    out_data = np.where(out_data == 0, 1e-3, out_data)
+    
+    
+    return out_data, warm_0
+
+    
+def set_interpolation_radius():
     
     # rd= min([abs(min(np.diff(meshIN.points[:,0]))),
     #      abs(min(np.diff(meshIN.points[:,1]))),
     #      abs(min(np.diff(meshIN.points[:,2])))
     #      ]
     #     )
+    
+    pass
+    
+    
+def plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result):
+    
+    import matplotlib.pylab as plt
+    fig = plt.figure()
+    ax1 = plt.subplot(131)
+    print(max(meshIN[scalar]))
+    print(min(meshIN[scalar]))
+    cm = plt.cm.get_cmap('RdYlBu')
+    # result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
+    sc = ax1.scatter(meshIN.points[:,0],meshIN.points[:,1],c=meshIN[scalar],label='meshIN[scalar]',
+                s=35, cmap=cm)
+    plt.colorbar(sc)
+    cm = plt.cm.get_cmap('RdYlBu')
+    ax2 = plt.subplot(132)
+    sc = ax2.scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
+                s=35, cmap=cm,vmin=min(meshIN[scalar]), vmax=max(meshIN[scalar]))
+    ax2.set_xlim([min(meshIN.points[:,0]),max(meshIN.points[:,0])])
+    ax2.set_ylim([min(meshIN.points[:,1]),max(meshIN.points[:,1])])
+    ax3 = plt.subplot(133)
+    sc = ax3.scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
+                s=35, cmap=cm)
+    plt.colorbar(sc)
+    
+    
+    def uniquify(path):
+        filename, extension = os.path.splitext(path)
+        counter = 1
+    
+        while os.path.exists(path):
+            path = filename + str(counter) + extension
+            counter += 1
+
+        return path
 
 
-    rd = max(np.diff(meshIN.points[:,0]))
-    
-    # result = meshOUT.interpolate(meshIN, radius=rd*250, pass_point_data=True)
-    result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
-    result = result.point_data_to_cell_data()
-    out_data = result[scalar]
+    savedir = os.getcwd()
+    savename_test = os.path.join(savedir, 'interpolation_q.png')
+    savename = uniquify(savename_test)
+    print(savename)
 
-    meshIN.save('meshIN.vtk',binary=False)
-    result.save('test.vtk',binary=False)
-    os.getcwd()
+    plt.savefig(savename)
+    # plt.show()
     
-    # Attention replace zeros by ones here 
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    print('!!!interpolation created 0 values - replacing them by 1!!!')
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    out_data = np.where(out_data == 0, 1, out_data)
-    
-    return out_data
-    
+    pass
 
 # def find_nearest_cellcenter(node_coord,meshIN_nodes_coords,threshold=1e-1, 
 #                        **kwargs):

@@ -5,16 +5,17 @@
 from __future__ import print_function
 import numpy as np
 
-from pyCATHY import cathy_tools as CT
+# from pyCATHY import cathy_tools as CT
 from pyCATHY.plotters import cathy_plots as pltCT
 from pyCATHY import meshtools as mt
+from pyCATHY.DA import perturbate
 
 import matplotlib.pyplot as plt
 
 
 import os
 import pyvista as pv
-import pygimli as pg
+# import pygimli as pg
 
 
 class rhizotron(object):
@@ -61,115 +62,11 @@ class rhizotron(object):
 def perturbate_rhizo(cathyDA,simu_DA,scenario,prj_name,NENS):
     
     
-    list_pert = []
-    if 'ic' in scenario['per_name']:      
+    list_pert = perturbate.perturbate(simu_DA, scenario, NENS)
         
-        index = scenario['per_name'].index('ic')
-
-        ic = {
-              'type_parm': 'ic',
-              'nominal':  scenario['per_nom'][index], #nominal value
-              'mean':  scenario['per_mean'][index],
-              'sd':  scenario['per_sigma'][index],
-              'units': 'pressure head $(m)$', # units
-              'sampling_type': 'normal',
-              'ensemble_size': NENS, # size of the ensemble
-              'per_type': scenario['per_type'][index],
-              'savefig': 'ic.png',
-              'show': True,
-              }    
-        list_pert.append(ic)
-    
-    
-    
-    if 'ks' in scenario['per_name']:
-        index = scenario['per_name'].index('ks')
-        
-        
-        
-        scenario_nom = scenario['per_nom'][index]
-        scenario_mean = scenario['per_mean'][index]
-        scenario_sd = scenario['per_sigma'][index]
-        
-        for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
-            if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
-                scenario_nom = scenario['per_nom'][index][nz]
-                scenario_mean = scenario['per_mean'][index][nz]
-                scenario_sd = scenario['per_sigma'][index][nz]
-
-            ks = {
-                  'type_parm': 'ks'+ str(nz),
-                  'nominal':  scenario_nom, #nominal value
-                  'mean':  scenario_mean,
-                  'sd':  scenario_sd,
-                  'units': '$m.s^{-1}$', # units
-                  'sampling_type': 'normal',
-                  'ensemble_size': NENS, # size of the ensemble
-                  'per_type': scenario['per_type'][index],
-                  'savefig': 'ks'+ str(nz) + '.png',
-                  'show': True,
-                  'surf_zones_param': nz
-                  }    
-            list_pert.append(ks)
-            
-    
-        
-        
-    if 'PCREF' in scenario['per_name']:
-        index = scenario['per_name'].index('PCREF')
-        
-        for nz in range(len(simu_DA.soil['PCREF'])):
-
-            PCREF = {
-                  'type_parm': 'PCREF'+ str(nz),
-                  'nominal':  scenario['per_nom'][index], #nominal value
-                  'mean':  scenario['per_mean'][index],
-                  'sd':  scenario['per_sigma'][index],
-                  'units': '$m$', # units
-                  'sampling_type': 'normal',
-                  'ensemble_size': NENS, # size of the ensemble
-                  'per_type': scenario['per_type'][index],
-                  'savefig': 'PCREF.png',
-                  'show': True,
-                  'surf_zones_param': nz
-                  }    
-            list_pert.append(PCREF)
-                   
-        
-        
-    if 'ZROOT' in scenario['per_name']:
-        index = scenario['per_name'].index('ZROOT')
-
-
-        scenario_nom = scenario['per_nom'][index]
-        scenario_mean = scenario['per_mean'][index]
-
-        
-        for nz in range(len(simu_DA.soil['ZROOT'])):
-            
-            if len(simu_DA.soil['ZROOT'])>1:
-                scenario_nom = scenario['per_nom'][index][nz]
-                scenario_mean = scenario['per_mean'][index][nz]
-            
-            ZROOT = {
-                  'type_parm': 'ZROOT'+ str(nz),
-                  'nominal': scenario_nom, #nominal value
-                  'mean': scenario_mean,
-                  'sd':  scenario['per_sigma'][index],
-                  'units': '$m.s^{-1}$', # units
-                  'sampling_type': 'lognormal',
-                  'ensemble_size': NENS, # size of the ensemble
-                  'per_type': scenario['per_type'][index],
-                  'savefig': 'ZROOT' + str(nz) + '.png',
-                  'show': True,
-                  'surf_zones_param': nz
-                  }    
-            list_pert.append(ZROOT)
-            # nb_surf_nodes = 110
-
-        
-    
     for dp in list_pert:
+        
+        np.random.seed(1)
         
         # need to call perturbate_var as many times as variable to perturbate
         # return a dict merging all variable perturbate to parse into prepare_DA
@@ -184,14 +81,6 @@ def perturbate_rhizo(cathyDA,simu_DA,scenario,prj_name,NENS):
                                             savefig= os.path.join(prj_name,
                                                                   prj_name + dp['savefig'])
                                             )
-        # print(len(list_pert))
-        
-        # min(parm_per['ic']['ini_perturbation'])
-        # max(parm_per['ic']['ini_perturbation'])
-        # np.mean(parm_per['ic']['ini_perturbation'])        
-        
-        
-
         
     return parm_per
         
@@ -445,7 +334,7 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     
     # Unbiased scenario
     # -------------------------------
-    PERMX = PERMY = PERMZ =solution['PERMX']
+    PERMX = PERMY = PERMZ = solution['PERMX']
     ELSTOR = solution['ELSTOR']
     POROS = solution['POROS']
     VGNCELL = solution['VGNCELL']
@@ -492,6 +381,9 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     
     veg_map = np.ones([int(simu_DA.hapin['M']),int(simu_DA.hapin['N'])])
     
+    if isinstance(solution['ZROOT'], float):
+        solution['ZROOT'] = [solution['ZROOT']]
+    
     if len(solution['ZROOT'])>1:
         veg_map[:,[0,9]]=1
         veg_map[:,[1,8]]=2
@@ -510,6 +402,9 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
     
     soil_zone_map = np.ones([int(simu_DA.hapin['M']),int(simu_DA.hapin['N'])])
     
+    if isinstance(PERMX, float):
+        PERMX = [PERMX]
+        
     if len(PERMX)>1:
         soil_zone_map[:,list(np.arange(5,10))]=2
         simu_DA.update_zone(soil_zone_map)
@@ -642,12 +537,15 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
         path = kwargs['path']
 
 
-    data_OUT = mt.trace_mesh(mesh_IN,mesh_OUT,
+    data_OUT, warm_0 = mt.trace_mesh(mesh_IN,mesh_OUT,
                             scalar=scalar,
                             threshold=1e-1,
                             in_nodes_mod=in_nodes_mod_m)
     
-
+    if len(warm_0)>0:
+        print(warm_0)
+        
+    
     scalar_new = scalar + '_nearIntrp2_pg_msh' 
     if 'time' in kwargs:
         time = kwargs['time']
@@ -666,7 +564,7 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
     
     if show == True:
 
-        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=False)
         p.add_mesh(mesh_new_attr,scalars=scalar_new)
         _ = p.add_bounding_box(line_width=5, color='black')
         cpos = p.show(True)
@@ -676,20 +574,6 @@ def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
         p.add_mesh(mesh_IN, scalars=scalar)
         _ = p.add_bounding_box(line_width=5, color='black')
         cpos = p.show(True)
-        
-    # if type(meshERT) is str:
-    #     meshERTpv = pv.read(meshERT)
-    
-    # if savefig == True:
-    
-    #     plotter = pv.Plotter(notebook=True)
-    #     _ = plotter.add_mesh(mesh_new_attr,show_edges=True)
-    #     plotter.view_xz(negative=False)
-    #     plotter.show_grid()
-    #     plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'), 
-    #                           title='ERT'+ str(DA_cnb), 
-    #                           raster=True, 
-    #                           painter=True)
             
     
     return mesh_new_attr, scalar_new

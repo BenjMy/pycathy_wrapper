@@ -35,7 +35,10 @@ def read_ERT(filename, data_format, **kwargs):
         df_ERT_new.columns=['a', 'b', 'k', 'm', 'n', 'r', 'rhoa', 'valid']
         dict_ERT['elecs'] = np.array(df_ERT.sensorPositions())
         
-        
+    elif 'custum' in data_format:
+        df_ERT = pg.load(filename)  
+      
+ 
     else:
         raise ValueError('ERT data format not recognized')
         
