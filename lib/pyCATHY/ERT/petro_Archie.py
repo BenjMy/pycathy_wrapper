@@ -83,8 +83,8 @@ def SW_2_ERa_test(project_name,
 def get_Archie_ens_i(ArchieParms,Ens_nb):
         
         ArchieParms2parse = {}
-        if len(ArchieParms['rFluid'])>1:
-            for p in ['rFluid','a','m','n']:
+        if len(ArchieParms['rFluid_Archie'])>1:
+            for p in ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie']:
                 ArchieParms2parse[p] = [ArchieParms[p][Ens_nb]]
         else:
             ArchieParms2parse = ArchieParms
@@ -186,12 +186,12 @@ def SW_2_ERa(project_name,
     ArchieParms2parse = get_Archie_ens_i(ArchieParms,Ens_nb)
         
         
-    ER_converted_ti = Archie_rho(rFluid=ArchieParms2parse['rFluid'], 
+    ER_converted_ti = Archie_rho(rFluid_Archie=ArchieParms2parse['rFluid_Archie'], 
                                 sat = [df_sw],
-                                porosity=[porosity], 
-                                a=ArchieParms2parse['a'], 
-                                m=ArchieParms2parse['m'],
-                                n=ArchieParms2parse['n'],
+                                porosity=ArchieParms2parse['porosity'], 
+                                a_Archie=ArchieParms2parse['a_Archie'], 
+                                m_Archie=ArchieParms2parse['m_Archie'],
+                                n_Archie=ArchieParms2parse['n_Archie'],
                                 pert_sigma=ArchieParms['pert_sigma'])
 
     df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','ER_converted'])
@@ -199,9 +199,9 @@ def SW_2_ERa(project_name,
     df_Archie['ens_nb'] = Ens_nb*np.ones(len(ER_converted_ti))
     df_Archie['sw'] = df_sw
     df_Archie['ER_converted'] = ER_converted_ti
-    df_Archie['porosity'] = porosity*np.ones(len(ER_converted_ti))
+    df_Archie['porosity'] = ArchieParms2parse['porosity']*np.ones(len(ER_converted_ti))
     
-
+    # len(ER_converted_ti)
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(ER_converted_ti,
@@ -234,6 +234,7 @@ def SW_2_ERa(project_name,
                                                      mesh=meshERT, 
                                                      res0=res0,
                                                      **kwargs)
+        # ERT_predicted
         d = {'a':ERT_predicted['a'], 
               'b':ERT_predicted['b'], 
               'k':ERT_predicted['k'], 
@@ -328,7 +329,7 @@ def SW_2_ERa(project_name,
     return df_ERT_predicted, df_Archie
   
 
-def Archie_rho(rFluid=[], sat=[], porosity=[], a=[1.0], m=[2.0], n=[2.0],
+def Archie_rho(rFluid_Archie=[], sat=[], porosity=[], a_Archie=[1.0], m_Archie=[2.0], n_Archie=[2.0],
                pert_sigma=[None]):
     '''
     Compute ER values at each mesh nodes
@@ -357,9 +358,9 @@ def Archie_rho(rFluid=[], sat=[], porosity=[], a=[1.0], m=[2.0], n=[2.0],
     
     # Loop over soil type
     # -----------------------------------------------
-    for i in range(len(rFluid)):
+    for i in range(len(rFluid_Archie)):
         
-        rho = rFluid[i] * a[i] * porosity[i]**(-m[i]) * sat[i]**(-n[i])
+        rho = rFluid_Archie[i] * a_Archie[i] * porosity[i]**(-m_Archie[i]) * sat[i]**(-n_Archie[i])
         
         if pert_sigma[i] is not None:
             noise = np.random.normal(0,pert_sigma*rho*rho,len(rho)) # See eq. 4.4 thesis Isabelle p.95

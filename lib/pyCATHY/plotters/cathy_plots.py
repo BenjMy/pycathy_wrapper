@@ -1188,6 +1188,10 @@ def DA_plot_parm_dynamic(parm = 'ks',
     ax = fig.add_subplot()
     ax.hist(dict_parm_pert[parm]['sampling'],
               ensemble_size, alpha=0.5, label='sampling')
+    
+    
+    # bins=dict_parm_pert[parm]['ini_perturbation'].quantile([0,.05,0.1,0.15,0.20,0.25,0.3,0.35,0.40,0.45,0.5,0.55,0.6,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1]).to_list()
+
     ax.hist(dict_parm_pert[parm]['ini_perturbation'],
               ensemble_size, alpha=0.5, label='ini_perturbation')
     plt.legend(loc='upper right')
@@ -1204,8 +1208,9 @@ def DA_plot_parm_dynamic(parm = 'ks',
         plt.ylabel('Probability')
         
 
-    if 'ylog' in kwargs:
-        plt.yscale('log')
+    if 'log' in kwargs:
+        if kwargs['log']:
+            plt.xscale('log')
         
     plt.show()
     
@@ -1274,8 +1279,9 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
     plt.ylabel(parm)
     plt.xlabel('assimilation time')
     
-    if 'ylog' in kwargs:
-        plt.yscale('log')
+    if 'log' in kwargs:
+        if kwargs['log']:
+            plt.yscale('log')
 
     # -------------------------------    
 

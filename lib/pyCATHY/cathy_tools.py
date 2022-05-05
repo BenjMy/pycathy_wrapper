@@ -31,6 +31,8 @@ import pandas as pd
 import time
 import rich.console
 from rich.progress import track
+from rich import print
+
 # from tqdm import tqdm
 
 # import cathy_plots as pltCT
@@ -691,7 +693,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         ERT_meta_dict['seq'] = key_value[1]['ERT']['sequenceERT'] 
         ERT_meta_dict['electrodes'] = key_value[1]['ERT']['elecs'] 
         ERT_meta_dict['noise_level'] = key_value[1]['ERT']['data_err'] 
-        ERT_meta_dict['porosity'] = self.soil_SPP['SPP'][:, 4][0]
+        # ERT_meta_dict['porosity'] = self.soil_SPP['SPP'][:, 4][0]
+        
+        ERT_meta_dict['porosity'] = self.Archie_parms['porosity']
+
         ERT_meta_dict['data_format'] = self.dict_obs[0]['ERT']['data_format']
 
         
@@ -1053,7 +1058,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     
     
     
-    def set_Archie_parm(self,rFluid=[1.0],a=[1.0],m=[2.0],n=[2.0], 
+    def set_Archie_parm(self,porosity=[],rFluid_Archie=[1.0],a_Archie=[1.0],m_Archie=[2.0],n_Archie=[2.0], 
                    pert_sigma=[None]):
         '''
         Dict of Archie parameters. Each type of soil is describe within a list
@@ -1071,7 +1076,22 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         pert_signa : TYPE, optional
             Gaussian noise to add. The default is None.
         '''
-        self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
+        
+        if len(porosity)==0:
+            porosity = self.soil_SPP['SPP'][:, 4][0]
+            
+        if not isinstance(porosity, list):
+            porosity = [porosity]
+            
+        self.Archie_parms = {
+            
+                             'porosity':porosity, 
+                             'rFluid_Archie':rFluid_Archie, 
+                             'a_Archie':a_Archie, 
+                             'm_Archie':m_Archie, 
+                             'n_Archie':n_Archie, 
+                             'pert_sigma':pert_sigma
+                             }
         
         pass
 
@@ -1080,8 +1100,19 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         ''' Initiate Archie and VGP'''
         
         
+        porosity = self.soil_SPP['SPP'][:, 4][0]
+         
+        
+        if not isinstance(porosity, list):
+            porosity = [porosity]
+
+            
         if hasattr(self,'Archie_parms') == False:
-            self.Archie_parms = {'rFluid':[1.0], 'a':[1.0], 'm':[2.0], 'n':[2.0]}
+            self.Archie_parms = {'porosity': porosity,
+                                 'rFluid_Archie':[1.0],
+                                 'a_Archie':[1.0],
+                                 'm_Archie':[2.0],
+                                 'n_Archie':[2.0]}
         if hasattr(self,'VGN_parms') == False:
             self.VGN_parms = {}
         
@@ -1310,6 +1341,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                        )
             # print(len(prediction))
             # print(np.shape(prediction))
+            # ValueError: operands could not be broadcast together with shapes (612,) (1836,) 
             
             # data2test , obs2evaltest = self._get_selected_data(list_assimilated_obs)
             # # len(data2test)
@@ -1374,6 +1406,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
             # # update parameter dictionnary
             # ----------------------------------------------------------------
+            def check_ensemble(ensemble_psi_valid,ensemble_sw_valid):
+                if np.any(ensemble_psi_valid>0):
+                    raise ValueError('positive pressure heads observed')
+                
+            check_ensemble(ensemble_psi_valid,ensemble_sw_valid)
+
             self.update_pert_parm_dict(update_key,list_update_parm,analysis_param_valid)
             
 
@@ -1411,7 +1449,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 pass   
             print('------ end of update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)-1) + '------')
             print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
-            print(self.ens_valid)
+            # print(self.ens_valid)
             
             plt.close('all')
             
@@ -3682,7 +3720,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         for n in range(self.NENS):
             
             if n in ens_valid:
-                print('ensemble_nb ' + str(n) + ' before update analysis')
+                # print('ensemble_nb ' + str(n) + ' before update analysis')
                 try:
                     df_mbeconv = out_CT.read_mbeconv(os.path.join(self.workdir, self.project_name,
                                                        "DA_Ensemble/cathy_" + str(n+1),
@@ -3754,6 +3792,30 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         id_valid = [list(np.arange(0,self.NENS))]
         id_nonvalid = []
+    
+    
+        def test_negative_values(update_key,pp):
+            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
+            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
+            
+            for i in id_nonvalid:
+                self.console.print(":x: [b]negative" + str(pp) + ":[/b]" + 
+                                   str(self.dict_parm_pert[pp[1]][update_key][i])+ 
+                                   ', ens_nb:' + str(i))
+            return id_nonvalid, id_valid
+                          
+        def test_range_values(update_key,pp,min_r,max_r):
+            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<min_r)[0]))
+            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>max_r)[0]))
+            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>min_r)[0]))
+            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<max_r)[0]))
+            for i in id_nonvalid:
+                self.console.print(":x: [b]out of range" + str(pp) + ":[/b]" + 
+                                   str(self.dict_parm_pert[pp[1]][update_key][i])+ 
+                                   ', ens_nb:' + str(i))
+            return id_nonvalid, id_valid
+        
+            
         
         for pp in enumerate(list_update_parm[:]):
             if 'St. var.' in pp[1]:
@@ -3761,7 +3823,14 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             else:
 
                 
-                if 'Ks'.casefold() in pp[1].casefold():
+                
+                if 'rFluid'.casefold() in pp[1].casefold():
+                    id_nonvalid, id_valid = test_negative_values(update_key,pp)
+                elif 'porosity'.casefold() in pp[1].casefold():
+                    id_nonvalid, id_valid = test_negative_values(update_key,pp)
+                elif 'a_Archie'.casefold() in pp[1].casefold():
+                    id_nonvalid, id_valid = test_range_values(update_key,pp, 0, 3)
+                elif 'Ks'.casefold() in pp[1].casefold():
                                                                   
                     id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
                     id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
@@ -3773,7 +3842,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                            ', ens_nb:' + str(i))
     
                     
-                if 'PCREF'.casefold() in pp[1].casefold():
+                elif 'PCREF'.casefold() in pp[1].casefold():
                     
 
                     id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
@@ -3788,7 +3857,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
                 # ckeck if new value of Zroot is feasible
                 # ------------------------------------------------------------
-                if 'Zroot'.casefold() in pp[1].casefold():
+                elif 'Zroot'.casefold() in pp[1].casefold():
                     
                     # zroot_index = list_update_parm.index('ZROOT')
 
@@ -4272,7 +4341,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # ---------------------------------------------------------------------
             for i, obs_key in enumerate(obskey2map):
                 
-                print('obs_key nb:' + obs_key)
+                # print('obs_key nb:' + obs_key)
                 
                 if 'tensio' in obs_key:
                     # case 1: pressure head assimilation (Hx_PH)
@@ -4312,8 +4381,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             if len(Hx_stacked)>0:
                 Hx_ens.append(Hx_stacked)
         
+        # print(np.shape(Hx_ens))
+        
         if np.shape(Hx_ens)[0]>0:
-            Hx_ens = np.hstack(Hx_ens)
+            Hx_ens = np.vstack(Hx_ens).T
+            # Hx_ens3 = np.hstack(Hx_ens)
+            # print(np.shape(Hx_ens3))
+            
 
                   
         # special case of ERT // during sequential assimilation
@@ -4771,6 +4845,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         FeddesParam_mat_ens = []
         PERMX_het_ens = []
         Archie_parms_mat_ens = []
+        Archie_p = ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie']
         
         for parm_i, key in enumerate(update_parm_list):  # loop over perturbated variables dict
             key_root = re.split('(\d+)', key)  
@@ -4872,29 +4947,27 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                      SPP=SPP,
                                      verbose=False,
                                      filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
-                    
-                elif key_root[0] in ['rFluid','a','m','n']:
+                
+                elif key_root[0] in Archie_p:
                     
                     # self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
                         
-                    idArchie = ['rFluid','a','m','n'].index(key_root[0])
+                    idArchie = Archie_p.index(key_root[0])
 
                     if len(Archie_parms_mat_ens)==0:
-                        for p in ['rFluid','a','m','n']:
+                        for p in Archie_p:
+                            # print(p)
                             if len(self.Archie_parms[p]) != self.NENS:
                                 self.Archie_parms[p]=list(self.Archie_parms[p]*np.ones(self.NENS))
                                 
                         Archie_parms_mat_ens = np.zeros([4,self.NENS]) 
                         Archie_parms_mat_ens[:] = np.nan
                     Archie_parms_mat_ens[idArchie,ens_nb] = parm_pert[key][update_key][ens_nb]    
-                    
-
-                        
-                    
+                                        
                     if np.isnan(Archie_parms_mat_ens[idArchie,:]).any()==False:
                         self.Archie_parms[key_root[0]]=list(Archie_parms_mat_ens[idArchie,:])
                         
-                    print(self.Archie_parms)
+                    # print(self.Archie_parms)
 
                 else:
                     # variable perturbated to ommit: state, Archie param

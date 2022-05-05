@@ -1,7 +1,15 @@
 """Class managing Data Assimilation process pertubation
 """
 
-
+def check_distribution(parm2check):
+    
+    if parm2check['type_parm']=='porosity':
+        if parm2check['per_nom']<0:
+            raise ValueError 
+    
+    
+    
+    
 def perturbate(simu_DA,scenario,NENS):
     
     
@@ -61,7 +69,7 @@ def perturbate(simu_DA,scenario,NENS):
         VGP_units = ['','','','','','']
         
         for i, p in enumerate(['ks','ss','phi','thetar','alpha','r']):
-            index = scenario['per_name'].index('archie')
+            index = scenario['per_name'].index('VGP')
             
             if p not in scenario['per_nom'][index]:
                 pass
@@ -82,7 +90,9 @@ def perturbate(simu_DA,scenario,NENS):
 
         
 
-    if 'archie' in scenario['per_name']:    
+    Archie_2pert = [ele for ele in scenario['per_name'] if('Archie' in ele)]
+    # if 'Archie' in scenario['per_name']: 
+    if len(Archie_2pert)>0: 
         
         # Dans un autre ordre d’idée, les paramètres définissant la relation pétrophysique pour les
         # résidus et les stériles pourraient être inclus dans l’état et estimés lors de l’assimilation de
@@ -92,33 +102,34 @@ def perturbate(simu_DA,scenario,NENS):
         # mise à jour, de la même façon que les variables de teneur en eau.
         
         # rFluid=[1.0],a=[1.0],m=[2.0],n=[2.0]
-        simu_DA.Archie_parms
+        # simu_DA.Archie_parms
+        
+        # literature example:
+        # ---------------------------------------------------------------------
+        # https://www.sciencedirect.com/science/article/pii/S0169772220302680#tf0005
+        # c = (mean = 1.6,sd = 0.5,min = 0.0, max = 2.0),
+        # m = (mean = 2.5,sd = 0.8,min = 0.0, max = 3.0)
+
         
         archie_units = ['','','','']
         
-        for i, p in enumerate(['rFluid','a','m','n']):
-            index = scenario['per_name'].index('archie')
+        for i, p in enumerate(Archie_2pert):
+            index = scenario['per_name'].index(p)
             
-            if p not in scenario['per_nom'][index]:
-                pass
-                # scenario['per_nom'][index][p] = simu.Archie_parms[p] 
-                # scenario['per_mean'][index][p] = simu.Archie_parms[p] 
-                # scenario['per_sigma'][index][p] = simu.Archie_parms[p] 
-                
-            else:
-                p_archie = {
-                      'type_parm': p,
-                      'nominal':  scenario['per_nom'][index][p], #nominal value
-                      'mean':  scenario['per_mean'][index][p],
-                      'sd':  scenario['per_sigma'][index][p],
-                      'units': archie_units[i], # units
-                      'sampling_type': 'normal',
-                      'ensemble_size': NENS, # size of the ensemble
-                      'per_type': scenario['per_type'][index],
-                      'savefig': '_Archie' + p + '.png',
-                      'show': True,
-                      }    
-                list_pert.append(p_archie)
+
+            p_archie = {
+                  'type_parm': p,
+                  'nominal':  scenario['per_nom'][index], #nominal value
+                  'mean':  scenario['per_mean'][index],
+                  'sd':  scenario['per_sigma'][index],
+                  'units': archie_units[i], # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': '_Archie' + p + '.png',
+                  'show': True,
+                  }    
+            list_pert.append(p_archie)
         
         
         
@@ -171,7 +182,42 @@ def perturbate(simu_DA,scenario,NENS):
                   }    
             list_pert.append(ks)
             
-    
+
+    if 'porosity' in scenario['per_name']:
+        index = scenario['per_name'].index('porosity')
+        
+
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+        scenario_sd = scenario['per_sigma'][index]
+        
+        for nz in range(len(simu_DA.soil_SPP['SPP_map']['POROS'])):
+            print('zone nb:' + str(nz))
+            if len(simu_DA.soil_SPP['SPP_map']['POROS'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
+                
+
+            porosity = {
+                  'type_parm': 'porosity'+ str(nz),
+                  'nominal':  scenario_nom, #nominal value
+                  'mean':  scenario_mean,
+                  'sd':  scenario_sd,
+                  'units': '', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'porosity'+ str(nz) + '.png',
+                  'show': True,
+                  'surf_zones_param': nz
+                  } 
+            
+            check_distribution(porosity)
+
+            list_pert.append(porosity)
+            
+            
         
         
     if 'PCREF' in scenario['per_name']:
@@ -206,7 +252,7 @@ def perturbate(simu_DA,scenario,NENS):
         if 'sampling_type' in scenario:
             scenario_sampling = scenario['sampling_type'][index]
         else:
-            scenario_sampling = 'normal'
+            scenario_sampling = 'lognormal'
             
 
         

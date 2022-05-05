@@ -2,9 +2,12 @@
 """
 
 import os
+import math
 import matplotlib.pyplot as plt
 # from matplotlib import pyplot
 import numpy as np
+import scipy.stats as stats
+
 import shutil
 # import matplotlib.pyplot as plt 
 from pyCATHY.cathy_tools import CATHY
@@ -217,6 +220,20 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     
 
 
+        # def sampling_dist_trunc(sampling_type,mean,sd,ensemble_size):
+        #     # sampling
+        #     np.random.seed(1)
+        #     if sampling_type == 'lognormal':
+        #         parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
+        #     elif sampling_type == 'normal':
+        #         # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
+        #         parm_sampling = np.random.normal(mean,scale=sd, size=ensemble_size)
+        #     elif sampling_type == 'uniform':
+        #         minmax_uni = kwargs['minmax_uni']
+        #         parm_sampling = np.random.uniform(minmax_uni[0],minmax_uni[1],ensemble_size)
+        #     return parm_sampling
+        
+
         def sampling_dist(sampling_type,mean,sd,ensemble_size):
             # sampling
             np.random.seed(1)
@@ -278,8 +295,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
             cholesky_diag_mat = np.diag(3)
             # VGN_means =
-            VGN_parm_per = VGN_means + cholesky_diag_mat.T*z
-        
+            # VGN_parm_per = VGN_means + cholesky_diag_mat.T*z
         
         # add Johnson1970 transformation in kwargs         
         # transformed them into normally
@@ -287,27 +303,99 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         def Johnson1970():
             print('not yet implemented - see Botto 2018')
 
+        def sampling_dist_trunc(myclip_a,myclip_b,ensemble_size, **kwargs):
+            # https://stackoverflow.com/questions/18441779/how-to-specify-upper-and-lower-limits-when-using-numpy-random-normal
+            
+            X = stats.truncnorm((myclip_a - kwargs['loc']) / kwargs['scale'], (myclip_b - kwargs['loc']) / kwargs['scale'],
+                                loc=kwargs['loc'], scale=kwargs['scale'])
+            
+            
+            # if len(np.where(X.rvs(ensemble_size)<=myclip_a)):
+            #     raise ValueError('need to decrease sd')
+            # elif len(np.where(X.rvs(ensemble_size)>=myclip_b)):
+            #     raise ValueError('need to decrease sd')
+                        
+            # fig, ax = plt.subplots(2, sharex=True)
+            # ax[0].hist(X.rvs(ensemble_size), normed=True)
+            
+                
+            return X.rvs(ensemble_size)
+
+
+
+
+        # perturbation
+        # - parameters with constrainsts (truncated distribution)
+        # - parameters time dependant
+        # - other types of parameters 
+        # --------------------------------------------------------------------
+        if 'Archie' in type_parm:
+            # a : TYPE, optional
+            #     Tortuosity factor. The default is [1.0].
+            # m : TYPE, optional
+            #     Cementation exponent. The default is [2.0]. (usually in the range 1.3 -- 2.5 for sandstones)
+            # n : TYPE, optional
+            #     Saturation exponent. The default is [2.0].
+           
+            if 'rFluid' in type_parm:
+                parm_sampling = sampling_dist_trunc(myclip_a=0,
+                                                    myclip_b=np.inf,
+                                                    ensemble_size=ensemble_size,
+                                                    loc=mean,
+                                                    scale=sd)
+            elif 'a' in type_parm:
+                parm_sampling = sampling_dist_trunc(myclip_a=0,
+                                                    myclip_b=2.5,
+                                                    ensemble_size=ensemble_size,
+                                                    loc=mean,
+                                                    scale=sd)
+            elif 'm' in type_parm:
+                parm_sampling = sampling_dist_trunc(myclip_a=1,
+                                                    myclip_b=2.5,
+                                                    ensemble_size=ensemble_size,
+                                                    loc=mean,
+                                                    scale=sd)
+            elif 'n' in type_parm:
+                parm_sampling = sampling_dist_trunc(myclip_a=2.5,
+                                                    myclip_b=3,
+                                                    ensemble_size=ensemble_size,
+                                                    loc=mean,
+                                                    scale=sd)
+            else:
+                parm_sampling = sampling_dist(sampling_type,mean,sd,ensemble_size)
+                
+                
+            parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
+
+            # import matplotlib.pyplot as plt
+            # fig, ax = plt.subplots(1, 1)
+            # ax.plot(x, truncnorm.pdf(x, a, b),
+            #    'r-', lw=5, alpha=0.6, label='truncnorm pdf')
+        
+        elif 'porosity' in type_parm: 
+            
+            parm_sampling = sampling_dist_trunc(myclip_a=0,
+                                                myclip_b=1,
+                                                ensemble_size=ensemble_size,
+                                                loc=mean,
+                                                scale=sd)
+            parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
             
-        # all parameters except Van Genuchten
-        #----------------------------------------------------------------------
             
-        parm_sampling = sampling_dist(sampling_type,mean,sd,ensemble_size)
-        parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
-
-
-        if 'VGN' in type_parm: #van Genuchten retention curves
+        elif 'VGN' in type_parm: #van Genuchten retention curves
             
             print('The parameters of the van Genuchten retention curves α,' + 
                   'n, and θ r are perturbed taking into account their mutual cor-' + 
                   'relation according to Carsel and Parrish (1988)')
             
             Carsel_Parrish_VGN_pert()
-            
-            
-            
+
         elif 'atmbc' in type_parm: 
             
+            parm_sampling = sampling_dist(sampling_type,mean,sd,ensemble_size)
+            parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
+
             var_per[type_parm] = parm                
             Tau = parm['time_decorrelation_len']
             wk0 = parm_per_array
@@ -330,6 +418,14 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             
             key = 'time_variable_perturbation'
             var_per[type_parm][key] = parm_per_array_time_variable
+            
+        else:
+            # other types of parameters 
+            #----------------------------------------------------------------------
+                
+            parm_sampling = sampling_dist(sampling_type,mean,sd,ensemble_size)
+            parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
+
 
 
         key = 'ini_perturbation'
@@ -365,14 +461,17 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             
             fig = plt.figure(figsize=(6, 3), dpi=150)
             
+            w = 0.2
+            nbins = math.ceil((parm_per_array.max() - parm_per_array.min())/w)
+
             if var_per[type_parm]['transf_type'] is not None:
                 if 'log'.casefold() in var_per[type_parm]['transf_type'].casefold():
                     # plt.hist(np.log10(parm_sampling), ensemble_size, alpha=0.5, label='sampling')
-                    plt.hist(np.log10(parm_per_array), ensemble_size, alpha=0.5, label='ini_perturbation')
+                    plt.hist(np.log10(parm_per_array), nbins, alpha=0.5, label='ini_perturbation')
                     plt.axvline(x=np.log10(parm[type_parm+'_nominal']),linestyle='--', color='red')
             else:
-                # plt.hist(parm_sampling, ensemble_size, alpha=0.5, label='sampling')
-                plt.hist(parm_per_array, ensemble_size, alpha=0.5, label='ini_perturbation')
+                # plt.hist(parm_sampling, ensemble_size/2, alpha=0.5, label='sampling')
+                plt.hist(parm_per_array, nbins, alpha=0.5, label='ini_perturbation')
                 plt.axvline(x=parm['nominal'],linestyle='--', color='red')
 
             plt.legend(loc='upper right')

@@ -74,8 +74,8 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     
         param_mean = np.vstack(param_mean)
         
-        print('mean pRam')
-        print(param_mean)
+        # print('mean pRam')
+        # print(param_mean)
         
     if len(param)>0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
@@ -98,8 +98,8 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     data_pert = (data - observation.T).T
     
     
-    print('data_pert')
-    print(data_pert)
+    # print('data_pert')
+    # print(data_pert)
         
         
         
@@ -109,7 +109,6 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     # S is (MeasSize)x(ens_size)        
     meas_avg = (1./float(ens_size))*np.tile(observation.reshape(meas_size,ens_size).sum(1), (ens_size,1)).transpose()
     obs_pert = observation - meas_avg
-    
     
     if obs_pert.mean() == 0:
         print('Ensemble measurement perturbation from ensemble'
@@ -125,7 +124,7 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     # else:
     # print(np.shape( (1./float(ens_size-1))*np.dot(S,S.transpose())))
     
-    Sakov = False
+    Sakov = True
     if Sakov:
         COV = data_cov.transpose()
     else:
@@ -152,8 +151,8 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     analysis = analysis[0:sim_size,:]
     
 
-    print('analysis_param')
-    print(analysis_param)
+    # print('analysis_param')
+    # print(analysis_param)
     
     
     # return [Analysis,Analysisparam]

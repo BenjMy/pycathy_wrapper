@@ -58,6 +58,16 @@ class rhizotron(object):
         self.update_rhizo_inputs()
         self.perturbate()
     
+def ETp_synth(workdir,project_name,dict_ETp,show=False,**kwargs):
+    
+    '''
+    https://plantmethods.biomedcentral.com/articles/10.1186/s13007-019-0409-9
+    https://journals.ashs.org/hortsci/view/journals/hortsci/46/12/article-p1677.xml
+    https://www.researchgate.net/publication/321734175_Root_growth_water_uptake_and_sap_flow_of_winter_wheat_in_response_to_different_soil_water_availability/figures?lo=1
+    https://en.bio-protocol.org/e3190
+    '''
+    pass
+
     
 def perturbate_rhizo(cathyDA,simu_DA,scenario,prj_name,NENS):
     
@@ -406,7 +416,9 @@ def update_rhizo_inputs(simu_DA, nb_of_days,solution,**kwargs):
         PERMX = [PERMX]
         
     if len(PERMX)>1:
-        soil_zone_map[:,list(np.arange(5,10))]=2
+        # soil_zone_map[list(np.arange(5,10)),:]=2
+        # soil_zone_map[list(np.arange(5,9)),:]=2
+        soil_zone_map=solution['soil_zone_map']
         simu_DA.update_zone(soil_zone_map)
 
     simu_DA.update_soil(  PMIN=pmin,

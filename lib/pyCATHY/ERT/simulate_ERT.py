@@ -77,7 +77,7 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
 
     noise_level = 5
     if noiseLevel in kwargs:
-        noise_level = kwargs['noiseLevel']
+        noise_level = kwargs['noise_level']
     
     if len(res0) != len(mesh3d.cells()):
         raise ValueError('wrong initial resistivity input')
