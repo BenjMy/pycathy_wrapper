@@ -14,7 +14,7 @@ def perturbate(simu_DA,scenario,NENS):
     
     
     list_pert = []
-    
+
     
     if 'atmbc' in scenario['per_name']:
         index = scenario['per_name'].index('atmbc')
@@ -90,8 +90,8 @@ def perturbate(simu_DA,scenario,NENS):
 
         
 
-    Archie_2pert = [ele for ele in scenario['per_name'] if('Archie' in ele)]
     # if 'Archie' in scenario['per_name']: 
+    Archie_2pert = [ele for ele in scenario['per_name'] if('Archie' in ele)]
     if len(Archie_2pert)>0: 
         
         # Dans un autre ordre d’idée, les paramètres définissant la relation pétrophysique pour les
@@ -273,7 +273,10 @@ def perturbate(simu_DA,scenario,NENS):
                   'per_type': scenario['per_type'][index],
                   'savefig': 'ZROOT' + str(nz) + '.png',
                   'show': True,
-                  'surf_zones_param': nz
+                  'surf_zones_param': nz,
+                  'myclip_a':0,
+                  'myclip_b':0.5,
+                      
                   }    
             list_pert.append(ZROOT)
             # nb_surf_nodes = 110

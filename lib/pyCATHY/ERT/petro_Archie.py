@@ -139,7 +139,8 @@ def SW_2_ERa(project_name,
     # Some flag for DA assimilation
     # ------------------------------------------------------------------------
     DA_cnb = None
-    Ens_nb = int(path_fwd_CATHY[-1])
+    Ens_nb = int(os.path.split(path_fwd_CATHY)[-1].split("_",1)[1])-1
+    
     data_format = []
     savefig = False
 

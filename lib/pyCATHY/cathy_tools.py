@@ -721,6 +721,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # -------------------------------------------
         ERT_meta_dict = self._parse_ERT_metadata(key_value)
         
+        # len(ERT_meta_dict['porosity'])
+        
         Hx_ERT, df_Archie = Archie.SW_2_ERa(self.project_name,
                                             self.Archie_parms, 
                                             ERT_meta_dict['porosity'], 
@@ -740,6 +742,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         df_Archie['OL'] = np.ones(len(df_Archie['time']))*False
         self._add_2_ensemble_Archie(df_Archie)
+        
+        # test = self.Archie
         
         return Hx_ERT
                         
@@ -805,7 +809,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
                 for ens_i in range(len(path_fwd_CATHY_list)):
                      Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]     
-                     df_Archie = results_mapping_time_i[ens_i][1]           
+                     
+                     print(np.shape(results_mapping_time_i))
+                     df_Archie = results_mapping_time_i[ens_i][1]     
+                     
+                     print(df_Archie)
                      df_Archie['OL'] = np.ones(len(df_Archie))
                      self._add_2_ensemble_Archie(df_Archie)
 
@@ -846,8 +854,14 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
              
              for ens_i in range(len(path_fwd_CATHY_list)):
-                 df_Archie = results_mapping[ens_i][1]           
+                 df_Archie = results_mapping[ens_i][1] 
+                 
                  df_Archie['OL'] = np.zeros(len(df_Archie))
+                 
+                 print(ens_i)
+                 print(df_Archie['time'].max())
+                 print(np.shape(results_mapping))
+
                  self._add_2_ensemble_Archie(df_Archie)
                  Hx_ERT_ens_i =  results_mapping[ens_i][0]
     
@@ -857,8 +871,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['resist'])
              prediction_ERT = np.vstack(Hx_ERT_ens).T  # (EnSize)
              
-        np.shape(prediction_ERT) 
-        np.shape(prediction_ERT) 
             
         return prediction_ERT
                 
@@ -1432,6 +1444,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                        # '':,
                        }
             self.backup_results_DA(meta_DA)
+            
+            test = self.Archie
+            
             self.backup_simu()
     
             # overwrite input files ensemble (perturbated variables)
@@ -4430,9 +4445,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                  'ER_converted',
                                                  'OL'])
       
-        
+        print(self.Archie['time'].max())
+        print(self.Archie['ens_nb'].max())
         self.Archie = pd.concat([self.Archie,df_Archie_2add])
-        
+        print(self.Archie['time'].max())
+        print(self.Archie['ens_nb'].max())
+
 
 
         
@@ -5092,6 +5110,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
             if 'ERT' in name_sensor:
                 RMSE_sensor_ti = np.sum(obs2eval_diff_avg,axis=0)*(1/len(data))
+                
+                
+                # Plot here scatter Transfer resistance scatter plot between the observed and simulated data
+                # plt.scatter(obs2eval[i],prediction2eval[i,j])
+                
+                
             else:
                 RMSE_sensor_ti = obs2eval_diff_avg
     

@@ -381,7 +381,15 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                                 scale=sd)
             parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
+        elif 'zroot'.casefold() in type_parm.casefold(): 
             
+            parm_sampling = sampling_dist_trunc(myclip_a=var_per[type_parm]['myclip_a'],
+                                                myclip_b=var_per[type_parm]['myclip_b'],
+                                                ensemble_size=ensemble_size,
+                                                loc=mean,
+                                                scale=sd)
+            parm_per_array = perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
+
             
         elif 'VGN' in type_parm: #van Genuchten retention curves
             

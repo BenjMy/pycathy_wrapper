@@ -124,7 +124,7 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     # else:
     # print(np.shape( (1./float(ens_size-1))*np.dot(S,S.transpose())))
     
-    Sakov = True
+    Sakov = False
     if Sakov:
         COV = data_cov.transpose()
     else:
