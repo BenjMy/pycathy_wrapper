@@ -35,7 +35,7 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
     # loop over lines
     for i, ll in enumerate(lines):
         if i>0:
-            if 'TIME' in ll:
+            if 'TIME'.casefold() in ll:
                 tstep_idx.append(i)
                 splt= ll.split()
                 t.append(float(splt[0]))
@@ -44,7 +44,7 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
             # numerical values + flag of value
             # -----------------------------------------------------------------
             # 1/ value (numeric) + 'VALUE'
-            elif 'VALUE' in ll:
+            elif 'VALUE'.casefold() in ll:
                 
                 value.append(float(ll.split()[0]))
 

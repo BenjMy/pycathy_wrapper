@@ -51,10 +51,10 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     
     # set_interpolation_radius()
     
-    rd = max(np.diff(meshIN.points[:,0]))
+    rd = max(np.diff(meshIN.points[:,0]))/1
     result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
     
-    # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result)
+    plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result)
 
 
     result = result.point_data_to_cell_data()
@@ -88,22 +88,34 @@ def plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result):
     ax1 = plt.subplot(131)
     print(max(meshIN[scalar]))
     print(min(meshIN[scalar]))
+    
+    meshIN.points[:,0].min()
+
+    meshOUT.points[:,0].min()
+    meshOUT.points[:,0].max()
+    meshOUT.points[:,1].min()
+    meshOUT.points[:,1].max()
+    
     cm = plt.cm.get_cmap('RdYlBu')
     # result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
     sc = ax1.scatter(meshIN.points[:,0],meshIN.points[:,1],c=meshIN[scalar],label='meshIN[scalar]',
                 s=35, cmap=cm)
     plt.colorbar(sc)
     cm = plt.cm.get_cmap('RdYlBu')
+    # fig = plt.figure()
     ax2 = plt.subplot(132)
     sc = ax2.scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
                 s=35, cmap=cm,vmin=min(meshIN[scalar]), vmax=max(meshIN[scalar]))
     ax2.set_xlim([min(meshIN.points[:,0]),max(meshIN.points[:,0])])
     ax2.set_ylim([min(meshIN.points[:,1]),max(meshIN.points[:,1])])
+    
+    # fig = plt.figure()
     ax3 = plt.subplot(133)
     sc = ax3.scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
                 s=35, cmap=cm)
     plt.colorbar(sc)
-    
+    plt.tight_layout()
+
     
     def uniquify(path):
         filename, extension = os.path.splitext(path)

@@ -21,7 +21,7 @@ from matplotlib.dates import DateFormatter
 
 from matplotlib.colors import LogNorm
 
-import panel as pn
+# import panel as pn
 import ipywidgets as widgets
 import imageio
 import natsort
@@ -165,12 +165,12 @@ def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
     return fig, ax 
 
 
-def show_vp(df_vp=[], workdir=[], project_name=[], 
+def show_vp_DEPRECATED(df_vp=[], workdir=[], project_name=[], 
             index='time', x='time', y='SW', **kwargs):
     '''
     plot vp 
     
-    
+    DEPRECATED use psi and sw reader instead and plot using pandas after find_nearest_node search.
 
     Parameters
     ----------
@@ -330,14 +330,7 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         v_atmbc_p = v_atmbc[1] # positif
         v_atmbc_n = v_atmbc[0] # negatif
         v_atmbc = v_atmbc[0] - v_atmbc[1]
-
-    
-
-    
-
-
-
-        
+       
 
     # if np.shape(t_atmbc) != np.shape(v_atmbc):
     if len(v_atmbc_n)>0:
@@ -376,11 +369,6 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
             elif kwargs['IETO'] == 0: # case of linear interpolation between points
                 ax.plot(t_atmbc, v_atmbc, "k.")
 
-
-
-
-        
-    # ax.legend()
     
     # dateFormat = '%d-%H'
     if 'dateFormat' in kwargs:
@@ -396,14 +384,13 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         
     
     # ax.set_yscale('symlog')
-    plt.show(block=False)
+    # plt.show(block=False)
 
     # if 'datetime' in kwargs:
     #     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
     #     ax.xaxis.set_minor_locator(mdates.MonthLocator())
     #     ax.grid(True)
-
-    return plt, ax 
+    return fig, ax 
 
 
 
@@ -573,7 +560,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
                     plotter.update_scalar_bar_range([kwargs['clim'][0],1])
             
                 legend_entries = []
-                legend_entries.append(["Time=" + str(mesh["TIME"]), "w"])
+                legend_entries.append(["Time=" + str(mesh["time"]), "w"])
                 _ = plotter.add_legend(legend_entries)
                 plotter.show_grid()
                 # plotter.add_mesh_clip_box(mesh, color='white')
@@ -730,8 +717,25 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
     offscreen = False
     if show == False:
         offscreen = True
+        
+    # if 'y_data2' in kwargs:
+    #     plotter = pv.Plotter(notebook=notebook, off_screen=offscreen,,
+    #                          shape=(2, 1))
+    #     # plotter.subplot(1, 0)
 
-    plotter = pv.Plotter(notebook=notebook, off_screen=offscreen)
+    #     # chart = pv.Chart2D()
+    #     # plot = chart.scatter([0, 1, 2], [2, 1, 3])
+    #     # chart.show()
+        
+        
+    # else:
+    plotter = pv.Plotter(notebook=notebook, 
+                         off_screen=offscreen,
+                         )
+
+
+        
+    # plotter.subplot(0, 0)
     plotter.add_mesh(mesh, show_edges=True,cmap=my_colormap)
 
     if savefig == True:
@@ -1057,6 +1061,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cbar = fig.colorbar(cax, location='bottom')
     
     ax = fig.add_subplot(2,5,6)
+    print('1')
     # cax = ax.matshow(np.cov(EnsembleX), 
     #                   aspect='auto',cmap='gray',
     #                   norm=LogNorm(vmin=np.matrix(EnsembleX).min(), 
@@ -1076,6 +1081,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
     
     ax = fig.add_subplot(2,5,2)
+    print('2')
     cax = ax.matshow(np.tile(Data,(np.shape(EnsembleX)[1],1)).T, 
                       aspect='auto')
     ax.set_title(label_sensor)
@@ -1089,6 +1095,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     # DataCov.mean()
     # DataCov.min()
     ax = fig.add_subplot(2,5,7)
+    print('3')
     cax = ax.matshow(DataCov, 
                       aspect='auto',cmap='gray_r')
                       # cmap=cm.rainbow, norm=colors.LogNorm())
@@ -1101,6 +1108,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
     
     ax = fig.add_subplot(2,5,3)
+    print('4')
     cax = ax.matshow(dD, 
                      aspect='auto',
                      cmap='jet')
@@ -1112,6 +1120,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
     
     ax = fig.add_subplot(2,5,4,sharey=ax1)
+    print('5')
     cax = ax.matshow(np.dot(dAS,B), 
                       aspect='auto',
                       cmap='jet')
@@ -1123,6 +1132,8 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     
     
     ax = fig.add_subplot(2,5,5,sharey=ax1)
+    print('6')
+
     cax = ax.matshow(Analysis, 
                      aspect='auto')
     ax.set_title('Posterior')
