@@ -656,7 +656,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
          ''' 
          Parallel mapping of ERT data using pedophysical transformation H
          '''                         
-         Hx_ERT_ens = []                     
+         Hx_ERT_ens = []      
+                        
          # freeze fixed arguments of Archie.SW_2_ERa       
          # -----------------------------------------------------------------
          ERTmapping_args = partial(Archie.SW_2_ERa, 
