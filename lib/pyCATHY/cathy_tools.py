@@ -38,7 +38,6 @@ from pyCATHY import cathy_utils as utils_CT
 
 from functools import partial
 import multiprocessing
-
 import matplotlib.pyplot as plt
 
 
