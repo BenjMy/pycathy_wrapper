@@ -156,7 +156,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             
             
     def sampling_dist(self,sampling_type,mean,sd,ensemble_size,**kwargs):
-        # sampling
+        #sampling
         np.random.seed(1)
         if sampling_type == 'lognormal':
             parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
