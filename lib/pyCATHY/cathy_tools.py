@@ -2798,6 +2798,15 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         return indice_veg
 
+    def map_states2Observations(self,
+                                 list_assimilated_obs='all',
+                                 parallel=False,
+                                 default_state = 'psi',
+                                 verbose = False,
+                                 **kwargs):
+        '''
+        Translate (map) the state values (pressure head or saturation) to observations (or predicted) values
+
 
         In other words: apply H mapping operator to convert model to predicted value Hx
 
