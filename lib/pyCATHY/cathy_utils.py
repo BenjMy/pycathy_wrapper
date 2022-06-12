@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jul 29 12:12:41 2021
-
 @author: ben
+- Unit conversion and labelling
+- Prediction of soil physical properties from literature or empircial models
+- Others
 """
 
 import pyvista as pv
@@ -12,13 +14,20 @@ import time
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-
+from datetime import datetime, timedelta
 from rosetta import rosetta, SoilData
+import numpy as np
+from pyCATHY.plotters import cathy_plots as pltCT
 
-#%% Unit conversion and label
+#%% ---------------------------------------------------------------------------
+#############    Unit conversion and label ####################################
+## ---------------------------------------------------------------------------
+
 
 def kPa2m(kpa):
     return kpa*0.101971621
+def kPa2cm(kpa):
+    return kpa*0.101971621*1e2
 
 def transform2_time_delta(t,x_units):
     '''
@@ -30,21 +39,6 @@ def transform2_time_delta(t,x_units):
 def convert_time_units(t, x_units):
     '''
     convert time units
-
-    Parameters
-    ----------
-    t : TYPE
-        DESCRIPTION.
-    x_units : str
-        DESCRIPTION.
-
-    Returns
-    -------
-    xlabel : TYPE
-        DESCRIPTION.
-    t_new : TYPE
-        DESCRIPTION.
-
     '''
     xlabel = " (s)"
     if x_units == "days":
@@ -61,17 +55,7 @@ def convert_time_units(t, x_units):
 def label_units(units,**kwargs):
     '''
     label units
-    Parameters
-    ----------
-    units : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    label
-
     '''
-
     if units == "SW":
         label = "Soil Water Content \n ($m^{3}/m^{3}$)"
     elif units == "PH":
@@ -85,9 +69,47 @@ def label_units(units,**kwargs):
         
     return label
 
-    
-#%% predict soil physical properties
 
+def change_x2date(time_in_sec,start_date):
+    ''' change x axis in sec to datetime '''
+    date0 = pd.to_datetime(start_date, format='%Y%m%d')
+    date_label = [date0] 
+    date_label_str = [date0.strftime("%Y-%m-%d %H:%M:%S")]
+    for d in time_in_sec[1:]:
+        date_label.append(date0 + timedelta(seconds=int(d)))
+        date_label_str.append((date0 + timedelta(seconds=int(d))).strftime("%Y-%m-%d %H:%M:%S"))   
+    dates = pd.to_datetime(date_label_str,format="%Y-%m-%d %H:%M:%S")       
+    return dates
+
+#%% ---------------------------------------------------------------------------
+#############  predict soil physical properties #############################
+## ---------------------------------------------------------------------------
+
+def VG_model(psi,tetar,tetas,n,psib, ax=None): # Model for function for VG model
+    # theta(psi) relationship
+    # https://www.sciencedirect.com/science/article/pii/S0098300421001898?via%3Dihub#appsec1
+    alpha=1/psib # Paramètre de Van Genuchten (Unité de pression −1, : m^−1 ou Pa^−1 )
+    m=1-(1/n)
+    teta=tetar+((tetas-tetar)*(1/(1+(alpha*psi)**n))**m)
+    if ax is not None:
+        theta_VG_df = pd.DataFrame(np.array([psi,teta]).T)
+        theta_VG_df.columns = ['psi', 'theta']
+        pltCT.plot_VGP(theta_VG_df)
+        return teta, ax
+        
+    return teta
+
+def BC_model(si,tetar,tetas,lamda,sib): # Model for function BC model
+    # https://www.sciencedirect.com/science/article/pii/S0098300421001898?via%3Dihub#appsec1
+    teta=np.zeros(len(si))
+    for i in range(len(si)):
+      if si[i]>sib:
+         teta[i]=tetar+((tetas-tetar)*(si[i]/sib)**-lamda)
+      else:
+         teta[i]=tetas
+    return teta
+       
+        
 def predict_unsat_soil_hydr_param(data=[[20,20,60]]):
     '''
     https://github.com/usda-ars-ussl/rosetta-soil
@@ -172,11 +194,9 @@ def past_authors(selec=0):
     
     # 4.05278E-05    4.05278E-05    4.05278E-05   0.001   0.41  PERMX PERMY PERMZ ELSTOR POROS st1
     # 2.28   0.057  -0.0806           VGN,VGRMC,VGPSAT
-
     # 4.05278E-05    4.05278E-05    4.05278E-05   0.001   0.41  2.28   0.057  -0.0806 PERMX PERMY PERMZ ELSTOR POROS 
-
     # PERMX PERMY  PERMZ  ELSTOR POROS,VGNCELL,VGRMCCELL,VGPSATCELL
-    
+
     # weil et al
     # ---------------------------------------------------------
     weil = [1.88E-04, 1.88E-04, 1.88E-04, 1.00E-05, 0.55, 1.46, 0.15, 0.03125]
@@ -555,8 +575,10 @@ def Leij_etal_1996():
 
     '''
 
-#%%
-    
+#%% ---------------------------------------------------------------------------
+#############  Other utils functions             #############################
+## ---------------------------------------------------------------------------
+
 def dictObs_2pd(obs2plot):
     ''' transform Observation dictionnary to panda dataframe for a given observation'''
     
