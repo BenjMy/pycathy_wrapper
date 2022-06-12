@@ -1,21 +1,57 @@
-"""Class managing Data Assimilation process pertubation
+""" Managing Data Assimilation process pertubation. 
+    Take a scenario dictionnary as input describing which and how parameters are perturbated
+    Check consistency of the distribution
+    Prepare for DA class
 """
 
 def check_distribution(parm2check):
-    
     if parm2check['type_parm']=='porosity':
         if parm2check['per_nom']<0:
             raise ValueError 
+            
+    # a : TYPE, optional
+    #     Tortuosity factor. The default is [1.0].
+    # m : TYPE, optional
+    #     Cementation exponent. The default is [2.0]. (usually in the range 1.3 -- 2.5 for sandstones)
+    # n : TYPE, optional
+    #     Saturation exponent. The default is [2.0].
+            
     
+def check4bounds(scenario, index, clip_min,clip_max):
+    if hasattr(scenario,'per_bounds'):
+        if scenario['per_bounds'][index]['min'] is not None:
+            clip_min = scenario['per_bounds'][index]['min']
+        if scenario['per_bounds'][index]['min'] is not None:
+            clip_max = scenario['per_bounds'][index]['max']     
+    return clip_min, clip_max
     
-    
+
     
 def perturbate(simu_DA,scenario,NENS):
-    
+    ''' Write a list of dictionaries, each containing all the informations on how to 
+    perturbate the parameters based on the scenario to consider'''   
     
     list_pert = []
 
-    
+    #%% Initial and boundary conditions parameters
+    # ------------------------------------------------------------------------
+    if 'ic' in scenario['per_name']:      
+        
+        index = scenario['per_name'].index('ic')
+
+        ic = {
+              'type_parm': 'ic',
+              'nominal':  scenario['per_nom'][index], #nominal value
+              'mean':  scenario['per_mean'][index],
+              'sd':  scenario['per_sigma'][index],
+              'units': 'pressure head $(m)$', # units
+              'sampling_type': 'normal',
+              'ensemble_size': NENS, # size of the ensemble
+              'per_type': scenario['per_type'][index],
+              'savefig': 'ic.png',
+              }    
+        list_pert.append(ic)     
+        
     if 'atmbc' in scenario['per_name']:
         index = scenario['per_name'].index('atmbc')
 
@@ -38,15 +74,98 @@ def perturbate(simu_DA,scenario,NENS):
                 'data2assimilate':simu_DA.atmbc,
                 'time_decorrelation_len': 277200*10,
                 'savefig': 'atmbc.png',
-                'show': True}
+                }
         
         list_pert.append(atmbc)
     
     
+    #%% Petro-Pedophysical parameters 
+    # ------------------------------------------------------------------------
+    if 'thetar_VG' in scenario['per_name']:   
+        index = scenario['per_name'].index('thetar_VG')
+        
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+        scenario_sd = scenario['per_sigma'][index]
+        
+        for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
+            if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
+
+            thetar_VG = {
+                  'type_parm': 'thetar_VG'+ str(nz),
+                  'nominal':  scenario_nom, #nominal value
+                  'mean':  scenario_mean,
+                  'sd':  scenario_sd,
+                  'units': '$m^{3}/m^{3}$', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'thetar_VG'+ str(nz) + '.png',
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(thetar_VG)
+            
+            
+    if 'alpha_VG' in scenario['per_name']:
+        index = scenario['per_name'].index('alpha_VG')
+        
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+        scenario_sd = scenario['per_sigma'][index]
+        
+        for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
+            if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
+
+            alpha_VG = {
+                  'type_parm': 'alpha_VG'+ str(nz),
+                  'nominal':  scenario_nom, #nominal value
+                  'mean':  scenario_mean,
+                  'sd':  scenario_sd,
+                  'units': '$cm^{-1}$', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'alpha_VG'+ str(nz) + '.png',
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(alpha_VG)
+            
+
+    if 'n_VG' in scenario['per_name']:   
+        index = scenario['per_name'].index('n_VG')
+        
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+        scenario_sd = scenario['per_sigma'][index]
+        
+        for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
+            if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
+
+            n_VG = {
+                  'type_parm': 'n_VG'+ str(nz),
+                  'nominal':  scenario_nom, #nominal value
+                  'mean':  scenario_mean,
+                  'sd':  scenario_sd,
+                  'units': '$(-)$', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'n_VG'+ str(nz) + '.png',
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(n_VG)
+        
     
     if 'VGP' in scenario['per_name']:   
-        
-        
         # - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
         # - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
         # - 'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz
@@ -54,12 +173,10 @@ def perturbate(simu_DA,scenario,NENS):
         # - 'POROS'  (NSTR, NZONE): porosity (moisture content at saturation) = \thetaS
 
         # retention curves parameters VGN, VGRMC, and VGPSAT
-
         # - 'VGNCELL' (NSTR, NZONE): van Genuchten curve exponent  = n
         # - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
         # - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent --> 
-        #                               VGPSAT == 1/alpha (with alpha expressed in [L-1]);
-        
+        #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
         # ['ks','ss','phi','thetar','alpha','n'])
         # ['PERMX','ELSTOR','POROS','VGRMCCELL','VGPSATCELL','VGNCELL'])
     
@@ -84,39 +201,30 @@ def perturbate(simu_DA,scenario,NENS):
                       'ensemble_size': NENS, # size of the ensemble
                       'per_type': scenario['per_type'][index],
                       'savefig': '_VGP' + p + '.png',
-                      'show': True,
                       }    
                 list_pert.append(p_VGP)        
 
         
-
-    # if 'Archie' in scenario['per_name']: 
     Archie_2pert = [ele for ele in scenario['per_name'] if('Archie' in ele)]
     if len(Archie_2pert)>0: 
-        
-        # Dans un autre ordre d’idée, les paramètres définissant la relation pétrophysique pour les
-        # résidus et les stériles pourraient être inclus dans l’état et estimés lors de l’assimilation de
-        # données. Initialement, chacun des membres de l’ensemble aurait des paramètres d’Archie
+        # Initialement, chacun des membres de l’ensemble aurait des paramètres d’Archie
         # légèrement différents, qui seraient utilisés dans la fonction d’observation afin de simuler les
         # données à partir de l’état a priori. Ces paramètres seraient ensuite modifiés à l’étape de
         # mise à jour, de la même façon que les variables de teneur en eau.
-        
         # rFluid=[1.0],a=[1.0],m=[2.0],n=[2.0]
         # simu_DA.Archie_parms
-        
         # literature example:
         # ---------------------------------------------------------------------
         # https://www.sciencedirect.com/science/article/pii/S0169772220302680#tf0005
         # c = (mean = 1.6,sd = 0.5,min = 0.0, max = 2.0),
         # m = (mean = 2.5,sd = 0.8,min = 0.0, max = 3.0)
-
         
+    
         archie_units = ['','','','']
         
         for i, p in enumerate(Archie_2pert):
             index = scenario['per_name'].index(p)
             
-
             p_archie = {
                   'type_parm': p,
                   'nominal':  scenario['per_nom'][index], #nominal value
@@ -127,32 +235,13 @@ def perturbate(simu_DA,scenario,NENS):
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': '_Archie' + p + '.png',
-                  'show': True,
                   }    
             list_pert.append(p_archie)
         
         
-        
-    if 'ic' in scenario['per_name']:      
-        
-        index = scenario['per_name'].index('ic')
+    #%% SOIL parameters
+    # ------------------------------------------------------------------------
 
-        ic = {
-              'type_parm': 'ic',
-              'nominal':  scenario['per_nom'][index], #nominal value
-              'mean':  scenario['per_mean'][index],
-              'sd':  scenario['per_sigma'][index],
-              'units': 'pressure head $(m)$', # units
-              'sampling_type': 'normal',
-              'ensemble_size': NENS, # size of the ensemble
-              'per_type': scenario['per_type'][index],
-              'savefig': 'ic.png',
-              'show': True,
-              }    
-        list_pert.append(ic)
-    
-    
-    
     if 'ks' in scenario['per_name']:
         index = scenario['per_name'].index('ks')
         
@@ -177,7 +266,6 @@ def perturbate(simu_DA,scenario,NENS):
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': 'ks'+ str(nz) + '.png',
-                  'show': True,
                   'surf_zones_param': nz
                   }    
             list_pert.append(ks)
@@ -190,6 +278,11 @@ def perturbate(simu_DA,scenario,NENS):
         scenario_nom = scenario['per_nom'][index]
         scenario_mean = scenario['per_mean'][index]
         scenario_sd = scenario['per_sigma'][index]
+        
+        clip_min = 0.2 # minimum soil porosity
+        clip_max = 0.7 # maximum soil porosity
+        
+        clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max)
         
         for nz in range(len(simu_DA.soil_SPP['SPP_map']['POROS'])):
             print('zone nb:' + str(nz))
@@ -209,16 +302,18 @@ def perturbate(simu_DA,scenario,NENS):
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': 'porosity'+ str(nz) + '.png',
-                  'show': True,
-                  'surf_zones_param': nz
+                  'surf_zones_param': nz,
+                  'clip_min':scenario['per_bounds'][index]['min'],
+                  'clip_max':scenario['per_bounds'][index]['max'],
                   } 
             
             check_distribution(porosity)
 
             list_pert.append(porosity)
-            
-            
-        
+
+    #%% Plant parameters
+    # ------------------------------------------------------------------------
+
         
     if 'PCREF' in scenario['per_name']:
         index = scenario['per_name'].index('PCREF')
@@ -235,8 +330,9 @@ def perturbate(simu_DA,scenario,NENS):
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': 'PCREF.png',
-                  'show': True,
                   'surf_zones_param': nz
+                  # 'clip_min':scenario['per_bounds'][index]['min'],
+                  # 'clip_max':scenario['per_bounds'][index]['max'],
                   }    
             list_pert.append(PCREF)
                    
@@ -253,9 +349,12 @@ def perturbate(simu_DA,scenario,NENS):
             scenario_sampling = scenario['sampling_type'][index]
         else:
             scenario_sampling = 'lognormal'
-            
 
-        
+        clip_min = 0
+        clip_max = None
+        clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max)
+
+
         for nz in range(len(simu_DA.soil['ZROOT'])):
             
             if len(simu_DA.soil['ZROOT'])>1:
@@ -272,25 +371,14 @@ def perturbate(simu_DA,scenario,NENS):
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': 'ZROOT' + str(nz) + '.png',
-                  'show': True,
                   'surf_zones_param': nz,
-                  'myclip_a':0,
-                  'myclip_b':0.5,
+                  'clip_min':scenario['per_bounds'][index]['min'],
+                  'clip_max':scenario['per_bounds'][index]['max'],
                       
                   }    
             list_pert.append(ZROOT)
             # nb_surf_nodes = 110
 
-        
-    
-
-        # print(len(list_pert))
-        
-        # min(parm_per['ic']['ini_perturbation'])
-        # max(parm_per['ic']['ini_perturbation'])
-        # np.mean(parm_per['ic']['ini_perturbation'])        
-        
-        
 
         
     return list_pert

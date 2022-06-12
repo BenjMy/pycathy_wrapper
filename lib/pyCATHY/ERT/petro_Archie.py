@@ -81,17 +81,15 @@ def SW_2_ERa_test(project_name,
     pass
 
 def get_Archie_ens_i(ArchieParms,Ens_nb):
-        
-        ArchieParms2parse = {}
-        if len(ArchieParms['rFluid_Archie'])>1:
-            for p in ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie']:
-                ArchieParms2parse[p] = [ArchieParms[p][Ens_nb]]
-        else:
-            ArchieParms2parse = ArchieParms
-            
-        return ArchieParms2parse
-    
-    
+    ''' Return Archie parameter for a given ensemble (if ensemble exist)'''
+    ArchieParms2parse = {}
+    if len(ArchieParms['rFluid_Archie'])>1:
+        for p in ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie']:
+            ArchieParms2parse[p] = [ArchieParms[p][Ens_nb]]
+    else:
+        ArchieParms2parse = ArchieParms
+    return ArchieParms2parse
+
     
 def SW_2_ERa(project_name,
              ArchieParms,
@@ -100,11 +98,10 @@ def SW_2_ERa(project_name,
              path_fwd_CATHY,
              **kwargs):
     '''
+    Map saturation water from CATHY model to apparent Electrical Resistivities
     
-
     Parameters
     ----------
-
     project_name : str
         name of the current project.
     ArchieParms : dict
@@ -129,7 +126,7 @@ def SW_2_ERa(project_name,
     Returns
     -------
     df_ERT_predicted : pd df
-        DESCRIPTION.
+        Dataframe of predicted ER.
     df_Archie : pd df
         Dataframe of the current (given ensemble and given assimilation time) Archie relationship.
 
@@ -179,13 +176,13 @@ def SW_2_ERa(project_name,
         mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, 'vtk/100.vtk'))
     else:
         mesh_CATHY_ref = pv.read(os.path.join('vtk/100.vtk'))
+        
     
     
-    
+    # IF ARCHIE PARAMETERS ARE PERTURBATED
     # Choose archie parameter for a given realisation (from the ensemble)
     # --------------------------------------------------------------------
     ArchieParms2parse = get_Archie_ens_i(ArchieParms,Ens_nb)
-        
         
     ER_converted_ti = Archie_rho(rFluid_Archie=ArchieParms2parse['rFluid_Archie'], 
                                 sat = [df_sw],
@@ -337,7 +334,8 @@ def SW_2_ERa(project_name,
 def Archie_rho(rFluid_Archie=[], sat=[], porosity=[], a_Archie=[1.0], m_Archie=[2.0], n_Archie=[2.0],
                pert_sigma=[None]):
     '''
-    Compute ER values at each mesh nodes
+    Compute ER values at each mesh nodes. 
+    If pert_sigma, add a nornal noise of sigma standart deviation and 0 mean (# See eq. 4.4 thesis Isabelle p.95)
 
     Parameters
     ----------
@@ -356,8 +354,7 @@ def Archie_rho(rFluid_Archie=[], sat=[], porosity=[], a_Archie=[1.0], m_Archie=[
 
     Returns
     -------
-    TYPE
-        Electrical Resistivity (Ohm.m).
+    rho: Apparent Electrical Resistivity (Ohm.m).
 
     '''
     
@@ -370,7 +367,6 @@ def Archie_rho(rFluid_Archie=[], sat=[], porosity=[], a_Archie=[1.0], m_Archie=[
         if pert_sigma[i] is not None:
             noise = np.random.normal(0,pert_sigma*rho*rho,len(rho)) # See eq. 4.4 thesis Isabelle p.95
             rho = rho + noise
-        
     
     return rho
 

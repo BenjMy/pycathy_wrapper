@@ -18,7 +18,7 @@ import os
 import pyvista as pv
 # import pygimli as pg
 import pandas as pd
-from rhizo_scenarii.DA_scenarii import load_scenario 
+#from rhizo_scenarii.DA_scenarii import load_scenario 
 
 
 class rhizotron(object):
@@ -863,7 +863,6 @@ def perturbate_rhizo(cathyDA,simu_DA,scenario,prj_name,NENS):
                                             sampling_type =  dp['sampling_type'],
                                             ensemble_size =  dp['ensemble_size'], # size of the ensemble
                                             per_type= dp['per_type'],
-                                            show= dp['show'],
                                             savefig= os.path.join(prj_name,
                                                                   prj_name + dp['savefig'])
                                             )
