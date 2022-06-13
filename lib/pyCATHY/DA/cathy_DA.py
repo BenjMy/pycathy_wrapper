@@ -12,36 +12,17 @@ import shutil
 # import matplotlib.pyplot as plt 
 from pyCATHY.cathy_tools import CATHY
 from pyCATHY.DA import enkf, pf
+from pyCATHY.plotters import cathy_plots as plt_CT
 
-
+import re
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import sensors_measures as in_meas
 from pyCATHY.ERT import petro_Archie as Archie
 from pyCATHY import cathy_utils as utils_CT
 
-import re
-from rich.progress import track
-from pyCATHY.plotters import cathy_plots as plt_CT
 
 
-# multiprocessor functions outside main CATHY object
-# -----------------------------------------------------------------------------
-def subprocess_run_multi(pathexe_list):
-    '''
-    Run multiple exe files in //
-    '''
-    # https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects
-    print(f"x= {pathexe_list}, PID = {os.getpid()}")
-    # self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
-
-    os.chdir(pathexe_list)
-    callexe = "./" + 'cathy'
-    p = subprocess.run([callexe], text=True, capture_output=True)
-    # p.close()
-
-
-    return p
 
 def run_analysis(DA_type,
                  data,data_cov,
@@ -131,951 +112,21 @@ def run_analysis(DA_type,
         
     
     
-class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
-    def __init__(self, *args, **kwargs):
+class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
+    # def __init__(self, *args, **kwargs):
 
-        self.var_per_list = {} # dict of dict of perturbated variables parameters
-
-        pass
-
-
-#%%  Observation Processing
-
-    def _parse_ERT_metadata(self,key_value):
-        '''
-        Extract ERT metadata information form obs dict
-        '''
-        ERT_meta_dict = {}
-        ERT_meta_dict['forward_mesh_vtk_file'] = key_value[1]['ERT']['forward_mesh_vtk_file'] 
-        ERT_meta_dict['pathERT'] = os.path.split(key_value[1]['ERT']['filename'])[0]
-        ERT_meta_dict['seq'] = key_value[1]['ERT']['sequenceERT'] 
-        ERT_meta_dict['electrodes'] = key_value[1]['ERT']['elecs'] 
-        ERT_meta_dict['noise_level'] = key_value[1]['ERT']['data_err']        
-        ERT_meta_dict['porosity'] = self.Archie_parms['porosity']
-        ERT_meta_dict['data_format'] = key_value[1]['ERT']['data_format'] 
-        return ERT_meta_dict
+    #     self.var_per_list = {} # dict of dict of perturbated variables parameters
         
-
-    def _map_ERT(self,state,
-                path_fwd_CATHY,
-                ens_nb,
-                **kwargs):
-        ''' 
-        Mapping of state variable to observation (predicted) 
-        ERT using pedophysical transformation H
-        '''
-    
-        savefig = True
-        if 'savefig' in kwargs:
-           savefig = kwargs['savefig'] 
+    #     print(CATHY)
+    #     C = CATHY()
+    #     C.__init__()
+    #     C.workdir
         
-        # search key value to identify time and method
-        # --------------------------------------------
-        tuple_list_obs = list(self.dict_obs.items())
-        key_value = tuple_list_obs[self.count_DA_cycle]  
-        
-        # Load ERT metadata information form obs dict
-        # -------------------------------------------
-        ERT_meta_dict = self._parse_ERT_metadata(key_value)
-        
-        Hx_ERT, df_Archie = Archie.SW_2_ERa(self.project_name,
-                                            self.Archie_parms, 
-                                            ERT_meta_dict['porosity'], 
-                                            ERT_meta_dict['pathERT'],
-                                            ERT_meta_dict['forward_mesh_vtk_file'],
-                                            ERT_meta_dict['electrodes'],
-                                            ERT_meta_dict['seq'],
-                                            path_fwd_CATHY,
-                                            df_sw = state[1], # kwargs
-                                            data_format= ERT_meta_dict['data_format'] , # kwargs
-                                            DA_cnb = self.count_DA_cycle, # kwargs
-                                            Ens_nb=ens_nb, # kwargs
-                                            savefig=savefig, # kwargs
-                                            noiseLevel = ERT_meta_dict['noise_level'],# kwargs
-                                            dict_ERT = key_value[1]['ERT']#  kwargs
-                                            )
+    #     print(self.workdir)
 
-        df_Archie['OL'] = np.ones(len(df_Archie['time']))*False
-        self._add_2_ensemble_Archie(df_Archie)
-        
-        
-        return Hx_ERT
-                        
-    def _map_ERT_parallel_DA(self,
-                             ENS_times,
-                             ERT_meta_dict,
-                             key_time,
-                             path_fwd_CATHY_list,
-                             DA_cnb,
-                             ):
-         ''' 
-         Parallel mapping of ERT data using pedophysical transformation H
-         '''                         
-         Hx_ERT_ens = []                     
-         # freeze fixed arguments of Archie.SW_2_ERa       
-         # -----------------------------------------------------------------
-         ERTmapping_args = partial(Archie.SW_2_ERa, 
-                                   self.project_name,
-                                   self.Archie_parms,
-                                   ERT_meta_dict['porosity'],
-                                   ERT_meta_dict['pathERT'],
-                                   ERT_meta_dict['forward_mesh_vtk_file'],
-                                   ERT_meta_dict['electrodes'],
-                                   ERT_meta_dict['seq'],
-                                   data_format= ERT_meta_dict['data_format'],
-                                   DA_cnb = DA_cnb,
-                                   savefig=True,
-                                   dict_ERT = key_time[1]['ERT']#  kwargs
-                                   ) 
-        
-         # // run using ensemble subfolders path as a list    
-         # -----------------------------------------------------------------
-         with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-            results_mapping = pool.map(ERTmapping_args, 
-                                         path_fwd_CATHY_list
-                                           )
-            print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-         
-         for ens_i in range(len(path_fwd_CATHY_list)):
-             df_Archie = results_mapping[ens_i][1]       
-             df_Archie['OL'] = np.zeros(len(df_Archie))
-             self._add_2_ensemble_Archie(df_Archie)
-             Hx_ERT_ens_i =  results_mapping[ens_i][0]
-
-             if 'pygimli' in self.dict_obs[key_time[0]]['ERT']['data_format']:
-                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['rhoa'])
-             else:
-                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['resist'])
-                
-         return Hx_ERT_ens
-                
-                    
-    def _map_ERT_parallel_OL(self,
-                             ENS_times,
-                             ERT_meta_dict,
-                             key_time,
-                             path_fwd_CATHY_list,
-                             ):
-        ''' 
-        Parallel mapping of ERT data using pedophysical transformation H
-        case of the open Loop = nested loop with ensemble time
-        ''' 
-
-        Hx_ERT_ens = []
-        for t in range(len(ENS_times)):
-            print('t_openLoop mapping:' + str(t))
-
-            # freeze fixed arguments of Archie.SW_2_ERa       
-            # -----------------------------------------------------------------
-            ERTmapping_args = partial(Archie.SW_2_ERa, 
-                                      self.project_name,
-                                      self.Archie_parms, 
-                                      ERT_meta_dict['porosity'], 
-                                      ERT_meta_dict['pathERT'],
-                                      ERT_meta_dict['forward_mesh_vtk_file'],
-                                      ERT_meta_dict['electrodes'],
-                                      ERT_meta_dict['seq'],
-                                      data_format= ERT_meta_dict['data_format'],
-                                      time_ass = t,
-                                      savefig=True,
-                                      noiseLevel = ERT_meta_dict['noise_level'] ,
-                                      dict_ERT = key_time[1]['ERT']
-                                      ) 
-            # 
-            # -----------------------------------------------------------------
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-                results_mapping_time_i = pool.map(ERTmapping_args, 
-                                                  path_fwd_CATHY_list
-                                                  )
-                print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-
-            for ens_i in range(len(path_fwd_CATHY_list)):
-                 Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]     
-                 
-                 # print(np.shape(results_mapping_time_i))
-                 df_Archie = results_mapping_time_i[ens_i][1]     
-                 
-                 # print(df_Archie)
-                 df_Archie['OL'] = np.ones(len(df_Archie))
-                 self._add_2_ensemble_Archie(df_Archie)
-
-    
-                 if 'pygimli' in ERT_meta_dict['data_format']:
-                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['rhoa'])
-                 else:
-                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['resist'])
-                     
-        # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
-        #                                         len(Hx_ERT_ens[0]),
-        #                                         len(ENS_times)])  # (EnSize * data size * times)
-        return Hx_ERT_ens
-    
-    
-    def _map_ERT_parallel(self, 
-                            path_fwd_CATHY_list,
-                            list_assimilated_obs='all', 
-                            default_state = 'psi',
-                            verbose = False,
-                            **kwargs):
-        ''' Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,
-        // run using ensemble subfolders path as a list
-        '''
-
-        savefig = True
-        if 'savefig' in kwargs:
-           savefig = kwargs['savefig'] 
-        ENS_times = []
-        if 'ENS_times' in kwargs:
-           ENS_times = kwargs['ENS_times'] 
-        DA_cnb = []
-        if 'DA_cnb' in kwargs:
-           DA_cnb = kwargs['DA_cnb'] 
-           
-           
-        # search key value to identify time and method
-        tuple_list_obs = list(self.dict_obs.items())
-        key_time = tuple_list_obs[self.count_DA_cycle]
-        # Load ERT metadata information form obs dict
-        # -------------------------------------------       
-        ERT_meta_dict = self._parse_ERT_metadata(key_time)
-        
-        if len(ENS_times)>0: # case of the open Loop = nested loop with ensemble time
-            Hx_ERT_ens = self._map_ERT_parallel_OL(
-                                                    ENS_times,
-                                                    ERT_meta_dict,
-                                                    key_time,
-                                                    path_fwd_CATHY_list,
-                                                )                                      
-        else:
-            Hx_ERT_ens = self._map_ERT_parallel_DA(
-                                                    ENS_times,
-                                                    ERT_meta_dict,
-                                                    key_time,
-                                                    path_fwd_CATHY_list,
-                                                    DA_cnb,
-                                                )                          
-                                                
-        prediction_ERT = np.vstack(Hx_ERT_ens).T  # (EnSize)
-        
-        # self.dict_obs
-            
-        return prediction_ERT
-
-    def _evaluate_perf_OL(self,
-                         parallel,
-                         list_assimilated_obs,
-                         path_fwd_CATHY_list,
-                         ENS_times
-                         ):
-        
-        prediction_OL = []
-        if parallel:
-            if 'ERT' in list_assimilated_obs:
-                prediction_OL_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
-                                                    savefig = True,
-                                                    DA_cnb = self.count_DA_cycle,
-                                                    ENS_times=ENS_times,
-                                                    )   
-                # prediction_OL_ERT is meas_size * ens_size * ENS_times size
-                np.shape(prediction_OL_ERT)
-            else:
-                for t in range(len(ENS_times)):
-                    print(str(t) + 't map OL')
-                    prediction_stacked = self.map_states2Observations(
-                                                        list_assimilated_obs,
-                                                        ENS_times=ENS_times,
-                                                        savefig=False,
-                                                        parallel=parallel,
-                                                        ) 
-                    np.shape(prediction_stacked)
-                    prediction_OL.append(prediction_stacked)
-                    
-        # prediction_OL = np.hstack(prediction_OL)
-                # np.shape(prediction_OL)
+    #     pass
 
 
-        # prediction_OL = np.reshape(prediction_OL,[
-        #                                           np.shape(prediction_OL)[1],
-        #                                           self.NENS,
-        #                                           len(ENS_times),
-        #                                           ]
-        #                           )
-        else:    
-            for t in range(len(ENS_times)):
-                prediction_stacked = self.map_states2Observations(
-                                                    list_assimilated_obs,
-                                                    ENS_times=ENS_times,
-                                                    savefig=False,
-                                                    parallel=parallel,
-                                                    ) 
-                # prediction_stacked is meas_size * ens_size
-                prediction_OL.append(prediction_stacked)
-                # prediction_OL is meas_size * ens_size * ENS_times size
-
-
-        if parallel:
-            if 'ERT' in list_assimilated_obs:
-                prediction_OL.append(prediction_OL_ERT)
-                
-                if np.shape(prediction_OL)[0]>1:
-                    prediction_OL =  np.hstack(prediction_OL)
-            
-        prediction_OL = np.reshape(prediction_OL,[
-                                                  np.shape(prediction_OL)[1],
-                                                  self.NENS,
-                                                  len(ENS_times),
-                                                  ]
-                                  )
-        for t in range(len(ENS_times)):
-            print(str(t) + 't perf OL')
-            data_t, _  = self._get_data2assimilate(
-                                                    list_assimilated_obs,
-                                                    time_ass=t,
-                                                )                    
-            self._performance_assessement(
-                                            list_assimilated_obs, 
-                                            data_t, 
-                                            prediction_OL[:,:,t],
-                                            t_obs=t,
-                                            openLoop=True,
-                                        )
-        return prediction_OL
-        
-                
-    def _DA_openLoop(self,
-                     ENS_times,
-                     list_assimilated_obs,
-                     parallel,
-                     verbose=False):
-        '''
-        Run open Loop (no update/assimilation) hydro simulation for an ensemble of realisation
-        Evaluate the performance by comparison with measured data after mapping
-
-        Parameters
-        ----------
-        ENS_times : list
-            List of the time steps (in sec) where observations are assimilated.
-        list_assimilated_obs : list
-            List of assimilation observations.
-        parallel : Bool, optional
-            Parallelize. The default is True.
-        verbose : Bool, optional
-            Display prints. The default is False.
-
-        Returns
-        -------
-        Prediction_OL.
-        Performance dataframe.
-
-        '''
-
-        # multi run CATHY hydrological model from the independant folders 
-        # composing the ensemble
-        # ----------------------------------------------------------------
-        if parallel == True:
-            pathexe_list = []
-            for ens_i in range(self.NENS):
-                path_exe = os.path.join(self.workdir,
-                                        self.project_name,
-                                        'DA_Ensemble/cathy_' + str(ens_i+1))
-                pathexe_list.append(path_exe)
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-                result = pool.map(subprocess_run_multi, pathexe_list)
-                if verbose == True:
-                    self.console.print(result)
-        
-        # Loop over ensemble realisations one by one
-        # ------------------------------------------------------------
-        else:
-            for ens_i in range(self.NENS):
-                os.chdir(os.path.join(self.workdir,
-                                      self.project_name, 
-                                      'DA_Ensemble/cathy_' + str(ens_i+1)))
-                len(list(self.atmbc['time']))
-                self._run_hydro_DA_openLoop(time_of_interest=list(self.atmbc['time']),
-                                              nodes_of_interest=[],
-                                              simu_time_max=max(list(self.atmbc['time'])),
-                                              ens_nb=ens_i+1                                 
-                                              )
-                
-        # save into the DA_df dataframe
-        # -----------------------------------------------------------------
-        path_fwd_CATHY_list = []
-        for ens_i in range(self.NENS):
-            path_fwd_CATHY_list.append(os.path.join(self.workdir,
-                                    self.project_name, 
-                                    'DA_Ensemble/cathy_' + str(ens_i+1)))
-
-            os.chdir(os.path.join(self.workdir,
-                                  self.project_name, 
-                                  'DA_Ensemble/cathy_' + str(ens_i+1)))
-            df_psi = self.read_outputs(filename='psi',
-                                        path=os.path.join(os.getcwd(),
-                                                          'output'))
-            df_sw = self.read_outputs(filename='sw',
-                                        path=os.path.join(os.getcwd(),
-                                                          'output'))
-            
-            
-            shift = len(df_psi)-self.parm["NPRT"]
-            if shift<0 | shift>2:
-                print('Error for the ensemble nb:' + str(ens_i))
-                raise ValueError('Error on the simulation:' 
-                                  'nb of times contained in the outputs files is too small;' 
-                                  'Check ')                
-            for t in range(np.shape(df_psi)[0]-2):
-                self._DA_df(state=[df_psi[t+shift,:], df_sw[t+shift,:]],
-                            t_ass=t, 
-                            openLoop=True,
-                            ens_nb=ens_i+1)
-             
-        
-        prediction_OL = self._evaluate_perf_OL(                    
-                                                parallel,
-                                                list_assimilated_obs,
-                                                path_fwd_CATHY_list,
-                                                ENS_times
-                                                )
-                   
-        # ------------------------------------------------------
-        # END of Open Loop simulation and performance evaluation
-        # ------------------------------------------------------     
-        pass
-    
-
-    def _mark_invalid_ensemble(self,ens_valid,
-                                  prediction,
-                                  ensemble_psi,
-                                  ensemble_sw,
-                                  analysis,
-                                  analysis_param):
-        ''' mark invalid ensemble - invalid ensemble are filled with NaN values '''          
-
-        ensemble_psi_valid = np.empty(ensemble_psi.shape)
-        ensemble_psi_valid[:] = np.NaN
-        ensemble_psi_valid[:,ens_valid]  = ensemble_psi[:,ens_valid]            
-
-        ensemble_sw_valid = np.empty(ensemble_psi.shape)
-        ensemble_sw_valid[:] = np.NaN
-        ensemble_sw_valid[:,ens_valid]  = ensemble_sw[:,ens_valid]        
-        
-        analysis_valid = np.empty(ensemble_psi.shape)
-        analysis_valid[:] = np.NaN
-        analysis_valid[:,ens_valid]  = analysis         
-
-        prediction_valid = np.empty([prediction.shape[0],
-                                     ensemble_psi.shape[1]])
-        prediction_valid[:] = np.NaN
-        prediction_valid[:,ens_valid]  = prediction
-        
-        analysis_param_valid = []
-        if len(analysis_param[0])>0:
-            analysis_param_valid = np.empty([analysis_param.shape[1],
-                                            ensemble_psi.shape[1]])
-            analysis_param_valid[:] = np.NaN
-            analysis_param_valid[:,ens_valid]  = analysis_param.T     
-        
-        return (prediction_valid, 
-                ensemble_psi_valid, 
-                ensemble_sw_valid, 
-                analysis_valid, 
-                analysis_param_valid
-                )
-    
-    
-    
-    def set_Archie_parm(self,
-                        porosity=[],
-                        rFluid_Archie=[1.0],
-                        a_Archie=[1.0],
-                        m_Archie=[2.0],
-                        n_Archie=[2.0], 
-                        pert_sigma=[None]
-                        ):
-        '''
-        Dict of Archie parameters. Each type of soil is describe within a list
-        Note that if pert_sigma is not None a normal noise is 
-        added during the translation of Saturation Water to ER
-
-        Parameters
-        ----------
-        rFluid : TYPE, optional
-            Resistivity of the pore fluid. The default is [1.0].
-        a : TYPE, optional
-            Tortuosity factor. The default is [1.0].
-        m : TYPE, optional
-            Cementation exponent. The default is [2.0]. 
-            (usually in the range 1.3 -- 2.5 for sandstones)
-        n : TYPE, optional
-            Saturation exponent. The default is [2.0].
-        pert_signa : TYPE, optional
-            Gaussian noise to add. The default is None.
-        '''
-        if len(porosity)==0:
-            porosity = self.soil_SPP['SPP'][:, 4][0]   
-        if not isinstance(porosity, list):
-            porosity = [porosity]
-        self.Archie_parms = {
-                             'porosity':porosity, 
-                             'rFluid_Archie':rFluid_Archie, 
-                             'a_Archie':a_Archie, 
-                             'm_Archie':m_Archie, 
-                             'n_Archie':n_Archie, 
-                             'pert_sigma':pert_sigma
-                             }
-        
-        pass
-
-
-    def _mapping_petro_init(self):
-        ''' Initiate Archie and VGP'''
-        
-        print('Initiate Archie and VGP')
-        porosity = self.soil_SPP['SPP'][:, 4][0]
-        if not isinstance(porosity, list):
-            porosity = [porosity]
-        if hasattr(self,'Archie_parms') == False:
-            print('Archie parameters not defined set defaults')
-            self.Archie_parms = {'porosity': porosity,
-                                 'rFluid_Archie':[1.0],
-                                 'a_Archie':[1.0],
-                                 'm_Archie':[2.0],
-                                 'n_Archie':[2.0],
-                                 'pert_sigma':None
-                                 }
-        if hasattr(self,'VGN_parms') == False:
-            print('VGN parameters not defined set defaults')
-            self.VGN_parms = {}
-            
-        pass
-         
-    
-
-    def run_ensemble_hydrological_model(self,parallel,verbose,callexe):
-        ''' multi run CATHY hydrological model from the independant folders composing the ensemble '''
-        
-        # ----------------------------------------------------------------
-        if parallel == True:
-            pathexe_list = []
-            # for ens_i in range(self.NENS):
-                
-            for ens_i in self.ens_valid:
-                path_exe = os.path.join(self.workdir,
-                                        self.project_name,
-                                        'DA_Ensemble/cathy_' + str(ens_i+1))
-                pathexe_list.append(path_exe)       
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-                result = pool.map(subprocess_run_multi, pathexe_list)
-
-                                        
-                if verbose == True:
-                    self.console.print(result)
-        # process each ensemble folder one by one
-        # ----------------------------------------------------------------
-        else:
-            # Loop over ensemble realisations
-            # ------------------------------------------------------------
-            for ens_i in track(range(self.NENS), description="Run hydrological fwd model..."):
-
-                self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
-                                    '/' + str(self.NENS))
-                os.chdir(os.path.join(self.workdir,
-                                      self.project_name,
-                                      'DA_Ensemble/cathy_' + str(ens_i+1)))
-                p = subprocess.run([callexe], text=True,
-                                   capture_output=True)
-
-                if verbose == True:
-                    self.console.print(p.stdout)
-                    self.console.print(p.stderr)   
-                    
-        pass
-                    
-    
-    def update_pert_parm_dict(self,update_key,list_update_parm,analysis_param_valid):
-        ''' update dict of perturbated parameters i.e. add a collumn with new params'''
-        
-        index_update = 0
-        if self.count_DA_cycle > 0:
-           for pp in list_update_parm:
-               if 'St. var.' in pp:
-                   index_update = index_update + 1
-                   pass
-               else:
-                   update_key = 'update_nb' + str(self.count_DA_cycle)
-                   self.dict_parm_pert[pp][update_key] = analysis_param_valid[index_update-1]
-                   index_update = index_update + 1
-   
-           # check after analysis
-           # ----------------------------------------------------------------
-           id_valid_after = self._check_after_analysis(
-                                                       update_key,
-                                                       list_update_parm
-                                                       )
-           intersection_set = set.intersection(
-                                               set(id_valid_after), 
-                                               set(self.ens_valid)
-                                               )
-           self.ens_valid = list(intersection_set)
-           
-        pass
-                            
-                            
-    def _run_DA(self, callexe, parallel,
-                        DA_type,
-                        dict_obs,
-                        list_update_parm,
-                        dict_parm_pert,
-                        list_assimilated_obs,
-                        open_loop_run,
-                        threshold_rejected,
-                        verbose,
-                        **kwargs
-                        ):
-                                    
-                             
-        '''
-        
-        Run Data Assimilation 
-        
-        .. note::
-
-            Steps are:
-            1. DA init (create subfolders)
-            2a. run CATHY hydrological model (open loop)
-            2b. run CATHY hydrological model recursively using DA times
-                <- Loop-->
-                    3. check before analysis
-                    4. analysis
-                    5. check after analysis
-                    6. update input files
-                <- Loop-->
- 
-        Parameters
-        ----------
-        callexe : str
-            processor exe filename
-        parallel : bool
-            True for multiple ensemble folder simulations.
-        DA_type : str
-            type of Data Assimilation.
-        list_assimilated_obs : TYPE
-            list of names of observations to assimilate.
-        dict_obs : dict
-            observations dictionnary.
-        list_update_parm : list
-            list of names of parameters to update.
-        dict_parm_pert : dict
-            parameters perturbated dictionnary.
-
-
-        '''
-        # Initiate
-        # -------------------------------------------------------------------
-        update_key = 'ini_perturbation'
-        
-        
-        # check if dict_obs is ordered in time
-        # ------------------------------------       
-        if (all(i < j for i, j in zip(list(dict_obs.keys()), list(dict_obs.keys())[1:]))) is False:
-            raise ValueError('Observation List is not sorted.')
-       
-        # dict_obs.keys()
-        # self.dict_obs.keys()
-        if hasattr(self,'dict_obs') is False:
-            self.dict_obs = dict_obs # self.dict_obs is already assigned (in read observatio! change it to self.obs
-        self.dict_parm_pert = dict_parm_pert
-        self.df_DA = pd.DataFrame()
-
-        # Infer ensemble size NENS from perturbated parameter dictionnary
-        # -------------------------------------------------------------------
-        for name in self.dict_parm_pert:
-            NENS = len(self.dict_parm_pert[name]['ini_perturbation'])
-
-        # Infer ensemble update times ENS_times from observation dictionnary
-        # -------------------------------------------------------------------
-        ENS_times = []
-        for ti in self.dict_obs:
-            ENS_times.append(float(ti))
-            
-        # data_measure_df = self.dictObs_2pd()     
-
-
-        # start DA cycle counter
-        # -------------------------------------------------------------------
-        self.count_DA_cycle = 0
-        self.count_atmbc_cycle = 0
-        # (the counter is incremented during the update analysis)
-        
-        # initiate DA
-        # -------------------------------------------------------------------
-        list_update_parm = self._DA_init(
-                                          NENS=NENS, # ensemble size
-                                          ENS_times=ENS_times, # assimilation times
-                                          parm_pert=dict_parm_pert,
-                                          update_parm_list = list_update_parm
-                                          )
-                            
-        # initiate mapping petro
-        # -------------------------------------------------------------------
-        self._mapping_petro_init()          
-        
-        # update the perturbated parameters 
-        # --------------------------------------------------------------------
-        self.update_ENS_files(dict_parm_pert, 
-                              update_parm_list='all', #list_update_parm
-                              cycle_nb=self.count_DA_cycle)
-        
-        all_atmbc_times = self.atmbc['time']        
-        # -------------------------------------------------------------------
-        if open_loop_run:
-            self._DA_openLoop(
-                              ENS_times,
-                              list_assimilated_obs,
-                              parallel)     
-        # end of Open loop - start DA
-        
-        # -------------------------------------------------------------------
-        # update input files ensemble again (time-windowed)
-        # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS, 
-                                    list(self.atmbc['time']), 
-                                    dict_parm_pert, 
-                                    update_parm_list='all')  #list_update_parm
-
-        # -----------------------------------
-        # Run hydrological model sequentially = Loop over atmbc times (including assimilation observation times)
-        # -----------------------------------
-        # self.sequential_DA()
-        
-        # TO CHANGE HERE
-        for t_atmbc in all_atmbc_times: #atmbc times include assimilation observation times
-            print(t_atmbc)
-            # t_atmbc = self.atmbc['time'][-2]
-            
-            self.run_ensemble_hydrological_model(parallel,verbose,callexe)  
-            os.chdir(os.path.join(self.workdir))
-            
-            # self.plot_ini_state_cov()
-            # def plot_ini_state_cov():
-            #     ensemble_psi, ensemble_sw, ens_size, sim_size = self._read_state_ensemble()
-                
-            # check scenario (result of the hydro simulation)
-            # ----------------------------------------------------------------       
-            rejected_ens = self._check_before_analysis(
-                                                       self.ens_valid,
-                                                       threshold_rejected,
-                                                       )
-            id_valid= ~np.array(rejected_ens)          
-            self.ens_valid = list(np.arange(0,self.NENS)[id_valid])
-            
-            
-            # define subloop here 
-            # if 'optimize_inflation' in DA_type:
-            # threshold_convergence = 10
-            # while self.df_performance < threshold_convergence:
-                
-            # self.atmbc['time']
-        
-            if t_atmbc in ENS_times:
-                
-                print('t=' + str(t_atmbc))
-
-                # map states to observation = apply H operator to state variable
-                # ----------------------------------------------------------------                               
-                prediction = self.map_states2Observations( 
-                                                            list_assimilated_obs,
-                                                            default_state = 'psi',
-                                                            parallel=parallel,
-                                                           )
-                # print(len(prediction))
-                # print(np.shape(prediction))
-                # ValueError: operands could not be broadcast together with shapes (612,) (1836,) 
-                
-                # data2test , obs2evaltest = self._get_data2assimilate(list_assimilated_obs)
-                # # len(data2test)
-                
-                # x = np.linspace(prediction.min(),
-                #                 prediction.max(),
-                #                 100)
-                # y = x
-                # fig, ax = plt.subplots(2,1)
-                # for ii in range(np.shape(prediction)[1]):
-                #     ax[0].scatter(prediction[:,ii],data2test)
-                #     ax[0].plot(x, y, '-r', label='y=x')
-                # ax[0].set_title('nb of ens' + str(np.shape(prediction)[1]))
-    
-                # ax[1].plot(data2test)
-                # plt.savefig('test' + str(DA_cnb))
-    
-                # plt.plot(data2test)
-                # plt.plot(prediction[:,ii])
-                # ax.scatter(prediction[:,ii],data2test)
-                # ax.set_aspect('equal')
-    
-                # fig.tight_layout()
-    
-                # DA analysis
-                # ----------------------------------------------------------------       
-                (ensemble_psi,
-                 ensemble_sw,
-                 data, 
-                 analysis, 
-                 analysis_param) = self._DA_analysis(prediction,
-                                                     DA_type,
-                                                     list_update_parm,
-                                                     list_assimilated_obs,
-                                                     ens_valid=self.ens_valid)
-                                                     
-                # DA mark_invalid_ensemble
-                # ----------------------------------------------------------------   
-                (prediction_valid, 
-                 ensemble_psi_valid, 
-                 ensemble_sw_valid,
-                 analysis_valid, 
-                 analysis_param_valid) = self._mark_invalid_ensemble(self.ens_valid,
-                                                                    prediction,
-                                                                    ensemble_psi,
-                                                                    ensemble_sw,
-                                                                    analysis,
-                                                                    analysis_param)
-                                                                    
-                                                                    
-                                                                    
-                # check analysis quality
-                # ----------------------------------------------------------------
-                
-                self.console.print(':face_with_monocle: [b]check analysis performance[/b]')
-                self._performance_assessement(list_assimilated_obs, 
-                                              data, 
-                                              prediction_valid,
-                                              t_obs=self.count_DA_cycle)
-                
-                
-                # the counter is incremented here                           
-                # ----------------------------------------------------------------
-                self.count_DA_cycle = self.count_DA_cycle + 1 
-                
-                
-                # # update parameter dictionnary
-                # ----------------------------------------------------------------
-                def check_ensemble(ensemble_psi_valid,ensemble_sw_valid):
-                    if np.any(ensemble_psi_valid>0):
-                        # raise ValueError('positive pressure heads observed')
-                        print('!!!!!!positive pressure heads observed!!!!!')
-                        psi_2replace = np.where(ensemble_psi_valid>=0)
-                        ensemble_psi_valid_new = ensemble_psi_valid
-                        ensemble_psi_valid_new[psi_2replace]=-1e-3
-
-                check_ensemble(ensemble_psi_valid,ensemble_sw_valid)
-    
-                self.update_pert_parm_dict(update_key,list_update_parm,analysis_param_valid)
-                
-                             
-            else:
-                self.console.print(':confused: No observation for this time - run hydrological model only')
-                print('!!!!!!!!! shoetcutttt here ensemble are anot validated!!!!!!!!!! S')
-                ensemble_psi_valid, ensemble_sw_valid, ens_size, sim_size = self._read_state_ensemble()
-                # analysis_valid = np.empty(ensemble_psi_valid.shape)
-                # analysis_valid[:] = np.NaN                
-                analysis_valid = ensemble_psi_valid
-                
-            self.count_atmbc_cycle = self.count_atmbc_cycle + 1 
-
-            print('------ end of time step (s) -------' + str(int(t_atmbc)) + '/' + str(int(all_atmbc_times[-1])) + '------')
-            print('------ end of atmbc update --------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
-
-            # create dataframe _DA_var_pert_df holding the results of the DA update
-            # ---------------------------------------------------------------------
-            self._DA_df(state=[ensemble_psi_valid, ensemble_sw_valid],
-                        state_analysis=analysis_valid,
-                        rejected_ens=rejected_ens)
-                
-            # export summary results of DA
-            # ----------------------------------------------------------------
-            
-            meta_DA = {'listAssimilatedObs': list_assimilated_obs,
-                       'listUpdatedparm':list_update_parm,
-                       # '':,
-                       # '':,
-                       # '':,
-                       }   
-                
-            self.backup_results_DA(meta_DA)
-            
-            # test = self.Archie
-            
-            self.backup_simu()
-    
-            # overwrite input files ensemble (perturbated variables)
-            # ---------------------------------------------------------------------
-
-            if self.count_atmbc_cycle<len(all_atmbc_times)-1: # -1 cause all_atmbc_times include TMAX
-            
-                self._update_input_ensemble(self.NENS, 
-                                            all_atmbc_times, 
-                                            self.dict_parm_pert,
-                                            update_parm_list=list_update_parm, 
-                                            analysis=analysis_valid
-                                            )
-            else:
-                print('------ end of DA ------')
-                pass   
-            # print('------ end of update -------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
-            print('------ end of DA update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)) + '------')
-            print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
-            # print(self.ens_valid)
-            
-            plt.close('all')
-
-
-
-    def _run_hydro_DA_openLoop(self,time_of_interest,nodes_of_interest,simu_time_max, ens_nb):
-        '''
-        Run openLoop and save result into DA dataframe (ensemble nb = 999)
-
-        Parameters
-        ----------
-        time_of_interest : TYPE
-            DESCRIPTION.
-        nodes_of_interest : TYPE
-            DESCRIPTION.
-        simu_time_max : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
-        '''
-
-        
-        cwd = os.getcwd()
-
-        self.console.print(
-            ":unlock: [b]open loop call[/b]")
-        self.run_processor(recompile=True,
-                           TIMPRTi=time_of_interest, 
-                           NODVP=nodes_of_interest, 
-                           TMAX=simu_time_max,
-                           DAFLAG=0,
-                           path_CATHY_folder= cwd,
-                           # filename = os.path.join(cwd, 'output')
-                           ) #TMAX=simu_time_max
-        
-        # df_psi = self.read_outputs(filename='psi',
-        #                            path=os.path.join(cwd, 'output'))
-        
-        # df_sw = self.read_outputs(filename='sw',
-        #                            path=os.path.join(cwd, 'output'))
-                
-        # for t in range(len(time_of_interest)):
-        #     self._DA_df(state=[df_psi[t,:],df_sw[t,:]], 
-        #                 t_ass=t, 
-        #                 openLoop=True,
-        #                 ens_nb=ens_nb)
-            
-        
     # -------------------------------------------------------------------#
     # %% DATA ASSIMILATION FCTS
 
@@ -2995,6 +2046,944 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                 index=df_obs.index)
         df_obs.index.names= ['sensorNameidx','assimilation time']
         return df_obs
+
+
+#%%  Observation Processing
+
+    def _parse_ERT_metadata(self,key_value):
+        '''
+        Extract ERT metadata information form obs dict
+        '''
+        ERT_meta_dict = {}
+        ERT_meta_dict['forward_mesh_vtk_file'] = key_value[1]['ERT']['forward_mesh_vtk_file'] 
+        ERT_meta_dict['pathERT'] = os.path.split(key_value[1]['ERT']['filename'])[0]
+        ERT_meta_dict['seq'] = key_value[1]['ERT']['sequenceERT'] 
+        ERT_meta_dict['electrodes'] = key_value[1]['ERT']['elecs'] 
+        ERT_meta_dict['noise_level'] = key_value[1]['ERT']['data_err']        
+        ERT_meta_dict['porosity'] = self.Archie_parms['porosity']
+        ERT_meta_dict['data_format'] = key_value[1]['ERT']['data_format'] 
+        return ERT_meta_dict
+        
+
+    def _map_ERT(self,state,
+                path_fwd_CATHY,
+                ens_nb,
+                **kwargs):
+        ''' 
+        Mapping of state variable to observation (predicted) 
+        ERT using pedophysical transformation H
+        '''
+    
+        savefig = True
+        if 'savefig' in kwargs:
+           savefig = kwargs['savefig'] 
+        
+        # search key value to identify time and method
+        # --------------------------------------------
+        tuple_list_obs = list(self.dict_obs.items())
+        key_value = tuple_list_obs[self.count_DA_cycle]  
+        
+        # Load ERT metadata information form obs dict
+        # -------------------------------------------
+        ERT_meta_dict = self._parse_ERT_metadata(key_value)
+        
+        Hx_ERT, df_Archie = Archie.SW_2_ERa(self.project_name,
+                                            self.Archie_parms, 
+                                            ERT_meta_dict['porosity'], 
+                                            ERT_meta_dict['pathERT'],
+                                            ERT_meta_dict['forward_mesh_vtk_file'],
+                                            ERT_meta_dict['electrodes'],
+                                            ERT_meta_dict['seq'],
+                                            path_fwd_CATHY,
+                                            df_sw = state[1], # kwargs
+                                            data_format= ERT_meta_dict['data_format'] , # kwargs
+                                            DA_cnb = self.count_DA_cycle, # kwargs
+                                            Ens_nb=ens_nb, # kwargs
+                                            savefig=savefig, # kwargs
+                                            noiseLevel = ERT_meta_dict['noise_level'],# kwargs
+                                            dict_ERT = key_value[1]['ERT']#  kwargs
+                                            )
+
+        df_Archie['OL'] = np.ones(len(df_Archie['time']))*False
+        self._add_2_ensemble_Archie(df_Archie)
+        
+        
+        return Hx_ERT
+                        
+    def _map_ERT_parallel_DA(self,
+                             ENS_times,
+                             ERT_meta_dict,
+                             key_time,
+                             path_fwd_CATHY_list,
+                             DA_cnb,
+                             ):
+         ''' 
+         Parallel mapping of ERT data using pedophysical transformation H
+         '''                         
+         Hx_ERT_ens = []                     
+         # freeze fixed arguments of Archie.SW_2_ERa       
+         # -----------------------------------------------------------------
+         ERTmapping_args = partial(Archie.SW_2_ERa, 
+                                   self.project_name,
+                                   self.Archie_parms,
+                                   ERT_meta_dict['porosity'],
+                                   ERT_meta_dict['pathERT'],
+                                   ERT_meta_dict['forward_mesh_vtk_file'],
+                                   ERT_meta_dict['electrodes'],
+                                   ERT_meta_dict['seq'],
+                                   data_format= ERT_meta_dict['data_format'],
+                                   DA_cnb = DA_cnb,
+                                   savefig=True,
+                                   dict_ERT = key_time[1]['ERT']#  kwargs
+                                   ) 
+        
+         # // run using ensemble subfolders path as a list    
+         # -----------------------------------------------------------------
+         with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            results_mapping = pool.map(ERTmapping_args, 
+                                         path_fwd_CATHY_list
+                                           )
+            print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+         
+         for ens_i in range(len(path_fwd_CATHY_list)):
+             df_Archie = results_mapping[ens_i][1]       
+             df_Archie['OL'] = np.zeros(len(df_Archie))
+             self._add_2_ensemble_Archie(df_Archie)
+             Hx_ERT_ens_i =  results_mapping[ens_i][0]
+
+             if 'pygimli' in self.dict_obs[key_time[0]]['ERT']['data_format']:
+                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['rhoa'])
+             else:
+                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['resist'])
+                
+         return Hx_ERT_ens
+                
+                    
+    def _map_ERT_parallel_OL(self,
+                             ENS_times,
+                             ERT_meta_dict,
+                             key_time,
+                             path_fwd_CATHY_list,
+                             ):
+        ''' 
+        Parallel mapping of ERT data using pedophysical transformation H
+        case of the open Loop = nested loop with ensemble time
+        ''' 
+
+        Hx_ERT_ens = []
+        for t in range(len(ENS_times)):
+            print('t_openLoop mapping:' + str(t))
+
+            # freeze fixed arguments of Archie.SW_2_ERa       
+            # -----------------------------------------------------------------
+            ERTmapping_args = partial(Archie.SW_2_ERa, 
+                                      self.project_name,
+                                      self.Archie_parms, 
+                                      ERT_meta_dict['porosity'], 
+                                      ERT_meta_dict['pathERT'],
+                                      ERT_meta_dict['forward_mesh_vtk_file'],
+                                      ERT_meta_dict['electrodes'],
+                                      ERT_meta_dict['seq'],
+                                      data_format= ERT_meta_dict['data_format'],
+                                      time_ass = t,
+                                      savefig=True,
+                                      noiseLevel = ERT_meta_dict['noise_level'] ,
+                                      dict_ERT = key_time[1]['ERT']
+                                      ) 
+            # 
+            # -----------------------------------------------------------------
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                results_mapping_time_i = pool.map(ERTmapping_args, 
+                                                  path_fwd_CATHY_list
+                                                  )
+                print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+
+            for ens_i in range(len(path_fwd_CATHY_list)):
+                 Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]     
+                 
+                 # print(np.shape(results_mapping_time_i))
+                 df_Archie = results_mapping_time_i[ens_i][1]     
+                 
+                 # print(df_Archie)
+                 df_Archie['OL'] = np.ones(len(df_Archie))
+                 self._add_2_ensemble_Archie(df_Archie)
+
+    
+                 if 'pygimli' in ERT_meta_dict['data_format']:
+                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['rhoa'])
+                 else:
+                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['resist'])
+                     
+        # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
+        #                                         len(Hx_ERT_ens[0]),
+        #                                         len(ENS_times)])  # (EnSize * data size * times)
+        return Hx_ERT_ens
+    
+    
+    def _map_ERT_parallel(self, 
+                            path_fwd_CATHY_list,
+                            list_assimilated_obs='all', 
+                            default_state = 'psi',
+                            verbose = False,
+                            **kwargs):
+        ''' Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,
+        // run using ensemble subfolders path as a list
+        '''
+
+        savefig = True
+        if 'savefig' in kwargs:
+           savefig = kwargs['savefig'] 
+        ENS_times = []
+        if 'ENS_times' in kwargs:
+           ENS_times = kwargs['ENS_times'] 
+        DA_cnb = []
+        if 'DA_cnb' in kwargs:
+           DA_cnb = kwargs['DA_cnb'] 
+           
+           
+        # search key value to identify time and method
+        tuple_list_obs = list(self.dict_obs.items())
+        key_time = tuple_list_obs[self.count_DA_cycle]
+        # Load ERT metadata information form obs dict
+        # -------------------------------------------       
+        ERT_meta_dict = self._parse_ERT_metadata(key_time)
+        
+        if len(ENS_times)>0: # case of the open Loop = nested loop with ensemble time
+            Hx_ERT_ens = self._map_ERT_parallel_OL(
+                                                    ENS_times,
+                                                    ERT_meta_dict,
+                                                    key_time,
+                                                    path_fwd_CATHY_list,
+                                                )                                      
+        else:
+            Hx_ERT_ens = self._map_ERT_parallel_DA(
+                                                    ENS_times,
+                                                    ERT_meta_dict,
+                                                    key_time,
+                                                    path_fwd_CATHY_list,
+                                                    DA_cnb,
+                                                )                          
+                                                
+        prediction_ERT = np.vstack(Hx_ERT_ens).T  # (EnSize)
+        
+        # self.dict_obs
+            
+        return prediction_ERT
+
+    def _evaluate_perf_OL(self,
+                         parallel,
+                         list_assimilated_obs,
+                         path_fwd_CATHY_list,
+                         ENS_times
+                         ):
+        
+        prediction_OL = []
+        if parallel:
+            if 'ERT' in list_assimilated_obs:
+                prediction_OL_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
+                                                    savefig = True,
+                                                    DA_cnb = self.count_DA_cycle,
+                                                    ENS_times=ENS_times,
+                                                    )   
+                # prediction_OL_ERT is meas_size * ens_size * ENS_times size
+                np.shape(prediction_OL_ERT)
+            else:
+                for t in range(len(ENS_times)):
+                    print(str(t) + 't map OL')
+                    prediction_stacked = self.map_states2Observations(
+                                                        list_assimilated_obs,
+                                                        ENS_times=ENS_times,
+                                                        savefig=False,
+                                                        parallel=parallel,
+                                                        ) 
+                    np.shape(prediction_stacked)
+                    prediction_OL.append(prediction_stacked)
+                    
+        # prediction_OL = np.hstack(prediction_OL)
+                # np.shape(prediction_OL)
+
+
+        # prediction_OL = np.reshape(prediction_OL,[
+        #                                           np.shape(prediction_OL)[1],
+        #                                           self.NENS,
+        #                                           len(ENS_times),
+        #                                           ]
+        #                           )
+        else:    
+            for t in range(len(ENS_times)):
+                prediction_stacked = self.map_states2Observations(
+                                                    list_assimilated_obs,
+                                                    ENS_times=ENS_times,
+                                                    savefig=False,
+                                                    parallel=parallel,
+                                                    ) 
+                # prediction_stacked is meas_size * ens_size
+                prediction_OL.append(prediction_stacked)
+                # prediction_OL is meas_size * ens_size * ENS_times size
+
+
+        if parallel:
+            if 'ERT' in list_assimilated_obs:
+                prediction_OL.append(prediction_OL_ERT)
+                
+                if np.shape(prediction_OL)[0]>1:
+                    prediction_OL =  np.hstack(prediction_OL)
+            
+        prediction_OL = np.reshape(prediction_OL,[
+                                                  np.shape(prediction_OL)[1],
+                                                  self.NENS,
+                                                  len(ENS_times),
+                                                  ]
+                                  )
+        for t in range(len(ENS_times)):
+            print(str(t) + 't perf OL')
+            data_t, _  = self._get_data2assimilate(
+                                                    list_assimilated_obs,
+                                                    time_ass=t,
+                                                )                    
+            self._performance_assessement(
+                                            list_assimilated_obs, 
+                                            data_t, 
+                                            prediction_OL[:,:,t],
+                                            t_obs=t,
+                                            openLoop=True,
+                                        )
+        return prediction_OL
+        
+                
+    def _DA_openLoop(self,
+                     ENS_times,
+                     list_assimilated_obs,
+                     parallel,
+                     verbose=False):
+        '''
+        Run open Loop (no update/assimilation) hydro simulation for an ensemble of realisation
+        Evaluate the performance by comparison with measured data after mapping
+
+        Parameters
+        ----------
+        ENS_times : list
+            List of the time steps (in sec) where observations are assimilated.
+        list_assimilated_obs : list
+            List of assimilation observations.
+        parallel : Bool, optional
+            Parallelize. The default is True.
+        verbose : Bool, optional
+            Display prints. The default is False.
+
+        Returns
+        -------
+        Prediction_OL.
+        Performance dataframe.
+
+        '''
+
+        # multi run CATHY hydrological model from the independant folders 
+        # composing the ensemble
+        # ----------------------------------------------------------------
+        if parallel == True:
+            pathexe_list = []
+            for ens_i in range(self.NENS):
+                path_exe = os.path.join(self.workdir,
+                                        self.project_name,
+                                        'DA_Ensemble/cathy_' + str(ens_i+1))
+                pathexe_list.append(path_exe)
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                result = pool.map(subprocess_run_multi, pathexe_list)
+                if verbose == True:
+                    self.console.print(result)
+        
+        # Loop over ensemble realisations one by one
+        # ------------------------------------------------------------
+        else:
+            for ens_i in range(self.NENS):
+                os.chdir(os.path.join(self.workdir,
+                                      self.project_name, 
+                                      'DA_Ensemble/cathy_' + str(ens_i+1)))
+                len(list(self.atmbc['time']))
+                self._run_hydro_DA_openLoop(time_of_interest=list(self.atmbc['time']),
+                                              nodes_of_interest=[],
+                                              simu_time_max=max(list(self.atmbc['time'])),
+                                              ens_nb=ens_i+1                                 
+                                              )
+                
+        # save into the DA_df dataframe
+        # -----------------------------------------------------------------
+        path_fwd_CATHY_list = []
+        for ens_i in range(self.NENS):
+            path_fwd_CATHY_list.append(os.path.join(self.workdir,
+                                    self.project_name, 
+                                    'DA_Ensemble/cathy_' + str(ens_i+1)))
+
+            os.chdir(os.path.join(self.workdir,
+                                  self.project_name, 
+                                  'DA_Ensemble/cathy_' + str(ens_i+1)))
+            df_psi = self.read_outputs(filename='psi',
+                                        path=os.path.join(os.getcwd(),
+                                                          'output'))
+            df_sw = self.read_outputs(filename='sw',
+                                        path=os.path.join(os.getcwd(),
+                                                          'output'))
+            
+            
+            shift = len(df_psi)-self.parm["NPRT"]
+            if shift<0 | shift>2:
+                print('Error for the ensemble nb:' + str(ens_i))
+                raise ValueError('Error on the simulation:' 
+                                  'nb of times contained in the outputs files is too small;' 
+                                  'Check ')                
+            for t in range(np.shape(df_psi)[0]-2):
+                self._DA_df(state=[df_psi[t+shift,:], df_sw[t+shift,:]],
+                            t_ass=t, 
+                            openLoop=True,
+                            ens_nb=ens_i+1)
+             
+        
+        prediction_OL = self._evaluate_perf_OL(                    
+                                                parallel,
+                                                list_assimilated_obs,
+                                                path_fwd_CATHY_list,
+                                                ENS_times
+                                                )
+                   
+        # ------------------------------------------------------
+        # END of Open Loop simulation and performance evaluation
+        # ------------------------------------------------------     
+        pass
+    
+
+    def _mark_invalid_ensemble(self,ens_valid,
+                                  prediction,
+                                  ensemble_psi,
+                                  ensemble_sw,
+                                  analysis,
+                                  analysis_param):
+        ''' mark invalid ensemble - invalid ensemble are filled with NaN values '''          
+
+        ensemble_psi_valid = np.empty(ensemble_psi.shape)
+        ensemble_psi_valid[:] = np.NaN
+        ensemble_psi_valid[:,ens_valid]  = ensemble_psi[:,ens_valid]            
+
+        ensemble_sw_valid = np.empty(ensemble_psi.shape)
+        ensemble_sw_valid[:] = np.NaN
+        ensemble_sw_valid[:,ens_valid]  = ensemble_sw[:,ens_valid]        
+        
+        analysis_valid = np.empty(ensemble_psi.shape)
+        analysis_valid[:] = np.NaN
+        analysis_valid[:,ens_valid]  = analysis         
+
+        prediction_valid = np.empty([prediction.shape[0],
+                                     ensemble_psi.shape[1]])
+        prediction_valid[:] = np.NaN
+        prediction_valid[:,ens_valid]  = prediction
+        
+        analysis_param_valid = []
+        if len(analysis_param[0])>0:
+            analysis_param_valid = np.empty([analysis_param.shape[1],
+                                            ensemble_psi.shape[1]])
+            analysis_param_valid[:] = np.NaN
+            analysis_param_valid[:,ens_valid]  = analysis_param.T     
+        
+        return (prediction_valid, 
+                ensemble_psi_valid, 
+                ensemble_sw_valid, 
+                analysis_valid, 
+                analysis_param_valid
+                )
+    
+    
+    
+    def set_Archie_parm(self,
+                        porosity=[],
+                        rFluid_Archie=[1.0],
+                        a_Archie=[1.0],
+                        m_Archie=[2.0],
+                        n_Archie=[2.0], 
+                        pert_sigma=[None]
+                        ):
+        '''
+        Dict of Archie parameters. Each type of soil is describe within a list
+        Note that if pert_sigma is not None a normal noise is 
+        added during the translation of Saturation Water to ER
+
+        Parameters
+        ----------
+        rFluid : TYPE, optional
+            Resistivity of the pore fluid. The default is [1.0].
+        a : TYPE, optional
+            Tortuosity factor. The default is [1.0].
+        m : TYPE, optional
+            Cementation exponent. The default is [2.0]. 
+            (usually in the range 1.3 -- 2.5 for sandstones)
+        n : TYPE, optional
+            Saturation exponent. The default is [2.0].
+        pert_signa : TYPE, optional
+            Gaussian noise to add. The default is None.
+        '''
+        if len(porosity)==0:
+            porosity = self.soil_SPP['SPP'][:, 4][0]   
+        if not isinstance(porosity, list):
+            porosity = [porosity]
+        self.Archie_parms = {
+                             'porosity':porosity, 
+                             'rFluid_Archie':rFluid_Archie, 
+                             'a_Archie':a_Archie, 
+                             'm_Archie':m_Archie, 
+                             'n_Archie':n_Archie, 
+                             'pert_sigma':pert_sigma
+                             }
+        
+        pass
+
+
+    def _mapping_petro_init(self):
+        ''' Initiate Archie and VGP'''
+        
+        print('Initiate Archie and VGP')
+        porosity = self.soil_SPP['SPP'][:, 4][0]
+        if not isinstance(porosity, list):
+            porosity = [porosity]
+        if hasattr(self,'Archie_parms') == False:
+            print('Archie parameters not defined set defaults')
+            self.Archie_parms = {'porosity': porosity,
+                                 'rFluid_Archie':[1.0],
+                                 'a_Archie':[1.0],
+                                 'm_Archie':[2.0],
+                                 'n_Archie':[2.0],
+                                 'pert_sigma':None
+                                 }
+        if hasattr(self,'VGN_parms') == False:
+            print('VGN parameters not defined set defaults')
+            self.VGN_parms = {}
+            
+        pass
+         
+    
+
+    def run_ensemble_hydrological_model(self,parallel,verbose,callexe):
+        ''' multi run CATHY hydrological model from the independant folders composing the ensemble '''
+        
+        # ----------------------------------------------------------------
+        if parallel == True:
+            pathexe_list = []
+            # for ens_i in range(self.NENS):
+                
+            for ens_i in self.ens_valid:
+                path_exe = os.path.join(self.workdir,
+                                        self.project_name,
+                                        'DA_Ensemble/cathy_' + str(ens_i+1))
+                pathexe_list.append(path_exe)       
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                result = pool.map(subprocess_run_multi, pathexe_list)
+
+                                        
+                if verbose == True:
+                    self.console.print(result)
+        # process each ensemble folder one by one
+        # ----------------------------------------------------------------
+        else:
+            # Loop over ensemble realisations
+            # ------------------------------------------------------------
+            for ens_i in track(range(self.NENS), description="Run hydrological fwd model..."):
+
+                self.console.print(":keycap_number_sign: [b]ensemble nb:[/b]" + str(ens_i+1) +
+                                    '/' + str(self.NENS))
+                os.chdir(os.path.join(self.workdir,
+                                      self.project_name,
+                                      'DA_Ensemble/cathy_' + str(ens_i+1)))
+                p = subprocess.run([callexe], text=True,
+                                   capture_output=True)
+
+                if verbose == True:
+                    self.console.print(p.stdout)
+                    self.console.print(p.stderr)   
+                    
+        pass
+                    
+    
+    def update_pert_parm_dict(self,update_key,list_update_parm,analysis_param_valid):
+        ''' update dict of perturbated parameters i.e. add a collumn with new params'''
+        
+        index_update = 0
+        if self.count_DA_cycle > 0:
+           for pp in list_update_parm:
+               if 'St. var.' in pp:
+                   index_update = index_update + 1
+                   pass
+               else:
+                   update_key = 'update_nb' + str(self.count_DA_cycle)
+                   self.dict_parm_pert[pp][update_key] = analysis_param_valid[index_update-1]
+                   index_update = index_update + 1
+   
+           # check after analysis
+           # ----------------------------------------------------------------
+           id_valid_after = self._check_after_analysis(
+                                                       update_key,
+                                                       list_update_parm
+                                                       )
+           intersection_set = set.intersection(
+                                               set(id_valid_after), 
+                                               set(self.ens_valid)
+                                               )
+           self.ens_valid = list(intersection_set)
+           
+        pass
+                            
+                            
+    def _run_DA(self, callexe, parallel,
+                        DA_type,
+                        dict_obs,
+                        list_update_parm,
+                        dict_parm_pert,
+                        list_assimilated_obs,
+                        open_loop_run,
+                        threshold_rejected,
+                        verbose,
+                        **kwargs
+                        ):
+                                    
+                             
+        '''
+        
+        Run Data Assimilation 
+        
+        .. note::
+
+            Steps are:
+            1. DA init (create subfolders)
+            2a. run CATHY hydrological model (open loop)
+            2b. run CATHY hydrological model recursively using DA times
+                <- Loop-->
+                    3. check before analysis
+                    4. analysis
+                    5. check after analysis
+                    6. update input files
+                <- Loop-->
+ 
+        Parameters
+        ----------
+        callexe : str
+            processor exe filename
+        parallel : bool
+            True for multiple ensemble folder simulations.
+        DA_type : str
+            type of Data Assimilation.
+        list_assimilated_obs : TYPE
+            list of names of observations to assimilate.
+        dict_obs : dict
+            observations dictionnary.
+        list_update_parm : list
+            list of names of parameters to update.
+        dict_parm_pert : dict
+            parameters perturbated dictionnary.
+
+
+        '''
+        # Initiate
+        # -------------------------------------------------------------------
+        update_key = 'ini_perturbation'
+        
+        
+        # check if dict_obs is ordered in time
+        # ------------------------------------       
+        if (all(i < j for i, j in zip(list(dict_obs.keys()), list(dict_obs.keys())[1:]))) is False:
+            raise ValueError('Observation List is not sorted.')
+       
+        # dict_obs.keys()
+        # self.dict_obs.keys()
+        if hasattr(self,'dict_obs') is False:
+            self.dict_obs = dict_obs # self.dict_obs is already assigned (in read observatio! change it to self.obs
+        self.dict_parm_pert = dict_parm_pert
+        self.df_DA = pd.DataFrame()
+
+        # Infer ensemble size NENS from perturbated parameter dictionnary
+        # -------------------------------------------------------------------
+        for name in self.dict_parm_pert:
+            NENS = len(self.dict_parm_pert[name]['ini_perturbation'])
+
+        # Infer ensemble update times ENS_times from observation dictionnary
+        # -------------------------------------------------------------------
+        ENS_times = []
+        for ti in self.dict_obs:
+            ENS_times.append(float(ti))
+            
+        # data_measure_df = self.dictObs_2pd()     
+
+
+        # start DA cycle counter
+        # -------------------------------------------------------------------
+        self.count_DA_cycle = 0
+        self.count_atmbc_cycle = 0
+        # (the counter is incremented during the update analysis)
+        
+        # initiate DA
+        # -------------------------------------------------------------------
+        list_update_parm = self._DA_init(
+                                          NENS=NENS, # ensemble size
+                                          ENS_times=ENS_times, # assimilation times
+                                          parm_pert=dict_parm_pert,
+                                          update_parm_list = list_update_parm
+                                          )
+                            
+        # initiate mapping petro
+        # -------------------------------------------------------------------
+        self._mapping_petro_init()          
+        
+        # update the perturbated parameters 
+        # --------------------------------------------------------------------
+        self.update_ENS_files(dict_parm_pert, 
+                              update_parm_list='all', #list_update_parm
+                              cycle_nb=self.count_DA_cycle)
+        
+        all_atmbc_times = self.atmbc['time']        
+        # -------------------------------------------------------------------
+        if open_loop_run:
+            self._DA_openLoop(
+                              ENS_times,
+                              list_assimilated_obs,
+                              parallel)     
+        # end of Open loop - start DA
+        
+        # -------------------------------------------------------------------
+        # update input files ensemble again (time-windowed)
+        # ---------------------------------------------------------------------
+        self._update_input_ensemble(NENS, 
+                                    list(self.atmbc['time']), 
+                                    dict_parm_pert, 
+                                    update_parm_list='all')  #list_update_parm
+
+        # -----------------------------------
+        # Run hydrological model sequentially = Loop over atmbc times (including assimilation observation times)
+        # -----------------------------------
+        # self.sequential_DA()
+        
+        # TO CHANGE HERE
+        for t_atmbc in all_atmbc_times: #atmbc times include assimilation observation times
+            print(t_atmbc)
+            # t_atmbc = self.atmbc['time'][-2]
+            
+            self.run_ensemble_hydrological_model(parallel,verbose,callexe)  
+            os.chdir(os.path.join(self.workdir))
+            
+            # self.plot_ini_state_cov()
+            # def plot_ini_state_cov():
+            #     ensemble_psi, ensemble_sw, ens_size, sim_size = self._read_state_ensemble()
+                
+            # check scenario (result of the hydro simulation)
+            # ----------------------------------------------------------------       
+            rejected_ens = self._check_before_analysis(
+                                                       self.ens_valid,
+                                                       threshold_rejected,
+                                                       )
+            id_valid= ~np.array(rejected_ens)          
+            self.ens_valid = list(np.arange(0,self.NENS)[id_valid])
+            
+            
+            # define subloop here 
+            # if 'optimize_inflation' in DA_type:
+            # threshold_convergence = 10
+            # while self.df_performance < threshold_convergence:
+                
+            # self.atmbc['time']
+        
+            if t_atmbc in ENS_times:
+                
+                print('t=' + str(t_atmbc))
+
+                # map states to observation = apply H operator to state variable
+                # ----------------------------------------------------------------                               
+                prediction = self.map_states2Observations( 
+                                                            list_assimilated_obs,
+                                                            default_state = 'psi',
+                                                            parallel=parallel,
+                                                           )
+                # print(len(prediction))
+                # print(np.shape(prediction))
+                # ValueError: operands could not be broadcast together with shapes (612,) (1836,) 
+                
+                # data2test , obs2evaltest = self._get_data2assimilate(list_assimilated_obs)
+                # # len(data2test)
+                
+                # x = np.linspace(prediction.min(),
+                #                 prediction.max(),
+                #                 100)
+                # y = x
+                # fig, ax = plt.subplots(2,1)
+                # for ii in range(np.shape(prediction)[1]):
+                #     ax[0].scatter(prediction[:,ii],data2test)
+                #     ax[0].plot(x, y, '-r', label='y=x')
+                # ax[0].set_title('nb of ens' + str(np.shape(prediction)[1]))
+    
+                # ax[1].plot(data2test)
+                # plt.savefig('test' + str(DA_cnb))
+    
+                # plt.plot(data2test)
+                # plt.plot(prediction[:,ii])
+                # ax.scatter(prediction[:,ii],data2test)
+                # ax.set_aspect('equal')
+    
+                # fig.tight_layout()
+    
+                # DA analysis
+                # ----------------------------------------------------------------       
+                (ensemble_psi,
+                 ensemble_sw,
+                 data, 
+                 analysis, 
+                 analysis_param) = self._DA_analysis(prediction,
+                                                     DA_type,
+                                                     list_update_parm,
+                                                     list_assimilated_obs,
+                                                     ens_valid=self.ens_valid)
+                                                     
+                # DA mark_invalid_ensemble
+                # ----------------------------------------------------------------   
+                (prediction_valid, 
+                 ensemble_psi_valid, 
+                 ensemble_sw_valid,
+                 analysis_valid, 
+                 analysis_param_valid) = self._mark_invalid_ensemble(self.ens_valid,
+                                                                    prediction,
+                                                                    ensemble_psi,
+                                                                    ensemble_sw,
+                                                                    analysis,
+                                                                    analysis_param)
+                                                                    
+                                                                    
+                                                                    
+                # check analysis quality
+                # ----------------------------------------------------------------
+                
+                self.console.print(':face_with_monocle: [b]check analysis performance[/b]')
+                self._performance_assessement(list_assimilated_obs, 
+                                              data, 
+                                              prediction_valid,
+                                              t_obs=self.count_DA_cycle)
+                
+                
+                # the counter is incremented here                           
+                # ----------------------------------------------------------------
+                self.count_DA_cycle = self.count_DA_cycle + 1 
+                
+                
+                # # update parameter dictionnary
+                # ----------------------------------------------------------------
+                def check_ensemble(ensemble_psi_valid,ensemble_sw_valid):
+                    if np.any(ensemble_psi_valid>0):
+                        # raise ValueError('positive pressure heads observed')
+                        print('!!!!!!positive pressure heads observed!!!!!')
+                        psi_2replace = np.where(ensemble_psi_valid>=0)
+                        ensemble_psi_valid_new = ensemble_psi_valid
+                        ensemble_psi_valid_new[psi_2replace]=-1e-3
+
+                check_ensemble(ensemble_psi_valid,ensemble_sw_valid)
+    
+                self.update_pert_parm_dict(update_key,list_update_parm,analysis_param_valid)
+                
+                             
+            else:
+                self.console.print(':confused: No observation for this time - run hydrological model only')
+                print('!!!!!!!!! shoetcutttt here ensemble are anot validated!!!!!!!!!! S')
+                ensemble_psi_valid, ensemble_sw_valid, ens_size, sim_size = self._read_state_ensemble()
+                # analysis_valid = np.empty(ensemble_psi_valid.shape)
+                # analysis_valid[:] = np.NaN                
+                analysis_valid = ensemble_psi_valid
+                
+            self.count_atmbc_cycle = self.count_atmbc_cycle + 1 
+
+            print('------ end of time step (s) -------' + str(int(t_atmbc)) + '/' + str(int(all_atmbc_times[-1])) + '------')
+            print('------ end of atmbc update --------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
+
+            # create dataframe _DA_var_pert_df holding the results of the DA update
+            # ---------------------------------------------------------------------
+            self._DA_df(state=[ensemble_psi_valid, ensemble_sw_valid],
+                        state_analysis=analysis_valid,
+                        rejected_ens=rejected_ens)
+                
+            # export summary results of DA
+            # ----------------------------------------------------------------
+            
+            meta_DA = {'listAssimilatedObs': list_assimilated_obs,
+                       'listUpdatedparm':list_update_parm,
+                       # '':,
+                       # '':,
+                       # '':,
+                       }   
+                
+            self.backup_results_DA(meta_DA)
+            
+            # test = self.Archie
+            
+            self.backup_simu()
+    
+            # overwrite input files ensemble (perturbated variables)
+            # ---------------------------------------------------------------------
+
+            if self.count_atmbc_cycle<len(all_atmbc_times)-1: # -1 cause all_atmbc_times include TMAX
+            
+                self._update_input_ensemble(self.NENS, 
+                                            all_atmbc_times, 
+                                            self.dict_parm_pert,
+                                            update_parm_list=list_update_parm, 
+                                            analysis=analysis_valid
+                                            )
+            else:
+                print('------ end of DA ------')
+                pass   
+            # print('------ end of update -------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
+            print('------ end of DA update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)) + '------')
+            print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
+            # print(self.ens_valid)
+            
+            plt.close('all')
+
+
+
+    def _run_hydro_DA_openLoop(self,time_of_interest,nodes_of_interest,simu_time_max, ens_nb):
+        '''
+        Run openLoop and save result into DA dataframe (ensemble nb = 999)
+
+        Parameters
+        ----------
+        time_of_interest : TYPE
+            DESCRIPTION.
+        nodes_of_interest : TYPE
+            DESCRIPTION.
+        simu_time_max : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+
+        
+        cwd = os.getcwd()
+
+        self.console.print(
+            ":unlock: [b]open loop call[/b]")
+        self.run_processor(recompile=True,
+                           TIMPRTi=time_of_interest, 
+                           NODVP=nodes_of_interest, 
+                           TMAX=simu_time_max,
+                           DAFLAG=0,
+                           path_CATHY_folder= cwd,
+                           # filename = os.path.join(cwd, 'output')
+                           ) #TMAX=simu_time_max
+        
+        # df_psi = self.read_outputs(filename='psi',
+        #                            path=os.path.join(cwd, 'output'))
+        
+        # df_sw = self.read_outputs(filename='sw',
+        #                            path=os.path.join(cwd, 'output'))
+                
+        # for t in range(len(time_of_interest)):
+        #     self._DA_df(state=[df_psi[t,:],df_sw[t,:]], 
+        #                 t_ass=t, 
+        #                 openLoop=True,
+        #                 ens_nb=ens_nb)
+            
 
 
     def Evensen2003(self,qk_0, wk,deltaT,Tau):

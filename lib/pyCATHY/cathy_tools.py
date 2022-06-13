@@ -1005,15 +1005,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         '''
         Update DEM parameters
 
-        Parameters
-        ----------
-        **kwargs : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
         '''        
 
         self.console.print(":black_nib: [b]update dem_parameters file [/b]")
