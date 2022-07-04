@@ -54,8 +54,7 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     rd = max(np.diff(meshIN.points[:,0]))/1
     result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
     
-    plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result)
-
+    # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result)
 
     result = result.point_data_to_cell_data()
     out_data = result[scalar]

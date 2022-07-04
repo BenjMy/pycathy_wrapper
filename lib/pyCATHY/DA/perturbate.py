@@ -8,7 +8,16 @@ def check_distribution(parm2check):
     if parm2check['type_parm']=='porosity':
         if parm2check['per_nom']<0:
             raise ValueError 
-            
+    
+    if parm2check['type_parm']=='thetar_VG':
+        if parm2check['per_nom']>1:
+            print('! warming value to high for residual water VG')
+
+    
+    
+    
+    # References for Archie paarmeters range
+    # https://www.sciencedirect.com/science/article/pii/S1018363918306123
     # a : TYPE, optional
     #     Tortuosity factor. The default is [1.0].
     # m : TYPE, optional
@@ -17,12 +26,18 @@ def check_distribution(parm2check):
     #     Saturation exponent. The default is [2.0].
             
     
-def check4bounds(scenario, index, clip_min,clip_max):
-    if hasattr(scenario,'per_bounds'):
-        if scenario['per_bounds'][index]['min'] is not None:
-            clip_min = scenario['per_bounds'][index]['min']
-        if scenario['per_bounds'][index]['min'] is not None:
-            clip_max = scenario['per_bounds'][index]['max']     
+def check4bounds(scenario, index, clip_min,clip_max,het_size=1,het_nb=None):
+    
+    try: # try since per_bounds is not mandatory
+        if het_size==1:
+            sc_bounds = scenario['per_bounds'][index]
+        else:
+            sc_bounds = scenario['per_bounds'][index][het_nb]
+        clip_min = sc_bounds['min']
+        clip_max = sc_bounds['max']
+    except:
+        pass
+    
     return clip_min, clip_max
     
 
@@ -88,11 +103,20 @@ def perturbate(simu_DA,scenario,NENS):
         scenario_mean = scenario['per_mean'][index]
         scenario_sd = scenario['per_sigma'][index]
         
+        
+        clip_min = 0
+        clip_max = 1
+        
         for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
             if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
                 scenario_nom = scenario['per_nom'][index][nz]
                 scenario_mean = scenario['per_mean'][index][nz]
                 scenario_sd = scenario['per_sigma'][index][nz]
+                
+            clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max,
+                                             het_size=len(simu_DA.soil_SPP['SPP_map']['PERMX']),
+                                             het_nb=nz,
+                                             )
 
             thetar_VG = {
                   'type_parm': 'thetar_VG'+ str(nz),
@@ -104,11 +128,13 @@ def perturbate(simu_DA,scenario,NENS):
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': 'thetar_VG'+ str(nz) + '.png',
-                  'surf_zones_param': nz
+                  'surf_zones_param': nz,
+                  'clip_min':clip_min,
+                  'clip_max':clip_max,
                   }    
             list_pert.append(thetar_VG)
             
-            
+           
     if 'alpha_VG' in scenario['per_name']:
         index = scenario['per_name'].index('alpha_VG')
         
@@ -135,7 +161,38 @@ def perturbate(simu_DA,scenario,NENS):
                   'surf_zones_param': nz
                   }    
             list_pert.append(alpha_VG)
-            
+
+    if 'VGPSATCELL' in scenario['per_name']:
+        index = scenario['per_name'].index('VGPSATCELL')
+        
+        scenario_nom = scenario['per_nom'][index]
+        scenario_mean = scenario['per_mean'][index]
+        scenario_sd = scenario['per_sigma'][index]
+        
+        
+        # clip_min = 0
+        # clip_max = 1
+        
+        for nz in range(len(simu_DA.soil_SPP['SPP_map']['PERMX'])):
+            if len(simu_DA.soil_SPP['SPP_map']['PERMX'])>1:
+                scenario_nom = scenario['per_nom'][index][nz]
+                scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
+
+            VGPSATCELL_VG = {
+                  'type_parm': 'VGPSATCELL_VG'+ str(nz),
+                  'nominal':  scenario_nom, #nominal value
+                  'mean':  scenario_mean,
+                  'sd':  scenario_sd,
+                  'units': '$cm^{-1}$', # units
+                  'sampling_type': 'normal',
+                  'ensemble_size': NENS, # size of the ensemble
+                  'per_type': scenario['per_type'][index],
+                  'savefig': 'VGPSATCELL_VG'+ str(nz) + '.png',
+                  'surf_zones_param': nz
+                  }    
+            list_pert.append(VGPSATCELL_VG)
+                
 
     if 'n_VG' in scenario['per_name']:   
         index = scenario['per_name'].index('n_VG')
@@ -281,11 +338,15 @@ def perturbate(simu_DA,scenario,NENS):
         
         clip_min = 0.2 # minimum soil porosity
         clip_max = 0.7 # maximum soil porosity
-        
-        clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max)
-        
+                
         for nz in range(len(simu_DA.soil_SPP['SPP_map']['POROS'])):
             print('zone nb:' + str(nz))
+            
+            clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max,
+                                             het_size=len(simu_DA.soil_SPP['SPP_map']['POROS']),
+                                             het_nb=nz,
+                                             )
+            
             if len(simu_DA.soil_SPP['SPP_map']['POROS'])>1:
                 scenario_nom = scenario['per_nom'][index][nz]
                 scenario_mean = scenario['per_mean'][index][nz]
@@ -303,8 +364,8 @@ def perturbate(simu_DA,scenario,NENS):
                   'per_type': scenario['per_type'][index],
                   'savefig': 'porosity'+ str(nz) + '.png',
                   'surf_zones_param': nz,
-                  'clip_min':scenario['per_bounds'][index]['min'],
-                  'clip_max':scenario['per_bounds'][index]['max'],
+                  'clip_min':clip_min,
+                  'clip_max':clip_max,
                   } 
             
             check_distribution(porosity)
@@ -344,7 +405,8 @@ def perturbate(simu_DA,scenario,NENS):
 
         scenario_nom = scenario['per_nom'][index]
         scenario_mean = scenario['per_mean'][index]
-        
+        scenario_sd = scenario['per_sigma'][index]
+
         if 'sampling_type' in scenario:
             scenario_sampling = scenario['sampling_type'][index]
         else:
@@ -352,28 +414,33 @@ def perturbate(simu_DA,scenario,NENS):
 
         clip_min = 0
         clip_max = None
-        clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max)
 
 
         for nz in range(len(simu_DA.soil['ZROOT'])):
             
+            clip_min,clip_max = check4bounds(scenario,index,clip_min,clip_max,
+                                             het_size=len(simu_DA.soil['ZROOT']),
+                                             het_nb=nz,
+                                             )
+            
             if len(simu_DA.soil['ZROOT'])>1:
                 scenario_nom = scenario['per_nom'][index][nz]
                 scenario_mean = scenario['per_mean'][index][nz]
+                scenario_sd = scenario['per_sigma'][index][nz]
             
             ZROOT = {
                   'type_parm': 'ZROOT'+ str(nz),
                   'nominal': scenario_nom, #nominal value
                   'mean': scenario_mean,
-                  'sd':  scenario['per_sigma'][index],
+                  'sd':  scenario_sd,
                   'units': '$m.s^{-1}$', # units
                   'sampling_type': scenario_sampling,
                   'ensemble_size': NENS, # size of the ensemble
                   'per_type': scenario['per_type'][index],
                   'savefig': 'ZROOT' + str(nz) + '.png',
                   'surf_zones_param': nz,
-                  'clip_min':scenario['per_bounds'][index]['min'],
-                  'clip_max':scenario['per_bounds'][index]['max'],
+                  'clip_min':clip_min,
+                  'clip_max':clip_max,
                       
                   }    
             list_pert.append(ZROOT)

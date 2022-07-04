@@ -623,7 +623,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # -------------------------------------------
         ERT_meta_dict = self._parse_ERT_metadata(key_value)
         
-        Hx_ERT, df_Archie = Archie.SW_2_ERa(self.project_name,
+        Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(self.project_name,
                                             self.Archie_parms, 
                                             ERT_meta_dict['porosity'], 
                                             ERT_meta_dict['pathERT'],
@@ -636,7 +636,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                             DA_cnb = self.count_DA_cycle, # kwargs
                                             Ens_nb=ens_nb, # kwargs
                                             savefig=savefig, # kwargs
-                                            noiseLevel = ERT_meta_dict['noise_level'],# kwargs
+                                            noise_level = ERT_meta_dict['noise_level'],# kwargs
                                             dict_ERT = key_value[1]['ERT']#  kwargs
                                             )
 
@@ -658,9 +658,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
          '''                         
          Hx_ERT_ens = []      
                         
-         # freeze fixed arguments of Archie.SW_2_ERa       
+         # freeze fixed arguments of Archie.SW_2_ERa_DA       
          # -----------------------------------------------------------------
-         ERTmapping_args = partial(Archie.SW_2_ERa, 
+         ERTmapping_args = partial(Archie.SW_2_ERa_DA, 
                                    self.project_name,
                                    self.Archie_parms,
                                    ERT_meta_dict['porosity'],
@@ -671,6 +671,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                    data_format= ERT_meta_dict['data_format'],
                                    DA_cnb = DA_cnb,
                                    savefig=True,
+                                   noise_level = ERT_meta_dict['noise_level'],# kwargs
                                    dict_ERT = key_time[1]['ERT']#  kwargs
                                    ) 
         
@@ -713,7 +714,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
             # freeze fixed arguments of Archie.SW_2_ERa       
             # -----------------------------------------------------------------
-            ERTmapping_args = partial(Archie.SW_2_ERa, 
+            ERTmapping_args = partial(Archie.SW_2_ERa_DA, 
                                       self.project_name,
                                       self.Archie_parms, 
                                       ERT_meta_dict['porosity'], 
@@ -724,7 +725,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                       data_format= ERT_meta_dict['data_format'],
                                       time_ass = t,
                                       savefig=True,
-                                      noiseLevel = ERT_meta_dict['noise_level'] ,
+                                      noise_level = ERT_meta_dict['noise_level'] ,
                                       dict_ERT = key_time[1]['ERT']
                                       ) 
             # 
@@ -826,28 +827,18 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 np.shape(prediction_OL_ERT)
             else:
                 for t in range(len(ENS_times)):
-                    print(str(t) + 't map OL')
+                # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
                     prediction_stacked = self.map_states2Observations(
                                                         list_assimilated_obs,
                                                         ENS_times=ENS_times,
                                                         savefig=False,
                                                         parallel=parallel,
                                                         ) 
-                    np.shape(prediction_stacked)
                     prediction_OL.append(prediction_stacked)
                     
-        # prediction_OL = np.hstack(prediction_OL)
-                # np.shape(prediction_OL)
-
-
-        # prediction_OL = np.reshape(prediction_OL,[
-        #                                           np.shape(prediction_OL)[1],
-        #                                           self.NENS,
-        #                                           len(ENS_times),
-        #                                           ]
-        #                           )
         else:    
             for t in range(len(ENS_times)):
+            # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
                 prediction_stacked = self.map_states2Observations(
                                                     list_assimilated_obs,
                                                     ENS_times=ENS_times,
@@ -873,7 +864,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                   ]
                                   )
         for t in range(len(ENS_times)):
-            print(str(t) + 't perf OL')
+            # print(str(t) + 't perf OL')
             data_t, _  = self._get_data2assimilate(
                                                     list_assimilated_obs,
                                                     time_ass=t,
@@ -1036,7 +1027,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         a_Archie=[1.0],
                         m_Archie=[2.0],
                         n_Archie=[2.0], 
-                        pert_sigma=[None]
+                        pert_sigma_Archie=[0]
                         ):
         '''
         Dict of Archie parameters. Each type of soil is describe within a list
@@ -1054,8 +1045,16 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             (usually in the range 1.3 -- 2.5 for sandstones)
         n : TYPE, optional
             Saturation exponent. The default is [2.0].
-        pert_signa : TYPE, optional
+        pert_sigma_Archie : TYPE, optional
             Gaussian noise to add. The default is None.
+        
+        ..note:
+            Field procedure to obtain tce he covariance structure of the model 
+            estimates is described in Tso et al () - 10.1029/2019WR024964
+            "Fit a straight line for log 10 (S) and log 10 (ρ S ) using the least-squares criterion. 
+            The fitting routine returns the covariance structure of the model estimates, which can be used to de-
+            termine the 68% confidence interval (1 standard deviation) of the model estimates.""
+
         '''
         if len(porosity)==0:
             porosity = self.soil_SPP['SPP'][:, 4][0]   
@@ -1067,7 +1066,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                              'a_Archie':a_Archie, 
                              'm_Archie':m_Archie, 
                              'n_Archie':n_Archie, 
-                             'pert_sigma':pert_sigma
+                             'pert_sigma_Archie':pert_sigma_Archie
                              }
         
         pass
@@ -1087,10 +1086,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                  'a_Archie':[1.0],
                                  'm_Archie':[2.0],
                                  'n_Archie':[2.0],
-                                 'pert_sigma':None
+                                 'pert_sigma_Archie':[0]
                                  }
         if hasattr(self,'VGN_parms') == False:
-            print('VGN parameters not defined set defaults')
+            print('VGN parameters not defined set defaults: empty dict {} - not implemented yet')
             self.VGN_parms = {}
             
         pass
@@ -1457,7 +1456,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # ---------------------------------------------------------------------
 
             if self.count_atmbc_cycle<len(all_atmbc_times)-1: # -1 cause all_atmbc_times include TMAX
-            
+                # len(all_atmbc_times)
                 self._update_input_ensemble(self.NENS, 
                                             all_atmbc_times, 
                                             self.dict_parm_pert,
@@ -2296,8 +2295,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             backup = kwargs['backup']
             
         if backup == True:
-           dst_dir = file2write + str(self.count_DA_cycle)
-           shutil.copy(file2write,dst_dir) 
+            if self.count_DA_cycle is not None:
+                dst_dir = file2write + str(self.count_DA_cycle)
+                shutil.copy(file2write,dst_dir) 
            
         self._write_parm_file(file2write)
 
@@ -2429,8 +2429,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             backup = kwargs['backup']
             
         if backup == True:
-           dst_dir = filename + str(self.count_DA_cycle-1)
-           shutil.copy(filename,dst_dir) 
+            if self.count_DA_cycle is not None:
+                dst_dir = filename + str(self.count_DA_cycle-1)
+                shutil.copy(filename,dst_dir) 
         
            
         with open(filename, "w+") as icfile:
@@ -2546,14 +2547,15 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 self.workdir, self.project_name, self.input_dirname, "atmbc")
 
 
-        backup = False
+        backup = True
         if 'backup' in kwargs:
             backup = kwargs['backup']
             
         if backup == True:
-           dst_dir = filename + str(self.count_DA_cycle-1)
-           shutil.copy(filename,dst_dir) 
-           
+            if self.count_DA_cycle is not None:
+                dst_dir = filename + str(self.count_DA_cycle-1)
+                shutil.copy(filename,dst_dir) 
+               
                    
         with open(filename, "w+") as atmbcfile:
             atmbcfile.write(str(HSPATM) + "\t" + str(IETO) +
@@ -2573,7 +2575,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     atmbcfile.write("{:.3e}".format(v) + "\t" + "VALUE" + "\n")
                     # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
                 else:
-                    print(t, v)
                     # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")  
                     np.savetxt(atmbcfile, v, fmt="%1.3e")
 
@@ -3609,8 +3610,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 self.workdir, self.project_name, self.input_dirname, "soil")
 
         if backup:
-           dst_dir = soil_filepath + str(self.count_DA_cycle)
-           shutil.copy(soil_filepath,dst_dir) 
+            if self.count_DA_cycle is not None:
+               dst_dir = soil_filepath + str(self.count_DA_cycle)
+               shutil.copy(soil_filepath,dst_dir) 
            
 
         with open(os.path.join(soil_filepath), "w+") as soilfile:
@@ -4775,8 +4777,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if self.count_atmbc_cycle is not None:
             try:
                 time_window_atmbc = [
-                                        ENS_times[self.count_atmbc_cycle], 
-                                        ENS_times[self.count_atmbc_cycle+1]
+                                        df_atmbc.iloc[self.count_atmbc_cycle]['time'], 
+                                        df_atmbc.iloc[self.count_atmbc_cycle+1]['time']
                                     ]
             except:
                 pass
@@ -4793,11 +4795,12 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             diff_time = time_window_atmbc[1] - time_window_atmbc[0]
             self.update_parm(TIMPRTi=[0,diff_time],TMAX=diff_time,
                               filename=os.path.join(os.getcwd(), 'input/parm'),
-                              backup=False)
+                              backup=True)
             self.console.print(":warning: [b]Making the assumption that atmbc are homogeneous![/b]")          
             VALUE = []
             for t in df_atmbc_window['time'].unique():
-                VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'].mean())
+                # VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'].mean())
+                VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'])
             if len(VALUE)>0:
                 self.update_atmbc(HSPATM=1,IETO=0,
                                   time=[0,diff_time], 
@@ -4805,6 +4808,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                   filename=os.path.join(os.getcwd(), 'input/atmbc'))
             else:
                 pass
+        
+        pass
 
 
     def update_ENS_files(self, parm_pert, update_parm_list, **kwargs):
@@ -4876,7 +4881,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         Archie_parms_mat_ens = [] # matrice of ensemble for Archie parameters
         VG_parms_mat_ens = [] # matrice of ensemble for VG parameters
         PERMX_het_ens = [] # matrice of ensemble for hydraulic conductivity parameters
-        Archie_p_names = ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie']
+        Archie_p_names = ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie','pert_sigma_Archie']
+        VG_p_possible_names = ['n_VG', 'thetar_VG', 'alpha_VG','VGPSATCELL_VG']
+        VG_p_possible_names_positions_in_soil_table = [5,6,7,7]
         
         for parm_i, key in enumerate(update_parm_list):  # loop over perturbated variables dict
             key_root = re.split('(\d+)', key)  
@@ -4925,7 +4932,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         
                     SPP.update(SPP_ensi[ens_nb])
                     
-                    print(PERMX_het_ens[:,ens_nb])
+                    # print(PERMX_het_ens[:,ens_nb])
                     if np.isnan(PERMX_het_ens[:,ens_nb]).any()==False:
                         self.update_soil(SPP=SPP,
                                           FP=self.soil_FP['FP_map'],
@@ -4934,13 +4941,20 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                           )  # specify filename path
                 # VG parameters update
                 # --------------------------------------------------------------
-                elif key_root[0] in ['thetar_VG','alpha_VG','n_VG']: 
+                elif key_root[0] in VG_p_possible_names: 
                     
                     # equivalence_CATHY = {
                     #                      'thetar_VG':'VGRMCCELL',
-                    #                      'alpha_VG':'VGPSATCELL',
+                    #                      'alpha_VG':'-1/VGPSATCELL',
                     #                      'n_VG':'VGNCELL',
                     #                      }
+                    
+                    # equivalence_CATHY
+                    # retention curves parameters VGN, VGRMC, and VGPSAT
+                    # - 'VGNCELL' (NSTR, NZONE): van Genuchten curve exponent  = n
+                    # - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
+                    # - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent --> 
+                    #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
 
                     SPP =  self.soil_SPP['SPP_map'] 
                     if len(VG_parms_mat_ens)==0:                       
@@ -4952,24 +4966,37 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                             # VG_parms_mat_ens = np.repeat(VG_parms_mat, self.NENS, axis=0)
                             print('Non homogeneous soil VG properties not implemented')
 
-                    idVG = ['n_VG', 'thetar_VG', 'alpha_VG'].index(key_root[0]) + 5
+                    
                     if len(SPP['PERMX'])<2:
-                        VG_parms_mat_ens[:,idVG] = parm_pert[key][update_key]
+                        # for k in parm_pert.keys():
+                        for k in VG_p_possible_names:
+                            match = [parm_incr for parm_incr in parm_pert.keys() if k in parm_incr]
+                            if len(match)>0:
+                                # print(match)
+                                # print(k)
+                                idVG = VG_p_possible_names_positions_in_soil_table[VG_p_possible_names.index(k)]
+                                # print(idVG)
+                                VG_parms_mat_ens[:,idVG] = parm_pert[match[0]][update_key]
+                            else:
+                                pass
                     else:
                         # VG_parms_mat_ens[:,:,idVG] = np.matlib.repmat(parm_pert[key][update_key],len(VG_parms_mat),1).T
                         print('Non homogeneous soil VG properties not implemented')
-
+                   
                     VG_parms_ensi = []
                     for es in range(self.NENS):
                         fed = dict()
                         for i, f in  enumerate(list(SPP.keys())):
                             if len(SPP['PERMX'])<2:
-                                fed[f] = [VG_parms_mat_ens[es,i]]
+                                if f == 'alpha_VG': # convert to CATHY VGPSATCELL == -1/alpha
+                                    fed[f] = -1/VG_parms_mat_ens[es,i]
+                                else:
+                                    fed[f] = [VG_parms_mat_ens[es,i]]
                             else:
                                 print('Non homogeneous soil VG properties not implemented')
                                 # fed[f] = list(VG_parms_mat_ens[es,:,i])
-                            VG_parms_ensi.append(fed)
-                        
+                        VG_parms_ensi.append(fed)
+                    
                     self.update_soil(SPP=VG_parms_ensi[ens_nb],
                                      FP=self.soil_FP['FP_map'],
                                      verbose=False,
@@ -4988,10 +5015,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     idFeddes = ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC'].index(key_root[0])
                     
                     
-                    if len(self.cathyH["MAXVEG"])<2: # Case where only 1 vegetation type
-                        FeddesParam_mat_ens[:,:,idFeddes] = parm_pert[key][update_key]                       
-                    else: # Case where only 1 vegetation type
-                        FeddesParam_mat_ens[:,int(key_root[1]),idFeddes] = parm_pert[key][update_key]
+                    # if self.cathyH["MAXVEG"]<2: # Case where only 1 vegetation type
+                    FeddesParam_mat_ens[:,int(key_root[1]),idFeddes] = parm_pert[key][update_key]
+                    # FeddesParam_mat_ens[:,:,idFeddes] = parm_pert[key][update_key]                       
+                    # else: # Case where only 1 vegetation type
 
                     
                     FeddesParam_ensi = []
@@ -5014,7 +5041,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                         for p in Archie_p_names:
                             if len(self.Archie_parms[p]) != self.NENS:
                                 self.Archie_parms[p]=list(self.Archie_parms[p]*np.ones(self.NENS))
-                        Archie_parms_mat_ens = np.zeros([4,self.NENS]) 
+                        Archie_parms_mat_ens = np.zeros([len(Archie_p_names),self.NENS]) 
                         Archie_parms_mat_ens[:] = np.nan
                     Archie_parms_mat_ens[idArchie,ens_nb] = parm_pert[key][update_key][ens_nb]    
                                         
@@ -5944,7 +5971,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if len(filename)==0:
             filename = os.path.join(self.workdir, self.project_name, self.project_name + '_df.pkl')
     
-        print(filename)
+        # print(filename)
         backup_list = []
         all_names = [
                      'meta_DA',

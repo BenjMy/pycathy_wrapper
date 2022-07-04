@@ -16,8 +16,17 @@ import pygimli.meshtools as mt
 
 # runParallel
 
-def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
+def create_ERT_survey_pg(pathERT,sequence,mesh,**kwargs):
 
+    
+    noise_level = 5
+    if 'noise_level' in kwargs:
+        noise_level = kwargs['noise_level']
+    
+    print('**'*10)
+    print(noise_level)
+    
+    
     # isExist = os.path.exists(pathERT)
     # if not isExist:
     #   # Create a new directory because it does not exist 
@@ -75,10 +84,8 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,noiseLevel=5, **kwargs):
     
     
 
-    noise_level = 5
-    if noiseLevel in kwargs:
-        noise_level = kwargs['noise_level']
-    
+
+        
     if len(res0) != len(mesh3d.cells()):
         raise ValueError('wrong initial resistivity input')
     

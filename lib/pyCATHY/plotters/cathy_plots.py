@@ -470,10 +470,13 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
     
     v_atmbc_n =[]
     if isinstance(v_atmbc, list):
-        v_atmbc_p = v_atmbc[1] # positif
-        v_atmbc_n = v_atmbc[0] # negatif
-        v_atmbc = v_atmbc[0] - v_atmbc[1]
-       
+        try:
+            np.shape(v_atmbc)[1]
+            v_atmbc_p = v_atmbc[1] # positif
+            v_atmbc_n = v_atmbc[0] # negatif
+            v_atmbc = v_atmbc[0] - v_atmbc[1]
+        except:
+             pass
 
     # if np.shape(t_atmbc) != np.shape(v_atmbc):
     if len(v_atmbc_n)>0:
@@ -960,7 +963,7 @@ def prepare_DA_plot_time_dynamic(DA,
         dates = change_x2date(atmbc_times,start_date)
         
         if len(dates)<len(list(DA['time'].unique())):
-            DA = DA.drop(DA[DA.time > len(list(DA['time'].unique()))].index)
+            DA = DA.drop(DA[DA.time+1 >= len(list(DA['time'].unique()))].index)
         if len(dates)>len(list(DA['time'].unique())):
             dates = dates[:len(list(DA['time'].unique()))]
         DA['time_date'] = DA['time'].replace(list(DA['time'].unique()),
@@ -981,6 +984,11 @@ def prepare_DA_plot_time_dynamic(DA,
     key2plot = 'psi_bef_update'
     if 'sw' in state:
         key2plot = 'sw_bef_update_'
+        
+    if 'key2plot' in kwargs:
+        key2plot = kwargs['key2plot']
+        
+        
     prep_DA = {
                 'isENS':isENS,
                 'isOL':isOL,

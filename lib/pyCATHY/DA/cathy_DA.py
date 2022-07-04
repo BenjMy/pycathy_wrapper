@@ -241,28 +241,29 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
            
             if 'rFluid' in type_parm:
                 parm_sampling = self.sampling_dist_trunc(myclip_a=0,
-                                                    myclip_b=np.inf,
-                                                    ensemble_size=ensemble_size,
-                                                    loc=mean,
-                                                    scale=sd)
+                                                         myclip_b=np.inf,
+                                                         ensemble_size=ensemble_size,
+                                                         loc=mean,
+                                                         scale=sd)
             elif 'a' in type_parm:
                 parm_sampling = self.sampling_dist_trunc(myclip_a=0,
-                                                    myclip_b=2.5,
-                                                    ensemble_size=ensemble_size,
-                                                    loc=mean,
-                                                    scale=sd)
+                                                         myclip_b=2.5,
+                                                         ensemble_size=ensemble_size,
+                                                         loc=mean,
+                                                         scale=sd
+                                                         )
             elif 'm' in type_parm:
-                parm_sampling = self.sampling_dist_trunc(myclip_a=1,
-                                                    myclip_b=2.5,
-                                                    ensemble_size=ensemble_size,
-                                                    loc=mean,
-                                                    scale=sd)
+                parm_sampling = self.sampling_dist_trunc(myclip_a=1.3,
+                                                         myclip_b=2.5,
+                                                         ensemble_size=ensemble_size,
+                                                         loc=mean,
+                                                         scale=sd)
             elif 'n' in type_parm:
                 parm_sampling = self.sampling_dist_trunc(myclip_a=2.5,
-                                                    myclip_b=3,
-                                                    ensemble_size=ensemble_size,
-                                                    loc=mean,
-                                                    scale=sd)
+                                                         myclip_b=3,
+                                                         ensemble_size=ensemble_size,
+                                                         loc=mean,
+                                                         scale=sd)
             else:
                 parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
                 
@@ -279,11 +280,12 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
         elif 'zroot'.casefold() in type_parm.casefold(): 
-            parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['myclip_a'],
-                                                myclip_b=var_per[type_parm]['myclip_b'],
-                                                ensemble_size=ensemble_size,
-                                                loc=mean,
-                                                scale=sd)
+            parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['clip_min'],
+                                                     myclip_b=var_per[type_parm]['clip_max'],
+                                                     ensemble_size=ensemble_size,
+                                                     loc=mean,
+                                                     scale=sd
+                                                     )
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
             
@@ -301,7 +303,16 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 
                 
             else:
-                parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
+                if 'clip_min' in var_per[type_parm].keys():
+                    parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['clip_min'],
+                                                             myclip_b=var_per[type_parm]['clip_max'],
+                                                             ensemble_size=ensemble_size,
+                                                             loc=mean,
+                                                             scale=sd
+                                                             )
+                else:
+                
+                    parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
                 parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)               
 
         elif 'atmbc' in type_parm: 

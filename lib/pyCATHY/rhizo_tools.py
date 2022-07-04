@@ -968,14 +968,14 @@ def update_rhizo_inputs_from_solution(simu_DA, nb_of_days,solution,**kwargs):
     # -------------------------------
     # ATMBC CONDITIONS
     # ******************
+    # simu_DA.update_atmbc(HSPATM=1,IETO=1,time=time_of_interest,
+    #                   VALUE=np.ones(len(time_of_interest))*solution['forcing'],
+    #                   show=True,x_units='hours') # just read new file and update parm and cathyH
+    
+    
     simu_DA.update_atmbc(HSPATM=1,IETO=1,time=time_of_interest,
-                      VALUE=np.ones(len(time_of_interest))*solution['forcing'],
+                      VALUE=list(solution['forcing']),
                       show=True,x_units='hours') # just read new file and update parm and cathyH
-    
-    
-    # simu_DA.update_atmbc(HSPATM=1,IETO=1,TIME=time_of_interest,
-    #                   VALUE=[np.zeros(len(time_of_interest)),np.ones(len(time_of_interest))*flux],
-    #                   show=True,x_units='hours',diff=True) # just read new file and update parm and cathyH
     
 
     """### 3- Boundary conditions"""
@@ -1039,12 +1039,18 @@ def update_rhizo_inputs_from_solution(simu_DA, nb_of_days,solution,**kwargs):
     if isinstance(solution['ZROOT'], float):
         solution['ZROOT'] = [solution['ZROOT']]
     
-    if len(solution['ZROOT'])>1:
-        veg_map[:,[0,9]]=1
-        veg_map[:,[1,8]]=2
-        veg_map[:,[2,7]]=3
-        veg_map[:,[3,6]]=4
-        veg_map[:,[4,5]]=5
+    # solution['veg_map']
+    # if hasattr(solution,'veg_map'):
+    try:
+        veg_map = solution['veg_map'] 
+    except:
+        pass
+    # if len(solution['ZROOT'])>1:
+    #     veg_map[:,[0,9]]=1
+    #     veg_map[:,[1,8]]=2
+    #     veg_map[:,[2,7]]=3
+    #     veg_map[:,[3,6]]=4
+    #     veg_map[:,[4,5]]=5
         
         
     simu_DA.update_veg_map(indice_veg=veg_map, show=True)
