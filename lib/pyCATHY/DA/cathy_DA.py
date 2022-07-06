@@ -344,8 +344,17 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             
         else:
             # other types of parameters 
-            #----------------------------------------------------------------------          
-            parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
+            #---------------------------------------------------------------------- 
+            if 'clip_min' in var_per[type_parm].keys():
+                parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['clip_min'],
+                                                         myclip_b=var_per[type_parm]['clip_max'],
+                                                         ensemble_size=ensemble_size,
+                                                         loc=mean,
+                                                         scale=sd
+                                                         )
+            else:
+                parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
+            # parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
 

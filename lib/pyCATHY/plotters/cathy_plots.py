@@ -14,6 +14,9 @@ import os
 import pyvista as pv
 pv.set_plot_theme('document')
 
+import datetime
+
+
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import LogNorm
@@ -961,13 +964,21 @@ def prepare_DA_plot_time_dynamic(DA,
     
     if start_date is not None:
         dates = change_x2date(atmbc_times,start_date)
+
         
         if len(dates)<len(list(DA['time'].unique())):
             DA = DA.drop(DA[DA.time+1 >= len(list(DA['time'].unique()))].index)
         if len(dates)>len(list(DA['time'].unique())):
+            # check if contains difference in time otherwise add articifially 1s to keep 
+            # the formatting. (Else plot crashes)
+            if all(dates[:len(list(DA['time'].unique()))].hour == 0):
+                time_delta_change = datetime.timedelta(seconds=1)
+                dates.values[0] = dates[0] + time_delta_change
             dates = dates[:len(list(DA['time'].unique()))]
         DA['time_date'] = DA['time'].replace(list(DA['time'].unique()),
                                         dates)
+        # DA['time_date'].dt.strftime('%Y-%m-%d %H:%M:%S')
+
         
     isOL = DA.loc[DA['OL']==True]
     isENS = DA.loc[DA['OL']==False]
@@ -998,40 +1009,54 @@ def prepare_DA_plot_time_dynamic(DA,
     if len(nodes_of_interest)>0:
     
         if len(isOL)>0:
-            isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time']+1)*NENS))),
-                                             int(max(isOL['time']+1)*NENS)), True)
-            select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
-            select_isOL = select_isOL.set_index([keytime,'idnode'])
-            select_isOL = select_isOL.reset_index()
-            
-            # mean, min and max of Open Loop
-            # --------------------------------------------------------------------------
-            ens_mean_isOL_time = (select_isOL.set_index([keytime,'Ensemble_nb','idnode'])
-                                    .groupby(level=[keytime,'idnode'])[key2plot]
-                                    .mean()
-                                    )
-            ens_mean_isOL_time = ens_mean_isOL_time.reset_index(name='mean(ENS)_OL')
-            
-            ens_min_isOL_time = (select_isOL.set_index([keytime,'Ensemble_nb','idnode'])
-                                    .groupby(level=[keytime,'idnode'])[key2plot]
-                                    .min()
-                                    )
-            ens_min_isOL_time = ens_min_isOL_time.reset_index(name='min(ENS)_OL')
-            
-            
-            ens_max_isOL_time = (select_isOL.set_index([keytime,'Ensemble_nb','idnode'])
-                                    .groupby(level=[keytime,'idnode'])[key2plot]
-                                    .max()
-                                    )
-            ens_max_isOL_time = ens_max_isOL_time.reset_index(name='max(ENS)_OL')
 
-            prep_DA.update(
-                        {
-                        'ens_mean_isOL_time':ens_mean_isOL_time,
-                        'ens_max_isOL_time':ens_max_isOL_time,
-                        'ens_min_isOL_time':ens_min_isOL_time,
-                        }
-                        )
+            nb_of_nodes = len(np.arange(int(len(isOL)/((max(isOL['time'])-1)*NENS))))
+            test = len(isOL)/nb_of_nodes
+            
+            if type(test) is not int:
+                print('inconsistent nb of OL data')
+                pass
+            else:
+                
+                isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time']+1)*NENS))),
+                                                  int(max(isOL['time']+1)*NENS)), True)
+                # len(isOL)/test
+                # len(isOL)/((len(isOL['time'].unique())1)*NENS)
+                # isOL.insert(2, "idnode", np.tile(np.arange(nb_of_nodes),
+                #                                   int((max(isOL['time'])-1)*NENS)), True)
+                select_isOL =isOL[isOL["idnode"].isin(nodes_of_interest)]
+                select_isOL = select_isOL.set_index([keytime,'idnode'])
+                select_isOL = select_isOL.reset_index()
+                
+                # mean, min and max of Open Loop
+                # --------------------------------------------------------------------------
+                ens_mean_isOL_time = (select_isOL.set_index([keytime,'Ensemble_nb','idnode'])
+                                        .groupby(level=[keytime,'idnode'])[key2plot]
+                                        .mean()
+                                        )
+                ens_mean_isOL_time = ens_mean_isOL_time.reset_index(name='mean(ENS)_OL')
+                
+                ens_min_isOL_time = (select_isOL.set_index([keytime,'Ensemble_nb','idnode'])
+                                        .groupby(level=[keytime,'idnode'])[key2plot]
+                                        .min()
+                                        )
+                ens_min_isOL_time = ens_min_isOL_time.reset_index(name='min(ENS)_OL')
+                
+                
+                ens_max_isOL_time = (select_isOL.set_index([keytime,'Ensemble_nb','idnode'])
+                                        .groupby(level=[keytime,'idnode'])[key2plot]
+                                        .max()
+                                        )
+                ens_max_isOL_time = ens_max_isOL_time.reset_index(name='max(ENS)_OL')
+    
+                prep_DA.update(
+                            {
+                            'ens_mean_isOL_time':ens_mean_isOL_time,
+                            'ens_max_isOL_time':ens_max_isOL_time,
+                            'ens_min_isOL_time':ens_min_isOL_time,
+                            }
+                            )
+                # ens_mean_isOL_time['time_date']
         
         if len(isENS)>0:
 
@@ -1148,12 +1173,11 @@ def DA_plot_time_dynamic(DA,
                                                         ylabel='pressure head $\psi$ (m)')
                                                     
         lgd= ax.fill_between(prep_DA['ens_max_isENS_time'][keytime], 
-                        prep_DA['ens_min_isENS_time']['min(ENS)'], 
-                        prep_DA['ens_max_isENS_time']['max(ENS)'], 
-                        alpha=0.2,
-                        color='blue',
-                        label='minmax DA')
-
+                             prep_DA['ens_min_isENS_time']['min(ENS)'], 
+                             prep_DA['ens_max_isENS_time']['max(ENS)'], 
+                             alpha=0.2,
+                             color='blue',
+                             label='minmax DA')
         # lgd= ax.fill_between(prep_DA['ens_max_isENS_time'][keytime], 
         #                 prep_DA['ens_min_isENS_time'][[keytime,'min(ENS)']], 
         #                 prep_DA['ens_max_isENS_time'][[keytime,'max(ENS)']], 
@@ -1162,7 +1186,8 @@ def DA_plot_time_dynamic(DA,
         #                 label='minmax DA')
         
                                                 
-    if len(prep_DA['isOL'])>0:
+    # if len(prep_DA['isOL'])>0:
+    if 'ens_mean_isOL_time' in prep_DA.keys()>0:
         prep_DA['ens_mean_isOL_time'].pivot(index=keytime, 
                           # columns=["Ensemble_nb",'idnode'], 
                           columns=['idnode'], 
