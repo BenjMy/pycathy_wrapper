@@ -22,4 +22,5 @@ dependencies:
   - numpydoc
   - PVGeo
   - soiltexture
+  - SALib
 

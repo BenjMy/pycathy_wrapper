@@ -1840,10 +1840,17 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         self.hapin = {}
 
         for i in range(len(tmp_param_value)):
+            if re.search("/t", tmp_param_value[i]) is None:
+                if tmp_param_value[i].isdigit():
+                    tmp_param_value[i] = int(tmp_param_value[i])
+                else:
+                    tmp_param_value[i] = float(tmp_param_value[i])
+            else:
+                list_tmp = tmp_param_value[i].split('/t')
+                tmp_param_value[i] = [float(x) for x in list_tmp]
+        
             self.hapin[hapin[i]] = tmp_param_value[i]
 
-        # print('--'*30)
-        # print(self.hapin)
 
         if self.hapin["dr"] != self.hapin["delta_x"]:
             print("adapt rivulet param to dem resolution")
@@ -1869,8 +1876,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     
                         if key == hapin[tmp_lnb[count]]:
                             if value != tmp_param_value[count]:
-                                print(key)
-                                print(value)
+                                # print(key)
+                                # print(value)
                                 if isinstance(value, list):
                                     value_str = "/t".join(value)
                                     xnew[1] = value_str
@@ -3339,7 +3346,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # write soil file
         # --------------------------------------------------------------------
-        self._write_SOIL_file(SoilPhysProp, FeddesParam)
+        self._write_SOIL_file(SoilPhysProp, FeddesParam, **kwargs)
         
         # if show:
         #     plt.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
@@ -3597,6 +3604,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if 'backup' in kwargs:
             backup = kwargs['backup']
             
+
+            
         # number of side header for each row
         header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
 
@@ -3608,6 +3617,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         else:
             soil_filepath = os.path.join(
                 self.workdir, self.project_name, self.input_dirname, "soil")
+            
+        if 'path' in kwargs:
+            soil_filepath =  os.path.join(kwargs['path'], "soil")
 
         if backup:
             if self.count_DA_cycle is not None:

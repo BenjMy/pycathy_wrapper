@@ -943,7 +943,7 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
     if 'log' in kwargs:
         if kwargs['log']:
             plt.yscale('log')
-    return ax
+    return plt, ax
     
     
 
