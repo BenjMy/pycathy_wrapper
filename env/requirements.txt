@@ -16,3 +16,4 @@ jupyter-sphinx==0.3.*
 matplotlib
 pyvista
 vtk
+myst_nb
