@@ -1,0 +1,1146 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    
+        <title>pyCATHY.plotters.cathy_plots.LogNorm | pyCATHY v0.0.1</title>
+    
+
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="shortcut icon" href="../../../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="pyCATHY.plotters.cathy_plots.COCumflowvol" href="pyCATHY.plotters.cathy_plots.COCumflowvol.html" />
+    <link rel="prev" title="pyCATHY.plotters.cathy_plots" href="pyCATHY.plotters.cathy_plots.html" />
+    <!-- Plausible analytics for anonymous usage statistics -->
+    <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.0.1</span></h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../overview.html">
+   Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../citing.html">
+   Citing pyCATHY
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Gallery of examples
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../gallery/index.html">
+   Data Assimilation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../api.html">
+   API reference: The
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     pyCATHY
+    </span>
+   </code>
+   package
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.cathy_tools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_tools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.CATHY.html">
+       pyCATHY.cathy_tools.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.HiddenPrints.html">
+       pyCATHY.cathy_tools.HiddenPrints
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.OrderedDict.html">
+       pyCATHY.cathy_tools.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.Repo.html">
+       pyCATHY.cathy_tools.Repo
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.partial.html">
+       pyCATHY.cathy_tools.partial
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.contextmanager.html">
+       pyCATHY.cathy_tools.contextmanager
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.isfile.html">
+       pyCATHY.cathy_tools.isfile
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.join.html">
+       pyCATHY.cathy_tools.join
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.listdir.html">
+       pyCATHY.cathy_tools.listdir
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.make_console.html">
+       pyCATHY.cathy_tools.make_console
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.print.html">
+       pyCATHY.cathy_tools.print
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.subprocess_run_multi.html">
+       pyCATHY.cathy_tools.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.suppress_stdout.html">
+       pyCATHY.cathy_tools.suppress_stdout
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_tools.track.html">
+       pyCATHY.cathy_tools.track
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.meshtools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.meshtools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.cathy_utils.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_utils
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.SoilData.html">
+       pyCATHY.cathy_utils.SoilData
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.datetime.html">
+       pyCATHY.cathy_utils.datetime
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.timedelta.html">
+       pyCATHY.cathy_utils.timedelta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.rosetta.html">
+       pyCATHY.cathy_utils.rosetta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.importers.cathy_outputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.importers.cathy_outputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_cumflowvol.html">
+       pyCATHY.importers.cathy_outputs.read_cumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_dtcoupling.html">
+       pyCATHY.importers.cathy_outputs.read_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_hgraph.html">
+       pyCATHY.importers.cathy_outputs.read_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_hgsfdet.html">
+       pyCATHY.importers.cathy_outputs.read_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_mbeconv.html">
+       pyCATHY.importers.cathy_outputs.read_mbeconv
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_psi.html">
+       pyCATHY.importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_sw.html">
+       pyCATHY.importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_outputs.read_vp.html">
+       pyCATHY.importers.cathy_outputs.read_vp
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.importers.cathy_inputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.importers.cathy_inputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_inputs.read_atmbc.html">
+       pyCATHY.importers.cathy_inputs.read_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.importers.cathy_inputs.read_grid3d.html">
+       pyCATHY.importers.cathy_inputs.read_grid3d
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="pyCATHY.plotters.cathy_plots.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.plotters.cathy_plots
+      </span>
+     </code>
+    </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="current">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
+       pyCATHY.plotters.cathy_plots.LogNorm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.COCumflowvol.html">
+       pyCATHY.plotters.cathy_plots.COCumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.DA_RMS.html">
+       pyCATHY.plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.DA_plot_Archie.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.change_x2date.html">
+       pyCATHY.plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.convert_time_units.html">
+       pyCATHY.plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.dem_plot.html">
+       pyCATHY.plotters.cathy_plots.dem_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.dem_plot_2d_top.html">
+       pyCATHY.plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.indice_veg_plot.html">
+       pyCATHY.plotters.cathy_plots.indice_veg_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.label_units.html">
+       pyCATHY.plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.plot_VGP.html">
+       pyCATHY.plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.plot_mesh_bounds.html">
+       pyCATHY.plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_DA_process_ens.html">
+       pyCATHY.plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_atmbc.html">
+       pyCATHY.plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_atmbc_3d.html">
+       pyCATHY.plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_hgraph.html">
+       pyCATHY.plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_hgraph_2.html">
+       pyCATHY.plotters.cathy_plots.show_hgraph_2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_hgsfdet.html">
+       pyCATHY.plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED.html">
+       pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_vtk.html">
+       pyCATHY.plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.show_vtk_TL.html">
+       pyCATHY.plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.plotters.cathy_plots.transform2_time_delta.html">
+       pyCATHY.plotters.cathy_plots.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.sensitivity.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.sensitivity
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+    <label for="toctree-checkbox-9">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.analysis_Morris.html">
+       pyCATHY.sensitivity.analysis_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.define_Morris.html">
+       pyCATHY.sensitivity.define_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.df_Morris.html">
+       pyCATHY.sensitivity.df_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.err_weighted_rmse.html">
+       pyCATHY.sensitivity.err_weighted_rmse
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.plot_Morris.html">
+       pyCATHY.sensitivity.plot_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.print_Morris_out.html">
+       pyCATHY.sensitivity.print_Morris_out
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.run_sensitivity_analysis.html">
+       pyCATHY.sensitivity.run_sensitivity_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.sensitivity.samples_generation.html">
+       pyCATHY.sensitivity.samples_generation
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.DA.cathy_DA.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.DA.cathy_DA
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.DA.cathy_DA.CATHY.html">
+       pyCATHY.DA.cathy_DA.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.DA.cathy_DA.DA.html">
+       pyCATHY.DA.cathy_DA.DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.DA.cathy_DA.run_analysis.html">
+       pyCATHY.DA.cathy_DA.run_analysis
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.ERT.petro_Archie.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.ERT.petro_Archie
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <label for="toctree-checkbox-11">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.petro_Archie.Archie_rho_DA.html">
+       pyCATHY.ERT.petro_Archie.Archie_rho_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.petro_Archie.CATHY_2_Resipy.html">
+       pyCATHY.ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.petro_Archie.CATHY_2_pg.html">
+       pyCATHY.ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.petro_Archie.SW_2_ERa_DA.html">
+       pyCATHY.ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.petro_Archie.get_Archie_ens_i.html">
+       pyCATHY.ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.petro_Archie.get_sw_ens_i.html">
+       pyCATHY.ERT.petro_Archie.get_sw_ens_i
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.ERT.simulate_ERT
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+    <label for="toctree-checkbox-12">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.R2.html">
+       pyCATHY.ERT.simulate_ERT.R2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.Archie_ERT.html">
+       pyCATHY.ERT.simulate_ERT.Archie_ERT
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.create_ERT_survey.html">
+       pyCATHY.ERT.simulate_ERT.create_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg.html">
+       pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.fwd_ERT_survey.html">
+       pyCATHY.ERT.simulate_ERT.fwd_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.ERT.simulate_ERT.invert_ERT_survey.html">
+       pyCATHY.ERT.simulate_ERT.invert_ERT_survey
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../change_log.html">
+   Change log
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../references.html">
+   References
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting help and contributed
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../contribute.html">
+   Contribute and support
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/BenjMy/pycathy_wrapper"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fcontent/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/BenjMy/pycathy_wrapper/edit/master/doc/content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.rst"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../../_sources/content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>pyCATHY.plotters.cathy_plots.LogNorm</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="pycathy-plotters-cathy-plots-lognorm">
+<h1>pyCATHY.plotters.cathy_plots.LogNorm<a class="headerlink" href="#pycathy-plotters-cathy-plots-lognorm" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyCATHY.plotters.cathy_plots.LogNorm">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyCATHY.plotters.cathy_plots.</span></span><span class="sig-name descname"><span class="pre">LogNorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/matplotlib/colors.html#LogNorm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyCATHY.plotters.cathy_plots.LogNorm" title="Permalink to this definition">#</a></dt>
+<dd><p>Normalize a given value to the 0-1 range on a log scale.</p>
+</dd></dl>
+
+<p class="rubric">Methods Summary</p>
+<table class="longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.__call__</span></code>(value[, clip])</p></td>
+<td><p>Normalize <em>value</em> data in the <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code> interval into the <code class="docutils literal notranslate"><span class="pre">[0.0,</span> <span class="pre">1.0]</span></code> interval and return it.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyCATHY.plotters.cathy_plots.LogNorm.autoscale" title="pyCATHY.plotters.cathy_plots.LogNorm.autoscale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.autoscale</span></code></a>(A)</p></td>
+<td><p>Set <em>vmin</em>, <em>vmax</em> to min, max of <em>A</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyCATHY.plotters.cathy_plots.LogNorm.autoscale_None" title="pyCATHY.plotters.cathy_plots.LogNorm.autoscale_None"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.autoscale_None</span></code></a>(A)</p></td>
+<td><p>If vmin or vmax are not set, use the min/max of <em>A</em> to set them.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyCATHY.plotters.cathy_plots.LogNorm.inverse" title="pyCATHY.plotters.cathy_plots.LogNorm.inverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.inverse</span></code></a>(value)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyCATHY.plotters.cathy_plots.LogNorm.process_value" title="pyCATHY.plotters.cathy_plots.LogNorm.process_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.process_value</span></code></a>(value)</p></td>
+<td><p>Homogenize the input <em>value</em> for easy and efficient normalization.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyCATHY.plotters.cathy_plots.LogNorm.scaled" title="pyCATHY.plotters.cathy_plots.LogNorm.scaled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.scaled</span></code></a>()</p></td>
+<td><p>Return whether vmin and vmax are set.</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="py method">
+<dt class="sig sig-object py" id="pyCATHY.plotters.cathy_plots.LogNorm.autoscale">
+<span class="sig-prename descclassname"><span class="pre">LogNorm.</span></span><span class="sig-name descname"><span class="pre">autoscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/matplotlib/colors.html#LogNorm.autoscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyCATHY.plotters.cathy_plots.LogNorm.autoscale" title="Permalink to this definition">#</a></dt>
+<dd><p>Set <em>vmin</em>, <em>vmax</em> to min, max of <em>A</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyCATHY.plotters.cathy_plots.LogNorm.autoscale_None">
+<span class="sig-prename descclassname"><span class="pre">LogNorm.</span></span><span class="sig-name descname"><span class="pre">autoscale_None</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/matplotlib/colors.html#LogNorm.autoscale_None"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyCATHY.plotters.cathy_plots.LogNorm.autoscale_None" title="Permalink to this definition">#</a></dt>
+<dd><p>If vmin or vmax are not set, use the min/max of <em>A</em> to set them.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyCATHY.plotters.cathy_plots.LogNorm.inverse">
+<span class="sig-prename descclassname"><span class="pre">LogNorm.</span></span><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyCATHY.plotters.cathy_plots.LogNorm.inverse" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyCATHY.plotters.cathy_plots.LogNorm.process_value">
+<em class="property"><span class="pre">static</span> </em><span class="sig-prename descclassname"><span class="pre">LogNorm.</span></span><span class="sig-name descname"><span class="pre">process_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyCATHY.plotters.cathy_plots.LogNorm.process_value" title="Permalink to this definition">#</a></dt>
+<dd><p>Homogenize the input <em>value</em> for easy and efficient normalization.</p>
+<p><em>value</em> can be a scalar or sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>result</strong> (<em>masked array</em>) – Masked array with the same shape as <em>value</em>.</p></li>
+<li><p><strong>is_scalar</strong> (<em>bool</em>) – Whether <em>value</em> is a scalar.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Float dtypes are preserved; integer types with two bytes or smaller are
+converted to np.float32, and larger types are converted to np.float64.
+Preserving float32 when possible, and using in-place operations,
+greatly improves speed for large arrays.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyCATHY.plotters.cathy_plots.LogNorm.scaled">
+<span class="sig-prename descclassname"><span class="pre">LogNorm.</span></span><span class="sig-name descname"><span class="pre">scaled</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyCATHY.plotters.cathy_plots.LogNorm.scaled" title="Permalink to this definition">#</a></dt>
+<dd><p>Return whether vmin and vmax are set.</p>
+</dd></dl>
+
+<div style='clear:both'></div></section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="pyCATHY.plotters.cathy_plots.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><code class="docutils literal notranslate"><span class="pre">pyCATHY.plotters.cathy_plots</span></code></p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="pyCATHY.plotters.cathy_plots.COCumflowvol.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pyCATHY.plotters.cathy_plots.COCumflowvol</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By B. Mary<br/>
+  
+      &copy; Copyright 2022, B. Mary.<br/>
+    Last updated on Jul 22, 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

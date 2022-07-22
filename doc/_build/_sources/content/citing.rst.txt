@@ -1,0 +1,7 @@
+.. _citing:
+
+Citing pyCATHY
+===============
+
+If you use the pyCATHY code for you work, please cite this paper as:
+

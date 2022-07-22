@@ -1,0 +1,3 @@
+# Build sphinx doc
+
+sphinx-build doc doc/_build

@@ -1,3 +1,5 @@
-Below is a gallery of examples
+.. _gallery:
 
-    
+This gallery contains a selection examples of what pyCATHY can do.
+
+
