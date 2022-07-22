@@ -1,0 +1,1440 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+        <title>pyCATHY.DA.cathy_DA | pyCATHY v0.0.1 documentation</title>
+    
+
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <!-- Plausible analytics for anonymous usage statistics -->
+    <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY v0.0.1 documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../content/installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../content/citing.html">
+   Citing pyCATHY
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Gallery of examples
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../gallery/index.html">
+   Surface subsurface hydrological model
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/SSHydro/errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../content/api_core/api.html">
+   API reference: The
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     pyCATHY
+    </span>
+   </code>
+   package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_tools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html">
+       pyCATHY.cathy_tools.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.HiddenPrints.html">
+       pyCATHY.cathy_tools.HiddenPrints
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html">
+       pyCATHY.cathy_tools.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.Repo.html">
+       pyCATHY.cathy_tools.Repo
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.partial.html">
+       pyCATHY.cathy_tools.partial
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.contextmanager.html">
+       pyCATHY.cathy_tools.contextmanager
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.isfile.html">
+       pyCATHY.cathy_tools.isfile
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.join.html">
+       pyCATHY.cathy_tools.join
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.listdir.html">
+       pyCATHY.cathy_tools.listdir
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.make_console.html">
+       pyCATHY.cathy_tools.make_console
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.print.html">
+       pyCATHY.cathy_tools.print
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.subprocess_run_multi.html">
+       pyCATHY.cathy_tools.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.suppress_stdout.html">
+       pyCATHY.cathy_tools.suppress_stdout
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_tools.track.html">
+       pyCATHY.cathy_tools.track
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.meshtools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_utils
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.SoilData.html">
+       pyCATHY.cathy_utils.SoilData
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.datetime.html">
+       pyCATHY.cathy_utils.datetime
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.timedelta.html">
+       pyCATHY.cathy_utils.timedelta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.rosetta.html">
+       pyCATHY.cathy_utils.rosetta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.importers.cathy_outputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_cumflowvol.html">
+       pyCATHY.importers.cathy_outputs.read_cumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_dtcoupling.html">
+       pyCATHY.importers.cathy_outputs.read_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgraph.html">
+       pyCATHY.importers.cathy_outputs.read_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgsfdet.html">
+       pyCATHY.importers.cathy_outputs.read_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_mbeconv.html">
+       pyCATHY.importers.cathy_outputs.read_mbeconv
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_psi.html">
+       pyCATHY.importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_sw.html">
+       pyCATHY.importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_vp.html">
+       pyCATHY.importers.cathy_outputs.read_vp
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_inputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.importers.cathy_inputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_inputs.read_atmbc.html">
+       pyCATHY.importers.cathy_inputs.read_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.importers.cathy_inputs.read_grid3d.html">
+       pyCATHY.importers.cathy_inputs.read_grid3d
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.plotters.cathy_plots
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html">
+       pyCATHY.plotters.cathy_plots.LogNorm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.COCumflowvol.html">
+       pyCATHY.plotters.cathy_plots.COCumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_RMS.html">
+       pyCATHY.plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_Archie.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic.html">
+       pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.change_x2date.html">
+       pyCATHY.plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.convert_time_units.html">
+       pyCATHY.plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot.html">
+       pyCATHY.plotters.cathy_plots.dem_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot_2d_top.html">
+       pyCATHY.plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.indice_veg_plot.html">
+       pyCATHY.plotters.cathy_plots.indice_veg_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.label_units.html">
+       pyCATHY.plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_VGP.html">
+       pyCATHY.plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_mesh_bounds.html">
+       pyCATHY.plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_DA_process_ens.html">
+       pyCATHY.plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc.html">
+       pyCATHY.plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc_3d.html">
+       pyCATHY.plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph.html">
+       pyCATHY.plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph_2.html">
+       pyCATHY.plotters.cathy_plots.show_hgraph_2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgsfdet.html">
+       pyCATHY.plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED.html">
+       pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk.html">
+       pyCATHY.plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk_TL.html">
+       pyCATHY.plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.plotters.cathy_plots.transform2_time_delta.html">
+       pyCATHY.plotters.cathy_plots.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.sensitivity
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+    <label for="toctree-checkbox-9">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.analysis_Morris.html">
+       pyCATHY.sensitivity.analysis_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.define_Morris.html">
+       pyCATHY.sensitivity.define_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.df_Morris.html">
+       pyCATHY.sensitivity.df_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.err_weighted_rmse.html">
+       pyCATHY.sensitivity.err_weighted_rmse
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.plot_Morris.html">
+       pyCATHY.sensitivity.plot_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.print_Morris_out.html">
+       pyCATHY.sensitivity.print_Morris_out
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.run_sensitivity_analysis.html">
+       pyCATHY.sensitivity.run_sensitivity_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.sensitivity.samples_generation.html">
+       pyCATHY.sensitivity.samples_generation
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.DA.cathy_DA
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html">
+       pyCATHY.DA.cathy_DA.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html">
+       pyCATHY.DA.cathy_DA.DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.run_analysis.html">
+       pyCATHY.DA.cathy_DA.run_analysis
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.ERT.petro_Archie
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <label for="toctree-checkbox-11">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.Archie_rho_DA.html">
+       pyCATHY.ERT.petro_Archie.Archie_rho_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_Resipy.html">
+       pyCATHY.ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_pg.html">
+       pyCATHY.ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.SW_2_ERa_DA.html">
+       pyCATHY.ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.get_Archie_ens_i.html">
+       pyCATHY.ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.petro_Archie.get_sw_ens_i.html">
+       pyCATHY.ERT.petro_Archie.get_sw_ens_i
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.ERT.simulate_ERT
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+    <label for="toctree-checkbox-12">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html">
+       pyCATHY.ERT.simulate_ERT.R2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.Archie_ERT.html">
+       pyCATHY.ERT.simulate_ERT.Archie_ERT
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey.html">
+       pyCATHY.ERT.simulate_ERT.create_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg.html">
+       pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.fwd_ERT_survey.html">
+       pyCATHY.ERT.simulate_ERT.fwd_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.invert_ERT_survey.html">
+       pyCATHY.ERT.simulate_ERT.invert_ERT_survey
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../content/change_log.html">
+   Change log
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../content/references.html">
+   References
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting help and contributed
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../content/contribute.html">
+   Contribute and support
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/BenjMy/pycathy_wrapper"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/pyCATHY/DA/cathy_DA.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for pyCATHY.DA.cathy_DA</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Class managing Data Assimilation process</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="c1"># from matplotlib import pyplot</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="c1"># import matplotlib.pyplot as plt </span>
+<span class="kn">from</span> <span class="nn">pyCATHY.cathy_tools</span> <span class="kn">import</span> <span class="n">CATHY</span>
+<span class="kn">from</span> <span class="nn">pyCATHY.DA</span> <span class="kn">import</span> <span class="n">enkf</span><span class="p">,</span> <span class="n">pf</span>
+<span class="kn">from</span> <span class="nn">pyCATHY.plotters</span> <span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">pltCT</span>
+<span class="kn">import</span> <span class="nn">pyCATHY.cathy_utils</span> <span class="k">as</span> <span class="nn">utils</span>
+
+
+<div class="viewcode-block" id="run_analysis"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.run_analysis.html#pyCATHY.DA.cathy_DA.run_analysis">[docs]</a><span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span><span class="n">DA_type</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">,</span><span class="n">data_cov</span><span class="p">,</span>
+                 <span class="n">param</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span>
+                 <span class="n">ensembleX</span><span class="p">,</span><span class="n">prediction</span><span class="p">,</span> 
+                 <span class="n">default_state</span><span class="o">=</span><span class="s1">&#39;psi&#39;</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                 <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Perform the DA analysis step </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    DA_type : str</span>
+<span class="sd">        type of analysis i.e ENKF or Particul filters.</span>
+<span class="sd">    data : np.array([])</span>
+<span class="sd">        measured data.</span>
+<span class="sd">    data_cov : np.array([]) or int</span>
+<span class="sd">        measured data covariance matrice.</span>
+<span class="sd">    param : np.array([])</span>
+<span class="sd">        model parameters to update.</span>
+<span class="sd">    ensemble_state : np.array([])</span>
+<span class="sd">        [pressure head, saturation water] at each nodes.</span>
+<span class="sd">    prediction : np.array([])</span>
+<span class="sd">        predicted observation (after mapping).</span>
+<span class="sd">    rejected_ens : list</span>
+<span class="sd">        list of ensemble to reject</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">id_state</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">default_state</span> <span class="o">==</span> <span class="s1">&#39;sw&#39;</span><span class="p">:</span>
+        <span class="n">id_state</span> <span class="o">=</span> <span class="mi">1</span>
+        
+    
+    <span class="k">if</span> <span class="n">DA_type</span><span class="o">==</span><span class="s1">&#39;enkf_Evensen2009_Sakov&#39;</span><span class="p">:</span>
+        
+        <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Amean</span><span class="p">,</span> <span class="n">dA</span><span class="p">,</span> 
+         <span class="n">dD</span><span class="p">,</span> <span class="n">MeasAvg</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> 
+         <span class="n">COV</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">dAS</span><span class="p">,</span> 
+         <span class="n">analysis</span><span class="p">,</span> 
+         <span class="n">analysis_param</span><span class="p">]</span> <span class="o">=</span> <span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> 
+                                              <span class="n">data_cov</span><span class="p">,</span> 
+                                              <span class="n">param</span><span class="p">,</span> 
+                                              <span class="n">ensembleX</span><span class="p">[</span><span class="n">id_state</span><span class="p">],</span> 
+                                              <span class="n">prediction</span>
+                                              <span class="p">)</span>
+                                              
+        <span class="k">return</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Amean</span><span class="p">,</span> <span class="n">dA</span><span class="p">,</span> 
+         <span class="n">dD</span><span class="p">,</span> <span class="n">MeasAvg</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> 
+         <span class="n">COV</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">dAS</span><span class="p">,</span> 
+         <span class="n">analysis</span><span class="p">,</span> 
+         <span class="n">analysis_param</span><span class="p">]</span> 
+    
+    
+    <span class="k">if</span> <span class="n">DA_type</span><span class="o">==</span><span class="s1">&#39;enkf_analysis_inflation&#39;</span><span class="p">:</span>
+
+        <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Amean</span><span class="p">,</span> <span class="n">dA</span><span class="p">,</span> 
+         <span class="n">dD</span><span class="p">,</span> <span class="n">MeasAvg</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> 
+         <span class="n">COV</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">dAS</span><span class="p">,</span> 
+         <span class="n">analysis</span><span class="p">,</span> 
+         <span class="n">analysis_param</span><span class="p">]</span> <span class="o">=</span> <span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis_inflation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                                                        <span class="n">data_cov</span><span class="p">,</span>
+                                                        <span class="n">param</span><span class="p">,</span>
+                                                        <span class="n">ensembleX</span><span class="p">[</span><span class="n">id_state</span><span class="p">],</span>
+                                                        <span class="n">prediction</span><span class="p">,</span>
+                                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                                                        
+        <span class="k">return</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Amean</span><span class="p">,</span> <span class="n">dA</span><span class="p">,</span> 
+         <span class="n">dD</span><span class="p">,</span> <span class="n">MeasAvg</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> 
+         <span class="n">COV</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">dAS</span><span class="p">,</span> 
+         <span class="n">analysis</span><span class="p">,</span> 
+         <span class="n">analysis_param</span><span class="p">]</span> 
+        
+        
+    <span class="k">elif</span> <span class="n">DA_type</span><span class="o">==</span><span class="s1">&#39;pf&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;not yet implemented&#39;</span><span class="p">)</span>
+        
+        <span class="p">[</span><span class="n">Analysis</span><span class="p">,</span><span class="n">AnalysisParam</span><span class="p">]</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">pf_analysis</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                                                  <span class="n">data_cov</span><span class="p">,</span>
+                                                  <span class="n">param</span><span class="p">,</span>
+                                                  <span class="n">ensembleX</span><span class="p">[</span><span class="n">id_state</span><span class="p">],</span>
+                                                  <span class="n">prediction</span><span class="p">)</span>
+        
+        
+        <span class="k">return</span> <span class="n">Analysis</span><span class="p">,</span><span class="n">AnalysisParam</span></div>
+
+        
+    
+    
+<div class="viewcode-block" id="DA"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA">[docs]</a><span class="k">class</span> <span class="nc">DA</span><span class="p">():</span> <span class="c1">#         NO TESTED YET THE INHERITANCE with CATHY MAIN class</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_per_list</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># dict of dict of perturbated variables parameters</span>
+
+        <span class="k">pass</span>
+                   
+<div class="viewcode-block" id="DA.Evensen2003"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.Evensen2003">[docs]</a>    <span class="k">def</span> <span class="nf">Evensen2003</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">qk_0</span><span class="p">,</span> <span class="n">wk</span><span class="p">,</span><span class="n">deltaT</span><span class="p">,</span><span class="n">Tau</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Ensemble Generation of time-variable atmospheric forcing rates.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wk : np.array([])</span>
+<span class="sd">            is a sequence of white noise drawn from the standard normal distribution.</span>
+<span class="sd">        deltaT : float</span>
+<span class="sd">            assimilation interval in sec</span>
+<span class="sd">        Tau : np.array([])</span>
+<span class="sd">            the specified time decorrelation length</span>
+<span class="sd">        time : int</span>
+<span class="sd">            assimilation time index</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        qki : Ensemble of time-variable atmospheric forcing rates at time i </span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">Tau</span><span class="o">&lt;</span><span class="n">deltaT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Time decorrelation length is too small; should be at least&gt;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">deltaT</span><span class="p">))</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">deltaT</span><span class="o">/</span><span class="n">Tau</span>
+        <span class="n">qki</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">qk_0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">gamma</span><span class="p">)</span> <span class="o">*</span> <span class="n">wk</span>
+        
+        <span class="k">return</span> <span class="n">qki</span></div>
+    
+    <span class="c1"># check if parameters in part of van Genuchten retention curves</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="c1"># if type_parm in [&#39;Alpha&#39;, &#39;nVG&#39;, &#39;thethaR&#39;]: #van Genuchten retention curves</span>
+    
+<div class="viewcode-block" id="DA.Carsel_Parrish_VGN_pert"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.Carsel_Parrish_VGN_pert">[docs]</a>    <span class="k">def</span> <span class="nf">Carsel_Parrish_VGN_pert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">cholesky_diag_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span></div>
+        <span class="c1"># VGN_means =</span>
+        <span class="c1"># VGN_parm_per = VGN_means + cholesky_diag_mat.T*z</span>
+    
+    <span class="c1"># add Johnson1970 transformation in kwargs         </span>
+    <span class="c1"># transformed them into normally</span>
+    <span class="c1"># distributed variables via the Johnson system (Johnson, 1970)</span>
+    
+<div class="viewcode-block" id="DA.Johnson1970"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.Johnson1970">[docs]</a>    <span class="k">def</span> <span class="nf">Johnson1970</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;not yet implemented - see Botto 2018&#39;</span><span class="p">)</span></div>
+            
+            
+<div class="viewcode-block" id="DA.sampling_dist"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.sampling_dist">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sampling_type</span><span class="p">,</span><span class="n">mean</span><span class="p">,</span><span class="n">sd</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># sampling</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sampling_type</span> <span class="o">==</span> <span class="s1">&#39;lognormal&#39;</span><span class="p">:</span>
+            <span class="n">parm_sampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sd</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_type</span> <span class="o">==</span> <span class="s1">&#39;normal&#39;</span><span class="p">:</span>
+            <span class="c1"># parm_sampling = np.random.normal(mean, sd, size=ensemble_size)</span>
+            <span class="n">parm_sampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="n">sd</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_type</span> <span class="o">==</span> <span class="s1">&#39;uniform&#39;</span><span class="p">:</span>
+            <span class="n">minmax_uni</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;minmax_uni&#39;</span><span class="p">]</span>
+            <span class="n">parm_sampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">minmax_uni</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">minmax_uni</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">ensemble_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parm_sampling</span></div>
+
+<div class="viewcode-block" id="DA.sampling_dist_trunc"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.sampling_dist_trunc">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_dist_trunc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">myclip_a</span><span class="p">,</span><span class="n">myclip_b</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># https://stackoverflow.com/questions/18441779/how-to-specify-upper-and-lower-limits-when-using-numpy-random-normal</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">truncnorm</span><span class="p">((</span><span class="n">myclip_a</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;loc&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">myclip_b</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;loc&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">],</span>
+                            <span class="n">loc</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;loc&#39;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">ensemble_size</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="DA.perturbate_dist"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.perturbate_dist">[docs]</a>    <span class="k">def</span> <span class="nf">perturbate_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">):</span>
+        <span class="c1"># pertubate</span>
+        <span class="n">parm_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ensemble_size</span><span class="p">)</span><span class="o">*</span><span class="n">parm</span><span class="p">[</span><span class="s1">&#39;nominal&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">per_type</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="n">parm_sampling</span>
+        <span class="k">if</span> <span class="n">per_type</span> <span class="o">==</span> <span class="s1">&#39;multiplicative&#39;</span><span class="p">:</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="n">parm_mat</span><span class="o">*</span><span class="n">parm_sampling</span>
+        <span class="k">elif</span> <span class="n">per_type</span> <span class="o">==</span> <span class="s1">&#39;additive&#39;</span><span class="p">:</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="n">parm_mat</span><span class="o">+</span><span class="n">parm_sampling</span>
+        <span class="k">return</span> <span class="n">parm_per_array</span></div>
+    
+        
+            
+<div class="viewcode-block" id="DA.perturbate_parm"><a class="viewcode-back" href="../../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.perturbate_parm">[docs]</a>    <span class="k">def</span> <span class="nf">perturbate_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parm</span><span class="p">,</span> <span class="n">type_parm</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="p">[],</span> <span class="n">sd</span><span class="o">=</span><span class="p">[],</span> <span class="n">per_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">sampling_type</span> <span class="o">=</span> <span class="s1">&#39;lognormal&#39;</span><span class="p">,</span>
+                        <span class="n">ensemble_size</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Perturbate parameter for ensemble generation</span>
+<span class="sd">        </span>
+<span class="sd">        Possible variable to perturbate:</span>
+<span class="sd">            - initial conditions</span>
+<span class="sd">            - hyetograph atmbc</span>
+<span class="sd">            - van Genuchten retention curves parameters</span>
+<span class="sd">            - Feddes parameters</span>
+<span class="sd">    </span>
+<span class="sd">        Perturbation:</span>
+<span class="sd">            - parameters with constrainsts (truncated distribution)</span>
+<span class="sd">            - parameters time dependant</span>
+<span class="sd">            - other types of parameters </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        var_per : dict</span>
+<span class="sd">            Perturbated variable dictionnary</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">var_per</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+        <span class="c1"># copy initiail variable dict and add &#39;sampling&#39; and &#39;ini_perturbation&#39; attributes</span>
+        <span class="c1"># -------------------------------------------------------------------------</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">]</span> <span class="o">=</span> <span class="n">parm</span> 
+        
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;sampling_type&#39;</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampling_type</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;sampling_mean&#39;</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;sampling_sd&#39;</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sd</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;per_type&#39;</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_type</span>
+    
+        <span class="c1"># --------------------------------------------------------------------</span>
+        
+        <span class="c1"># if &#39;bounds&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;Archie&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span>
+            <span class="c1"># a : TYPE, optional</span>
+            <span class="c1">#     Tortuosity factor. The default is [1.0].</span>
+            <span class="c1"># m : TYPE, optional</span>
+            <span class="c1">#     Cementation exponent. The default is [2.0]. (usually in the range 1.3 -- 2.5 for sandstones)</span>
+            <span class="c1"># n : TYPE, optional</span>
+            <span class="c1">#     Saturation exponent. The default is [2.0].</span>
+           
+            <span class="k">if</span> <span class="s1">&#39;rFluid&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                         <span class="n">myclip_b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                                                         <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                         <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">sd</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;a&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                         <span class="n">myclip_b</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
+                                                         <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                         <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">sd</span>
+                                                         <span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;m&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
+                                                         <span class="n">myclip_b</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
+                                                         <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                         <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">sd</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;n&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
+                                                         <span class="n">myclip_b</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                                         <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                         <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">sd</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist</span><span class="p">(</span><span class="n">sampling_type</span><span class="p">,</span><span class="n">mean</span><span class="p">,</span><span class="n">sd</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+                
+                
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+
+        
+        <span class="k">elif</span> <span class="s1">&#39;porosity&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span> 
+            <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                <span class="n">myclip_b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                <span class="n">scale</span><span class="o">=</span><span class="n">sd</span><span class="p">)</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="s1">&#39;zroot&#39;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span> 
+            <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;clip_min&#39;</span><span class="p">],</span>
+                                                     <span class="n">myclip_b</span><span class="o">=</span><span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;clip_max&#39;</span><span class="p">],</span>
+                                                     <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                     <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                     <span class="n">scale</span><span class="o">=</span><span class="n">sd</span>
+                                                     <span class="p">)</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+
+            
+        <span class="k">elif</span> <span class="s1">&#39;VG&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span> <span class="c1">#van Genuchten retention curves</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The parameters of the van Genuchten retention curves α,&#39;</span> <span class="o">+</span> 
+                  <span class="s1">&#39;n, and θ r are perturbed taking into account their mutual cor-&#39;</span> <span class="o">+</span> 
+                  <span class="s1">&#39;relation according to Carsel and Parrish (1988)&#39;</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="s1">&#39;Carsel_Parrish_VGN_pert&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                
+                <span class="n">utils</span><span class="o">.</span><span class="n">Carsel_Parrish_1988</span><span class="p">(</span><span class="n">soilTexture</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">Carsel_Parrish_VGN_pert</span><span class="p">()</span>
+                
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;clip_min&#39;</span> <span class="ow">in</span> <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;clip_min&#39;</span><span class="p">],</span>
+                                                             <span class="n">myclip_b</span><span class="o">=</span><span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;clip_max&#39;</span><span class="p">],</span>
+                                                             <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                             <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                             <span class="n">scale</span><span class="o">=</span><span class="n">sd</span>
+                                                             <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                
+                    <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist</span><span class="p">(</span><span class="n">sampling_type</span><span class="p">,</span><span class="n">mean</span><span class="p">,</span><span class="n">sd</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+                <span class="n">parm_per_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>               
+
+        <span class="k">elif</span> <span class="s1">&#39;atmbc&#39;</span> <span class="ow">in</span> <span class="n">type_parm</span><span class="p">:</span> 
+            <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist</span><span class="p">(</span><span class="n">sampling_type</span><span class="p">,</span><span class="n">mean</span><span class="p">,</span><span class="n">sd</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+
+            <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">]</span> <span class="o">=</span> <span class="n">parm</span>                
+            <span class="n">Tau</span> <span class="o">=</span> <span class="n">parm</span><span class="p">[</span><span class="s1">&#39;time_decorrelation_len&#39;</span><span class="p">]</span>
+            <span class="n">wk0</span> <span class="o">=</span> <span class="n">parm_per_array</span>
+            <span class="n">atmbc_times</span> <span class="o">=</span> <span class="n">parm</span><span class="p">[</span><span class="s1">&#39;data2assimilate&#39;</span><span class="p">][</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span>
+            <span class="n">atmbc_values</span> <span class="o">=</span> <span class="n">parm</span><span class="p">[</span><span class="s1">&#39;data2assimilate&#39;</span><span class="p">][</span><span class="s1">&#39;VALUE&#39;</span><span class="p">]</span>
+            
+            <span class="n">parm_per_array_time_variable</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atmbc_times</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="n">qk_0</span> <span class="o">=</span> <span class="n">wk0</span>
+                    <span class="n">parm_per_array_time_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qk_0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">qk_0</span> <span class="o">=</span> <span class="n">parm_per_array_time_variable</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">parm</span><span class="p">[</span><span class="s1">&#39;nominal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atmbc_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">wk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+                    
+                    <span class="n">deltaT</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">atmbc_times</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">atmbc_times</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">qk_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Evensen2003</span><span class="p">(</span><span class="n">qk_0</span><span class="p">,</span> <span class="n">wk</span><span class="p">,</span> <span class="n">deltaT</span><span class="p">,</span> <span class="n">Tau</span><span class="p">)</span>
+                    <span class="n">parm_per_array_time_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qk_i</span><span class="p">)</span>
+            
+            <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;time_variable_perturbation&#39;</span>
+            <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">parm_per_array_time_variable</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># other types of parameters </span>
+            <span class="c1">#---------------------------------------------------------------------- </span>
+            <span class="k">if</span> <span class="s1">&#39;clip_min&#39;</span> <span class="ow">in</span> <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist_trunc</span><span class="p">(</span><span class="n">myclip_a</span><span class="o">=</span><span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;clip_min&#39;</span><span class="p">],</span>
+                                                         <span class="n">myclip_b</span><span class="o">=</span><span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;clip_max&#39;</span><span class="p">],</span>
+                                                         <span class="n">ensemble_size</span><span class="o">=</span><span class="n">ensemble_size</span><span class="p">,</span>
+                                                         <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">sd</span>
+                                                         <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parm_sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_dist</span><span class="p">(</span><span class="n">sampling_type</span><span class="p">,</span><span class="n">mean</span><span class="p">,</span><span class="n">sd</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+            <span class="c1"># parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)</span>
+            <span class="n">parm_per_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbate_dist</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">per_type</span><span class="p">,</span><span class="n">parm_sampling</span><span class="p">,</span><span class="n">ensemble_size</span><span class="p">)</span>
+
+
+
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;ini_perturbation&#39;</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">parm_per_array</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;sampling&#39;</span>
+        <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">parm_sampling</span>
+
+
+        <span class="c1"># Parameter tranformation</span>
+        <span class="c1"># --------------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="s1">&#39;transf_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;transf_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transf_type&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;transf_bounds&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;transf_bounds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transf_bounds&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;transf_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Parameter spatial extension</span>
+        <span class="c1"># --------------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="s1">&#39;surf_zones_param&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">nb_surf_zones</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;surf_zones_param&#39;</span><span class="p">]</span>
+            <span class="c1"># parm_per_array = np.tile(parm_per_array,nb_surf_zones)</span>
+            <span class="n">var_per</span><span class="p">[</span><span class="n">type_parm</span><span class="p">][</span><span class="s1">&#39;surf_zones_param&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;surf_zones_param&#39;</span><span class="p">]</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_perturbated_dict</span><span class="p">(</span><span class="n">var_per</span><span class="p">)</span>
+        
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;savefig&#39;</span><span class="p">]:</span>
+            <span class="n">pltCT</span><span class="o">.</span><span class="n">plot_hist_perturbated_parm</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span><span class="n">var_per</span><span class="p">,</span><span class="n">type_parm</span><span class="p">,</span><span class="n">parm_per_array</span><span class="p">,</span>
+                                             <span class="o">**</span><span class="n">kwargs</span>
+                                             <span class="p">)</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_per_list</span> </div>
+    
+    
+    <span class="k">def</span> <span class="nf">_add_to_perturbated_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">var_per_2add</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Update dict of perturbated variable.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_per_list</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_per_list</span> <span class="o">|</span> <span class="n">var_per_2add</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_per_list</span>
+
+
+    <span class="k">def</span> <span class="nf">_create_subfolders_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">NENS</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        NO TESTED HERE YET IN INHERITANCE</span>
+<span class="sd">        SEE CATHY TOOLS for _create_subfolders_ensemble</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        NENS : TYPE</span>
+<span class="sd">            DESCRIPTION.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                                           <span class="s2">&quot;DA_Ensemble/cathy_origin&quot;</span><span class="p">)):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                                     <span class="s2">&quot;DA_Ensemble/cathy_origin&quot;</span><span class="p">))</span>
+            
+            <span class="c1"># copy input, output and vtk dir</span>
+            <span class="k">for</span> <span class="n">dir2copy</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;input&#39;</span><span class="p">,</span><span class="s1">&#39;output&#39;</span><span class="p">,</span><span class="s1">&#39;vtk&#39;</span><span class="p">]):</span>                
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="n">dir2copy</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> 
+                                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                                             <span class="s2">&quot;DA_Ensemble/cathy_origin&quot;</span><span class="p">,</span> <span class="n">dir2copy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># copy exe into cathy_origin folder</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor_name</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                             <span class="s2">&quot;DA_Ensemble/cathy_origin&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># copy cathy.fnames into cathy_origin folder</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                             <span class="s1">&#39;cathy.fnames&#39;</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                             <span class="s2">&quot;DA_Ensemble/cathy_origin/cathy.fnames&quot;</span><span class="p">)</span>
+            <span class="p">)</span> 
+            <span class="c1"># copy prepro into cathy_origin folder            </span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                                         <span class="s1">&#39;prepro&#39;</span><span class="p">),</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                                     <span class="s2">&quot;DA_Ensemble/cathy_origin/prepro&quot;</span><span class="p">))</span>
+                        
+                        
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;:worried_face: [b]processor exe not found[/b]&quot;</span><span class="p">)</span>
+
+            
+        <span class="n">path_origin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
+                                   <span class="s2">&quot;DA_Ensemble/cathy_origin&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># copy origin folder to each ensemble subfolders</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NENS</span><span class="p">):</span>
+            <span class="n">path_nudn_i</span> <span class="o">=</span>  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> 
+                                        <span class="s2">&quot;DA_Ensemble/cathy_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>  
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_nudn_i</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span>
+                    <span class="n">path_origin</span><span class="p">,</span> <span class="n">path_nudn_i</span>
+                <span class="p">)</span></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By B. Mary<br/>
+  
+      &copy; Copyright 2022, B. Mary.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
