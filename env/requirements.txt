@@ -1,0 +1,12 @@
+numpy
+GitPython 
+pyvista
+soiltexture
+SALib
+pyvistaqt
+itkwidgets
+jupyter
+sphinx
+sphinx-gallery
+sphinx_bootstrap_theme
+numpydoc

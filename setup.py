@@ -20,6 +20,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.9',
-    install_requires=["numpy", "pandas", "pyvista", "numba"]
+    install_requires=["numpy", "pandas", "pyvista"]
 ) 
 
