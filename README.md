@@ -1,6 +1,6 @@
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://benjmy.github.io/pycathy_wrapper/)
 [![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)
-
+[![Upload Python Package](https://github.com/BenjMy/pycathy_wrapper/actions/workflows/python-publish.yml/badge.svg)](https://github.com/BenjMy/pycathy_wrapper/actions/workflows/python-publish.yml)
 
 ## Python package for hydrogeophysical data modeling
 
