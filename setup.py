@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="pyCATHY",
-    version="0.0.1",
+    version="0.1.0",
     author="B. Mary",
     author_email="bmary@lbl.gov",
     description="Python package for managing CATHY processing, and visualization at the project level",
