@@ -104,7 +104,6 @@
    content/change_log
    content/references
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Getting help and contributed
