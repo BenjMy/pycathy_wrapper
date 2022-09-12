@@ -4,3 +4,5 @@ build/
 Makefile
 examples_tmp
 known_issues
+pycathy.egg-info
+meta.yaml
