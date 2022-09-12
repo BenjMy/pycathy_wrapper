@@ -1,0 +1,31 @@
+numpy
+GitPython 
+soiltexture
+SALib
+pyvistaqt
+itkwidgets
+rosetta
+rich
+pandas
+natsort
+
+# Optionnal packages
+resipy
+
+# Documentation building requirements
+numpydoc
+sphinx==4.5.*
+sphinx-book-theme==0.2.*
+sphinx-gallery==0.10.*
+sphinx-design==0.2.*
+sphinx-copybutton==0.5.*
+jupyter-sphinx==0.3.*
+sphinxcontrib-bibtex
+matplotlib
+pyvista
+vtk
+myst_nb
+
+
+# pypi building requirements
+twine
