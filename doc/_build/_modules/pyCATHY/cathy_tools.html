@@ -7,13 +7,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-        <title>pyCATHY.cathy_tools | pyCATHY v0.0.1 documentation</title>
+        <title>pyCATHY.cathy_tools | pyCATHY v0.1.0</title>
     
 
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -23,21 +22,25 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
+    
+      
+
+    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -50,32 +53,19 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script src="../../_static/design-tabs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
+    <link rel="shortcut icon" href="../../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <!-- Plausible analytics for anonymous usage statistics -->
     <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
-
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -84,15 +74,24 @@
     <div class="container-xl">
       <div class="row">
           
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
+    
+        <div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="../../index.html">
       
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
       
       
-      <h1 class="site-logo" id="site-title">pyCATHY v0.0.1 documentation</h1>
+      <img src="../../_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.1.0</span></h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
@@ -106,6 +105,11 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/overview.html">
+   Overview
+  </a>
+ </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../../content/installing.html">
    Installing
@@ -125,7 +129,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../../gallery/index.html">
-   Surface subsurface hydrological model
+   Data Assimilation
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
@@ -134,7 +138,7 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../gallery/SSHydro/errorbar_subsample3.html">
+    <a class="reference internal" href="../../gallery/DA/errorbar_subsample3.html">
      Errorbar subsampling
     </a>
    </li>
@@ -148,7 +152,7 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../../content/api_core/api.html">
+  <a class="reference internal" href="../../content/api/api.html">
    API reference: The
    <code class="docutils literal notranslate">
     <span class="pre">
@@ -164,10 +168,10 @@
   </label>
   <ul>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.html">
+    <a class="reference internal" href="../../content/api/generated/cathy_tools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.cathy_tools
+       cathy_tools
       </span>
      </code>
     </a>
@@ -178,82 +182,72 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html">
-       pyCATHY.cathy_tools.CATHY
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.CATHY.html">
+       cathy_tools.CATHY
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.HiddenPrints.html">
-       pyCATHY.cathy_tools.HiddenPrints
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.HiddenPrints.html">
+       cathy_tools.HiddenPrints
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html">
-       pyCATHY.cathy_tools.OrderedDict
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.OrderedDict.html">
+       cathy_tools.OrderedDict
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.Repo.html">
-       pyCATHY.cathy_tools.Repo
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.Repo.html">
+       cathy_tools.Repo
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.partial.html">
-       pyCATHY.cathy_tools.partial
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.partial.html">
+       cathy_tools.partial
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.contextmanager.html">
-       pyCATHY.cathy_tools.contextmanager
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.isfile.html">
+       cathy_tools.isfile
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.isfile.html">
-       pyCATHY.cathy_tools.isfile
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.join.html">
+       cathy_tools.join
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.join.html">
-       pyCATHY.cathy_tools.join
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.listdir.html">
+       cathy_tools.listdir
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.listdir.html">
-       pyCATHY.cathy_tools.listdir
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.make_console.html">
+       cathy_tools.make_console
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.make_console.html">
-       pyCATHY.cathy_tools.make_console
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.print.html">
+       cathy_tools.print
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.print.html">
-       pyCATHY.cathy_tools.print
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.subprocess_run_multi.html">
-       pyCATHY.cathy_tools.subprocess_run_multi
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.suppress_stdout.html">
-       pyCATHY.cathy_tools.suppress_stdout
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_tools.track.html">
-       pyCATHY.cathy_tools.track
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.track.html">
+       cathy_tools.track
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.html">
+    <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.meshtools
+       importers.cathy_outputs
       </span>
      </code>
     </a>
@@ -264,42 +258,52 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
-       pyCATHY.meshtools.add_attribute_2mesh
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_cumflowvol.html">
+       importers.cathy_outputs.read_cumflowvol
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.find_nearest_node.html">
-       pyCATHY.meshtools.find_nearest_node
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_dtcoupling.html">
+       importers.cathy_outputs.read_dtcoupling
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
-       pyCATHY.meshtools.plot_2d_interpolation_quality
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_hgraph.html">
+       importers.cathy_outputs.read_hgraph
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.set_interpolation_radius.html">
-       pyCATHY.meshtools.set_interpolation_radius
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_hgsfdet.html">
+       importers.cathy_outputs.read_hgsfdet
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.trace_mesh.html">
-       pyCATHY.meshtools.trace_mesh
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_mbeconv.html">
+       importers.cathy_outputs.read_mbeconv
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.meshtools.trace_mesh_pg.html">
-       pyCATHY.meshtools.trace_mesh_pg
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_psi.html">
+       importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_sw.html">
+       importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_vp.html">
+       importers.cathy_outputs.read_vp
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.html">
+    <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.cathy_utils
+       importers.cathy_inputs
       </span>
      </code>
     </a>
@@ -310,67 +314,22 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.SoilData.html">
-       pyCATHY.cathy_utils.SoilData
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_atmbc.html">
+       importers.cathy_inputs.read_atmbc
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.datetime.html">
-       pyCATHY.cathy_utils.datetime
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.timedelta.html">
-       pyCATHY.cathy_utils.timedelta
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.change_x2date.html">
-       pyCATHY.cathy_utils.change_x2date
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.convert_time_units.html">
-       pyCATHY.cathy_utils.convert_time_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
-       pyCATHY.cathy_utils.dictObs_2pd
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.kPa2cm.html">
-       pyCATHY.cathy_utils.kPa2cm
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.kPa2m.html">
-       pyCATHY.cathy_utils.kPa2m
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.label_units.html">
-       pyCATHY.cathy_utils.label_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.rosetta.html">
-       pyCATHY.cathy_utils.rosetta
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
-       pyCATHY.cathy_utils.transform2_time_delta
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_grid3d.html">
+       importers.cathy_inputs.read_grid3d
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.html">
+    <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.importers.cathy_outputs
+       DA.cathy_DA
       </span>
      </code>
     </a>
@@ -381,52 +340,27 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_cumflowvol.html">
-       pyCATHY.importers.cathy_outputs.read_cumflowvol
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.CATHY.html">
+       DA.cathy_DA.CATHY
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_dtcoupling.html">
-       pyCATHY.importers.cathy_outputs.read_dtcoupling
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.DA.html">
+       DA.cathy_DA.DA
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgraph.html">
-       pyCATHY.importers.cathy_outputs.read_hgraph
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgsfdet.html">
-       pyCATHY.importers.cathy_outputs.read_hgsfdet
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_mbeconv.html">
-       pyCATHY.importers.cathy_outputs.read_mbeconv
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_psi.html">
-       pyCATHY.importers.cathy_outputs.read_psi
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_sw.html">
-       pyCATHY.importers.cathy_outputs.read_sw
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_vp.html">
-       pyCATHY.importers.cathy_outputs.read_vp
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.run_analysis.html">
+       DA.cathy_DA.run_analysis
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_inputs.html">
+    <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.importers.cathy_inputs
+       ERT.petro_Archie
       </span>
      </code>
     </a>
@@ -437,22 +371,42 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_inputs.read_atmbc.html">
-       pyCATHY.importers.cathy_inputs.read_atmbc
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.Archie_rho_DA.html">
+       ERT.petro_Archie.Archie_rho_DA
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.importers.cathy_inputs.read_grid3d.html">
-       pyCATHY.importers.cathy_inputs.read_grid3d
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.CATHY_2_Resipy.html">
+       ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.CATHY_2_pg.html">
+       ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.SW_2_ERa_DA.html">
+       ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.get_Archie_ens_i.html">
+       ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.get_sw_ens_i.html">
+       ERT.petro_Archie.get_sw_ens_i
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.html">
+    <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.plotters.cathy_plots
+       ERT.simulate_ERT
       </span>
      </code>
     </a>
@@ -463,147 +417,42 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html">
-       pyCATHY.plotters.cathy_plots.LogNorm
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.R2.html">
+       ERT.simulate_ERT.R2
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.COCumflowvol.html">
-       pyCATHY.plotters.cathy_plots.COCumflowvol
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.Archie_ERT.html">
+       ERT.simulate_ERT.Archie_ERT
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_RMS.html">
-       pyCATHY.plotters.cathy_plots.DA_RMS
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.create_ERT_survey.html">
+       ERT.simulate_ERT.create_ERT_survey
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_Archie.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_Archie
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.create_ERT_survey_pg.html">
+       ERT.simulate_ERT.create_ERT_survey_pg
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html">
+       ERT.simulate_ERT.fwd_ERT_survey
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.change_x2date.html">
-       pyCATHY.plotters.cathy_plots.change_x2date
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.convert_time_units.html">
-       pyCATHY.plotters.cathy_plots.convert_time_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot.html">
-       pyCATHY.plotters.cathy_plots.dem_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot_2d_top.html">
-       pyCATHY.plotters.cathy_plots.dem_plot_2d_top
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.indice_veg_plot.html">
-       pyCATHY.plotters.cathy_plots.indice_veg_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.label_units.html">
-       pyCATHY.plotters.cathy_plots.label_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_VGP.html">
-       pyCATHY.plotters.cathy_plots.plot_VGP
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm.html">
-       pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_mesh_bounds.html">
-       pyCATHY.plotters.cathy_plots.plot_mesh_bounds
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
-       pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_DA_process_ens.html">
-       pyCATHY.plotters.cathy_plots.show_DA_process_ens
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc.html">
-       pyCATHY.plotters.cathy_plots.show_atmbc
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc_3d.html">
-       pyCATHY.plotters.cathy_plots.show_atmbc_3d
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph.html">
-       pyCATHY.plotters.cathy_plots.show_hgraph
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph_2.html">
-       pyCATHY.plotters.cathy_plots.show_hgraph_2
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgsfdet.html">
-       pyCATHY.plotters.cathy_plots.show_hgsfdet
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED.html">
-       pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk.html">
-       pyCATHY.plotters.cathy_plots.show_vtk
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk_TL.html">
-       pyCATHY.plotters.cathy_plots.show_vtk_TL
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.plotters.cathy_plots.transform2_time_delta.html">
-       pyCATHY.plotters.cathy_plots.transform2_time_delta
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.invert_ERT_survey.html">
+       ERT.simulate_ERT.invert_ERT_survey
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.html">
+    <a class="reference internal" href="../../content/api/generated/sensitivity.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.sensitivity
+       sensitivity
       </span>
      </code>
     </a>
@@ -614,52 +463,52 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.analysis_Morris.html">
-       pyCATHY.sensitivity.analysis_Morris
+      <a class="reference internal" href="../../content/api/generated/sensitivity.analysis_Morris.html">
+       sensitivity.analysis_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.define_Morris.html">
-       pyCATHY.sensitivity.define_Morris
+      <a class="reference internal" href="../../content/api/generated/sensitivity.define_Morris.html">
+       sensitivity.define_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.df_Morris.html">
-       pyCATHY.sensitivity.df_Morris
+      <a class="reference internal" href="../../content/api/generated/sensitivity.df_Morris.html">
+       sensitivity.df_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.err_weighted_rmse.html">
-       pyCATHY.sensitivity.err_weighted_rmse
+      <a class="reference internal" href="../../content/api/generated/sensitivity.err_weighted_rmse.html">
+       sensitivity.err_weighted_rmse
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.plot_Morris.html">
-       pyCATHY.sensitivity.plot_Morris
+      <a class="reference internal" href="../../content/api/generated/sensitivity.plot_Morris.html">
+       sensitivity.plot_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.print_Morris_out.html">
-       pyCATHY.sensitivity.print_Morris_out
+      <a class="reference internal" href="../../content/api/generated/sensitivity.print_Morris_out.html">
+       sensitivity.print_Morris_out
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.run_sensitivity_analysis.html">
-       pyCATHY.sensitivity.run_sensitivity_analysis
+      <a class="reference internal" href="../../content/api/generated/sensitivity.run_sensitivity_analysis.html">
+       sensitivity.run_sensitivity_analysis
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.sensitivity.samples_generation.html">
-       pyCATHY.sensitivity.samples_generation
+      <a class="reference internal" href="../../content/api/generated/sensitivity.samples_generation.html">
+       sensitivity.samples_generation
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.DA.cathy_DA.html">
+    <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.DA.cathy_DA
+       plotters.cathy_plots
       </span>
      </code>
     </a>
@@ -670,27 +519,147 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html">
-       pyCATHY.DA.cathy_DA.CATHY
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.LogNorm.html">
+       plotters.cathy_plots.LogNorm
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html">
-       pyCATHY.DA.cathy_DA.DA
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.COCumflowvol.html">
+       plotters.cathy_plots.COCumflowvol
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.DA.cathy_DA.run_analysis.html">
-       pyCATHY.DA.cathy_DA.run_analysis
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_RMS.html">
+       plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_Archie.html">
+       plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html">
+       plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.change_x2date.html">
+       plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.convert_time_units.html">
+       plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.dem_plot.html">
+       plotters.cathy_plots.dem_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html">
+       plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.indice_veg_plot.html">
+       plotters.cathy_plots.indice_veg_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.label_units.html">
+       plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.plot_VGP.html">
+       plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.plot_mesh_bounds.html">
+       plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_DA_process_ens.html">
+       plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_atmbc.html">
+       plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_atmbc_3d.html">
+       plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgraph.html">
+       plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgraph_2.html">
+       plotters.cathy_plots.show_hgraph_2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html">
+       plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vtk.html">
+       plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vtk_TL.html">
+       plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.transform2_time_delta.html">
+       plotters.cathy_plots.transform2_time_delta
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.html">
+    <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.ERT.petro_Archie
+       pyCATHY.cathy_utils
       </span>
      </code>
     </a>
@@ -701,42 +670,47 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.Archie_rho_DA.html">
-       pyCATHY.ERT.petro_Archie.Archie_rho_DA
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_Resipy.html">
-       pyCATHY.ERT.petro_Archie.CATHY_2_Resipy
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_pg.html">
-       pyCATHY.ERT.petro_Archie.CATHY_2_pg
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.SW_2_ERa_DA.html">
-       pyCATHY.ERT.petro_Archie.SW_2_ERa_DA
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.get_Archie_ens_i.html">
-       pyCATHY.ERT.petro_Archie.get_Archie_ens_i
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.petro_Archie.get_sw_ens_i.html">
-       pyCATHY.ERT.petro_Archie.get_sw_ens_i
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.html">
+    <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.ERT.simulate_ERT
+       pyCATHY.meshtools
       </span>
      </code>
     </a>
@@ -747,33 +721,33 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html">
-       pyCATHY.ERT.simulate_ERT.R2
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.Archie_ERT.html">
-       pyCATHY.ERT.simulate_ERT.Archie_ERT
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.create_ERT_survey
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg.html">
-       pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.fwd_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.fwd_ERT_survey
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api_core/generated/pyCATHY.ERT.simulate_ERT.invert_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.invert_ERT_survey
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
       </a>
      </li>
     </ul>
@@ -805,122 +779,73 @@
 </ul>
 
     </div>
-</nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
             </div>
+            
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BenjMy/pycathy_wrapper"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/pyCATHY/cathy_tools.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
         </div>
     </div>
-    <div id="rtd-footer-container"></div>
 </div>
-
-
-          
-
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
-<div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
-
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
-    </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-
-<div class="menu-dropdown menu-dropdown-repository-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Source repositories">
-      <i class="fab fa-github"></i>
-  </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="https://github.com/BenjMy/pycathy_wrapper"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fab fa-github"></i>
-  </span>
-<span class="headerbtn__text-container">repository</span>
-</a>
-
-      </li>
-      
-      <li>
-        <a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/pyCATHY/cathy_tools.html&body=Your%20issue%20content%20here."
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Open an issue"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-lightbulb"></i>
-  </span>
-<span class="headerbtn__text-container">open issue</span>
-</a>
-
-      </li>
-      
-    </ul>
-  </div>
-</div>
-
-    </div>
-</div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-</div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1></h1>
@@ -931,8 +856,7 @@ title="Open an issue"
                     </div>
                 </div>
             </div>
-            <main id="main-content" role="main">
-                
+            
               <div>
                 
   <h1>Source code for pyCATHY.cathy_tools</h1><div class="highlight"><pre>
@@ -977,7 +901,7 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
-<div class="viewcode-block" id="make_console"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.make_console.html#pyCATHY.DA.cathy_DA.make_console">[docs]</a><span class="k">def</span> <span class="nf">make_console</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">make_console</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start up the :class:`rich.console.Console` instance we&#39;ll use.</span>
 
@@ -986,13 +910,13 @@ title="Open an issue"
 <span class="sd">    verbose : bool</span>
 <span class="sd">        Whether or not to print status messages to stderr.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span>
 
 
 
 <span class="c1"># multiprocessor functions outside main CATHY object</span>
 <span class="c1"># -----------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="subprocess_run_multi"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.subprocess_run_multi.html#pyCATHY.DA.cathy_DA.subprocess_run_multi">[docs]</a><span class="k">def</span> <span class="nf">subprocess_run_multi</span><span class="p">(</span><span class="n">pathexe_list</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">subprocess_run_multi</span><span class="p">(</span><span class="n">pathexe_list</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Run multiple exe files in //</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -1006,38 +930,24 @@ title="Open an issue"
     <span class="c1"># p.close()</span>
 
 
-    <span class="k">return</span> <span class="n">p</span></div>
+    <span class="k">return</span> <span class="n">p</span>
 
 
 
-<div class="viewcode-block" id="HiddenPrints"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.HiddenPrints.html#pyCATHY.DA.cathy_DA.HiddenPrints">[docs]</a><span class="k">class</span> <span class="nc">HiddenPrints</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">HiddenPrints</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_original_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_stdout</span></div>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_stdout</span>
         
-
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
-
-<div class="viewcode-block" id="suppress_stdout"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.suppress_stdout.html#pyCATHY.DA.cathy_DA.suppress_stdout">[docs]</a><span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">suppress_stdout</span><span class="p">():</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
-        <span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">devnull</span>
-        <span class="k">try</span><span class="p">:</span>  
-            <span class="k">yield</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span></div>
-            
             
     
 <span class="c1"># -----------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="CATHY"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY">[docs]</a><span class="k">class</span> <span class="nc">CATHY</span><span class="p">():</span>  <span class="c1"># IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould better pass main CATHY into children classes</span>
+<div class="viewcode-block" id="CATHY"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY">[docs]</a><span class="k">class</span> <span class="nc">CATHY</span><span class="p">():</span>  <span class="c1"># IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould better pass main CATHY into children classes</span>
     <span class="sd">&quot;&quot;&quot; </span>
 
 <span class="sd">    Main CATHY object</span>
@@ -1255,7 +1165,7 @@ title="Open an issue"
 <span class="c1"># replace console cmd by a subprocess call</span>
 <span class="c1"># --------------------------------------------------------------------------- #</span>
 
-<div class="viewcode-block" id="CATHY.run_preprocessor"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.run_preprocessor">[docs]</a>    <span class="k">def</span> <span class="nf">run_preprocessor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">KeepOutlet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.run_preprocessor"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.run_preprocessor">[docs]</a>    <span class="k">def</span> <span class="nf">run_preprocessor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">KeepOutlet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run cppp.exe</span>
 <span class="sd">        1. updates cathy parameters prepo</span>
@@ -1327,7 +1237,7 @@ title="Open an issue"
 
         <span class="k">return</span></div>
 
-<div class="viewcode-block" id="CATHY.recompileSrc"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.recompileSrc">[docs]</a>    <span class="k">def</span> <span class="nf">recompileSrc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.recompileSrc"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.recompileSrc">[docs]</a>    <span class="k">def</span> <span class="nf">recompileSrc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Other option is self.run_processor(runProcess=False)</span>
 
@@ -1370,7 +1280,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CATHY.run_processor"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.run_processor">[docs]</a>    <span class="k">def</span> <span class="nf">run_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recompile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">runProcess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.run_processor"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.run_processor">[docs]</a>    <span class="k">def</span> <span class="nf">run_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recompile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">runProcess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Run cathy.exe</span>
 
@@ -1960,7 +1870,7 @@ title="Open an issue"
     
     
     
-<div class="viewcode-block" id="CATHY.set_Archie_parm"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.set_Archie_parm">[docs]</a>    <span class="k">def</span> <span class="nf">set_Archie_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="CATHY.set_Archie_parm"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.set_Archie_parm">[docs]</a>    <span class="k">def</span> <span class="nf">set_Archie_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">porosity</span><span class="o">=</span><span class="p">[],</span>
                         <span class="n">rFluid_Archie</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">],</span>
                         <span class="n">a_Archie</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">],</span>
@@ -2035,7 +1945,7 @@ title="Open an issue"
          
     
 
-<div class="viewcode-block" id="CATHY.run_ensemble_hydrological_model"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.run_ensemble_hydrological_model">[docs]</a>    <span class="k">def</span> <span class="nf">run_ensemble_hydrological_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parallel</span><span class="p">,</span><span class="n">verbose</span><span class="p">,</span><span class="n">callexe</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.run_ensemble_hydrological_model"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.run_ensemble_hydrological_model">[docs]</a>    <span class="k">def</span> <span class="nf">run_ensemble_hydrological_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parallel</span><span class="p">,</span><span class="n">verbose</span><span class="p">,</span><span class="n">callexe</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; multi run CATHY hydrological model from the independant folders composing the ensemble &#39;&#39;&#39;</span>
         
         <span class="c1"># ----------------------------------------------------------------</span>
@@ -2076,7 +1986,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
                     
     
-<div class="viewcode-block" id="CATHY.update_pert_parm_dict"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_pert_parm_dict">[docs]</a>    <span class="k">def</span> <span class="nf">update_pert_parm_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">update_key</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span><span class="n">analysis_param_valid</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_pert_parm_dict"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_pert_parm_dict">[docs]</a>    <span class="k">def</span> <span class="nf">update_pert_parm_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">update_key</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span><span class="n">analysis_param_valid</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; update dict of perturbated parameters i.e. add a collumn with new params&#39;&#39;&#39;</span>
         
         <span class="n">index_update</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2461,7 +2371,7 @@ title="Open an issue"
             
         
 
-<div class="viewcode-block" id="CATHY.create_output"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.create_output">[docs]</a>    <span class="k">def</span> <span class="nf">create_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dirname</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.create_output"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.create_output">[docs]</a>    <span class="k">def</span> <span class="nf">create_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dirname</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create output directories</span>
 
@@ -2487,7 +2397,7 @@ title="Open an issue"
         <span class="c1"># compute the processor (make clean make) using the Makefile</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CATHY.display_time_run"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.display_time_run">[docs]</a>    <span class="k">def</span> <span class="nf">display_time_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.display_time_run"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.display_time_run">[docs]</a>    <span class="k">def</span> <span class="nf">display_time_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span></div>
 
@@ -2497,7 +2407,7 @@ title="Open an issue"
 <span class="c1"># --------------------------------------------------------------------------- #</span>
 
 
-<div class="viewcode-block" id="CATHY.update_cathyH"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_cathyH">[docs]</a>    <span class="k">def</span> <span class="nf">update_cathyH</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_cathyH"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_cathyH">[docs]</a>    <span class="k">def</span> <span class="nf">update_cathyH</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update CathyH file input based on **kwargs parameters.</span>
 
@@ -2685,7 +2595,7 @@ title="Open an issue"
         <span class="n">CATHYH_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CATHY.update_prepo_inputs"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_prepo_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">update_prepo_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DEM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_prepo_inputs"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_prepo_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">update_prepo_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DEM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs</span>
 
@@ -2884,7 +2794,7 @@ title="Open an issue"
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CATHY.update_dem_parameters"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_dem_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_dem_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_dem_parameters"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_dem_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_dem_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Update DEM parameters</span>
 
@@ -3004,7 +2914,7 @@ title="Open an issue"
 
     <span class="c1"># %% Ouput/INPUT FILES</span>
 
-<div class="viewcode-block" id="CATHY.update_zone"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_zone">[docs]</a>    <span class="k">def</span> <span class="nf">update_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone_xyz</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="CATHY.update_zone"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_zone">[docs]</a>    <span class="k">def</span> <span class="nf">update_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone_xyz</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Update zone file</span>
 
@@ -3057,7 +2967,7 @@ title="Open an issue"
 
     <span class="c1"># %% INPUT FILES</span>
 
-<div class="viewcode-block" id="CATHY.update_parm"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_parm">[docs]</a>    <span class="k">def</span> <span class="nf">update_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_parm"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_parm">[docs]</a>    <span class="k">def</span> <span class="nf">update_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Update parm file</span>
 
@@ -3296,7 +3206,7 @@ title="Open an issue"
 
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="CATHY.update_ic"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_ic">[docs]</a>    <span class="k">def</span> <span class="nf">update_ic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">INDP</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">IPOND</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">WTPOSITION</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_ic"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_ic">[docs]</a>    <span class="k">def</span> <span class="nf">update_ic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">INDP</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">IPOND</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">WTPOSITION</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        The initial conditions file contains the pressure heads distribution for the study area (INDP)</span>
 <span class="sd">        For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface,</span>
@@ -3411,7 +3321,7 @@ title="Open an issue"
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CATHY.update_atmbc"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_atmbc">[docs]</a>    <span class="k">def</span> <span class="nf">update_atmbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">HSPATM</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">IETO</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">VALUE</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+<div class="viewcode-block" id="CATHY.update_atmbc"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_atmbc">[docs]</a>    <span class="k">def</span> <span class="nf">update_atmbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">HSPATM</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">IETO</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">VALUE</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
                      <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Atmospheric forcing term (atmbc - IIN6)</span>
@@ -3553,7 +3463,7 @@ title="Open an issue"
 
               
 
-<div class="viewcode-block" id="CATHY.init_boundary_conditions"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.init_boundary_conditions">[docs]</a>    <span class="k">def</span> <span class="nf">init_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.init_boundary_conditions"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.init_boundary_conditions">[docs]</a>    <span class="k">def</span> <span class="nf">init_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        .. note:</span>
 <span class="sd">            The boundary conditions are defined in the nansfdirbc (Dirichlet), </span>
@@ -3604,10 +3514,10 @@ title="Open an issue"
         
         <span class="k">pass</span></div>
         
-<div class="viewcode-block" id="CATHY.check_for_inconsistent_BC"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.check_for_inconsistent_BC">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_inconsistent_BC</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.check_for_inconsistent_BC"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.check_for_inconsistent_BC">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_inconsistent_BC</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
     
-<div class="viewcode-block" id="CATHY.set_BC_laterals"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.set_BC_laterals">[docs]</a>    <span class="k">def</span> <span class="nf">set_BC_laterals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">BC_type</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.set_BC_laterals"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.set_BC_laterals">[docs]</a>    <span class="k">def</span> <span class="nf">set_BC_laterals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">BC_type</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        Set all sides expect surface one        </span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -3640,7 +3550,7 @@ title="Open an issue"
         
         
 
-<div class="viewcode-block" id="CATHY.update_nansfdirbc"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_nansfdirbc">[docs]</a>    <span class="k">def</span> <span class="nf">update_nansfdirbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="o">=</span><span class="p">[],</span><span class="n">NDIR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">NDIRC</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">NQ3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="CATHY.update_nansfdirbc"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_nansfdirbc">[docs]</a>    <span class="k">def</span> <span class="nf">update_nansfdirbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="o">=</span><span class="p">[],</span><span class="n">NDIR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">NDIRC</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">NQ3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                             <span class="n">bound_xyz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">pressure_head</span><span class="o">=</span><span class="p">[],</span>
                         <span class="p">):</span>
@@ -3844,7 +3754,7 @@ title="Open an issue"
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CATHY.update_nansfneubc"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_nansfneubc">[docs]</a>    <span class="k">def</span> <span class="nf">update_nansfneubc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="p">[],</span> <span class="n">NQ</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ZERO</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+<div class="viewcode-block" id="CATHY.update_nansfneubc"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_nansfneubc">[docs]</a>    <span class="k">def</span> <span class="nf">update_nansfneubc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="p">[],</span> <span class="n">NQ</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ZERO</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
                           <span class="n">fixed_pressure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                           <span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -3913,7 +3823,7 @@ title="Open an issue"
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CATHY.update_sfbc"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_sfbc">[docs]</a>    <span class="k">def</span> <span class="nf">update_sfbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="p">[],</span> <span class="n">sfbc</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_sfbc"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_sfbc">[docs]</a>    <span class="k">def</span> <span class="nf">update_sfbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="p">[],</span> <span class="n">sfbc</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Seepage face boundary conditions at time t</span>
 
@@ -3969,7 +3879,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
 
     
-<div class="viewcode-block" id="CATHY.create_mesh_bounds_df"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.create_mesh_bounds_df">[docs]</a>    <span class="k">def</span> <span class="nf">create_mesh_bounds_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grid3d</span><span class="p">,</span><span class="n">times</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.create_mesh_bounds_df"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.create_mesh_bounds_df">[docs]</a>    <span class="k">def</span> <span class="nf">create_mesh_bounds_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grid3d</span><span class="p">,</span><span class="n">times</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create a dataframe with flag for different boundary condtions assigned to each nodes</span>
 
@@ -4034,7 +3944,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
         
 
-<div class="viewcode-block" id="CATHY.update_mesh_boundary_cond"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_mesh_boundary_cond">[docs]</a>    <span class="k">def</span> <span class="nf">update_mesh_boundary_cond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="CATHY.update_mesh_boundary_cond"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_mesh_boundary_cond">[docs]</a>    <span class="k">def</span> <span class="nf">update_mesh_boundary_cond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                                   <span class="n">time</span><span class="p">,</span>
                                   <span class="n">BC_bool_name</span><span class="o">=</span><span class="p">[],</span>
                                   <span class="n">BC_bool_val</span><span class="o">=</span><span class="p">[],):</span>
@@ -4054,7 +3964,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
             
 
-<div class="viewcode-block" id="CATHY.create_mesh_vtk"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.create_mesh_vtk">[docs]</a>    <span class="k">def</span> <span class="nf">create_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">topo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.create_mesh_vtk"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.create_mesh_vtk">[docs]</a>    <span class="k">def</span> <span class="nf">create_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">topo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create custum mesh</span>
 
@@ -4109,7 +4019,7 @@ title="Open an issue"
 
         
 
-<div class="viewcode-block" id="CATHY.update_mesh_vtk"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_mesh_vtk">[docs]</a>    <span class="k">def</span> <span class="nf">update_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="p">[],</span> <span class="n">savevtk</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_mesh_vtk"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_mesh_vtk">[docs]</a>    <span class="k">def</span> <span class="nf">update_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="p">[],</span> <span class="n">savevtk</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data</span>
 
@@ -4142,7 +4052,7 @@ title="Open an issue"
             
             
                     
-<div class="viewcode-block" id="CATHY.update_soil"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_soil">[docs]</a>    <span class="k">def</span> <span class="nf">update_soil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">IVGHU</span><span class="o">=</span><span class="p">[],</span> <span class="n">FP</span><span class="o">=</span><span class="p">[],</span> <span class="n">SPP</span><span class="o">=</span><span class="p">[],</span> <span class="n">soil_het_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<div class="viewcode-block" id="CATHY.update_soil"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_soil">[docs]</a>    <span class="k">def</span> <span class="nf">update_soil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">IVGHU</span><span class="o">=</span><span class="p">[],</span> <span class="n">FP</span><span class="o">=</span><span class="p">[],</span> <span class="n">SPP</span><span class="o">=</span><span class="p">[],</span> <span class="n">soil_het_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Soil parameters (soil - IIN4). The porous media properties.</span>
@@ -4319,7 +4229,7 @@ title="Open an issue"
         
         
 
-<div class="viewcode-block" id="CATHY.set_SOIL_defaults"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.set_SOIL_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">set_SOIL_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="CATHY.set_SOIL_defaults"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.set_SOIL_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">set_SOIL_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                           <span class="n">FP_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                           <span class="n">SPP_default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
@@ -4606,7 +4516,7 @@ title="Open an issue"
 
         <span class="n">soilfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CATHY.update_veg_map"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_veg_map">[docs]</a>    <span class="k">def</span> <span class="nf">update_veg_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indice_veg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_veg_map"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_veg_map">[docs]</a>    <span class="k">def</span> <span class="nf">update_veg_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indice_veg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Contains the raster map describing which type of vegetation every cell belongs to.</span>
 
@@ -4888,7 +4798,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">id_valid</span>
 
 
-<div class="viewcode-block" id="CATHY.spatialize_parameters"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.spatialize_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">spatialize_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span><span class="n">parm</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.spatialize_parameters"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.spatialize_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">spatialize_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span><span class="n">parm</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Extend the number of parameters according to the number of zones</span>
 <span class="sd">        (useful for the heteregeneous case)</span>
@@ -4910,7 +4820,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">parm_extended</span></div>
         
 
-<div class="viewcode-block" id="CATHY.transform_parameters"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.transform_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">transform_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span>
+<div class="viewcode-block" id="CATHY.transform_parameters"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.transform_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">transform_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span>
                              <span class="n">update_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">back</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">param</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -5224,7 +5134,7 @@ title="Open an issue"
             
     
     
-<div class="viewcode-block" id="CATHY.map_states2Observations"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_states2Observations">[docs]</a>    <span class="k">def</span> <span class="nf">map_states2Observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="CATHY.map_states2Observations"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_states2Observations">[docs]</a>    <span class="k">def</span> <span class="nf">map_states2Observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                  <span class="n">list_assimilated_obs</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> 
                                  <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                  <span class="n">default_state</span> <span class="o">=</span> <span class="s1">&#39;psi&#39;</span><span class="p">,</span>
@@ -5695,7 +5605,7 @@ title="Open an issue"
 
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="CATHY.selec_atmbc_window"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.selec_atmbc_window">[docs]</a>    <span class="k">def</span> <span class="nf">selec_atmbc_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NENS</span><span class="p">,</span> <span class="n">ENS_times</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.selec_atmbc_window"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.selec_atmbc_window">[docs]</a>    <span class="k">def</span> <span class="nf">selec_atmbc_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NENS</span><span class="p">,</span> <span class="n">ENS_times</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        THIS SHOULD BE MOVED TO DA CLASS</span>
 
@@ -5763,7 +5673,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CATHY.update_ENS_files"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_ENS_files">[docs]</a>    <span class="k">def</span> <span class="nf">update_ENS_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parm_pert</span><span class="p">,</span> <span class="n">update_parm_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.update_ENS_files"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_ENS_files">[docs]</a>    <span class="k">def</span> <span class="nf">update_ENS_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parm_pert</span><span class="p">,</span> <span class="n">update_parm_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        THIS SHOULD BE MOVED TO DA CLASS</span>
 
@@ -6167,7 +6077,7 @@ title="Open an issue"
     
     
 
-<div class="viewcode-block" id="CATHY.read_observations"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.read_observations">[docs]</a>    <span class="k">def</span> <span class="nf">read_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">data_err</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.read_observations"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.read_observations">[docs]</a>    <span class="k">def</span> <span class="nf">read_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">data_err</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        read measures (real observations) from file </span>
 <span class="sd">        and prepare for DA analysis (covariance matrice and perturbation)</span>
@@ -6446,7 +6356,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_obs</span>
 
 
-<div class="viewcode-block" id="CATHY.prepare_observations"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.prepare_observations">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<div class="viewcode-block" id="CATHY.prepare_observations"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.prepare_observations">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                              <span class="n">dict_obs</span> <span class="o">=</span> <span class="p">[],</span> 
                              <span class="n">perturbate</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                              <span class="n">obs_cov_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -6533,7 +6443,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">data_cov</span><span class="p">,</span> <span class="n">data_pert</span></div>
 
 
-<div class="viewcode-block" id="CATHY.perturbate_obs"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.perturbate_obs">[docs]</a>    <span class="k">def</span> <span class="nf">perturbate_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_obs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.perturbate_obs"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.perturbate_obs">[docs]</a>    <span class="k">def</span> <span class="nf">perturbate_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_obs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Not yet implemented</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -6555,7 +6465,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CATHY.init_obs_cov_matrice"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.init_obs_cov_matrice">[docs]</a>    <span class="k">def</span> <span class="nf">init_obs_cov_matrice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_obs</span><span class="p">,</span> <span class="n">obs_cov_type</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.init_obs_cov_matrice"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.init_obs_cov_matrice">[docs]</a>    <span class="k">def</span> <span class="nf">init_obs_cov_matrice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_obs</span><span class="p">,</span> <span class="n">obs_cov_type</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        THIS SHOULD BE MOVED TO DA CLASS</span>
 
@@ -6595,7 +6505,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">data_cov</span> </div>
 
 
-<div class="viewcode-block" id="CATHY.resynchronise_times"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.resynchronise_times">[docs]</a>    <span class="k">def</span> <span class="nf">resynchronise_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_measure</span><span class="p">,</span><span class="n">atmbc_df</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.resynchronise_times"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.resynchronise_times">[docs]</a>    <span class="k">def</span> <span class="nf">resynchronise_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_measure</span><span class="p">,</span><span class="n">atmbc_df</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; old key is elapsed time in second from the first observation, </span>
 <span class="sd">        while new key is from the first atmbc time</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -6612,7 +6522,7 @@ title="Open an issue"
     
     <span class="c1"># self.dict_obs.keys()</span>
 
-<div class="viewcode-block" id="CATHY.dictObs_2pd"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.dictObs_2pd">[docs]</a>    <span class="k">def</span> <span class="nf">dictObs_2pd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.dictObs_2pd"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.dictObs_2pd">[docs]</a>    <span class="k">def</span> <span class="nf">dictObs_2pd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;dict of observation to dataframe of observation&#39;&#39;&#39;</span>
         <span class="n">df_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_obs</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
         <span class="n">df_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> 
@@ -6623,7 +6533,7 @@ title="Open an issue"
     <span class="c1"># ------------------------------------------------------------------------</span>
     <span class="c1"># %% Mapping of properties to zones/mesh</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="CATHY.map_prop2mesh"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_prop2mesh">[docs]</a>    <span class="k">def</span> <span class="nf">map_prop2mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_props</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.map_prop2mesh"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_prop2mesh">[docs]</a>    <span class="k">def</span> <span class="nf">map_prop2mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_props</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Add a map of a given physical property to the mesh</span>
 
@@ -6654,7 +6564,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CATHY.map_prop_veg"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_prop_veg">[docs]</a>    <span class="k">def</span> <span class="nf">map_prop_veg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_props</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.map_prop_veg"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_prop_veg">[docs]</a>    <span class="k">def</span> <span class="nf">map_prop_veg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_props</span><span class="p">):</span>
                
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;veg_map&#39;</span><span class="p">)</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;no known existing vegetation map.&#39;</span><span class="p">)</span>
@@ -6673,7 +6583,7 @@ title="Open an issue"
             <span class="k">return</span> <span class="n">update_map_veg</span></div>
         
         
-<div class="viewcode-block" id="CATHY.map_prop2zone"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_prop2zone">[docs]</a>    <span class="k">def</span> <span class="nf">map_prop2zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_props</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.map_prop2zone"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_prop2zone">[docs]</a>    <span class="k">def</span> <span class="nf">map_prop2zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dict_props</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
                
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;zone_xyz&#39;</span><span class="p">)</span><span class="o">==</span><span class="kc">False</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;no known existing zones.&#39;</span><span class="p">)</span>
@@ -6688,7 +6598,7 @@ title="Open an issue"
     <span class="c1"># ------------------------------------------------------------------------</span>
     <span class="c1">#%% Plot call</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="CATHY.plot"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.plot"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Call and parse to cathy.plotter from the main CATHY class</span>
 
@@ -6716,7 +6626,7 @@ title="Open an issue"
             
     <span class="c1">#%% Read outputs/inputs </span>
     <span class="c1"># ------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="CATHY.read_outputs"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.read_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">read_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.read_outputs"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.read_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">read_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Read CATHY format output file</span>
 
@@ -6764,7 +6674,7 @@ title="Open an issue"
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="CATHY.read_inputs"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.read_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">read_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.read_inputs"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.read_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">read_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Read CATHY format input file</span>
 
@@ -6796,7 +6706,7 @@ title="Open an issue"
     <span class="c1"># %% utils</span>
     <span class="c1"># -------------------------------------------------------------------#</span>
 
-<div class="viewcode-block" id="CATHY.find_nearest_node"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.find_nearest_node">[docs]</a>    <span class="k">def</span> <span class="nf">find_nearest_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_coords</span><span class="p">,</span> <span class="n">grid3d</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="CATHY.find_nearest_node"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.find_nearest_node">[docs]</a>    <span class="k">def</span> <span class="nf">find_nearest_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_coords</span><span class="p">,</span> <span class="n">grid3d</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Find nearest mesh node</span>
 
@@ -6845,7 +6755,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">closest_idx</span><span class="p">,</span> <span class="n">closest</span></div>
 
 
-<div class="viewcode-block" id="CATHY.rich_display"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.rich_display">[docs]</a>    <span class="k">def</span> <span class="nf">rich_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Star Wars Movies&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.rich_display"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.rich_display">[docs]</a>    <span class="k">def</span> <span class="nf">rich_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Star Wars Movies&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Describe the variable state and fate during the simulation with a rich table</span>
 
@@ -6860,7 +6770,7 @@ title="Open an issue"
 
 
 
-<div class="viewcode-block" id="CATHY.backup_simu"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.backup_simu">[docs]</a>    <span class="k">def</span> <span class="nf">backup_simu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.backup_simu"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.backup_simu">[docs]</a>    <span class="k">def</span> <span class="nf">backup_simu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Save a copy of the simulation for reuse within python</span>
 <span class="sd">        </span>
@@ -6876,7 +6786,7 @@ title="Open an issue"
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
         
    
-<div class="viewcode-block" id="CATHY.backup_results_DA"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.backup_results_DA">[docs]</a>    <span class="k">def</span> <span class="nf">backup_results_DA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">meta_DA</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="CATHY.backup_results_DA"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.backup_results_DA">[docs]</a>    <span class="k">def</span> <span class="nf">backup_results_DA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">meta_DA</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Save minimal dataframes of the simulation for result visualisation within python</span>
 <span class="sd">        </span>
@@ -6914,7 +6824,7 @@ title="Open an issue"
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
         
 
-<div class="viewcode-block" id="CATHY.load_pickle_backup"><a class="viewcode-back" href="../../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.load_pickle_backup">[docs]</a>    <span class="k">def</span> <span class="nf">load_pickle_backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="CATHY.load_pickle_backup"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.load_pickle_backup">[docs]</a>    <span class="k">def</span> <span class="nf">load_pickle_backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span> <span class="o">+</span> <span class="s1">&#39;_df.pkl&#39;</span><span class="p">)</span>
@@ -6951,34 +6861,29 @@ title="Open an issue"
 
               </div>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
+            
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
 </div>
-            </footer>
+            
         </div>
     </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
-  
-    By B. Mary<br/>
-  
-      &copy; Copyright 2022, B. Mary.<br/>
-</p>
-        </footer>
-    </div>
+    <footer class="footer">
+  <p>
     
-</div>
+      By B. Mary<br/>
+    
+        &copy; Copyright 2022, B. Mary.<br/>
+      Last updated on Sep 12, 2022.<br/>
+  </p>
+</footer>
+</main>
 
 
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

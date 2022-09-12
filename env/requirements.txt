@@ -4,6 +4,13 @@ soiltexture
 SALib
 pyvistaqt
 itkwidgets
+rosetta
+rich
+pandas
+natsort
+
+# Optionnal packages
+resipy
 
 # Documentation building requirements
 numpydoc
@@ -18,3 +25,7 @@ matplotlib
 pyvista
 vtk
 myst_nb
+
+
+# pypi building requirements
+twine

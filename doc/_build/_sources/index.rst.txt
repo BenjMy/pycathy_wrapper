@@ -7,13 +7,13 @@
 .. title:: Home
 
 
-.. warning:: Ready for daily use but still changing    
+.. warning:: This package is in early stage of developement. The first version (0.1.0) is ready for daily use but is still changing.    
     
     
 **PyCATHY** is a **Python wrapper for CATHY** :cite:p:`Camporese2010` (V1) easing the process for mesh creation, forward hydrological modeling, and output visualization of CATHY simulations.
 
 
-.. hint:: The initial version (v0.0.1) includes a **Data Assimilation** extension to facilitate the integration of geophysical data into the hydrological model. You can check the list of improvements in the github releases. 
+.. hint:: The initial version (v0.1.0) includes a **Data Assimilation** extension to facilitate the integration of geophysical data into the hydrological model. You can check the list of improvements in the github releases. 
 
 
 
@@ -100,7 +100,7 @@
    :maxdepth: 5
    :caption: Reference documentation
    
-   content/api_core/api
+   content/api/api.rst
    content/change_log
    content/references
 

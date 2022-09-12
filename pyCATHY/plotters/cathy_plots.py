@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Plotting functions for pyCATHY (2D and 3D)
-Covers:
+
+Plotting:
     - output files
     - inputs files 
     - petro/pedophysical relationships

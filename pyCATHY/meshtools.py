@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jul 28 18:03:04 2021
-
-@author: ben
+Meshing tools
 """
 
 import os 
 import numpy as np
 import pyvista as pv
-import pygimli as pg
-import pygimli.meshtools as mt
+
+try: 
+    import pygimli as pg
+    import pygimli.meshtools as mt
+except ImportError: 
+    pygimli = None
+
+import matplotlib.pylab as plt
 
 
 def trace_mesh_pg(meshIN,meshOUT,method='spline', **kwargs):
@@ -82,7 +86,6 @@ def set_interpolation_radius():
     
 def plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result):
     
-    import matplotlib.pylab as plt
     fig = plt.figure()
     ax1 = plt.subplot(131)
     print(max(meshIN[scalar]))

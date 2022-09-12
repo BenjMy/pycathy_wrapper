@@ -12,8 +12,8 @@
 #
 import os
 import sys
-#sys.path.append(os.path.relpath('../pyCATHY/'))
-#sys.path.insert(0, os.path.abspath('../pyCATHY/'))
+sys.path.append(os.path.relpath('../pyCATHY/'))
+sys.path.insert(0, os.path.abspath('../pyCATHY/'))
 
 #import pyCATHY
 
@@ -40,7 +40,7 @@ copyright = '2022, B. Mary'
 author = 'B. Mary'
 
 # The full version, including alpha/beta/rc tags
-release = 'v0.0.1'
+release = 'v0.1.0'
 
 
 

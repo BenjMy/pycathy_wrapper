@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 29 12:12:41 2021
-@author: ben
+Utilities for pyCATHY
 - Unit conversion and labelling
 - Others utilities
 """
 
 import pandas as pd
-from datetime import datetime, timedelta
-from rosetta import rosetta, SoilData
+#from datetime import datetime, timedelta
+#from rosetta import rosetta, SoilData
 
 #%% ---------------------------------------------------------------------------
 #############    Unit conversion and label ####################################

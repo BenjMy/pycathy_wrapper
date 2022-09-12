@@ -5,14 +5,25 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from resipy import R2 # geophysics tools
 import pyvista as pv # if not installed : pip install with conda install pyvista (in a conda terminal)
 import numpy as np
 import os 
 
-import pygimli as pg
-from pygimli.physics import ert
-import pygimli.meshtools as mt
+try: 
+    import pygimli as pg
+    from pygimli.physics import ert
+    import pygimli.meshtools as mt
+except ImportError: 
+    pygimli = None
+
+try: 
+    from resipy import R2 # geophysics tools
+except ImportError: 
+    resipy = None
+
+
+
+
 
 # runParallel
 

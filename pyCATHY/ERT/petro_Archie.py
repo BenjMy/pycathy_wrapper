@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""For the manager look at BERT https://gitlab.com/resistivity-net/bert."""
+"""Pedophysical transformations"""
 
 import numpy as np
 import matplotlib.pyplot as plt

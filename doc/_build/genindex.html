@@ -7,13 +7,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-        <title>Index | pyCATHY v0.0.1</title>
+        <title>Index | pyCATHY v0.1.0</title>
     
 
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -23,22 +22,25 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
+    
+      
+
+    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -51,11 +53,11 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script src="_static/design-tabs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
     <link rel="shortcut icon" href="_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -63,21 +65,7 @@
     <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
-
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -86,10 +74,14 @@
     <div class="container-xl">
       <div class="row">
           
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
+    
+        <div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
         <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
@@ -99,7 +91,7 @@
       <img src="_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
       
       
-      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.0.1</span></h1>
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.1.0</span></h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -160,7 +152,7 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="content/api_core/api.html">
+  <a class="reference internal" href="content/api/api.html">
    API reference: The
    <code class="docutils literal notranslate">
     <span class="pre">
@@ -176,10 +168,10 @@
   </label>
   <ul>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.html">
+    <a class="reference internal" href="content/api/generated/cathy_tools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.cathy_tools
+       cathy_tools
       </span>
      </code>
     </a>
@@ -190,82 +182,72 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html">
-       pyCATHY.cathy_tools.CATHY
+      <a class="reference internal" href="content/api/generated/cathy_tools.CATHY.html">
+       cathy_tools.CATHY
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.HiddenPrints.html">
-       pyCATHY.cathy_tools.HiddenPrints
+      <a class="reference internal" href="content/api/generated/cathy_tools.HiddenPrints.html">
+       cathy_tools.HiddenPrints
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html">
-       pyCATHY.cathy_tools.OrderedDict
+      <a class="reference internal" href="content/api/generated/cathy_tools.OrderedDict.html">
+       cathy_tools.OrderedDict
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html">
-       pyCATHY.cathy_tools.Repo
+      <a class="reference internal" href="content/api/generated/cathy_tools.Repo.html">
+       cathy_tools.Repo
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.partial.html">
-       pyCATHY.cathy_tools.partial
+      <a class="reference internal" href="content/api/generated/cathy_tools.partial.html">
+       cathy_tools.partial
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.contextmanager.html">
-       pyCATHY.cathy_tools.contextmanager
+      <a class="reference internal" href="content/api/generated/cathy_tools.isfile.html">
+       cathy_tools.isfile
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.isfile.html">
-       pyCATHY.cathy_tools.isfile
+      <a class="reference internal" href="content/api/generated/cathy_tools.join.html">
+       cathy_tools.join
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.join.html">
-       pyCATHY.cathy_tools.join
+      <a class="reference internal" href="content/api/generated/cathy_tools.listdir.html">
+       cathy_tools.listdir
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.listdir.html">
-       pyCATHY.cathy_tools.listdir
+      <a class="reference internal" href="content/api/generated/cathy_tools.make_console.html">
+       cathy_tools.make_console
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.make_console.html">
-       pyCATHY.cathy_tools.make_console
+      <a class="reference internal" href="content/api/generated/cathy_tools.print.html">
+       cathy_tools.print
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.print.html">
-       pyCATHY.cathy_tools.print
+      <a class="reference internal" href="content/api/generated/cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.subprocess_run_multi.html">
-       pyCATHY.cathy_tools.subprocess_run_multi
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.suppress_stdout.html">
-       pyCATHY.cathy_tools.suppress_stdout
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_tools.track.html">
-       pyCATHY.cathy_tools.track
+      <a class="reference internal" href="content/api/generated/cathy_tools.track.html">
+       cathy_tools.track
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.html">
+    <a class="reference internal" href="content/api/generated/importers.cathy_outputs.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.meshtools
+       importers.cathy_outputs
       </span>
      </code>
     </a>
@@ -276,42 +258,52 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
-       pyCATHY.meshtools.add_attribute_2mesh
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_cumflowvol.html">
+       importers.cathy_outputs.read_cumflowvol
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.find_nearest_node.html">
-       pyCATHY.meshtools.find_nearest_node
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_dtcoupling.html">
+       importers.cathy_outputs.read_dtcoupling
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
-       pyCATHY.meshtools.plot_2d_interpolation_quality
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_hgraph.html">
+       importers.cathy_outputs.read_hgraph
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.set_interpolation_radius.html">
-       pyCATHY.meshtools.set_interpolation_radius
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_hgsfdet.html">
+       importers.cathy_outputs.read_hgsfdet
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.trace_mesh.html">
-       pyCATHY.meshtools.trace_mesh
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_mbeconv.html">
+       importers.cathy_outputs.read_mbeconv
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.meshtools.trace_mesh_pg.html">
-       pyCATHY.meshtools.trace_mesh_pg
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_psi.html">
+       importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_sw.html">
+       importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/importers.cathy_outputs.read_vp.html">
+       importers.cathy_outputs.read_vp
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.html">
+    <a class="reference internal" href="content/api/generated/importers.cathy_inputs.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.cathy_utils
+       importers.cathy_inputs
       </span>
      </code>
     </a>
@@ -322,67 +314,22 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html">
-       pyCATHY.cathy_utils.SoilData
+      <a class="reference internal" href="content/api/generated/importers.cathy_inputs.read_atmbc.html">
+       importers.cathy_inputs.read_atmbc
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html">
-       pyCATHY.cathy_utils.datetime
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.timedelta.html">
-       pyCATHY.cathy_utils.timedelta
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.change_x2date.html">
-       pyCATHY.cathy_utils.change_x2date
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.convert_time_units.html">
-       pyCATHY.cathy_utils.convert_time_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
-       pyCATHY.cathy_utils.dictObs_2pd
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.kPa2cm.html">
-       pyCATHY.cathy_utils.kPa2cm
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.kPa2m.html">
-       pyCATHY.cathy_utils.kPa2m
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.label_units.html">
-       pyCATHY.cathy_utils.label_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.rosetta.html">
-       pyCATHY.cathy_utils.rosetta
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
-       pyCATHY.cathy_utils.transform2_time_delta
+      <a class="reference internal" href="content/api/generated/importers.cathy_inputs.read_grid3d.html">
+       importers.cathy_inputs.read_grid3d
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.html">
+    <a class="reference internal" href="content/api/generated/DA.cathy_DA.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.importers.cathy_outputs
+       DA.cathy_DA
       </span>
      </code>
     </a>
@@ -393,52 +340,27 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_cumflowvol.html">
-       pyCATHY.importers.cathy_outputs.read_cumflowvol
+      <a class="reference internal" href="content/api/generated/DA.cathy_DA.CATHY.html">
+       DA.cathy_DA.CATHY
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_dtcoupling.html">
-       pyCATHY.importers.cathy_outputs.read_dtcoupling
+      <a class="reference internal" href="content/api/generated/DA.cathy_DA.DA.html">
+       DA.cathy_DA.DA
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgraph.html">
-       pyCATHY.importers.cathy_outputs.read_hgraph
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgsfdet.html">
-       pyCATHY.importers.cathy_outputs.read_hgsfdet
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_mbeconv.html">
-       pyCATHY.importers.cathy_outputs.read_mbeconv
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_psi.html">
-       pyCATHY.importers.cathy_outputs.read_psi
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_sw.html">
-       pyCATHY.importers.cathy_outputs.read_sw
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_vp.html">
-       pyCATHY.importers.cathy_outputs.read_vp
+      <a class="reference internal" href="content/api/generated/DA.cathy_DA.run_analysis.html">
+       DA.cathy_DA.run_analysis
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_inputs.html">
+    <a class="reference internal" href="content/api/generated/ERT.petro_Archie.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.importers.cathy_inputs
+       ERT.petro_Archie
       </span>
      </code>
     </a>
@@ -449,22 +371,42 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_inputs.read_atmbc.html">
-       pyCATHY.importers.cathy_inputs.read_atmbc
+      <a class="reference internal" href="content/api/generated/ERT.petro_Archie.Archie_rho_DA.html">
+       ERT.petro_Archie.Archie_rho_DA
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.importers.cathy_inputs.read_grid3d.html">
-       pyCATHY.importers.cathy_inputs.read_grid3d
+      <a class="reference internal" href="content/api/generated/ERT.petro_Archie.CATHY_2_Resipy.html">
+       ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/ERT.petro_Archie.CATHY_2_pg.html">
+       ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/ERT.petro_Archie.SW_2_ERa_DA.html">
+       ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/ERT.petro_Archie.get_Archie_ens_i.html">
+       ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/ERT.petro_Archie.get_sw_ens_i.html">
+       ERT.petro_Archie.get_sw_ens_i
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.html">
+    <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.plotters.cathy_plots
+       ERT.simulate_ERT
       </span>
      </code>
     </a>
@@ -475,147 +417,42 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html">
-       pyCATHY.plotters.cathy_plots.LogNorm
+      <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.R2.html">
+       ERT.simulate_ERT.R2
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.COCumflowvol.html">
-       pyCATHY.plotters.cathy_plots.COCumflowvol
+      <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.Archie_ERT.html">
+       ERT.simulate_ERT.Archie_ERT
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_RMS.html">
-       pyCATHY.plotters.cathy_plots.DA_RMS
+      <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.create_ERT_survey.html">
+       ERT.simulate_ERT.create_ERT_survey
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_Archie.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_Archie
+      <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.create_ERT_survey_pg.html">
+       ERT.simulate_ERT.create_ERT_survey_pg
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic
+      <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html">
+       ERT.simulate_ERT.fwd_ERT_survey
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.change_x2date.html">
-       pyCATHY.plotters.cathy_plots.change_x2date
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.convert_time_units.html">
-       pyCATHY.plotters.cathy_plots.convert_time_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot.html">
-       pyCATHY.plotters.cathy_plots.dem_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot_2d_top.html">
-       pyCATHY.plotters.cathy_plots.dem_plot_2d_top
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.indice_veg_plot.html">
-       pyCATHY.plotters.cathy_plots.indice_veg_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.label_units.html">
-       pyCATHY.plotters.cathy_plots.label_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_VGP.html">
-       pyCATHY.plotters.cathy_plots.plot_VGP
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm.html">
-       pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_mesh_bounds.html">
-       pyCATHY.plotters.cathy_plots.plot_mesh_bounds
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
-       pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_DA_process_ens.html">
-       pyCATHY.plotters.cathy_plots.show_DA_process_ens
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc.html">
-       pyCATHY.plotters.cathy_plots.show_atmbc
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc_3d.html">
-       pyCATHY.plotters.cathy_plots.show_atmbc_3d
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph.html">
-       pyCATHY.plotters.cathy_plots.show_hgraph
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph_2.html">
-       pyCATHY.plotters.cathy_plots.show_hgraph_2
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgsfdet.html">
-       pyCATHY.plotters.cathy_plots.show_hgsfdet
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED.html">
-       pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk.html">
-       pyCATHY.plotters.cathy_plots.show_vtk
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk_TL.html">
-       pyCATHY.plotters.cathy_plots.show_vtk_TL
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.plotters.cathy_plots.transform2_time_delta.html">
-       pyCATHY.plotters.cathy_plots.transform2_time_delta
+      <a class="reference internal" href="content/api/generated/ERT.simulate_ERT.invert_ERT_survey.html">
+       ERT.simulate_ERT.invert_ERT_survey
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.html">
+    <a class="reference internal" href="content/api/generated/sensitivity.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.sensitivity
+       sensitivity
       </span>
      </code>
     </a>
@@ -626,52 +463,52 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.analysis_Morris.html">
-       pyCATHY.sensitivity.analysis_Morris
+      <a class="reference internal" href="content/api/generated/sensitivity.analysis_Morris.html">
+       sensitivity.analysis_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.define_Morris.html">
-       pyCATHY.sensitivity.define_Morris
+      <a class="reference internal" href="content/api/generated/sensitivity.define_Morris.html">
+       sensitivity.define_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.df_Morris.html">
-       pyCATHY.sensitivity.df_Morris
+      <a class="reference internal" href="content/api/generated/sensitivity.df_Morris.html">
+       sensitivity.df_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.err_weighted_rmse.html">
-       pyCATHY.sensitivity.err_weighted_rmse
+      <a class="reference internal" href="content/api/generated/sensitivity.err_weighted_rmse.html">
+       sensitivity.err_weighted_rmse
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.plot_Morris.html">
-       pyCATHY.sensitivity.plot_Morris
+      <a class="reference internal" href="content/api/generated/sensitivity.plot_Morris.html">
+       sensitivity.plot_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.print_Morris_out.html">
-       pyCATHY.sensitivity.print_Morris_out
+      <a class="reference internal" href="content/api/generated/sensitivity.print_Morris_out.html">
+       sensitivity.print_Morris_out
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.run_sensitivity_analysis.html">
-       pyCATHY.sensitivity.run_sensitivity_analysis
+      <a class="reference internal" href="content/api/generated/sensitivity.run_sensitivity_analysis.html">
+       sensitivity.run_sensitivity_analysis
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.sensitivity.samples_generation.html">
-       pyCATHY.sensitivity.samples_generation
+      <a class="reference internal" href="content/api/generated/sensitivity.samples_generation.html">
+       sensitivity.samples_generation
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.DA.cathy_DA.html">
+    <a class="reference internal" href="content/api/generated/plotters.cathy_plots.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.DA.cathy_DA
+       plotters.cathy_plots
       </span>
      </code>
     </a>
@@ -682,27 +519,147 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html">
-       pyCATHY.DA.cathy_DA.CATHY
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.LogNorm.html">
+       plotters.cathy_plots.LogNorm
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html">
-       pyCATHY.DA.cathy_DA.DA
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.COCumflowvol.html">
+       plotters.cathy_plots.COCumflowvol
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.DA.cathy_DA.run_analysis.html">
-       pyCATHY.DA.cathy_DA.run_analysis
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.DA_RMS.html">
+       plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.DA_plot_Archie.html">
+       plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html">
+       plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.change_x2date.html">
+       plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.convert_time_units.html">
+       plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.dem_plot.html">
+       plotters.cathy_plots.dem_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html">
+       plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.indice_veg_plot.html">
+       plotters.cathy_plots.indice_veg_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.label_units.html">
+       plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.plot_VGP.html">
+       plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.plot_mesh_bounds.html">
+       plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_DA_process_ens.html">
+       plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_atmbc.html">
+       plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_atmbc_3d.html">
+       plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_hgraph.html">
+       plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_hgraph_2.html">
+       plotters.cathy_plots.show_hgraph_2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html">
+       plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_vtk.html">
+       plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.show_vtk_TL.html">
+       plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/plotters.cathy_plots.transform2_time_delta.html">
+       plotters.cathy_plots.transform2_time_delta
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.html">
+    <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.ERT.petro_Archie
+       pyCATHY.cathy_utils
       </span>
      </code>
     </a>
@@ -713,42 +670,47 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.Archie_rho_DA.html">
-       pyCATHY.ERT.petro_Archie.Archie_rho_DA
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_Resipy.html">
-       pyCATHY.ERT.petro_Archie.CATHY_2_Resipy
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_pg.html">
-       pyCATHY.ERT.petro_Archie.CATHY_2_pg
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.SW_2_ERa_DA.html">
-       pyCATHY.ERT.petro_Archie.SW_2_ERa_DA
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.get_Archie_ens_i.html">
-       pyCATHY.ERT.petro_Archie.get_Archie_ens_i
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.petro_Archie.get_sw_ens_i.html">
-       pyCATHY.ERT.petro_Archie.get_sw_ens_i
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="content/api/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.html">
+    <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.ERT.simulate_ERT
+       pyCATHY.meshtools
       </span>
      </code>
     </a>
@@ -759,33 +721,33 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html">
-       pyCATHY.ERT.simulate_ERT.R2
+      <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.Archie_ERT.html">
-       pyCATHY.ERT.simulate_ERT.Archie_ERT
+      <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.create_ERT_survey
+      <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg.html">
-       pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg
+      <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.fwd_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.fwd_ERT_survey
+      <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.invert_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.invert_ERT_survey
+      <a class="reference internal" href="content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
       </a>
      </li>
     </ul>
@@ -817,122 +779,73 @@
 </ul>
 
     </div>
-</nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
             </div>
+            
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BenjMy/pycathy_wrapper"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fgenindex.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
         </div>
     </div>
-    <div id="rtd-footer-container"></div>
 </div>
-
-
-          
-
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
-<div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
-
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
-    </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-
-<div class="menu-dropdown menu-dropdown-repository-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Source repositories">
-      <i class="fab fa-github"></i>
-  </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="https://github.com/BenjMy/pycathy_wrapper"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fab fa-github"></i>
-  </span>
-<span class="headerbtn__text-container">repository</span>
-</a>
-
-      </li>
-      
-      <li>
-        <a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fgenindex.html&body=Your%20issue%20content%20here."
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Open an issue"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-lightbulb"></i>
-  </span>
-<span class="headerbtn__text-container">open issue</span>
-</a>
-
-      </li>
-      
-    </ul>
-  </div>
-</div>
-
-    </div>
-</div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-</div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1></h1>
@@ -943,8 +856,7 @@ title="Open an issue"
                     </div>
                 </div>
             </div>
-            <main id="main-content" role="main">
-                
+            
               <div>
                 
 
@@ -978,33 +890,33 @@ title="Open an issue"
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.meshtools.add_attribute_2mesh.html#pyCATHY.meshtools.add_attribute_2mesh">add_attribute_2mesh() (in module pyCATHY.meshtools)</a>
+      <li><a href="content/api/generated/meshtools.add_attribute_2mesh.html#meshtools.add_attribute_2mesh">add_attribute_2mesh() (in module meshtools)</a>
+
+      <ul>
+        <li><a href="content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html#pyCATHY.meshtools.add_attribute_2mesh">(in module pyCATHY.meshtools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.addData">addData() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.addData">addData() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.addFilteredIP">addFilteredIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.addFilteredIP">addFilteredIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.addFlatError">addFlatError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.addFlatError">addFlatError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.addRegion">addRegion() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.analysis_Morris.html#pyCATHY.sensitivity.analysis_Morris">analysis_Morris() (in module pyCATHY.sensitivity)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.addRegion">addRegion() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.append">append() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/sensitivity.analysis_Morris.html#sensitivity.analysis_Morris">analysis_Morris() (in module sensitivity)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.Archie_ERT.html#pyCATHY.ERT.simulate_ERT.Archie_ERT">Archie_ERT() (in module pyCATHY.ERT.simulate_ERT)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.Archie_ERT.html#ERT.simulate_ERT.Archie_ERT">Archie_ERT() (in module ERT.simulate_ERT)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.Archie_rho_DA.html#pyCATHY.ERT.petro_Archie.Archie_rho_DA">Archie_rho_DA() (in module pyCATHY.ERT.petro_Archie)</a>
+      <li><a href="content/api/generated/ERT.petro_Archie.Archie_rho_DA.html#ERT.petro_Archie.Archie_rho_DA">Archie_rho_DA() (in module ERT.petro_Archie)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.archive">archive() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.archive">archive() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.astimezone">astimezone() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm.autoscale">autoscale() (plotters.cathy_plots.LogNorm method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html#pyCATHY.plotters.cathy_plots.LogNorm.autoscale">autoscale() (pyCATHY.plotters.cathy_plots.LogNorm method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html#pyCATHY.plotters.cathy_plots.LogNorm.autoscale_None">autoscale_None() (pyCATHY.plotters.cathy_plots.LogNorm method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm.autoscale_None">autoscale_None() (plotters.cathy_plots.LogNorm method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1012,23 +924,23 @@ title="Open an issue"
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.backup_results_DA">backup_results_DA() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.backup_results_DA">backup_results_DA() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.backup_results_DA">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.backup_results_DA">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.backup_simu">backup_simu() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.backup_simu">backup_simu() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.backup_simu">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.backup_simu">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.blame">blame() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.blame">blame() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.blame_incremental">blame_incremental() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.blame_incremental">blame_incremental() (cathy_tools.Repo method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1036,137 +948,139 @@ title="Open an issue"
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.Carsel_Parrish_VGN_pert">Carsel_Parrish_VGN_pert() (pyCATHY.DA.cathy_DA.DA method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.Carsel_Parrish_VGN_pert">Carsel_Parrish_VGN_pert() (DA.cathy_DA.DA method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY">CATHY (class in pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY">CATHY (class in cathy_tools)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY">(class in pyCATHY.DA.cathy_DA)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY">(class in DA.cathy_DA)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_pg.html#pyCATHY.ERT.petro_Archie.CATHY_2_pg">CATHY_2_pg() (in module pyCATHY.ERT.petro_Archie)</a>
+      <li><a href="content/api/generated/ERT.petro_Archie.CATHY_2_pg.html#ERT.petro_Archie.CATHY_2_pg">CATHY_2_pg() (in module ERT.petro_Archie)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_Resipy.html#pyCATHY.ERT.petro_Archie.CATHY_2_Resipy">CATHY_2_Resipy() (in module pyCATHY.ERT.petro_Archie)</a>
+      <li><a href="content/api/generated/ERT.petro_Archie.CATHY_2_Resipy.html#ERT.petro_Archie.CATHY_2_Resipy">CATHY_2_Resipy() (in module ERT.petro_Archie)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.change_x2date.html#pyCATHY.cathy_utils.change_x2date">change_x2date() (in module pyCATHY.cathy_utils)</a>
+      <li>
+    cathy_tools
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.change_x2date.html#pyCATHY.plotters.cathy_plots.change_x2date">(in module pyCATHY.plotters.cathy_plots)</a>
+        <li><a href="content/api/generated/cathy_tools.html#module-cathy_tools">module</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.check_for_inconsistent_BC">check_for_inconsistent_BC() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li>
+    cathy_utils
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.check_for_inconsistent_BC">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/cathy_utils.html#module-cathy_utils">module</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.checkTxSign">checkTxSign() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.clear">clear() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_utils.change_x2date.html#cathy_utils.change_x2date">change_x2date() (in module cathy_utils)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.clear">(pyCATHY.cathy_utils.SoilData method)</a>
+        <li><a href="content/api/generated/plotters.cathy_plots.change_x2date.html#plotters.cathy_plots.change_x2date">(in module plotters.cathy_plots)</a>
+</li>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.change_x2date.html#pyCATHY.cathy_utils.change_x2date">(in module pyCATHY.cathy_utils)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.clone">clone() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.clone_from">clone_from() (pyCATHY.cathy_tools.Repo class method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.close">close() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.COCumflowvol.html#pyCATHY.plotters.cathy_plots.COCumflowvol">COCumflowvol() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.combine">combine() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.commit">commit() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.computeAttribute">computeAttribute() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.computeDiff">computeDiff() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.computeFineMeshDepth">computeFineMeshDepth() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.computeModelError">computeModelError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.config_reader">config_reader() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.config_writer">config_writer() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.contextmanager.html#pyCATHY.cathy_tools.contextmanager">contextmanager() (in module pyCATHY.cathy_tools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.convert_time_units.html#pyCATHY.cathy_utils.convert_time_units">convert_time_units() (in module pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.check_for_inconsistent_BC">check_for_inconsistent_BC() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.convert_time_units.html#pyCATHY.plotters.cathy_plots.convert_time_units">(in module pyCATHY.plotters.cathy_plots)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.check_for_inconsistent_BC">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.copy">copy() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.checkTxSign">checkTxSign() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.clear">clear() (cathy_tools.OrderedDict method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.clone">clone() (cathy_tools.Repo method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.clone_from">clone_from() (cathy_tools.Repo class method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.close">close() (cathy_tools.Repo method)</a>
+</li>
+      <li><a href="content/api/generated/plotters.cathy_plots.COCumflowvol.html#plotters.cathy_plots.COCumflowvol">COCumflowvol() (in module plotters.cathy_plots)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.commit">commit() (cathy_tools.Repo method)</a>
+</li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.computeAttribute">computeAttribute() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.computeDiff">computeDiff() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.computeFineMeshDepth">computeFineMeshDepth() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.computeModelError">computeModelError() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.config_reader">config_reader() (cathy_tools.Repo method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.config_writer">config_writer() (cathy_tools.Repo method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_utils.convert_time_units.html#cathy_utils.convert_time_units">convert_time_units() (in module cathy_utils)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.copy">(pyCATHY.cathy_utils.SoilData method)</a>
+        <li><a href="content/api/generated/plotters.cathy_plots.convert_time_units.html#plotters.cathy_plots.convert_time_units">(in module plotters.cathy_plots)</a>
+</li>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.convert_time_units.html#pyCATHY.cathy_utils.convert_time_units">(in module pyCATHY.cathy_utils)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.count">count() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.copy">copy() (cathy_tools.OrderedDict method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.create3DSurvey">create3DSurvey() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.create3DSurvey">create3DSurvey() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey.html#pyCATHY.ERT.simulate_ERT.create_ERT_survey">create_ERT_survey() (in module pyCATHY.ERT.simulate_ERT)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.create_ERT_survey.html#ERT.simulate_ERT.create_ERT_survey">create_ERT_survey() (in module ERT.simulate_ERT)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg.html#pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg">create_ERT_survey_pg() (in module pyCATHY.ERT.simulate_ERT)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.create_ERT_survey_pg.html#ERT.simulate_ERT.create_ERT_survey_pg">create_ERT_survey_pg() (in module ERT.simulate_ERT)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.create_head">create_head() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.create_head">create_head() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.create_mesh_bounds_df">create_mesh_bounds_df() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.create_mesh_bounds_df">create_mesh_bounds_df() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.create_mesh_bounds_df">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.create_mesh_bounds_df">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.create_mesh_vtk">create_mesh_vtk() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.create_mesh_vtk">create_mesh_vtk() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.create_mesh_vtk">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.create_mesh_vtk">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.create_output">create_output() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.create_output">create_output() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.create_output">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.create_output">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.create_remote">create_remote() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.create_remote">create_remote() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.create_submodule">create_submodule() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.create_submodule">create_submodule() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.create_tag">create_tag() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.create_tag">create_tag() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createBatchSurvey">createBatchSurvey() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createBatchSurvey">createBatchSurvey() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createMesh">createMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createMesh">createMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createModel">createModel() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createModel">createModel() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createModelErrorMesh">createModelErrorMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createModelErrorMesh">createModelErrorMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createModelMesh">createModelMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createModelMesh">createModelMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createMultiMesh">createMultiMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createMultiMesh">createMultiMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createPseudo3DSurvey">createPseudo3DSurvey() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createPseudo3DSurvey">createPseudo3DSurvey() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createSequence">createSequence() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createSequence">createSequence() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createSequenceXBH">createSequenceXBH() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createSequenceXBH">createSequenceXBH() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createSurvey">createSurvey() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createSurvey">createSurvey() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.createTimeLapseSurvey">createTimeLapseSurvey() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.createTimeLapseSurvey">createTimeLapseSurvey() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.ctime">ctime() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.currently_rebasing_on">currently_rebasing_on() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.currently_rebasing_on">currently_rebasing_on() (cathy_tools.Repo method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1174,75 +1088,90 @@ title="Open an issue"
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA">DA (class in pyCATHY.DA.cathy_DA)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA">DA (class in DA.cathy_DA)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_Archie.html#pyCATHY.plotters.cathy_plots.DA_plot_Archie">DA_plot_Archie() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li>
+    DA.cathy_DA
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.html#module-DA.cathy_DA">module</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic.html#pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic">DA_plot_parm_dynamic() (in module pyCATHY.plotters.cathy_plots)</a>
+      </ul></li>
+      <li><a href="content/api/generated/plotters.cathy_plots.DA_plot_Archie.html#plotters.cathy_plots.DA_plot_Archie">DA_plot_Archie() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html#pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter">DA_plot_parm_dynamic_scatter() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html#plotters.cathy_plots.DA_plot_parm_dynamic">DA_plot_parm_dynamic() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic.html#pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic">DA_plot_time_dynamic() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html#plotters.cathy_plots.DA_plot_parm_dynamic_scatter">DA_plot_parm_dynamic_scatter() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_RMS.html#pyCATHY.plotters.cathy_plots.DA_RMS">DA_RMS() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html#plotters.cathy_plots.DA_plot_time_dynamic">DA_plot_time_dynamic() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.date">date() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.DA_RMS.html#plotters.cathy_plots.DA_RMS">DA_RMS() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime">datetime (class in pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/sensitivity.define_Morris.html#sensitivity.define_Morris">define_Morris() (in module sensitivity)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.define_Morris.html#pyCATHY.sensitivity.define_Morris">define_Morris() (in module pyCATHY.sensitivity)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.delete_head">delete_head() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.delete_head">delete_head() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.delete_remote">delete_remote() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.delete_remote">delete_remote() (cathy_tools.Repo method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.delete_tag">delete_tag() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.delete_tag">delete_tag() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot.html#pyCATHY.plotters.cathy_plots.dem_plot">dem_plot() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.dem_plot.html#plotters.cathy_plots.dem_plot">dem_plot() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot_2d_top.html#pyCATHY.plotters.cathy_plots.dem_plot_2d_top">dem_plot_2d_top() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html#plotters.cathy_plots.dem_plot_2d_top">dem_plot_2d_top() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.designModel">designModel() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.designModel">designModel() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.detectStrings">detectStrings() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.detectStrings">detectStrings() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.df_Morris.html#pyCATHY.sensitivity.df_Morris">df_Morris() (in module pyCATHY.sensitivity)</a>
+      <li><a href="content/api/generated/sensitivity.df_Morris.html#sensitivity.df_Morris">df_Morris() (in module sensitivity)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.dictObs_2pd.html#pyCATHY.cathy_utils.dictObs_2pd">dictObs_2pd() (in module pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.dictObs_2pd">dictObs_2pd() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.dictObs_2pd">(pyCATHY.cathy_tools.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.dictObs_2pd">(DA.cathy_DA.CATHY method)</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.dictObs_2pd">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/cathy_utils.dictObs_2pd.html#cathy_utils.dictObs_2pd">(in module cathy_utils)</a>
+</li>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.dictObs_2pd.html#pyCATHY.cathy_utils.dictObs_2pd">(in module pyCATHY.cathy_utils)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.display_time_run">display_time_run() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.display_time_run">display_time_run() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.display_time_run">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.display_time_run">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.dst">dst() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.elec2distance">elec2distance() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.elec2distance">elec2distance() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.err_weighted_rmse.html#pyCATHY.sensitivity.err_weighted_rmse">err_weighted_rmse() (in module pyCATHY.sensitivity)</a>
+      <li><a href="content/api/generated/sensitivity.err_weighted_rmse.html#sensitivity.err_weighted_rmse">err_weighted_rmse() (in module sensitivity)</a>
 </li>
+      <li>
+    ERT.petro_Archie
+
+      <ul>
+        <li><a href="content/api/generated/ERT.petro_Archie.html#module-ERT.petro_Archie">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.estimateError">estimateError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li>
+    ERT.simulate_ERT
+
+      <ul>
+        <li><a href="content/api/generated/ERT.simulate_ERT.html#module-ERT.simulate_ERT">module</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.Evensen2003">Evensen2003() (pyCATHY.DA.cathy_DA.DA method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.estimateError">estimateError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.extend">extend() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.Evensen2003">Evensen2003() (DA.cathy_DA.DA method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1250,73 +1179,65 @@ title="Open an issue"
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterAppResist">filterAppResist() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterAppResist">filterAppResist() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterDCA">filterDCA() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterDCA">filterDCA() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterDummy">filterDummy() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterDummy">filterDummy() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterElec">filterElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterElec">filterElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterInvError">filterInvError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterInvError">filterInvError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterManual">filterManual() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterManual">filterManual() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterNegative">filterNegative() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterNegative">filterNegative() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterNested">filterNested() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterNested">filterNested() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterRangeIP">filterRangeIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterRangeIP">filterRangeIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterRecip">filterRecip() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterRecip">filterRecip() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterRecipIP">filterRecipIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterRecipIP">filterRecipIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterStack">filterStack() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterStack">filterStack() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterTransferRes">filterTransferRes() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterTransferRes">filterTransferRes() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterUnpaired">filterUnpaired() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterUnpaired">filterUnpaired() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.filterZeroMeasSurveys">filterZeroMeasSurveys() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.meshtools.find_nearest_node.html#pyCATHY.meshtools.find_nearest_node">find_nearest_node() (in module pyCATHY.meshtools)</a>
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.find_nearest_node">(pyCATHY.cathy_tools.CATHY method)</a>
-</li>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.find_nearest_node">(pyCATHY.DA.cathy_DA.CATHY method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.fitErrorLin">fitErrorLin() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.filterZeroMeasSurveys">filterZeroMeasSurveys() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.fitErrorLME">fitErrorLME() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.find_nearest_node">find_nearest_node() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.find_nearest_node">(DA.cathy_DA.CATHY method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.fitErrorParabolaIP">fitErrorParabolaIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+        <li><a href="content/api/generated/meshtools.find_nearest_node.html#meshtools.find_nearest_node">(in module meshtools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.fitErrorPwl">fitErrorPwl() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+        <li><a href="content/api/generated/pyCATHY.meshtools.find_nearest_node.html#pyCATHY.meshtools.find_nearest_node">(in module pyCATHY.meshtools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.fitErrorPwlIP">fitErrorPwlIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.fitErrorLin">fitErrorLin() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.fixLegendItems">fixLegendItems() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.fitErrorLME">fitErrorLME() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.forward">forward() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.fitErrorParabolaIP">fitErrorParabolaIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.from_array">from_array() (pyCATHY.cathy_utils.SoilData class method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.fitErrorPwl">fitErrorPwl() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.fromisocalendar">fromisocalendar() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.fitErrorPwlIP">fitErrorPwlIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.fromisoformat">fromisoformat() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.fixLegendItems">fixLegendItems() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.fromkeys">fromkeys() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.forward">forward() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.fromordinal">fromordinal() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.fromkeys">fromkeys() (cathy_tools.OrderedDict method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.fromtimestamp">fromtimestamp() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.fwd_ERT_survey.html#pyCATHY.ERT.simulate_ERT.fwd_ERT_survey">fwd_ERT_survey() (in module pyCATHY.ERT.simulate_ERT)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html#ERT.simulate_ERT.fwd_ERT_survey">fwd_ERT_survey() (in module ERT.simulate_ERT)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1324,21 +1245,21 @@ title="Open an issue"
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.generateElec">generateElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.generateElec">generateElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.get">get() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.get">get() (cathy_tools.OrderedDict method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.get_Archie_ens_i.html#pyCATHY.ERT.petro_Archie.get_Archie_ens_i">get_Archie_ens_i() (in module pyCATHY.ERT.petro_Archie)</a>
+      <li><a href="content/api/generated/ERT.petro_Archie.get_Archie_ens_i.html#ERT.petro_Archie.get_Archie_ens_i">get_Archie_ens_i() (in module ERT.petro_Archie)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.get_sw_ens_i.html#pyCATHY.ERT.petro_Archie.get_sw_ens_i">get_sw_ens_i() (in module pyCATHY.ERT.petro_Archie)</a>
+      <li><a href="content/api/generated/ERT.petro_Archie.get_sw_ens_i.html#ERT.petro_Archie.get_sw_ens_i">get_sw_ens_i() (in module ERT.petro_Archie)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.getInvError">getInvError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.getInvError">getInvError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.getR2out">getR2out() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.getR2out">getR2out() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.getResults">getResults() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.getResults">getResults() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1346,13 +1267,13 @@ title="Open an issue"
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.has_separate_working_tree">has_separate_working_tree() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.has_separate_working_tree">has_separate_working_tree() (cathy_tools.Repo method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.hasElecString">hasElecString() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.hasElecString">hasElecString() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.HiddenPrints.html#pyCATHY.cathy_tools.HiddenPrints">HiddenPrints (class in pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.HiddenPrints.html#cathy_tools.HiddenPrints">HiddenPrints (class in cathy_tools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1360,69 +1281,71 @@ title="Open an issue"
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.ignored">ignored() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.ignored">ignored() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.importElec">importElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.importElec">importElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.importMesh">importMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.importPseudo3DElec">importPseudo3DElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.importSequence">importSequence() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.index">index() (pyCATHY.cathy_utils.SoilData method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.indice_veg_plot.html#pyCATHY.plotters.cathy_plots.indice_veg_plot">indice_veg_plot() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.init">init() (pyCATHY.cathy_tools.Repo class method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.init_boundary_conditions">init_boundary_conditions() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li>
+    importers.cathy_inputs
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.init_boundary_conditions">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/importers.cathy_inputs.html#module-importers.cathy_inputs">module</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.init_obs_cov_matrice">init_obs_cov_matrice() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li>
+    importers.cathy_outputs
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.init_obs_cov_matrice">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/importers.cathy_outputs.html#module-importers.cathy_outputs">module</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.insert">insert() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.importMesh">importMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html#pyCATHY.plotters.cathy_plots.LogNorm.inverse">inverse() (pyCATHY.plotters.cathy_plots.LogNorm method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.importPseudo3DElec">importPseudo3DElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.importSequence">importSequence() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/plotters.cathy_plots.indice_veg_plot.html#plotters.cathy_plots.indice_veg_plot">indice_veg_plot() (in module plotters.cathy_plots)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.init">init() (cathy_tools.Repo class method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.init_boundary_conditions">init_boundary_conditions() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.init_boundary_conditions">(DA.cathy_DA.CATHY method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.invert">invert() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.init_obs_cov_matrice">init_obs_cov_matrice() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.init_obs_cov_matrice">(DA.cathy_DA.CATHY method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.invert_ERT_survey.html#pyCATHY.ERT.simulate_ERT.invert_ERT_survey">invert_ERT_survey() (in module pyCATHY.ERT.simulate_ERT)</a>
+      </ul></li>
+      <li><a href="content/api/generated/plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm.inverse">inverse() (plotters.cathy_plots.LogNorm method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.invertPseudo3D">invertPseudo3D() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.invert">invert() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.is_ancestor">is_ancestor() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.invert_ERT_survey.html#ERT.simulate_ERT.invert_ERT_survey">invert_ERT_survey() (in module ERT.simulate_ERT)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.is_dirty">is_dirty() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.invertPseudo3D">invertPseudo3D() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.is_valid">is_valid() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.is_ancestor">is_ancestor() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.is_valid_object">is_valid_object() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.is_dirty">is_dirty() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.isfile.html#pyCATHY.cathy_tools.isfile">isfile() (in module pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.is_valid_object">is_valid_object() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.isocalendar">isocalendar() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.isfile.html#cathy_tools.isfile">isfile() (in module cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.isoformat">isoformat() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.items">items() (cathy_tools.OrderedDict method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.isoweekday">isoweekday() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.iter_commits">iter_commits() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.items">items() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.iter_submodules">iter_submodules() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.iter_commits">iter_commits() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.iter_submodules">iter_submodules() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.iter_trees">iter_trees() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.iter_trees">iter_trees() (cathy_tools.Repo method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1430,11 +1353,11 @@ title="Open an issue"
 <h2 id="J">J</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.Johnson1970">Johnson1970() (pyCATHY.DA.cathy_DA.DA method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.Johnson1970">Johnson1970() (DA.cathy_DA.DA method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.join.html#pyCATHY.cathy_tools.join">join() (in module pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.join.html#cathy_tools.join">join() (in module cathy_tools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1442,41 +1365,51 @@ title="Open an issue"
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.keys">keys() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.keys">keys() (cathy_tools.OrderedDict method)</a>
 </li>
+      <li><a href="content/api/generated/cathy_utils.kPa2cm.html#cathy_utils.kPa2cm">kPa2cm() (in module cathy_utils)</a>
+
+      <ul>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.kPa2cm.html#pyCATHY.cathy_utils.kPa2cm">(in module pyCATHY.cathy_utils)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.kPa2cm.html#pyCATHY.cathy_utils.kPa2cm">kPa2cm() (in module pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/cathy_utils.kPa2m.html#cathy_utils.kPa2m">kPa2m() (in module cathy_utils)</a>
+
+      <ul>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.kPa2m.html#pyCATHY.cathy_utils.kPa2m">(in module pyCATHY.cathy_utils)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.kPa2m.html#pyCATHY.cathy_utils.kPa2m">kPa2m() (in module pyCATHY.cathy_utils)</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.label_units.html#pyCATHY.cathy_utils.label_units">label_units() (in module pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/cathy_utils.label_units.html#cathy_utils.label_units">label_units() (in module cathy_utils)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.label_units.html#pyCATHY.plotters.cathy_plots.label_units">(in module pyCATHY.plotters.cathy_plots)</a>
+        <li><a href="content/api/generated/plotters.cathy_plots.label_units.html#plotters.cathy_plots.label_units">(in module plotters.cathy_plots)</a>
+</li>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.label_units.html#pyCATHY.cathy_utils.label_units">(in module pyCATHY.cathy_utils)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.listdir.html#pyCATHY.cathy_tools.listdir">listdir() (in module pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.listdir.html#cathy_tools.listdir">listdir() (in module cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.load_pickle_backup">load_pickle_backup() (pyCATHY.cathy_tools.CATHY method)</a>
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.load_pickle_backup">(pyCATHY.DA.cathy_DA.CATHY method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.loadProject">loadProject() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.load_pickle_backup">load_pickle_backup() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.load_pickle_backup">(DA.cathy_DA.CATHY method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.loadResults">loadResults() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.loadProject">loadProject() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html#pyCATHY.plotters.cathy_plots.LogNorm">LogNorm (class in pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.loadResults">loadResults() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm">LogNorm (class in plotters.cathy_plots)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1484,78 +1417,79 @@ title="Open an issue"
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.make_console.html#pyCATHY.cathy_tools.make_console">make_console() (in module pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.make_console.html#cathy_tools.make_console">make_console() (in module cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.map_prop2mesh">map_prop2mesh() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.map_prop2mesh">map_prop2mesh() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_prop2mesh">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_prop2mesh">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.map_prop2zone">map_prop2zone() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.map_prop2zone">map_prop2zone() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_prop2zone">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_prop2zone">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.map_prop_veg">map_prop_veg() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.map_prop_veg">map_prop_veg() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_prop_veg">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_prop_veg">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.map_states2Observations">map_states2Observations() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.map_states2Observations">map_states2Observations() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.map_states2Observations">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.map_states2Observations">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.matchSurveys">matchSurveys() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.matchSurveys">matchSurveys() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.merge_base">merge_base() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.merge_base">merge_base() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.mergeElec">mergeElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.mergeElec">mergeElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.modelDOI">modelDOI() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li>
+    meshtools
+
+      <ul>
+        <li><a href="content/api/generated/meshtools.html#module-meshtools">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.modelDOI">modelDOI() (ERT.simulate_ERT.R2 method)</a>
 </li>
       <li>
     module
 
       <ul>
-        <li><a href="content/api_core/api.html#module-pyCATHY">pyCATHY</a>
+        <li><a href="content/api/generated/cathy_tools.html#module-cathy_tools">cathy_tools</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_tools.html#module-pyCATHY.cathy_tools">pyCATHY.cathy_tools</a>
+        <li><a href="content/api/generated/cathy_utils.html#module-cathy_utils">cathy_utils</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_utils.html#module-pyCATHY.cathy_utils">pyCATHY.cathy_utils</a>
+        <li><a href="content/api/generated/DA.cathy_DA.html#module-DA.cathy_DA">DA.cathy_DA</a>
 </li>
-        <li><a href="content/api_core/_generated/pyCATHY.DA.html#module-pyCATHY.DA">pyCATHY.DA</a>
+        <li><a href="content/api/generated/ERT.petro_Archie.html#module-ERT.petro_Archie">ERT.petro_Archie</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.html#module-pyCATHY.DA.cathy_DA">pyCATHY.DA.cathy_DA</a>
+        <li><a href="content/api/generated/ERT.simulate_ERT.html#module-ERT.simulate_ERT">ERT.simulate_ERT</a>
 </li>
-        <li><a href="content/api_core/_generated/pyCATHY.ERT.html#module-pyCATHY.ERT">pyCATHY.ERT</a>
+        <li><a href="content/api/generated/importers.cathy_inputs.html#module-importers.cathy_inputs">importers.cathy_inputs</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.html#module-pyCATHY.ERT.petro_Archie">pyCATHY.ERT.petro_Archie</a>
+        <li><a href="content/api/generated/importers.cathy_outputs.html#module-importers.cathy_outputs">importers.cathy_outputs</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.html#module-pyCATHY.ERT.simulate_ERT">pyCATHY.ERT.simulate_ERT</a>
+        <li><a href="content/api/generated/meshtools.html#module-meshtools">meshtools</a>
 </li>
-        <li><a href="content/api_core/_generated/pyCATHY.importers.html#module-pyCATHY.importers">pyCATHY.importers</a>
+        <li><a href="content/api/generated/plotters.cathy_plots.html#module-plotters.cathy_plots">plotters.cathy_plots</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.importers.cathy_inputs.html#module-pyCATHY.importers.cathy_inputs">pyCATHY.importers.cathy_inputs</a>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.html#module-pyCATHY.cathy_utils">pyCATHY.cathy_utils</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.html#module-pyCATHY.importers.cathy_outputs">pyCATHY.importers.cathy_outputs</a>
+        <li><a href="content/api/generated/pyCATHY.meshtools.html#module-pyCATHY.meshtools">pyCATHY.meshtools</a>
 </li>
-        <li><a href="content/api_core/generated/pyCATHY.meshtools.html#module-pyCATHY.meshtools">pyCATHY.meshtools</a>
-</li>
-        <li><a href="content/api_core/_generated/pyCATHY.plotters.html#module-pyCATHY.plotters">pyCATHY.plotters</a>
-</li>
-        <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.html#module-pyCATHY.plotters.cathy_plots">pyCATHY.plotters.cathy_plots</a>
-</li>
-        <li><a href="content/api_core/generated/pyCATHY.sensitivity.html#module-pyCATHY.sensitivity">pyCATHY.sensitivity</a>
+        <li><a href="content/api/generated/sensitivity.html#module-sensitivity">sensitivity</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.move_to_end">move_to_end() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.move_to_end">move_to_end() (cathy_tools.OrderedDict method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1563,11 +1497,7 @@ title="Open an issue"
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.normElecIdx">normElecIdx() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.now">now() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.normElecIdx">normElecIdx() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1575,7 +1505,7 @@ title="Open an issue"
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict">OrderedDict (class in pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict">OrderedDict (class in cathy_tools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1583,161 +1513,77 @@ title="Open an issue"
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.partial.html#pyCATHY.cathy_tools.partial">partial (class in pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.partial.html#cathy_tools.partial">partial (class in cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.perturbate_dist">perturbate_dist() (pyCATHY.DA.cathy_DA.DA method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.perturbate_dist">perturbate_dist() (DA.cathy_DA.DA method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.perturbate_obs">perturbate_obs() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.perturbate_obs">perturbate_obs() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.perturbate_obs">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.perturbate_obs">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.perturbate_parm">perturbate_parm() (pyCATHY.DA.cathy_DA.DA method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.perturbate_parm">perturbate_parm() (DA.cathy_DA.DA method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.plot">plot() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.plot">plot() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.plot">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.plot">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html#pyCATHY.meshtools.plot_2d_interpolation_quality">plot_2d_interpolation_quality() (in module pyCATHY.meshtools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm.html#pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm">plot_hist_perturbated_parm() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_mesh_bounds.html#pyCATHY.plotters.cathy_plots.plot_mesh_bounds">plot_mesh_bounds() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.plot_Morris.html#pyCATHY.sensitivity.plot_Morris">plot_Morris() (in module pyCATHY.sensitivity)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_VGP.html#pyCATHY.plotters.cathy_plots.plot_VGP">plot_VGP() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.pop">pop() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/meshtools.plot_2d_interpolation_quality.html#meshtools.plot_2d_interpolation_quality">plot_2d_interpolation_quality() (in module meshtools)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.pop">(pyCATHY.cathy_utils.SoilData method)</a>
+        <li><a href="content/api/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html#pyCATHY.meshtools.plot_2d_interpolation_quality">(in module pyCATHY.meshtools)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.popitem">popitem() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.plot_hist_perturbated_parm.html#plotters.cathy_plots.plot_hist_perturbated_parm">plot_hist_perturbated_parm() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic.html#pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic">prepare_DA_plot_time_dynamic() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.plot_mesh_bounds.html#plotters.cathy_plots.plot_mesh_bounds">plot_mesh_bounds() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.prepare_observations">prepare_observations() (pyCATHY.cathy_tools.CATHY method)</a>
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.prepare_observations">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+      <li><a href="content/api/generated/sensitivity.plot_Morris.html#sensitivity.plot_Morris">plot_Morris() (in module sensitivity)</a>
 </li>
-      </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.print.html#pyCATHY.cathy_tools.print">print() (in module pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.plot_VGP.html#plotters.cathy_plots.plot_VGP">plot_VGP() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.print_Morris_out.html#pyCATHY.sensitivity.print_Morris_out">print_Morris_out() (in module pyCATHY.sensitivity)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html#pyCATHY.plotters.cathy_plots.LogNorm.process_value">process_value() (pyCATHY.plotters.cathy_plots.LogNorm static method)</a>
-</li>
-      <li>
-    pyCATHY
-
-      <ul>
-        <li><a href="content/api_core/api.html#module-pyCATHY">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.cathy_tools
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_tools.html#module-pyCATHY.cathy_tools">module</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    plotters.cathy_plots
+
+      <ul>
+        <li><a href="content/api/generated/plotters.cathy_plots.html#module-plotters.cathy_plots">module</a>
+</li>
+      </ul></li>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.pop">pop() (cathy_tools.OrderedDict method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.popitem">popitem() (cathy_tools.OrderedDict method)</a>
+</li>
+      <li><a href="content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html#plotters.cathy_plots.prepare_DA_plot_time_dynamic">prepare_DA_plot_time_dynamic() (in module plotters.cathy_plots)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.prepare_observations">prepare_observations() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.prepare_observations">(DA.cathy_DA.CATHY method)</a>
+</li>
+      </ul></li>
+      <li><a href="content/api/generated/cathy_tools.print.html#cathy_tools.print">print() (in module cathy_tools)</a>
+</li>
+      <li><a href="content/api/generated/sensitivity.print_Morris_out.html#sensitivity.print_Morris_out">print_Morris_out() (in module sensitivity)</a>
+</li>
+      <li><a href="content/api/generated/plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm.process_value">process_value() (plotters.cathy_plots.LogNorm static method)</a>
+</li>
       <li>
     pyCATHY.cathy_utils
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.cathy_utils.html#module-pyCATHY.cathy_utils">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.DA
-
-      <ul>
-        <li><a href="content/api_core/_generated/pyCATHY.DA.html#module-pyCATHY.DA">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.DA.cathy_DA
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.html#module-pyCATHY.DA.cathy_DA">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.ERT
-
-      <ul>
-        <li><a href="content/api_core/_generated/pyCATHY.ERT.html#module-pyCATHY.ERT">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.ERT.petro_Archie
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.html#module-pyCATHY.ERT.petro_Archie">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.ERT.simulate_ERT
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.html#module-pyCATHY.ERT.simulate_ERT">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.importers
-
-      <ul>
-        <li><a href="content/api_core/_generated/pyCATHY.importers.html#module-pyCATHY.importers">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.importers.cathy_inputs
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.importers.cathy_inputs.html#module-pyCATHY.importers.cathy_inputs">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.importers.cathy_outputs
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.html#module-pyCATHY.importers.cathy_outputs">module</a>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.html#module-pyCATHY.cathy_utils">module</a>
 </li>
       </ul></li>
       <li>
     pyCATHY.meshtools
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.meshtools.html#module-pyCATHY.meshtools">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.plotters
-
-      <ul>
-        <li><a href="content/api_core/_generated/pyCATHY.plotters.html#module-pyCATHY.plotters">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.plotters.cathy_plots
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.html#module-pyCATHY.plotters.cathy_plots">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyCATHY.sensitivity
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.sensitivity.html#module-pyCATHY.sensitivity">module</a>
+        <li><a href="content/api/generated/pyCATHY.meshtools.html#module-pyCATHY.meshtools">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1746,109 +1592,101 @@ title="Open an issue"
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2">R2 (class in pyCATHY.ERT.simulate_ERT)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2">R2 (class in ERT.simulate_ERT)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_inputs.read_atmbc.html#pyCATHY.importers.cathy_inputs.read_atmbc">read_atmbc() (in module pyCATHY.importers.cathy_inputs)</a>
+      <li><a href="content/api/generated/importers.cathy_inputs.read_atmbc.html#importers.cathy_inputs.read_atmbc">read_atmbc() (in module importers.cathy_inputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_cumflowvol.html#pyCATHY.importers.cathy_outputs.read_cumflowvol">read_cumflowvol() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_cumflowvol.html#importers.cathy_outputs.read_cumflowvol">read_cumflowvol() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_dtcoupling.html#pyCATHY.importers.cathy_outputs.read_dtcoupling">read_dtcoupling() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_dtcoupling.html#importers.cathy_outputs.read_dtcoupling">read_dtcoupling() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_inputs.read_grid3d.html#pyCATHY.importers.cathy_inputs.read_grid3d">read_grid3d() (in module pyCATHY.importers.cathy_inputs)</a>
+      <li><a href="content/api/generated/importers.cathy_inputs.read_grid3d.html#importers.cathy_inputs.read_grid3d">read_grid3d() (in module importers.cathy_inputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgraph.html#pyCATHY.importers.cathy_outputs.read_hgraph">read_hgraph() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_hgraph.html#importers.cathy_outputs.read_hgraph">read_hgraph() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgsfdet.html#pyCATHY.importers.cathy_outputs.read_hgsfdet">read_hgsfdet() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_hgsfdet.html#importers.cathy_outputs.read_hgsfdet">read_hgsfdet() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.read_inputs">read_inputs() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.read_inputs">read_inputs() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.read_inputs">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.read_inputs">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_mbeconv.html#pyCATHY.importers.cathy_outputs.read_mbeconv">read_mbeconv() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_mbeconv.html#importers.cathy_outputs.read_mbeconv">read_mbeconv() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.read_observations">read_observations() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.read_observations">read_observations() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.read_observations">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.read_observations">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.read_outputs">read_outputs() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.read_outputs">read_outputs() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.read_outputs">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.read_outputs">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_psi.html#pyCATHY.importers.cathy_outputs.read_psi">read_psi() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_psi.html#importers.cathy_outputs.read_psi">read_psi() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_sw.html#pyCATHY.importers.cathy_outputs.read_sw">read_sw() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_sw.html#importers.cathy_outputs.read_sw">read_sw() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.importers.cathy_outputs.read_vp.html#pyCATHY.importers.cathy_outputs.read_vp">read_vp() (in module pyCATHY.importers.cathy_outputs)</a>
+      <li><a href="content/api/generated/importers.cathy_outputs.read_vp.html#importers.cathy_outputs.read_vp">read_vp() (in module importers.cathy_outputs)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.recompileSrc">recompileSrc() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.recompileSrc">recompileSrc() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.recompileSrc">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.recompileSrc">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.refineMesh">refineMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.remote">remote() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.remove">remove() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.refineMesh">refineMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.replace">replace() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.remote">remote() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo">Repo (class in pyCATHY.cathy_tools)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo">Repo (class in cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.resetRegions">resetRegions() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.resetRegions">resetRegions() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.resynchronise_times">resynchronise_times() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.resynchronise_times">resynchronise_times() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.resynchronise_times">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.resynchronise_times">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.rev_parse">rev_parse() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.rev_parse">rev_parse() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.reverse">reverse() (pyCATHY.cathy_utils.SoilData method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.rich_display">rich_display() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.rich_display">rich_display() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.rich_display">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.rich_display">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.rosetta.html#pyCATHY.cathy_utils.rosetta">rosetta() (in module pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.run_analysis.html#DA.cathy_DA.run_analysis">run_analysis() (in module DA.cathy_DA)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.run_analysis.html#pyCATHY.DA.cathy_DA.run_analysis">run_analysis() (in module pyCATHY.DA.cathy_DA)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.run_ensemble_hydrological_model">run_ensemble_hydrological_model() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.run_ensemble_hydrological_model">run_ensemble_hydrological_model() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.run_ensemble_hydrological_model">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.run_ensemble_hydrological_model">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.run_preprocessor">run_preprocessor() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.run_preprocessor">run_preprocessor() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.run_preprocessor">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.run_preprocessor">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.run_processor">run_processor() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.run_processor">run_processor() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.run_processor">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.run_processor">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.run_sensitivity_analysis.html#pyCATHY.sensitivity.run_sensitivity_analysis">run_sensitivity_analysis() (in module pyCATHY.sensitivity)</a>
+      <li><a href="content/api/generated/sensitivity.run_sensitivity_analysis.html#sensitivity.run_sensitivity_analysis">run_sensitivity_analysis() (in module sensitivity)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.runParallel">runParallel() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.runParallel">runParallel() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.runR2">runR2() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.runR2">runR2() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1856,159 +1694,160 @@ title="Open an issue"
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.sensitivity.samples_generation.html#pyCATHY.sensitivity.samples_generation">samples_generation() (in module pyCATHY.sensitivity)</a>
+      <li><a href="content/api/generated/sensitivity.samples_generation.html#sensitivity.samples_generation">samples_generation() (in module sensitivity)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.sampling_dist">sampling_dist() (pyCATHY.DA.cathy_DA.DA method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.sampling_dist">sampling_dist() (DA.cathy_DA.DA method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html#pyCATHY.DA.cathy_DA.DA.sampling_dist_trunc">sampling_dist_trunc() (pyCATHY.DA.cathy_DA.DA method)</a>
+      <li><a href="content/api/generated/DA.cathy_DA.DA.html#DA.cathy_DA.DA.sampling_dist_trunc">sampling_dist_trunc() (DA.cathy_DA.DA method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveData">saveData() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveData">saveData() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveErrorData">saveErrorData() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveErrorData">saveErrorData() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveFilteredData">saveFilteredData() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveFilteredData">saveFilteredData() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveInvPlots">saveInvPlots() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveInvPlots">saveInvPlots() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveMesh">saveMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveMesh">saveMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveMeshVtk">saveMeshVtk() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveMeshVtk">saveMeshVtk() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveProject">saveProject() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveProject">saveProject() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveSequence">saveSequence() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveSequence">saveSequence() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.saveVtks">saveVtks() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.saveVtks">saveVtks() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html#pyCATHY.plotters.cathy_plots.LogNorm.scaled">scaled() (pyCATHY.plotters.cathy_plots.LogNorm method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm.scaled">scaled() (plotters.cathy_plots.LogNorm method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.selec_atmbc_window">selec_atmbc_window() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.selec_atmbc_window">selec_atmbc_window() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.selec_atmbc_window">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.selec_atmbc_window">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.set_Archie_parm">set_Archie_parm() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li>
+    sensitivity
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.set_Archie_parm">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/sensitivity.html#module-sensitivity">module</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.set_BC_laterals">set_BC_laterals() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.set_Archie_parm">set_Archie_parm() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.set_BC_laterals">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.set_Archie_parm">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.meshtools.set_interpolation_radius.html#pyCATHY.meshtools.set_interpolation_radius">set_interpolation_radius() (in module pyCATHY.meshtools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.set_SOIL_defaults">set_SOIL_defaults() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.set_BC_laterals">set_BC_laterals() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.set_SOIL_defaults">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.set_BC_laterals">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setBorehole">setBorehole() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/meshtools.set_interpolation_radius.html#meshtools.set_interpolation_radius">set_interpolation_radius() (in module meshtools)</a>
+
+      <ul>
+        <li><a href="content/api/generated/pyCATHY.meshtools.set_interpolation_radius.html#pyCATHY.meshtools.set_interpolation_radius">(in module pyCATHY.meshtools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.setdefault">setdefault() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.set_SOIL_defaults">set_SOIL_defaults() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.set_SOIL_defaults">(DA.cathy_DA.CATHY method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setElec">setElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setBorehole">setBorehole() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setNcores">setNcores() (pyCATHY.ERT.simulate_ERT.R2 static method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.setdefault">setdefault() (cathy_tools.OrderedDict method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setPseudo3DElec">setPseudo3DElec() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setElec">setElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setRefModel">setRefModel() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setNcores">setNcores() (ERT.simulate_ERT.R2 static method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setStartingRes">setStartingRes() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setPseudo3DElec">setPseudo3DElec() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setTitle">setTitle() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setRefModel">setRefModel() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.setwd">setwd() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setStartingRes">setStartingRes() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc.html#pyCATHY.plotters.cathy_plots.show_atmbc">show_atmbc() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setTitle">setTitle() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc_3d.html#pyCATHY.plotters.cathy_plots.show_atmbc_3d">show_atmbc_3d() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_DA_process_ens.html#pyCATHY.plotters.cathy_plots.show_DA_process_ens">show_DA_process_ens() (in module pyCATHY.plotters.cathy_plots)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph.html#pyCATHY.plotters.cathy_plots.show_hgraph">show_hgraph() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.setwd">setwd() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph_2.html#pyCATHY.plotters.cathy_plots.show_hgraph_2">show_hgraph_2() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_atmbc.html#plotters.cathy_plots.show_atmbc">show_atmbc() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgsfdet.html#pyCATHY.plotters.cathy_plots.show_hgsfdet">show_hgsfdet() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_atmbc_3d.html#plotters.cathy_plots.show_atmbc_3d">show_atmbc_3d() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED.html#pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED">show_vp_DEPRECATED() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_DA_process_ens.html#plotters.cathy_plots.show_DA_process_ens">show_DA_process_ens() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk.html#pyCATHY.plotters.cathy_plots.show_vtk">show_vtk() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_hgraph.html#plotters.cathy_plots.show_hgraph">show_hgraph() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk_TL.html#pyCATHY.plotters.cathy_plots.show_vtk_TL">show_vtk_TL() (in module pyCATHY.plotters.cathy_plots)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_hgraph_2.html#plotters.cathy_plots.show_hgraph_2">show_hgraph_2() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showError">showError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_hgsfdet.html#plotters.cathy_plots.show_hgsfdet">show_hgsfdet() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showErrorDist">showErrorDist() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html#plotters.cathy_plots.show_vp_DEPRECATED">show_vp_DEPRECATED() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showErrorIP">showErrorIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_vtk.html#plotters.cathy_plots.show_vtk">show_vtk() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showHeatmap">showHeatmap() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/plotters.cathy_plots.show_vtk_TL.html#plotters.cathy_plots.show_vtk_TL">show_vtk_TL() (in module plotters.cathy_plots)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showInParaview">showInParaview() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showError">showError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showInvError">showInvError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showErrorDist">showErrorDist() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showIter">showIter() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showErrorIP">showErrorIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showMesh">showMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showHeatmap">showHeatmap() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showMeshInParaview">showMeshInParaview() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showInParaview">showInParaview() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showParam">showParam() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showInvError">showInvError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showPseudo">showPseudo() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showIter">showIter() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showPseudo3DMesh">showPseudo3DMesh() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showMesh">showMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showPseudo3DResults">showPseudo3DResults() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showMeshInParaview">showMeshInParaview() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showPseudoInvError">showPseudoInvError() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showParam">showParam() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showPseudoInvErrorIP">showPseudoInvErrorIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showPseudo">showPseudo() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showPseudoIP">showPseudoIP() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showPseudo3DMesh">showPseudo3DMesh() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showResults">showResults() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showPseudo3DResults">showPseudo3DResults() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showRMS">showRMS() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showPseudoInvError">showPseudoInvError() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.showSlice">showSlice() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showPseudoInvErrorIP">showPseudoInvErrorIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData">SoilData (class in pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showPseudoIP">showPseudoIP() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.sort">sort() (pyCATHY.cathy_utils.SoilData method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showResults">showResults() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.spatialize_parameters">spatialize_parameters() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showRMS">showRMS() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.showSlice">showSlice() (ERT.simulate_ERT.R2 method)</a>
+</li>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.spatialize_parameters">spatialize_parameters() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.spatialize_parameters">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.spatialize_parameters">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.split3DGrid">split3DGrid() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.split3DGrid">split3DGrid() (ERT.simulate_ERT.R2 method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.strftime">strftime() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.submodule">submodule() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.strptime">strptime() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.submodule_update">submodule_update() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.submodule">submodule() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.subprocess_run_multi.html#cathy_tools.subprocess_run_multi">subprocess_run_multi() (in module cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.submodule_update">submodule_update() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.subprocess_run_multi.html#pyCATHY.cathy_tools.subprocess_run_multi">subprocess_run_multi() (in module pyCATHY.cathy_tools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.suppress_stdout.html#pyCATHY.cathy_tools.suppress_stdout">suppress_stdout() (in module pyCATHY.cathy_tools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.petro_Archie.SW_2_ERa_DA.html#pyCATHY.ERT.petro_Archie.SW_2_ERa_DA">SW_2_ERa_DA() (in module pyCATHY.ERT.petro_Archie)</a>
+      <li><a href="content/api/generated/ERT.petro_Archie.SW_2_ERa_DA.html#ERT.petro_Archie.SW_2_ERa_DA">SW_2_ERa_DA() (in module ERT.petro_Archie)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2016,51 +1855,41 @@ title="Open an issue"
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.tag">tag() (pyCATHY.cathy_tools.Repo method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.tag">tag() (cathy_tools.Repo method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.time">time() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.topo2distance">topo2distance() (ERT.simulate_ERT.R2 static method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.timedelta.html#pyCATHY.cathy_utils.timedelta">timedelta (class in pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/meshtools.trace_mesh.html#meshtools.trace_mesh">trace_mesh() (in module meshtools)</a>
+
+      <ul>
+        <li><a href="content/api/generated/pyCATHY.meshtools.trace_mesh.html#pyCATHY.meshtools.trace_mesh">(in module pyCATHY.meshtools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.timestamp">timestamp() (pyCATHY.cathy_utils.datetime method)</a>
+      </ul></li>
+      <li><a href="content/api/generated/meshtools.trace_mesh_pg.html#meshtools.trace_mesh_pg">trace_mesh_pg() (in module meshtools)</a>
+
+      <ul>
+        <li><a href="content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html#pyCATHY.meshtools.trace_mesh_pg">(in module pyCATHY.meshtools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.timetuple">timetuple() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.timetz">timetz() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.SoilData.html#pyCATHY.cathy_utils.SoilData.to_array">to_array() (pyCATHY.cathy_utils.SoilData method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.today">today() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.toordinal">toordinal() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.topo2distance">topo2distance() (pyCATHY.ERT.simulate_ERT.R2 static method)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.timedelta.html#pyCATHY.cathy_utils.timedelta.total_seconds">total_seconds() (pyCATHY.cathy_utils.timedelta method)</a>
+      <li><a href="content/api/generated/cathy_tools.track.html#cathy_tools.track">track() (in module cathy_tools)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.meshtools.trace_mesh.html#pyCATHY.meshtools.trace_mesh">trace_mesh() (in module pyCATHY.meshtools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.meshtools.trace_mesh_pg.html#pyCATHY.meshtools.trace_mesh_pg">trace_mesh_pg() (in module pyCATHY.meshtools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.track.html#pyCATHY.cathy_tools.track">track() (in module pyCATHY.cathy_tools)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.transform2_time_delta.html#pyCATHY.cathy_utils.transform2_time_delta">transform2_time_delta() (in module pyCATHY.cathy_utils)</a>
+      <li><a href="content/api/generated/cathy_utils.transform2_time_delta.html#cathy_utils.transform2_time_delta">transform2_time_delta() (in module cathy_utils)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.plotters.cathy_plots.transform2_time_delta.html#pyCATHY.plotters.cathy_plots.transform2_time_delta">(in module pyCATHY.plotters.cathy_plots)</a>
+        <li><a href="content/api/generated/plotters.cathy_plots.transform2_time_delta.html#plotters.cathy_plots.transform2_time_delta">(in module plotters.cathy_plots)</a>
+</li>
+        <li><a href="content/api/generated/pyCATHY.cathy_utils.transform2_time_delta.html#pyCATHY.cathy_utils.transform2_time_delta">(in module pyCATHY.cathy_utils)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.transform_parameters">transform_parameters() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.transform_parameters">transform_parameters() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.transform_parameters">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.transform_parameters">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.Repo.html#pyCATHY.cathy_tools.Repo.tree">tree() (pyCATHY.cathy_tools.Repo method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.tzname">tzname() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo.tree">tree() (cathy_tools.Repo method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2068,121 +1897,113 @@ title="Open an issue"
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.update">update() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.update">update() (cathy_tools.OrderedDict method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_atmbc">update_atmbc() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_atmbc">update_atmbc() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_atmbc">(pyCATHY.DA.cathy_DA.CATHY method)</a>
-</li>
-      </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_cathyH">update_cathyH() (pyCATHY.cathy_tools.CATHY method)</a>
-
-      <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_cathyH">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_atmbc">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_dem_parameters">update_dem_parameters() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_cathyH">update_cathyH() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_dem_parameters">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_cathyH">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_ENS_files">update_ENS_files() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_dem_parameters">update_dem_parameters() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_ENS_files">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_dem_parameters">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_ic">update_ic() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_ENS_files">update_ENS_files() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_ic">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_ENS_files">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_mesh_boundary_cond">update_mesh_boundary_cond() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_ic">update_ic() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_mesh_boundary_cond">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_ic">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_mesh_vtk">update_mesh_vtk() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_mesh_boundary_cond">update_mesh_boundary_cond() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_mesh_vtk">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_mesh_boundary_cond">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_nansfdirbc">update_nansfdirbc() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_mesh_vtk">update_mesh_vtk() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_nansfdirbc">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_mesh_vtk">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_nansfneubc">update_nansfneubc() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_nansfdirbc">update_nansfdirbc() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_nansfneubc">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_nansfdirbc">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_parm">update_parm() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_nansfneubc">update_nansfneubc() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_parm">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_nansfneubc">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_pert_parm_dict">update_pert_parm_dict() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_parm">update_parm() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_pert_parm_dict">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_parm">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_prepo_inputs">update_prepo_inputs() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_pert_parm_dict">update_pert_parm_dict() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_prepo_inputs">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_pert_parm_dict">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_sfbc">update_sfbc() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_prepo_inputs">update_prepo_inputs() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_sfbc">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_prepo_inputs">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_soil">update_soil() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_sfbc">update_sfbc() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_soil">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_sfbc">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_veg_map">update_veg_map() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_soil">update_soil() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_veg_map">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_soil">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.CATHY.html#pyCATHY.cathy_tools.CATHY.update_zone">update_zone() (pyCATHY.cathy_tools.CATHY method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_veg_map">update_veg_map() (cathy_tools.CATHY method)</a>
 
       <ul>
-        <li><a href="content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html#pyCATHY.DA.cathy_DA.CATHY.update_zone">(pyCATHY.DA.cathy_DA.CATHY method)</a>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_veg_map">(DA.cathy_DA.CATHY method)</a>
 </li>
       </ul></li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.utcfromtimestamp">utcfromtimestamp() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_zone">update_zone() (cathy_tools.CATHY method)</a>
+
+      <ul>
+        <li><a href="content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY.update_zone">(DA.cathy_DA.CATHY method)</a>
 </li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.utcnow">utcnow() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.utcoffset">utcoffset() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.utctimetuple">utctimetuple() (pyCATHY.cathy_utils.datetime method)</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html#pyCATHY.cathy_tools.OrderedDict.values">values() (pyCATHY.cathy_tools.OrderedDict method)</a>
+      <li><a href="content/api/generated/cathy_tools.OrderedDict.html#cathy_tools.OrderedDict.values">values() (cathy_tools.OrderedDict method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2190,13 +2011,11 @@ title="Open an issue"
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.cathy_utils.datetime.html#pyCATHY.cathy_utils.datetime.weekday">weekday() (pyCATHY.cathy_utils.datetime method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.write2in">write2in() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.write2in">write2in() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
-</li>
-      <li><a href="content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html#pyCATHY.ERT.simulate_ERT.R2.write2protocol">write2protocol() (pyCATHY.ERT.simulate_ERT.R2 method)</a>
+      <li><a href="content/api/generated/ERT.simulate_ERT.R2.html#ERT.simulate_ERT.R2.write2protocol">write2protocol() (ERT.simulate_ERT.R2 method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2205,35 +2024,29 @@ title="Open an issue"
 
               </div>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
+            
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
 </div>
-            </footer>
+            
         </div>
     </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
-  
-    By B. Mary<br/>
-  
-      &copy; Copyright 2022, B. Mary.<br/>
-    Last updated on Jul 22, 2022.<br/>
-</p>
-        </footer>
-    </div>
+    <footer class="footer">
+  <p>
     
-</div>
+      By B. Mary<br/>
+    
+        &copy; Copyright 2022, B. Mary.<br/>
+      Last updated on Sep 12, 2022.<br/>
+  </p>
+</footer>
+</main>
 
 
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>

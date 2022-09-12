@@ -4,7 +4,11 @@
 import os
 import numpy as np
 import pandas as pd
-import pygimli as pg
+
+try: 
+    import pygimli as pg
+except ImportError: 
+    pygimli = None
 
 
 
@@ -21,8 +25,14 @@ def read_ERT(filename, data_format, **kwargs):
     dict_ERT = {}
     
     if 'resipy' in data_format:
+        if resipy is None:
+            raise ValueError(f'resipy module not imported. Please pip install.')
+
         df_ERT_new = pd.read_csv(filename, sep=",", header='infer')       
     elif 'pygimli' in data_format:
+        if pygimli is None:
+            raise ValueError(f'pygimli module not imported. Please pip install.')
+
         df_ERT = pg.load(filename)  
         
         df_ERT_new = pd.DataFrame([df_ERT['a'],df_ERT['b'],

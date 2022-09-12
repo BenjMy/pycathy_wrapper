@@ -7,13 +7,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-        <title>rich | pyCATHY v0.0.1 documentation</title>
+        <title>rich | pyCATHY v0.1.0</title>
     
 
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -23,21 +22,25 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
+    
+      
+
+    
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -50,32 +53,19 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../_static/togglebutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script src="../_static/design-tabs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
+    <link rel="shortcut icon" href="../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <!-- Plausible analytics for anonymous usage statistics -->
     <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
-
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -84,15 +74,24 @@
     <div class="container-xl">
       <div class="row">
           
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
+    
+        <div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="../index.html">
       
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
       
       
-      <h1 class="site-logo" id="site-title">pyCATHY v0.0.1 documentation</h1>
+      <img src="../_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.1.0</span></h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
@@ -106,6 +105,11 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/overview.html">
+   Overview
+  </a>
+ </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../content/installing.html">
    Installing
@@ -125,7 +129,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../gallery/index.html">
-   Surface subsurface hydrological model
+   Data Assimilation
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
@@ -134,7 +138,7 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../gallery/SSHydro/errorbar_subsample3.html">
+    <a class="reference internal" href="../gallery/DA/errorbar_subsample3.html">
      Errorbar subsampling
     </a>
    </li>
@@ -148,7 +152,7 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../content/api_core/api.html">
+  <a class="reference internal" href="../content/api/api.html">
    API reference: The
    <code class="docutils literal notranslate">
     <span class="pre">
@@ -164,10 +168,10 @@
   </label>
   <ul>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.html">
+    <a class="reference internal" href="../content/api/generated/cathy_tools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.cathy_tools
+       cathy_tools
       </span>
      </code>
     </a>
@@ -178,82 +182,72 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.CATHY.html">
-       pyCATHY.cathy_tools.CATHY
+      <a class="reference internal" href="../content/api/generated/cathy_tools.CATHY.html">
+       cathy_tools.CATHY
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.HiddenPrints.html">
-       pyCATHY.cathy_tools.HiddenPrints
+      <a class="reference internal" href="../content/api/generated/cathy_tools.HiddenPrints.html">
+       cathy_tools.HiddenPrints
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.OrderedDict.html">
-       pyCATHY.cathy_tools.OrderedDict
+      <a class="reference internal" href="../content/api/generated/cathy_tools.OrderedDict.html">
+       cathy_tools.OrderedDict
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.Repo.html">
-       pyCATHY.cathy_tools.Repo
+      <a class="reference internal" href="../content/api/generated/cathy_tools.Repo.html">
+       cathy_tools.Repo
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.partial.html">
-       pyCATHY.cathy_tools.partial
+      <a class="reference internal" href="../content/api/generated/cathy_tools.partial.html">
+       cathy_tools.partial
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.contextmanager.html">
-       pyCATHY.cathy_tools.contextmanager
+      <a class="reference internal" href="../content/api/generated/cathy_tools.isfile.html">
+       cathy_tools.isfile
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.isfile.html">
-       pyCATHY.cathy_tools.isfile
+      <a class="reference internal" href="../content/api/generated/cathy_tools.join.html">
+       cathy_tools.join
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.join.html">
-       pyCATHY.cathy_tools.join
+      <a class="reference internal" href="../content/api/generated/cathy_tools.listdir.html">
+       cathy_tools.listdir
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.listdir.html">
-       pyCATHY.cathy_tools.listdir
+      <a class="reference internal" href="../content/api/generated/cathy_tools.make_console.html">
+       cathy_tools.make_console
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.make_console.html">
-       pyCATHY.cathy_tools.make_console
+      <a class="reference internal" href="../content/api/generated/cathy_tools.print.html">
+       cathy_tools.print
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.print.html">
-       pyCATHY.cathy_tools.print
+      <a class="reference internal" href="../content/api/generated/cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.subprocess_run_multi.html">
-       pyCATHY.cathy_tools.subprocess_run_multi
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.suppress_stdout.html">
-       pyCATHY.cathy_tools.suppress_stdout
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_tools.track.html">
-       pyCATHY.cathy_tools.track
+      <a class="reference internal" href="../content/api/generated/cathy_tools.track.html">
+       cathy_tools.track
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.html">
+    <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.meshtools
+       importers.cathy_outputs
       </span>
      </code>
     </a>
@@ -264,42 +258,52 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
-       pyCATHY.meshtools.add_attribute_2mesh
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_cumflowvol.html">
+       importers.cathy_outputs.read_cumflowvol
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.find_nearest_node.html">
-       pyCATHY.meshtools.find_nearest_node
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_dtcoupling.html">
+       importers.cathy_outputs.read_dtcoupling
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
-       pyCATHY.meshtools.plot_2d_interpolation_quality
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_hgraph.html">
+       importers.cathy_outputs.read_hgraph
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.set_interpolation_radius.html">
-       pyCATHY.meshtools.set_interpolation_radius
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_hgsfdet.html">
+       importers.cathy_outputs.read_hgsfdet
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.trace_mesh.html">
-       pyCATHY.meshtools.trace_mesh
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_mbeconv.html">
+       importers.cathy_outputs.read_mbeconv
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.meshtools.trace_mesh_pg.html">
-       pyCATHY.meshtools.trace_mesh_pg
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_psi.html">
+       importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_sw.html">
+       importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_vp.html">
+       importers.cathy_outputs.read_vp
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.html">
+    <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.cathy_utils
+       importers.cathy_inputs
       </span>
      </code>
     </a>
@@ -310,67 +314,22 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.SoilData.html">
-       pyCATHY.cathy_utils.SoilData
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_atmbc.html">
+       importers.cathy_inputs.read_atmbc
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.datetime.html">
-       pyCATHY.cathy_utils.datetime
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.timedelta.html">
-       pyCATHY.cathy_utils.timedelta
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.change_x2date.html">
-       pyCATHY.cathy_utils.change_x2date
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.convert_time_units.html">
-       pyCATHY.cathy_utils.convert_time_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
-       pyCATHY.cathy_utils.dictObs_2pd
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.kPa2cm.html">
-       pyCATHY.cathy_utils.kPa2cm
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.kPa2m.html">
-       pyCATHY.cathy_utils.kPa2m
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.label_units.html">
-       pyCATHY.cathy_utils.label_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.rosetta.html">
-       pyCATHY.cathy_utils.rosetta
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
-       pyCATHY.cathy_utils.transform2_time_delta
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_grid3d.html">
+       importers.cathy_inputs.read_grid3d
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.html">
+    <a class="reference internal" href="../content/api/generated/DA.cathy_DA.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.importers.cathy_outputs
+       DA.cathy_DA
       </span>
      </code>
     </a>
@@ -381,52 +340,27 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_cumflowvol.html">
-       pyCATHY.importers.cathy_outputs.read_cumflowvol
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.CATHY.html">
+       DA.cathy_DA.CATHY
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_dtcoupling.html">
-       pyCATHY.importers.cathy_outputs.read_dtcoupling
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.DA.html">
+       DA.cathy_DA.DA
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgraph.html">
-       pyCATHY.importers.cathy_outputs.read_hgraph
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_hgsfdet.html">
-       pyCATHY.importers.cathy_outputs.read_hgsfdet
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_mbeconv.html">
-       pyCATHY.importers.cathy_outputs.read_mbeconv
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_psi.html">
-       pyCATHY.importers.cathy_outputs.read_psi
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_sw.html">
-       pyCATHY.importers.cathy_outputs.read_sw
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_outputs.read_vp.html">
-       pyCATHY.importers.cathy_outputs.read_vp
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.run_analysis.html">
+       DA.cathy_DA.run_analysis
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_inputs.html">
+    <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.importers.cathy_inputs
+       ERT.petro_Archie
       </span>
      </code>
     </a>
@@ -437,22 +371,42 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_inputs.read_atmbc.html">
-       pyCATHY.importers.cathy_inputs.read_atmbc
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.Archie_rho_DA.html">
+       ERT.petro_Archie.Archie_rho_DA
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.importers.cathy_inputs.read_grid3d.html">
-       pyCATHY.importers.cathy_inputs.read_grid3d
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.CATHY_2_Resipy.html">
+       ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.CATHY_2_pg.html">
+       ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.SW_2_ERa_DA.html">
+       ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.get_Archie_ens_i.html">
+       ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.get_sw_ens_i.html">
+       ERT.petro_Archie.get_sw_ens_i
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.html">
+    <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.plotters.cathy_plots
+       ERT.simulate_ERT
       </span>
      </code>
     </a>
@@ -463,147 +417,42 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.LogNorm.html">
-       pyCATHY.plotters.cathy_plots.LogNorm
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.R2.html">
+       ERT.simulate_ERT.R2
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.COCumflowvol.html">
-       pyCATHY.plotters.cathy_plots.COCumflowvol
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.Archie_ERT.html">
+       ERT.simulate_ERT.Archie_ERT
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_RMS.html">
-       pyCATHY.plotters.cathy_plots.DA_RMS
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.create_ERT_survey.html">
+       ERT.simulate_ERT.create_ERT_survey
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_Archie.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_Archie
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.create_ERT_survey_pg.html">
+       ERT.simulate_ERT.create_ERT_survey_pg
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html">
+       ERT.simulate_ERT.fwd_ERT_survey
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_parm_dynamic_scatter
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic.html">
-       pyCATHY.plotters.cathy_plots.DA_plot_time_dynamic
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.change_x2date.html">
-       pyCATHY.plotters.cathy_plots.change_x2date
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.convert_time_units.html">
-       pyCATHY.plotters.cathy_plots.convert_time_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot.html">
-       pyCATHY.plotters.cathy_plots.dem_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.dem_plot_2d_top.html">
-       pyCATHY.plotters.cathy_plots.dem_plot_2d_top
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.indice_veg_plot.html">
-       pyCATHY.plotters.cathy_plots.indice_veg_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.label_units.html">
-       pyCATHY.plotters.cathy_plots.label_units
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_VGP.html">
-       pyCATHY.plotters.cathy_plots.plot_VGP
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm.html">
-       pyCATHY.plotters.cathy_plots.plot_hist_perturbated_parm
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.plot_mesh_bounds.html">
-       pyCATHY.plotters.cathy_plots.plot_mesh_bounds
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
-       pyCATHY.plotters.cathy_plots.prepare_DA_plot_time_dynamic
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_DA_process_ens.html">
-       pyCATHY.plotters.cathy_plots.show_DA_process_ens
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc.html">
-       pyCATHY.plotters.cathy_plots.show_atmbc
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_atmbc_3d.html">
-       pyCATHY.plotters.cathy_plots.show_atmbc_3d
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph.html">
-       pyCATHY.plotters.cathy_plots.show_hgraph
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgraph_2.html">
-       pyCATHY.plotters.cathy_plots.show_hgraph_2
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_hgsfdet.html">
-       pyCATHY.plotters.cathy_plots.show_hgsfdet
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED.html">
-       pyCATHY.plotters.cathy_plots.show_vp_DEPRECATED
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk.html">
-       pyCATHY.plotters.cathy_plots.show_vtk
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.show_vtk_TL.html">
-       pyCATHY.plotters.cathy_plots.show_vtk_TL
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.plotters.cathy_plots.transform2_time_delta.html">
-       pyCATHY.plotters.cathy_plots.transform2_time_delta
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.invert_ERT_survey.html">
+       ERT.simulate_ERT.invert_ERT_survey
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.html">
+    <a class="reference internal" href="../content/api/generated/sensitivity.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.sensitivity
+       sensitivity
       </span>
      </code>
     </a>
@@ -614,52 +463,52 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.analysis_Morris.html">
-       pyCATHY.sensitivity.analysis_Morris
+      <a class="reference internal" href="../content/api/generated/sensitivity.analysis_Morris.html">
+       sensitivity.analysis_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.define_Morris.html">
-       pyCATHY.sensitivity.define_Morris
+      <a class="reference internal" href="../content/api/generated/sensitivity.define_Morris.html">
+       sensitivity.define_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.df_Morris.html">
-       pyCATHY.sensitivity.df_Morris
+      <a class="reference internal" href="../content/api/generated/sensitivity.df_Morris.html">
+       sensitivity.df_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.err_weighted_rmse.html">
-       pyCATHY.sensitivity.err_weighted_rmse
+      <a class="reference internal" href="../content/api/generated/sensitivity.err_weighted_rmse.html">
+       sensitivity.err_weighted_rmse
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.plot_Morris.html">
-       pyCATHY.sensitivity.plot_Morris
+      <a class="reference internal" href="../content/api/generated/sensitivity.plot_Morris.html">
+       sensitivity.plot_Morris
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.print_Morris_out.html">
-       pyCATHY.sensitivity.print_Morris_out
+      <a class="reference internal" href="../content/api/generated/sensitivity.print_Morris_out.html">
+       sensitivity.print_Morris_out
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.run_sensitivity_analysis.html">
-       pyCATHY.sensitivity.run_sensitivity_analysis
+      <a class="reference internal" href="../content/api/generated/sensitivity.run_sensitivity_analysis.html">
+       sensitivity.run_sensitivity_analysis
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.sensitivity.samples_generation.html">
-       pyCATHY.sensitivity.samples_generation
+      <a class="reference internal" href="../content/api/generated/sensitivity.samples_generation.html">
+       sensitivity.samples_generation
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.DA.cathy_DA.html">
+    <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.DA.cathy_DA
+       plotters.cathy_plots
       </span>
      </code>
     </a>
@@ -670,27 +519,147 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.DA.cathy_DA.CATHY.html">
-       pyCATHY.DA.cathy_DA.CATHY
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.LogNorm.html">
+       plotters.cathy_plots.LogNorm
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.DA.cathy_DA.DA.html">
-       pyCATHY.DA.cathy_DA.DA
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.COCumflowvol.html">
+       plotters.cathy_plots.COCumflowvol
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.DA.cathy_DA.run_analysis.html">
-       pyCATHY.DA.cathy_DA.run_analysis
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_RMS.html">
+       plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_Archie.html">
+       plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html">
+       plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.change_x2date.html">
+       plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.convert_time_units.html">
+       plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.dem_plot.html">
+       plotters.cathy_plots.dem_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html">
+       plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.indice_veg_plot.html">
+       plotters.cathy_plots.indice_veg_plot
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.label_units.html">
+       plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.plot_VGP.html">
+       plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.plot_mesh_bounds.html">
+       plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_DA_process_ens.html">
+       plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_atmbc.html">
+       plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_atmbc_3d.html">
+       plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_hgraph.html">
+       plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_hgraph_2.html">
+       plotters.cathy_plots.show_hgraph_2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html">
+       plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_vtk.html">
+       plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_vtk_TL.html">
+       plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.transform2_time_delta.html">
+       plotters.cathy_plots.transform2_time_delta
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.html">
+    <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.ERT.petro_Archie
+       pyCATHY.cathy_utils
       </span>
      </code>
     </a>
@@ -701,42 +670,47 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.Archie_rho_DA.html">
-       pyCATHY.ERT.petro_Archie.Archie_rho_DA
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_Resipy.html">
-       pyCATHY.ERT.petro_Archie.CATHY_2_Resipy
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.CATHY_2_pg.html">
-       pyCATHY.ERT.petro_Archie.CATHY_2_pg
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.SW_2_ERa_DA.html">
-       pyCATHY.ERT.petro_Archie.SW_2_ERa_DA
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.get_Archie_ens_i.html">
-       pyCATHY.ERT.petro_Archie.get_Archie_ens_i
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.petro_Archie.get_sw_ens_i.html">
-       pyCATHY.ERT.petro_Archie.get_sw_ens_i
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.html">
+    <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
-       pyCATHY.ERT.simulate_ERT
+       pyCATHY.meshtools
       </span>
      </code>
     </a>
@@ -747,33 +721,33 @@
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.R2.html">
-       pyCATHY.ERT.simulate_ERT.R2
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.Archie_ERT.html">
-       pyCATHY.ERT.simulate_ERT.Archie_ERT
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.create_ERT_survey
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg.html">
-       pyCATHY.ERT.simulate_ERT.create_ERT_survey_pg
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.fwd_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.fwd_ERT_survey
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api_core/generated/pyCATHY.ERT.simulate_ERT.invert_ERT_survey.html">
-       pyCATHY.ERT.simulate_ERT.invert_ERT_survey
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
       </a>
      </li>
     </ul>
@@ -805,122 +779,73 @@
 </ul>
 
     </div>
-</nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
             </div>
+            
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BenjMy/pycathy_wrapper"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/rich.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
         </div>
     </div>
-    <div id="rtd-footer-container"></div>
 </div>
-
-
-          
-
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
-<div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
-
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
-    </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-
-<div class="menu-dropdown menu-dropdown-repository-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Source repositories">
-      <i class="fab fa-github"></i>
-  </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="https://github.com/BenjMy/pycathy_wrapper"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fab fa-github"></i>
-  </span>
-<span class="headerbtn__text-container">repository</span>
-</a>
-
-      </li>
-      
-      <li>
-        <a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/rich.html&body=Your%20issue%20content%20here."
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Open an issue"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-lightbulb"></i>
-  </span>
-<span class="headerbtn__text-container">open issue</span>
-</a>
-
-      </li>
-      
-    </ul>
-  </div>
-</div>
-
-    </div>
-</div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-</div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1></h1>
@@ -931,17 +856,16 @@ title="Open an issue"
                     </div>
                 </div>
             </div>
-            <main id="main-content" role="main">
-                
+            
               <div>
                 
   <h1>Source code for rich</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Rich text and beautiful formatting in the terminal.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">._extension</span> <span class="kn">import</span> <span class="n">load_ipython_extension</span>
+<span class="kn">from</span> <span class="nn">._extension</span> <span class="kn">import</span> <span class="n">load_ipython_extension</span>  <span class="c1"># noqa: F401</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get_console&quot;</span><span class="p">,</span> <span class="s2">&quot;reconfigure&quot;</span><span class="p">,</span> <span class="s2">&quot;print&quot;</span><span class="p">,</span> <span class="s2">&quot;inspect&quot;</span><span class="p">]</span>
 
@@ -951,7 +875,11 @@ title="Open an issue"
 <span class="c1"># Global console used by alternative print</span>
 <span class="n">_console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="n">_IMPORT_CWD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_IMPORT_CWD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+    <span class="c1"># Can happen if the cwd has been deleted</span>
+    <span class="n">_IMPORT_CWD</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">get_console</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;Console&quot;</span><span class="p">:</span>
@@ -983,7 +911,7 @@ title="Open an issue"
     <span class="n">_console</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="n">new_console</span><span class="o">.</span><span class="vm">__dict__</span>
 
 
-<div class="viewcode-block" id="print"><a class="viewcode-back" href="../content/api_core/generated/pyCATHY.cathy_tools.print.html#pyCATHY.cathy_tools.print">[docs]</a><span class="k">def</span> <span class="nf">print</span><span class="p">(</span>
+<div class="viewcode-block" id="print"><a class="viewcode-back" href="../content/api/generated/cathy_tools.print.html#cathy_tools.print">[docs]</a><span class="k">def</span> <span class="nf">print</span><span class="p">(</span>
     <span class="o">*</span><span class="n">objects</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
     <span class="n">end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -1011,8 +939,14 @@ title="Open an issue"
     <span class="n">json</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">indent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
     <span class="n">highlight</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">skip_keys</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ensure_ascii</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">check_circular</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">allow_nan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sort_keys</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Pretty prints JSON. Output will be valid JSON.</span>
 
@@ -1021,9 +955,27 @@ title="Open an issue"
 <span class="sd">        data (Any): If json is not supplied, then encode this data.</span>
 <span class="sd">        indent (int, optional): Number of spaces to indent. Defaults to 2.</span>
 <span class="sd">        highlight (bool, optional): Enable highlighting of output: Defaults to True.</span>
+<span class="sd">        skip_keys (bool, optional): Skip keys not of a basic type. Defaults to False.</span>
+<span class="sd">        ensure_ascii (bool, optional): Escape all non-ascii characters. Defaults to False.</span>
+<span class="sd">        check_circular (bool, optional): Check for circular references. Defaults to True.</span>
+<span class="sd">        allow_nan (bool, optional): Allow NaN and Infinity values. Defaults to True.</span>
+<span class="sd">        default (Callable, optional): A callable that converts values that can not be encoded</span>
+<span class="sd">            in to something that can be JSON encoded. Defaults to None.</span>
+<span class="sd">        sort_keys (bool, optional): Sort dictionary keys. Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">print_json</span><span class="p">(</span><span class="n">json</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="n">highlight</span><span class="p">)</span>
+    <span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">print_json</span><span class="p">(</span>
+        <span class="n">json</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+        <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span>
+        <span class="n">highlight</span><span class="o">=</span><span class="n">highlight</span><span class="p">,</span>
+        <span class="n">skip_keys</span><span class="o">=</span><span class="n">skip_keys</span><span class="p">,</span>
+        <span class="n">ensure_ascii</span><span class="o">=</span><span class="n">ensure_ascii</span><span class="p">,</span>
+        <span class="n">check_circular</span><span class="o">=</span><span class="n">check_circular</span><span class="p">,</span>
+        <span class="n">allow_nan</span><span class="o">=</span><span class="n">allow_nan</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
+        <span class="n">sort_keys</span><span class="o">=</span><span class="n">sort_keys</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span>
@@ -1088,34 +1040,29 @@ title="Open an issue"
 
               </div>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
+            
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
 </div>
-            </footer>
+            
         </div>
     </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
-  
-    By B. Mary<br/>
-  
-      &copy; Copyright 2022, B. Mary.<br/>
-</p>
-        </footer>
-    </div>
+    <footer class="footer">
+  <p>
     
-</div>
+      By B. Mary<br/>
+    
+        &copy; Copyright 2022, B. Mary.<br/>
+      Last updated on Sep 12, 2022.<br/>
+  </p>
+</footer>
+</main>
 
 
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
   </body>
 </html>
