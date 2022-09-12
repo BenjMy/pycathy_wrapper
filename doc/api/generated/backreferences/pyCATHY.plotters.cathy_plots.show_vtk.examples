@@ -5,14 +5,14 @@ Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Weil et al example">
+    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
 
 .. only:: html
 
- .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_pyCATHY_weilletal_thumb.png
+ .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_weilletal_thumb.png
      :alt: Weil et al example
 
-     :ref:`sphx_glr_gallery_SSHydro_pyCATHY_weilletal.py`
+     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`
 
 .. raw:: html
 
@@ -20,4 +20,4 @@ Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_SSHydro_pyCATHY_weilletal.py`
+ * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`

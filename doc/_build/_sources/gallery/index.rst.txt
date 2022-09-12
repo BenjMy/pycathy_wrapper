@@ -30,10 +30,10 @@ Data Assimilation
 
 .. only:: html
 
- .. figure:: /gallery/DA/images/thumb/sphx_glr_errorbar_subsample3_thumb.png
+ .. figure:: /gallery/DA/images/thumb/sphx_glr_plot_errorbar_subsample3_thumb.png
      :alt: Errorbar subsampling
 
-     :ref:`sphx_glr_gallery_DA_errorbar_subsample3.py`
+     :ref:`sphx_glr_gallery_DA_plot_errorbar_subsample3.py`
 
 .. raw:: html
 
@@ -43,7 +43,7 @@ Data Assimilation
 .. toctree::
    :hidden:
 
-   /gallery/DA/errorbar_subsample3
+   /gallery/DA/plot_errorbar_subsample3
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>
@@ -59,14 +59,14 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Weil et al example">
+    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
 
 .. only:: html
 
- .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_pyCATHY_weilletal_thumb.png
+ .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_weilletal_thumb.png
      :alt: Weil et al example
 
-     :ref:`sphx_glr_gallery_SSHydro_pyCATHY_weilletal.py`
+     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`
 
 .. raw:: html
 
@@ -76,7 +76,7 @@ Surface subsurface hydrological model
 .. toctree::
    :hidden:
 
-   /gallery/SSHydro/pyCATHY_weilletal
+   /gallery/SSHydro/plot_pyCATHY_weilletal
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

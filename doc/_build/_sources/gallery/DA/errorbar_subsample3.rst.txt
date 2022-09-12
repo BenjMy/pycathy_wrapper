@@ -28,17 +28,6 @@ data points with similar errors.
 
 .. GENERATED FROM PYTHON SOURCE LINES 10-40
 
-
-
-.. image-sg:: /gallery/DA/images/sphx_glr_errorbar_subsample3_001.png
-   :alt: Errorbar subsampling, all errorbars, only every 6th errorbar, second series shifted by 3
-   :srcset: /gallery/DA/images/sphx_glr_errorbar_subsample3_001.png
-   :class: sphx-glr-single-img
-
-
-
-
-
 .. code-block:: default
 
 
@@ -75,7 +64,7 @@ data points with similar errors.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.318 seconds)
+   **Total running time of the script:** ( 0 minutes  0.000 seconds)
 
 
 .. _sphx_glr_download_gallery_DA_errorbar_subsample3.py:

@@ -40,7 +40,7 @@ copyright = '2022, B. Mary'
 author = 'B. Mary'
 
 # The full version, including alpha/beta/rc tags
-release = 'v0.1.0'
+release = 'v0.1.1'
 
 
 
@@ -118,10 +118,9 @@ sphinx_gallery_conf = {
     # path where to save gallery generated examples
     "gallery_dirs": "gallery",
     #"gallery_dirs": ["galleryDA", "galleryDA2"],
-    "filename_pattern": r".py",
+    #"filename_pattern": r".py",
     #"filename_pattern": [r"\.py",r"\.ipynb"],
     #"dont_preprocess": [],
-    #'pattern': '.ipynb',
     # Remove the "Download all examples" button from the top level gallery
     "download_all_examples": False,
     # Sort gallery example by file name instead of number of lines (default)
