@@ -142,7 +142,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # (self.dict_obs is assimiliatiom times size)
         self.dict_obs = OrderedDict() # dictionnary containing all the observation data
         # (self.stacked_data_cov is data_size * assimiliatiom times size)
-        self.stacked_data_cov = [] # merged data covariance matrice of all the observation data and all times
         self.count_DA_cycle = None  # counter of the Assimilation Cycle
         # self.df_performance = pd.DataFrame() # pandas dataframe with performence evaluation metrics
 
@@ -2860,26 +2859,20 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         else:
             raise ValueError('Non homogeneous Neumanm Boundary conditions Not yet implemented')
 
-
         # read existing input nansfneubc file
         # --------------------------------------------------------------------
-
         with open(os.path.join(self.workdir,
                                self.project_name,
                                self.input_dirname,
                                "nansfneubc"),"w+") as nansfneubcfile:
-
             if len(time) == 0:
                 time = self.atmbc["time"]
             for tt in time:
-                # nansfneubcfile.write(str(tt) + "\t" + "time" + "\n")
                 nansfneubcfile.write("{:.3e}".format(tt) + "\t" + "time" + "\n")
-
                 nansfneubcfile.write(
                     str(ZERO) + "\t" + str(NQ) + "\t" +
                         "ZERO" + "\t" + "NQ" + "\n"
                 )
-
         nansfneubcfile.close()
 
         pass
@@ -2944,7 +2937,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     def create_mesh_bounds_df(self,grid3d,times):
         '''
         Create a dataframe with flag for different boundary condtions assigned to each nodes
-
+        
         Parameters
         ----------
         grid3d : TYPE
@@ -2998,7 +2991,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         len(bound_bool)
         print('SKip time dependence init boundary condition dataframe - consequences (?)')
         # self.mesh_bound_cond_df = pd.concat([self.mesh_bound_cond_df]*len(times), ignore_index=True)
-
         # times_reshaped = [val for val in times for _ in np.arange(len(grid3d))]
         # self.mesh_bound_cond_df['time (s)'] = times_reshaped
         # empty_vec = np.empty(len(times_reshaped))
@@ -3031,7 +3023,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
 
     def create_mesh_vtkris3d(self):
-
         '''
         Create mesh for vtk format version 2
 
@@ -3079,13 +3070,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     def create_mesh_vtk(self):
         '''
         Create custum mesh
-
         THIS SHOULD BE MOVED TO MESHTOOLS
-
-        Returns
-        -------
-        None.
-
         '''
         self.create_mesh_vtkris3d()
         self.mesh_pv_attributes = pv.read(os.path.join(self.workdir,
@@ -3093,8 +3078,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                                        'vtk/mesh_tmp.vtk'
                                                        )
                                           )
-        # remove tmp file
-
         self.mesh_pv_attributes.save(os.path.join(self.workdir,
                                                   self.project_name,
                                                   'vtk/',
@@ -3104,58 +3087,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                                      binary=False,
                                      )
 
-
          # THIS IS A TEMPORARY IMPLEMENTATION OF THE PYVISTA MESH
-         # the created mesh is not exactly the same than the CATHY mesh
-         # in the future need to create the mesh.vtk from grid using CATHY then read it to pyvista
-         # VTKRIS3D
-         # vtkris3d(ntetra, nnode,iunit,tetra, u,v,vx,vy,vz,x,y,z,ks,time,vtkf)
-
-
-        # if topo==None:
-
-        #     # mesh dimensions
-        #     # -------------
-        #     si, sj, sk  = ( self.hapin["M"]*self.dem_parameters['delta_x'],
-        #                     self.hapin["N"]*self.dem_parameters['delta_y'],
-        #                     self.dem_parameters['base']
-        #                     )
-
-        #     # mesh discretisation
-        #     # -------------------
-        #     ni, nj, nk = (
-        #                     int(self.hapin["M"]),
-        #                     int(self.hapin["N"]),
-        #                     self.dem_parameters['nstr']
-        #                 )
-
-        #     xcorn = np.arange(0, (ni+1)*si, si)
-        #     xcorn = np.repeat(xcorn, 2)
-        #     xcorn = xcorn[1:-1]
-        #     xcorn = np.tile(xcorn, 4*nj*nk)
-
-        #     ycorn = np.arange(0, (nj+1)*sj, sj)
-        #     ycorn = np.repeat(ycorn, 2)
-        #     ycorn = ycorn[1:-1]
-        #     ycorn = np.tile(ycorn, (2*ni, 2*nk))
-        #     ycorn = np.transpose(ycorn)
-        #     ycorn = ycorn.flatten()
-
-        #     zcorn = np.arange(0, (nk+1)*sk, sk)
-        #     zcorn = np.repeat(zcorn, 2)
-        #     zcorn = zcorn[1:-1]
-        #     zcorn = np.repeat(zcorn, (4*ni*nj))
-
-        #     corners = np.stack((xcorn, ycorn, zcorn))
-        #     corners = corners.transpose()
-
-        #     dims = np.asarray((ni, nj, nk))+1
-        #     self.mesh_pv_attributes = pv.ExplicitStructuredGrid(dims, corners)
-
-        # else:
-        #     # https://docs.pyvista.org/examples/00-load/create-structured-surface.html
-        #     raise NotImplementedError('creation of mesh with topo not yet implemented')
-
+         #  https://docs.pyvista.org/examples/00-load/create-structured-surface.html
         pass
 
 
@@ -3529,13 +3462,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         return SoilPhysProp
 
-    def _prepare_SOIL_vegetation_tb(self, FP):
+    def _prepare_SOIL_vegetation_tb(self, FP_map):
         '''
         _prepare_SOIL_vegetation_tb
 
         Parameters
         ----------
-        FP : dict
+        FP_map : dict
             dict containing Feddes parameters.
             - 'PCANA': anaerobiosis point
             - 'PCREF': field capacity
@@ -3559,7 +3492,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # Check if root_map file exist and is updated
         # -------------------------------------------
         if hasattr(self,'veg_map') is False:
-            if len(FP[list(FP)[0]])==1:
+            if len(FP_map[list(FP_map)[0]])==1:
                 self.update_veg_map()
             else:
                 raise ValueError('Found multiple values of Feddes zones' +
@@ -3568,8 +3501,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # Check vegetation heterogeneity dimension
         # ----------------------------------------
-        if self.cathyH["MAXVEG"] != len(FP[list(FP)[0]]):
-            raise ValueError("Wrong number of vegetations: PCANA size is " + str(len(FP[list(FP)[0]]))
+        if self.cathyH["MAXVEG"] != len(FP_map[list(FP_map)[0]]):
+            raise ValueError("Wrong number of vegetations: PCANA size is " + str(len(FP_map[list(FP_map)[0]]))
                              + ' while MAXVEG is ' + str(self.cathyH["MAXVEG"]))
 
         # check number of vegetation
@@ -3578,8 +3511,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
             for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
-                for sfp in FP:
-                    izoneVeg_tmp.append(FP[sfp][iveg])
+                for sfp in FP_map:
+                    izoneVeg_tmp.append(FP_map[sfp][iveg])
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
@@ -3698,14 +3631,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             DESCRIPTION.
 
         '''
-
         if isinstance(indice_veg, int):
             indice_veg = float(indice_veg)
-
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
-
-        #print("update root map")
+            
         with open(
             os.path.join(
                 self.workdir, self.project_name, self.input_dirname, "root_map"
@@ -3721,9 +3651,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
 
             if isinstance(indice_veg, float):
-                # if  root_depth>self.dem_parameters['base']:
-                #     print('max root mesh > max mesh depth')
-                #     sys.exit()
                 indice_veg = (
                     np.c_[
                         np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]
@@ -3735,1962 +3662,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         rootmapfile.close()
 
-        # self.update_zone(indice_veg)
         self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
-        # ,                        MAXZON=len(np.unique(indice_veg))
-
         self.veg_map = indice_veg
-
 
         if show is not None:
             plt, ax = plt_CT.show_indice_veg(indice_veg,**kwargs)
-
             return indice_veg, plt, ax
-
-
         return indice_veg
-
-    # -------------------------------------------------------------------#
-    # %% DATA ASSIMILATION FCTS
-
-    def _DA_init(self, NENS=[], ENS_times=[], parm_pert=[],update_parm_list='all'):
-        """
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Initial preparation for DA
-
-
-        .. note::
-
-            1. update cathyH file given NENS, ENS_times + flag self.parm['DAFLAG']==True
-
-            2. create the processor cathy_origin.exe
-
-            3. create directory tree for the ensemble
-
-            4. create panda dataframe for each perturbated variable
-
-            5. update input files
-
-        Parameters
-        ----------
-        NENS : int
-            # Number of realizations in the ensemble
-        ENS_times : int
-            # Observation times
-
-        Returns
-        -------
-        None.
-
-        Note: for now only implemented for EnkF DA
-        """
-
-        self.NENS = NENS  # THIS IS TEMPORARY
-        # updated_parm_list - update_parm_list
-
-
-        if hasattr(self,'ens_valid') is False:
-            self.ens_valid = list(np.arange(0,self.NENS))
-
-        # create sub directories for each ensemble
-        # ---------------------------------------------------------------------
-        self._create_subfolders_ensemble(NENS)
-
-
-        # update list of updated parameters based on problem heterogeneity
-        # ---------------------------------------------------------------------
-
-        updated_parm_list = ['St. var.']
-        for d in self.dict_parm_pert.keys():
-            for l in update_parm_list:
-                if l in d:
-                    updated_parm_list.append(d)
-
-        return updated_parm_list
-
-
-    def _check_before_analysis(self, ens_valid=[],
-                               threshold_rejected=10):
-        '''
-        Filter is applied only on selected ensemble
-
-        Parameters
-        ----------
-        update_key : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        rejected_ens
-
-        '''
-
-        self.console.print(":white_check_mark: [b]check scenarii before analysis[/b]")
-
-        ###CHECK which scenarios are OK and which are to be rejected and then create and applied the filter
-        ###only on the selected scenarios which are to be considered.
-
-        rejected_ens_new = []
-        for n in range(self.NENS):
-
-            if n in ens_valid:
-                # print('ensemble_nb ' + str(n) + ' before update analysis')
-                try:
-                    df_mbeconv = out_CT.read_mbeconv(os.path.join(self.workdir, self.project_name,
-                                                       "DA_Ensemble/cathy_" + str(n+1),
-                                                       'output/mbeconv'))
-                    if df_mbeconv['CUM.'].isnull().values.any():
-                        rejected_ens_new.append(True)
-                        self.console.print(":x: [b]df_mbeconv['CUM.'][/b]" + str(df_mbeconv['CUM.'].isnull().values.any())+ ', ens_nb:' + str(n+1))
-
-                    elif (np.round(df_mbeconv['TIME'].iloc[-1]))<np.round(self.parm['(TIMPRT(I),I=1,NPRT)'][-1]) - self.parm['DELTAT']:
-                        rejected_ens_new.append(True)
-                        self.console.print(":x: [b]df_mbeconv['time'][/b]" + str(df_mbeconv['TIME'].iloc[-1]) + ', ens_nb:' + str(n+1))
-
-                    elif len(df_mbeconv) == 0:
-                        rejected_ens_new.append(True)
-                        self.console.print(":x: [b]len(df_mbeconv)['TIME'][/b]" + str(len(df_mbeconv))+ ', ens_nb:' + str(n+1))
-
-                    else:
-                        rejected_ens_new.append(False)
-
-                except:
-                    rejected_ens_new.append(True)
-                    print('cannot read mbeconv')
-                    pass
-                    # UnboundLocalError: local variable 'df_mbeconv' referenced before assignment
-
-            else:
-                rejected_ens_new.append(True)
-
-        #check whether the number of discarded scenarios is major than the 10% of the total number [N];
-        #if the answer is yes than the execution stops
-        # --------------------------------------------------------------------
-        if sum(rejected_ens_new)>=(threshold_rejected/100)*self.NENS:
-            print('new parameters (if updated)')
-            print(self.dict_parm_pert)
-
-            raise ValueError('% number of rejected ensemble is too high:' + str((sum(rejected_ens_new)*100)/(self.NENS)))
-
-        return  rejected_ens_new
-
-
-
-
-    def _check_after_analysis(self,update_key,list_update_parm):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        CHECK which scenarios parameters are OK and which one to discard
-
-        Returns
-        -------
-        None.
-
-        '''
-        self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
-
-        id_valid = [list(np.arange(0,self.NENS))]
-        id_nonvalid = []
-
-
-        def test_negative_values(update_key,pp):
-            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
-            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
-
-            for i in id_nonvalid:
-                self.console.print(":x: [b]negative" + str(pp) + ":[/b]" +
-                                   str(self.dict_parm_pert[pp[1]][update_key][i])+
-                                   ', ens_nb:' + str(i))
-            return id_nonvalid, id_valid
-
-        def test_range_values(update_key,pp,min_r,max_r):
-            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<min_r)[0]))
-            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>max_r)[0]))
-            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>min_r)[0]))
-            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<max_r)[0]))
-            for i in id_nonvalid:
-                self.console.print(":x: [b]out of range" + str(pp) + ":[/b]" +
-                                   str(self.dict_parm_pert[pp[1]][update_key][i])+
-                                   ', ens_nb:' + str(i))
-            return id_nonvalid, id_valid
-
-
-
-        for pp in enumerate(list_update_parm[:]):
-            if 'St. var.' in pp[1]:
-                pass
-            else:
-                if 'rFluid'.casefold() in pp[1].casefold():
-                    id_nonvalid, id_valid = test_negative_values(update_key,pp)
-                elif 'porosity'.casefold() in pp[1].casefold():
-                    id_nonvalid, id_valid = test_negative_values(update_key,pp)
-                elif 'a_Archie'.casefold() in pp[1].casefold():
-                    id_nonvalid, id_valid = test_range_values(update_key,pp, 0, 3)
-                elif 'Ks'.casefold() in pp[1].casefold():
-
-                    id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
-                    id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
-                    for i in id_nonvalid:
-                        self.console.print(":x: [b]negative Ks:[/b]" +
-                                           str(self.dict_parm_pert[pp[1]][update_key][i])+
-                                           ', ens_nb:' + str(i))
-                elif 'PCREF'.casefold() in pp[1].casefold():
-                    id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
-                    id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
-                    for i in id_nonvalid:
-                        self.console.print('Positive values encountered in PCREF:' +
-                              str(self.dict_parm_pert[pp[1]][update_key][i])+
-                                           ', ens_nb:' + str(i))
-                # ckeck if new value of Zroot is feasible
-                # ------------------------------------------------------------
-                elif 'Zroot'.casefold() in pp[1].casefold():
-                    id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>
-                                                abs(min(self.grid3d['nodes_idxyz'][:, -1])))[0]))
-                    id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<
-                                             abs(min(self.grid3d['nodes_idxyz'][:, -1])))[0])
-                                    )
-                    for i in id_nonvalid:
-                        self.console.print(":x: [b]unfeasible root depth:[/b]" +
-                                           str(self.dict_parm_pert[pp[1]][update_key][i])+ ', ens_nb:' + str(i))
-
-        id_nonvalid_flat = [item for sublist in id_nonvalid for item in sublist]
-        id_valid = set.difference(set(list(np.arange(0,self.NENS))), set(list(np.unique(id_nonvalid_flat))))
-        return id_valid
-
-
-    def spatialize_parameters(self,list_update_parm,parm):
-        '''
-        Extend the number of parameters according to the number of zones
-        (useful for the heteregeneous case)
-        '''
-        i=0
-        parm_extended = []
-        for l in list_update_parm:
-            print(l)
-            if 'St. var.' in l:
-                pass
-            else:
-                nb_of_zones = 1
-                if 'surf_zones_param' in self.dict_parm_pert[l]:
-                    nb_of_zones =  self.dict_parm_pert[l]['surf_zones_param']
-                    print(nb_of_zones)
-                    parm_extended.append(np.tile(parm[i,:],(nb_of_zones,1)))
-                i = i + 1
-        parm_extended = np.vstack(parm_extended)
-        return parm_extended
-
-
-    def transform_parameters(self,list_update_parm,
-                             update_key=None,
-                             back=False,
-                             param=None):
-        '''
-        Parameter (back) transformation before analysis (log, bounded log, ...)
-
-        ..note:: parameters are log transform so that they become Gaussian distributed
-                 to be updated by the Ensemble Kalman Filter
-        '''
-        param_new = []
-        for pp in enumerate(list_update_parm[:]):
-            param_trans = []
-
-            if 'St. var.' in pp[1]:
-                pass
-            else:
-                if update_key:
-                    param = self.dict_parm_pert[pp[1]][update_key]
-                if self.dict_parm_pert[pp[1]]['transf_type'] == 'log':
-                    print('log transformation')
-                    if back:
-                        param_trans = np.exp(param)
-                    else:
-                        param_trans = np.log(param)
-                elif self.dict_parm_pert[pp[1]]['transf_type'] == 'log-ratio':
-                   print('bounded log transformation')
-                   range_tr = self.dict_parm_pert[pp[1]]['transf_bounds']
-                   A = range_tr['A'] # min range
-                   B = range_tr['B'] # max range
-                   if back:
-                       param_trans = (
-                                       np.exp(  (param - A)/
-                                                (B - param)
-                                              )
-                                    )
-                   else:
-                       param_trans = (
-                                       np.log(  (param - A)/
-                                                (B - param)
-                                              )
-                                    )
-                elif self.dict_parm_pert[pp[1]]['transf_type'] == 'hyperbolic':
-                   print('hyperbolic transformation')
-                   # Y = sinh−1(U )
-                   param_trans = np.log(self.dict_parm_pert[pp[1]][update_key])
-
-                else:
-                    param_trans = param
-                param_new.append(param_trans)
-            if len(param_new)>0:
-                np.vstack(param_new)
-
-        return np.array(param_new)
-
-
-
-
-    def _get_data2assimilate(self,list_assimilated_obs,time_ass=None,match=False):
-        '''
-        Loop over observation dictionnary and select corresponding data for a given assimilation time
-
-        Parameters
-        ----------
-        list_assimilated_obs : list
-            list of observation to assimilate.
-
-        Returns
-        -------
-        data : list
-            list of data values.
-        '''
-
-        # find the method to map for this time step
-        # --------------------------------------------------------
-        obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-
-        def extract_data(sensor, time_ass, data):
-            data2add = []
-            if 'ERT' in sensor:
-                if 'pygimli' in items_dict[time_ass][1][sensor]['data_format']:
-                # if 'pygimli' in obs2map[time_ass]['data_format']:
-                # if 'pygimli' in self.dict_obs[time_ass]['ERT']['data_format']:
-                    data2add.append(np.array(items_dict[time_ass][1][sensor]['data']['rhoa']))
-                else:
-                    data2add.append(items_dict[time_ass][1][sensor]['data']['resist'].to_numpy())
-                data2add= np.hstack(data2add)
-            else:
-                data2add.append(items_dict[time_ass][1][sensor]['data'])
-
-            return data2add
-
-
-        if time_ass is None:
-            time_ass = self.count_DA_cycle
-
-        data = []
-        # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
-        # -----------------------------------------------------------------
-        items_dict = list(self.dict_obs.items())
-        for sensor in items_dict[time_ass][1].keys():
-            if 'all' in list_assimilated_obs:
-                # obskey2map.append(sensor)
-                data2add = extract_data(sensor, time_ass, data)
-                data.append(data2add)
-            else:
-                for l in list_assimilated_obs:
-                    if match:
-                        if l == sensor:
-                            # obskey2map.append(sensor)
-                            data2add = extract_data(sensor, time_ass, data)
-                            data.append(data2add)
-                    else:
-                        if l in sensor:
-                            # obskey2map.append(sensor)
-                            data2add = extract_data(sensor, time_ass, data)
-                            data.append(data2add)
-            # len(data2add)
-        return np.hstack(data), obskey2map
-
-
-    def _DA_analysis(self, prediction,
-                     DA_type='enkf_Evensen2009_Sakov',
-                     list_update_parm=['St. var.'],
-                     list_assimilated_obs='all',
-                     ens_valid=[]):
-        """
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Analysis ensemble using DA
-        print(list_assimilated_obs)
-
-
-        1. map state variable 2 Observations
-
-        2. apply filter
-
-        3. checkings
-
-        Parameters
-        ----------
-        typ : str
-            type of Data Assimilation
-        NUDN : int
-            #  NUDN  = number of observation points for nudging or EnKF (NUDN=0 for no nudging)
-        ENS_times : np.array([])
-            # Observation time for ensemble kalman filter (EnKF).
-        rejected_ens : list
-            list of ensemble to reject
-        Returns
-        -------
-        None.
-
-        Note: for now only implemented for EnkF DA
-        """
-
-        update_key = 'ini_perturbation'
-        if self.count_DA_cycle > 0:
-            update_key = 'update_nb' + str(self.count_DA_cycle)
-
-        # find the method to map for this time step
-        # --------------------------------------------------------
-        obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-
-        # prepare states
-        # ---------------------------------------------------------------------
-        ensemble_psi, ensemble_sw, ens_size, sim_size = self._read_state_ensemble()
-
-        # ---------------------------------------------------------------------
-        # prepare data
-        # ---------------------------------------------------------------------
-        # select ONLY data to assimilate
-        # ---------------------------------------------------------------------
-        data, _ = self._get_data2assimilate(list_assimilated_obs)
-        print('data size: ' + str(len(data)))
-
-        # check size of data_cov
-        # ---------------------------------------------------------------------
-        # if len(self.stacked_data_cov)/len(self.dict_obs.items()) != len(data):
-        # if 'ERT' in sensors:
-        #     if np.shape(self.stacked_data_cov[self.count_DA_cycle])[0] != len(data[0]):
-        #         raise ValueError('need to compute data covariance')
-        # else:
-        if np.shape(self.stacked_data_cov[self.count_DA_cycle])[0] != len(data):
-            raise ValueError('need to compute data covariance')
-
-        data_cov =self.stacked_data_cov[self.count_DA_cycle]
-
-
-
-        # # filter non-valid ensemble before Analysis
-        # # ---------------------------------------------------------------------
-        prediction_valid = prediction
-        ensemble_psi_valid = ensemble_psi[:,ens_valid]
-        ensemble_sw_valid = ensemble_sw[:,ens_valid]
-        # print('prediction valid size: ' + str(len(prediction_valid[:,0])))
-
-
-
-        # prepare parameters
-        # ---------------------------------------------------------------------
-        # When updating the states only, the elements of X are the
-        # pressure heads at each node of the finite element grid, while
-        # the state augmentation technique is used when also updat-
-        # ing the parameters
-        param = self.transform_parameters(list_update_parm,update_key)
-        print('parm size: ' + str(len(param)))
-
-        # if update_key == 'ini_perturbation':
-        #     param = self.spatialize_parameters(list_update_parm,param)
-
-        param_valid = []
-        if len(param)>0:
-            param_valid = param[:, ens_valid]
-
-
-        # run Analysis
-        # ---------------------------------------------------------------------
-
-        result_analysis = cathy_DA.run_analysis(DA_type,
-                                                data,
-                                                data_cov,
-                                                param_valid,
-                                                list_update_parm,
-                                                [ensemble_psi_valid,ensemble_sw_valid],
-                                                prediction_valid,
-                                                alpha=self.damping,
-                                                )
-
-
-        # plot ensemble covariance matrices and changes (only for ENKF)
-        # ---------------------------------------------------------------------
-        if len(result_analysis)>2:
-            [A, Amean, dA,
-             dD, MeasAvg, S,
-             COV, B, dAS,
-             analysis,
-             analysis_param]  = result_analysis
-
-            try:
-                plt_CT.show_DA_process_ens(ensemble_psi_valid,
-                                            data,COV,
-                                            dD,dAS,B,analysis,
-                                            savefig=True,
-                                            savename= os.path.join(self.workdir,
-                                                                   self.project_name,
-                                                                   'DA_Ensemble',
-                                                                   'DA_Matrices_t'
-                                                                   +str(self.count_DA_cycle)
-                                                                  ),
-                                            # label_sensor=str([*self.dict_obs[0]])
-                                            label_sensor=str([*obskey2map])
-                                            )
-            except:
-                self.console.print("[b]Impossible to plot matrices[/b]")
-
-
-        # particule filter
-        # ----------------
-        else:
-            [analysis,
-             analysis_param]  = result_analysis
-
-
-        # Back-transformation of the parameters
-        # ---------------------------------------------------------------------
-        # for pp in enumerate(list_update_parm[:]):
-        #     if 'St. var.' in pp[1]:
-        #         pass
-        #     else:
-
-        # analysis_param_valid = []
-        # if len(param)>0:
-        #     analysis_param_valid = analysis_param[ens_valid]
-
-        self.transform_parameters(list_update_parm,
-                                  param=np.hstack(analysis_param),
-                                  back=True)
-
-                # if self.dict_parm_pert[pp[1]]['transf_type'] == 'log':
-                #     print('back log transformation')
-                #     analysis_param = np.exp(analysis_param)
-
-
-
-        # return ensemble_psi, Analysis, AnalysisParam, Data, data_cov
-        # ---------------------------------------------------------------------
-        return(ensemble_psi, ensemble_sw, data,  analysis,
-                 analysis_param)
-
-
-
-
-    def _obs_key_select(self,list_assimilated_obs):
-        ''' find data to map from dictionnary of observations '''
-        # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
-        # -----------------------------------------------------------------
-        obskey2map = [] # data type 2 map
-        obs2map = []    # data dict 2 map
-        items_dict = list(self.dict_obs.items())
-        for sensor in items_dict[self.count_DA_cycle][1].keys():
-            if 'all' in list_assimilated_obs:
-                obskey2map.append(sensor)
-                obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
-            else:
-                for l in list_assimilated_obs:
-                    if l in sensor:
-                        obskey2map.append(sensor)
-                        obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
-        return obskey2map,obs2map
-
-
-
-
-    def map_states2Observations(self,
-                                 list_assimilated_obs='all',
-                                 parallel=False,
-                                 default_state = 'psi',
-                                 verbose = False,
-                                 **kwargs):
-        '''
-        Translate (map) the state values (pressure head or saturation) to observations (or predicted) values
-
-
-        In other words: apply H mapping operator to convert model to predicted value Hx
-
-        In practice, for each assimilation time, loop over the observation
-        dictionnary and infer observation type. Stack Hx.
-        Hx = [Hx0,Hx1,Hx_nb_of_observation]
-
-        .. note::
-
-            - For ERT data, H is Archie law, SWC --> ER0 --> ERapp
-            - For SWC data, H is a multiplicator (porosity)
-            - For tensiometer data, no mapping needed or VGP model if model state used is saturation
-            - For discharge, no mapping needed
-            - For scale data: no mapping needed
-
-
-        .. note::
-
-            - For ERT data each ERT mesh node is an observation
-
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Parameters
-        ----------
-        state : np.array([])
-            [pressure heads, saturation] for each mesh nodes. The default is [None, None].
-        list_assimilated_obs : TYPE, optional
-            DESCRIPTION. The default is 'all'.
-        parallel : Bool, optional
-            DESCRIPTION. The default is False.
-        verbose : Bool, optional
-            DESCRIPTION. The default is False.
-        **kwargts : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        Hx : np.array
-            Ensemble of the simulated (predicted) observations.
-        '''
-
-
-        if parallel:
-            path_fwd_CATHY_list = [] # list of ensemble path of cathy output
-            for ens_nb in self.ens_valid: # loop over ensemble files
-                path_fwd_CATHY_list.append(os.path.join(self.workdir,
-                                        self.project_name,
-                                        'DA_Ensemble/cathy_' + str(ens_nb+1)))
-
-
-
-
-        Hx_ens = [] # matrice of predicted observation for each ensemble realisation
-        for ens_nb in self.ens_valid: # loop over ensemble files
-            # print('ens nb:' + str(ens_nb))
-
-            path_fwd_CATHY = os.path.join(self.workdir, self.project_name,
-                                  './DA_Ensemble/cathy_' + str(ens_nb+1))
-
-            df_psi = self.read_outputs(filename='psi',
-                                       path=os.path.join(path_fwd_CATHY,
-                                                         self.output_dirname)
-                                       )
-            df_sw = self.read_outputs(filename='sw',
-                                      path=os.path.join(path_fwd_CATHY,
-                                                        self.output_dirname)
-                                      )
-
-            # infer soil parameters properties
-            # ---------------------------------
-            porosity = self.soil_SPP['SPP'][:, 4][0]
-
-            # find data to map with dictionnary of observations
-            # --------------------------------------------
-            obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-            state = [df_psi[-1],df_sw[-1]]
-
-
-            Hx_stacked= [] # stacked predicted observation
-            # Loop over observations to map
-            # ---------------------------------------------------------------------
-            for i, obs_key in enumerate(obskey2map):
-
-                # print('obs_key nb:' + obs_key)
-
-                if 'tensio' in obs_key:
-                    # case 1: pressure head assimilation (Hx_PH)
-                    # -------------------------------------------------------------
-                    Hx_PH = state[0][obs2map[i]['mesh_nodes']]
-                    Hx_stacked.append(Hx_PH)
-
-                if 'swc' in obs_key:
-                    # case 2: sw assimilation (Hx_SW)
-                    # --------------------------------------------------------------------
-                    Hx_SW = state[1][obs2map[i]['mesh_nodes']] * porosity
-                    Hx_stacked.append(Hx_SW)
-                    # note: the value of the porosity can be unique or not depending on the soil physical properties defined
-
-                if 'scale' in obs_key:
-                    #Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]
-                    #Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)
-                    #Atmpot-r (11) : Potential atmospheric forcing rate [L/T]
-                    #Atmpot-d (12) : Potential atmospheric forcing depth [L]
-                    #Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
-                    #Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
-                    #Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
-                    #Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
-
-                    print('Not yet implemented')
-
-                    df_dtcoupling = self.read_outputs(filename='dtcoupling',
-                                              path=os.path.join(path_fwd_CATHY,
-                                                                self.output_dirname)
-                                              )
-
-                    Hx_scale = state[1][obs2map[i]['mesh_nodes']] * porosity
-                    Hx_stacked.append(Hx_scale)
-
-
-
-                if 'discharge' in obs_key:
-                    # case 3: discharge
-                    # need to read the hgsfdet file (Hx_Q)
-                    # --------------------------------------------------------------------
-                    # if key[0] in 'discharge':
-                    # derivation of the dircharge, Q from file 'hgsfdet'
-                    # Hx_Q = []
-                    # Hx.vstack(Hx_Q)
-                    print('Not yet implemented')
-
-                if 'ERT' in obs_key:
-                    if parallel == False:
-                        Hx_ERT = self._map_ERT(state,
-                                                path_fwd_CATHY,
-                                                ens_nb,
-                                                **kwargs)
-                        if 'pygimli' in obs2map[i]['data_format']:
-                            Hx_stacked.append(Hx_ERT['rhoa'])
-                        else:
-                            Hx_stacked.append(Hx_ERT['resist'])
-                        Hx_stacked = np.hstack(Hx_stacked)
-
-            if len(Hx_stacked)>2:
-                np.hstack(Hx_stacked)
-            Hx_ens.append(Hx_stacked)
-
-        if len(Hx_ens)>2:
-            Hx_ens= np.hstack(Hx_ens)
-
-
-        # special case of ERT // during sequential assimilation
-        # ---------------------------------------------------------------------
-        for i, obs_key in enumerate(obskey2map):
-            if 'ERT' in obs_key:
-                if parallel:
-                    Hx_ens_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
-                                                        savefig = True,
-                                                        DA_cnb = self.count_DA_cycle,
-                                                        )
-                    if len(Hx_ens)>0:
-                        Hx_ens = np.vstack([Hx_ens,Hx_ens_ERT])
-                        # np.shape(Hx_ens)
-                    else:
-                        Hx_ens = Hx_ens_ERT
-
-        return Hx_ens #meas_size * ens_size
-
-
-    def _add_2_ensemble_Archie(self, df_Archie_2add):
-        '''
-        Store in a dataframe Archie relationship for all ensembles and all assimilation times
-
-        Parameters
-        ----------
-        df_Archie_2add : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
-        '''
-
-        if hasattr(self,'Archie') == False:
-            self.Archie =  pd.DataFrame(columns=['time',
-                                                 'ens_nb',
-                                                 'sw',
-                                                 'ER_converted',
-                                                 'OL'])
-
-        # print(self.Archie['time'].max())
-        # print(self.Archie['ens_nb'].max())
-        self.Archie = pd.concat([self.Archie,df_Archie_2add])
-        # print(self.Archie['time'].max())
-        # print(self.Archie['ens_nb'].max())
-
-
-
-
-    def _add_2_ensemble_Hx(self, Hx, Hx_2add):
-        '''
-        Store in an array predicted value for all ensembles and all assimilation times
-        '''
-        try:
-            Hx.append(Hx_2add)
-        except:
-            Hx = list(Hx)
-            Hx.append(Hx_2add)
-
-
-        return Hx
-
-
-    def _read_state_ensemble(self):
-        # read grid to infer dimension of the ensemble X
-        # --------------------------------------------------------------------
-        # self.grid3d = {}
-        if len(self.grid3d) == 0:
-            self.grid3d = in_CT.read_grid3d(
-                os.path.join(self.workdir, self.project_name))
-
-        M_rows = np.shape(self.grid3d['nodes_idxyz'])[0]
-        N_col = self.NENS
-        # N_col = len(ens_valid)
-
-        # Ensemble matrix X of M rows and N  + fill with psi values
-        # --------------------------------------------------------------------
-        psi = np.zeros([M_rows, N_col])*1e99
-        sw = np.zeros([M_rows, N_col])*1e99
-        for j in range(self.NENS):
-        # for j in range(len(ens_valid)):
-
-            try:
-                df_psi = out_CT.read_psi(os.path.join(self.workdir, self.project_name,
-                                                   "DA_Ensemble/cathy_" + str(j+1),
-                                                   'output/psi'))
-                psi[:, j] = df_psi[-1, :]
-            except:
-                pass
-
-            try:
-                df_sw = out_CT.read_sw(os.path.join(self.workdir, self.project_name,
-                                                   "DA_Ensemble/cathy_" + str(j+1),
-                                                   'output/sw'))
-                sw[:, j] = df_sw[-1, :]
-            except:
-                pass
-        # check if there is still zeros
-        if np.count_nonzero(psi==1e99) != 0:
-            print('!!!unconsistent filled X, missing values!!!')
-            # sys.exit()
-
-        return psi, sw, N_col, M_rows
-
-
-
-    def _create_subfolders_ensemble(self, NENS):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-        '''
-
-        # if not os.path.exists(os.path.join(self.workdir, self.project_name,
-        #                                    "DA_Ensemble/cathy_origin")):
-        if os.path.exists(os.path.join(self.workdir, self.project_name,
-                                 "DA_Ensemble/cathy_origin")):
-            shutil.rmtree(os.path.join(self.workdir, self.project_name,
-                                     "DA_Ensemble/cathy_origin"))           # Removes all the subdirectories!
-        os.makedirs(os.path.join(self.workdir, self.project_name,
-                                 "DA_Ensemble/cathy_origin"),exist_ok=True)
-
-        # copy input, output and vtk dir
-        # ----------------------------------------------------------------
-        for dir2copy in enumerate(['input', 'output', 'vtk']):
-
-            if os.path.exists(os.path.join(self.workdir, self.project_name,
-                                           "DA_Ensemble/cathy_origin", dir2copy[1])
-                              ):
-                print('delete' + dir2copy)
-                shutil.rmtree(os.path.join(self.workdir, self.project_name,
-                                               "DA_Ensemble/cathy_origin", dir2copy[1]))
-
-            shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]),
-                            os.path.join(self.workdir, self.project_name,
-                                         "DA_Ensemble/cathy_origin", dir2copy[1])
-                )
-
-        try:
-            # copy exe into cathy_origin folder
-            # ----------------------------------------------------------------
-            shutil.move(
-                os.path.join(self.workdir, self.project_name,
-                             self.processor_name),
-                os.path.join(self.workdir, self.project_name,
-                             "DA_Ensemble/cathy_origin", self.processor_name)
-                        )
-
-            # copy cathy.fnames into cathy_origin folder
-            # ----------------------------------------------------------------
-            shutil.copy(
-                os.path.join(self.workdir, self.project_name,
-                             'cathy.fnames'),
-                os.path.join(self.workdir, self.project_name,
-                             "DA_Ensemble/cathy_origin/cathy.fnames")
-                        )
-
-            # copy prepro into cathy_origin folder
-            # ----------------------------------------------------------------
-            shutil.copytree(os.path.join(self.workdir,  self.project_name,
-                                         'prepro'),
-                            os.path.join(self.workdir, self.project_name,
-                                     "DA_Ensemble/cathy_origin/prepro"))
-
-        except:
-            raise ValueError(":worried_face: [b]processor exe not found[/b]")
-            # self.console.print(":worried_face: [b]processor exe not found[/b]")
-
-        path_origin = os.path.join(self.workdir, self.project_name,
-                                   "DA_Ensemble/cathy_origin")
-
-        # copy origin folder to each ensemble subfolders
-        for i in range(NENS):
-            path_nudn_i = os.path.join(self.workdir, self.project_name,
-                                        "DA_Ensemble/cathy_" + str(i+1))
-
-            if os.path.exists(path_nudn_i):
-                shutil.rmtree(path_nudn_i)
-
-            shutil.copytree(
-                    path_origin, path_nudn_i
-                )
-
-
-
-    def _DA_df(self, state=[None,None], state_analysis=None, rejected_ens=[], **kwargs):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Build a dataframe container to keep track of the changes before and after update for each ensemble.
-        This dataframe is the support for DA results visualisation.
-
-
-        Parameters
-        ----------
-        sw : np.array([])
-            State variable mesh nodes values (before update).
-        sw_analysis : np.array([])
-            State variable mesh nodes values after DA analysis.
-
-        Returns
-        -------
-        None.
-
-        '''
-
-        df_DA_ti_ni = pd.DataFrame() # nested df for a given ensemble/given time
-        df_DA_ti = pd.DataFrame() # nested df for a given time
-
-        cols_root = ['time',
-                     'Ensemble_nb',
-                     'psi_bef_update',
-                     'sw_bef_update_',
-                     'analysis',
-                     'OL',# Open loop boolean
-                     'rejected']
-
-
-        # Open loop kwargs
-        # --------------------------
-        t_ass = []
-        if 't_ass' in kwargs:
-            t_ass = kwargs['t_ass']
-
-        NENS = []
-        if 'ens_nb' in kwargs:
-            ens_nb = kwargs['ens_nb']
-        # --------------------------
-
-
-        if 'openLoop' in kwargs:
-
-            data_df_root = [t_ass*np.ones(len(state[0])),
-                            ens_nb*np.ones(len(state[0])),
-                            state[0],
-                            state[1],
-                            state[0],
-                            True*np.ones(len(state[0])),
-                            False*np.ones(len(state[0]))]
-            df_DA_ti = pd.DataFrame(np.transpose(data_df_root),
-                                  columns=cols_root)
-
-        else:
-
-            for n in range(self.NENS):
-
-                data_df_root = [self.count_atmbc_cycle*np.ones(len(state[0])),
-                                n*np.ones(len(state[0])),
-                                state[0][:,n],
-                                state[1][:,n],
-                                state_analysis[:,n],
-                                False*np.ones(len(state[0])),
-                                int(rejected_ens[n])**np.ones(len(state[0]))
-                                ]
-                df_DA_ti_ni = pd.DataFrame(np.transpose(data_df_root),
-                                      columns=cols_root)
-
-                df_DA_ti= pd.concat([df_DA_ti, df_DA_ti_ni], axis=0)
-
-
-        self.df_DA= pd.concat([self.df_DA, df_DA_ti], axis=0, ignore_index=True)
-
-
-        pass
-
-
-
-
-    def _update_input_ensemble(self, NENS, ENS_times,
-                               parm_pert=[],
-                               update_parm_list=['St. var.'],
-                               analysis=[],
-                               **kwargs):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-
-        Select the time window of the hietograph.
-        Write new variable perturbated/updated value into corresponding input file
-
-        Parameters
-        ----------
-        NENS : int
-            size of the ensemble.
-        parm_pert : dict
-            dict of all perturbated variables holding values and metadata.
-
-        Returns
-        -------
-        New file written/overwritten into the input dir.
-
-        '''
-
-        self.console.print(":sponge: [b]update input ensemble[/b]")
-
-
-
-        # resample atmbc file for the given DA window
-        # ---------------------------------------------------------------------
-        self.selec_atmbc_window(NENS, ENS_times)
-
-        # ---------------------------------------------------------------------
-
-        # analysis = []
-        # if 'analysis' in kwargs:
-        #     analysis = kwargs['analysis']
-
-        self.update_ENS_files(parm_pert,
-                              update_parm_list=update_parm_list,
-                              cycle_nb=self.count_atmbc_cycle,
-                              analysis=analysis)
-
-        pass
-
-    def selec_atmbc_window(self, NENS, ENS_times):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Select the time window of the hietograph
-        == time between two assimilation observation
-
-        Parameters
-        ----------
-        NENS : TYPE
-            DESCRIPTION.
-        ENS_times : TYPE
-            DESCRIPTION.
-        '''
-
-        if len(self.grid3d) == 0:
-            self.run_processor(IPRT1=3, verbose=False, DAFLAG=0)
-            self.grid3d = in_CT.read_grid3d(
-                os.path.join(self.workdir, self.project_name))
-
-        # read full simulation atmbc and filter time window
-        # ----------------------------------------------------------------------
-        df_atmbc, HSPATM, IETO = in_CT.read_atmbc(os.path.join(
-                                                                self.workdir,
-                                                                self.project_name,
-                                                                'input', 'atmbc'
-                                                               ),
-                                                  grid=self.grid3d
-                                                  )
-
-        if self.count_atmbc_cycle is not None:
-            try:
-                time_window_atmbc = [
-                                        df_atmbc.iloc[self.count_atmbc_cycle]['time'],
-                                        df_atmbc.iloc[self.count_atmbc_cycle+1]['time']
-                                    ]
-            except:
-                pass
-        else:
-                time_window_atmbc = [ENS_times[0], ENS_times[1]]
-
-        df_atmbc_window = df_atmbc[(df_atmbc['time'] >= time_window_atmbc[0]) &
-                      (df_atmbc['time'] <= time_window_atmbc[1])]
-
-
-        for ens_nb in range(NENS):
-            os.chdir(os.path.join(self.workdir, self.project_name,
-                                  './DA_Ensemble/cathy_' + str(ens_nb+1)))
-            diff_time = time_window_atmbc[1] - time_window_atmbc[0]
-            self.update_parm(TIMPRTi=[0,diff_time],TMAX=diff_time,
-                              filename=os.path.join(os.getcwd(), 'input/parm'),
-                              backup=True)
-            self.console.print(":warning: [b]Making the assumption that atmbc are homogeneous![/b]")
-            VALUE = []
-            for t in df_atmbc_window['time'].unique():
-                # VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'].mean())
-                VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'])
-            if len(VALUE)>0:
-                self.update_atmbc(HSPATM=1,IETO=0,
-                                  time=[0,diff_time],
-                                  VALUE=[VALUE[0]],
-                                  filename=os.path.join(os.getcwd(), 'input/atmbc'))
-            else:
-                pass
-
-        pass
-
-
-    def update_ENS_files(self, parm_pert, update_parm_list, **kwargs):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        Update by overwriting ensemble files (usually after analysis step or initially to build the ensemble)
-        - update state
-        - update model parameters:
-            - initial conditions
-            - Archie
-            - Hydraulic conductivity ks
-            - Feddes parameters
-            - Atmbc boundary conditions
-        Returns
-        -------
-        Overwritten files.
-
-        '''
-        update_key = 'ini_perturbation'
-        if 'cycle_nb' in kwargs:
-            if kwargs['cycle_nb'] > 0:
-                update_key = 'update_nb' + str(kwargs['cycle_nb'])
-
-        if 'analysis' in kwargs:
-            analysis = kwargs['analysis']
-
-
-        if update_parm_list=='all':
-            update_parm_list = ['St. var.']
-            for pp in parm_pert:
-                update_parm_list.append(pp)
-
-        # loop over ensemble files to update ic -->
-        # this is always done since psi are state variable to update
-        # ------------------------------------------------------------------
-        for ens_nb in range(self.NENS):
-            # change directory according to ensmble file nb
-            os.chdir(os.path.join(self.workdir, self.project_name,
-                                  './DA_Ensemble/cathy_' + str(ens_nb+1)))
-
-            # state variable update use ANALYSIS update or not
-            # --------------------------------------------------------------
-            if 'St. var.' in update_parm_list:
-                if kwargs['cycle_nb'] > 0:
-                        df_psi = self.read_outputs(filename='psi',
-                                                  path=os.path.join(os.getcwd(),
-                                                                    self.output_dirname))
-                        self.update_ic(INDP=1, IPOND=0,
-                                       pressure_head_ini=analysis[:,ens_nb],
-                                       filename=os.path.join(os.getcwd(), 'input/ic'),
-                                       backup=True)
-            else:
-                if kwargs['cycle_nb'] > 0:
-                    raise ValueError('no state variable update - use last iteration as initial conditions ?')
-                    df_psi = self.read_outputs(filename='psi',
-                                              path=os.path.join(os.getcwd(),
-                                                                self.output_dirname))
-                    if kwargs['cycle_nb'] > 0:
-                            self.update_ic(INDP=1, IPOND=0,
-                                           pressure_head_ini=df_psi[-1, :],
-                                           filename=os.path.join(os.getcwd(), 'input/ic'),
-                                           backup=False)
-
-
-        # loop over dict of perturbated variable
-        # ----------------------------------------------------------------------
-        FeddesParam_mat_ens = [] # matrice of ensemble for Feddes parameters
-        Archie_parms_mat_ens = [] # matrice of ensemble for Archie parameters
-        VG_parms_mat_ens = [] # matrice of ensemble for VG parameters
-        PERMX_het_ens = [] # matrice of ensemble for hydraulic conductivity parameters
-        Archie_p_names = ['porosity', 'rFluid_Archie','a_Archie','m_Archie','n_Archie','pert_sigma_Archie']
-        VG_p_possible_names = ['n_VG', 'thetar_VG', 'alpha_VG','VGPSATCELL_VG']
-        VG_p_possible_names_positions_in_soil_table = [5,6,7,7]
-
-        for parm_i, key in enumerate(update_parm_list):  # loop over perturbated variables dict
-            key_root = re.split('(\d+)', key)
-            if len(key_root)==1:
-                key_root.append('0')
-
-            # ------------------------------------------------------------------
-            for ens_nb in range(self.NENS):
-                # change directory according to ensmble file nb
-                os.chdir(os.path.join(self.workdir, self.project_name,
-                                      './DA_Ensemble/cathy_' + str(ens_nb+1)))
-
-                # atmbc update
-                # --------------------------------------------------------------
-                if key == 'atmbc':
-                    print('hietograph perturbated not yet implemented')
-                    self.update_atmbc(verbose=True)
-
-                # ic update (i.e. water table position update)
-                # --------------------------------------------------------------
-                elif key.casefold() in 'ic'.casefold():
-                    if kwargs['cycle_nb']==0:
-                        self.update_ic(INDP=0, IPOND=0,
-                                       pressure_head_ini=parm_pert[key
-                                           ]['ini_perturbation'][ens_nb],
-                                       filename=os.path.join(os.getcwd(), 'input/ic'),
-                                       backup=True)
-
-                # kss update
-                # --------------------------------------------------------------
-                elif key_root[0].casefold() in 'ks'.casefold():
-                    if len(PERMX_het_ens)==0:
-                        SPP =  self.soil_SPP['SPP_map']
-                        PERMX_het_ens = np.ones([len(SPP['PERMX']),self.NENS])
-                        PERMX_het_ens[:] = np.nan
-
-                    PERMX_het_ens[int(key_root[1]),ens_nb]=parm_pert[key][update_key][ens_nb]
-
-                    SPP_ensi = []
-                    for es in range(self.NENS):
-                        spd = dict()
-                        spd['PERMX'] = list(PERMX_het_ens[:,ens_nb])
-                        spd['PERMY'] = list(PERMX_het_ens[:,ens_nb])
-                        spd['PERMZ'] = list(PERMX_het_ens[:,ens_nb])
-                        SPP_ensi.append(spd)
-
-                    SPP.update(SPP_ensi[ens_nb])
-
-                    # print(PERMX_het_ens[:,ens_nb])
-                    if np.isnan(PERMX_het_ens[:,ens_nb]).any()==False:
-                        self.update_soil(SPP=SPP,
-                                          FP=self.soil_FP['FP_map'],
-                                          verbose=True,
-                                          filename=os.path.join(os.getcwd(), 'input/soil')
-                                          )  # specify filename path
-                # VG parameters update
-                # --------------------------------------------------------------
-                elif key_root[0] in VG_p_possible_names:
-
-                    # equivalence_CATHY = {
-                    #                      'thetar_VG':'VGRMCCELL',
-                    #                      'alpha_VG':'-1/VGPSATCELL',
-                    #                      'n_VG':'VGNCELL',
-                    #                      }
-
-                    # equivalence_CATHY
-                    # retention curves parameters VGN, VGRMC, and VGPSAT
-                    # - 'VGNCELL' (NSTR, NZONE): van Genuchten curve exponent  = n
-                    # - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
-                    # - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent -->
-                    #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
-
-                    SPP =  self.soil_SPP['SPP_map']
-                    if len(VG_parms_mat_ens)==0:
-                        VG_parms_mat = self.soil_SPP['SPP']
-                        np.shape(VG_parms_mat)
-                        if len(SPP['PERMX'])<2:
-                            VG_parms_mat_ens = np.matlib.repmat(VG_parms_mat[0], self.NENS, 1)
-                        else:
-                            # VG_parms_mat_ens = np.repeat(VG_parms_mat, self.NENS, axis=0)
-                            print('Non homogeneous soil VG properties not implemented')
-
-
-                    if len(SPP['PERMX'])<2:
-                        # for k in parm_pert.keys():
-                        for k in VG_p_possible_names:
-                            match = [parm_incr for parm_incr in parm_pert.keys() if k in parm_incr]
-                            if len(match)>0:
-                                # print(match)
-                                # print(k)
-                                idVG = VG_p_possible_names_positions_in_soil_table[VG_p_possible_names.index(k)]
-                                # print(idVG)
-                                VG_parms_mat_ens[:,idVG] = parm_pert[match[0]][update_key]
-                            else:
-                                pass
-                    else:
-                        # VG_parms_mat_ens[:,:,idVG] = np.matlib.repmat(parm_pert[key][update_key],len(VG_parms_mat),1).T
-                        print('Non homogeneous soil VG properties not implemented')
-
-                    VG_parms_ensi = []
-                    for es in range(self.NENS):
-                        fed = dict()
-                        for i, f in  enumerate(list(SPP.keys())):
-                            if len(SPP['PERMX'])<2:
-                                if f == 'alpha_VG': # convert to CATHY VGPSATCELL == -1/alpha
-                                    fed[f] = -1/VG_parms_mat_ens[es,i]
-                                else:
-                                    fed[f] = [VG_parms_mat_ens[es,i]]
-                            else:
-                                print('Non homogeneous soil VG properties not implemented')
-                                # fed[f] = list(VG_parms_mat_ens[es,:,i])
-                        VG_parms_ensi.append(fed)
-
-                    self.update_soil(SPP=VG_parms_ensi[ens_nb],
-                                     FP=self.soil_FP['FP_map'],
-                                     verbose=False,
-                                     filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
-
-                # FeddesParam update
-                # --------------------------------------------------------------
-                elif key_root[0] in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:
-                    SPP =  self.soil_SPP['SPP_map']
-
-                    if len(FeddesParam_mat_ens)==0:
-                        FeddesParam_mat = self.soil_FP['FP']
-                        FeddesParam_mat_ens = np.repeat(FeddesParam_mat, self.NENS, axis=0)
-                        FeddesParam_mat_ens = np.reshape(FeddesParam_mat_ens,(self.NENS,self.cathyH["MAXVEG"],6))
-
-                    idFeddes = ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC'].index(key_root[0])
-
-
-                    # if self.cathyH["MAXVEG"]<2: # Case where only 1 vegetation type
-                    FeddesParam_mat_ens[:,int(key_root[1]),idFeddes] = parm_pert[key][update_key]
-                    # FeddesParam_mat_ens[:,:,idFeddes] = parm_pert[key][update_key]
-                    # else: # Case where only 1 vegetation type
-
-
-                    FeddesParam_ensi = []
-                    for es in range(self.NENS):
-                        fed = dict()
-                        for i, f in  enumerate(['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']):
-                            fed[f] = list(FeddesParam_mat_ens[es,:,i])
-                        FeddesParam_ensi.append(fed)
-                    self.update_soil(FP=FeddesParam_ensi[ens_nb],
-                                     SPP=SPP,
-                                     verbose=False,
-                                     filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
-
-                # Archie_p update
-                # --------------------------------------------------------------
-                elif key_root[0] in Archie_p_names:
-                    # self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
-                    idArchie = Archie_p_names.index(key_root[0])
-                    if len(Archie_parms_mat_ens)==0:
-                        for p in Archie_p_names:
-                            if len(self.Archie_parms[p]) != self.NENS:
-                                self.Archie_parms[p]=list(self.Archie_parms[p]*np.ones(self.NENS))
-                        Archie_parms_mat_ens = np.zeros([len(Archie_p_names),self.NENS])
-                        Archie_parms_mat_ens[:] = np.nan
-                    Archie_parms_mat_ens[idArchie,ens_nb] = parm_pert[key][update_key][ens_nb]
-
-                    if np.isnan(Archie_parms_mat_ens[idArchie,:]).any()==False:
-                        self.Archie_parms[key_root[0]]=list(Archie_parms_mat_ens[idArchie,:])
-
-                    # print(self.Archie_parms)
-
-                else:
-                    # variable perturbated to ommit: state, Archie param
-                    var_pert_to_ommit = ['St. var.']
-
-                    if not key in var_pert_to_ommit:
-                        raise  ValueError('key:' + str(key) + ' to update is not existing!')
-
-
-        pass
-
-    def _performance_assessement(self,list_assimilated_obs,
-                                 data,
-                                 prediction,
-                                 t_obs,
-                                 **kwargs):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-        (Normalized) root mean square errors (NRMSEs)
-        RMSE is compute separately for each observation assimilated
-
-
-        ----------
-        list_assimilated_obs : TYPE
-            DESCRIPTION.
-        Data : TYPE
-            Refers to the measured data.
-        Observation : TYPE
-            Refers to the simulated data.
-
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
-
-        '''
-
-
-        OL_bool = False
-        if 'openLoop' in kwargs:
-            OL_bool = True
-
-
-        if hasattr(self, 'df_performance') is False:
-            # initiate if simulation just started
-            # -------------------------------------------------------------
-            self.df_performance = pd.DataFrame()
-            self.RMSE_avg_stacked = []
-            self.RMSE_sensor_stacked = []
-
-
-            # NAs default
-            # -------------------------------------------------------------
-            # RMSE_avg = np.nan # root mean square error (RMSE)
-            # NMRMSE = np.nan # time-averaged normalized root mror: unexpected indent
-
-
-
-        # average differences over the number of ensemble
-        # ALL OBSERVATIONS
-        # ------------------------------
-
-
-        all_Obs_diff_mat = np.zeros(np.shape(prediction))
-        for i in range(len(data)):
-            for j in range(np.shape(prediction)[1]): # Loop over ensemble collumns
-                all_Obs_diff_mat[i,j] = abs(data[i]-prediction[i,j])
-                # all_Obs_diff_mat[:,j] = abs(data[i]-prediction[i,j])
-
-        all_Obs_diff_avg = np.nansum(all_Obs_diff_mat,axis=1)*(1/len(prediction))
-
-        # average differences over all the observations
-        all_Obs_RMSE_avg_ti = np.sum(all_Obs_diff_avg,axis=0)*(1/len(data))
-
-
-
-        # # compute metrics for each observation variable
-        # # ------------------------------------------
-        # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
-        # -----------------------------------------------------------------
-        obs2eval_key = [] # data type 2 eval
-        obs2eval = []    # data dict 2 eval
-
-        _ , obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
-
-
-        start_line_obs = 0
-        for s, name_sensor in enumerate(obs2eval_key): # case where there is other observations than ERT
-            obs2eval, _ = self._get_data2assimilate([name_sensor], match=True)
-
-            # number of observation at a given time
-            # for ERT number of observation = is the number of grid cells
-            n_obs = len(obs2eval)
-            prediction2eval = prediction[start_line_obs:start_line_obs+n_obs]
-            obs2eval_diff_mat = np.zeros(np.shape(prediction2eval))
-
-            for i in range(len(obs2eval)):
-                for j in range(np.shape(prediction2eval)[1]): # Loop over ensemble collumns
-                    obs2eval_diff_mat[i,j] = abs(obs2eval[i]-prediction2eval[i,j])
-
-            obs2eval_diff_avg = np.nansum(obs2eval_diff_mat,axis=1)*(1/len(prediction2eval))
-
-            start_line_obs = start_line_obs + n_obs
-
-            if 'ERT' in name_sensor:
-                RMSE_sensor_ti = np.sum(obs2eval_diff_avg,axis=0)*(1/len(data))
-                # Plot here scatter Transfer resistance scatter plot between the observed and simulated data
-                # plt.scatter(obs2eval[i],prediction2eval[i,j])
-            else:
-                RMSE_sensor_ti = obs2eval_diff_avg
-
-
-            # compute normalised RMSE
-            #---------------------------------------------------------
-
-            self.RMSE_avg_stacked.append(all_Obs_RMSE_avg_ti)
-            self.RMSE_sensor_stacked.append(RMSE_sensor_ti)
-
-            # if hasattr(self, 'RMSE') is False:
-            if t_obs == 0:
-                NMRMSE_sensor_ti = RMSE_sensor_ti
-                NMRMSE_avg_ti = all_Obs_RMSE_avg_ti
-            else:
-                NMRMSE_sensor_ti = (1/(t_obs+1))*np.sum(self.RMSE_sensor_stacked)
-                NMRMSE_avg_ti = (1/(t_obs+1))*np.sum(self.RMSE_avg_stacked)
-
-
-
-
-            # root names for the collumns name
-            # -------------------------------------------------------------
-            cols_root = ['time',
-                         'ObsType',
-                         'RMSE'+ name_sensor,
-                         'RMSE_avg',
-                         'NMRMSE'+ name_sensor,
-                         'NMRMSE_avg',
-                         'OL']
-
-            # root data
-            # -------------------------------------------------------------
-            data_df_root = [[t_obs],
-                            [name_sensor],
-                            [RMSE_sensor_ti],
-                            [all_Obs_RMSE_avg_ti],
-                            [NMRMSE_sensor_ti],
-                            [NMRMSE_avg_ti],
-                            [OL_bool]]
-
-
-            df_performance_ti = pd.DataFrame(np.array(data_df_root,dtype=object).T,
-                                  columns=cols_root)
-
-
-            # concatenate with main RMSE dataframe
-            # -------------------------------------------------------------
-            self.df_performance= pd.concat([self.df_performance, df_performance_ti],
-                                       axis=0,
-                                       ignore_index=True)
-
-
-
-
-        return self.df_performance
-
-
-
-    def read_observations(self, filename, data_type, data_err, show=False, **kwargs):
-        '''
-        read measures (real observations) from file
-        and prepare for DA analysis (covariance matrice and perturbation)
-        Uses `pyCATHY.importers`, `sensors_measures` to read files with common standards
-        Need to be call for each time/ each observation
-
-        Parameters
-        ----------
-        filename : str or dataframe
-            filename (or data) of the observation dataset.
-        data_type : str
-            key tring to identify what type of measure is to read.
-        data_err : float
-            % of error for a given measurement dataset. The default is 0.05.
-        show : Bool
-            plot measure graph. The default is False.
-
-        Returns
-        -------
-        dict_obs : dict
-            dict merging all observations + metadatas.
-            First key level is data assimilation time
-            Loop over data assimilation times means:
-            for ti in self.dict_obs:
-                print(ti)
-
-
-        OrderedDict([(0.0,
-                      {'swc': {'filename': None,
-                               'data_type': 'swc',
-                               'units': '$m^{3}/m^{3}$',
-                               'data': 0.3391464625,
-                               'data_err': 0.01,
-                               'mesh_nodes': [159],
-                               'assimilation_times': 0.0,
-                               'data_cov': [],
-                               'dataPert': [],
-                               'sensor_name': 'swc'},
-                       'swc1': {'filename': None,
-                                'data_type': 'swc',
-                                'units': '$m^{3}/m^{3}$',
-                                'data': 0.3391464625,
-                                'data_err': 0.01,
-                                'mesh_nodes': [159],
-                                'assimilation_times': 0.0,
-                                'data_cov': [],
-                                'dataPert': [],
-                                'sensor_name': 'swc'},
-                       }
-                     3600,
-                      {'swc': {'filename': None,
-                               'data_type': 'swc',
-                               'units': '$m^{3}/m^{3}$',
-                               'data': 0.3391464625,
-                               'data_err': 0.01,
-                               'mesh_nodes': [159],
-                               'assimilation_times': 0.0,
-                               'data_cov': [],
-                               'dataPert': [],
-                               'sensor_name': 'swc'},
-                       'swc1': {'filename': None,
-                                'data_type': 'swc',
-                                'units': '$m^{3}/m^{3}$',
-                                'data': 0.3391464625,
-                                'data_err': 0.01,
-                                'mesh_nodes': [159],
-                                'assimilation_times': 0.0,
-                                'data_cov': [],
-                                'dataPert': [],
-                                'sensor_name': 'swc'},
-                       .
-                       .
-                       .
-                     )])
-
-        '''
-
-        dict_obs_2add = {}
-        # specify mesh node position for point measurements
-        # ---------------------------------------------------------------------
-        mesh_nodes = []
-        if 'mesh_nodes' in kwargs:
-            mesh_nodes = kwargs['mesh_nodes']
-
-
-        # specify assimilation time if not contained in the file
-        # ---------------------------------------------------------------------
-        tA = []
-        if 'tA' in kwargs:
-            tA = kwargs['tA']
-        datetime =  None
-        if 'datetime' in kwargs:
-            datetime = kwargs['datetime']
-
-
-        # discharge type read
-        # ---------------------------------------------------------------------
-        if data_type == 'discharge':
-            df = in_meas.read_discharge(filename)
-            units = '$m^{3}/s$'
-
-
-        # weight type read
-        # ---------------------------------------------------------------------
-        if data_type == 'scale':
-            # infer ET from weight data
-            if isinstance(filename, str):
-                df = in_meas.read_scale(filename)
-            else:
-                df = filename
-                filename = None
-
-            units = '$mm/s$'
-            obs_cov_type = None
-
-
-
-        # discharge type read
-        # ---------------------------------------------------------------------
-        elif data_type == 'swc':
-            if isinstance(filename, str):
-                df = in_meas.read_swc(filename)
-            else:
-                df = filename
-                filename = None
-            units = '$m^{3}/m^{3}$'
-            obs_cov_type = None
-            # point sensors --> covariance between the sensors is formed later
-
-            # if 'date' in df.keys:
-            #     date_yyyymmdd_hhmmss = df['date']
-            #     dict_obs_2add.update(
-            #          date_yyyymmdd_hhmmss = date_yyyymmdd_hhmmss
-            #          )
-
-
-        # tensiometer type read
-        # ---------------------------------------------------------------------
-        elif data_type == 'tensiometer':
-            if isinstance(filename, str):
-                df = in_meas.read_tensiometers(filename)
-            else:
-                df = filename
-                filename = None
-
-            units = '$kPa$'
-            # convert in m
-            # -------------------
-
-            df = utils_CT.kPa2m(df)
-            obs_cov_type = None
-
-        # ERT type read
-        # ---------------------------------------------------------------------
-        elif data_type == 'ERT':
-
-            obs_cov_type = 'reciprocal_err'
-            if 'obs_cov_type' in kwargs:
-                obs_cov_type = kwargs['obs_cov_type']
-
-
-            data_format = 'resipy'
-            if 'data_format' in kwargs:
-                data_format = kwargs['data_format']
-                dict_obs_2add.update(
-                     data_format = data_format
-                     )
-
-            elecs = []
-            if 'elecs' in kwargs:
-                elecs = kwargs['elecs']
-
-            df, dict_ERT = in_meas.read_ERT(filename,data_format)
-            units = '$\Omega$'
-
-            if 'elecs' in dict_ERT.keys():
-                elecs = dict_ERT['elecs']
-
-
-            dict_obs_2add.update(
-                     elecs = elecs
-                     )
-
-
-        # no file specified (raise error)
-        # ---------------------------------------------------------------------
-        else:
-            print('no file specified')
-
-
-        dict_obs_2add.update(
-                            filename = filename,
-                            data_type =  data_type,
-                            units= units,  # units
-                            data=  df,
-                            data_err=  data_err,
-                            mesh_nodes =  mesh_nodes,
-                            assimilation_times=  tA,
-                            datetime =  datetime
-                            )
-
-
-        # add optionnal data metadata to the dictionnary
-        # ---------------------------------------------------------------------
-        if 'meta' in kwargs:
-            meta = kwargs['meta']
-            dict_obs_2add.update(meta)
-
-
-
-        # data covariance and perturbation (if required)
-        # ---------------------------------------------------------------------
-
-        data_cov, dataPert = self.prepare_observations(dict_obs_2add,
-                                                      perturbate = False,
-                                                      obs_cov_type = obs_cov_type
-                                                      )
-        dict_obs_2add.update(
-                             data_cov = data_cov,
-                             dataPert = dataPert
-                             )
-
-
-        dict_obs_2add = OrderedDict(dict_obs_2add)
-
-        # check if assimilation already existing andincrement sensor name if so
-        # ---------------------------------------------------------------------
-        sensor_name =  data_type
-
-        if tA in self.dict_obs.keys():
-            print('already existing assimilation time')
-            for k in self.dict_obs[tA]:
-                k
-            if data_type in k:
-                match = re.match(r"([a-z]+)([0-9]+)", k, re.I)
-                if match:
-                    items = match.groups()
-                    it = int(items[1]) +1
-                else:
-                    it = 1
-                sensor_name = sensor_name + str(it)
-            self.dict_obs[tA][sensor_name] = {}
-            dict_obs_2add.update(sensor_name = sensor_name)
-        else:
-            self.dict_obs[tA] = {}
-            self.dict_obs[tA][sensor_name] = {}
-            dict_obs_2add.update(sensor_name = sensor_name)
-
-
-        self.dict_obs = self._add_to_obs_dict(tA,sensor_name,dict_obs_2add)
-
-        return self.dict_obs
-
-    def _add_to_obs_dict(self, tA, sensor_name, dict_obs_2add):
-        '''
-        Merge a new observation into an existing dict
-
-        Parameters
-        ----------
-        dict_obs_2add : dict
-            dict of the new observation.
-
-        Returns
-        -------
-        dict
-            updated dict with all observations.
-
-        '''
-
-        for key in dict_obs_2add.keys():
-            self.dict_obs[tA][sensor_name][key] = dict_obs_2add[key]
-
-        # self.dict_obs = self.dict_obs | dict_obs_2add
-        # self.dict_obs.update(dict_obs_2add)
-
-        return self.dict_obs
-
-
-    def prepare_observations(self,
-                             dict_obs = [],
-                             perturbate = False,
-                             obs_cov_type = None,
-                             Bishop=False, **kwargs):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-
-        prepare observations before DA
-
-
-        1. Measurement perturbation (if required)
-        2. Compute matrice covariance
-        3. normalise data (if necessary)
-
-        Parameters
-        ----------
-        dict_obs : dict
-            dict containing measure data + metadata.
-
-        Returns
-        -------
-        TYPE
-            data_cov, DataPert.
-
-        '''
-
-
-        # compute individual observation data covariance
-        # ----------------------------------------------------
-        data_cov = []
-        if obs_cov_type is not None:
-            data_cov = self.init_obs_cov_matrice(dict_obs, obs_cov_type)
-
-
-        # compute individual observation perturbation covariance
-        # ----------------------------------------------------
-
-        data_pert = []
-        if perturbate == True:
-            data_pert = self.perturbate_obs(dict_obs)
-
-
-        # stacked data covariance (multiple observations at the same time)
-        # ----------------------------------------------------
-        if 'stacked_data_cov' in kwargs:
-            self.stacked_data_cov = kwargs['stacked_data_cov']
-        else:
-            self.stacked_data_cov.append(data_cov)
-
-
-
-
-
-
-        # (Bishop et al., 2001) --> not require the perturbation of observations
-        # taking advantage of the high time resolution of the collected data.
-        # ---------------------------------------------------------------------
-        # The EnKF algorithm implemented here is actually an en-
-        # semble transform Kalman filter (Bishop et al., 2001) that
-        # does not require the perturbation of observations. On the
-        # other hand, the measurement error covariance matrix, R,
-        # must be assumed to be known a priori.
-
-
-        # unit conversion (?)
-        # ------------------------------------------------------------------
-        # When assimilating multiple variables, proper normaliza-
-        # tion of the measurement error covariance matrices, anoma-
-        # lies of the simulated data, and innovation vectors were per-
-        # formed, using values of 0.6 m, 0.58, and 4.17 × 10 −5 m 3 s −1
-        # for pressure head, water content and subsurface outflow,
-        # respectively. The normalization ensures that in multivari-
-        # ate assimilation scenarios the covariance matrices in the
-        # Kalman gain are not ill-conditioned (Evensen, 2003; Cam-
-        # porese et al., 2009b).
-
-
-        # normalisation
-        # ------------------------------------------------------------------
-
-
-
-        return data_cov, data_pert
-
-
-    def perturbate_obs(self, dict_obs):
-        '''
-        Not yet implemented
-        '''
-
-            # if (self.data_cov.ndim == 0):
-            #     DataPerturbation=np.sqrt(self.data_cov)*rn.randn(1, self.EnSize)
-            # elif (self.data_cov.ndim == 2):
-            #     # Compute SVD of Data Covariance to generate noise
-            #     U, s, V=np.linalg.svd(self.data_cov, full_matrices=False)
-            #     DataPerturbation=np.dot(np.dot(U, np.diag(np.sqrt(s))),
-            #                               rn.randn(self.Data.shape[1], self.EnSize))
-            # else:
-            #     print('Data Covariance should be matrix or scalar', '\n')
-
-            # DataArray=np.tile(
-            #     self.Data[i, :], (self.EnSize, 1)).transpose() + DataPerturbation
-
-
-        pass
-
-
-    def init_obs_cov_matrice(self,dict_obs, obs_cov_type):
-        '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-        compute measurement cov matrice and add it to dict_obs
-
-        Returns
-        -------
-        None.
-
-        '''
-
-        # Attribute to define the data-error covariance matrix.
-        # In this example the data noise is assumed to be a scalar
-        # that is constant at each observation. We use an array so
-        # that the 'shape' of the data covariance is understood by
-        # numpy in a linear algebra sense.
-
-        if obs_cov_type == 'reciprocal_err':
-            # print(dict_obs)
-            data_cov = np.diag(1/abs(dict_obs['data']['recipError'].to_numpy()))
-        elif obs_cov_type == 'data_err':
-
-            # resipy format
-            try:
-                err_arr = np.tile(dict_obs['data_err'],len(dict_obs['data']))
-                data_cov = np.diag(err_arr)
-
-            # pygimli format
-            except:
-                err_arr = np.tile(dict_obs['data_err'],len(dict_obs['data']['a']))
-                data_cov = np.diag(err_arr)
-
-
-
-
-
-        return data_cov
-
-
-    def resynchronise_times(self,data_measure,atmbc_df):
-        ''' old key is elapsed time in second from the first observation,
-        while new key is from the first atmbc time
-        '''
-        for d in range(len(data_measure.keys())):
-            items_dict = list(self.dict_obs.items())
-            # print(items_dict)
-            # list(items_dict[d][1].keys())
-            for sensor in list(items_dict[d][1].keys()):
-                new_key = (atmbc_df[atmbc_df['sensor_name']==sensor]['diff'].dt.total_seconds().to_numpy()[d])
-                old_key = list(data_measure.keys())[d]
-                self.dict_obs[old_key][sensor]['assimilation_times'] = new_key
-                self.dict_obs[new_key] = self.dict_obs.pop(old_key)
-        pass
-
-    # self.dict_obs.keys()
-
-    def dictObs_2pd(self):
-        '''dict of observation to dataframe of observation'''
-        df_obs = pd.DataFrame.from_dict(self.dict_obs).stack().to_frame()
-        df_obs = pd.DataFrame(df_obs[0].values.T.tolist(),
-                                index=df_obs.index)
-        df_obs.index.names= ['sensorNameidx','assimilation time']
-        return df_obs
 
     # ------------------------------------------------------------------------
     # %% Mapping of properties to zones/mesh
@@ -5698,52 +3676,15 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     def map_prop2mesh(self,dict_props):
         '''
         Add a given physical property to the mesh
-
-        Parameters
-        ----------
-        dict_props : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
         '''
-
         if hasattr(self,'mesh_pv_attributes') == False:
             self.create_mesh_vtk()
-
-        # nnodes = int(self.mesh_pv_attributes.points.size/3)
         for dp in dict_props.keys():
-            print(dp)
-        #     if type(dict_props[dp]) == float: # homogeneous properties
-        #         self.update_mesh_vtk(prop=dp, prop_value=np.ones(self.grid3d['nnod3'])*dict_props[dp])
-        #     else: # homogeneous properties
-        #         if len(dict_props[dp]) == 1:
-        #             self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
-
             self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp].flatten())
-
-
-
-        len(dict_props['zone'].flatten())
-
-        np.shape(dict_props['zone'])
-        # add boundary points
-
-
-        self.grid3d['nnod3']
-        self.grid3d['nnod3']
-        # .flatten()
-
-
-
-
         pass
 
 
     def map_prop_veg(self,dict_props):
-
         if hasattr(self,'veg_map')==False:
             warnings.warn('no known existing vegetation map.')
             pass
@@ -5762,7 +3703,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
 
     def map_prop2zone(self,dict_props, prop):
-
         if hasattr(self,'zone')==False:
             warnings.warn('no known existing zones.')
             pass
@@ -5770,7 +3710,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             prop_zones = np.zeros(np.shape(self.zone))
             for z in range(len(np.unique(self.zone))):
                 prop_zones[self.zone==z+1]=dict_props[prop][z]
-
             return prop_zones
 
     # ------------------------------------------------------------------------
@@ -5791,7 +3730,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         None.
 
         '''
-
         df = self.read_outputs(filename=prop)
         if prop == 'hgsfdet':
             plt_CT.show_hgsfdet(df)
@@ -5803,39 +3741,26 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             plt_CT.show_dtcoupling(df,**kwargs)
         else:
             print('no proxy to plot')
-
-
-
         # elif filename == 'psi':
         #     plt_CT.show_psi(path)
         # elif filename == 'sw':
         #     plt_CT.show_sw(path)
-
         pass
 
 
     def show_bc(self, layer=0, time=0,  **kwargs):
         ''' Show bc '''
-
         # - atmbc spatially
         # nansfdirbc
         # nansfneubc
         # sfbc
-
         fig, ax = plt.subplots(3,1,1)
-
         # df = self.read_inputs(filename='dirichlet')
         # df = self.update_nansfdirbc()
-
         self.init_boundary_conditions(time)
         # self.update_mesh_boundary_cond(time)
-
         # self.set_BC_laterals(time=time)
-
-
-
-
-
+        pass
 
 
     def show_input(self, prop='hgsfdet', **kwargs):
@@ -5853,7 +3778,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         None.
 
         '''
-
         df = self.read_inputs(filename=prop)
         if prop == 'atmbc':
             plt_CT.show_atmbc(df['time'],df['value'])
@@ -5915,7 +3839,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         A dataframe or a dict describing file data/entries.
 
         '''
-
         path=os.path.join(self.workdir, self.project_name, 'output', filename)
         if 'path' in kwargs:
             path=kwargs['path'] + '/' + filename
@@ -5946,8 +3869,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             return df
         else:
             print('no file specified')
-
-
         pass
 
 
@@ -5966,7 +3887,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         A dataframe or a dict describing file data/entries.
 
         '''
-
         if filename == 'atmbc':
             df, _, _ =in_CT.read_atmbc(os.path.join(
                 self.workdir, self.project_name, 'input', filename))
@@ -5995,11 +3915,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         elif filename == 'zone':
             df  =  in_CT.read_zone(os.path.join(self.workdir, self.project_name, "prepro/zone"))
             return df
-
         else:
             print('unknown file requested')
-
-
         pass
 
     # -------------------------------------------------------------------#
@@ -6023,34 +3940,27 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             Node coordinate in the grid3d.
 
         '''
-
-
         if np.array(node_coords).ndim <= 1:
             node_coords=[node_coords]
-
         if len(grid3d)==0:
             grid3d=in_CT.read_grid3d(self.project_name)
 
-
         closest_idx=[]
         closest=[]
-
         for i, nc in enumerate(node_coords):
             # euclidean distance
             d=((grid3d['nodes_idxyz'][:, 1] - nc[0]) ** 2 +
                    (grid3d['nodes_idxyz'][:, 2] - nc[1]) ** 2 +
                    (abs(grid3d['nodes_idxyz'][:, 3]) - abs(nc[2])) ** 2
                    ) ** 0.5
-
             closest_idx.append(np.argmin(d))
             closest.append(grid3d['nodes_idxyz'][closest_idx[i], 1:])
-
             threshold=5e-1
             if d[np.argmin(d)] > threshold:
                 self.console.print(":warning: [b]No node close to the required points![/b]")
-                print(d[np.argmin(d)])
-                print(grid3d['nodes_idxyz'][closest_idx[i], 1:])
-                print(nc)
+                # print(d[np.argmin(d)])
+                # print(grid3d['nodes_idxyz'][closest_idx[i], 1:])
+                # print(nc)
 
         return closest_idx, closest
 
@@ -6065,9 +3975,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         """
         self.console.print(eval('self.' + str(title)))
-
-
-
+        pass
 
 
     def backup_simu(self):
@@ -6079,11 +3987,10 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         project_filename.pkl
 
         '''
-
         with open(os.path.join(self.workdir, self.project_name, self.project_name + '.pkl'), 'wb') as f:
             pickle.dump(CATHY,f)
-
         f.close()
+        pass
 
 
     def backup_results_DA(self,meta_DA=[]):
@@ -6095,41 +4002,21 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         project_filename_df.pkl
 
         '''
-
-
         with open(os.path.join(self.workdir, self.project_name, self.project_name + '_df.pkl'), 'wb') as f:
             pickle.dump(meta_DA,f)
             pickle.dump(self.dict_parm_pert,f)
             pickle.dump(self.df_DA,f)
             pickle.dump(self.dict_obs,f)
-
-
-            # pickle.dump(
-
-            #     'data': Data: Sensors: 64 data: 1400, nonzero entries: ['a', 'b', 'k', 'm', 'n', 'r', 'rhoa', 'valid']
-
-
-
-            #     )
-
             if hasattr(self,'df_performance'):
                 pickle.dump(self.df_performance,f)
-
-
             if hasattr(self,'Archie'):
                 pickle.dump(self.Archie,f)
-
-
-
         f.close()
 
 
     def load_pickle_backup(self,filename=''):
-
         if len(filename)==0:
             filename = os.path.join(self.workdir, self.project_name, self.project_name + '_df.pkl')
-
-        # print(filename)
         backup_list = []
         all_names = [
                      'meta_DA',
@@ -6150,10 +4037,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 except EOFError:
                     break
         f.close()
-
         dict_backup = {}
         for i, n in enumerate(names):
             dict_backup[n]=backup_list[i]
-
-        # return df_DA, dict_parm_pert, df_performance, dict_obs
         return dict_backup

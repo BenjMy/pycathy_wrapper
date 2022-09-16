@@ -9,6 +9,7 @@ from pyCATHY.plotters import cathy_plots as pltCT
 from pyCATHY.importers import cathy_inputs as inCT
 from pyCATHY.DA import cathy_DA
 from pyCATHY.DA import perturbate
+from pyCATHY.DA.cathy_DA import DA
 
 import pandas as pd
 import shutil
@@ -26,7 +27,7 @@ prj_name = 'tensiometers_DA'
 
 simu_test_DA = CATHY(dirName=dirName, prj_name=prj_name + '_DA', 
                      notebook=False) #
-cathyDA = cathy_DA.DA() # initiate the Data Assimilation class
+# cathyDA = cathy_DA.DA() # initiate the Data Assimilation class
 
 data = pd.read_csv('./doc_test_data/doc_test_point_data.csv')
 data_ass_time_s = pd.read_csv('./doc_test_data/doc_test_point_data_assimilation_times.csv')
@@ -36,7 +37,7 @@ data_ass_time_s = pd.read_csv('./doc_test_data/doc_test_point_data_assimilation_
 # -----------------
 # A dictionnary describing how model parameters are pertubarted 
 # and what observation to assimilate
-# for more information on how the parameters are perturbated: cathyDA.perturbate_parm.__doc__
+# for more information on how the parameters are perturbated: DA.perturbate_parm.__doc__
 scenario =  {
                 'per_type': [None,'multiplicative'],
                 'per_name':['ic','ks'],
@@ -117,7 +118,7 @@ list_pert = perturbate.perturbate(simu_test_DA,
 for dp in list_pert:
     # need to call perturbate_var as many times as variable to perturbate
     # return a dict merging all variable perturbate to parse into prepare_DA
-    parm_per = cathyDA.perturbate_parm(parm=dp, 
+    parm_per = DA.perturbate_parm(parm=dp, 
                                         type_parm = dp['type_parm'], # can also be VAN GENUCHTEN PARAMETERS
                                         mean =  dp['mean'],
                                         sd =  dp['sd'],

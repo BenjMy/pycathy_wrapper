@@ -730,7 +730,6 @@ def show_dem(dem_mat=[], str_hd_dem=[], workdir=None, project_name=None, **kwarg
         
     if len(dem_mat)==0:
         # Read the Header
-        # str_hd_dem = {'north':0,'south':0,'east':0,'west':0,'rows':0,'cols':0}
         dem_mat, str_hd_dem = in_CT.read_dem(os.path.join(workdir, project_name, "prepro/dem"),
                                              os.path.join(workdir, project_name, "prepro/dtm_13.val"))
     

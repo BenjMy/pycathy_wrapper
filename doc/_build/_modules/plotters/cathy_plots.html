@@ -238,11 +238,6 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api/generated/cathy_tools.subprocess_run_multi.html">
-       cathy_tools.subprocess_run_multi
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/cathy_tools.track.html">
        cathy_tools.track
       </a>
@@ -381,8 +376,73 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.OrderedDict.html">
+       DA.cathy_DA.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Archie_pert_rules.html">
+       DA.cathy_DA.Archie_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Carsel_Parrish_VGN_pert.html">
+       DA.cathy_DA.Carsel_Parrish_VGN_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Evensen2003.html">
+       DA.cathy_DA.Evensen2003
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Johnson1970.html">
+       DA.cathy_DA.Johnson1970
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.VG_pert_rules.html">
+       DA.cathy_DA.VG_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.atmbc_pert_rules.html">
+       DA.cathy_DA.atmbc_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.build_dict_attributes_pert.html">
+       DA.cathy_DA.build_dict_attributes_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.dictObs_2pd.html">
+       DA.cathy_DA.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.perturbate_dist.html">
+       DA.cathy_DA.perturbate_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.resynchronise_times.html">
+       DA.cathy_DA.resynchronise_times
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.run_analysis.html">
        DA.cathy_DA.run_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.sampling_dist.html">
+       DA.cathy_DA.sampling_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.sampling_dist_trunc.html">
+       DA.cathy_DA.sampling_dist_trunc
       </a>
      </li>
     </ul>
@@ -1638,7 +1698,6 @@
         
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dem_mat</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Read the Header</span>
-        <span class="c1"># str_hd_dem = {&#39;north&#39;:0,&#39;south&#39;:0,&#39;east&#39;:0,&#39;west&#39;:0,&#39;rows&#39;:0,&#39;cols&#39;:0}</span>
         <span class="n">dem_mat</span><span class="p">,</span> <span class="n">str_hd_dem</span> <span class="o">=</span> <span class="n">in_CT</span><span class="o">.</span><span class="n">read_dem</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;prepro/dem&quot;</span><span class="p">),</span>
                                              <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;prepro/dtm_13.val&quot;</span><span class="p">))</span>
     

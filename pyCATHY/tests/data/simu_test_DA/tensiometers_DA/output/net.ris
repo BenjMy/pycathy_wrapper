@@ -1,0 +1,161 @@
+ DELTA_X=  0.10000000000000001      DELTA_Y=  0.10000000000000001     
+ FACTOR=   1.0000000000000000     
+ DOSTEP=           1
+ NCELL_NO_LAKES=         100
+ NCELL_WITH_LAKES=         100
+ INDCELL(IROW,ICOL)
+           1           2           3           4           5           6           7           8           9          10
+          11          12          13          14          15          16          17          18          19          20
+          21          22          23          24          25          26          27          28          29          30
+          31          32          33          34          35          36          37          38          39          40
+          41          42          43          44          45          46          47          48          49          50
+          51          52          53          54          55          56          57          58          59          60
+          61          62          63          64          65          66          67          68          69          70
+          71          72          73          74          75          76          77          78          79          80
+          81          82          83          84          85          86          87          88          89          90
+          91          92          93          94          95          96          97          98          99         100
+ INDCELL_WITH_LAKES(IROW,ICOL)
+           1           2           3           4           5           6           7           8           9          10
+          11          12          13          14          15          16          17          18          19          20
+          21          22          23          24          25          26          27          28          29          30
+          31          32          33          34          35          36          37          38          39          40
+          41          42          43          44          45          46          47          48          49          50
+          51          52          53          54          55          56          57          58          59          60
+          61          62          63          64          65          66          67          68          69          70
+          71          72          73          74          75          76          77          78          79          80
+          81          82          83          84          85          86          87          88          89          90
+          91          92          93          94          95          96          97          98          99         100
+ CELLCOL   CELLROW
+ 1      1
+ 2      1
+ 3      1
+ 4      1
+ 5      1
+ 6      1
+ 7      1
+ 8      1
+ 9      1
+10      1
+ 1      2
+ 2      2
+ 3      2
+ 4      2
+ 5      2
+ 6      2
+ 7      2
+ 8      2
+ 9      2
+10      2
+ 1      3
+ 2      3
+ 3      3
+ 4      3
+ 5      3
+ 6      3
+ 7      3
+ 8      3
+ 9      3
+10      3
+ 1      4
+ 2      4
+ 3      4
+ 4      4
+ 5      4
+ 6      4
+ 7      4
+ 8      4
+ 9      4
+10      4
+ 1      5
+ 2      5
+ 3      5
+ 4      5
+ 5      5
+ 6      5
+ 7      5
+ 8      5
+ 9      5
+10      5
+ 1      6
+ 2      6
+ 3      6
+ 4      6
+ 5      6
+ 6      6
+ 7      6
+ 8      6
+ 9      6
+10      6
+ 1      7
+ 2      7
+ 3      7
+ 4      7
+ 5      7
+ 6      7
+ 7      7
+ 8      7
+ 9      7
+10      7
+ 1      8
+ 2      8
+ 3      8
+ 4      8
+ 5      8
+ 6      8
+ 7      8
+ 8      8
+ 9      8
+10      8
+ 1      9
+ 2      9
+ 3      9
+ 4      9
+ 5      9
+ 6      9
+ 7      9
+ 8      9
+ 9      9
+10      9
+ 1     10
+ 2     10
+ 3     10
+ 4     10
+ 5     10
+ 6     10
+ 7     10
+ 8     10
+ 9     10
+10     10
+ NCELNL=         100
+ NCELL=         100
+
+     NNOD   (# OF NODES IN 2-D MESH)         =    121
+     NTRI   (# OF TRIANGLES IN 2-D MESH)     =    200
+     NZONE  (NUMERO ZONE (MATERIAL TYPES))   =      1
+     NVEG   (NUMERO ZONE VEG (VEG TYPES))    =      1
+     NSTR   (NUMERO STRATI)                  =     19
+     N1     (NUM. MAX CONTATTI NODALI)       =     25
+
+     IVERT  (TYPE OF VERTICAL DISCRETIZATION)=      0
+     ISP    (0 FLAT SURFACE, ELSE NOT FLAT)  =      1
+     BASE   (THICKNESS OR BASE OF 3-D MESH)  =     9.50000E-01
+     LAYER   1     ZRATIO =   5.26316E-02
+     LAYER   2     ZRATIO =   5.26316E-02
+     LAYER   3     ZRATIO =   5.26316E-02
+     LAYER   4     ZRATIO =   5.26316E-02
+     LAYER   5     ZRATIO =   5.26316E-02
+     LAYER   6     ZRATIO =   5.26316E-02
+     LAYER   7     ZRATIO =   5.26316E-02
+     LAYER   8     ZRATIO =   5.26316E-02
+     LAYER   9     ZRATIO =   5.26316E-02
+     LAYER  10     ZRATIO =   5.26316E-02
+     LAYER  11     ZRATIO =   5.26316E-02
+     LAYER  12     ZRATIO =   5.26316E-02
+     LAYER  13     ZRATIO =   5.26316E-02
+     LAYER  14     ZRATIO =   5.26316E-02
+     LAYER  15     ZRATIO =   5.26316E-02
+     LAYER  16     ZRATIO =   5.26316E-02
+     LAYER  17     ZRATIO =   5.26316E-02
+     LAYER  18     ZRATIO =   5.26316E-02
+     LAYER  19     ZRATIO =   5.26316E-02
+ numero serbatoi=           0

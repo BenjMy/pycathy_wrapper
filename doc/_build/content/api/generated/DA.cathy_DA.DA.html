@@ -63,7 +63,7 @@
     <link rel="shortcut icon" href="../../../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="DA.cathy_DA.run_analysis" href="DA.cathy_DA.run_analysis.html" />
+    <link rel="next" title="DA.cathy_DA.OrderedDict" href="DA.cathy_DA.OrderedDict.html" />
     <link rel="prev" title="DA.cathy_DA.CATHY" href="DA.cathy_DA.CATHY.html" />
     <!-- Plausible analytics for anonymous usage statistics -->
     <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
@@ -241,11 +241,6 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="cathy_tools.subprocess_run_multi.html">
-       cathy_tools.subprocess_run_multi
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="cathy_tools.track.html">
        cathy_tools.track
       </a>
@@ -384,8 +379,73 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.OrderedDict.html">
+       DA.cathy_DA.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Archie_pert_rules.html">
+       DA.cathy_DA.Archie_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Carsel_Parrish_VGN_pert.html">
+       DA.cathy_DA.Carsel_Parrish_VGN_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Evensen2003.html">
+       DA.cathy_DA.Evensen2003
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Johnson1970.html">
+       DA.cathy_DA.Johnson1970
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.VG_pert_rules.html">
+       DA.cathy_DA.VG_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.atmbc_pert_rules.html">
+       DA.cathy_DA.atmbc_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.build_dict_attributes_pert.html">
+       DA.cathy_DA.build_dict_attributes_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.dictObs_2pd.html">
+       DA.cathy_DA.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.perturbate_dist.html">
+       DA.cathy_DA.perturbate_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.resynchronise_times.html">
+       DA.cathy_DA.resynchronise_times
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.run_analysis.html">
        DA.cathy_DA.run_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.sampling_dist.html">
+       DA.cathy_DA.sampling_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.sampling_dist_trunc.html">
+       DA.cathy_DA.sampling_dist_trunc
       </a>
      </li>
     </ul>
@@ -931,392 +991,36 @@
 <h1>DA.cathy_DA.DA<a class="headerlink" href="#da-cathy-da-da" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DA.cathy_DA.</span></span><span class="sig-name descname"><span class="pre">DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prj_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'my_cathy_prj'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.0.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">DA.cathy_DA.</span></span><span class="sig-name descname"><span class="pre">DA</span></span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Summary</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.Carsel_Parrish_VGN_pert" title="DA.cathy_DA.DA.Carsel_Parrish_VGN_pert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.Carsel_Parrish_VGN_pert</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.Evensen2003" title="DA.cathy_DA.DA.Evensen2003"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.Evensen2003</span></code></a>(qk_0, wk, deltaT, Tau)</p></td>
-<td><p>Ensemble Generation of time-variable atmospheric forcing rates.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.Johnson1970" title="DA.cathy_DA.DA.Johnson1970"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.Johnson1970</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.backup_results_DA" title="DA.cathy_DA.DA.backup_results_DA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.backup_results_DA</span></code></a>([meta_DA])</p></td>
-<td><p>Save minimal dataframes of the simulation for result visualisation within python</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.backup_simu" title="DA.cathy_DA.DA.backup_simu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.backup_simu</span></code></a>()</p></td>
-<td><p>Save a copy of the simulation for reuse within python</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.check_for_inconsistent_BC" title="DA.cathy_DA.DA.check_for_inconsistent_BC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.check_for_inconsistent_BC</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.create_mesh_bounds_df" title="DA.cathy_DA.DA.create_mesh_bounds_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.create_mesh_bounds_df</span></code></a>(grid3d, times)</p></td>
-<td><p>Create a dataframe with flag for different boundary condtions assigned to each nodes</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.create_mesh_vtk" title="DA.cathy_DA.DA.create_mesh_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.create_mesh_vtk</span></code></a>()</p></td>
-<td><p>Create custum mesh</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.create_mesh_vtkris3d" title="DA.cathy_DA.DA.create_mesh_vtkris3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.create_mesh_vtkris3d</span></code></a>()</p></td>
-<td><p>Create mesh for vtk format version 2</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.create_output" title="DA.cathy_DA.DA.create_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.create_output</span></code></a>([output_dirname])</p></td>
-<td><p>Create output directories</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.dictObs_2pd" title="DA.cathy_DA.DA.dictObs_2pd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.dictObs_2pd</span></code></a>()</p></td>
-<td><p>dict of observation to dataframe of observation</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.display_time_run" title="DA.cathy_DA.DA.display_time_run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.display_time_run</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.find_nearest_node" title="DA.cathy_DA.DA.find_nearest_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.find_nearest_node</span></code></a>(node_coords[, grid3d])</p></td>
-<td><p>Find nearest mesh node</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.init_boundary_conditions" title="DA.cathy_DA.DA.init_boundary_conditions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.init_boundary_conditions</span></code></a>(time)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.init_obs_cov_matrice" title="DA.cathy_DA.DA.init_obs_cov_matrice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.init_obs_cov_matrice</span></code></a>(dict_obs, obs_cov_type)</p></td>
-<td><p>THIS SHOULD BE MOVED TO DA CLASS</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.load_pickle_backup" title="DA.cathy_DA.DA.load_pickle_backup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.load_pickle_backup</span></code></a>([filename])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.map_prop2mesh" title="DA.cathy_DA.DA.map_prop2mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.map_prop2mesh</span></code></a>(dict_props)</p></td>
-<td><p>Add a given physical property to the mesh</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.map_prop2zone" title="DA.cathy_DA.DA.map_prop2zone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.map_prop2zone</span></code></a>(dict_props, prop)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.map_prop_veg" title="DA.cathy_DA.DA.map_prop_veg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.map_prop_veg</span></code></a>(dict_props)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.map_states2Observations" title="DA.cathy_DA.DA.map_states2Observations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.map_states2Observations</span></code></a>([...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.map_states2Observations" title="DA.cathy_DA.DA.map_states2Observations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.map_states2Observations</span></code></a>([...])</p></td>
 <td><p>Translate (map) the state values (pressure head or saturation) to observations (or predicted) values</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.perturbate_dist" title="DA.cathy_DA.DA.perturbate_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.perturbate_dist</span></code></a>(parm, per_type, ...)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.perturbate_obs" title="DA.cathy_DA.DA.perturbate_obs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.perturbate_obs</span></code></a>(dict_obs)</p></td>
-<td><p>Not yet implemented</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.perturbate_parm" title="DA.cathy_DA.DA.perturbate_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.perturbate_parm</span></code></a>(parm, type_parm[, mean, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.perturbate_parm" title="DA.cathy_DA.DA.perturbate_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.perturbate_parm</span></code></a>(parm, type_parm[, mean, ...])</p></td>
 <td><p>Perturbate parameter for ensemble generation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.prepare_observations" title="DA.cathy_DA.DA.prepare_observations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.prepare_observations</span></code></a>([dict_obs, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.selec_atmbc_window" title="DA.cathy_DA.DA.selec_atmbc_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.selec_atmbc_window</span></code></a>(NENS, ENS_times)</p></td>
 <td><p>THIS SHOULD BE MOVED TO DA CLASS</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.read_inputs" title="DA.cathy_DA.DA.read_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.read_inputs</span></code></a>(filename)</p></td>
-<td><p>Read CATHY format input file</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.read_observations" title="DA.cathy_DA.DA.read_observations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.read_observations</span></code></a>(filename, data_type, ...)</p></td>
-<td><p>read measures (real observations) from file and prepare for DA analysis (covariance matrice and perturbation) Uses <cite>pyCATHY.importers</cite>, <cite>sensors_measures</cite> to read files with common standards Need to be call for each time/ each observation</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.read_outputs" title="DA.cathy_DA.DA.read_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.read_outputs</span></code></a>(filename, **kwargs)</p></td>
-<td><p>Read CATHY format output file</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.recompileSrc" title="DA.cathy_DA.DA.recompileSrc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.recompileSrc</span></code></a>([verbose])</p></td>
-<td><p>Other option is self.run_processor(runProcess=False)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.resynchronise_times" title="DA.cathy_DA.DA.resynchronise_times"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.resynchronise_times</span></code></a>(data_measure, atmbc_df)</p></td>
-<td><p>old key is elapsed time in second from the first observation, while new key is from the first atmbc time</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.rich_display" title="DA.cathy_DA.DA.rich_display"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.rich_display</span></code></a>([title])</p></td>
-<td><p>Describe the variable state and fate during the simulation with a rich table</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.run_ensemble_hydrological_model" title="DA.cathy_DA.DA.run_ensemble_hydrological_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.run_ensemble_hydrological_model</span></code></a>(parallel, ...)</p></td>
-<td><p>multi run CATHY hydrological model from the independant folders composing the ensemble</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.run_preprocessor" title="DA.cathy_DA.DA.run_preprocessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.run_preprocessor</span></code></a>([KeepOutlet, verbose])</p></td>
-<td><p>Run cppp.exe 1.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.run_processor" title="DA.cathy_DA.DA.run_processor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.run_processor</span></code></a>([recompile, runProcess, ...])</p></td>
-<td><p>Run cathy.exe</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.sampling_dist" title="DA.cathy_DA.DA.sampling_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.sampling_dist</span></code></a>(sampling_type, mean, sd, ...)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.sampling_dist_trunc" title="DA.cathy_DA.DA.sampling_dist_trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.sampling_dist_trunc</span></code></a>(myclip_a, myclip_b, ...)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.selec_atmbc_window" title="DA.cathy_DA.DA.selec_atmbc_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.selec_atmbc_window</span></code></a>(NENS, ENS_times)</p></td>
-<td><p>THIS SHOULD BE MOVED TO DA CLASS</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.set_Archie_parm" title="DA.cathy_DA.DA.set_Archie_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.set_Archie_parm</span></code></a>([porosity, ...])</p></td>
-<td><p>Dict of Archie parameters.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.set_BC_laterals" title="DA.cathy_DA.DA.set_BC_laterals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.set_BC_laterals</span></code></a>(time[, BC_type, val])</p></td>
-<td><p>Set all sides expect surface one</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.set_SOIL_defaults" title="DA.cathy_DA.DA.set_SOIL_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.set_SOIL_defaults</span></code></a>([FP_map_default, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.show" title="DA.cathy_DA.DA.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.show</span></code></a>([prop])</p></td>
-<td><p>Call and parse to cathy.plotter from the main CATHY class</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.show_bc" title="DA.cathy_DA.DA.show_bc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.show_bc</span></code></a>([layer, time])</p></td>
-<td><p>Show bc</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.show_input" title="DA.cathy_DA.DA.show_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.show_input</span></code></a>([prop])</p></td>
-<td><p>Call and parse to cathy.plotter from the main CATHY class</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.spatialize_parameters" title="DA.cathy_DA.DA.spatialize_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.spatialize_parameters</span></code></a>(list_update_parm, parm)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.spatialize_parameters" title="DA.cathy_DA.DA.spatialize_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.spatialize_parameters</span></code></a>(list_update_parm, parm)</p></td>
 <td><p>Extend the number of parameters according to the number of zones (useful for the heteregeneous case)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.transform_parameters" title="DA.cathy_DA.DA.transform_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.transform_parameters</span></code></a>(list_update_parm[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.transform_parameters" title="DA.cathy_DA.DA.transform_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.transform_parameters</span></code></a>(list_update_parm[, ...])</p></td>
 <td><p>Parameter (back) transformation before analysis (log, bounded log, ...)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_ENS_files" title="DA.cathy_DA.DA.update_ENS_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_ENS_files</span></code></a>(parm_pert, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_ENS_files" title="DA.cathy_DA.DA.update_ENS_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_ENS_files</span></code></a>(parm_pert, ...)</p></td>
 <td><p>THIS SHOULD BE MOVED TO DA CLASS</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_atmbc" title="DA.cathy_DA.DA.update_atmbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_atmbc</span></code></a>([HSPATM, IETO, time, VALUE, ...])</p></td>
-<td><p>Atmospheric forcing term (atmbc - IIN6)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_cathyH" title="DA.cathy_DA.DA.update_cathyH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_cathyH</span></code></a>([verbose])</p></td>
-<td><p>Update CathyH file input based on <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameters.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_dem_parameters" title="DA.cathy_DA.DA.update_dem_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_dem_parameters</span></code></a>(**kwargs)</p></td>
-<td><p>Update DEM parameters - if no args reset to default values</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_ic" title="DA.cathy_DA.DA.update_ic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_ic</span></code></a>([INDP, IPOND, WTPOSITION, verbose])</p></td>
-<td><p>The initial conditions file contains the pressure heads distribution for the study area (INDP) For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface, INDP=3 and WTHEIGHT=4.5 are selected</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_mesh_boundary_cond" title="DA.cathy_DA.DA.update_mesh_boundary_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_mesh_boundary_cond</span></code></a>(time[, ...])</p></td>
-<td><p>update_mesh_bounds</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_mesh_vtk" title="DA.cathy_DA.DA.update_mesh_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_mesh_vtk</span></code></a>([prop, prop_value, savevtk])</p></td>
-<td><p><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data">https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_nansfdirbc" title="DA.cathy_DA.DA.update_nansfdirbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_nansfdirbc</span></code></a>([time, NDIR, NDIRC, ...])</p></td>
-<td><p>Dirichlet Boundary conditions (or specified pressure) at time t</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_nansfneubc" title="DA.cathy_DA.DA.update_nansfneubc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_nansfneubc</span></code></a>([time, NQ, ZERO, ...])</p></td>
-<td><p>Neumann boundary conditions (or specifed flux) at time t</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_parm" title="DA.cathy_DA.DA.update_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_parm</span></code></a>([verbose])</p></td>
-<td><p>Update parm file .. note:     - create object zone parm     - Updated CATHYH file (NPRT and NUMVP).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_pert_parm_dict" title="DA.cathy_DA.DA.update_pert_parm_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_pert_parm_dict</span></code></a>(update_key, ...)</p></td>
-<td><p>update dict of perturbated parameters i.e. add a collumn with new params.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_prepo_inputs" title="DA.cathy_DA.DA.update_prepo_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_prepo_inputs</span></code></a>([DEM, verbose, show])</p></td>
-<td><p>Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_sfbc" title="DA.cathy_DA.DA.update_sfbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_sfbc</span></code></a>([time, sfbc, no_flow])</p></td>
-<td><p>Seepage face boundary conditions at time t</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_soil" title="DA.cathy_DA.DA.update_soil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_soil</span></code></a>([IVGHU, FP, FP_map, SPP, ...])</p></td>
-<td><p>Soil parameters (soil - IIN4).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_veg_map" title="DA.cathy_DA.DA.update_veg_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_veg_map</span></code></a>([indice_veg, show])</p></td>
-<td><p>Contains the raster map describing which type of vegetation every cell belongs to.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.DA.update_zone" title="DA.cathy_DA.DA.update_zone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.update_zone</span></code></a>([zone])</p></td>
-<td><p>Update zone file</p></td>
 </tr>
 </tbody>
 </table>
 <hr class="docutils" />
 <dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.Carsel_Parrish_VGN_pert">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">Carsel_Parrish_VGN_pert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.Carsel_Parrish_VGN_pert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.Carsel_Parrish_VGN_pert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.Evensen2003">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">Evensen2003</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qk_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.Evensen2003"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.Evensen2003" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensemble Generation of time-variable atmospheric forcing rates.
-:param wk: is a sequence of white noise drawn from the standard normal distribution.
-:type wk: np.array([])
-:param deltaT: assimilation interval in sec
-:type deltaT: float
-:param Tau: the specified time decorrelation length
-:type Tau: np.array([])
-:param time: assimilation time index
-:type time: int</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>qki</strong> (<em>Ensemble of time-variable atmospheric forcing rates at time i</em>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.Johnson1970">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">Johnson1970</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.Johnson1970"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.Johnson1970" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.backup_results_DA">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">backup_results_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_DA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.backup_results_DA" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save minimal dataframes of the simulation for result visualisation within python</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>project_filename_df.pkl</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.backup_simu">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">backup_simu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.backup_simu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save a copy of the simulation for reuse within python</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>project_filename.pkl</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.check_for_inconsistent_BC">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">check_for_inconsistent_BC</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.check_for_inconsistent_BC" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.create_mesh_bounds_df">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">create_mesh_bounds_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid3d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.create_mesh_bounds_df" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a dataframe with flag for different boundary condtions assigned to each nodes</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>grid3d</strong> (<em>TYPE</em>) – DESCRIPTION.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.create_mesh_vtk">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">create_mesh_vtk</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.create_mesh_vtk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create custum mesh</p>
-<p>THIS SHOULD BE MOVED TO MESHTOOLS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.create_mesh_vtkris3d">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">create_mesh_vtkris3d</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.create_mesh_vtkris3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create mesh for vtk format version 2</p>
-<p># vtk DataFile Version 2.0
-3D Unstructured Grid of Linear Triangles
-ASCII
-DATASET UNSTRUCTURED_GRID
-FIELD FieldData  1
-TIME 1 1 double</p>
-<blockquote>
-<div><p>0.00000</p>
-</div></blockquote>
-<p>POINTS     7056 float
-TETRA (5,NT)       - element connectivities in 3-d mesh (TETRA(5,I)
-# C                        indicates material type for 3-d element I)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.create_output">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">create_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.create_output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create output directories</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>output_dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the dir. The default is “output”.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.dictObs_2pd">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">dictObs_2pd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.dictObs_2pd" title="Permalink to this definition">¶</a></dt>
-<dd><p>dict of observation to dataframe of observation</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.display_time_run">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">display_time_run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.display_time_run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.find_nearest_node">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">find_nearest_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid3d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.find_nearest_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find nearest mesh node</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>node_coords</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – List of coordinates [[x,y,z],[x2,y2,z2]].</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>closest_idx</strong> (<em>list</em>) – Node indice in the grid3d.</p></li>
-<li><p><strong>closest</strong> (<em>list</em>) – Node coordinate in the grid3d.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.init_boundary_conditions">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">init_boundary_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.init_boundary_conditions" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.init_obs_cov_matrice">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">init_obs_cov_matrice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_cov_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.init_obs_cov_matrice" title="Permalink to this definition">¶</a></dt>
-<dd><p>THIS SHOULD BE MOVED TO DA CLASS</p>
-<p>compute measurement cov matrice and add it to dict_obs</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.load_pickle_backup">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">load_pickle_backup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.load_pickle_backup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.map_prop2mesh">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">map_prop2mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_props</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.map_prop2mesh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a given physical property to the mesh</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dict_props</strong> (<em>TYPE</em>) – DESCRIPTION.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.map_prop2zone">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">map_prop2zone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_props</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.map_prop2zone" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.map_prop_veg">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">map_prop_veg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_props</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.map_prop_veg" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA.map_states2Observations">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">map_states2Observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_assimilated_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.map_states2Observations" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">map_states2Observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_assimilated_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.map_states2Observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.map_states2Observations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translate (map) the state values (pressure head or saturation) to observations (or predicted) values</p>
 <p>In other words: apply H mapping operator to convert model to predicted value Hx</p>
 <p>In practice, for each assimilation time, loop over the observation
@@ -1356,17 +1060,6 @@ Hx = [Hx0,Hx1,Hx_nb_of_observation]</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.perturbate_dist">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">perturbate_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parm_sampling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.perturbate_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.perturbate_dist" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.perturbate_obs">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">perturbate_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_obs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.perturbate_obs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Not yet implemented</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA.perturbate_parm">
 <span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">perturbate_parm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lognormal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.perturbate_parm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.perturbate_parm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perturbate parameter for ensemble generation</p>
@@ -1393,219 +1086,8 @@ Hx = [Hx0,Hx1,Hx_nb_of_observation]</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.prepare_observations">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">prepare_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perturbate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_cov_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Bishop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.prepare_observations" title="Permalink to this definition">¶</a></dt>
-<dd><p>THIS SHOULD BE MOVED TO DA CLASS</p>
-<p>prepare observations before DA</p>
-<ol class="arabic simple">
-<li><p>Measurement perturbation (if required)</p></li>
-<li><p>Compute matrice covariance</p></li>
-<li><p>normalise data (if necessary)</p></li>
-</ol>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dict_obs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – dict containing measure data + metadata.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>TYPE</em> – data_cov, DataPert.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.read_inputs">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">read_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.read_inputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read CATHY format input file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the input CATHY file to read.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>A dataframe or a dict describing file data/entries.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.read_observations">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">read_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_err</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.read_observations" title="Permalink to this definition">¶</a></dt>
-<dd><p>read measures (real observations) from file
-and prepare for DA analysis (covariance matrice and perturbation)
-Uses <cite>pyCATHY.importers</cite>, <cite>sensors_measures</cite> to read files with common standards
-Need to be call for each time/ each observation</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>dataframe</em>) – filename (or data) of the observation dataset.</p></li>
-<li><p><strong>data_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – key tring to identify what type of measure is to read.</p></li>
-<li><p><strong>data_err</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – % of error for a given measurement dataset. The default is 0.05.</p></li>
-<li><p><strong>show</strong> (<em>Bool</em>) – plot measure graph. The default is False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p><strong>dict_obs</strong> (<em>dict</em>) – dict merging all observations + metadatas.
-First key level is data assimilation time
-Loop over data assimilation times means:
-for ti in self.dict_obs:</p>
-<blockquote>
-<div><p>print(ti)</p>
-</div></blockquote>
-</p>
-</dd>
-</dl>
-<dl>
-<dt>OrderedDict([(0.0,</dt><dd><blockquote>
-<div><dl>
-<dt>{‘swc’: {‘filename’: None,</dt><dd><blockquote>
-<div><p>‘data_type’: ‘swc’,
-‘units’: ‘$m^{3}/m^{3}$’,
-‘data’: 0.3391464625,
-‘data_err’: 0.01,
-‘mesh_nodes’: [159],
-‘assimilation_times’: 0.0,
-‘data_cov’: [],
-‘dataPert’: [],
-‘sensor_name’: ‘swc’},</p>
-</div></blockquote>
-<dl class="simple">
-<dt>‘swc1’: {‘filename’: None,</dt><dd><p>‘data_type’: ‘swc’,
-‘units’: ‘$m^{3}/m^{3}$’,
-‘data’: 0.3391464625,
-‘data_err’: 0.01,
-‘mesh_nodes’: [159],
-‘assimilation_times’: 0.0,
-‘data_cov’: [],
-‘dataPert’: [],
-‘sensor_name’: ‘swc’},</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-</div></blockquote>
-<dl>
-<dt>3600,</dt><dd><dl>
-<dt>{‘swc’: {‘filename’: None,</dt><dd><blockquote>
-<div><p>‘data_type’: ‘swc’,
-‘units’: ‘$m^{3}/m^{3}$’,
-‘data’: 0.3391464625,
-‘data_err’: 0.01,
-‘mesh_nodes’: [159],
-‘assimilation_times’: 0.0,
-‘data_cov’: [],
-‘dataPert’: [],
-‘sensor_name’: ‘swc’},</p>
-</div></blockquote>
-<dl class="simple">
-<dt>‘swc1’: {‘filename’: None,</dt><dd><p>‘data_type’: ‘swc’,
-‘units’: ‘$m^{3}/m^{3}$’,
-‘data’: 0.3391464625,
-‘data_err’: 0.01,
-‘mesh_nodes’: [159],
-‘assimilation_times’: 0.0,
-‘data_cov’: [],
-‘dataPert’: [],
-‘sensor_name’: ‘swc’},</p>
-</dd>
-</dl>
-<p>.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>)])</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.read_outputs">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">read_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.read_outputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read CATHY format output file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the output file to read.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>A dataframe or a dict describing file data/entries.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.recompileSrc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">recompileSrc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.recompileSrc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Other option is self.run_processor(runProcess=False)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.resynchronise_times">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">resynchronise_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_measure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atmbc_df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.resynchronise_times" title="Permalink to this definition">¶</a></dt>
-<dd><p>old key is elapsed time in second from the first observation,
-while new key is from the first atmbc time</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.rich_display">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">rich_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Star</span> <span class="pre">Wars</span> <span class="pre">Movies'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.rich_display" title="Permalink to this definition">¶</a></dt>
-<dd><p>Describe the variable state and fate during the simulation with a rich table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.run_ensemble_hydrological_model">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">run_ensemble_hydrological_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parallel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callexe</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.run_ensemble_hydrological_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>multi run CATHY hydrological model from the independant folders composing the ensemble</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.run_preprocessor">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">run_preprocessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">KeepOutlet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.run_preprocessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run cppp.exe
-1. updates cathy parameters prepo
-2. recompile the source files prepo
-3. run the preprocessor using bash cmd</p>
-<p>Running the executable file has allowed to generate a complete set of
-files describing physiographic features of the drainage system, as shown in Table 2.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.run_processor">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">run_processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recompile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runProcess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.run_processor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run cathy.exe</p>
-<ol class="arabic simple">
-<li><p>updates cathy parameters and cathyH based on <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</p></li>
-<li><p>recompile the source files (set False for notebook) and create the executable</p></li>
-<li><p>run the processor using bash cmd if runProcess is True</p></li>
-</ol>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>recompile</strong> (<em>Bool</em><em>, </em><em>optional</em>) – recomplile CATHY src files. The default is True.</p></li>
-<li><p><strong>runProcess</strong> (<em>Bool</em><em>, </em><em>optional</em>) – exectute compile CATHY exe. The default is True.</p></li>
-<li><p><strong>verbose</strong> (<em>Bool</em><em>, </em><em>optional</em>) – Output CATHY log. The default is False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.sampling_dist">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">sampling_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.sampling_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.sampling_dist" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.sampling_dist_trunc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">sampling_dist_trunc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">myclip_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">myclip_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.sampling_dist_trunc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.sampling_dist_trunc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA.selec_atmbc_window">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">selec_atmbc_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NENS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ENS_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.selec_atmbc_window" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">selec_atmbc_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NENS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ENS_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.selec_atmbc_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.selec_atmbc_window" title="Permalink to this definition">¶</a></dt>
 <dd><p>THIS SHOULD BE MOVED TO DA CLASS</p>
 <p>Select the time window of the hietograph
 == time between two assimilation observation</p>
@@ -1620,91 +1102,15 @@ files describing physiographic features of the drainage system, as shown in Tabl
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.set_Archie_parm">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">set_Archie_parm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">porosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rFluid_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pert_sigma_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.set_Archie_parm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dict of Archie parameters. Each type of soil is describe within a list
-Note that if pert_sigma is not None a normal noise is
-added during the translation of Saturation Water to ER</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rFluid</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Resistivity of the pore fluid. The default is [1.0].</p></li>
-<li><p><strong>a</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Tortuosity factor. The default is [1.0].</p></li>
-<li><p><strong>m</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Cementation exponent. The default is [2.0].
-(usually in the range 1.3 – 2.5 for sandstones)</p></li>
-<li><p><strong>n</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Saturation exponent. The default is [2.0].</p></li>
-<li><p><strong>pert_sigma_Archie</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Gaussian noise to add. The default is None.</p></li>
-<li><p><strong>..note</strong> – Field procedure to obtain tce he covariance structure of the model
-estimates is described in Tso et al () - 10.1029/2019WR024964
-“Fit a straight line for log 10 (S) and log 10 (ρ S ) using the least-squares criterion.
-The fitting routine returns the covariance structure of the model estimates, which can be used to de-
-termine the 68% confidence interval (1 standard deviation) of the model estimates.””</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.set_BC_laterals">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">set_BC_laterals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BC_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.set_BC_laterals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set all sides expect surface one</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.set_SOIL_defaults">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">set_SOIL_defaults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FP_map_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SPP_map_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.set_SOIL_defaults" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.show">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hgsfdet'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call and parse to cathy.plotter from the main CATHY class</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – property to plot.</p></li>
-<li><p><strong>**kwargs</strong> (<em>kwargs</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.show_bc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">show_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.show_bc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show bc</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.show_input">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">show_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hgsfdet'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.show_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call and parse to cathy.plotter from the main CATHY class</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – property to plot.</p></li>
-<li><p><strong>**kwargs</strong> (<em>kwargs</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA.spatialize_parameters">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">spatialize_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_update_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.spatialize_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">spatialize_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_update_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.spatialize_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.spatialize_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extend the number of parameters according to the number of zones
 (useful for the heteregeneous case)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA.transform_parameters">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">transform_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_update_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.transform_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">transform_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_update_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.transform_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.transform_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parameter (back) transformation before analysis (log, bounded log, …)</p>
 <dl class="simple">
 <dt>..note:: parameters are log transform so that they become Gaussian distributed</dt><dd><p>to be updated by the Ensemble Kalman Filter</p>
@@ -1714,7 +1120,7 @@ termine the 68% confidence interval (1 standard deviation) of the model estimate
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.DA.update_ENS_files">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_ENS_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parm_pert</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_parm_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_ENS_files" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_ENS_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parm_pert</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_parm_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/DA/cathy_DA.html#DA.update_ENS_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.DA.update_ENS_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>THIS SHOULD BE MOVED TO DA CLASS</p>
 <p>Update by overwriting ensemble files (usually after analysis step or initially to build the ensemble)
 - update state
@@ -1735,410 +1141,6 @@ termine the 68% confidence interval (1 standard deviation) of the model estimate
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_atmbc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_atmbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">HSPATM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IETO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VALUE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_atmbc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Atmospheric forcing term (atmbc - IIN6)</p>
-<p>..note:</p>
-<blockquote>
-<div><p>1 1                HSPATM,IETO
-0.0000000e+00      time
-5.5e-06              VALUE
-12.000000e+03      time
-0.00                 VALUE
-18.000000e+03      time
-0.00                 VALUE</p>
-<p>The values are those of a 200-min rainfall event at a uniform
-intensity of 3.3·10-4 m/min, followed by 100 min of drainage.</p>
-</div></blockquote>
-<p>..note:</p>
-<blockquote>
-<div><p>In case of simultaneous precipitation and evaporation, we impose at
-the surface the net flux, i.e., precipitation minus evaporation.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>HSPATM</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – <ul>
-<li><p>=0 for spatially variable atmospheric boundary condition inputs;</p></li>
-</ul>
-<p>blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC’s are
-homogeneous in space.</p>
-</p></li>
-<li><p><strong>IETO</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – <ul>
-<li><p>=0 for linear interpolation of the atmospheric boundary condition inputs between different</p></li>
-<li><p>otherwise the inputs are assigned as a piecewise constant function (ietograph).</p></li>
-</ul>
-<p>The default is 0.</p>
-</p></li>
-<li><p><strong>time</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is None.</p></li>
-<li><p><strong>VALUE</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is [Precipitation, EvapoTranspiration].</p></li>
-<li><p><strong>show</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is False.</p></li>
-<li><p><strong>verbose</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is False.</p></li>
-<li><p><strong>**kwargs</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p><em>..note</em> –</p>
-<ul class="simple">
-<li><p>Update parm file (NPRT).</p></li>
-<li><p>Update CATHYH file (MAXPRT).</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_cathyH">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_cathyH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_cathyH" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update CathyH file input based on <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs parameters.</p>
-<p>Parameters ———- <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs : all variable parameters included into cathyH. For instance
-ROWMAX # maximum NROW, with NROW = number of rows in the DEM.</p>
-<p>Returns ——- type Write a modified cathyH file based on new parameters parsed</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_dem_parameters">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_dem_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_dem_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update DEM parameters - if no args reset to default values</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_ic">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_ic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">INDP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IPOND</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WTPOSITION</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_ic" title="Permalink to this definition">¶</a></dt>
-<dd><p>The initial conditions file contains the pressure heads distribution for the study area (INDP)
-For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface,
-INDP=3 and WTHEIGHT=4.5 are selected</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>INDP</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – <p>Flag for pressure head initial conditions (all nodes). The default is 2.</p>
-<ul>
-<li><p>=0 for input of uniform initial conditions (one value read in)</p></li>
-<li><p>=1 for input of non-uniform IC’s (one value read in for each node)</p></li>
-<li><p>=2 for calculation of fully saturated vertical hydrostatic equilibrium IC’s
-(calculated in subroutine ICVHE). In the case of IPOND&gt;0, the fully saturated
-hydrostatic IC is calculated (in subroutine ICVHEPOND) starting from the ponding head
-values at the surface nodes, rather than surface pressure heads of 0.</p></li>
-<li><p>=3 for calculation of partially saturated vertical hydrostatic equilibrium IC’s
-(calculated in subroutine ICVHWT) with the water table height (relative to the base
-of the 3‐d grid) given by parameter WTHEIGHT</p></li>
-<li><p>=4 for calculation of partially saturated vertical hydrostatic equilibrium IC’s
-(calculated in subroutine ICVDWT) with the water table depth (relative to the surface
-of the 3‐d grid) given by parameter WTHEIGHT</p></li>
-</ul>
-</p></li>
-<li><p><strong>IPOND</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – <p>Flag for ponding head initial conditions (surface nodes). The default is 0.</p>
-<ul>
-<li><p>=0 no input of ponding head initial conditions; otherwise (IPOND = 1 or 2) ponding
-head initial conditions are read into PONDNOD, and, where PONDNOD &gt; 0, these values
-are used to update the surface node values in PtimeP read in according to the
-previous INDP flag</p></li>
-<li><p>=1 uniform ponding head initial conditions (one value read in)</p></li>
-<li><p>=2 non-uniform ponding head initial conditions (one value read in for each node)</p></li>
-</ul>
-</p></li>
-<li><p><strong>WTPOSITION</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – For the case INDP=3, specifies the initial water table height relative to
-the base of the 3‐d grid. The default is 0.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>new ic file written/overwritten.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_mesh_boundary_cond">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_mesh_boundary_cond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BC_bool_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BC_bool_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_mesh_boundary_cond" title="Permalink to this definition">¶</a></dt>
-<dd><p>update_mesh_bounds</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bound_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Neumann or Dirichlet.</p></li>
-<li><p><strong>bound_bool</strong> (<em>TYPE</em>) – Boolean for bound cond.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_mesh_vtk">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_mesh_vtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savevtk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_mesh_vtk" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data">https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prop</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is ‘’.</p></li>
-<li><p><strong>prop_value</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is [].</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_nansfdirbc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_nansfdirbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NDIR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NDIRC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NQ3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_flow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_xyz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_nansfdirbc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dirichlet Boundary conditions (or specified pressure) at time t</p>
-<ul class="simple">
-<li><p>To simulate the no-flow boundaries conditions for the bottom and
-vertical sides of the domain it is necessary to set NDIR and NDIRC
-equal to zero.</p></li>
-<li><p>To simulate different boundary conditions, it is necessary to
-indicate the number of selected nodes through NDIR or NDIRC,
-then to specify the node ID’s that you want to consider and
-eventually the value of pressure head or flux that you want to assign.</p></li>
-</ul>
-<dl class="simple">
-<dt>..note::</dt><dd><p>update_nansfdirbc use the grid3d to refer to mesh nodes</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<em>np.array</em><em>(</em><em>[</em><em>]</em><em>)</em><em>, </em><em>optional</em>) – Absolute simulation time in sec.
-The default is [].</p></li>
-<li><p><strong>NDIR</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Number of non-atmospheric, non‐seepage face Dirichlet
-nodes in 2-d mesh. The BC’s assigned to these surface nodes are replicated vertically.
-The default is 0.</p></li>
-<li><p><strong>NDIRC</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Number of ‘fixed’ non-atmospheric, non-seepage face Dirichlet
-nodes in 3‐d mesh (‘fixed’ in the sense that these BC’s are not replicated to other nodes ‐
-compare NDIR).
-The default is 0.</p></li>
-<li><p><strong>NQ3</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Number of non-atmospheric, non‐seepage face Neumann nodes in 3‐d
-mesh.
-The default is None.</p></li>
-<li><p><strong>noflow</strong> (<em>Bool</em><em>, </em><em>optional</em>) – To simulate the no-flow boundaries conditions for the bottom and
-# vertical sides of the domain. The default is True.</p></li>
-<li><p><strong>bound_xyz</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is None.</p></li>
-<li><p><strong>pressure_head</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Specify a value of node pressure head to impose as Dirichlet boundary condition.
-The default is [].</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_nansfneubc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_nansfneubc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NQ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZERO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_pressure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_flow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_nansfneubc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Neumann boundary conditions (or specifed flux) at time t</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<em>np.array</em><em>(</em><em>[</em><em>]</em><em>)</em><em>, </em><em>optional</em>) – Absolute simulation time in sec.
-The default is [].</p></li>
-<li><p><strong>NQ</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – number of non-atmospheric, non seepage face Neumann nodes in
-3-D mesh. The default is 0.</p></li>
-<li><p><strong>ZERO</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is 0.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_parm">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_parm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_parm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update parm file
-.. note:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>create object zone parm</p></li>
-<li><p>Updated CATHYH file (NPRT and NUMVP).</p></li>
-</ul>
-</div></blockquote>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_pert_parm_dict">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_pert_parm_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_update_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_param_valid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_pert_parm_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>update dict of perturbated parameters i.e. add a collumn with new params</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_prepo_inputs">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_prepo_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DEM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_prepo_inputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs</p>
-<p>Parameters ———- DEM : type Description of parameter <cite>DEM</cite>. verbose : type Description
-of parameter <cite>verbose</cite>. <a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs : type Description of parameter <cite>**kwargs</cite>.</p>
-<p>Returns ——- type Description of returned object.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_sfbc">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_sfbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfbc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_flow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_sfbc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Seepage face boundary conditions at time t</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>time</strong> (<em>np.array</em><em>(</em><em>[</em><em>]</em><em>)</em><em>, </em><em>optional</em>) – Absolute simulation time in sec.
-The default is [].</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None.</em></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_soil">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_soil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IVGHU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FP_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SPP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SPP_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_soil" title="Permalink to this definition">¶</a></dt>
-<dd><p>Soil parameters (soil - IIN4). The porous media properties.</p>
-<dl class="simple">
-<dt>..note::</dt><dd><p>The first thing that must be decides is the type of relationship to describe the hydraulic
-characteristics of the unsaturated soil (i.e. retention curves). This can be done through
-the choice of the parameter <strong>IVGHU</strong> amongst the several options.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>IVGHU</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – <p>= -1 table look up for moisture curves
-= 0 for van Genuchten moisture curves
-= 1 for extended van Genuchten moisture curves
-= 2 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with Kr=Se**n conductivity relationship
-= 3 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986)with conductivity relationship from Table 3 of 1984 paper (log_10 Kr(Se) curve)
-= 4 for Brooks‐Corey moisture curves.</p>
-<p>The default is [].</p>
-</p></li>
-<li><p><strong>FP</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>, </em><em>optional</em>) – <p>Feddes Parameters. The default is [].
-[PCANA PCREF PCWLT ZROOT PZ OMGC]
-- ‘PCANA’: float, anaerobiosis point –&gt; h2 (≈ -0.5m)
-- ‘PCREF’: float, field capacity –&gt; h3 (≈ 4-m)
-- ‘PCWLT’: float, wilting point –&gt; h4 (≈ -150m)
-- ‘ZROOT’: float, root depth
-- ‘PZ’: float, pz is an empirical parameter
-- ‘OMGC’: float, 0&lt;OMGC&lt;1 Compensatory mechanisms for root water uptake</p>
-</p></li>
-</ul>
-</dd>
-</dl>
-<dl>
-<dt>FP<span class="classifier">Dict, optional</span></dt><dd><p>Dictionnary containing the SPP properies per zones (root map, indice of vegetation)</p>
-</dd>
-<dt>SPP<span class="classifier">DataFrame, optional</span></dt><dd><p>Soil Physical Properties. The default is [].
-- ‘PERMX’ (NSTR, NZONE): saturated hydraulic conductivity - xx
-- ‘PERMY’ (NSTR, NZONE): saturated hydraulic conductivity - yy
-- ‘PERMZ’ (NSTR, NZONE): saturated hydraulic conductivity - zz
-- ‘ELSTOR’ (NSTR, NZONE): specific storage
-- ‘POROS’  (NSTR, NZONE): porosity (moisture content at saturation) =       hetaS</p>
-<p>retention curves parameters VGN, VGRMC, and VGPSAT
-- ‘VGNCELL’ (NSTR, NZONE): van Genuchten curve exponent  = n
-- ‘VGRMCCELL’ (NSTR, NZONE): residual moisture content =    hetaR
-- ‘VGPSATCELL’ (NSTR, NZONE): van Genuchten curve exponent –&gt;</p>
-<blockquote>
-<div><p>VGPSAT == -1/alpha (with alpha expressed in [L-1]);</p>
-</div></blockquote>
-<p>Example for 1 zone:</p>
-<blockquote>
-<div><blockquote>
-<div><p>PERMX     PERMY     PERMZ  …  VGNCELL  VGRMCCELL  VGPSATCELL</p>
-</div></blockquote>
-<p>str zone                                …
-0   0     0.000188  0.000188  0.000188  …     1.46       0.15     0.03125
-1   0     0.000188  0.000188  0.000188  …     1.46       0.15     0.03125
-2   0     0.000188  0.000188  0.000188  …     1.46       0.15     0.03125
-3   0     0.000188  0.000188  0.000188  …     1.46       0.15     0.03125
-4   0     0.000188  0.000188  0.000188  …     1.46       0.15     0.03125</p>
-</div></blockquote>
-</dd>
-<dt>SPP_map<span class="classifier">Dict, optional</span></dt><dd><p>Dictionnary containing the SPP properies per zones
-Example for 2 zones:</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><blockquote>
-<div><p>‘PERMX’: [0.000188, 9.4e-05],
-‘PERMY’: [0.000188, 0.000188],
-‘PERMZ’: [0.000188, 0.000188],
-‘ELSTOR’: [1e-05, 1e-05],
-‘POROS’: [0.55, 0.55],
-‘VGNCELL’: [1.46, 1.46],
-‘VGRMCCELL’: [0.15, 0.15],
-‘VGPSATCELL’: [0.03125, 0.03125]</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-</div></blockquote>
-</dd>
-</dl>
-<p>..note:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">At</span> <span class="n">the</span> <span class="n">file</span> <span class="n">level</span><span class="p">,</span> <span class="n">this</span> <span class="ow">is</span> <span class="n">an</span> <span class="n">example</span> <span class="n">of</span> <span class="mi">3</span> <span class="n">layers</span> <span class="ow">and</span>  <span class="mi">2</span> <span class="n">zones</span><span class="p">;</span> <span class="n">The</span> <span class="n">inner</span> <span class="n">reading</span> <span class="n">cycle</span> <span class="ow">is</span> <span class="n">by</span> <span class="n">zone</span><span class="p">,</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">outer</span> <span class="n">one</span> <span class="n">by</span> <span class="n">layers</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="p">:</span>
-
-<span class="n">PERMX_z1_str1</span> <span class="n">PERMY_z1_str1</span>  <span class="n">PERMZ_z1_str1</span>  <span class="n">ELSTOR_z1_str1</span> <span class="n">POROS_z1_str1</span> <span class="n">VGNCELL_z1_str1</span> <span class="n">VGRMCCELL__z1_str1</span> <span class="n">VGPSATCELL__z1_str1</span>
-<span class="n">PERMX_z2_str1</span> <span class="n">PERMY_z2_str1</span>  <span class="n">PERMZ_z2_str1</span>  <span class="n">ELSTOR_z2_str1</span> <span class="n">POROS_z2_str1</span> <span class="n">VGNCELL_z2_str1</span> <span class="n">VGRMCCELL__z2_str1</span> <span class="n">VGPSATCELL__z2_str1</span>
-<span class="n">PERMX_z1_str2</span> <span class="n">PERMY_z1_str2</span>  <span class="n">PERMZ_z1_str2</span>  <span class="n">ELSTOR_z1_str2</span> <span class="n">POROS_z1_str2</span> <span class="n">VGNCELL_z1_str2</span> <span class="n">VGRMCCELL__z1_str2</span> <span class="n">VGPSATCELL__z1_str2</span>
-<span class="n">PERMX_z2_str2</span> <span class="n">PERMY_z2_str2</span>  <span class="n">PERMZ_z2_str2</span>  <span class="n">ELSTOR_z2_str2</span> <span class="n">POROS_z2_str2</span> <span class="n">VGNCELL_z2_str2</span> <span class="n">VGRMCCELL__z2_str2</span> <span class="n">VGPSATCELL__z2_str2</span>
-<span class="n">PERMX_z1_str3</span> <span class="n">PERMY_z1_str3</span>  <span class="n">PERMZ_z1_str3</span>  <span class="n">ELSTOR_z1_str3</span> <span class="n">POROS_z1_str3</span> <span class="n">VGNCELL_z1_str3</span> <span class="n">VGRMCCELL__z1_str3</span> <span class="n">VGPSATCELL__z1_str3</span>
-<span class="n">PERMX_z2_str3</span> <span class="n">PERMY_z2_str3</span>  <span class="n">PERMZ_z2_str3</span>  <span class="n">ELSTOR_z2_str3</span> <span class="n">POROS_z2_str3</span> <span class="n">VGNCELL_z2_str3</span> <span class="n">VGRMCCELL__z2_str3</span>  <span class="n">VGPSATCELL__z2_str3</span>
-
-<span class="n">Make</span> <span class="n">sure</span> <span class="nb">all</span> <span class="mi">8</span> <span class="n">parameters</span> <span class="k">for</span> <span class="n">each</span> <span class="n">layer</span><span class="o">/</span><span class="n">zone</span> <span class="n">are</span> <span class="n">on</span> <span class="n">the</span> <span class="n">same</span> <span class="n">line</span><span class="o">.</span>
-<span class="n">Also</span><span class="p">,</span> <span class="n">make</span> <span class="n">sure</span> <span class="n">NZONE</span> <span class="o">=</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">dem_parameters</span> <span class="ow">and</span> <span class="n">MAXZON</span> <span class="ow">in</span> <span class="n">CATHY</span><span class="o">.</span><span class="n">H</span> <span class="ow">is</span> <span class="n">larger</span> <span class="n">than</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">to</span> <span class="n">NZONE</span><span class="o">.</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><em>- update parm file</em></p></li>
-<li><p><em>- update CATHY.H file</em></p></li>
-<li><p><em>- update mesh vtk file</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_veg_map">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_veg_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indice_veg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_veg_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains the raster map describing which type of vegetation every cell belongs to.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>indice_veg</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is 1.</p></li>
-<li><p><strong>show</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is False.</p></li>
-<li><p><strong>**kwargs</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>indice_veg</strong> (<em>TYPE</em>) – DESCRIPTION.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.DA.update_zone">
-<span class="sig-prename descclassname"><span class="pre">DA.</span></span><span class="sig-name descname"><span class="pre">update_zone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DA.cathy_DA.DA.update_zone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update zone file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>zone</strong> (<em>np.array</em><em>(</em><em>[</em><em>]</em><em>)</em><em>, </em><em>optional</em>) – 2d numpy array describing the zone for x and y direction.
-The array dim must be equal to DEM dim.
-If zone is empty, reset to homogeneous zone = 1
-The default is [].</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>Create object zone variable</p></li>
-<li><p>Update dem_parameters file (number of zones).</p></li>
-<li><p>Update parm file.</p></li>
-<li><p>Update CATHYH file.</p></li>
-<li><p>Update vtk mesh file.</p></li>
-</ul>
-</div>
-</dd></dl>
-
 <div style='clear:both'></div></section>
 
 
@@ -2154,10 +1156,10 @@ The default is [].</p>
             <p class="prev-next-title">DA.cathy_DA.CATHY</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="DA.cathy_DA.run_analysis.html" title="next page">
+    <a class='right-next' id="next-link" href="DA.cathy_DA.OrderedDict.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">DA.cathy_DA.run_analysis</p>
+        <p class="prev-next-title">DA.cathy_DA.OrderedDict</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

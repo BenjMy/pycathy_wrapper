@@ -177,58 +177,6 @@ cathy\_tools.CATHY
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
         CATHY.backup_results_DA
     
     
@@ -257,10 +205,6 @@ cathy\_tools.CATHY
     
     
     
-        CATHY.dictObs_2pd
-    
-    
-    
         CATHY.display_time_run
     
     
@@ -270,10 +214,6 @@ cathy\_tools.CATHY
     
     
         CATHY.init_boundary_conditions
-    
-    
-    
-        CATHY.init_obs_cov_matrice
     
     
     
@@ -293,23 +233,7 @@ cathy\_tools.CATHY
     
     
     
-        CATHY.map_states2Observations
-    
-    
-    
-        CATHY.perturbate_obs
-    
-    
-    
-        CATHY.prepare_observations
-    
-    
-    
         CATHY.read_inputs
-    
-    
-    
-        CATHY.read_observations
     
     
     
@@ -318,10 +242,6 @@ cathy\_tools.CATHY
     
     
         CATHY.recompileSrc
-    
-    
-    
-        CATHY.resynchronise_times
     
     
     
@@ -338,10 +258,6 @@ cathy\_tools.CATHY
     
     
         CATHY.run_processor
-    
-    
-    
-        CATHY.selec_atmbc_window
     
     
     
@@ -366,18 +282,6 @@ cathy\_tools.CATHY
     
     
         CATHY.show_input
-    
-    
-    
-        CATHY.spatialize_parameters
-    
-    
-    
-        CATHY.transform_parameters
-    
-    
-    
-        CATHY.update_ENS_files
     
     
     
@@ -475,10 +379,6 @@ cathy\_tools.CATHY
 
 
 
-.. automethod:: CATHY.dictObs_2pd
-
-
-
 .. automethod:: CATHY.display_time_run
 
 
@@ -488,10 +388,6 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.init_boundary_conditions
-
-
-
-.. automethod:: CATHY.init_obs_cov_matrice
 
 
 
@@ -511,23 +407,7 @@ cathy\_tools.CATHY
 
 
 
-.. automethod:: CATHY.map_states2Observations
-
-
-
-.. automethod:: CATHY.perturbate_obs
-
-
-
-.. automethod:: CATHY.prepare_observations
-
-
-
 .. automethod:: CATHY.read_inputs
-
-
-
-.. automethod:: CATHY.read_observations
 
 
 
@@ -536,10 +416,6 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.recompileSrc
-
-
-
-.. automethod:: CATHY.resynchronise_times
 
 
 
@@ -556,10 +432,6 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.run_processor
-
-
-
-.. automethod:: CATHY.selec_atmbc_window
 
 
 
@@ -584,18 +456,6 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.show_input
-
-
-
-.. automethod:: CATHY.spatialize_parameters
-
-
-
-.. automethod:: CATHY.transform_parameters
-
-
-
-.. automethod:: CATHY.update_ENS_files
 
 
 
