@@ -133,7 +133,7 @@ for dp in list_pert:
 
 # run simulation + DA
 # -------------------
-simu_test_DA.run_processor(
+DA.run_DA_sequential(
                     DAFLAG=1,
                     parallel=True,    
                     dict_obs= sorted_dict_obs,
