@@ -4,7 +4,7 @@ soiltexture
 SALib
 pyvistaqt
 itkwidgets
-rosetta
+rosetta-soil
 rich
 pandas
 natsort

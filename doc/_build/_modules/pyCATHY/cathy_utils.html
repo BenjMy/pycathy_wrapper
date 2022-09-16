@@ -325,8 +325,33 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_dem.html">
+       importers.cathy_inputs.read_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_dem_parameters.html">
+       importers.cathy_inputs.read_dem_parameters
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_grid3d.html">
        importers.cathy_inputs.read_grid3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_root_map.html">
+       importers.cathy_inputs.read_root_map
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_soil.html">
+       importers.cathy_inputs.read_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_zone.html">
+       importers.cathy_inputs.read_zone
       </a>
      </li>
     </ul>
@@ -530,11 +555,6 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.COCumflowvol.html">
-       plotters.cathy_plots.COCumflowvol
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_RMS.html">
        plotters.cathy_plots.DA_RMS
       </a>
@@ -570,18 +590,8 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.dem_plot.html">
-       plotters.cathy_plots.dem_plot
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html">
        plotters.cathy_plots.dem_plot_2d_top
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.indice_veg_plot.html">
-       plotters.cathy_plots.indice_veg_plot
       </a>
      </li>
      <li class="toctree-l3">
@@ -610,6 +620,11 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_COCumflowvol.html">
+       plotters.cathy_plots.show_COCumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_DA_process_ens.html">
        plotters.cathy_plots.show_DA_process_ens
       </a>
@@ -625,18 +640,33 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_dem.html">
+       plotters.cathy_plots.show_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_dtcoupling.html">
+       plotters.cathy_plots.show_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgraph.html">
        plotters.cathy_plots.show_hgraph
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgraph_2.html">
-       plotters.cathy_plots.show_hgraph_2
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
-       plotters.cathy_plots.show_hgsfdet
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_indice_veg.html">
+       plotters.cathy_plots.show_indice_veg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_soil.html">
+       plotters.cathy_plots.show_soil
       </a>
      </li>
      <li class="toctree-l3">
@@ -652,6 +682,11 @@
      <li class="toctree-l3">
       <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vtk_TL.html">
        plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_zone.html">
+       plotters.cathy_plots.show_zone
       </a>
      </li>
      <li class="toctree-l3">
@@ -916,6 +951,16 @@
     <span class="k">return</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">t_new</span></div>
 
 
+<span class="c1">#Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]</span>
+<span class="c1">#Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)</span>
+<span class="c1">#Atmpot-r (11) : Potential atmospheric forcing rate [L/T]</span>
+<span class="c1">#Atmpot-d (12) : Potential atmospheric forcing depth [L]</span>
+<span class="c1">#Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]</span>
+<span class="c1">#Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]</span>
+<span class="c1">#Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]</span>
+<span class="c1">#Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]</span>
+
+
 <div class="viewcode-block" id="label_units"><a class="viewcode-back" href="../../content/api/generated/pyCATHY.cathy_utils.label_units.html#plotters.cathy_plots.label_units">[docs]</a><span class="k">def</span> <span class="nf">label_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    label units</span>
@@ -928,9 +973,23 @@
         <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Relative hydraulic conductivity&quot;</span>
     <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;QTRANIE&quot;</span><span class="p">:</span>
         <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Root‐zone water uptake&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>                
-        
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-vf&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Potential atmospheric forcing (rain +ve / evap -ve) </span><span class="se">\n</span><span class="s2"> ($[L^</span><span class="si">{3}</span><span class="s2">/T]$)&quot;</span>               
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-v&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Potential atmospheric forcing volume </span><span class="se">\n</span><span class="s2"> ($[L^</span><span class="si">{3}</span><span class="s2">/T]$)&quot;</span>               
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-v&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Potential atmospheric forcing rate </span><span class="se">\n</span><span class="s2"> ($[L/T]$)&quot;</span>   
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-d&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Potential atmospheric forcing depth </span><span class="se">\n</span><span class="s2"> ($[L]$)&quot;</span>               
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-vf&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux </span><span class="se">\n</span><span class="s1"> ($[L^3/T]$)&#39;</span>  
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-v &quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Actual infiltration (+ve) or exfiltration (-ve) volume </span><span class="se">\n</span><span class="s1"> ($[L^3]$)&#39;</span>  
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-r&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Actual infiltration (+ve) or exfiltration (-ve) rate </span><span class="se">\n</span><span class="s1"> ($[L/T]$)&#39;</span>    
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-d &quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Actual infiltration (+ve) or exfiltration (-ve) depth </span><span class="se">\n</span><span class="s1"> ($[L]$)&#39;</span>  
+
     <span class="k">return</span> <span class="n">label</span></div>
 
 
@@ -976,7 +1035,7 @@
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 14, 2022.<br/>
+      Last updated on Sep 16, 2022.<br/>
   </p>
 </footer>
 </main>

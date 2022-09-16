@@ -223,6 +223,12 @@ cathy\_tools.CATHY
     
     
     
+    
+    
+    
+    
+    
+    
         CATHY.backup_results_DA
     
     
@@ -240,6 +246,10 @@ cathy\_tools.CATHY
     
     
         CATHY.create_mesh_vtk
+    
+    
+    
+        CATHY.create_mesh_vtkris3d
     
     
     
@@ -288,10 +298,6 @@ cathy\_tools.CATHY
     
     
         CATHY.perturbate_obs
-    
-    
-    
-        CATHY.plot
     
     
     
@@ -348,6 +354,18 @@ cathy\_tools.CATHY
     
     
         CATHY.set_SOIL_defaults
+    
+    
+    
+        CATHY.show
+    
+    
+    
+        CATHY.show_bc
+    
+    
+    
+        CATHY.show_input
     
     
     
@@ -449,6 +467,10 @@ cathy\_tools.CATHY
 
 
 
+.. automethod:: CATHY.create_mesh_vtkris3d
+
+
+
 .. automethod:: CATHY.create_output
 
 
@@ -494,10 +516,6 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.perturbate_obs
-
-
-
-.. automethod:: CATHY.plot
 
 
 
@@ -554,6 +572,18 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.set_SOIL_defaults
+
+
+
+.. automethod:: CATHY.show
+
+
+
+.. automethod:: CATHY.show_bc
+
+
+
+.. automethod:: CATHY.show_input
 
 
 

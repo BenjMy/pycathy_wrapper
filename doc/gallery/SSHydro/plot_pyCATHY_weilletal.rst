@@ -28,7 +28,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 *Estimated time to run the notebook = 5min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 13-32
+.. GENERATED FROM PYTHON SOURCE LINES 13-36
 
 
 
@@ -46,7 +46,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
     🏁 Initiate CATHY object
     ✒ update parm file 
-    key: IPRT1 | value: 2
+    key: IPRT1 | value: 3
     ✒ Update hap.in file
     ✒ update dem_parameters file 
     😔 cannot find existing dem paramters
@@ -54,7 +54,19 @@ The notebook illustrate how to work interactively: execute single cell, see part
     0.5
     1.0
     1
-    0.002   0.004   0.006   0.008   0.01    0.01    0.02    0.02    0.05    0.05    0.1     0.1     0.2     0.2     0.22
+    0.002   0.004   0.006   0.008   0.01    0.01    0.02    0.02    0.05    0.05    0.1     0.1     0.2  
+    0.2     0.22
+    🛠 Recompile src files
+    🍳 gfortran compilation
+    👟 Run processor
+
+
+     IPRT1=3: Program terminating after output of X, Y, Z coordinate values
+
+
+    reading grid3d
+    ✒ update parm file 
+    key: IPRT1 | value: 2
     🛠 Recompile src files
     🍳 gfortran compilation
     👟 Run processor
@@ -7089,8 +7101,6 @@ The notebook illustrate how to work interactively: execute single cell, see part
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     reading grid3d
-    /home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_inputs.py:139: UserWarning: loadtxt: Empty input file: "<_io.TextIOWrapper name='my_cathy_prj/output/grid3d' mode='r' encoding='UTF-8'>"
-      nnod, nnod3, nel = np.loadtxt(grid3d_file, max_rows=1)
     plot pressure
 
 
@@ -7113,6 +7123,10 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
     path2prj ='weil_exemple' # add your local path here
     simu = cathy_tools.CATHY(dirName=path2prj)
+
+    simu.run_processor(IPRT1=3,verbose=True)
+    simu.grid3d
+    len(simu.grid3d['mesh_tetra'])
     simu.run_processor(IPRT1=2,verbose=True)
 
     cplt.show_vtk(unit='pressure',
@@ -7125,7 +7139,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  22.738 seconds)
+   **Total running time of the script:** ( 1 minutes  20.113 seconds)
 
 
 .. _sphx_glr_download_gallery_SSHydro_plot_pyCATHY_weilletal.py:

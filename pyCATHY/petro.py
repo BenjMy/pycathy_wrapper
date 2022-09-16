@@ -6,7 +6,7 @@ Created on Tue Mar  8 17:34:12 2022
 """
 
 from scipy.optimize import curve_fit
-from sklearn.metrics import r2_score
+# from sklearn.metrics import r2_score
 import numpy as np
 import pandas as pd
 from pyCATHY.plotters import cathy_plots as pltCT

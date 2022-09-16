@@ -31,8 +31,6 @@
 .. autosummary::
   :toctree: ./
 
-  plotters.cathy_plots.COCumflowvol
-
   plotters.cathy_plots.DA_RMS
 
   plotters.cathy_plots.DA_plot_Archie
@@ -47,11 +45,7 @@
 
   plotters.cathy_plots.convert_time_units
 
-  plotters.cathy_plots.dem_plot
-
   plotters.cathy_plots.dem_plot_2d_top
-
-  plotters.cathy_plots.indice_veg_plot
 
   plotters.cathy_plots.label_units
 
@@ -63,23 +57,33 @@
 
   plotters.cathy_plots.prepare_DA_plot_time_dynamic
 
+  plotters.cathy_plots.show_COCumflowvol
+
   plotters.cathy_plots.show_DA_process_ens
 
   plotters.cathy_plots.show_atmbc
 
   plotters.cathy_plots.show_atmbc_3d
 
+  plotters.cathy_plots.show_dem
+
+  plotters.cathy_plots.show_dtcoupling
+
   plotters.cathy_plots.show_hgraph
 
-  plotters.cathy_plots.show_hgraph_2
-
   plotters.cathy_plots.show_hgsfdet
+
+  plotters.cathy_plots.show_indice_veg
+
+  plotters.cathy_plots.show_soil
 
   plotters.cathy_plots.show_vp_DEPRECATED
 
   plotters.cathy_plots.show_vtk
 
   plotters.cathy_plots.show_vtk_TL
+
+  plotters.cathy_plots.show_zone
 
   plotters.cathy_plots.transform2_time_delta
 

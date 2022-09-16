@@ -4,12 +4,11 @@
 import os
 import math
 import matplotlib.pyplot as plt
-# from matplotlib import pyplot
 import numpy as np
 import scipy.stats as stats
+import pandas as pd
 
 import shutil
-# import matplotlib.pyplot as plt 
 from pyCATHY.cathy_tools import CATHY
 from pyCATHY.DA import enkf, pf
 from pyCATHY.plotters import cathy_plots as pltCT
@@ -19,12 +18,12 @@ import pyCATHY.cathy_utils as utils
 def run_analysis(DA_type,
                  data,data_cov,
                  param,list_update_parm,
-                 ensembleX,prediction, 
+                 ensembleX,prediction,
                  default_state='psi',
                  **kwargs,
                  ):
     '''
-    Perform the DA analysis step 
+    Perform the DA analysis step
 
     Parameters
     ----------
@@ -43,74 +42,294 @@ def run_analysis(DA_type,
     rejected_ens : list
         list of ensemble to reject
     '''
-    
+
     id_state = 0
     if default_state == 'sw':
         id_state = 1
-        
-    
+
+
     if DA_type=='enkf_Evensen2009_Sakov':
-        
-        [A, Amean, dA, 
-         dD, MeasAvg, S, 
-         COV, B, dAS, 
-         analysis, 
-         analysis_param] = enkf.enkf_analysis(data, 
-                                              data_cov, 
-                                              param, 
-                                              ensembleX[id_state], 
+
+        [A, Amean, dA,
+         dD, MeasAvg, S,
+         COV, B, dAS,
+         analysis,
+         analysis_param] = enkf.enkf_analysis(data,
+                                              data_cov,
+                                              param,
+                                              ensembleX[id_state],
                                               prediction
                                               )
-                                              
-        return [A, Amean, dA, 
-         dD, MeasAvg, S, 
-         COV, B, dAS, 
-         analysis, 
-         analysis_param] 
-    
-    
+
+        return [A, Amean, dA,
+         dD, MeasAvg, S,
+         COV, B, dAS,
+         analysis,
+         analysis_param]
+
+
     if DA_type=='enkf_analysis_inflation':
 
-        [A, Amean, dA, 
-         dD, MeasAvg, S, 
-         COV, B, dAS, 
-         analysis, 
+        [A, Amean, dA,
+         dD, MeasAvg, S,
+         COV, B, dAS,
+         analysis,
          analysis_param] = enkf.enkf_analysis_inflation(data,
                                                         data_cov,
                                                         param,
                                                         ensembleX[id_state],
                                                         prediction,
                                                         **kwargs)
-                                                        
-        return [A, Amean, dA, 
-         dD, MeasAvg, S, 
-         COV, B, dAS, 
-         analysis, 
-         analysis_param] 
-        
-        
+
+        return [A, Amean, dA,
+         dD, MeasAvg, S,
+         COV, B, dAS,
+         analysis,
+         analysis_param]
+
+
     elif DA_type=='pf':
         print('not yet implemented')
-        
+
         [Analysis,AnalysisParam] = pf.pf_analysis(data,
                                                   data_cov,
                                                   param,
                                                   ensembleX[id_state],
                                                   prediction)
-        
-        
+
+
         return Analysis,AnalysisParam
 
-        
+
+
+
+class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
+    def __init__(self):
+    #     self.var_per_list = {} # dict of dict of perturbated variables parameters
+    #     print(CATHY)
+    #     C = CATHY()
+    #     C.__init__()
+    #     C.workdir
+    #     print(self.workdir)
+    #     pass
+
+    #self.workdir
+    #self.project_name
+    #self.processor_name
+    #self.console
+
+        self.var_per_list = [] # list of variable perturbated 
+    pass
     
-    
-class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
-    def __init__(self, *args, **kwargs):
+    # -------------------------------------------------------------------#
+    # %% DATA ASSIMILATION FCTS
+
+    def _DA_init(self, NENS=[], ENS_times=[], parm_pert=[],update_parm_list='all'):
+        """
+        Initial preparation for DA
+
+
+        .. note::
+
+            1. update cathyH file given NENS, ENS_times + flag self.parm['DAFLAG']==True
+
+            2. create the processor cathy_origin.exe
+
+            3. create directory tree for the ensemble
+
+            4. create panda dataframe for each perturbated variable
+
+            5. update input files
+
+        Parameters
+        ----------
+        NENS : int
+            # Number of realizations in the ensemble
+        ENS_times : int
+            # Observation times
+
+        Returns
+        -------
+        None.
+
+        Note: for now only implemented for EnkF DA
+        """
+
+        self.NENS = NENS  # THIS IS TEMPORARY
+        # updated_parm_list - update_parm_list
+
+
+        if hasattr(self,'ens_valid') is False:
+            self.ens_valid = list(np.arange(0,self.NENS))
+
+        # create sub directories for each ensemble
+        # ---------------------------------------------------------------------
+        self._create_subfolders_ensemble(NENS)
+
+
+        # update list of updated parameters based on problem heterogeneity
+        # ---------------------------------------------------------------------
+
+        updated_parm_list = ['St. var.']
+        for d in self.dict_parm_pert.keys():
+            for l in update_parm_list:
+                if l in d:
+                    updated_parm_list.append(d)
+
+        return updated_parm_list
+
+
+    def _check_before_analysis(self, ens_valid=[],
+                               threshold_rejected=10):
+        '''
+        Filter is applied only on selected ensemble
+
+        Parameters
+        ----------
+        update_key : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        rejected_ens
+
+        '''
+
+        self.console.print(":white_check_mark: [b]check scenarii before analysis[/b]")
+
+        ###CHECK which scenarios are OK and which are to be rejected and then create and applied the filter
+        ###only on the selected scenarios which are to be considered.
+
+        rejected_ens_new = []
+        for n in range(self.NENS):
+
+            if n in ens_valid:
+                # print('ensemble_nb ' + str(n) + ' before update analysis')
+                try:
+                    df_mbeconv = out_CT.read_mbeconv(os.path.join(self.workdir, self.project_name,
+                                                       "DA_Ensemble/cathy_" + str(n+1),
+                                                       'output/mbeconv'))
+                    if df_mbeconv['CUM.'].isnull().values.any():
+                        rejected_ens_new.append(True)
+                        self.console.print(":x: [b]df_mbeconv['CUM.'][/b]" + str(df_mbeconv['CUM.'].isnull().values.any())+ ', ens_nb:' + str(n+1))
+
+                    elif (np.round(df_mbeconv['TIME'].iloc[-1]))<np.round(self.parm['(TIMPRT(I),I=1,NPRT)'][-1]) - self.parm['DELTAT']:
+                        rejected_ens_new.append(True)
+                        self.console.print(":x: [b]df_mbeconv['time'][/b]" + str(df_mbeconv['TIME'].iloc[-1]) + ', ens_nb:' + str(n+1))
+
+                    elif len(df_mbeconv) == 0:
+                        rejected_ens_new.append(True)
+                        self.console.print(":x: [b]len(df_mbeconv)['TIME'][/b]" + str(len(df_mbeconv))+ ', ens_nb:' + str(n+1))
+
+                    else:
+                        rejected_ens_new.append(False)
+
+                except:
+                    rejected_ens_new.append(True)
+                    print('cannot read mbeconv')
+                    pass
+                    # UnboundLocalError: local variable 'df_mbeconv' referenced before assignment
+
+            else:
+                rejected_ens_new.append(True)
+
+        #check whether the number of discarded scenarios is major than the 10% of the total number [N];
+        #if the answer is yes than the execution stops
+        # --------------------------------------------------------------------
+        if sum(rejected_ens_new)>=(threshold_rejected/100)*self.NENS:
+            print('new parameters (if updated)')
+            print(self.dict_parm_pert)
+
+            raise ValueError('% number of rejected ensemble is too high:' + str((sum(rejected_ens_new)*100)/(self.NENS)))
+
+        return  rejected_ens_new
+
+
+
+
+    def _check_after_analysis(self,update_key,list_update_parm):
+        '''
+        CHECK which scenarios parameters are OK and which one to discard
+
+        Returns
+        -------
+        None.
+
+        '''
+        self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
+
+        id_valid = [list(np.arange(0,self.NENS))]
+        id_nonvalid = []
+
+
+        def test_negative_values(update_key,pp):
+            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
+            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
+
+            for i in id_nonvalid:
+                self.console.print(":x: [b]negative" + str(pp) + ":[/b]" +
+                                   str(self.dict_parm_pert[pp[1]][update_key][i])+
+                                   ', ens_nb:' + str(i))
+            return id_nonvalid, id_valid
+
+        def test_range_values(update_key,pp,min_r,max_r):
+            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<min_r)[0]))
+            id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>max_r)[0]))
+            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>min_r)[0]))
+            id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<max_r)[0]))
+            for i in id_nonvalid:
+                self.console.print(":x: [b]out of range" + str(pp) + ":[/b]" +
+                                   str(self.dict_parm_pert[pp[1]][update_key][i])+
+                                   ', ens_nb:' + str(i))
+            return id_nonvalid, id_valid
+
+
+
+        for pp in enumerate(list_update_parm[:]):
+            if 'St. var.' in pp[1]:
+                pass
+            else:
+                if 'rFluid'.casefold() in pp[1].casefold():
+                    id_nonvalid, id_valid = test_negative_values(update_key,pp)
+                elif 'porosity'.casefold() in pp[1].casefold():
+                    id_nonvalid, id_valid = test_negative_values(update_key,pp)
+                elif 'a_Archie'.casefold() in pp[1].casefold():
+                    id_nonvalid, id_valid = test_range_values(update_key,pp, 0, 3)
+                elif 'Ks'.casefold() in pp[1].casefold():
+
+                    id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
+                    id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
+                    for i in id_nonvalid:
+                        self.console.print(":x: [b]negative Ks:[/b]" +
+                                           str(self.dict_parm_pert[pp[1]][update_key][i])+
+                                           ', ens_nb:' + str(i))
+                elif 'PCREF'.casefold() in pp[1].casefold():
+                    id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>0)[0]))
+                    id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<0)[0]))
+                    for i in id_nonvalid:
+                        self.console.print('Positive values encountered in PCREF:' +
+                              str(self.dict_parm_pert[pp[1]][update_key][i])+
+                                           ', ens_nb:' + str(i))
+                # ckeck if new value of Zroot is feasible
+                # ------------------------------------------------------------
+                elif 'Zroot'.casefold() in pp[1].casefold():
+                    id_nonvalid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]>
+                                                abs(min(self.grid3d['nodes_idxyz'][:, -1])))[0]))
+                    id_valid.append(list(np.where(self.dict_parm_pert[pp[1]][update_key]<
+                                             abs(min(self.grid3d['nodes_idxyz'][:, -1])))[0])
+                                    )
+                    for i in id_nonvalid:
+                        self.console.print(":x: [b]unfeasible root depth:[/b]" +
+                                           str(self.dict_parm_pert[pp[1]][update_key][i])+ ', ens_nb:' + str(i))
+
+        id_nonvalid_flat = [item for sublist in id_nonvalid for item in sublist]
+        id_valid = set.difference(set(list(np.arange(0,self.NENS))), set(list(np.unique(id_nonvalid_flat))))
+        return id_valid
 
         self.var_per_list = {} # dict of dict of perturbated variables parameters
 
         pass
-                   
+
     def Evensen2003(self,qk_0, wk,deltaT,Tau):
         '''
         Ensemble Generation of time-variable atmospheric forcing rates.
@@ -124,37 +343,37 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             the specified time decorrelation length
         time : int
             assimilation time index
-            
+
         Returns
         -------
-        qki : Ensemble of time-variable atmospheric forcing rates at time i 
+        qki : Ensemble of time-variable atmospheric forcing rates at time i
 
         '''
         if Tau<deltaT:
             raise ValueError('Time decorrelation length is too small; should be at least>=' + str(deltaT))
         gamma = 1 - deltaT/Tau
         qki = gamma * qk_0 + np.sqrt(1-gamma*gamma) * wk
-        
+
         return qki
-    
+
     # check if parameters in part of van Genuchten retention curves
     #----------------------------------------------------------------------
     # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
-    
+
     def Carsel_Parrish_VGN_pert(self):
 
         cholesky_diag_mat = np.diag(3)
         # VGN_means =
         # VGN_parm_per = VGN_means + cholesky_diag_mat.T*z
-    
-    # add Johnson1970 transformation in kwargs         
+
+    # add Johnson1970 transformation in kwargs
     # transformed them into normally
     # distributed variables via the Johnson system (Johnson, 1970)
-    
+
     def Johnson1970(self):
         print('not yet implemented - see Botto 2018')
-            
-            
+
+
     def sampling_dist(self,sampling_type,mean,sd,ensemble_size,**kwargs):
         # sampling
         np.random.seed(1)
@@ -173,7 +392,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         X = stats.truncnorm((myclip_a - kwargs['loc']) / kwargs['scale'], (myclip_b - kwargs['loc']) / kwargs['scale'],
                             loc=kwargs['loc'], scale=kwargs['scale'])
         return X.rvs(ensemble_size)
-        
+
     def perturbate_dist(self,parm,per_type,parm_sampling,ensemble_size):
         # pertubate
         parm_mat = np.ones(ensemble_size)*parm['nominal']
@@ -184,27 +403,27 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         elif per_type == 'additive':
             parm_per_array = parm_mat+parm_sampling
         return parm_per_array
-    
-        
-            
-    def perturbate_parm(self, parm, type_parm, mean=[], sd=[], per_type=None, 
+
+
+
+    def perturbate_parm(self, parm, type_parm, mean=[], sd=[], per_type=None,
                         sampling_type = 'lognormal',
                         ensemble_size = 128, seed=True,
                         **kwargs):
         '''
         Perturbate parameter for ensemble generation
-        
+
         Possible variable to perturbate:
             - initial conditions
             - hyetograph atmbc
             - van Genuchten retention curves parameters
             - Feddes parameters
-    
+
         Perturbation:
             - parameters with constrainsts (truncated distribution)
             - parameters time dependant
-            - other types of parameters 
-        
+            - other types of parameters
+
         Returns
         -------
         var_per : dict
@@ -217,8 +436,8 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
         # -------------------------------------------------------------------------
-        var_per[type_parm] = parm 
-        
+        var_per[type_parm] = parm
+
         key = 'sampling_type'
         var_per[type_parm][key] = sampling_type
         key = 'sampling_mean'
@@ -227,9 +446,9 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         var_per[type_parm][key] = sd
         key = 'per_type'
         var_per[type_parm][key] = per_type
-    
+
         # --------------------------------------------------------------------
-        
+
         # if 'bounds'
         if 'Archie' in type_parm:
             # a : TYPE, optional
@@ -238,7 +457,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             #     Cementation exponent. The default is [2.0]. (usually in the range 1.3 -- 2.5 for sandstones)
             # n : TYPE, optional
             #     Saturation exponent. The default is [2.0].
-           
+
             if 'rFluid' in type_parm:
                 parm_sampling = self.sampling_dist_trunc(myclip_a=0,
                                                          myclip_b=np.inf,
@@ -266,12 +485,12 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                                          scale=sd)
             else:
                 parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
-                
-                
+
+
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
-        
-        elif 'porosity' in type_parm: 
+
+        elif 'porosity' in type_parm:
             parm_sampling = self.sampling_dist_trunc(myclip_a=0,
                                                 myclip_b=1,
                                                 ensemble_size=ensemble_size,
@@ -279,7 +498,7 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                                 scale=sd)
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
-        elif 'zroot'.casefold() in type_parm.casefold(): 
+        elif 'zroot'.casefold() in type_parm.casefold():
             parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['clip_min'],
                                                      myclip_b=var_per[type_parm]['clip_max'],
                                                      ensemble_size=ensemble_size,
@@ -288,20 +507,20 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                                      )
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
-            
+
         elif 'VG' in type_parm: #van Genuchten retention curves
-            
-            print('The parameters of the van Genuchten retention curves α,' + 
-                  'n, and θ r are perturbed taking into account their mutual cor-' + 
+
+            print('The parameters of the van Genuchten retention curves α,' +
+                  'n, and θ r are perturbed taking into account their mutual cor-' +
                   'relation according to Carsel and Parrish (1988)')
-            
+
             if 'Carsel_Parrish_VGN_pert' in kwargs:
-                
+
                 utils.Carsel_Parrish_1988(soilTexture=None)
-                
+
                 self.Carsel_Parrish_VGN_pert()
-                
-                
+
+
             else:
                 if 'clip_min' in var_per[type_parm].keys():
                     parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['clip_min'],
@@ -311,20 +530,20 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                                              scale=sd
                                                              )
                 else:
-                
-                    parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
-                parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)               
 
-        elif 'atmbc' in type_parm: 
+                    parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
+                parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
+
+        elif 'atmbc' in type_parm:
             parm_sampling = self.sampling_dist(sampling_type,mean,sd,ensemble_size)
             parm_per_array = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
 
-            var_per[type_parm] = parm                
+            var_per[type_parm] = parm
             Tau = parm['time_decorrelation_len']
             wk0 = parm_per_array
             atmbc_times = parm['data2assimilate']['TIME']
             atmbc_values = parm['data2assimilate']['VALUE']
-            
+
             parm_per_array_time_variable = []
             for i, t in enumerate(atmbc_times):
                 if i==0:
@@ -334,17 +553,17 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                     qk_0 = parm_per_array_time_variable[i-1]
                     parm['nominal'] = atmbc_values[i]
                     wk = self.perturbate_dist(parm,per_type,parm_sampling,ensemble_size)
-                    
+
                     deltaT = abs(atmbc_times[i] - atmbc_times[i-1])
                     qk_i = self.Evensen2003(qk_0, wk, deltaT, Tau)
                     parm_per_array_time_variable.append(qk_i)
-            
+
             key = 'time_variable_perturbation'
             var_per[type_parm][key] = parm_per_array_time_variable
-            
+
         else:
-            # other types of parameters 
-            #---------------------------------------------------------------------- 
+            # other types of parameters
+            #----------------------------------------------------------------------
             if 'clip_min' in var_per[type_parm].keys():
                 parm_sampling = self.sampling_dist_trunc(myclip_a=var_per[type_parm]['clip_min'],
                                                          myclip_b=var_per[type_parm]['clip_max'],
@@ -380,18 +599,18 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             nb_surf_zones = kwargs['surf_zones_param']
             # parm_per_array = np.tile(parm_per_array,nb_surf_zones)
             var_per[type_parm]['surf_zones_param'] = kwargs['surf_zones_param']
-    
+
         self._add_to_perturbated_dict(var_per)
-        
+
 
         if kwargs['savefig']:
             pltCT.plot_hist_perturbated_parm(parm,var_per,type_parm,parm_per_array,
                                              **kwargs
                                              )
-            
-        return self.var_per_list 
-    
-    
+
+        return self.var_per_list
+
+
     def _add_to_perturbated_dict(self,var_per_2add):
         '''
         Update dict of perturbated variable.
@@ -416,52 +635,54 @@ class DA(): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         '''
 
-        if not os.path.exists(os.path.join(self.workdir, self.project_name, 
+        if not os.path.exists(os.path.join(self.workdir, self.project_name,
                                            "DA_Ensemble/cathy_origin")):
-            os.makedirs(os.path.join(self.workdir, self.project_name, 
+            os.makedirs(os.path.join(self.workdir, self.project_name,
                                      "DA_Ensemble/cathy_origin"))
-            
+
             # copy input, output and vtk dir
-            for dir2copy in enumerate(['input','output','vtk']):                
-                shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]), 
-                                os.path.join(self.workdir, self.project_name, 
+            for dir2copy in enumerate(['input','output','vtk']):
+                shutil.copytree(os.path.join(self.workdir, self.project_name, dir2copy[1]),
+                                os.path.join(self.workdir, self.project_name,
                                              "DA_Ensemble/cathy_origin", dir2copy[1])
                 )
-        
+
         try:
             # copy exe into cathy_origin folder
             shutil.move(
                 os.path.join(self.workdir, self.project_name, self.processor_name),
-                os.path.join(self.workdir, self.project_name, 
+                os.path.join(self.workdir, self.project_name,
                              "DA_Ensemble/cathy_origin", self.processor_name)
             )
             # copy cathy.fnames into cathy_origin folder
             shutil.copy(
-                os.path.join(self.workdir, self.project_name, 
+                os.path.join(self.workdir, self.project_name,
                              'cathy.fnames'),
-                os.path.join(self.workdir, self.project_name, 
+                os.path.join(self.workdir, self.project_name,
                              "DA_Ensemble/cathy_origin/cathy.fnames")
-            ) 
-            # copy prepro into cathy_origin folder            
-            shutil.copytree(os.path.join(self.workdir,  self.project_name, 
+            )
+            # copy prepro into cathy_origin folder
+            shutil.copytree(os.path.join(self.workdir,  self.project_name,
                                          'prepro'),
-                        os.path.join(self.workdir, self.project_name, 
+                        os.path.join(self.workdir, self.project_name,
                                      "DA_Ensemble/cathy_origin/prepro"))
-                        
-                        
+
+
         except:
             self.console.print(":worried_face: [b]processor exe not found[/b]")
 
-            
+
         path_origin = os.path.join(self.workdir, self.project_name,
                                    "DA_Ensemble/cathy_origin")
-        
+
         # copy origin folder to each ensemble subfolders
         for i in range(NENS):
-            path_nudn_i =  os.path.join(self.workdir, self.project_name, 
-                                        "DA_Ensemble/cathy_" + str(i+1))  
-            
+            path_nudn_i =  os.path.join(self.workdir, self.project_name,
+                                        "DA_Ensemble/cathy_" + str(i+1))
+
             if not os.path.exists(path_nudn_i):
                 shutil.copytree(
                     path_origin, path_nudn_i
                 )
+
+
