@@ -11,8 +11,16 @@ import pandas as pd
 import shutil
 from pyCATHY.cathy_tools import CATHY
 from pyCATHY.DA import enkf, pf
-from pyCATHY.plotters import cathy_plots as pltCT
-import pyCATHY.cathy_utils as utils
+from pyCATHY.plotters import cathy_plots as plt_CT
+
+import re
+from pyCATHY.importers import cathy_outputs as out_CT
+from pyCATHY.importers import cathy_inputs as in_CT
+from pyCATHY.importers import sensors_measures as in_meas
+from pyCATHY.ERT import petro_Archie as Archie
+from pyCATHY import cathy_utils as utils_CT
+
+
 
 
 def run_analysis(DA_type,
@@ -118,9 +126,9 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
     #self.processor_name
     #self.console
 
-        self.var_per_list = [] # list of variable perturbated 
+        self.var_per_list = [] # list of variable perturbated
     pass
-    
+
     # -------------------------------------------------------------------#
     # %% DATA ASSIMILATION FCTS
 
@@ -326,7 +334,6 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         id_valid = set.difference(set(list(np.arange(0,self.NENS))), set(list(np.unique(id_nonvalid_flat))))
         return id_valid
 
-        self.var_per_list = {} # dict of dict of perturbated variables parameters
 
         pass
 
@@ -604,7 +611,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
         if kwargs['savefig']:
-            pltCT.plot_hist_perturbated_parm(parm,var_per,type_parm,parm_per_array,
+            plt_CT.plot_hist_perturbated_parm(parm,var_per,type_parm,parm_per_array,
                                              **kwargs
                                              )
 
@@ -684,5 +691,3 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 shutil.copytree(
                     path_origin, path_nudn_i
                 )
-
-
