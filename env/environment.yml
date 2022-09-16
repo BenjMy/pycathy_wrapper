@@ -1,0 +1,26 @@
+name: pyCATHY
+channels:
+- conda-forge
+- default
+dependencies:
+- gcc_linux-64
+- gfortran_linux-64
+- cmake
+- make
+- m4
+- git
+- pip
+- pip:
+  - numpy
+  - GitPython 
+  - pyvistaqt
+  - itkwidgets
+  - jupyter
+  - sphinx
+  - sphinx-gallery
+  - sphinx_bootstrap_theme
+  - numpydoc
+  - PVGeo
+  - soiltexture
+  - SALib
+

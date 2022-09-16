@@ -1,0 +1,77 @@
+.. automodule:: pyCATHY
+
+.. currentmodule:: pyCATHY
+
+
+
+Tools
+-----
+
+.. autosummary::
+    :toctree: generated/
+    
+    cathy_tools
+    meshtools
+    cathy_utils
+
+.. currentmodule:: pyCATHY.importers
+
+
+Importers
+---------
+
+.. autosummary::
+    :toctree: generated/
+    
+    cathy_outputs
+    
+
+.. autosummary::
+    :toctree: generated/
+    
+    cathy_inputs
+    
+
+.. currentmodule:: pyCATHY.plotters
+
+Plotting
+--------
+
+.. autosummary::
+    :toctree: generated/
+    
+    cathy_plots
+    
+
+.. currentmodule:: pyCATHY
+
+Sensitivity analysis
+--------------------
+
+.. autosummary::
+    :toctree: generated/
+    
+    sensitivity
+    
+
+.. currentmodule:: pyCATHY.DA
+
+Data assimilation
+-----------------
+
+.. autosummary::
+    :toctree: generated/
+    
+    cathy_DA
+ 
+.. currentmodule:: pyCATHY.ERT
+   
+ERT
+---
+
+.. autosummary::
+    :toctree: generated/
+    
+    petro_Archie
+    simulate_ERT
+    

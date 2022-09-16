@@ -1,0 +1,23 @@
+
+
+Examples using ``pyCATHY.cathy_tools.CATHY.run_processor``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
+
+.. only:: html
+
+ .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_weilletal_thumb.png
+     :alt: Weil et al example
+
+     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`
