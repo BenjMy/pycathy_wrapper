@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>ERT.simulate_ERT.R2 | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
@@ -141,6 +143,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -762,6 +769,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../references.html">
    References
   </a>
@@ -880,8 +892,8 @@
             
               <div>
                 
-  <div class="section" id="ert-simulate-ert-r2">
-<h1>ERT.simulate_ERT.R2<a class="headerlink" href="#ert-simulate-ert-r2" title="Permalink to this headline">¶</a></h1>
+  <section id="ert-simulate-ert-r2">
+<h1>ERT.simulate_ERT.R2<a class="headerlink" href="#ert-simulate-ert-r2" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ERT.simulate_ERT.</span></span><span class="sig-name descname"><span class="pre">R2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/resipy/Project.html#R2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ERT.simulate_ERT.R2" title="Permalink to this definition">¶</a></dt>
@@ -889,10 +901,6 @@
 
 <p class="rubric">Methods Summary</p>
 <table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#ERT.simulate_ERT.R2.addData" title="ERT.simulate_ERT.R2.addData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">R2.addData</span></code></a>(**kwargs)</p></td>
 <td><p>Adds data to the survey - used usually to add reciprocal datasets</p></td>
@@ -1226,7 +1234,7 @@
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">addData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.addData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds data to the survey - used usually to add reciprocal datasets</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>**kwargs</strong> (<em>Keyword arguments to be passed to Survey.addData</em><em>(</em><em>)</em>) – </p>
 </dd>
 </dl>
@@ -1246,7 +1254,7 @@ the class). This action is irreversable. Use case is for simulating
 modelling errors in unconventional surveys.</p>
 <p>resError = res*(percent/100) + resError</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>percent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Error in percent.</p>
 </dd>
 </dl>
@@ -1258,7 +1266,7 @@ modelling errors in unconventional surveys.</p>
 <dd><p>Add region according to a polyline defined by <cite>xz</cite> and assign it
 the starting resistivity <cite>res0</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xz</strong> (<em>array</em>) – Array with two columns for the x and y coordinates.</p></li>
 <li><p><strong>res0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Resistivity values of the defined area.</p></li>
@@ -1288,7 +1296,7 @@ region.</p></li>
 <p>NOTE: this function present a security risk as it allows execution
 of python code inputed by the user. It should be used with caution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Formula as a string. All attribute already in the mesh object are
 available from the x dictionary and can be sed as x[‘nameOfAttribute’].
@@ -1329,7 +1337,7 @@ region below the surface.</p>
 <dd><p>Compute modelling error associated with the mesh.
 This is computed on a flat triangular or tetrahedral mesh.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rmTree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Remove the working directory used for the error modelling. Default
 is True.</p>
 </dd>
@@ -1341,7 +1349,7 @@ is True.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">create3DSurvey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zigzag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Syscal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.create3DSurvey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a 3D survey based on 2D regularly spaced surveys.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fname</strong> (<em>list of str</em>) – List of 2D filenames in the right order for the grid or directory
 name (the files will be sorted alphabetically in this last case).</p></li>
@@ -1366,7 +1374,7 @@ and share its label accross the lines.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">createBatchSurvey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Syscal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isurveys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.createBatchSurvey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read multiples files from a folders (sorted by alphabetical order).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Directory with files to be parsed.</p></li>
 <li><p><strong>ftype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Type of file to be parsed. Either ‘Syscal’ or ‘Protocol’.</p></li>
@@ -1385,10 +1393,10 @@ and so on will be displayed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.createMesh">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">createMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buried</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.createMesh" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">createMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buried</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.createMesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a mesh.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>typ</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – <p>Type of mesh.
 For 2D:</p>
@@ -1466,7 +1474,7 @@ Specific for ‘tank mesh’:</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">createModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'poly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addAction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.createModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interactive model creation for forward modelling.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.5.3)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>optional</em>) – Axes to which the graph will be plotted.</p></li>
 <li><p><strong>dump</strong> (<em>function</em><em>, </em><em>optional</em>) – Function that outputs messages from the interactive model creation.</p></li>
@@ -1476,7 +1484,7 @@ rectangle.</p></li>
 GUI purpose).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib.figure</em>) – If <cite>ax</cite> is <cite>None</cite>, will return a figure.</p>
 </dd>
 </dl>
@@ -1495,7 +1503,7 @@ GUI purpose).</p></li>
 <dd><p>Create a triangular mesh given the designed geometry by
 R2.designModel().</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>R2.createMesh</strong><strong>(</strong><strong>)</strong><strong>.</strong> (<em>All parameters to be passed are similar to</em>) – </p>
 </dd>
 </dl>
@@ -1506,7 +1514,7 @@ R2.designModel().</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">createMultiMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runParallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.createMultiMesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create multiple meshes from avalable Projects in self.projs.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>runParallel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – if True, mesh generation will run in multiple threads.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to be passed to mesh generation schemes</p></li>
@@ -1523,7 +1531,7 @@ R2.designModel().</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dirname</strong> (<em>list of str</em>) – List of 2D filenames in the right order for the grid or directory
 name (the files will be sorted alphabetically in this last case).</p></li>
@@ -1540,7 +1548,7 @@ name (the files will be sorted alphabetically in this last case).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">createSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[('dpdp1',</span> <span class="pre">1,</span> <span class="pre">8)]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seqIdx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.createSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a forward modelling sequence, see examples below for usage.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>params</strong> (<em>list of tuple</em><em>, </em><em>optional</em>) – Each tuple is the form (&lt;array_name&gt;, param1, param2, …)
 Types of sequences available are : ‘dpdp1’,’dpdp2’,’wenner_alpha’,
@@ -1578,7 +1586,7 @@ of a list means that sequences can be of different lengths.</p></li>
 <dd><p>Read electrodes and quadrupoles data and return
 a survey object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Filename to be parsed.</p></li>
 <li><p><strong>ftype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Type of file to be parsed. Either ‘Syscal’,’ProtocolDC’,’ResInv’,
@@ -1600,7 +1608,7 @@ filtering, etc. will be displayed.</p></li>
 <dd><p>Read electrodes and quadrupoles data and return
 a survey object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> or </em><em>list of str</em>) – Directory with files to be parsed or list of file to be parsed.</p></li>
 <li><p><strong>ftype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Type of file to be parsed. Either ‘Syscal’ or ‘Protocol’.</p></li>
@@ -1626,7 +1634,7 @@ As opposite to R2.createModel(). R2.designModel() allows to draw mesh
 region <strong>before</strong> meshing. This allows to have straight boundaries for
 triangular mesh.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.5.3)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>optional</em>) – Axes to which the graph will be plotted.</p></li>
 <li><p><strong>dump</strong> (<em>function</em><em>, </em><em>optional</em>) – Function that outputs messages from the interactive model creation.</p></li>
@@ -1637,7 +1645,7 @@ GUI purpose).</p></li>
 <li><p><strong>fmd</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Depth of of interest specifies as a relative positive number from the surface.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib.figure</em>) – If <cite>ax</cite> is <cite>None</cite>, will return a figure.</p>
 </dd>
 </dl>
@@ -1648,7 +1656,7 @@ GUI purpose).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">detectStrings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.detectStrings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Automatically detect electrode strings</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum (+/-) bearing (ie directional angle) tolerance each subsiquent
 electrode may have. The default is 5.</p></li>
@@ -1656,7 +1664,7 @@ electrode may have. The default is 5.</p></li>
 nieghbouring electrodes. The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – if the change in x and y direction for 2 neighbouring electrodes is
     the same. ie no 2 electrodes can occupy the same x y position in
@@ -1664,7 +1672,7 @@ nieghbouring electrodes. The default is None.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – if the change maxium number of searches is exceeded.</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>list (of list)</em> – Each entry in the list corresponds to an electrode string, and is
 a list of integers which are the indices of the respective electrodes
 in self.elec</p>
@@ -1681,7 +1689,7 @@ If self.elec has been set then each survey will use the electrodes set
 in the R2 master class. If not then the R2 master class will take on the
 elec values set for the first survey in a sequence.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yDominant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – If electrodes are prodimently spaced in the y direction then set yDominant
 to True.</p></li>
@@ -1700,7 +1708,7 @@ survey, using the same routine present in R2. This allows for the
 additional inclusion of modelling errors. It could be used when the user
 want to assign invidual errors based on a_wgt/b_wgt. This action is irreversable.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>a_wgt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – a_wgt documented in the R2 documentation</p></li>
 <li><p><strong>b_wgt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – b_wgt documented in the R2 documentation</p></li>
@@ -1711,10 +1719,10 @@ want to assign invidual errors based on a_wgt/b_wgt. This action is irreversable
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterAppResist">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterAppResist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterAppResist" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterAppResist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterAppResist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter measurements by apparent resistivity for surface surveys</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum value.</p></li>
 <li><p><strong>vmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum value.</p></li>
@@ -1728,13 +1736,13 @@ processing is to be applied to all surveys then specifiy
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterDCA">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterDCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterDCA" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterDCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterDCA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute DCA filtering. Decay Curve Analysis (DCA) based on.
 Flores Orozco, A., Gallistl, J., Bücker, M., &amp; Williams, K. H. (2017).,
 Decay curve analysis for data error quantification in time-domain induced polarization imaging.,
 Geophysics, 83(2), 1–48. <a class="reference external" href="https://doi.org/10.1190/geo2016-0714.1">https://doi.org/10.1190/geo2016-0714.1</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to use for processing. Default <cite>index == -1</cite>
 will apply the processing to all surveys.</p></li>
@@ -1746,11 +1754,11 @@ will apply the processing to all surveys.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterDummy">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterDummy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterDummy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterDummy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterDummy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove measurements where abs(a-b) != abs(m-n) (likely to be dummy
 measurements added for speed).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to process. If <cite>index == -1</cite> (default) then the
 processing is applied on all survey independantly.</p>
 </dd>
@@ -1759,10 +1767,10 @@ processing is applied on all survey independantly.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterElec">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterElec" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterElec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter out measurements associated with specific electrodes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – List of electrode number to be removed.</p></li>
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey on which to apply the processing. If the
@@ -1775,10 +1783,10 @@ processing is to be applied to all surveys then specifiy
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterInvError">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterInvError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterInvError" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterInvError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterInvError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove measurements where inversion error is outside of the defined range.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – minimum value of normalized error below which data will be discarded.</p></li>
 <li><p><strong>vmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – maximum value of normalized error above which data will be discarded.</p></li>
@@ -1791,7 +1799,7 @@ processing is applied on all survey independantly.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterManual">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterManual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterManual" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterManual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterManual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interactive manually filters the data visually. The manually selected
 points index are stored in <cite>Survey.iselect</cite> or <cite>Survey.eselect``if it is
 an electrodes. Use `Survey.filterData()</cite> to filter them out for a single
@@ -1807,11 +1815,11 @@ survey. Or <cite>R2._filterSimilarQuads()</cite> to filter quadrupoles amongs al
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterNested">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterNested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterNested" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterNested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterNested" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes nested measurements:
 Where M or N are in between A and B.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. If <cite>index == -1</cite> (default) then the fit
 is done on all surveys independantly.
 If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p>
@@ -1821,10 +1829,10 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterRangeIP">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterRangeIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phimin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phimax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterRangeIP" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterRangeIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phimin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phimax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterRangeIP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter IP data according to a specified range.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. If <cite>index == -1</cite> (default)
 then the fit is done on all surveys independantly.</p></li>
@@ -1837,10 +1845,10 @@ then the fit is done on all surveys independantly.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterRecip">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterRecip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterRecip" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterRecip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterRecip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter on reciprocal errors.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey on which to apply the processing. If the
 processing is to be applied to all surveys then specifiy
@@ -1861,10 +1869,10 @@ passed to :func: <cite>~resipy.Survey.filterRecipIP</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterStack">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterStack" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterStack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter on stacking (dev) errors.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey on which to apply the processing. If the
 processing is to be applied to all surveys then specifiy
@@ -1878,10 +1886,10 @@ discarded. 2% by default.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterTransferRes">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterTransferRes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterTransferRes" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterTransferRes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterTransferRes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter measurements by transfer resistance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum value.</p></li>
 <li><p><strong>vmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum value.</p></li>
@@ -1895,11 +1903,11 @@ processing is to be applied to all surveys then specifiy
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.filterUnpaired">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterUnpaired</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterUnpaired" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">filterUnpaired</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.filterUnpaired" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove quadrupoles that don’t have reciprocals. This might
 remove dummy measurements added for sequence optimization.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey on which to apply the processing. If the
 processing is to be applied to all surveys then specifiy
 <cite>index=-1</cite> (default).</p>
@@ -1916,11 +1924,11 @@ are actually left.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.fitErrorLME">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorLME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorLME" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorLME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorLME" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a linear mixed effect (LME) model by having the electrodes as
 as grouping variables.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fit</strong> (<em>Index of the survey to fit. If index == -1</em><em> (</em><em>default</em><em>) </em><em>then the</em>) – is done on all surveys independantly.
 If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></li>
@@ -1935,10 +1943,10 @@ otherwise a new figure will be created.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.fitErrorLin">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorLin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorLin" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorLin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorLin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a linear relationship to the resistivity data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. If <cite>index == -1</cite> (default) then the fit
 is done on all surveys independantly.
@@ -1946,7 +1954,7 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -1954,10 +1962,10 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.fitErrorParabolaIP">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorParabolaIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorParabolaIP" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorParabolaIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorParabolaIP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the reciprocal phase errors with a parabola fit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. If <cite>index == -1</cite> (default) then the fit
 is done on all surveys independantly.
@@ -1965,7 +1973,7 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -1973,10 +1981,10 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.fitErrorPwl">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorPwl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorPwl" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorPwl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorPwl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit an power law to the resistivity data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. If <cite>index == -1</cite> (default) then the fit
 is done on all surveys independantly.
@@ -1984,7 +1992,7 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -1992,10 +2000,10 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.fitErrorPwlIP">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorPwlIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorPwlIP" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">fitErrorPwlIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.fitErrorPwlIP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the reciprocal phase errors with a power-law fit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. If <cite>index == -1</cite> (default) then the fit
 is done on all surveys independantly.
@@ -2003,7 +2011,7 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -2015,7 +2023,7 @@ If <cite>ìndex == -2</cite> then the fit is done on the combined surveys.</p></
 <dd><p>Display legend items with survey names in the case of fitting
 individual error models to multiple data sets.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ax</strong> (<em>matplotlib axes</em>) – Axes handle with reciprocal error plots in it.</p>
 </dd>
 </dl>
@@ -2026,7 +2034,7 @@ individual error models to multiple data sets.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noiseIP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Operates forward modelling.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>noise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional 0% &lt;= noise &lt;= 100%</em>) – Noise level in percent from a Gaussian distribution that should be
 applied on the forward apparent resistivities obtained.</p></li>
@@ -2044,7 +2052,7 @@ on the forward phase values obtained.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">generateElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.generateElec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate electrodes positions for 2D and 3D surveys.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Number of electrodes per line. For 3D survey, if multiple lines,
 the total number of electrodes will be nb x nline.</p></li>
@@ -2067,7 +2075,7 @@ the total number of electrodes will be nb x nline.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">getR2out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.getR2out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reat the .out file and parse its content.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>Dataframe with the dataset name, and the RMS decrease for each iteration.</em></p>
 </dd>
 </dl>
@@ -2079,7 +2087,7 @@ the total number of electrodes will be nb x nline.</p></li>
 <dd><p>Collect inverted results after running the inversion and adding
 them to <cite>R2.meshResults</cite> list.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – If specified, dirname will be used as the working directory (this
 is needed for R2.loadResults()). Default is self.dirname.</p>
 </dd>
@@ -2091,7 +2099,7 @@ is needed for R2.loadResults()). Default is self.dirname.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">hasElecString</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.hasElecString" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine if a electrode strings are present in the electrode labels</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>bool</em> – True if strings present in electrode label</p>
 </dd>
 </dl>
@@ -2102,7 +2110,7 @@ is needed for R2.loadResults()). Default is self.dirname.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">importElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.importElec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import electrodes positions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path of the CSV file containing the electrodes positions. It should contains 3 columns maximum with the X, Y, Z positions of the electrodes.</p>
 </dd>
 </dl>
@@ -2114,7 +2122,7 @@ is needed for R2.loadResults()). Default is self.dirname.</p>
 <dd><p>Import mesh from .vtk / .msh / .dat, rather than having ResIPy
 create one for you.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path mapping to the mesh file</p></li>
 <li><p><strong>mesh_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Not used anymore.</p></li>
@@ -2141,7 +2149,7 @@ number separated by space (like in 3D):</p>
 1 5,1,2,1</p>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path of the CSV file containing the electrodes positions. It should contains 3 columns maximum with the X, Y, Z positions of the electrodes.</p>
 </dd>
 </dl>
@@ -2152,7 +2160,7 @@ number separated by space (like in 3D):</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">importSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.importSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import sequence for forward modelling.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path of the CSV file to be imported. The file must have 4 columns with headers (a, b, m, n) containing 4 electrodes numbers.</p>
 </dd>
 </dl>
@@ -2164,7 +2172,7 @@ number separated by space (like in 3D):</p>
 <dd><p>Invert the data, first generate R2.in file, then run
 inversion using appropriate wrapper, then return results.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of parameters for inversion. Will be passed to
 <cite>R2.write2in()</cite>.</p></li>
@@ -2195,7 +2203,7 @@ Note that this option is only available for <em>single</em> survey.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">invertPseudo3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invLog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runParallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.invertPseudo3D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run pseudo3D inversions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>invLog</strong> (<em>function</em><em>, </em><em>optional</em>) – Passes project inversion outputs.</p></li>
 <li><p><strong>runParallel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if True, inversions will run in parallel based on number of CPU cores.</p></li>
@@ -2210,7 +2218,7 @@ Note that this option is only available for <em>single</em> survey.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">loadProject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.loadProject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load data from project file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path where the file will be saved.</p>
 </dd>
 </dl>
@@ -2222,7 +2230,7 @@ Note that this option is only available for <em>single</em> survey.</p></li>
 <dd><p>Given working directory, will attempt to load the results of an
 already run inversion.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>invdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path to the inversion directory.</p>
 </dd>
 </dl>
@@ -2242,14 +2250,14 @@ where all datasets must have the same number of quadrupoles.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.mergeElec">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">mergeElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.mergeElec" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">mergeElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.mergeElec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge electrodes that have less than a certain distance to eache other</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – maximum distance of close electrodes in meters (electrodes that have a distance less than dist will be merged)
 -1 flag for auto calculation where dist = average(electrode spacing)/100</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>bool</em> – True: merge successful
 False: merge unsuccessful</p>
 </dd>
@@ -2290,7 +2298,7 @@ starting model to invert data from forward modelling.</p>
 <dd><p>Run several instances of R2 in parallel according to the number of
 cores available.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Path of the working directory.</p></li>
 <li><p><strong>dump</strong> (<em>function</em><em>, </em><em>optional</em>) – Function to be passed to <cite>R2.runR2()</cite> for printing output during
@@ -2311,7 +2319,7 @@ Default is True.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">runR2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.runR2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the executable in charge of the inversion.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Path of the directory where to run the inversion code.</p></li>
 <li><p><strong>dump</strong> (<em>function</em><em>, </em><em>optional</em>) – Function to print the output of the invrsion code while running.</p></li>
@@ -2326,7 +2334,7 @@ Default is True.</p></li>
 <dd><p>Save all data (_res.dat, .vtk, …) from the working directory
 generated during inversion to the designated directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path to the directory to save the files.</p>
 </dd>
 </dl>
@@ -2338,7 +2346,7 @@ generated during inversion to the designated directory.</p>
 <dd><p>Save quadruople, resistance, phase and their respective reciprocal
 errors as .csv file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path where to save the file.</p>
 </dd>
 </dl>
@@ -2349,7 +2357,7 @@ errors as .csv file.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">saveFilteredData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savetyp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Res2DInv</span> <span class="pre">(*.dat)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.saveFilteredData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save filtered data in formats to be used outside ResIPy (e.g. Res2DInv).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path where to save the file.</p></li>
 <li><p><strong>savetyp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Saving format. To be determined in GUI. Default: Res2DInv (.dat)</p></li>
@@ -2364,7 +2372,7 @@ errors as .csv file.</p>
 <dd><p>Save all plots to output (or working directory). Parameters
 are passed to the <cite>showResults()</cite> method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Path of the output directory. Default is the working directory.</p>
 </dd>
 </dl>
@@ -2375,7 +2383,7 @@ are passed to the <cite>showResults()</cite> method.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">saveMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.saveMesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save mesh as .vtk to be viewed in paraview.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>outputname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – <dl class="simple">
 <dt>Output path with extension. Available mesh format are:</dt><dd><ul class="simple">
 <li><p>.vtk (Paraview)</p></li>
@@ -2396,7 +2404,7 @@ as mesh.vtk.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">saveMeshVtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.saveMeshVtk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save mesh as .vtk to be viewed in paraview.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>outputname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Output path of the .vtk produced. By default the mesh is saved in
 the working directory <cite>self.dirname</cite> as <cite>mesh.vtk</cite>.</p>
 </dd>
@@ -2415,7 +2423,7 @@ ResIPy format (.resipy) for future importation.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">saveSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.saveSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save sequence as .csv file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Path where to save the sequence.</p>
 </dd>
 </dl>
@@ -2426,7 +2434,7 @@ ResIPy format (.resipy) for future importation.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">saveVtks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.saveVtks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save vtk files of inversion results to a specified directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Directory in which results will be saved. Default is the working directory.</p>
 </dd>
 </dl>
@@ -2443,7 +2451,7 @@ ResIPy format (.resipy) for future importation.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">setElec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elecList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.setElec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set electrodes. Automatically identified remote electrode.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elec</strong> (<em>numpy array</em>) – Array of NxM dimensions. N = number of electrodes, M = 2 for x,z or
 M = 3 if x,y,z coordinates are supplied.</p></li>
@@ -2462,10 +2470,10 @@ of ‘elec’, which is then assigned to each survey class.</p></li>
 <dd><p>Set the number of cores to use for big calculations, for now
 this value only to mesh generation and calculations done on 3D meshes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ncores</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of cores to use</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#EnvironmentError" title="(in Python v3.10)"><strong>EnvironmentError</strong></a> – Raised if ncores is more than that avialable</p>
 </dd>
 </dl>
@@ -2479,7 +2487,7 @@ this value only to mesh generation and calculations done on 3D meshes.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>elecList</strong> (<em>list of dataframes</em><em>, </em><em>optional</em>) – List of electrodes dataframes - each df must have 2D like XYZ (rotated to have y=0).</p>
 </dd>
 </dl>
@@ -2495,7 +2503,7 @@ of elements, this method requires a vector of the same length as the
 number of elements. This enables, notably to manually perform consecutive
 background constrained inversion.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>res0</strong> (<em>array like</em>) – Array of resistivity values, ideally from a previous inversion. The
 length of this array should be the same as the number of elements.</p>
 </dd>
@@ -2507,7 +2515,7 @@ length of this array should be the same as the number of elements.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">setStartingRes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regionValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoneValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixedValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.setStartingRes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign starting resitivity values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>regionValues</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionnary with key being the region number and the value being
 the resistivity in [Ohm.m].</p></li>
@@ -2539,7 +2547,7 @@ the phase [mrad].</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">setwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.setwd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the working directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path of the working directory.</p>
 </dd>
 </dl>
@@ -2550,7 +2558,7 @@ the phase [mrad].</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the reciprocal errors.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to plot. If <cite>index == -1</cite> then all combined
 data of all survey will be plotted together. Default is to plot
@@ -2558,7 +2566,7 @@ the first survey (<cite>index==0</cite>).</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -2571,7 +2579,7 @@ the first survey (<cite>index==0</cite>).</p></li>
 Good data will have a bell shape (normal) distribution where most datapoints have near
 zero reciprocal error.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to plot. Default is first survey <cite>index == 0</cite>.
 If <cite>index == -2</cite> then the error distribution of the combined data
@@ -2588,7 +2596,7 @@ will be plotted.</p></li>
 <dd><p>Plot the reciprocal phase discrepancies against the reciprocal mean
 transfer resistance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to show. Default is the first survey
 <cite>index == 0</cite>. If <cite>ìndex == -2</cite> then the combined data from all
@@ -2596,7 +2604,7 @@ surveys are shown.</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib.Figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -2610,14 +2618,14 @@ Orozco, A. F., K. H. Williams, and A. Kemna (2013),
 Time-lapse spectral induced polarization imaging of stimulated uranium bioremediation,
 Near Surf. Geophys., 11(5), 531–544, doi:10.3997/1873-0604.2013020)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to fit. Default is the first survey
 <cite>index == 0</cite>.</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig</strong> (<em>matplotlib figure, optional</em>) – If ax is not specified, the function will return a figure object.</p>
 </dd>
 </dl>
@@ -2628,7 +2636,7 @@ Near Surf. Geophys., 11(5), 531–544, doi:10.3997/1873-0604.2013020)</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showInParaview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paraview_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showInParaview" title="Permalink to this definition">¶</a></dt>
 <dd><p>Open paraview to display the .vtk file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Timestep to be shown in paraview (for an individual survey this 1).</p></li>
 <li><p><strong>paraview_loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – <strong>Windows ONLY</strong> maps to the excuatable paraview.exe. The program
@@ -2643,7 +2651,7 @@ will attempt to find the location of the paraview install if not given.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showInvError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showInvError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display inversion error by measurment numbers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of survey (if time-lapse or batch). Default <cite>index == 0</cite>.</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em>) – If provided, the graph will be plotted against this axis.</p></li>
@@ -2654,10 +2662,10 @@ will attempt to find the location of the paraview install if not given.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ERT.simulate_ERT.R2.showIter">
-<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showIter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelDOI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropMaxDepth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showIter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showIter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelDOI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropMaxDepth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showIter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dispay temporary inverted section after each iteration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Iteration number to show.</p></li>
 <li><p><strong>ax</strong> (<em>matplotib axis</em><em>, </em><em>optional</em>) – If specified, the graph will be plotted along <cite>ax</cite>.</p></li>
@@ -2680,7 +2688,7 @@ method to look for an R2 looking iteration file.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showMeshInParaview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paraview_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showMeshInParaview" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mesh in paraview (mostly useful for 3D surveys.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>paraview_loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – <strong>Windows ONLY</strong> maps to the excuatable paraview.exe. The program
 will attempt to find the location of the paraview install if not given.</p>
 </dd>
@@ -2698,7 +2706,7 @@ will attempt to find the location of the paraview install if not given.</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showPseudo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showPseudo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot pseudo-section with dots.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to be used for the pseudo-section (in case of
 timelapse or batch).</p></li>
@@ -2716,7 +2724,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showPseudo3DMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Greys'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropMesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_bar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnMesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropMaxDepth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clipCorners</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvshow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showPseudo3DMesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show 2D meshes in 3D view</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If specified, graph will be plotted on the given axis.</p></li>
 <li><p><strong>color_map</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the colormap to be used.</p></li>
@@ -2738,7 +2746,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showPseudo3DResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cropMesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showPseudo3DResults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show 2D Inversions in 3D view</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cropMesh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, 2D mesh will be bound to electrodes and zlim.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to be passed to showPseudo3DMesh().</p></li>
@@ -2752,7 +2760,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showPseudoIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showPseudoIP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot pseudo-section with dots for IP data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey to be used for the pseudo-section (in case of
 timelapse or batch).</p></li>
@@ -2770,7 +2778,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showPseudoInvError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showPseudoInvError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot pseudo section of errors from file <cite>f001_err.dat</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey (if time-lapse or batch). Default <cite>index == 0</cite>.</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em>) – If specified, the graph will be plotted against <cite>ax</cite>.</p></li>
@@ -2787,7 +2795,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showPseudoInvErrorIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showPseudoInvErrorIP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display normalized phase error.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey (if time-lapse or batch). Default <cite>index == 0</cite>.</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em>) – If specified, the graph will be plotted against <cite>ax</cite>.</p></li>
@@ -2803,7 +2811,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showRMS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showRMS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the RMS decrease for each iteration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the dataset for which to plot the RMS.</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib axis</em><em>, </em><em>optional</em>) – If provided, the graph will be plotted against it.</p></li>
@@ -2817,7 +2825,7 @@ timelapse or batch).</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doiSens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropMaxDepth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clipContour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clipCorners</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pyvista</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.8,</span> <span class="pre">0.8,</span> <span class="pre">0.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvslices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">([],</span> <span class="pre">[],</span> <span class="pre">[])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvthreshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvgrid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvcontour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvdelaunay3d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showResults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the inverteds section.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the inverted section (mainly in the case of time-lapse
 inversion). If index == -1, then all 2D survey will be plotted
@@ -2860,7 +2868,7 @@ a slice normal to X in 3 and two slices normal to Z in -3 and -4.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">showSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'z'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.showSlice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show slice of 3D mesh interactively.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>, </em><em>optional</em>) – Index of the survey. Default is first survey (index == 0).</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.Axes</em><em>, </em><em>optional</em>) – Axis on which to plot the graph.</p></li>
@@ -2878,14 +2886,14 @@ a slice normal to X in 3 and two slices normal to Z in -3 and -4.</p></li>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">split3DGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">changeLabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.split3DGrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split self.elec to available lines based on ‘label’</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elec</strong> (<em>dataframe</em><em>, </em><em>optional</em>) – Contains the electrodes information. “label” column must be provided and
 have “&lt;line number&gt; &lt;electrode number&gt;” format.</p></li>
 <li><p><strong>changeLable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, the line number will be dropped from labels - Flase for GUI related surveys.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>elecList</strong> (<em>list of dataframes</em>) – List of electrodes dataframes - each df can have a 3D like XYZ.</p>
 </dd>
 </dl>
@@ -2903,7 +2911,7 @@ Use for 2D data only!</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">write2in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.write2in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create configuration file for inversion. Write mesh.dat and res0.dat.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>param</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Dictionnary of parameters and values for the inversion settings.</p>
 </dd>
 </dl>
@@ -2914,7 +2922,7 @@ Use for 2D data only!</p>
 <span class="sig-prename descclassname"><span class="pre">R2.</span></span><span class="sig-name descname"><span class="pre">write2protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errTot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fm0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ERT.simulate_ERT.R2.write2protocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a protocol.dat file for the inversion code.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>err</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> error columns will be written in protocol.dat provided
 an error model has been fitted or errors have been imported.</p></li>
@@ -2929,7 +2937,7 @@ the reference survey as transfer resistance (Ohm).</p></li>
 </dl>
 </dd></dl>
 
-<div style='clear:both'></div></div>
+<div style='clear:both'></div></section>
 
 
               </div>
@@ -2961,7 +2969,7 @@ the reference survey as transfer resistance (Ohm).</p></li>
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

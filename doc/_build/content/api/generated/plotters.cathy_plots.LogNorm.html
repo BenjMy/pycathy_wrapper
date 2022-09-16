@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>plotters.cathy_plots.LogNorm | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
@@ -141,6 +143,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -762,6 +769,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../references.html">
    References
   </a>
@@ -880,8 +892,8 @@
             
               <div>
                 
-  <div class="section" id="plotters-cathy-plots-lognorm">
-<h1>plotters.cathy_plots.LogNorm<a class="headerlink" href="#plotters-cathy-plots-lognorm" title="Permalink to this headline">¶</a></h1>
+  <section id="plotters-cathy-plots-lognorm">
+<h1>plotters.cathy_plots.LogNorm<a class="headerlink" href="#plotters-cathy-plots-lognorm" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="plotters.cathy_plots.LogNorm">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">plotters.cathy_plots.</span></span><span class="sig-name descname"><span class="pre">LogNorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/matplotlib/colors.html#LogNorm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plotters.cathy_plots.LogNorm" title="Permalink to this definition">¶</a></dt>
@@ -890,10 +902,6 @@
 
 <p class="rubric">Methods Summary</p>
 <table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogNorm.__call__</span></code>(value[, clip])</p></td>
 <td><p>Normalize <em>value</em> data in the <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code> interval into the <code class="docutils literal notranslate"><span class="pre">[0.0,</span> <span class="pre">1.0]</span></code> interval and return it.</p></td>
@@ -939,7 +947,7 @@
 <dd><p>Homogenize the input <em>value</em> for easy and efficient normalization.</p>
 <p><em>value</em> can be a scalar or sequence.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><ul class="simple">
 <li><p><strong>result</strong> (<em>masked array</em>) – Masked array with the same shape as <em>value</em>.</p></li>
 <li><p><strong>is_scalar</strong> (<em>bool</em>) – Whether <em>value</em> is a scalar.</p></li>
@@ -960,7 +968,7 @@ greatly improves speed for large arrays.</p>
 <dd><p>Return whether vmin and vmax are set.</p>
 </dd></dl>
 
-<div style='clear:both'></div></div>
+<div style='clear:both'></div></section>
 
 
               </div>
@@ -992,7 +1000,7 @@ greatly improves speed for large arrays.</p>
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

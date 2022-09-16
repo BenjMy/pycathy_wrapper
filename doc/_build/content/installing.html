@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>Installing | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -141,6 +143,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -762,6 +769,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
   </a>
@@ -936,15 +948,16 @@
             
               <div>
                 
-  <div class="section" id="installing">
-<span id="id1"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
+  <section id="installing">
+<span id="id1"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this heading">¶</a></h1>
 <p><strong>PyCATHY</strong> is a <strong>Python wrapper for CATHY</strong> <span id="id2">[<a class="reference internal" href="references.html#id3" title="M. Camporese, C. Paniconi, M. Putti, and S. Orlandini. Surface-subsurface flow modeling with path-based runoff routing, boundary condition-based coupling, and assimilation of multisource observation data. Water Resources Research, Feb 2010. URL: http://dx.doi.org/10.1029/2008WR007536, doi:10.1029/2008wr007536.">1</a>]</span> (V1) easing the process for mesh creation, forward hydrological modeling, and output visualization of CATHY simulations.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>On all platforms, we recommend to install pyCATHY via the conda package manager contained in the Anaconda distribution. For details on how to install Anaconda, we refer to: [<a class="reference external" href="https://docs.anaconda.com/anaconda/install/](https://docs.anaconda.com/anaconda/install/">https://docs.anaconda.com/anaconda/install/](https://docs.anaconda.com/anaconda/install/</a>). To avoid conflicts with other packages, we recommend to install pyCATHY in a separate environment. Here we call this environment pyCATHY, but you can give it any name. Note that this environment has to be created only once.</p>
+<p>On all platforms, we recommend to install pyCATHY via the conda package manager contained in the Anaconda distribution. For details on how to install Anaconda, we refer to: (<a class="reference external" href="https://docs.anaconda.com/anaconda/install/">https://docs.anaconda.com/anaconda/install/</a>).</p>
 </div>
-<div class="section" id="quick-use">
-<h2>Quick use<a class="headerlink" href="#quick-use" title="Permalink to this headline">¶</a></h2>
+<section id="quick-use">
+<h2>Quick use<a class="headerlink" href="#quick-use" title="Permalink to this heading">¶</a></h2>
+<p>To avoid conflicts with other packages, we recommend to install pyCATHY in a separate environment. Here we call this environment pyCATHY, but you can give it any name. Note that this environment has to be created only once.</p>
 <p>Open a terminal (Linux &amp; Mac) or the Anaconda Prompt (Windows) and type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">pyCATHY</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">pyCATHY</span>
 <span class="n">conda</span> <span class="n">activate</span> <span class="n">pyCATHY</span>
@@ -958,9 +971,9 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">jupyterlab</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="staying-up-to-date">
-<h2>Staying up-to-date<a class="headerlink" href="#staying-up-to-date" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="staying-up-to-date">
+<h2>Staying up-to-date<a class="headerlink" href="#staying-up-to-date" title="Permalink to this heading">¶</a></h2>
 <p>Install using setup.py:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">BenjMy</span><span class="o">/</span><span class="n">pycathy_wrapper</span>
 <span class="n">cd</span> <span class="n">pycathy_wrapper</span>
@@ -968,9 +981,9 @@
 <span class="kn">import</span> <span class="nn">pyCATHY</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>numpy, scipy, and matplotlib beyond default python packages</p></li>
 </ul>
@@ -989,12 +1002,12 @@
 <li><p>OR [Resipy](<a class="reference external" href="https://gitlab.com/hkex/resipy">https://gitlab.com/hkex/resipy</a>)</p></li>
 </ul>
 </div>
-</div>
-<div class="section" id="how-to-run-tests">
-<h2>How to run tests<a class="headerlink" href="#how-to-run-tests" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="how-to-run-tests">
+<h2>How to run tests<a class="headerlink" href="#how-to-run-tests" title="Permalink to this heading">¶</a></h2>
 <p>Download one of the exemple and run python <a href="#id3"><span class="problematic" id="id4">*</span></a>.py script</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>
@@ -1026,7 +1039,7 @@
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

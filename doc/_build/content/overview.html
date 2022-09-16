@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>Overview | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -142,6 +144,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -763,6 +770,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="references.html">
    References
   </a>
@@ -881,8 +893,8 @@
             
               <div>
                 
-  <div class="section" id="overview">
-<span id="id1"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+  <section id="overview">
+<span id="id1"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h1>
 <p>The CATchment HYdrology (CATHY) model couples a finite element solver for the Richards equation describing
 ow in variably saturated porous media and a finite difference solver for the diffusion wave equation describing surface flow propagation throughout a hill slope and stream channel network identified using terrain topography and the hydraulic geometry concept
 The mathematical model is described by a system of two differential equations <span id="id2">[<a class="reference internal" href="references.html#id3" title="M. Camporese, C. Paniconi, M. Putti, and S. Orlandini. Surface-subsurface flow modeling with path-based runoff routing, boundary condition-based coupling, and assimilation of multisource observation data. Water Resources Research, Feb 2010. URL: http://dx.doi.org/10.1029/2008WR007536, doi:10.1029/2008wr007536.">1</a>]</span>:</p>
@@ -897,7 +909,7 @@ The mathematical model is described by a system of two differential equations <s
 <div class="math notranslate nohighlight">
 \[\frac{\partial Q}{\partial t} + c_{k}\frac{\partial Q}{\partial s} = D_{h}\frac{\partial^{2} Q}{\partial s^{2}} + c_{k}q_{s}\]</div>
 <p>The 3-D Richards equation is solved numerically by Galerkin finite elements in space using tetrahedral elements and linear basis functions, and by a weighted finite difference scheme for integration in time. The nonlinear characteristic relationships <span class="math notranslate nohighlight">\(K_{r}(\Psi)\)</span> and  <span class="math notranslate nohighlight">\(S_{w}(\Psi)\)</span> are specified using either van Genuchten and Nielsen [1985], Brooks and Corey [1964], or Huyakorn et al. [1984] expression. Linearization via Newton or Picard iteration is used in the solution procedure.</p>
-</div>
+</section>
 
 
               </div>
@@ -929,7 +941,7 @@ The mathematical model is described by a system of two differential equations <s
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

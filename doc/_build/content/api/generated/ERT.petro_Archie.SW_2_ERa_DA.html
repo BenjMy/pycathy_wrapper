@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>ERT.petro_Archie.SW_2_ERa_DA | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
@@ -141,6 +143,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -762,6 +769,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../references.html">
    References
   </a>
@@ -880,8 +892,8 @@
             
               <div>
                 
-  <div class="section" id="ert-petro-archie-sw-2-era-da">
-<h1>ERT.petro_Archie.SW_2_ERa_DA<a class="headerlink" href="#ert-petro-archie-sw-2-era-da" title="Permalink to this headline">¶</a></h1>
+  <section id="ert-petro-archie-sw-2-era-da">
+<h1>ERT.petro_Archie.SW_2_ERa_DA<a class="headerlink" href="#ert-petro-archie-sw-2-era-da" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="ERT.petro_Archie.SW_2_ERa_DA">
 <span class="sig-prename descclassname"><span class="pre">ERT.petro_Archie.</span></span><span class="sig-name descname"><span class="pre">SW_2_ERa_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ArchieParms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pathERT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshERT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elecs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequenceERT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_fwd_CATHY</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ERT/petro_Archie.html#SW_2_ERa_DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ERT.petro_Archie.SW_2_ERa_DA" title="Permalink to this definition">¶</a></dt>
@@ -893,7 +905,7 @@ Map saturation water from CATHY model to apparent Electrical Resistivities
 2. Convert SW to ER uisng Archie law
 3. Fwd ERT model to obtain apparent resistivities (predicted observation for DA)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>project_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – name of the current project.</p></li>
 <li><p><strong>ArchieParms</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Archie params.</p></li>
@@ -912,7 +924,7 @@ Map saturation water from CATHY model to apparent Electrical Resistivities
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>df_ERT_predicted</strong> (<em>pd df</em>) – Dataframe of predicted ER.</p></li>
 <li><p><strong>df_Archie</strong> (<em>pd df</em>) – Dataframe of the current (given ensemble and given assimilation time) Archie relationship.</p></li>
@@ -922,7 +934,7 @@ Map saturation water from CATHY model to apparent Electrical Resistivities
 </dl>
 </dd></dl>
 
-<div style='clear:both'></div></div>
+<div style='clear:both'></div></section>
 
 
               </div>
@@ -954,7 +966,7 @@ Map saturation water from CATHY model to apparent Electrical Resistivities
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

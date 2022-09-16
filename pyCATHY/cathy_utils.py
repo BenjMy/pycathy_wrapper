@@ -43,6 +43,16 @@ def convert_time_units(t, x_units):
     return xlabel, t_new
 
 
+#Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]
+#Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)
+#Atmpot-r (11) : Potential atmospheric forcing rate [L/T]
+#Atmpot-d (12) : Potential atmospheric forcing depth [L]
+#Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
+#Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
+#Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
+#Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
+
+
 def label_units(units,**kwargs):
     '''
     label units
@@ -55,9 +65,23 @@ def label_units(units,**kwargs):
         label = "Relative hydraulic conductivity"
     elif units == "QTRANIE":
         label = "Root‐zone water uptake"
-    else:
-        label = ''                
-        
+    elif units == "Atmpot-vf":
+        label = "Potential atmospheric forcing (rain +ve / evap -ve) \n ($[L^{3}/T]$)"               
+    elif units == "Atmpot-v":
+        label = "Potential atmospheric forcing volume \n ($[L^{3}/T]$)"               
+    elif units == "Atmpot-v":
+        label = "Potential atmospheric forcing rate \n ($[L/T]$)"   
+    elif units == "Atmpot-d":
+        label = "Potential atmospheric forcing depth \n ($[L]$)"               
+    elif units == "Atmact-vf":
+        label = 'Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux \n ($[L^3/T]$)'  
+    elif units == "Atmact-v ":
+        label = 'Actual infiltration (+ve) or exfiltration (-ve) volume \n ($[L^3]$)'  
+    elif units == "Atmact-r":
+        label = 'Actual infiltration (+ve) or exfiltration (-ve) rate \n ($[L/T]$)'    
+    elif units == "Atmact-d ":
+        label = 'Actual infiltration (+ve) or exfiltration (-ve) depth \n ($[L]$)'  
+
     return label
 
 

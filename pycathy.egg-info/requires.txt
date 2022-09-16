@@ -3,3 +3,11 @@ pandas
 scipy
 pyvista
 SALib
+GitPython
+soiltexture
+pyvistaqt
+itkwidgets
+rosetta
+rich
+natsort
+ipywidgets

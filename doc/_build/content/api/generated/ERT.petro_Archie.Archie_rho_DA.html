@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>ERT.petro_Archie.Archie_rho_DA | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
@@ -141,6 +143,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -762,6 +769,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../references.html">
    References
   </a>
@@ -880,15 +892,15 @@
             
               <div>
                 
-  <div class="section" id="ert-petro-archie-archie-rho-da">
-<h1>ERT.petro_Archie.Archie_rho_DA<a class="headerlink" href="#ert-petro-archie-archie-rho-da" title="Permalink to this headline">¶</a></h1>
+  <section id="ert-petro-archie-archie-rho-da">
+<h1>ERT.petro_Archie.Archie_rho_DA<a class="headerlink" href="#ert-petro-archie-archie-rho-da" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="ERT.petro_Archie.Archie_rho_DA">
 <span class="sig-prename descclassname"><span class="pre">ERT.petro_Archie.</span></span><span class="sig-name descname"><span class="pre">Archie_rho_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rFluid_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pert_sigma_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ERT/petro_Archie.html#Archie_rho_DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ERT.petro_Archie.Archie_rho_DA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute ER values at each mesh nodes.
 If pert_sigma, add a nornal noise of sigma standart deviation and 0 mean (# See eq. 4.4 thesis Isabelle p.95)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rFluid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – Conductivity of the pore fluid for each soil zone</p></li>
 <li><p><strong>sat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – Water saturation for each soil zone</p></li>
@@ -899,13 +911,13 @@ If pert_sigma, add a nornal noise of sigma standart deviation and 0 mean (# See 
 <li><p><strong>pert_sigma_Archie</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>, </em><em>optional</em>) – Normal noise to add to the data</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>rho</strong> (<em>Converted Apparent Electrical Resistivity (Ohm.m).</em>)</p>
 </dd>
 </dl>
 </dd></dl>
 
-<div style='clear:both'></div></div>
+<div style='clear:both'></div></section>
 
 
               </div>
@@ -937,7 +949,7 @@ If pert_sigma, add a nornal noise of sigma standart deviation and 0 mean (# See 
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

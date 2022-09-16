@@ -134,7 +134,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # change working directory
         if not os.path.exists(os.path.join(self.workdir)):
             os.makedirs(self.workdir, exist_ok=True)
-        os.chdir(self.workdir)
+        # os.chdir(self.workdir)
 
         self.project_name = prj_name
 
@@ -198,7 +198,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # fetch src files if not existing from Gitbucket repo
         # ---------------------------------------------------------------------
-        if not os.path.exists(os.path.join(self.project_name, "src")):
+        if not os.path.exists(os.path.join(self.workdir,self.project_name, "src")):
             self.console.print(":worried_face: [b]src files not found[/b]")
             self.console.print("working directory is:" + str((self.workdir)))
 
@@ -242,7 +242,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     )
 
                     pathsrc = os.path.join(
-                        os.getcwd(), self.project_name, "tmp_src/runs/weilletal/"
+                        self.workdir, self.project_name, "tmp_src/runs/weilletal/"
                     )
 
                     onlyfiles = [
@@ -256,8 +256,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                     ):  # You could shorten this to one line, but it runs on a bit.
                         shutil.move(
                             os.path.join(pathsrc, file),
-                            os.path.join(self.project_name, file),
+                            os.path.join(self.workdir,self.project_name, file),
                         )
+                        
+                    self.create_output(output_dirname="output")
+
                 except:
                     print("no internet connection to fetch the files")
                     sys.exit()
@@ -559,7 +562,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
                 os.chdir(os.path.join(self.workdir))
                 
-                self.grid3d = in_CT.read_grid3d(self.project_name)
+                self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir,self.project_name))
 
 
             # computation time
@@ -1914,7 +1917,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 self.DEM = DEM_withOutlet
 
             print("update dtm_13.val")
-            with open(os.path.join(self.project_name, "prepro/dtm_13.val"), "w+") as f:
+            with open(os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+") as f:
                 # use exponential notation
                 np.savetxt(f, self.DEM, fmt="%1.4e")
 
@@ -1926,7 +1929,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         self.update_dem_parameters(**kwargs)
 
         if show == True:
-            plt_CT.dem_plot(self.workdir, self.project_name,
+            plt_CT.show_dem(workdir=self.workdir, 
+                            project_name= self.project_name,
                             delta_x=self.hapin['delta_x'],
                             delta_y=self.hapin['delta_y'])
 
@@ -1934,17 +1938,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
     def update_dem_parameters(self, **kwargs):
         '''
-        Update DEM parameters
-
-        Parameters
-        ----------
-        **kwargs : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
+        Update DEM parameters - if no args reset to default values
         '''        
 
         self.console.print(":black_nib: [b]update dem_parameters file [/b]")
@@ -2052,28 +2046,26 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
     # %% Ouput/INPUT FILES
 
-    def update_zone(self, zone_xyz=[]):
+    def update_zone(self, zone=[]):
         '''
         Update zone file
 
         Parameters
         ----------
-        zone_xyz : TYPE, optional
-            DESCRIPTION. The default is [].
+        zone : np.array([]), optional
+            2d numpy array describing the zone for x and y direction. 
+            The array dim must be equal to DEM dim.
+            If zone is empty, reset to homogeneous zone = 1
+            The default is [].
 
-        Returns
-        -------
-        
         Notes
         -----
-
         .. note::
-            - create global zone_xyz variable
-
-        .. note::
-            - Updated dem_parameters file (number of zones).
-            - Updated parm file.
-            - Updated CATHYH file.
+            - Create object zone variable
+            - Update dem_parameters file (number of zones).
+            - Update parm file.
+            - Update CATHYH file.
+            - Update vtk mesh file.
 
         '''
 
@@ -2087,44 +2079,41 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             zonefile.write("west:     0" + "\n")
             zonefile.write("rows:     " + str(self.hapin["M"]) + "\n")
             zonefile.write("cols:     " + str(self.hapin["N"]) + "\n")
-            if len(zone_xyz) == 0:
-                zone_xyz = np.c_[np.ones([self.hapin["M"], self.hapin["N"]])]
-                np.savetxt(zonefile, zone_xyz, fmt="%i")
+            if len(zone) == 0:
+                zone = np.c_[np.ones([self.hapin["M"], self.hapin["N"]])]
+                np.savetxt(zonefile, zone, fmt="%i")
             else:
-                # if np.shape(zone_xyz)== :
-                np.savetxt(zonefile, zone_xyz, fmt="%i")
+                # if np.shape(zone)== :
+                np.savetxt(zonefile, zone, fmt="%i")
 
         zonefile.close()
 
-        self.zone_xyz = zone_xyz
+        self.zone = zone
         
         # update number of zone in the dem parameter file
-        self.update_dem_parameters(nzone=len(np.unique(zone_xyz)))
+        self.update_dem_parameters(nzone=len(np.unique(zone)))
         self.update_parm()
-        self.update_cathyH(MAXZON=len(np.unique(zone_xyz)))
-
+        self.update_cathyH(MAXZON=len(np.unique(zone)))
+        
+        zone_with_bound = np.vstack([-99*np.ones(len(zone)), zone])
+        zone_with_bound = np.vstack([zone_with_bound.T,-99*np.ones(len(zone_with_bound))])
+        # zone_with_bound = np.pad(zone,1, mode='constant')       
+        zone_extruded_with_bound = np.repeat(zone_with_bound[:, :, np.newaxis],
+                                             self.dem_parameters["nstr"]+1, axis=2)
+        
+        
+        # Map zones in the 3d vtk mesh
+        # ----------------------------
+        # self.map_prop2mesh({'zone':zone_extruded_with_bound})
+        
     # %% INPUT FILES
 
     def update_parm(self, verbose=False, **kwargs):
         '''
-        Update parm file
-
-        Parameters
-        ----------
-        verbose : TYPE, optional
-            DESCRIPTION. The default is False.
-        **kwargs : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        
+        Update parm file       
         .. note:
-            - create global parm variable
-
-        .. note:
+            - create object zone parm
             - Updated CATHYH file (NPRT and NUMVP).
-
         '''
         
         if verbose:
@@ -2135,7 +2124,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # set default parameters
             # --------------------------------------------------------------------
             self.parm = {
-                "IPRT1": 3,  # Flag for output of input and coordinate data
+                "IPRT1": 2,  # Flag for output of input and coordinate data
                 "NCOUT": 0,
                 "TRAFLAG": 0, # Flag for transport
                 "ISIMGR": 2,  # Flag for type of simulation and type of surface grid
@@ -2601,7 +2590,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
               
 
-    def init_boundary_conditions(self, times):
+    def init_boundary_conditions(self, time):
         '''
         .. note:
             The boundary conditions are defined in the nansfdirbc (Dirichlet), 
@@ -2643,9 +2632,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         
         try:
             self.console.print('init boundary condition dataframe')
-            self.create_mesh_bounds_df(self.grid3d['nodes_idxyz'],times)
+            # self.create_mesh_vtk()
+            if not 'nnod3' in self.grid3d.keys():
+                self.run_processor(IPRT1=3)
+            self.create_mesh_bounds_df(self.grid3d['nodes_idxyz'],time)
             plt_CT.plot_mesh_bounds(self.mesh_bound_cond_df)
-            self.create_mesh_vtk()
         except:
             raise ValueError('cannot init boundary conditions dataframe')
             pass
@@ -2746,7 +2737,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         try:
             self.grid3d = in_CT.read_grid3d(self.project_name)
         except OSError:
-            print("grid3d missing - need to run the processor with IPRT1=2 first")
+            print("grid3d missing - need to run the processor with IPRT1=3 first")
 
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
@@ -2881,16 +2872,11 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 # modicare il valore di NPMAX nel file 27 CATHY.H nel caso
                 # in cui si inseriscano dei NDIRC ed il valore di NP2MAX nel caso si inseriscano dei
                 # NDIR. I valori di NPMAX e NP2MAX corrispondono al numero massimo
-                # di nodi NDIRC e NDIR che si possono inserire.
-
-            
-        
-        
-        
-        
-        
+                # di nodi NDIRC e NDIR che si possono inserire.       
 
         pass
+
+
 
     def update_nansfneubc(self, time=[], NQ=0, ZERO=0, 
                           fixed_pressure=False, 
@@ -2921,7 +2907,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         try:
             self.grid3d = in_CT.read_grid3d(self.project_name)
         except OSError:
-            print("grid3d missing - need to run the processor with IPRT1=2 first")
+            print("grid3d missing - need to run the processor with IPRT1=3 first")
 
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
@@ -2961,6 +2947,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         pass
 
+
     def update_sfbc(self, time=[], sfbc = False, no_flow=False):
         '''
         Seepage face boundary conditions at time t
@@ -2982,7 +2969,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         try:
             self.grid3d = in_CT.read_grid3d(self.project_name)
         except OSError:
-            print("grid3d missing - need to run the processor with IPRT1=2 first")
+            print("grid3d missing - need to run the processor with IPRT1=3 first")
 
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
@@ -3031,6 +3018,8 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         None.
 
         '''
+        
+        len(grid3d)
 
         self.mesh_bound_cond_df = pd.DataFrame(grid3d)
         self.mesh_bound_cond_df = self.mesh_bound_cond_df.rename(
@@ -3069,6 +3058,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             
         self.mesh_bound_cond_df['bound'] = bound_bool
         
+        len(bound_bool)
         print('SKip time dependence init boundary condition dataframe - consequences (?)')
         # self.mesh_bound_cond_df = pd.concat([self.mesh_bound_cond_df]*len(times), ignore_index=True)
 
@@ -3102,56 +3092,132 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         pass
             
 
-    def create_mesh_vtk(self,topo=None):
+
+    def create_mesh_vtkris3d(self):
+        
+        '''
+        Create mesh for vtk format version 2
+        
+        
+        # vtk DataFile Version 2.0
+        3D Unstructured Grid of Linear Triangles
+        ASCII
+        DATASET UNSTRUCTURED_GRID
+        FIELD FieldData  1
+        TIME 1 1 double
+                   0.00000
+        POINTS     7056 float
+        TETRA (5,NT)       - element connectivities in 3-d mesh (TETRA(5,I)
+        # C                        indicates material type for 3-d element I)
+        '''
+        
+        if not 'nnod3' in self.grid3d.keys():
+            self.run_processor(IPRT1=3)
+            
+        with open(os.path.join(self.workdir, 
+                               self.project_name, 
+                               "vtk/mesh_tmp.vtk"),"w+") as vtkmesh:
+            vtkmesh.write("# vtk DataFile Version 2.0\n")
+            vtkmesh.write("3D Unstructured Grid of Linear Triangles\n")
+            vtkmesh.write("ASCII\n")
+            vtkmesh.write("DATASET UNSTRUCTURED_GRID\n")
+            vtkmesh.write("FIELD FieldData  1\n")
+            vtkmesh.write("TIME 1 1 double\n")
+            vtkmesh.write("           0.00000\n")
+            vtkmesh.write("POINTS " + "{:3.0f}".format(self.grid3d['nnod3']) + " float\n")
+            np.savetxt(vtkmesh,self.grid3d['mesh3d_nodes'],fmt='%1.6e')
+            ntetra = len(self.grid3d['mesh_tetra']) 
+            numb=ntetra*5
+            mesh_tretra_m = self.grid3d['mesh_tetra'].T[0:4] -1
+            tetra_mesh = np.vstack([4*np.ones(ntetra),mesh_tretra_m]).T
+            vtkmesh.write("CELLS " + "{:d}".format(ntetra) + "\t" + "{:d}".format(numb) + "\n")
+            np.savetxt(vtkmesh,tetra_mesh,fmt='%d',delimiter='\t')
+            vtkmesh.write("CELL_TYPES " + "{:d}".format(ntetra) + "\n")
+            np.savetxt(vtkmesh,10*np.ones(ntetra).T,fmt='%d')
+            vtkmesh.close()
+            
+        pass
+            
+            
+    def create_mesh_vtk(self):
         '''
         Create custum mesh
+        
+        THIS SHOULD BE MOVED TO MESHTOOLS
 
         Returns
         -------
         None.
 
         '''
+        self.create_mesh_vtkris3d()
+        self.mesh_pv_attributes = pv.read(os.path.join(self.workdir,
+                                                       self.project_name, 
+                                                       'vtk/mesh_tmp.vtk'
+                                                       )
+                                          )
+        # remove tmp file
         
+        self.mesh_pv_attributes.save(os.path.join(self.workdir,
+                                                  self.project_name, 
+                                                  'vtk/',
+                                                  self.project_name +
+                                                  '.vtk'
+                                                  ),
+                                     binary=False,
+                                     )
         
+         
+         # THIS IS A TEMPORARY IMPLEMENTATION OF THE PYVISTA MESH
+         # the created mesh is not exactly the same than the CATHY mesh
+         # in the future need to create the mesh.vtk from grid using CATHY then read it to pyvista
+         # VTKRIS3D
+         # vtkris3d(ntetra, nnode,iunit,tetra, u,v,vx,vy,vz,x,y,z,ks,time,vtkf)
 
+
+        # if topo==None:
         
-        if topo==None:
+        #     # mesh dimensions
+        #     # -------------
+        #     si, sj, sk  = ( self.hapin["M"]*self.dem_parameters['delta_x'], 
+        #                     self.hapin["N"]*self.dem_parameters['delta_y'], 
+        #                     self.dem_parameters['base']
+        #                     )
+            
+        #     # mesh discretisation
+        #     # -------------------
+        #     ni, nj, nk = (
+        #                     int(self.hapin["M"]), 
+        #                     int(self.hapin["N"]), 
+        #                     self.dem_parameters['nstr']
+        #                 )
+            
+        #     xcorn = np.arange(0, (ni+1)*si, si)
+        #     xcorn = np.repeat(xcorn, 2)
+        #     xcorn = xcorn[1:-1]
+        #     xcorn = np.tile(xcorn, 4*nj*nk)
+            
+        #     ycorn = np.arange(0, (nj+1)*sj, sj)
+        #     ycorn = np.repeat(ycorn, 2)
+        #     ycorn = ycorn[1:-1]
+        #     ycorn = np.tile(ycorn, (2*ni, 2*nk))
+        #     ycorn = np.transpose(ycorn)
+        #     ycorn = ycorn.flatten()
+            
+        #     zcorn = np.arange(0, (nk+1)*sk, sk)
+        #     zcorn = np.repeat(zcorn, 2)
+        #     zcorn = zcorn[1:-1]
+        #     zcorn = np.repeat(zcorn, (4*ni*nj))
+            
+        #     corners = np.stack((xcorn, ycorn, zcorn))
+        #     corners = corners.transpose()
+            
+        #     dims = np.asarray((ni, nj, nk))+1
+        #     self.mesh_pv_attributes = pv.ExplicitStructuredGrid(dims, corners)
         
-            si, sj, sk  = ( self.hapin["M"]*self.dem_parameters['delta_x'], 
-                            self.hapin["N"]*self.dem_parameters['delta_y'], 
-                            self.dem_parameters['base']
-                            )
-            
-            ni, nj, nk = int(self.hapin["M"]), int(self.hapin["N"]), self.dem_parameters['nstr']
-            
-            xcorn = np.arange(0, (ni+1)*si, si)
-            xcorn = np.repeat(xcorn, 2)
-            xcorn = xcorn[1:-1]
-            xcorn = np.tile(xcorn, 4*nj*nk)
-            
-            ycorn = np.arange(0, (nj+1)*sj, sj)
-            ycorn = np.repeat(ycorn, 2)
-            ycorn = ycorn[1:-1]
-            ycorn = np.tile(ycorn, (2*ni, 2*nk))
-            ycorn = np.transpose(ycorn)
-            ycorn = ycorn.flatten()
-            
-            zcorn = np.arange(0, (nk+1)*sk, sk)
-            zcorn = np.repeat(zcorn, 2)
-            zcorn = zcorn[1:-1]
-            zcorn = np.repeat(zcorn, (4*ni*nj))
-            
-            corners = np.stack((xcorn, ycorn, zcorn))
-            corners = corners.transpose()
-            
-            dims = np.asarray((ni, nj, nk))+1
-            self.mesh_pv_attributes = pv.ExplicitStructuredGrid(dims, corners)
-            # self.mesh_pv = self.mesh_pv.compute_connectivity()
-            # self.mesh_pv.plot(show_edges=True)
-        
-        else:
-            # https://docs.pyvista.org/examples/00-load/create-structured-surface.html
-            raise NotImplementedError('creation of mesh with topo not yet implemented')
+        # else:
+        #     # https://docs.pyvista.org/examples/00-load/create-structured-surface.html
+        #     raise NotImplementedError('creation of mesh with topo not yet implemented')
     
         pass
 
@@ -3174,24 +3240,24 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         '''
         
-        meshname = self.project_name
-        if 'meshname' in kwargs:
-            meshname = kwargs['meshname']
-        
+       
         self.mesh_pv_attributes.add_field_data(prop_value, prop)
         self.mesh_pv_attributes.save(os.path.join(self.workdir, 
-                               self.project_name, 
-                               'vtk/',
-                               meshname +
-                               '.vtk'), binary=False)
+                                self.project_name, 
+                                'vtk/',
+                                self.project_name +
+                                '.vtk'), binary=False)
         
         pass
             
             
             
                     
-    def update_soil(self, IVGHU=[], FP=[], SPP=[], soil_het_dim=1,
-                    verbose=False, show=False, **kwargs):
+    def update_soil(self, IVGHU=[], 
+                    FP=[], FP_map= [],
+                    SPP=[], SPP_map=[],
+                    show=False, 
+                    **kwargs):
         '''
         Soil parameters (soil - IIN4). The porous media properties.
 
@@ -3234,7 +3300,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 OMG(I)    = OMG(I) + GX*BETA*DZ
                 QTRANIE(K)=ETP(I)*BTRANI(K)/BTRAN(I)/MAX(OMG(I),OMGC(VEG_TYPE(I)))
 
-        SPP : list, optional
+
+        FP : Dict, optional
+            Dictionnary containing the SPP properies per zones (root map, indice of vegetation)
+
+
+
+        SPP : DataFrame, optional
             Soil Physical Properties. The default is [].
             - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
             - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
@@ -3247,14 +3319,46 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
             - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent --> 
                                           VGPSAT == -1/alpha (with alpha expressed in [L-1]);
+                                          
+            Example for 1 zone: 
                 
-        heteregeneity_dim: int
-            - dimension of the heteregeneity
-            
+                             PERMX     PERMY     PERMZ  ...  VGNCELL  VGRMCCELL  VGPSATCELL
+                str zone                                ...                                
+                0   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                1   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                2   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                3   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                4   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                                
 
-        verbose : TYPE, optional
-            DESCRIPTION. The default is False.
-        **kwargs
+        SPP_map : Dict, optional
+            Dictionnary containing the SPP properies per zones
+            Example for 2 zones: 
+                {
+                    'PERMX': [0.000188, 9.4e-05], 
+                    'PERMY': [0.000188, 0.000188], 
+                    'PERMZ': [0.000188, 0.000188], 
+                    'ELSTOR': [1e-05, 1e-05], 
+                    'POROS': [0.55, 0.55], 
+                    'VGNCELL': [1.46, 1.46],
+                    'VGRMCCELL': [0.15, 0.15], 
+                    'VGPSATCELL': [0.03125, 0.03125]
+                 }
+
+
+        ..note::
+
+            At the file level, this is an example of 3 layers and  2 zones; The inner reading cycle is by zone, and the outer one by layers, i.e.:
+    
+            PERMX_z1_str1 PERMY_z1_str1  PERMZ_z1_str1  ELSTOR_z1_str1 POROS_z1_str1 VGNCELL_z1_str1 VGRMCCELL__z1_str1 VGPSATCELL__z1_str1
+            PERMX_z2_str1 PERMY_z2_str1  PERMZ_z2_str1  ELSTOR_z2_str1 POROS_z2_str1 VGNCELL_z2_str1 VGRMCCELL__z2_str1 VGPSATCELL__z2_str1
+            PERMX_z1_str2 PERMY_z1_str2  PERMZ_z1_str2  ELSTOR_z1_str2 POROS_z1_str2 VGNCELL_z1_str2 VGRMCCELL__z1_str2 VGPSATCELL__z1_str2
+            PERMX_z2_str2 PERMY_z2_str2  PERMZ_z2_str2  ELSTOR_z2_str2 POROS_z2_str2 VGNCELL_z2_str2 VGRMCCELL__z2_str2 VGPSATCELL__z2_str2
+            PERMX_z1_str3 PERMY_z1_str3  PERMZ_z1_str3  ELSTOR_z1_str3 POROS_z1_str3 VGNCELL_z1_str3 VGRMCCELL__z1_str3 VGPSATCELL__z1_str3
+            PERMX_z2_str3 PERMY_z2_str3  PERMZ_z2_str3  ELSTOR_z2_str3 POROS_z2_str3 VGNCELL_z2_str3 VGRMCCELL__z2_str3  VGPSATCELL__z2_str3
+            
+            Make sure all 8 parameters for each layer/zone are on the same line. 
+            Also, make sure NZONE = 2 in dem_parameters and MAXZON in CATHY.H is larger than or equal to NZONE. 
 
         Returns
         -------
@@ -3266,43 +3370,52 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 
         # set default parameters if SPP and/or FP args are not existing yet
         # --------------------------------------------------------------------
-        
         if len(self.soil)==0:
             self.set_SOIL_defaults()
-        if len(SPP) == 0:
-        # if hasattr(self, 'soil_SPP') == 0:
-            SPP = self.set_SOIL_defaults(SPP_default=True)
-        if len(FP) == 0:
-        # if hasattr(self, 'soil_FP') == 0:
-            FP = self.set_SOIL_defaults(FP_default=True)
             
+        if len(SPP_map) == 0:
+            SPP_map = self.set_SOIL_defaults(SPP_map_default=True)
+            
+        if ((not hasattr(self, 'soil_FP')) and (len(FP_map)== 0)):
+            FP_map = self.set_SOIL_defaults(FP_map_default=True)
+        elif len(FP_map)==0:
+            FP_map = self.soil_FP['FP_map']
 
-        # check size of soil properties 
+
+
+
+        # check size of soil properties map versus nb of zones
         # --------------------------------------------------------------------
-        if isinstance(SPP['PERMX'], float):
+        if isinstance(SPP_map['PERMX'], float):
             if self.dem_parameters["nzone"]!=1:
-                raise ValueError
+                raise ValueError("Wrong number of zones")
         else:
-            if len(SPP['PERMX'])!=self.dem_parameters["nzone"]:
+            if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
                 raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX'])) 
-                                 + 'while nzone is ' + str(self.dem_parameters["nzone"]))
+                                 + ' while nzone is ' + str(self.dem_parameters["nzone"]))
                     
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
-        for keykwargs, value in kwargs.items():
-            self.soil[keykwargs] = value
-            self.parm[keykwargs] = value
+        for kk, value in kwargs.items():
+            self.soil[kk] = value
+            self.parm[kk] = value
 
-        # loop over Feddes parameters FP mandatory fct arg
+        # loop over Feddes parameters
         # --------------------------------------------------------------------
         for fp in FP:  # loop over fedded parameterssoil_het_dim
             self.soil[fp] = FP[fp]
 
         # check consistency between parameters
         # --------------------------------------------------------------------
-        if SPP['VGRMCCELL']>=SPP['POROS']:
-            raise ValueError("residual water content is" + str(SPP['VGRMCCELL']) 
-                             + '> porosity ' + str(SPP['POROS']))
+        if isinstance(SPP_map['PERMX'], float):
+            for k in SPP_map:
+                print(k)
+                SPP_map[k] = [SPP_map[k]]
+            
+        for z in range(len(SPP_map['VGRMCCELL'])): # loop over zones
+            if SPP_map['VGRMCCELL'][z]>=SPP_map['POROS'][z]:
+                raise ValueError("residual water content is" + str(SPP_map['VGRMCCELL'][z]) 
+                                 + '> porosity ' + str(SPP_map['POROS'][z]))
         
         # create prepro inputs if not existing (containing info about the DEM)
         # --------------------------------------------------------------------
@@ -3311,21 +3424,24 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
         # Soil Physical Properties strat by strat
         # --------------------------------------------------------------------
-        SoilPhysProp = self._prepare_SPP_tb(SPP)
         self.soil_SPP = {}
-        self.soil_SPP['SPP'] = SoilPhysProp # matrice with respect to zones
-        self.soil_SPP['SPP_map'] = SPP # mapping with respect to zones
-
+        self.soil_SPP['SPP_map'] = SPP_map # mapping with respect to zones
+        if len(SPP)>0:
+            self.soil_SPP['SPP'] = SPP # matrice with respect to zones
+        else:
+            SoilPhysProp = self._prepare_SPP_tb(SPP_map)
+            self.soil_SPP['SPP'] = SoilPhysProp # matrice with respect to zones
+          
+        
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
-        # Read only if IVGHU=0
-        FeddesParam = self._prepare_SOIL_vegetation_tb(FP)
+        FeddesParam = self._prepare_SOIL_vegetation_tb(FP_map)
         self.soil_FP = {}
         self.soil_FP['FP'] = FeddesParam
-        self.soil_FP['FP_map'] = FP # mapping with respect to zones
+        self.soil_FP['FP_map'] = FP_map # mapping with respect to zones
         
         if show:
-            update_map_veg = self.map_prop_veg(FP)
+            update_map_veg = self.map_prop_veg(FP_map)
             fig, ax = plt_CT.dem_plot_2d_top(update_map_veg,
                                               label='all')
             fig.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
@@ -3335,41 +3451,16 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # --------------------------------------------------------------------
         self._write_SOIL_file(SoilPhysProp, FeddesParam, **kwargs)
         
-        # if show:
-        #     plt.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
-        #     plt.close()  
-            
-        #     raise NotImplementedError('show for soil not yet implemented')
-            
-        #     SPP_zones = self.map_prop2zone(SPP,prop=show)
-        #     plt, ax = plt_CT.dem_plot_2d_top(SPP_zones,
-        #                                      label=show)
-            
-        #     FP_zones = self.map_prop2zone(FP,prop='ZROOT')
-        #     plt, ax = plt_CT.dem_plot_2d_top(SPP_zones,
-        #                                      label=show)
-
-        #     return plt, ax        
-        
         # map SPP to the mesh
         # --------------------------------------------------------------------
-        self.map_prop2mesh(SPP)
+        # self.map_prop2mesh(SPP_map)
 
+        pass    
 
-        
-        
-            
-        pass
-    
-    
-
-        
-        
-        
 
     def set_SOIL_defaults(self,
-                          FP_default=False, 
-                          SPP_default=False):
+                          FP_map_default=False, 
+                          SPP_map_default=False):
 
         self.soil = {
             "PMIN": -5.0,
@@ -3399,9 +3490,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         }
 
 
-        if FP_default:
+        if FP_map_default:
             
-            FP = {
+            FP_map = {
                     # Feddes parameters default values
                     "PCANA": [0.0],
                     "PCREF": [-4.0],
@@ -3413,13 +3504,13 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 
             # self.soil.update(FP)
             
-            return FP
+            return FP_map
 
             
         # # set Soil Physical Properties defaults parameters
         # # --------------------------------------------------------------------
             
-        if SPP_default:
+        if SPP_map_default:
             
             PERMX = PERMY = PERMZ = 1.88e-04
             ELSTOR = 1.00e-05
@@ -3428,7 +3519,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             VGRMCCELL = 0.15
             VGPSATCELL = 0.03125
     
-            SPP = {
+            SPP_map = {
                 "PERMX": PERMX,
                 "PERMY": PERMY,
                 "PERMZ": PERMZ,
@@ -3439,7 +3530,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
                 "VGPSATCELL": VGPSATCELL,
             }
             
-            return SPP
+            return SPP_map
 
 
         pass 
@@ -3458,12 +3549,9 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         np.array describing the SoilPhysProp with rows corresponding to the layer.
 
         '''
-        
-           
+
         # check number of zones
         if self.dem_parameters["nzone"] > 1:
-            
-            
             if len(SPP['PERMX'])<=1:
                 for i, spp in enumerate(SPP):
                     SPP[spp] = SPP[spp]*np.ones(self.dem_parameters["nzone"])
@@ -3476,7 +3564,6 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
             # 1d --> uniform
             # 2d --> lateral variations due to zones defined in surface
             # 3d --> lateral + vertical variations due to zones and strates
-            
 
             SoilPhysProp = []
 
@@ -3546,7 +3633,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         # ----------------------------------------
         if self.cathyH["MAXVEG"] != len(FP[list(FP)[0]]):
             raise ValueError("Wrong number of vegetations: PCANA size is " + str(len(FP[list(FP)[0]])) 
-                             + 'while MAXVEG is ' + str(self.cathyH["MAXVEG"]))
+                             + ' while MAXVEG is ' + str(self.cathyH["MAXVEG"]))
 
         # check number of vegetation
         # --------------------------------------------------------------------
@@ -3719,7 +3806,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
 
 
         if show is not None:
-            plt, ax = plt_CT.indice_veg_plot(indice_veg,**kwargs)
+            plt, ax = plt_CT.show_indice_veg(indice_veg,**kwargs)
             
             return indice_veg, plt, ax
         
@@ -5673,7 +5760,7 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
     # ------------------------------------------------------------------------
     def map_prop2mesh(self,dict_props):
         '''
-        Add a map of a given physical property to the mesh
+        Add a given physical property to the mesh
 
         Parameters
         ----------
@@ -5689,14 +5776,30 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if hasattr(self,'mesh_pv_attributes') == False:
             self.create_mesh_vtk()
         
-        nnodes = int(self.mesh_pv_attributes.points.size/3)
+        # nnodes = int(self.mesh_pv_attributes.points.size/3)
         for dp in dict_props.keys():
-            if type(dict_props[dp]) == float: # homogeneous properties
-                self.update_mesh_vtk(prop=dp, prop_value=np.ones(nnodes)*dict_props[dp])
-            elif type(dict_props[dp]) == list: # homogeneous properties
-                if len(dict_props[dp]) == 1:
-                    self.update_mesh_vtk(prop=dp, prop_value=np.ones(nnodes)*dict_props[dp])
+            print(dp)
+        #     if type(dict_props[dp]) == float: # homogeneous properties
+        #         self.update_mesh_vtk(prop=dp, prop_value=np.ones(self.grid3d['nnod3'])*dict_props[dp])
+        #     else: # homogeneous properties
+        #         if len(dict_props[dp]) == 1:
+        #             self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
+                    
+            self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp].flatten())
 
+
+
+        len(dict_props['zone'].flatten())
+        
+        np.shape(dict_props['zone'])
+        # add boundary points
+        
+        
+        self.grid3d['nnod3']
+        self.grid3d['nnod3']
+        # .flatten()
+        
+        
 
         
         pass
@@ -5723,20 +5826,20 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         
     def map_prop2zone(self,dict_props, prop):
                
-        if hasattr(self,'zone_xyz')==False:
+        if hasattr(self,'zone')==False:
             warnings.warn('no known existing zones.')
             pass
         else:
-            prop_zones = np.zeros(np.shape(self.zone_xyz))
-            for z in range(len(np.unique(self.zone_xyz))):
-                prop_zones[self.zone_xyz==z+1]=dict_props[prop][z]
+            prop_zones = np.zeros(np.shape(self.zone))
+            for z in range(len(np.unique(self.zone))):
+                prop_zones[self.zone==z+1]=dict_props[prop][z]
             
             return prop_zones
     
     # ------------------------------------------------------------------------
     #%% Plot call
     # ------------------------------------------------------------------------
-    def plot(self, prop, **kwargs):
+    def show(self, prop='hgsfdet', **kwargs):
         '''
         Call and parse to cathy.plotter from the main CATHY class
 
@@ -5751,17 +5854,113 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         None.
 
         '''
-
-        raise NotImplementedError('plotter from main class not yet implemented')
-        # prop_zones = self.map2zone(prop)
         
-        plt, ax = plt_CT.dem_plot_2d_top(SPP_zones,
-                                         label=show)
+        df = self.read_outputs(filename=prop)
+        if prop == 'hgsfdet':
+            plt_CT.show_hgsfdet(df)
+        elif prop == 'hgraph':
+            plt_CT.show_hgraph(df)
+        elif prop == 'cumflowvol':
+            plt_CT.show_COCumflowvol(df)
+        elif prop == 'dtcoupling':
+            plt_CT.show_dtcoupling(df,**kwargs)
+        else:
+            print('no proxy to plot')
+
             
-        if prop == 'ZROOT':
-            df=out_CT.dem_plot_2d_top(path)
+
+        # elif filename == 'psi':
+        #     plt_CT.show_psi(path)
+        # elif filename == 'sw':
+        #     plt_CT.show_sw(path)
+
+        pass
+
+
+    def show_bc(self, layer=0, time=0,  **kwargs):
+        ''' Show bc '''
+        
+        # - atmbc spatially
+        # nansfdirbc
+        # nansfneubc
+        # sfbc
+        
+        fig, ax = plt.subplots(3,1,1)
+        
+        # df = self.read_inputs(filename='dirichlet')
+        # df = self.update_nansfdirbc()
+        
+        self.init_boundary_conditions(time)
+        # self.update_mesh_boundary_cond(time)
+
+        # self.set_BC_laterals(time=time)
+        
+        
+        
+        
+
+
+        
+    def show_input(self, prop='hgsfdet', **kwargs):
+        '''
+        Call and parse to cathy.plotter from the main CATHY class
+
+        Parameters
+        ----------
+        prop : str
+            property to plot.
+        **kwargs : kwargs
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        df = self.read_inputs(filename=prop)
+        if prop == 'atmbc':
+            plt_CT.show_atmbc(df['time'],df['value'])
+        elif prop == 'root_map':
+            plt_CT.show_indice_veg(df[0])
+        elif prop == 'dem':
+            plt_CT.show_dem(df[0],df[1])
+        elif prop == 'zone':
+            plt_CT.show_zone(df[0])
+        elif prop == 'soil':
             
+            # in 2 dimensions
+            # -------------
+            zone_mat  =  in_CT.read_zone(os.path.join(self.workdir, self.project_name, "prepro/zone"))
             
+            layer_nb = 1
+            if 'layer_nb' in kwargs:
+                layer_nb = kwargs['layer_nb']
+                
+            yprop = 'PERMX'
+            if 'yprop' in kwargs:
+                yprop = kwargs['yprop']
+                
+            soil_map = zone_mat[0]
+            
+            for z in np.unique(zone_mat[0]):
+                soil_map[zone_mat[0] == z] =  df[0][yprop].xs([str(layer_nb),str(int(z-1))]) #,level=0) 
+            plt_CT.show_soil(soil_map, yprop=yprop, layer_nb=layer_nb)
+            
+            # in 3 dimensions
+            # --------------
+            # SPP = df[0].to_dict()
+            # SoilPhysProp = self._prepare_SPP_tb(SPP)
+            # soil_SPP_plot = {}
+            # soil_SPP_plot['SPP'] = SoilPhysProp # matrice with respect to zones
+            # soil_SPP_plot['SPP_map'] = SPP # mapping with respect to zones
+            # self.map_prop2mesh(SPP)
+            
+        else:
+            print('no proxy to plot')
+
+        pass
+
+
     #%% Read outputs/inputs 
     # ------------------------------------------------------------------------
     def read_outputs(self, filename, **kwargs):
@@ -5784,26 +5983,29 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         if 'path' in kwargs:
             path=kwargs['path'] + '/' + filename
 
-        if filename == 'vp':
+        elif filename == 'vp':
             df=out_CT.read_vp(path)
             return df
-        if filename == 'hgraph':
+        elif filename == 'hgraph':
             df=out_CT.read_hgraph(path)
             return df
-        if filename == 'dtcoupling':
+        elif filename == 'dtcoupling':
             df=out_CT.read_dtcoupling(path)
             return df
-        if filename == 'hgsfdet':
+        elif filename == 'hgsfdet':
             df=out_CT.read_hgsfdet(path)
             return df
-        if filename == 'psi':
+        elif filename == 'psi':
             df=out_CT.read_psi(path)
             return df
-        if filename == 'sw':
+        elif filename == 'sw':
             df=out_CT.read_sw(path)
             return df
-        if filename == 'mbeconv':
+        elif filename == 'mbeconv':
             df=out_CT.read_mbeconv(path)
+            return df
+        elif filename == 'cumflowvol':
+            df = out_CT.read_cumflowvol(path)
             return df
         else:
             print('no file specified')
@@ -5829,13 +6031,36 @@ class CATHY():  # IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould b
         '''
 
         if filename == 'atmbc':
-            df=in_CT.read_atmbc(os.path.join(
+            df, _, _ =in_CT.read_atmbc(os.path.join(
                 self.workdir, self.project_name, 'input', filename))
             return df
-
+        elif filename == 'dem':
+            df = in_CT.read_dem(os.path.join(self.workdir, self.project_name, "prepro/dem"),
+                                os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"))
+            return df
+        elif filename == 'root_map':
+            df = in_CT.read_root_map(os.path.join(
+                self.workdir, self.project_name, 'input', filename))
+            return df
+        elif filename == 'soil':
+            dem_parm = in_CT.read_dem_parameters(os.path.join(
+                self.workdir, self.project_name, 'input', 'dem_parameters'))
+            
+            df = in_CT.read_soil(os.path.join(
+                                                self.workdir, 
+                                                self.project_name, 
+                                                'input', 
+                                                filename),
+                                dem_parm,
+                                MAXVEG = self.cathyH['MAXVEG']
+                                )
+            return df
+        elif filename == 'zone':
+            df  =  in_CT.read_zone(os.path.join(self.workdir, self.project_name, "prepro/zone"))
+            return df
 
         else:
-            print('no file specified')
+            print('unknown file requested')
 
 
         pass

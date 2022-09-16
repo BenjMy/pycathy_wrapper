@@ -44,6 +44,27 @@ Data Assimilation
    :hidden:
 
    /gallery/DA/plot_errorbar_subsample3
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The parameter *errorevery* of .Axes.errorbar can be used to draw error bars only on a subset of...">
+
+.. only:: html
+
+ .. figure:: /gallery/DA/images/thumb/sphx_glr_sensitivity_analysis_thumb.png
+     :alt: Errorbar subsampling
+
+     :ref:`sphx_glr_gallery_DA_sensitivity_analysis.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /gallery/DA/sensitivity_analysis
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

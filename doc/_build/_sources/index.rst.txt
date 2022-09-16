@@ -102,6 +102,7 @@
    
    content/api/api.rst
    content/change_log
+   content/cathy_list_citation
    content/references
 
 

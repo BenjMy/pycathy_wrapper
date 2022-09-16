@@ -30,6 +30,8 @@ import pandas as pd
 import numpy as np
 
 from pyCATHY.importers import cathy_outputs as out_CT
+from pyCATHY.importers import cathy_inputs as in_CT
+
 from pyCATHY.cathy_utils import (label_units, 
                                  transform2_time_delta, 
                                  convert_time_units,
@@ -54,6 +56,9 @@ nice_fonts = {
 }
 matplotlib.rcParams.update(nice_fonts)
 
+
+
+        
 #%% ---------------------------------------------------------------------------
 # -----------------Plot OUTPUTS CATHY -----------------------------------------
 # -----------------------------------------------------------------------------
@@ -62,7 +67,7 @@ matplotlib.rcParams.update(nice_fonts)
 
 def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):
     '''
-    plot hgsfdet 
+    plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
     '''
     # read hgraph file if df_hgraph not existing
     # ------------------------------------------------------------------------
@@ -82,6 +87,37 @@ def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):
     return fig, ax 
 
 
+def show_dtcoupling(df_dtcoupling=[], workdir=[], project_name=[],
+                x='time', yprop='Atmact-vf', **kwargs):
+    '''
+    plot dtcoupling 
+    '''
+    
+    if 'yprop' in kwargs:
+        yprop = kwargs['yprop']
+    
+    # read hgraph file if df_hgraph not existing
+    # ------------------------------------------------------------------------
+    fig, ax = plt.subplots()
+    if len(df_dtcoupling)==0:
+        df_dtcoupling = out_CT.read_dtcoupling(filename='dtcoupling')
+    nstep = len(df_dtcoupling['Atmpot-d'])
+    jmax=max(df_dtcoupling['Atmact-vf'])
+    timeatm = [df_dtcoupling['Deltat'][0]]
+    for i in np.arange(1,nstep):
+        timeatm.append(timeatm[i-1]+df_dtcoupling['Deltat'][i-1])
+    len(timeatm)
+    plt.step(timeatm, df_dtcoupling[yprop], color="green", where="post", label=yprop)
+    # plt.step(timeatm, df_dtcoupling[yprop[1]], color="blue", where="post", label=yprop[1])
+    
+    
+    ax.set_xlabel('time (h)')
+    ax.set_ylabel(label_units(yprop))
+    plt.legend()
+    
+    return fig, ax 
+
+
 def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
                 x='time', y='SW', **kwargs):
     '''
@@ -89,17 +125,36 @@ def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
     '''
     # read hgraph file if df_hgraph not existing
     # ------------------------------------------------------------------------
-    fig, ax = plt.subplots()
     if len(df_hgraph)==0:
-        df_dtcoupling = out_CT.read_dtcoupling(filename='dtcoupling')
-    nstep = len(df_dtcoupling['Atmpot-d'])
-    jmax=max(df_dtcoupling['Atmact-vf'])
-    timeatm = [df_dtcoupling['Deltat'][0]]
-    for i in np.arange(1,nstep+1):
-        timeatm.append(timeatm[i-1]+df_dtcoupling['Deltat'][i-1])
-    plt.step(timeatm, df_dtcoupling['Atmact-vf'], color="blue", where="post", label="test")
-    plt.step(timeatm, df_dtcoupling['Atmact-v'], color="blue", where="post", label="test")
+        df_hgraph = out_CT.read_hgraph(filename='hgraph')
+    fig, ax = plt.subplots()
+    if 'delta_t' in kwargs:
+        df_hgraph['time'] = pd.to_timedelta( df_hgraph['time'],unit='s') 
+    df_hgraph.pivot_table(values='streamflow',index='time').plot(ax=ax,
+                                                                 ylabel='streamflow ($m^3/s$)',
+                                                                 xlabel='time (s)')
     return fig, ax 
+
+
+def show_COCumflowvol(df_cumflowvol=[], workdir=None, project_name=None):
+    '''
+    plot COCumflowvol
+    '''
+    # read file if df_cumflowvol not existing
+    # ------------------------------------------------------------------------
+    if len(df_cumflowvol)==0:
+        df_cumflowvol = out_CT.read_cumflowvol(os.path.join(workdir, project_name, 
+                                                         "output", "cumflowvol"))
+    # plot Net Flow Volume (m^3) = f(time)
+    # ------------------------------------------------------------------------
+    fig, ax = plt.subplots()
+    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], "b-.")
+    ax.plot(df_cumflowvol[:, 2] / 3600, df_cumflowvol[:, 7])
+    ax.set_title("Cumulative flow volume")
+    ax.set(xlabel="Time (s)", ylabel="Net Flow Volume (m^3)")
+    ax.legend(["Total flow volume", "nansfdir flow volume"])
+
+    return fig, ax
 
 
 def show_vp_DEPRECATED(df_vp=[], workdir=[], project_name=[], 
@@ -129,50 +184,26 @@ def show_vp_DEPRECATED(df_vp=[], workdir=[], project_name=[],
             ax[i].set_ylabel(label);
     return fig, ax 
 
-
-def show_hgraph_2(df_hgraph=[], workdir=[], project_name=[],
-                x='time', y='SW', **kwargs):
-    '''
-    plot hgraph 
-    '''
-    # read hgraph file if df_hgraph not existing
-    # ------------------------------------------------------------------------
-    if len(df_hgraph)==0:
-        df_hgraph = out_CT.read_hgraph(filename='hgraph')
-    fig, ax = plt.subplots()
-    if 'delta_t' in kwargs:
-        df_hgraph['time'] = pd.to_timedelta( df_hgraph['time'],unit='s') 
-    df_hgraph.pivot_table(values='streamflow',index='time').plot(ax=ax,
-                                                                 ylabel='streamflow ($m^3/s$)',
-                                                                 xlabel='time (s)')
-    return fig, ax 
-
-
 def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
              savefig=False,**kwargs):
     '''
     Plot vtk file using pyvista
     Parameters
     ----------
-    filename : TYPE, optional
-        DESCRIPTION. The default is None.
+    filename : str, optional
+        Name of the file. The default is None.
     unit : str, optional
         ['pressure', 'saturation', 'ER', 'permeability', 'velocity'] . The default is pressure.
-    timeStep : TYPE, optional
-        DESCRIPTION. The default is 0.
-    notebook : TYPE, optional
-        DESCRIPTION. The default is False.
-    path : TYPE, optional
-        DESCRIPTION. The default is None.
-    savefig : TYPE, optional
-        DESCRIPTION. The default is False.
-    **kwargs : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    None.
-
+    timeStep : int, optional
+        Time step to plot. The default is 0.
+    notebook : bool, optional
+        Option to plot in a notebook. The default is False.
+    path : str, optional
+        Path of the vtk file. The default is None.
+    savefig : bool, optional
+        Save figure. The default is False.
+    **kwargs :
+        mainly plotting adjustements to pass into Pyvista.
     '''
     my_colormap = 'viridis'
     if path is None:
@@ -411,26 +442,7 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
 
     return
 
-def COCumflowvol(workdir, project_name):
-    '''
-    plot COCumflowvol
-    '''
-    # read file if df_cumflowvol not existing
-    # ------------------------------------------------------------------------
-    df_cumflowvol = []
-    if len(df_cumflowvol)==0:
-        df_cumflowvol = out_CT.read_cumflowvol(os.path.join(workdir, project_name, 
-                                                         "output", "cumflowvol"))
-    # plot Net Flow Volume (m^3) = f(time)
-    # ------------------------------------------------------------------------
-    fig, ax = plt.subplots()
-    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], "b-.")
-    ax.plot(df_cumflowvol[:, 2] / 3600, df_cumflowvol[:, 7])
-    ax.set_title("Cumulative flow volume")
-    ax.set(xlabel="Time (s)", ylabel="Net Flow Volume (m^3)")
-    ax.legend(["Total flow volume", "nansfdir flow volume"])
 
-    return fig, ax
 
 
 #%% ---------------------------------------------------------------------------
@@ -543,7 +555,59 @@ def show_atmbc_3d(df_atmbc):
     pass
            
 
-def indice_veg_plot(veg_map, **kwargs):
+def show_soil(soil_map, **kwargs):
+    '''
+    View from top of the soil prop
+    Parameters
+    ----------
+    soil_map : DataFrame()
+        Dataframe containing soil properties for the DEM
+    '''
+    
+    yprop = 'PERMX'
+    if 'yprop' in kwargs:
+        yprop = kwargs['yprop']
+       
+    layer_nb = '1'
+    if 'layer_nb' in kwargs:
+        layer_nb = kwargs['layer_nb']
+             
+        
+    cmap='tab10'
+    nb_of_zones = len(np.unique(soil_map))
+    cmap = mpl.colors.ListedColormap(plt.cm.tab10.colors[:nb_of_zones])
+    if 'cmap' in kwargs: 
+        cmap = kwargs['cmap']
+
+    fig, ax = plt.subplots()
+    cf = ax.pcolormesh(soil_map, edgecolors="black", cmap=cmap,
+                       )
+    cf.set_clim(min(soil_map.flatten()), max(soil_map.flatten()))
+
+    cax = plt.colorbar(cf, 
+                       ticks=np.linspace(min(soil_map.flatten()), 
+                                         max(soil_map.flatten()),
+                                         nb_of_zones),
+                       ax=ax, label=yprop)
+    
+    
+    cax.set_ticklabels(range(int(min(soil_map.flatten())), nb_of_zones))
+    cax.ax.set_yticklabels(['{:.2e}'.format(x) for x in np.linspace(min(soil_map.flatten()), 
+                      max(soil_map.flatten()),
+                      nb_of_zones)])
+                             # , 
+                            # fontsize=16,
+                            # )
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    
+    ax.set_title('view from top (before extruding), layer nb' + str(layer_nb))
+    plt.show(block=False)
+    plt.close() 
+  
+    return fig, ax
+
+def show_zone(zone_map, **kwargs):
     '''
     View from top of the vegetation type (equivalent somehow to root map)
     Parameters
@@ -552,13 +616,60 @@ def indice_veg_plot(veg_map, **kwargs):
         Indice of vegetation. The dimension of the vegetation map must match 
         the dimension of the DEM.
     '''
-    cmap='tab10'
+    # cmap='tab10'
+    nb_of_zones = len(np.unique(zone_map))
+    cmap = mpl.colors.ListedColormap(plt.cm.tab10.colors[:nb_of_zones])
+    if 'cmap' in kwargs: 
+        cmap = kwargs['cmap']
+
+    fig, ax = plt.subplots()
+    cf = ax.pcolormesh(zone_map, edgecolors="black", cmap=cmap)
+    # cbar = fig.colorbar(cf, ax=ax, label='indice of zones')
+    
+    cax = plt.colorbar(cf, 
+                       ticks=np.linspace(int(min(zone_map.flatten())), 
+                                         int(max(zone_map.flatten())),
+                                         nb_of_zones+1),
+                       ax=ax, label='indice of zones')
+    cax.set_ticklabels(range(int(min(zone_map.flatten())), nb_of_zones+1))
+
+
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_title('view from top (before extruding)')
+    plt.show(block=False)
+    plt.close() 
+    return fig, ax
+  
+    
+  
+def show_indice_veg(veg_map, **kwargs):
+    '''
+    View from top of the vegetation type (equivalent somehow to root map)
+    Parameters
+    ----------
+    veg_map : np.array([])
+        Indice of vegetation. The dimension of the vegetation map must match 
+        the dimension of the DEM.
+    '''
+    # cmap='tab10'
+    nb_of_zones = len(np.unique(veg_map))
+    cmap = mpl.colors.ListedColormap(plt.cm.tab10.colors[:nb_of_zones])
     if 'cmap' in kwargs: 
         cmap = kwargs['cmap']
 
     fig, ax = plt.subplots()
     cf = ax.pcolormesh(veg_map, edgecolors="black", cmap=cmap)
-    fig.colorbar(cf, ax=ax, label='indice of vegetation')
+    # fig.colorbar(cf, ax=ax, label='indice of vegetation')
+    
+    cax = plt.colorbar(cf, 
+                       ticks=np.linspace(int(min(veg_map.flatten())), 
+                                         int(max(veg_map.flatten())),
+                                         nb_of_zones+1),
+                       ax=ax, label='indice of vegetation')
+    cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones+1))
+
+
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_title('view from top (before extruding)')
@@ -570,7 +681,13 @@ def indice_veg_plot(veg_map, **kwargs):
 
 def dem_plot_2d_top(parameter, label='', **kwargs):
     '''
-    View  of the DEM from top of the a given parameter
+    View of the DEM from top of the a given parameter
+    
+    (Not yet implemented)
+    Possible parameters are: 
+        - vegetation
+        - altitude
+        
     '''
     if label=='all':
         fig, axs = plt.subplots(int(len(parameter.keys())/2),
@@ -596,10 +713,11 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
     return fig, ax 
     
 
-def dem_plot(workdir, project_name, **kwargs):
+def show_dem(dem_mat=[], str_hd_dem=[], workdir=None, project_name=None, **kwargs):
     """
     DEM3D creates a 3D representation from a Grass DEM file
     """
+    
     length = 1
     width = 1
     delta_x = 1 
@@ -608,21 +726,13 @@ def dem_plot(workdir, project_name, **kwargs):
     delta_y = 1 
     if 'delta_y' in kwargs:
         delta_y = kwargs['delta_y']
-    # Read the Header
-    # str_hd_dem = {'north':0,'south':0,'east':0,'west':0,'rows':0,'cols':0}
-    str_hd_dem = {}
-    with open(
-        os.path.join(workdir, project_name, "prepro/dem"), "r"
-    ) as f:  # open the file for reading
-        count = 0
-        for line in f:  # iterate over each line
-            if count < 6:
-                str_hd, value_hd = line.split()  # split it by whitespace
-                str_hd_dem[str_hd.replace(":", "")] = value_hd
-            count += 1
-    dem_file = open(os.path.join(workdir, project_name, "prepro/dtm_13.val"), "r")
-    dem_mat = np.loadtxt(dem_file, skiprows=0)
-    dem_file.close()
+             
+        
+    if len(dem_mat)==0:
+        # Read the Header
+        # str_hd_dem = {'north':0,'south':0,'east':0,'west':0,'rows':0,'cols':0}
+        dem_mat, str_hd_dem = in_CT.read_dem(os.path.join(workdir, project_name, "prepro/dem"),
+                                             os.path.join(workdir, project_name, "prepro/dtm_13.val"))
     
     x = np.zeros(dem_mat.shape[0])
     y = np.zeros(dem_mat.shape[1])

@@ -16,6 +16,8 @@
 .. hint:: The initial version (v0.1.0) includes a **Data Assimilation** extension to facilitate the integration of geophysical data into the hydrological model. You can check the list of improvements in the github releases. 
 
 
+.. hint:: Beyond a scientific tools, pyCATHY aims at making the processing **interpolable**, **reusable**. 
+
 
 ----
 
@@ -102,6 +104,7 @@
    
    content/api/api.rst
    content/change_log
+   content/cathy_list_citation
    content/references
 
 

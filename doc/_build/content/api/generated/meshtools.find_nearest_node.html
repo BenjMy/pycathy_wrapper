@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>meshtools.find_nearest_node | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
@@ -139,6 +141,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -760,6 +767,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../references.html">
    References
   </a>
@@ -878,21 +890,21 @@
             
               <div>
                 
-  <div class="section" id="meshtools-find-nearest-node">
-<h1>meshtools.find_nearest_node<a class="headerlink" href="#meshtools-find-nearest-node" title="Permalink to this headline">¶</a></h1>
+  <section id="meshtools-find-nearest-node">
+<h1>meshtools.find_nearest_node<a class="headerlink" href="#meshtools-find-nearest-node" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="meshtools.find_nearest_node">
 <span class="sig-prename descclassname"><span class="pre">meshtools.</span></span><span class="sig-name descname"><span class="pre">find_nearest_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meshIN_nodes_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/meshtools.html#find_nearest_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#meshtools.find_nearest_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find nearest mesh node between two meshes</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>node_coord</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>meshIN_nodes_coords</strong> (<em>np.array</em>) – </p></li>
 <li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – if distance &gt; threshold –&gt; closest = nan</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>closest_idx</strong> (<em>list</em>) – Node indice in the mesh_node.</p></li>
 <li><p><strong>closest</strong> (<em>list</em>) – Node coordinate in the mesh_node.</p></li>
@@ -902,7 +914,7 @@
 </dl>
 </dd></dl>
 
-<div style='clear:both'></div></div>
+<div style='clear:both'></div></section>
 
 
               </div>
@@ -920,7 +932,7 @@
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>

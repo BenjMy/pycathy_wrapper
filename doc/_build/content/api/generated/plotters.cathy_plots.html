@@ -2,10 +2,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     
         <title>plotters.cathy_plots | pyCATHY v0.1.1</title>
     
@@ -45,6 +46,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
@@ -141,6 +143,11 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
+     Errorbar subsampling
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
      Errorbar subsampling
     </a>
    </li>
@@ -762,6 +769,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../references.html">
    References
   </a>
@@ -880,8 +892,8 @@
             
               <div>
                 
-  <div class="api-module"><div class="section" id="plotters-cathy-plots">
-<h1><code class="docutils literal notranslate"><span class="pre">plotters.cathy_plots</span></code><a class="headerlink" href="#plotters-cathy-plots" title="Permalink to this headline">¶</a></h1>
+  <div class="api-module"><section id="plotters-cathy-plots">
+<h1><code class="docutils literal notranslate"><span class="pre">plotters.cathy_plots</span></code><a class="headerlink" href="#plotters-cathy-plots" title="Permalink to this heading">¶</a></h1>
 <hr><span class="target" id="module-plotters.cathy_plots"></span><p>Plotting functions for pyCATHY (2D and 3D)</p>
 <dl class="simple">
 <dt>Plotting:</dt><dd><ul class="simple">
@@ -894,10 +906,6 @@
 </dl>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="plotters.cathy_plots.LogNorm.html#plotters.cathy_plots.LogNorm" title="plotters.cathy_plots.LogNorm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots.LogNorm</span></code></a>([vmin, vmax, clip])</p></td>
 <td><p>Normalize a given value to the 0-1 range on a log scale.</p></td>
@@ -906,10 +914,6 @@
 </table>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="plotters.cathy_plots.COCumflowvol.html#plotters.cathy_plots.COCumflowvol" title="plotters.cathy_plots.COCumflowvol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots.COCumflowvol</span></code></a>(workdir, ...)</p></td>
 <td><p>plot COCumflowvol</p></td>
@@ -939,7 +943,7 @@
 <td><p>DEM3D creates a 3D representation from a Grass DEM file</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="plotters.cathy_plots.dem_plot_2d_top.html#plotters.cathy_plots.dem_plot_2d_top" title="plotters.cathy_plots.dem_plot_2d_top"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots.dem_plot_2d_top</span></code></a>(parameter)</p></td>
-<td><p>View  of the DEM from top of the a given parameter</p></td>
+<td><p>View of the DEM from top of the a given parameter</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="plotters.cathy_plots.indice_veg_plot.html#plotters.cathy_plots.indice_veg_plot" title="plotters.cathy_plots.indice_veg_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots.indice_veg_plot</span></code></a>(...)</p></td>
 <td><p>View from top of the vegetation type (equivalent somehow to root map) :param veg_map: Indice of vegetation. The dimension of the vegetation map must match                 the dimension of the DEM. :type veg_map: np.array([]).</p></td>
@@ -975,7 +979,7 @@
 <td><p>plot hgraph</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="plotters.cathy_plots.show_hgsfdet.html#plotters.cathy_plots.show_hgsfdet" title="plotters.cathy_plots.show_hgsfdet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots.show_hgsfdet</span></code></a>([...])</p></td>
-<td><p>plot hgsfdet</p></td>
+<td><p>plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="plotters.cathy_plots.show_vp_DEPRECATED.html#plotters.cathy_plots.show_vp_DEPRECATED" title="plotters.cathy_plots.show_vp_DEPRECATED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots.show_vp_DEPRECATED</span></code></a>([...])</p></td>
 <td><p>plot vp DEPRECATED use psi and sw reader instead and plot using pandas after find_nearest_node search.</p></td>
@@ -991,7 +995,7 @@
 </tr>
 </tbody>
 </table>
-</div></div>
+</div></section>
 
 
               </div>
@@ -1023,7 +1027,7 @@
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 12, 2022.<br/>
+      Last updated on Sep 14, 2022.<br/>
   </p>
 </footer>
 </main>
