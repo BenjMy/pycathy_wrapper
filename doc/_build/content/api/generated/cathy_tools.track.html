@@ -63,8 +63,6 @@
     <link rel="shortcut icon" href="../../../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="importers.cathy_outputs" href="importers.cathy_outputs.html" />
-    <link rel="prev" title="cathy_tools.print" href="cathy_tools.print.html" />
     <!-- Plausible analytics for anonymous usage statistics -->
     <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
 
@@ -142,13 +140,8 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
-     Errorbar subsampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
-     Errorbar subsampling
+    <a class="reference internal" href="../../../gallery/DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
     </a>
    </li>
   </ul>
@@ -159,8 +152,8 @@
   Reference documentation
  </span>
 </p>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active has-children">
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../api.html">
    API reference: The
    <code class="docutils literal notranslate">
@@ -170,13 +163,13 @@
    </code>
    package
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul class="current">
-   <li class="toctree-l2 current active has-children">
+  <ul>
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="cathy_tools.html">
      <code class="docutils literal notranslate">
       <span class="pre">
@@ -184,12 +177,12 @@
       </span>
      </code>
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
     <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul class="current">
+    <ul>
      <li class="toctree-l3">
       <a class="reference internal" href="cathy_tools.CATHY.html">
        cathy_tools.CATHY
@@ -240,9 +233,9 @@
        cathy_tools.print
       </a>
      </li>
-     <li class="toctree-l3 current active">
-      <a class="current reference internal" href="#">
-       cathy_tools.track
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
     </ul>
@@ -429,6 +422,11 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.resynchronise_times.html">
        DA.cathy_DA.resynchronise_times
       </a>
@@ -446,6 +444,16 @@
      <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.sampling_dist_trunc.html">
        DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.track.html">
+       DA.cathy_DA.track
       </a>
      </li>
     </ul>
@@ -989,35 +997,6 @@
                 
   <section id="cathy-tools-track">
 <h1>cathy_tools.track<a class="headerlink" href="#cathy-tools-track" title="Permalink to this heading">¶</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="cathy_tools.track">
-<span class="sig-prename descclassname"><span class="pre">cathy_tools.</span></span><span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.10)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ProgressType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ProgressType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Working...'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_refresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Console</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transient</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_per_second</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Style</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bar.back'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Style</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bar.complete'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finished_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Style</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bar.finished'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulse_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Style</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'bar.pulse'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ProgressType</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/rich/progress.html#track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.track" title="Permalink to this definition">¶</a></dt>
-<dd><p>Track progress by iterating over a sequence.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sequence</strong> (<em>Iterable</em><em>[</em><em>ProgressType</em><em>]</em>) – A sequence (must support “len”) you wish to iterate over.</p></li>
-<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – Description of task show next to progress bar. Defaults to “Working”.</p></li>
-<li><p><strong>total</strong> – (float, optional): Total number of steps. Default is len(sequence).</p></li>
-<li><p><strong>auto_refresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Automatic refresh, disable to force a refresh after each iteration. Default is True.</p></li>
-<li><p><strong>transient</strong> – (bool, optional): Clear the progress on exit. Defaults to False.</p></li>
-<li><p><strong>console</strong> (<em>Console</em><em>, </em><em>optional</em>) – Console to write to. Default creates internal Console instance.</p></li>
-<li><p><strong>refresh_per_second</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Number of times per second to refresh the progress information. Defaults to 10.</p></li>
-<li><p><strong>style</strong> (<em>StyleType</em><em>, </em><em>optional</em>) – Style for the bar background. Defaults to “bar.back”.</p></li>
-<li><p><strong>complete_style</strong> (<em>StyleType</em><em>, </em><em>optional</em>) – Style for the completed bar. Defaults to “bar.complete”.</p></li>
-<li><p><strong>finished_style</strong> (<em>StyleType</em><em>, </em><em>optional</em>) – Style for a finished bar. Defaults to “bar.done”.</p></li>
-<li><p><strong>pulse_style</strong> (<em>StyleType</em><em>, </em><em>optional</em>) – Style for pulsing bars. Defaults to “bar.pulse”.</p></li>
-<li><p><strong>update_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum time (in seconds) between calls to update(). Defaults to 0.1.</p></li>
-<li><p><strong>disable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Disable display of progress.</p></li>
-<li><p><strong>show_speed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Show speed if total isn’t known. Defaults to True.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Iterable[ProgressType]</em> – An iterable of the values in the sequence.</p>
-</dd>
-</dl>
-</dd></dl>
-
 <div style='clear:both'></div></section>
 
 
@@ -1025,21 +1004,7 @@
               
             
                 <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="cathy_tools.print.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">cathy_tools.print</p>
-        </div>
-    </a>
-    <a class='right-next' id="next-link" href="importers.cathy_outputs.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><code class="docutils literal notranslate"><span class="pre">importers.cathy_outputs</span></code></p>
-    </div>
-    <i class="fas fa-angle-right"></i>
-    </a>
+<div class='prev-next-area'>
 </div>
             
         </div>
@@ -1050,7 +1015,7 @@
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 16, 2022.<br/>
+      Last updated on Sep 19, 2022.<br/>
   </p>
 </footer>
 </main>

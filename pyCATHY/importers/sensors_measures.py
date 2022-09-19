@@ -10,6 +10,11 @@ try:
 except ImportError: 
     pygimli = None
 
+try: 
+    from resipy import Project
+except ImportError: 
+    resipy = None
+
 
 
 def read_ERT(filename, data_format, **kwargs):
@@ -25,7 +30,7 @@ def read_ERT(filename, data_format, **kwargs):
     dict_ERT = {}
     
     if 'resipy' in data_format:
-        if resipy is None:
+        if Project is None:
             raise ValueError(f'resipy module not imported. Please pip install.')
 
         df_ERT_new = pd.read_csv(filename, sep=",", header='infer')       

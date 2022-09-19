@@ -35,12 +35,6 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
         state values (can be either pressure heads or saturation water).
     observation : TYPE
         stacked predicted observation (after mapping) in the same physical quantity than data.
-
-    Returns
-    -------
-    list
-        DESCRIPTION.
-
     '''
     
     # get kwargs optionnal arguments
@@ -70,20 +64,12 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
         param_mean = []
         for l in range(len(param)):
             param_mean.append((1./float(ens_size))*np.tile(param[l,:].sum(0), (ens_size,1)).transpose())
-            # param_mean.append((1./float(ens_size))*np.tile(param[:,:].sum(0), (ens_size,1)).transpose())
-    
         param_mean = np.vstack(param_mean)
         
-        # print('mean pRam')
-        # print(param_mean)
         
     if len(param)>0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
         augm_state = np.vstack([ensemble, param])
-        # augm_data =  np.vstack([data, param.T])
-        # np.shape(augm_state)
-        # np.shape(data)
-        # np.shape(observation)
     else:
         augm_state_mean = ensemble_mean
         augm_state = ensemble
@@ -95,13 +81,16 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     
     # data perturbation from ensemble measurements
     # data_pert should be (MeasSize)x(ens_size)
+    
+    if isinstance(observation, list):
+        if len(list)==1:
+            observation = np.array(observation[0])
+        else:
+            print(observation)
+            print('observation is a list? should be a numpy array')
+            
     data_pert = (data - observation.T).T
-    
-    
-    # print('data_pert')
-    # print(data_pert)
-        
-        
+
         
     if np.max(abs(data_pert))>1e3:
         raise ValueError('predictions are too far from observations')
@@ -112,7 +101,7 @@ def enkf_analysis(data,data_cov,param,ensemble,observation,**kwargs):
     
     if obs_pert.mean() == 0:
         print('Ensemble measurement perturbation from ensemble'
-                'measurement mean is too small (=0):'
+                ' measurement mean is too small (=0):'
                 '- Increase perturbation!'
                 '- Check if the system is not in steady state'
                 )

@@ -19,7 +19,6 @@ import pyvista as pv
 import pandas as pd
 import time
 import rich.console
-from rich.progress import track
 from rich import print
 
 from pyCATHY.plotters import cathy_plots as plt_CT
@@ -35,7 +34,25 @@ import multiprocessing
 import matplotlib.pyplot as plt
 
 
-from abc import ABC, abstractmethod
+# from abc import ABC, abstractmethod
+
+# multiprocessor functions outside main CATHY object
+# -----------------------------------------------------------------------------
+def subprocess_run_multi(pathexe_list):
+    '''
+    Run multiple exe files in //
+    '''
+    # https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects
+    print(f"x= {pathexe_list}, PID = {os.getpid()}")
+    # self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
+
+    os.chdir(pathexe_list)
+    callexe = "./" + 'cathy'
+    p = subprocess.run([callexe], text=True, capture_output=True)
+    # p.close()
+
+
+    return p
 
 
 def make_console(verbose):
@@ -65,7 +82,7 @@ class HiddenPrints:
 
 # -----------------------------------------------------------------------------
 
-class CATHY(ABC):
+class CATHY():
     """
 
     Main CATHY object
@@ -474,6 +491,7 @@ class CATHY(ABC):
 
             # ----------------------------------------------------------------
             if self.DAFLAG:
+                print('DA activated')
 
                 # verbose = False
                 # # define Data Assimilation default parameters
@@ -519,20 +537,20 @@ class CATHY(ABC):
                 #     self.damping = kwargs['damping']
 
                 # https://blog.airbrake.io/blog/python/python-exception-handling-notimplementederror
-                @abstractmethod
-                def run_DA_sequential(
-                                    callexe, parallel,
-                                     DA_type,
-                                     dict_obs,
-                                     list_update_parm,
-                                     dict_parm_pert,
-                                     list_assimilated_obs,
-                                     open_loop_run,
-                                     threshold_rejected,
-                                     verbose,
-                                     **kwargs
-                             ):
-                    raise NotImplementedError('run_DA_seq')
+                # @abstractmethod
+                # def run_DA_sequential(
+                #                     callexe, parallel,
+                #                      DA_type,
+                #                      dict_obs,
+                #                      list_update_parm,
+                #                      dict_parm_pert,
+                #                      list_assimilated_obs,
+                #                      open_loop_run,
+                #                      threshold_rejected,
+                #                      verbose,
+                #                      **kwargs
+                #              ):
+                    # raise NotImplementedError('run_DA_seq')
 
             # case of simple simulation
             # ----------------------------------------------------------------
@@ -1881,7 +1899,11 @@ class CATHY(ABC):
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
                 np.savetxt(icfile, pressure_head_ini, fmt="%1.3e")
-                self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
+                
+                try: 
+                    self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
+                except:
+                    pass
 
 
             elif INDP in [2,3]:
@@ -2791,7 +2813,6 @@ class CATHY(ABC):
         # --------------------------------------------------------------------
         if isinstance(SPP_map['PERMX'], float):
             for k in SPP_map:
-                print(k)
                 SPP_map[k] = [SPP_map[k]]
 
         for z in range(len(SPP_map['VGRMCCELL'])): # loop over zones
@@ -3177,7 +3198,7 @@ class CATHY(ABC):
         self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
         self.veg_map = indice_veg
 
-        if show is not None:
+        if show:
             plt, ax = plt_CT.show_indice_veg(indice_veg,**kwargs)
             return indice_veg, plt, ax
         return indice_veg
@@ -3192,7 +3213,10 @@ class CATHY(ABC):
         if hasattr(self,'mesh_pv_attributes') == False:
             self.create_mesh_vtk()
         for dp in dict_props.keys():
-            self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp].flatten())
+            try:
+                self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp].flatten())
+            except:
+                pass
         pass
 
 
@@ -3355,7 +3379,7 @@ class CATHY(ABC):
         if 'path' in kwargs:
             path=kwargs['path'] + '/' + filename
 
-        elif filename == 'vp':
+        if filename == 'vp':
             df=out_CT.read_vp(path)
             return df
         elif filename == 'hgraph':

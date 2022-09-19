@@ -139,13 +139,8 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../gallery/DA/plot_errorbar_subsample3.html">
-     Errorbar subsampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../gallery/DA/sensitivity_analysis.html">
-     Errorbar subsampling
+    <a class="reference internal" href="../gallery/DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
     </a>
    </li>
   </ul>
@@ -238,8 +233,8 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../content/api/generated/cathy_tools.track.html">
-       cathy_tools.track
+      <a class="reference internal" href="../content/api/generated/cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
     </ul>
@@ -426,6 +421,11 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../content/api/generated/DA.cathy_DA.resynchronise_times.html">
        DA.cathy_DA.resynchronise_times
       </a>
@@ -443,6 +443,16 @@
      <li class="toctree-l3">
       <a class="reference internal" href="../content/api/generated/DA.cathy_DA.sampling_dist_trunc.html">
        DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.track.html">
+       DA.cathy_DA.track
       </a>
      </li>
     </ul>
@@ -987,23 +997,40 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">rich.console</span>
-<span class="kn">from</span> <span class="nn">rich.progress</span> <span class="kn">import</span> <span class="n">track</span>
 <span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span>
 
 <span class="kn">from</span> <span class="nn">pyCATHY.plotters</span> <span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">plt_CT</span>
-<span class="c1"># from pyCATHY.DA.cathy_DA import DA</span>
-<span class="kn">from</span> <span class="nn">pyCATHY.DA</span> <span class="kn">import</span> <span class="n">cathy_DA</span>
 
 <span class="kn">from</span> <span class="nn">pyCATHY.importers</span> <span class="kn">import</span> <span class="n">cathy_outputs</span> <span class="k">as</span> <span class="n">out_CT</span>
 <span class="kn">from</span> <span class="nn">pyCATHY.importers</span> <span class="kn">import</span> <span class="n">cathy_inputs</span> <span class="k">as</span> <span class="n">in_CT</span>
-<span class="kn">from</span> <span class="nn">pyCATHY.importers</span> <span class="kn">import</span> <span class="n">sensors_measures</span> <span class="k">as</span> <span class="n">in_meas</span>
+<span class="c1"># from pyCATHY.importers import sensors_measures as in_meas</span>
 <span class="kn">from</span> <span class="nn">pyCATHY.ERT</span> <span class="kn">import</span> <span class="n">petro_Archie</span> <span class="k">as</span> <span class="n">Archie</span>
-<span class="kn">from</span> <span class="nn">pyCATHY</span> <span class="kn">import</span> <span class="n">cathy_utils</span> <span class="k">as</span> <span class="n">utils_CT</span>
 
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<span class="c1"># from abc import ABC, abstractmethod</span>
+
+<span class="c1"># multiprocessor functions outside main CATHY object</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="subprocess_run_multi"><a class="viewcode-back" href="../content/api/generated/cathy_tools.subprocess_run_multi.html#cathy_tools.subprocess_run_multi">[docs]</a><span class="k">def</span> <span class="nf">subprocess_run_multi</span><span class="p">(</span><span class="n">pathexe_list</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Run multiple exe files in //</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x= </span><span class="si">{</span><span class="n">pathexe_list</span><span class="si">}</span><span class="s2">, PID = </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># self.console.print(&quot;:athletic_shoe: [b]nudging type: [/b]&quot; + str(self.DAFLAG))</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">pathexe_list</span><span class="p">)</span>
+    <span class="n">callexe</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span> <span class="o">+</span> <span class="s1">&#39;cathy&#39;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">callexe</span><span class="p">],</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># p.close()</span>
+
+
+    <span class="k">return</span> <span class="n">p</span></div>
 
 
 <div class="viewcode-block" id="make_console"><a class="viewcode-back" href="../content/api/generated/cathy_tools.make_console.html#cathy_tools.make_console">[docs]</a><span class="k">def</span> <span class="nf">make_console</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
@@ -1033,7 +1060,7 @@
 
 <span class="c1"># -----------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="CATHY"><a class="viewcode-back" href="../content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY">[docs]</a><span class="k">class</span> <span class="nc">CATHY</span><span class="p">():</span>  <span class="c1"># IS IT GOOD PRACTICE TO PASS DA CLASS HERE ? I think we sould better pass main CATHY into children classes</span>
+<div class="viewcode-block" id="CATHY"><a class="viewcode-back" href="../content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY">[docs]</a><span class="k">class</span> <span class="nc">CATHY</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Main CATHY object</span>
@@ -1442,61 +1469,66 @@
 
             <span class="c1"># ----------------------------------------------------------------</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DAFLAG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DA activated&#39;</span><span class="p">)</span>
 
-                <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="c1"># define Data Assimilation default parameters</span>
-                <span class="c1"># -------------------------------------------------------------</span>
+                <span class="c1"># verbose = False</span>
+                <span class="c1"># # define Data Assimilation default parameters</span>
+                <span class="c1"># # -------------------------------------------------------------</span>
 
-                <span class="c1"># type of assimillation</span>
-                <span class="n">DA_type</span> <span class="o">=</span> <span class="s1">&#39;enkf_Evensen2009_Sakov&#39;</span> <span class="c1"># Default DA type</span>
-                <span class="k">if</span> <span class="s1">&#39;DA_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">DA_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;DA_type&#39;</span><span class="p">]</span>
+                <span class="c1"># # type of assimillation</span>
+                <span class="c1"># DA_type = &#39;enkf_Evensen2009_Sakov&#39; # Default DA type</span>
+                <span class="c1"># if &#39;DA_type&#39; in kwargs:</span>
+                <span class="c1">#     DA_type = kwargs[&#39;DA_type&#39;]</span>
 
-                <span class="c1"># perturbated parameters dict</span>
-                <span class="n">dict_parm_pert</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">if</span> <span class="s1">&#39;dict_parm_pert&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">dict_parm_pert</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dict_parm_pert&#39;</span><span class="p">]</span>
+                <span class="c1"># # perturbated parameters dict</span>
+                <span class="c1"># dict_parm_pert = []</span>
+                <span class="c1"># if &#39;dict_parm_pert&#39; in kwargs:</span>
+                <span class="c1">#     dict_parm_pert = kwargs[&#39;dict_parm_pert&#39;]</span>
 
-                <span class="c1"># observations dict</span>
-                <span class="n">dict_obs</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">if</span> <span class="s1">&#39;dict_obs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">dict_obs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dict_obs&#39;</span><span class="p">]</span>
+                <span class="c1"># # observations dict</span>
+                <span class="c1"># dict_obs = []</span>
+                <span class="c1"># if &#39;dict_obs&#39; in kwargs:</span>
+                <span class="c1">#     dict_obs = kwargs[&#39;dict_obs&#39;]</span>
 
-                <span class="c1"># what needs to be updated ? only model states or also model parameters?</span>
-                <span class="n">list_update_parm</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;St. var.&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="s1">&#39;list_update_parm&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">list_update_parm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;list_update_parm&#39;</span><span class="p">]</span>
+                <span class="c1"># # what needs to be updated ? only model states or also model parameters?</span>
+                <span class="c1"># list_update_parm = [&#39;St. var.&#39;]</span>
+                <span class="c1"># if &#39;list_update_parm&#39; in kwargs:</span>
+                <span class="c1">#     list_update_parm = kwargs[&#39;list_update_parm&#39;]</span>
 
-                <span class="c1"># what needs to be assimilated ? default is ALL</span>
-                <span class="n">list_assimilated_obs</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>
-                <span class="k">if</span> <span class="s1">&#39;list_assimilated_obs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">list_assimilated_obs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;list_assimilated_obs&#39;</span><span class="p">]</span>
+                <span class="c1"># # what needs to be assimilated ? default is ALL</span>
+                <span class="c1"># list_assimilated_obs = &#39;all&#39;</span>
+                <span class="c1"># if &#39;list_assimilated_obs&#39; in kwargs:</span>
+                <span class="c1">#     list_assimilated_obs = kwargs[&#39;list_assimilated_obs&#39;]</span>
 
-                <span class="n">open_loop_run</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">if</span> <span class="s1">&#39;open_loop_run&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">open_loop_run</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;open_loop_run&#39;</span><span class="p">]</span>
-
-
-                <span class="n">threshold_rejected</span> <span class="o">=</span> <span class="mi">10</span>
-                <span class="k">if</span> <span class="s1">&#39;threshold_rejected&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="n">threshold_rejected</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;threshold_rejected&#39;</span><span class="p">]</span>
+                <span class="c1"># open_loop_run = True</span>
+                <span class="c1"># if &#39;open_loop_run&#39; in kwargs:</span>
+                <span class="c1">#     open_loop_run = kwargs[&#39;open_loop_run&#39;]</span>
 
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">damping</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="s1">&#39;damping&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">damping</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;damping&#39;</span><span class="p">]</span>
+                <span class="c1"># threshold_rejected = 10</span>
+                <span class="c1"># if &#39;threshold_rejected&#39; in kwargs:</span>
+                <span class="c1">#     threshold_rejected = kwargs[&#39;threshold_rejected&#39;]</span>
 
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_DA</span><span class="p">(</span><span class="n">callexe</span><span class="p">,</span> <span class="n">parallel</span><span class="p">,</span>
-                             <span class="n">DA_type</span><span class="p">,</span>
-                             <span class="n">dict_obs</span><span class="p">,</span>
-                             <span class="n">list_update_parm</span><span class="p">,</span>
-                             <span class="n">dict_parm_pert</span><span class="p">,</span>
-                             <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                             <span class="n">open_loop_run</span><span class="p">,</span>
-                             <span class="n">threshold_rejected</span><span class="p">,</span>
-                             <span class="n">verbose</span>
-                             <span class="p">)</span>
+                <span class="c1"># self.damping = 1</span>
+                <span class="c1"># if &#39;damping&#39; in kwargs:</span>
+                <span class="c1">#     self.damping = kwargs[&#39;damping&#39;]</span>
+
+                <span class="c1"># https://blog.airbrake.io/blog/python/python-exception-handling-notimplementederror</span>
+                <span class="c1"># @abstractmethod</span>
+                <span class="c1"># def run_DA_sequential(</span>
+                <span class="c1">#                     callexe, parallel,</span>
+                <span class="c1">#                      DA_type,</span>
+                <span class="c1">#                      dict_obs,</span>
+                <span class="c1">#                      list_update_parm,</span>
+                <span class="c1">#                      dict_parm_pert,</span>
+                <span class="c1">#                      list_assimilated_obs,</span>
+                <span class="c1">#                      open_loop_run,</span>
+                <span class="c1">#                      threshold_rejected,</span>
+                <span class="c1">#                      verbose,</span>
+                <span class="c1">#                      **kwargs</span>
+                <span class="c1">#              ):</span>
+                    <span class="c1"># raise NotImplementedError(&#39;run_DA_seq&#39;)</span>
 
             <span class="c1"># case of simple simulation</span>
             <span class="c1"># ----------------------------------------------------------------</span>
@@ -1816,146 +1848,6 @@
         <span class="k">return</span> <span class="n">prediction_OL</span>
 
 
-    <span class="k">def</span> <span class="nf">_DA_openLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                     <span class="n">ENS_times</span><span class="p">,</span>
-                     <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                     <span class="n">parallel</span><span class="p">,</span>
-                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Run open Loop (no update/assimilation) hydro simulation for an ensemble of realisation</span>
-<span class="sd">        Evaluate the performance by comparison with measured data after mapping</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        ENS_times : list</span>
-<span class="sd">            List of the time steps (in sec) where observations are assimilated.</span>
-<span class="sd">        list_assimilated_obs : list</span>
-<span class="sd">            List of assimilation observations.</span>
-<span class="sd">        parallel : Bool, optional</span>
-<span class="sd">            Parallelize. The default is True.</span>
-<span class="sd">        verbose : Bool, optional</span>
-<span class="sd">            Display prints. The default is False.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Prediction_OL.</span>
-<span class="sd">        Performance dataframe.</span>
-
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="c1"># multi run CATHY hydrological model from the independant folders</span>
-        <span class="c1"># composing the ensemble</span>
-        <span class="c1"># ----------------------------------------------------------------</span>
-        <span class="k">if</span> <span class="n">parallel</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">pathexe_list</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">ens_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">):</span>
-                <span class="n">path_exe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
-                                        <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                                        <span class="s1">&#39;DA_Ensemble/cathy_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-                <span class="n">pathexe_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_exe</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">subprocess_run_multi</span><span class="p">,</span> <span class="n">pathexe_list</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-
-        <span class="c1"># Loop over ensemble realisations one by one</span>
-        <span class="c1"># ------------------------------------------------------------</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">ens_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">):</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                                      <span class="s1">&#39;DA_Ensemble/cathy_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
-                <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atmbc</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_hydro_DA_openLoop</span><span class="p">(</span><span class="n">time_of_interest</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atmbc</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span>
-                                              <span class="n">nodes_of_interest</span><span class="o">=</span><span class="p">[],</span>
-                                              <span class="n">simu_time_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atmbc</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])),</span>
-                                              <span class="n">ens_nb</span><span class="o">=</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span>
-                                              <span class="p">)</span>
-
-        <span class="c1"># save into the DA_df dataframe</span>
-        <span class="c1"># -----------------------------------------------------------------</span>
-        <span class="n">path_fwd_CATHY_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">ens_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">):</span>
-            <span class="n">path_fwd_CATHY_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                                    <span class="s1">&#39;DA_Ensemble/cathy_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
-
-            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
-                                  <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                                  <span class="s1">&#39;DA_Ensemble/cathy_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
-            <span class="n">df_psi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_outputs</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;psi&#39;</span><span class="p">,</span>
-                                        <span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
-                                                          <span class="s1">&#39;output&#39;</span><span class="p">))</span>
-            <span class="n">df_sw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_outputs</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;sw&#39;</span><span class="p">,</span>
-                                        <span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
-                                                          <span class="s1">&#39;output&#39;</span><span class="p">))</span>
-
-
-            <span class="n">shift</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_psi</span><span class="p">)</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">parm</span><span class="p">[</span><span class="s2">&quot;NPRT&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">shift</span><span class="o">&lt;</span><span class="mi">0</span> <span class="o">|</span> <span class="n">shift</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error for the ensemble nb:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="p">))</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Error on the simulation:&#39;</span>
-                                  <span class="s1">&#39;nb of times contained in the outputs files is too small;&#39;</span>
-                                  <span class="s1">&#39;Check &#39;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">df_psi</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_DA_df</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="p">[</span><span class="n">df_psi</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">shift</span><span class="p">,:],</span> <span class="n">df_sw</span><span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="n">shift</span><span class="p">,:]],</span>
-                            <span class="n">t_ass</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
-                            <span class="n">openLoop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                            <span class="n">ens_nb</span><span class="o">=</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-
-
-        <span class="n">prediction_OL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_perf_OL</span><span class="p">(</span>
-                                                <span class="n">parallel</span><span class="p">,</span>
-                                                <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                                                <span class="n">path_fwd_CATHY_list</span><span class="p">,</span>
-                                                <span class="n">ENS_times</span>
-                                                <span class="p">)</span>
-
-        <span class="c1"># ------------------------------------------------------</span>
-        <span class="c1"># END of Open Loop simulation and performance evaluation</span>
-        <span class="c1"># ------------------------------------------------------</span>
-        <span class="k">pass</span>
-
-
-    <span class="k">def</span> <span class="nf">_mark_invalid_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ens_valid</span><span class="p">,</span>
-                                  <span class="n">prediction</span><span class="p">,</span>
-                                  <span class="n">ensemble_psi</span><span class="p">,</span>
-                                  <span class="n">ensemble_sw</span><span class="p">,</span>
-                                  <span class="n">analysis</span><span class="p">,</span>
-                                  <span class="n">analysis_param</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; mark invalid ensemble - invalid ensemble are filled with NaN values &#39;&#39;&#39;</span>
-
-        <span class="n">ensemble_psi_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">ensemble_psi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">ensemble_psi_valid</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="n">ensemble_psi_valid</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>  <span class="o">=</span> <span class="n">ensemble_psi</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>
-
-        <span class="n">ensemble_sw_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">ensemble_psi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">ensemble_sw_valid</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="n">ensemble_sw_valid</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>  <span class="o">=</span> <span class="n">ensemble_sw</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>
-
-        <span class="n">analysis_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">ensemble_psi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">analysis_valid</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="n">analysis_valid</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>  <span class="o">=</span> <span class="n">analysis</span>
-
-        <span class="n">prediction_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="n">prediction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                     <span class="n">ensemble_psi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
-        <span class="n">prediction_valid</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="n">prediction_valid</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>  <span class="o">=</span> <span class="n">prediction</span>
-
-        <span class="n">analysis_param_valid</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">analysis_param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="n">analysis_param_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="n">analysis_param</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                            <span class="n">ensemble_psi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
-            <span class="n">analysis_param_valid</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-            <span class="n">analysis_param_valid</span><span class="p">[:,</span><span class="n">ens_valid</span><span class="p">]</span>  <span class="o">=</span> <span class="n">analysis_param</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="n">prediction_valid</span><span class="p">,</span>
-                <span class="n">ensemble_psi_valid</span><span class="p">,</span>
-                <span class="n">ensemble_sw_valid</span><span class="p">,</span>
-                <span class="n">analysis_valid</span><span class="p">,</span>
-                <span class="n">analysis_param_valid</span>
-                <span class="p">)</span>
-
 
 
 <div class="viewcode-block" id="CATHY.set_Archie_parm"><a class="viewcode-back" href="../content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.set_Archie_parm">[docs]</a>    <span class="k">def</span> <span class="nf">set_Archie_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -2009,407 +1901,55 @@
         <span class="k">pass</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_mapping_petro_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Initiate Archie and VGP&#39;&#39;&#39;</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initiate Archie and VGP&#39;</span><span class="p">)</span>
-        <span class="n">porosity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soil_SPP</span><span class="p">[</span><span class="s1">&#39;SPP&#39;</span><span class="p">][:,</span> <span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">porosity</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">porosity</span> <span class="o">=</span> <span class="p">[</span><span class="n">porosity</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;Archie_parms&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Archie parameters not defined set defaults&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Archie_parms</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;porosity&#39;</span><span class="p">:</span> <span class="n">porosity</span><span class="p">,</span>
-                                 <span class="s1">&#39;rFluid_Archie&#39;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">],</span>
-                                 <span class="s1">&#39;a_Archie&#39;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">],</span>
-                                 <span class="s1">&#39;m_Archie&#39;</span><span class="p">:[</span><span class="mf">2.0</span><span class="p">],</span>
-                                 <span class="s1">&#39;n_Archie&#39;</span><span class="p">:[</span><span class="mf">2.0</span><span class="p">],</span>
-                                 <span class="s1">&#39;pert_sigma_Archie&#39;</span><span class="p">:[</span><span class="mi">0</span><span class="p">]</span>
-                                 <span class="p">}</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;VGN_parms&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;VGN parameters not defined set defaults: empty dict </span><span class="si">{}</span><span class="s1"> - not implemented yet&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">VGN_parms</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">pass</span>
-
-
-
-<div class="viewcode-block" id="CATHY.run_ensemble_hydrological_model"><a class="viewcode-back" href="../content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.run_ensemble_hydrological_model">[docs]</a>    <span class="k">def</span> <span class="nf">run_ensemble_hydrological_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parallel</span><span class="p">,</span><span class="n">verbose</span><span class="p">,</span><span class="n">callexe</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; multi run CATHY hydrological model from the independant folders composing the ensemble &#39;&#39;&#39;</span>
-
-        <span class="c1"># ----------------------------------------------------------------</span>
-        <span class="k">if</span> <span class="n">parallel</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">pathexe_list</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="c1"># for ens_i in range(self.NENS):</span>
-
-            <span class="k">for</span> <span class="n">ens_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">:</span>
-                <span class="n">path_exe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
-                                        <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                                        <span class="s1">&#39;DA_Ensemble/cathy_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-                <span class="n">pathexe_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_exe</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">subprocess_run_multi</span><span class="p">,</span> <span class="n">pathexe_list</span><span class="p">)</span>
-
-
-                <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="c1"># process each ensemble folder one by one</span>
-        <span class="c1"># ----------------------------------------------------------------</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Loop over ensemble realisations</span>
-            <span class="c1"># ------------------------------------------------------------</span>
-            <span class="k">for</span> <span class="n">ens_i</span> <span class="ow">in</span> <span class="n">track</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">),</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Run hydrological fwd model...&quot;</span><span class="p">):</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;:keycap_number_sign: [b]ensemble nb:[/b]&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
-                                    <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">))</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                                      <span class="s1">&#39;DA_Ensemble/cathy_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ens_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">callexe</span><span class="p">],</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                   <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-
-        <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="CATHY.update_pert_parm_dict"><a class="viewcode-back" href="../content/api/generated/cathy_tools.CATHY.html#cathy_tools.CATHY.update_pert_parm_dict">[docs]</a>    <span class="k">def</span> <span class="nf">update_pert_parm_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">update_key</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span><span class="n">analysis_param_valid</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; update dict of perturbated parameters i.e. add a collumn with new params&#39;&#39;&#39;</span>
-
-        <span class="n">index_update</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-           <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">list_update_parm</span><span class="p">:</span>
-               <span class="k">if</span> <span class="s1">&#39;St. var.&#39;</span> <span class="ow">in</span> <span class="n">pp</span><span class="p">:</span>
-                   <span class="n">index_update</span> <span class="o">=</span> <span class="n">index_update</span> <span class="o">+</span> <span class="mi">1</span>
-                   <span class="k">pass</span>
-               <span class="k">else</span><span class="p">:</span>
-                   <span class="n">update_key</span> <span class="o">=</span> <span class="s1">&#39;update_nb&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span><span class="p">)</span>
-                   <span class="bp">self</span><span class="o">.</span><span class="n">dict_parm_pert</span><span class="p">[</span><span class="n">pp</span><span class="p">][</span><span class="n">update_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis_param_valid</span><span class="p">[</span><span class="n">index_update</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                   <span class="n">index_update</span> <span class="o">=</span> <span class="n">index_update</span> <span class="o">+</span> <span class="mi">1</span>
-
-           <span class="c1"># check after analysis</span>
-           <span class="c1"># ----------------------------------------------------------------</span>
-           <span class="n">id_valid_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_after_analysis</span><span class="p">(</span>
-                                                       <span class="n">update_key</span><span class="p">,</span>
-                                                       <span class="n">list_update_parm</span>
-                                                       <span class="p">)</span>
-           <span class="n">intersection_set</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
-                                               <span class="nb">set</span><span class="p">(</span><span class="n">id_valid_after</span><span class="p">),</span>
-                                               <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">)</span>
-                                               <span class="p">)</span>
-           <span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">intersection_set</span><span class="p">)</span>
-
-        <span class="k">pass</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_run_DA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callexe</span><span class="p">,</span> <span class="n">parallel</span><span class="p">,</span>
-                        <span class="n">DA_type</span><span class="p">,</span>
-                        <span class="n">dict_obs</span><span class="p">,</span>
-                        <span class="n">list_update_parm</span><span class="p">,</span>
-                        <span class="n">dict_parm_pert</span><span class="p">,</span>
-                        <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                        <span class="n">open_loop_run</span><span class="p">,</span>
-                        <span class="n">threshold_rejected</span><span class="p">,</span>
-                        <span class="n">verbose</span><span class="p">,</span>
-                        <span class="o">**</span><span class="n">kwargs</span>
-                        <span class="p">):</span>
-
-
-        <span class="sd">&#39;&#39;&#39;</span>
-
-<span class="sd">        Run Data Assimilation</span>
-
-<span class="sd">        .. note::</span>
-
-<span class="sd">            Steps are:</span>
-<span class="sd">            1. DA init (create subfolders)</span>
-<span class="sd">            2a. run CATHY hydrological model (open loop)</span>
-<span class="sd">            2b. run CATHY hydrological model recursively using DA times</span>
-<span class="sd">                &lt;- Loop--&gt;</span>
-<span class="sd">                    3. check before analysis</span>
-<span class="sd">                    4. analysis</span>
-<span class="sd">                    5. check after analysis</span>
-<span class="sd">                    6. update input files</span>
-<span class="sd">                &lt;- Loop--&gt;</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        callexe : str</span>
-<span class="sd">            processor exe filename</span>
-<span class="sd">        parallel : bool</span>
-<span class="sd">            True for multiple ensemble folder simulations.</span>
-<span class="sd">        DA_type : str</span>
-<span class="sd">            type of Data Assimilation.</span>
-<span class="sd">        list_assimilated_obs : TYPE</span>
-<span class="sd">            list of names of observations to assimilate.</span>
-<span class="sd">        dict_obs : dict</span>
-<span class="sd">            observations dictionnary.</span>
-<span class="sd">        list_update_parm : list</span>
-<span class="sd">            list of names of parameters to update.</span>
-<span class="sd">        dict_parm_pert : dict</span>
-<span class="sd">            parameters perturbated dictionnary.</span>
-
-
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1"># Initiate</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="n">update_key</span> <span class="o">=</span> <span class="s1">&#39;ini_perturbation&#39;</span>
-
-
-        <span class="c1"># check if dict_obs is ordered in time</span>
-        <span class="c1"># ------------------------------------</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dict_obs</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">dict_obs</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">:])))</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Observation List is not sorted.&#39;</span><span class="p">)</span>
-
-        <span class="c1"># dict_obs.keys()</span>
-        <span class="c1"># self.dict_obs.keys()</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;dict_obs&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dict_obs</span> <span class="o">=</span> <span class="n">dict_obs</span> <span class="c1"># self.dict_obs is already assigned (in read observatio! change it to self.obs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dict_parm_pert</span> <span class="o">=</span> <span class="n">dict_parm_pert</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">df_DA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-
-        <span class="c1"># Infer ensemble size NENS from perturbated parameter dictionnary</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_parm_pert</span><span class="p">:</span>
-            <span class="n">NENS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_parm_pert</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;ini_perturbation&#39;</span><span class="p">])</span>
-
-        <span class="c1"># Infer ensemble update times ENS_times from observation dictionnary</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="n">ENS_times</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_obs</span><span class="p">:</span>
-            <span class="n">ENS_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ti</span><span class="p">))</span>
-
-        <span class="c1"># data_measure_df = self.dictObs_2pd()</span>
-
-
-        <span class="c1"># start DA cycle counter</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count_atmbc_cycle</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># (the counter is incremented during the update analysis)</span>
-
-        <span class="c1"># initiate DA</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="n">list_update_parm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DA_init</span><span class="p">(</span>
-                                          <span class="n">NENS</span><span class="o">=</span><span class="n">NENS</span><span class="p">,</span> <span class="c1"># ensemble size</span>
-                                          <span class="n">ENS_times</span><span class="o">=</span><span class="n">ENS_times</span><span class="p">,</span> <span class="c1"># assimilation times</span>
-                                          <span class="n">parm_pert</span><span class="o">=</span><span class="n">dict_parm_pert</span><span class="p">,</span>
-                                          <span class="n">update_parm_list</span> <span class="o">=</span> <span class="n">list_update_parm</span>
-                                          <span class="p">)</span>
-
-        <span class="c1"># initiate mapping petro</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mapping_petro_init</span><span class="p">()</span>
-
-        <span class="c1"># update the perturbated parameters</span>
-        <span class="c1"># --------------------------------------------------------------------</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_ENS_files</span><span class="p">(</span><span class="n">dict_parm_pert</span><span class="p">,</span>
-                              <span class="n">update_parm_list</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="c1">#list_update_parm</span>
-                              <span class="n">cycle_nb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span><span class="p">)</span>
-
-        <span class="n">all_atmbc_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atmbc</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="k">if</span> <span class="n">open_loop_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_DA_openLoop</span><span class="p">(</span>
-                              <span class="n">ENS_times</span><span class="p">,</span>
-                              <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                              <span class="n">parallel</span><span class="p">)</span>
-        <span class="c1"># end of Open loop - start DA</span>
-
-        <span class="c1"># -------------------------------------------------------------------</span>
-        <span class="c1"># update input files ensemble again (time-windowed)</span>
-        <span class="c1"># ---------------------------------------------------------------------</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_input_ensemble</span><span class="p">(</span><span class="n">NENS</span><span class="p">,</span>
-                                    <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atmbc</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span>
-                                    <span class="n">dict_parm_pert</span><span class="p">,</span>
-                                    <span class="n">update_parm_list</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>  <span class="c1">#list_update_parm</span>
-
-        <span class="c1"># -----------------------------------</span>
-        <span class="c1"># Run hydrological model sequentially = Loop over atmbc times (including assimilation observation times)</span>
-        <span class="c1"># -----------------------------------</span>
-        <span class="c1"># self.sequential_DA()</span>
-
-        <span class="c1"># TO CHANGE HERE</span>
-        <span class="k">for</span> <span class="n">t_atmbc</span> <span class="ow">in</span> <span class="n">all_atmbc_times</span><span class="p">:</span> <span class="c1">#atmbc times include assimilation observation times</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">t_atmbc</span><span class="p">)</span>
-            <span class="c1"># t_atmbc = self.atmbc[&#39;time&#39;][-2]</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">run_ensemble_hydrological_model</span><span class="p">(</span><span class="n">parallel</span><span class="p">,</span><span class="n">verbose</span><span class="p">,</span><span class="n">callexe</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">))</span>
-
-            <span class="c1"># self.plot_ini_state_cov()</span>
-            <span class="c1"># def plot_ini_state_cov():</span>
-            <span class="c1">#     ensemble_psi, ensemble_sw, ens_size, sim_size = self._read_state_ensemble()</span>
-
-            <span class="c1"># check scenario (result of the hydro simulation)</span>
-            <span class="c1"># ----------------------------------------------------------------</span>
-            <span class="n">rejected_ens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_before_analysis</span><span class="p">(</span>
-                                                       <span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">,</span>
-                                                       <span class="n">threshold_rejected</span><span class="p">,</span>
-                                                       <span class="p">)</span>
-            <span class="n">id_valid</span><span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rejected_ens</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">)[</span><span class="n">id_valid</span><span class="p">])</span>
-
-
-            <span class="c1"># define subloop here</span>
-            <span class="c1"># if &#39;optimize_inflation&#39; in DA_type:</span>
-            <span class="c1"># threshold_convergence = 10</span>
-            <span class="c1"># while self.df_performance &lt; threshold_convergence:</span>
-
-            <span class="c1"># self.atmbc[&#39;time&#39;]</span>
-
-            <span class="k">if</span> <span class="n">t_atmbc</span> <span class="ow">in</span> <span class="n">ENS_times</span><span class="p">:</span>
-
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;t=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">t_atmbc</span><span class="p">))</span>
-
-                <span class="c1"># map states to observation = apply H operator to state variable</span>
-                <span class="c1"># ----------------------------------------------------------------</span>
-                <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_states2Observations</span><span class="p">(</span>
-                                                            <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                                                            <span class="n">default_state</span> <span class="o">=</span> <span class="s1">&#39;psi&#39;</span><span class="p">,</span>
-                                                            <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span>
-                                                           <span class="p">)</span>
-                <span class="c1"># print(len(prediction))</span>
-                <span class="c1"># print(np.shape(prediction))</span>
-                <span class="c1"># ValueError: operands could not be broadcast together with shapes (612,) (1836,)</span>
-
-                <span class="c1"># data2test , obs2evaltest = self._get_data2assimilate(list_assimilated_obs)</span>
-                <span class="c1"># # len(data2test)</span>
-
-                <span class="c1"># x = np.linspace(prediction.min(),</span>
-                <span class="c1">#                 prediction.max(),</span>
-                <span class="c1">#                 100)</span>
-                <span class="c1"># y = x</span>
-                <span class="c1"># fig, ax = plt.subplots(2,1)</span>
-                <span class="c1"># for ii in range(np.shape(prediction)[1]):</span>
-                <span class="c1">#     ax[0].scatter(prediction[:,ii],data2test)</span>
-                <span class="c1">#     ax[0].plot(x, y, &#39;-r&#39;, label=&#39;y=x&#39;)</span>
-                <span class="c1"># ax[0].set_title(&#39;nb of ens&#39; + str(np.shape(prediction)[1]))</span>
-
-                <span class="c1"># ax[1].plot(data2test)</span>
-                <span class="c1"># plt.savefig(&#39;test&#39; + str(DA_cnb))</span>
-
-                <span class="c1"># plt.plot(data2test)</span>
-                <span class="c1"># plt.plot(prediction[:,ii])</span>
-                <span class="c1"># ax.scatter(prediction[:,ii],data2test)</span>
-                <span class="c1"># ax.set_aspect(&#39;equal&#39;)</span>
-
-                <span class="c1"># fig.tight_layout()</span>
-
-                <span class="c1"># DA analysis</span>
-                <span class="c1"># ----------------------------------------------------------------</span>
-                <span class="p">(</span><span class="n">ensemble_psi</span><span class="p">,</span>
-                 <span class="n">ensemble_sw</span><span class="p">,</span>
-                 <span class="n">data</span><span class="p">,</span>
-                 <span class="n">analysis</span><span class="p">,</span>
-                 <span class="n">analysis_param</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DA_analysis</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span>
-                                                     <span class="n">DA_type</span><span class="p">,</span>
-                                                     <span class="n">list_update_parm</span><span class="p">,</span>
-                                                     <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                                                     <span class="n">ens_valid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">)</span>
-
-                <span class="c1"># DA mark_invalid_ensemble</span>
-                <span class="c1"># ----------------------------------------------------------------</span>
-                <span class="p">(</span><span class="n">prediction_valid</span><span class="p">,</span>
-                 <span class="n">ensemble_psi_valid</span><span class="p">,</span>
-                 <span class="n">ensemble_sw_valid</span><span class="p">,</span>
-                 <span class="n">analysis_valid</span><span class="p">,</span>
-                 <span class="n">analysis_param_valid</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mark_invalid_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">,</span>
-                                                                    <span class="n">prediction</span><span class="p">,</span>
-                                                                    <span class="n">ensemble_psi</span><span class="p">,</span>
-                                                                    <span class="n">ensemble_sw</span><span class="p">,</span>
-                                                                    <span class="n">analysis</span><span class="p">,</span>
-                                                                    <span class="n">analysis_param</span><span class="p">)</span>
-
-
-
-                <span class="c1"># check analysis quality</span>
-                <span class="c1"># ----------------------------------------------------------------</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:face_with_monocle: [b]check analysis performance[/b]&#39;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_performance_assessement</span><span class="p">(</span><span class="n">list_assimilated_obs</span><span class="p">,</span>
-                                              <span class="n">data</span><span class="p">,</span>
-                                              <span class="n">prediction_valid</span><span class="p">,</span>
-                                              <span class="n">t_obs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span><span class="p">)</span>
-
-
-                <span class="c1"># the counter is incremented here</span>
-                <span class="c1"># ----------------------------------------------------------------</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span> <span class="o">+</span> <span class="mi">1</span>
-
-
-                <span class="c1"># # update parameter dictionnary</span>
-                <span class="c1"># ----------------------------------------------------------------</span>
-                <span class="k">def</span> <span class="nf">check_ensemble</span><span class="p">(</span><span class="n">ensemble_psi_valid</span><span class="p">,</span><span class="n">ensemble_sw_valid</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">ensemble_psi_valid</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
-                        <span class="c1"># raise ValueError(&#39;positive pressure heads observed&#39;)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;!!!!!!positive pressure heads observed!!!!!&#39;</span><span class="p">)</span>
-                        <span class="n">psi_2replace</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ensemble_psi_valid</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span>
-                        <span class="n">ensemble_psi_valid_new</span> <span class="o">=</span> <span class="n">ensemble_psi_valid</span>
-                        <span class="n">ensemble_psi_valid_new</span><span class="p">[</span><span class="n">psi_2replace</span><span class="p">]</span><span class="o">=-</span><span class="mf">1e-3</span>
-
-                <span class="n">check_ensemble</span><span class="p">(</span><span class="n">ensemble_psi_valid</span><span class="p">,</span><span class="n">ensemble_sw_valid</span><span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">update_pert_parm_dict</span><span class="p">(</span><span class="n">update_key</span><span class="p">,</span><span class="n">list_update_parm</span><span class="p">,</span><span class="n">analysis_param_valid</span><span class="p">)</span>
-
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;:confused: No observation for this time - run hydrological model only&#39;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;!!!!!!!!! shoetcutttt here ensemble are anot validated!!!!!!!!!! S&#39;</span><span class="p">)</span>
-                <span class="n">ensemble_psi_valid</span><span class="p">,</span> <span class="n">ensemble_sw_valid</span><span class="p">,</span> <span class="n">ens_size</span><span class="p">,</span> <span class="n">sim_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_state_ensemble</span><span class="p">()</span>
-                <span class="c1"># analysis_valid = np.empty(ensemble_psi_valid.shape)</span>
-                <span class="c1"># analysis_valid[:] = np.NaN</span>
-                <span class="n">analysis_valid</span> <span class="o">=</span> <span class="n">ensemble_psi_valid</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">count_atmbc_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_atmbc_cycle</span> <span class="o">+</span> <span class="mi">1</span>
-
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------ end of time step (s) -------&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t_atmbc</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">all_atmbc_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="s1">&#39;------&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------ end of atmbc update --------&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_atmbc_cycle</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_atmbc_times</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;------&#39;</span><span class="p">)</span>
-
-            <span class="c1"># create dataframe _DA_var_pert_df holding the results of the DA update</span>
-            <span class="c1"># ---------------------------------------------------------------------</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_DA_df</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="p">[</span><span class="n">ensemble_psi_valid</span><span class="p">,</span> <span class="n">ensemble_sw_valid</span><span class="p">],</span>
-                        <span class="n">state_analysis</span><span class="o">=</span><span class="n">analysis_valid</span><span class="p">,</span>
-                        <span class="n">rejected_ens</span><span class="o">=</span><span class="n">rejected_ens</span><span class="p">)</span>
-
-            <span class="c1"># export summary results of DA</span>
-            <span class="c1"># ----------------------------------------------------------------</span>
-
-            <span class="n">meta_DA</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;listAssimilatedObs&#39;</span><span class="p">:</span> <span class="n">list_assimilated_obs</span><span class="p">,</span>
-                       <span class="s1">&#39;listUpdatedparm&#39;</span><span class="p">:</span><span class="n">list_update_parm</span><span class="p">,</span>
-                       <span class="c1"># &#39;&#39;:,</span>
-                       <span class="c1"># &#39;&#39;:,</span>
-                       <span class="c1"># &#39;&#39;:,</span>
-                       <span class="p">}</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">backup_results_DA</span><span class="p">(</span><span class="n">meta_DA</span><span class="p">)</span>
-
-            <span class="c1"># test = self.Archie</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">backup_simu</span><span class="p">()</span>
-
-            <span class="c1"># overwrite input files ensemble (perturbated variables)</span>
-            <span class="c1"># ---------------------------------------------------------------------</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_atmbc_cycle</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">all_atmbc_times</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># -1 cause all_atmbc_times include TMAX</span>
-                <span class="c1"># len(all_atmbc_times)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_update_input_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">,</span>
-                                            <span class="n">all_atmbc_times</span><span class="p">,</span>
-                                            <span class="bp">self</span><span class="o">.</span><span class="n">dict_parm_pert</span><span class="p">,</span>
-                                            <span class="n">update_parm_list</span><span class="o">=</span><span class="n">list_update_parm</span><span class="p">,</span>
-                                            <span class="n">analysis</span><span class="o">=</span><span class="n">analysis_valid</span>
-                                            <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------ end of DA ------&#39;</span><span class="p">)</span>
-                <span class="k">pass</span>
-            <span class="c1"># print(&#39;------ end of update -------&#39; + str(self.count_atmbc_cycle) + &#39;/&#39; + str(len(all_atmbc_times)-1) + &#39;------&#39;)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------ end of DA update -------&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ENS_times</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;------&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">% o</span><span class="s1">f valid ensemble is: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NENS</span><span class="p">)))</span>
-            <span class="c1"># print(self.ens_valid)</span>
-
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
-
+    <span class="c1"># define abstract methods for the DA class</span>
+    <span class="c1"># -----------------------------------------</span>
+    <span class="c1"># def _DA_init(self,</span>
+    <span class="c1">#              NENS, # ensemble size</span>
+    <span class="c1">#              ENS_times, # assimilation times</span>
+    <span class="c1">#              parm_pert,</span>
+    <span class="c1">#              update_parm_list,</span>
+    <span class="c1">#              ):</span>
+    <span class="c1">#             # https://stackoverflow.com/questions/25062114/calling-child-class-method-from-parent-class-file-in-python</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _DA_init DA class&quot;)</span>
+    <span class="c1"># def _mapping_petro_init(self):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _mapping_petro_init DA class&quot;)</span>
+    <span class="c1"># def update_ENS_files(self,</span>
+    <span class="c1">#                      parm_pert,</span>
+    <span class="c1">#                      update_parm_list,</span>
+    <span class="c1">#                      NENS,</span>
+    <span class="c1">#                      **kwargs):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _update_ENS_files DA class&quot;)</span>
+    <span class="c1"># def _DA_openLoop(self,</span>
+    <span class="c1">#                  ENS_times,</span>
+    <span class="c1">#                  list_assimilated_obs,</span>
+    <span class="c1">#                  parallel,</span>
+    <span class="c1">#                  verbose=False</span>
+    <span class="c1">#                 ):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override DA_openLoop DA class&quot;)</span>
+    <span class="c1"># def _update_input_ensemble(self, NENS, ENS_times,</span>
+    <span class="c1">#                            parm_pert=[],</span>
+    <span class="c1">#                            update_parm_list=[&#39;St. var.&#39;],</span>
+    <span class="c1">#                            analysis=[],</span>
+    <span class="c1">#                            **kwargs):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _update_input_ensemble DA class&quot;)</span>
+    <span class="c1"># def run_ensemble_hydrological_model(self,parallel,verbose,callexe):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override run_ensemble_hydrological_model DA class&quot;)</span>
+    <span class="c1"># def _check_before_analysis(self, ens_valid=[],</span>
+    <span class="c1">#                            threshold_rejected=10):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _check_before_analysis DA class&quot;)</span>
+    <span class="c1"># def map_states2Observations(self):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override map_states2Observations DA class&quot;)</span>
+    <span class="c1"># def _DA_analysis(self):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _DA_analysis DA class&quot;)                                 </span>
+    <span class="c1"># def _mark_invalid_ensemble(self):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _mark_invalid_ensemble DA class&quot;)</span>
+    <span class="c1"># def _performance_assessement(self):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override _performance_assessement DA class&quot;)</span>
+    <span class="c1"># def update_pert_parm_dict(self):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Must override update_pert_parm_dict DA class&quot;)</span>
+              
+        
 
 
 
@@ -3337,7 +2877,11 @@
                 <span class="n">icfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">INDP</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">IPOND</span><span class="p">)</span> <span class="o">+</span>
                              <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;INDP&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;IPOND&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">icfile</span><span class="p">,</span> <span class="n">pressure_head_ini</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%1.3e</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">update_mesh_vtk</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s1">&#39;ic&#39;</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="n">pressure_head_ini</span><span class="p">,</span> <span class="n">savevtk</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                
+                <span class="k">try</span><span class="p">:</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_mesh_vtk</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s1">&#39;ic&#39;</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="n">pressure_head_ini</span><span class="p">,</span> <span class="n">savevtk</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
 
 
             <span class="k">elif</span> <span class="n">INDP</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]:</span>
@@ -4247,7 +3791,6 @@
         <span class="c1"># --------------------------------------------------------------------</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">SPP_map</span><span class="p">[</span><span class="s1">&#39;PERMX&#39;</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">SPP_map</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
                 <span class="n">SPP_map</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">SPP_map</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span>
 
         <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">SPP_map</span><span class="p">[</span><span class="s1">&#39;VGRMCCELL&#39;</span><span class="p">])):</span> <span class="c1"># loop over zones</span>
@@ -4633,7 +4176,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_cathyH</span><span class="p">(</span><span class="n">MAXVEG</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">indice_veg</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">veg_map</span> <span class="o">=</span> <span class="n">indice_veg</span>
 
-        <span class="k">if</span> <span class="n">show</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
             <span class="n">plt</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt_CT</span><span class="o">.</span><span class="n">show_indice_veg</span><span class="p">(</span><span class="n">indice_veg</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">indice_veg</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">ax</span>
         <span class="k">return</span> <span class="n">indice_veg</span></div>
@@ -4648,7 +4191,10 @@
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;mesh_pv_attributes&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">create_mesh_vtk</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">dict_props</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update_mesh_vtk</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="n">dict_props</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_mesh_vtk</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="n">dict_props</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
         <span class="k">pass</span></div>
 
 
@@ -4811,7 +4357,7 @@
         <span class="k">if</span> <span class="s1">&#39;path&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">path</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span>
 
-        <span class="k">elif</span> <span class="n">filename</span> <span class="o">==</span> <span class="s1">&#39;vp&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="s1">&#39;vp&#39;</span><span class="p">:</span>
             <span class="n">df</span><span class="o">=</span><span class="n">out_CT</span><span class="o">.</span><span class="n">read_vp</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">elif</span> <span class="n">filename</span> <span class="o">==</span> <span class="s1">&#39;hgraph&#39;</span><span class="p">:</span>
@@ -5026,7 +4572,7 @@
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 16, 2022.<br/>
+      Last updated on Sep 19, 2022.<br/>
   </p>
 </footer>
 </main>

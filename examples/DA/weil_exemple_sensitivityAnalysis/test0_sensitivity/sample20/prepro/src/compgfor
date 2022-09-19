@@ -1,0 +1,19 @@
+gfortran -c mrbb_sr.f90
+gfortran -c dsf.f90
+gfortran -c streamer.f90
+gfortran -c smean.f90
+gfortran -c csort.f90
+gfortran -c facet.f90
+gfortran -c depit.f90
+gfortran -c mpar.f90
+gfortran -c wbb_sr.f90
+gfortran -c shape.f90
+gfortran -c mbbio.f90
+gfortran -c compgfor
+gfortran -c cca.f90
+gfortran -c dbase.f90
+gfortran -c hg.f90
+gfortran -c qsort.f90
+gfortran -c cppp.f90
+gfortran -c bb2shp_sr.f90
+gfortran -O -o cppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90

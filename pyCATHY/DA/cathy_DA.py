@@ -23,6 +23,12 @@ from pyCATHY import cathy_utils as utils_CT
 
 # from update_ic
 
+from rich.progress import track
+import multiprocessing
+import subprocess
+
+
+
 
 
 def run_analysis(DA_type,
@@ -133,7 +139,7 @@ def resynchronise_times(data_measure,atmbc_df):
         print('datetime first atmbc point')
         print(atmbc_df['datetime'][0])
         print('datetime first measurement')
-        print(data_measure[0]['tensiometer']['datetime'])
+        print(data_measure[0][sensor]['datetime'])
         print('cant synchronise times - continue without') 
     return data_measure_sync
 
@@ -448,43 +454,21 @@ def perturbate_parm(var_per, parm, type_parm, mean=[], sd=[], per_type=None,
 # ---------
 
 class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
-    def __init__(self):
-        super().__init__()
-    #     #     self.var_per_dict = {} # dict of dict of perturbated variables parameters
-    #     print(CATHY)
-    #     self.atmbc
-    #     CATHY.atmbc
-    #     C = CATHY()
-    #     C.atmbc
-        
-    #     self.workdir
-    #     self.Archie
-        
-        #     C = CATHY()
-        #     C.__init__()
-        #     C.workdir
-        #     print(self.workdir)
-        #     pass
-    
-        # self.workdir
-        # self.project_name
-        # self,'ens_valid'
 
-        #self.console
-        # self.stacked_data_cov = [] # merged data covariance matrice of all the observation data and all times
-        # self.dict_obs = OrderedDict() # dictionnary containing all the observation data
-        # self.var_per_dict = {} # list of variable perturbated
-        # pass
+    # def __init__(self,**kwargs):
+    #     self.damping = 1
 
     # -------------------------------------------------------------------#
     # %% DATA ASSIMILATION FCTS
 
-    def _DA_init(self, NENS=[], ENS_times=[], parm_pert=[],update_parm_list='all'):
+    def _DA_init(self,dict_obs,dict_parm_pert,list_parm2update='all'):
         """
         Initial preparation for DA
 
 
         .. note::
+            
+            0. check dictionnaries validity
 
             1. update cathyH file given NENS, ENS_times + flag self.parm['DAFLAG']==True
 
@@ -510,31 +494,62 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         Note: for now only implemented for EnkF DA
         """
        
+        # Initiate
+        # -------------------------------------------------------------------
+        update_key = 'ini_perturbation'
+
+        # check if dict_obs is ordered in time
+        # ------------------------------------
+        if (all(i < j for i, j in zip(list(dict_obs.keys()), list(dict_obs.keys())[1:]))) is False:
+            raise ValueError('Observation List is not sorted.')
+
+        # if hasattr(self,'dict_obs') is False:
+        self.dict_obs = dict_obs # self.dict_obs is already assigned (in read observatio! change it to self.obs
+        self.dict_parm_pert = dict_parm_pert
+        self.df_DA = pd.DataFrame()
+
+        # Infer ensemble size NENS from perturbated parameter dictionnary
+        # -------------------------------------------------------------------
+        for name in self.dict_parm_pert:
+            self.NENS = len(self.dict_parm_pert[name]['ini_perturbation'])
+
+        # Infer ensemble update times ENS_times from observation dictionnary
+        # -------------------------------------------------------------------
+        ENS_times = []
+        for ti in self.dict_obs:
+            ENS_times.append(float(ti))
+
+        # start DA cycle counter
+        # -------------------------------------------------------------------
+        self.count_DA_cycle = 0
+        self.count_atmbc_cycle = 0
+        # (the counter is incremented during the update analysis)
+        
+        
         if hasattr(self,'ens_valid') is False:
-            self.ens_valid = list(np.arange(0,NENS))
+            self.ens_valid = list(np.arange(0,self.NENS))
 
         # create sub directories for each ensemble
         # ---------------------------------------------------------------------
-        self._create_subfolders_ensemble(NENS)
+        self._create_subfolders_ensemble()
 
 
         # update list of updated parameters based on problem heterogeneity
         # ---------------------------------------------------------------------
-
-        updated_parm_list = ['St. var.']
+        newlist_parm2update = ['St. var.']
         for d in self.dict_parm_pert.keys():
-            for l in update_parm_list:
+            for l in list_parm2update:
                 if l in d:
-                    updated_parm_list.append(d)
+                    newlist_parm2update.append(d)
 
-        return updated_parm_list
+        return ENS_times, newlist_parm2update, update_key
 
 
     def run_DA_sequential(self,
                 parallel,
                 DA_type,
                 dict_obs,
-                list_update_parm,
+                list_parm2update,
                 dict_parm_pert,
                 list_assimilated_obs,
                 open_loop_run,
@@ -577,15 +592,14 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
         '''
-        # from pyCATHY.DA.cathy_DA import DA    
-        # CATHYDA = DA()
-
+        
+        self.run_processor(DAFLAG=1)
         callexe = "./" + self.processor_name
 
-        # Initiate
-        # -------------------------------------------------------------------
-        update_key = 'ini_perturbation'
-
+        self.damping = 1
+        if 'damping' in kwargs:
+            self.damping = kwargs['damping']
+                
         threshold_rejected = 10
         if 'threshold_rejected' in kwargs:
             threshold_rejected = kwargs['threshold_rejected']
@@ -593,92 +607,51 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         if 'verbose' in kwargs:
             verbose = kwargs['verbose']
 
-
-        # check if dict_obs is ordered in time
-        # ------------------------------------
-        if (all(i < j for i, j in zip(list(dict_obs.keys()), list(dict_obs.keys())[1:]))) is False:
-            raise ValueError('Observation List is not sorted.')
-
-        # dict_obs.keys()
-        # self.dict_obs.keys()
-        if hasattr(self,'dict_obs') is False:
-            self.dict_obs = dict_obs # self.dict_obs is already assigned (in read observatio! change it to self.obs
-        self.dict_parm_pert = dict_parm_pert
-        self.df_DA = pd.DataFrame()
-
-        # Infer ensemble size NENS from perturbated parameter dictionnary
-        # -------------------------------------------------------------------
-        for name in self.dict_parm_pert:
-            NENS = len(self.dict_parm_pert[name]['ini_perturbation'])
-
-        # Infer ensemble update times ENS_times from observation dictionnary
-        # -------------------------------------------------------------------
-        ENS_times = []
-        for ti in self.dict_obs:
-            ENS_times.append(float(ti))
-
-        # data_measure_df = self.dictObs_2pd()
-        # self.workdir
-
-        # start DA cycle counter
-        # -------------------------------------------------------------------
-        self.count_DA_cycle = 0
-        self.count_atmbc_cycle = 0
-        # (the counter is incremented during the update analysis)
-
         # initiate DA
         # -------------------------------------------------------------------
-        list_update_parm = self._DA_init(
-                                        NENS=NENS, # ensemble size
-                                        ENS_times=ENS_times, # assimilation times
-                                        parm_pert= dict_parm_pert,
-                                        update_parm_list = list_update_parm,
-                                        )
-
+        ENS_times, list_parm2update, update_key = self._DA_init(
+                                                                dict_obs,
+                                                                dict_parm_pert,
+                                                                list_parm2update,
+                                                                )
         # initiate mapping petro
         # -------------------------------------------------------------------
         self._mapping_petro_init()
-
-        # update the perturbated parameters
-        # --------------------------------------------------------------------
+       
+        # update the ensemble files with pertubarted parameters
+        # -------------------------------------------------------------------
         self.update_ENS_files(dict_parm_pert,
-                              update_parm_list='all', #list_update_parm
-                              NENS = NENS,
+                              list_parm2update='all', #list_update_parm
                               cycle_nb=self.count_DA_cycle)
-
-
         all_atmbc_times = self.atmbc['time']
+        
+        # Open loop
         # -------------------------------------------------------------------
         if open_loop_run:
             self._DA_openLoop(
                               ENS_times,
                               list_assimilated_obs,
                               parallel)
-        # end of Open loop - start DA
+            
+        # end of Open loop
+        # -------------------------------------------------------------------
 
         
-         
-            
         # -------------------------------------------------------------------
         # update input files ensemble again (time-windowed)
-        # ---------------------------------------------------------------------
-        self._update_input_ensemble(NENS,
+        # -------------------------------------------------------------------
+        self._update_input_ensemble(
                                     list(self.atmbc['time']),
-                                    dict_parm_pert,
-                                    update_parm_list='all')  #list_update_parm
+                                    list_parm2update='all',
+                                    ) 
 
         # -----------------------------------
-        # Run hydrological model sequentially = Loop over atmbc times (including assimilation observation times)
+        # Run hydrological model sequentially 
+        # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
-        # self.sequential_DA()
-
        
-            
-            
-        # TO CHANGE HERE
         for t_atmbc in all_atmbc_times: #atmbc times include assimilation observation times
             print(t_atmbc)
-            # t_atmbc = self.atmbc['time'][-2]
 
             self._run_ensemble_hydrological_model(parallel,verbose,callexe)
             os.chdir(os.path.join(self.workdir))
@@ -703,7 +676,9 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             # while self.df_performance < threshold_convergence:
 
             # self.atmbc['time']
-
+            
+            # check if there is an observation at the given atmbc time 
+            # --------------------------------------------------------
             if t_atmbc in ENS_times:
 
                 print('t=' + str(t_atmbc))
@@ -750,7 +725,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                  analysis,
                  analysis_param) = self._DA_analysis(prediction,
                                                      DA_type,
-                                                     list_update_parm,
+                                                     list_parm2update,
                                                      list_assimilated_obs,
                                                      ens_valid=self.ens_valid)
 
@@ -796,7 +771,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
                 check_ensemble(ensemble_psi_valid,ensemble_sw_valid)
 
-                self.update_pert_parm_dict(update_key,list_update_parm,analysis_param_valid)
+                self.update_pert_parm_dict(update_key,list_parm2update,analysis_param_valid)
 
 
             else:
@@ -822,7 +797,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             # ----------------------------------------------------------------
 
             meta_DA = {'listAssimilatedObs': list_assimilated_obs,
-                       'listUpdatedparm':list_update_parm,
+                       'listUpdatedparm':list_parm2update,
                        # '':,
                        # '':,
                        # '':,
@@ -839,25 +814,53 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
             if self.count_atmbc_cycle<len(all_atmbc_times)-1: # -1 cause all_atmbc_times include TMAX
                 # len(all_atmbc_times)
-                self._update_input_ensemble(self.NENS,
+                self._update_input_ensemble(
                                             all_atmbc_times,
-                                            self.dict_parm_pert,
-                                            update_parm_list=list_update_parm,
+                                            list_parm2update,
                                             analysis=analysis_valid
                                             )
             else:
                 print('------ end of DA ------')
                 pass
-            # print('------ end of update -------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
             print('------ end of DA update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)) + '------')
             print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
-            # print(self.ens_valid)
 
             plt.close('all')
         pass
 
 
+    def _run_hydro_DA_openLoop(self,time_of_interest,nodes_of_interest,simu_time_max, ens_nb):
+        '''
+        Run openLoop and save result into DA dataframe (ensemble nb = 999)
 
+        Parameters
+        ----------
+        time_of_interest : TYPE
+            DESCRIPTION.
+        nodes_of_interest : TYPE
+            DESCRIPTION.
+        simu_time_max : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
+
+        
+        cwd = os.getcwd()
+
+        self.console.print(
+            ":unlock: [b]open loop call[/b]")
+        self.run_processor(recompile=True,
+                           TIMPRTi=time_of_interest, 
+                           NODVP=nodes_of_interest, 
+                           TMAX=simu_time_max,
+                           DAFLAG=0,
+                           path_CATHY_folder= cwd,
+                           )
+        
     def _DA_openLoop(self,
                      ENS_times,
                      list_assimilated_obs,
@@ -907,7 +910,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 os.chdir(os.path.join(self.workdir,
                                       self.project_name,
                                       'DA_Ensemble/cathy_' + str(ens_i+1)))
-                len(list(self.atmbc['time']))
+                # len(list(self.atmbc['time']))
                 self._run_hydro_DA_openLoop(time_of_interest=list(self.atmbc['time']),
                                               nodes_of_interest=[],
                                               simu_time_max=max(list(self.atmbc['time'])),
@@ -1170,7 +1173,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
 
-    def run_ensemble_hydrological_model(self,parallel,verbose,callexe):
+    def _run_ensemble_hydrological_model(self,parallel,verbose,callexe):
         ''' multi run CATHY hydrological model from the independant folders composing the ensemble '''
 
         # ----------------------------------------------------------------
@@ -1280,13 +1283,17 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
     def _check_after_analysis(self,update_key,list_update_parm):
         '''
-        CHECK which scenarios parameters are OK and which one to discard
+        Check which scenarios parameters are OK and which one to discard after analysis. 
+        Test the range of each physical properties. 
 
-        Returns
-        -------
-        None.
-
+        Parameters
+        ----------
+        update_key : str
+            Update cycle key identifier.
+        list_update_parm : list
+            list of updated model parameters (after analysis).
         '''
+
         self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
 
         id_valid = [list(np.arange(0,self.NENS))]
@@ -1442,12 +1449,22 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
     def _mapping_petro_init(self):
-        ''' Initiate Archie and VGP'''
+        ''' 
+        Initiate Archie and VGP petro/pedophysical parameters
+        
+        If Archie and VGP dictionnaries are not existing fill with default values       
+        '''
 
         print('Initiate Archie and VGP')
+        
+        # check that porosity is a list
+        # -------------------------------------
         porosity = self.soil_SPP['SPP'][:, 4][0]
         if not isinstance(porosity, list):
             porosity = [porosity]
+            
+        # check if Archie parameters exists
+        # ---------------------------------
         if hasattr(self,'Archie_parms') == False:
             print('Archie parameters not defined set defaults')
             self.Archie_parms = {'porosity': porosity,
@@ -1457,13 +1474,16 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                  'n_Archie':[2.0],
                                  'pert_sigma_Archie':[0]
                                  }
+            
+        # check if VGN parameters exists
+        # ---------------------------------
         if hasattr(self,'VGN_parms') == False:
             print('VGN parameters not defined set defaults: empty dict {} - not implemented yet')
             self.VGN_parms = {}
 
         pass
     
-    def update_ENS_files(self, parm_pert, update_parm_list, NENS, **kwargs):
+    def update_ENS_files(self, dict_parm_pert, list_parm2update, **kwargs):
         '''
         Update by overwriting ensemble files (usually after analysis step or initially to build the ensemble)
         - update state
@@ -1478,6 +1498,9 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         Overwritten files.
 
         '''
+        
+        # replace dictionnary key with cycle nb
+        # -------------------------------------
         update_key = 'ini_perturbation'
         if 'cycle_nb' in kwargs:
             if kwargs['cycle_nb'] > 0:
@@ -1487,22 +1510,22 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             analysis = kwargs['analysis']
 
 
-        if update_parm_list=='all':
-            update_parm_list = ['St. var.']
-            for pp in parm_pert:
-                update_parm_list.append(pp)
+        if list_parm2update=='all':
+            list_parm2update = ['St. var.']
+            for pp in dict_parm_pert:
+                list_parm2update.append(pp)
 
         # loop over ensemble files to update ic -->
         # this is always done since psi are state variable to update
         # ------------------------------------------------------------------
-        for ens_nb in range(NENS):
+        for ens_nb in range(self.NENS):
             # change directory according to ensmble file nb
             os.chdir(os.path.join(self.workdir, self.project_name,
                                   './DA_Ensemble/cathy_' + str(ens_nb+1)))
 
             # state variable update use ANALYSIS update or not
             # --------------------------------------------------------------
-            if 'St. var.' in update_parm_list:
+            if 'St. var.' in list_parm2update:
                 if kwargs['cycle_nb'] > 0:
                         df_psi = self.read_outputs(filename='psi',
                                                   path=os.path.join(os.getcwd(),
@@ -1534,7 +1557,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         VG_p_possible_names = ['n_VG', 'thetar_VG', 'alpha_VG','VGPSATCELL_VG']
         VG_p_possible_names_positions_in_soil_table = [5,6,7,7]
 
-        for parm_i, key in enumerate(update_parm_list):  # loop over perturbated variables dict
+        for parm_i, key in enumerate(list_parm2update):  # loop over perturbated variables dict
             key_root = re.split('(\d+)', key)
             if len(key_root)==1:
                 key_root.append('0')
@@ -1556,7 +1579,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 elif key.casefold() in 'ic'.casefold():
                     if kwargs['cycle_nb']==0:
                         self.update_ic(INDP=0, IPOND=0,
-                                       pressure_head_ini=parm_pert[key
+                                       pressure_head_ini=dict_parm_pert[key
                                            ]['ini_perturbation'][ens_nb],
                                        filename=os.path.join(os.getcwd(), 'input/ic'),
                                        backup=True)
@@ -1565,26 +1588,26 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 # --------------------------------------------------------------
                 elif key_root[0].casefold() in 'ks'.casefold():
                     if len(PERMX_het_ens)==0:
-                        SPP =  self.soil_SPP['SPP_map']
-                        PERMX_het_ens = np.ones([len(SPP['PERMX']),self.NENS])
+                        SPP_map =  self.soil_SPP['SPP_map']
+                        PERMX_het_ens = np.ones([len(SPP_map['PERMX']),self.NENS])
                         PERMX_het_ens[:] = np.nan
 
-                    PERMX_het_ens[int(key_root[1]),ens_nb]=parm_pert[key][update_key][ens_nb]
+                    PERMX_het_ens[int(key_root[1]),ens_nb]=dict_parm_pert[key][update_key][ens_nb]
 
-                    SPP_ensi = []
+                    SPP_map_ensi = []
                     for es in range(self.NENS):
                         spd = dict()
                         spd['PERMX'] = list(PERMX_het_ens[:,ens_nb])
                         spd['PERMY'] = list(PERMX_het_ens[:,ens_nb])
                         spd['PERMZ'] = list(PERMX_het_ens[:,ens_nb])
-                        SPP_ensi.append(spd)
+                        SPP_map_ensi.append(spd)
 
-                    SPP.update(SPP_ensi[ens_nb])
+                    SPP_map.update(SPP_map_ensi[ens_nb])
 
                     # print(PERMX_het_ens[:,ens_nb])
                     if np.isnan(PERMX_het_ens[:,ens_nb]).any()==False:
-                        self.update_soil(SPP=SPP,
-                                          FP=self.soil_FP['FP_map'],
+                        self.update_soil(SPP_map=SPP_map,
+                                          FP_map=self.soil_FP['FP_map'],
                                           verbose=True,
                                           filename=os.path.join(os.getcwd(), 'input/soil')
                                           )  # specify filename path
@@ -1605,27 +1628,27 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                     # - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent -->
                     #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
 
-                    SPP =  self.soil_SPP['SPP_map']
+                    SPP_map =  self.soil_SPP['SPP_map']
                     if len(VG_parms_mat_ens)==0:
                         VG_parms_mat = self.soil_SPP['SPP']
                         np.shape(VG_parms_mat)
-                        if len(SPP['PERMX'])<2:
+                        if len(SPP_map['PERMX'])<2:
                             VG_parms_mat_ens = np.matlib.repmat(VG_parms_mat[0], self.NENS, 1)
                         else:
                             # VG_parms_mat_ens = np.repeat(VG_parms_mat, self.NENS, axis=0)
                             print('Non homogeneous soil VG properties not implemented')
 
 
-                    if len(SPP['PERMX'])<2:
+                    if len(SPP_map['PERMX'])<2:
                         # for k in parm_pert.keys():
                         for k in VG_p_possible_names:
-                            match = [parm_incr for parm_incr in parm_pert.keys() if k in parm_incr]
+                            match = [parm_incr for parm_incr in dict_parm_pert.keys() if k in parm_incr]
                             if len(match)>0:
                                 # print(match)
                                 # print(k)
                                 idVG = VG_p_possible_names_positions_in_soil_table[VG_p_possible_names.index(k)]
                                 # print(idVG)
-                                VG_parms_mat_ens[:,idVG] = parm_pert[match[0]][update_key]
+                                VG_parms_mat_ens[:,idVG] = dict_parm_pert[match[0]][update_key]
                             else:
                                 pass
                     else:
@@ -1635,8 +1658,8 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                     VG_parms_ensi = []
                     for es in range(self.NENS):
                         fed = dict()
-                        for i, f in  enumerate(list(SPP.keys())):
-                            if len(SPP['PERMX'])<2:
+                        for i, f in  enumerate(list(SPP_map.keys())):
+                            if len(SPP_map['PERMX'])<2:
                                 if f == 'alpha_VG': # convert to CATHY VGPSATCELL == -1/alpha
                                     fed[f] = -1/VG_parms_mat_ens[es,i]
                                 else:
@@ -1646,8 +1669,8 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                 # fed[f] = list(VG_parms_mat_ens[es,:,i])
                         VG_parms_ensi.append(fed)
 
-                    self.update_soil(SPP=VG_parms_ensi[ens_nb],
-                                     FP=self.soil_FP['FP_map'],
+                    self.update_soil(SPP_map=VG_parms_ensi[ens_nb],
+                                     FP_map=self.soil_FP['FP_map'],
                                      verbose=False,
                                      filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
 
@@ -1665,7 +1688,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
                     # if self.cathyH["MAXVEG"]<2: # Case where only 1 vegetation type
-                    FeddesParam_mat_ens[:,int(key_root[1]),idFeddes] = parm_pert[key][update_key]
+                    FeddesParam_mat_ens[:,int(key_root[1]),idFeddes] = dict_parm_pert[key][update_key]
                     # FeddesParam_mat_ens[:,:,idFeddes] = parm_pert[key][update_key]
                     # else: # Case where only 1 vegetation type
 
@@ -1692,7 +1715,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                 self.Archie_parms[p]=list(self.Archie_parms[p]*np.ones(self.NENS))
                         Archie_parms_mat_ens = np.zeros([len(Archie_p_names),self.NENS])
                         Archie_parms_mat_ens[:] = np.nan
-                    Archie_parms_mat_ens[idArchie,ens_nb] = parm_pert[key][update_key][ens_nb]
+                    Archie_parms_mat_ens[idArchie,ens_nb] = dict_parm_pert[key][update_key][ens_nb]
 
                     if np.isnan(Archie_parms_mat_ens[idArchie,:]).any()==False:
                         self.Archie_parms[key_root[0]]=list(Archie_parms_mat_ens[idArchie,:])
@@ -2017,7 +2040,8 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             # print('ens nb:' + str(ens_nb))
 
             path_fwd_CATHY = os.path.join(self.workdir, self.project_name,
-                                  './DA_Ensemble/cathy_' + str(ens_nb+1))
+                                          'DA_Ensemble/cathy_' + str(ens_nb+1)
+                                          )
 
             df_psi = self.read_outputs(filename='psi',
                                        path=os.path.join(path_fwd_CATHY,
@@ -2220,7 +2244,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
     def update_pert_parm_dict(self,update_key,list_update_parm,analysis_param_valid):
-        ''' update dict of perturbated parameters i.e. add a collumn with new params'''
+        ''' update dict of perturbated parameters i.e. add a new entry with new params'''
 
         index_update = 0
         if self.count_DA_cycle > 0:
@@ -2249,22 +2273,17 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
 
-    def _update_input_ensemble(self, NENS, ENS_times,
-                               parm_pert=[],
-                               update_parm_list=['St. var.'],
+    def _update_input_ensemble(self,
+                               ENS_times,
+                               list_parm2update=['St. var.'],
                                analysis=[],
                                **kwargs):
         '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
-
         Select the time window of the hietograph.
         Write new variable perturbated/updated value into corresponding input file
 
         Parameters
-        ----------
-        NENS : int
-            size of the ensemble.
+        ----------           
         parm_pert : dict
             dict of all perturbated variables holding values and metadata.
 
@@ -2280,18 +2299,14 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         # resample atmbc file for the given DA window
         # ---------------------------------------------------------------------
-        self.selec_atmbc_window(NENS, ENS_times)
+        self.selec_atmbc_window(self.NENS, ENS_times)
 
         # ---------------------------------------------------------------------
-
-        # analysis = []
-        # if 'analysis' in kwargs:
-        #     analysis = kwargs['analysis']
-
-        self.update_ENS_files(parm_pert,
-                              update_parm_list=update_parm_list,
+        self.update_ENS_files(self.dict_parm_pert,
+                              list_parm2update,
                               cycle_nb=self.count_atmbc_cycle,
-                              analysis=analysis)
+                              analysis=analysis
+                              )
 
         pass
 
@@ -2458,12 +2473,9 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         return self.var_per_dict
 
 
-    def _create_subfolders_ensemble(self,NENS):
+    def _create_subfolders_ensemble(self):
         '''
-        Parameters
-        ----------
-        NENS : TYPE
-            DESCRIPTION.
+        Create ensemble subfolders
         '''
 
         if not os.path.exists(os.path.join(self.workdir, self.project_name,
@@ -2479,8 +2491,9 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 )
 
         try:
+            # for ff in [self.processor_name,'cathy.fnames','prepro']
             # copy exe into cathy_origin folder
-            shutil.move(
+            shutil.copy(
                 os.path.join(self.workdir, self.project_name, self.processor_name),
                 os.path.join(self.workdir, self.project_name,
                              "DA_Ensemble/cathy_origin", self.processor_name)
@@ -2507,7 +2520,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                                    "DA_Ensemble/cathy_origin")
 
         # copy origin folder to each ensemble subfolders
-        for i in range(NENS):
+        for i in range(self.NENS):
             path_nudn_i =  os.path.join(self.workdir, self.project_name,
                                         "DA_Ensemble/cathy_" + str(i+1))
 

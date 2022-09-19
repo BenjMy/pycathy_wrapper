@@ -165,18 +165,6 @@ cathy\_tools.CATHY
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
         CATHY.backup_results_DA
     
     
@@ -249,10 +237,6 @@ cathy\_tools.CATHY
     
     
     
-        CATHY.run_ensemble_hydrological_model
-    
-    
-    
         CATHY.run_preprocessor
     
     
@@ -318,10 +302,6 @@ cathy\_tools.CATHY
     
     
         CATHY.update_parm
-    
-    
-    
-        CATHY.update_pert_parm_dict
     
     
     
@@ -423,10 +403,6 @@ cathy\_tools.CATHY
 
 
 
-.. automethod:: CATHY.run_ensemble_hydrological_model
-
-
-
 .. automethod:: CATHY.run_preprocessor
 
 
@@ -492,10 +468,6 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.update_parm
-
-
-
-.. automethod:: CATHY.update_pert_parm_dict
 
 
 

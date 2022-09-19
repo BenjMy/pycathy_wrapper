@@ -26,14 +26,14 @@ Data Assimilation
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The parameter *errorevery* of .Axes.errorbar can be used to draw error bars only on a subset of...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model p...">
 
 .. only:: html
 
- .. figure:: /gallery/DA/images/thumb/sphx_glr_plot_errorbar_subsample3_thumb.png
-     :alt: Errorbar subsampling
+ .. figure:: /gallery/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
+     :alt: Sensitivity analysis
 
-     :ref:`sphx_glr_gallery_DA_plot_errorbar_subsample3.py`
+     :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`
 
 .. raw:: html
 
@@ -43,28 +43,7 @@ Data Assimilation
 .. toctree::
    :hidden:
 
-   /gallery/DA/plot_errorbar_subsample3
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="The parameter *errorevery* of .Axes.errorbar can be used to draw error bars only on a subset of...">
-
-.. only:: html
-
- .. figure:: /gallery/DA/images/thumb/sphx_glr_sensitivity_analysis_thumb.png
-     :alt: Errorbar subsampling
-
-     :ref:`sphx_glr_gallery_DA_sensitivity_analysis.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /gallery/DA/sensitivity_analysis
+   /gallery/DA/plot_Weilletal_sensitivityAnalysis
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>
@@ -77,6 +56,48 @@ Surface subsurface hydrological model
 -------------------------------------
 
 
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot inputs of the hydrological model.">
+
+.. only:: html
+
+ .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_inputs_thumb.png
+     :alt: Input plots
+
+     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_inputs.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /gallery/SSHydro/plot_pyCATHY_inputs
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological...">
+
+.. only:: html
+
+ .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_outputs_thumb.png
+     :alt: Output plots
+
+     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_outputs.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /gallery/SSHydro/plot_pyCATHY_outputs
 
 .. raw:: html
 

@@ -1,0 +1,46 @@
+------------------------------------------------------------------------------
+STRUCTURAL PARAMETERS
+------------------------------------------------------------------------------
+Grid spacing along the x-direction =                           0.50
+Grid spacing along the y-direction =                           0.50
+DEM rectangle size along the x-direction =                    20
+DEM rectangle size along the y-direction =                    20
+Number of cells within the catchment =                       400
+X low left corner coordinate =                                 0.00000000
+Y low left corner coordinate =                                 0.00000000
+------------------------------------------------------------------------------
+TERRAIN ANALYSIS PARAMETERS
+------------------------------------------------------------------------------
+Depit threshold slope =                                        0.130E-06
+Drainage directions method (LAD:1,LTD:2) =                     1
+Upstream deviation memory factor (CBM:0,PBM:1) =               0.000E+00
+Threshold on the contour curvature (NDM:-1E10;DM:+1E10) =      0.100E+13
+Nondispersive channel flow (0:not-required;1:required) =       0
+Channel initiation method (A:1,AS**k:2,ND:3) =                 1
+Threshold on the support area (A) =                            0.200000000E+04
+Threshold on the AS**k function =                          16000.00
+Exponent k of the AS**k function =                             2.00
+Threshold on the normalized divergence (ND) =                 -0.100E-01
+Path threshold slope =                                         0.500E-03
+Drainage direction of the outlet cell (if necessary...)  =     4
+Boundary channel constraction (No:0,Yes:1) =                   0
+Coefficient for boundary channel elevation definition =        0.50
+Coefficient for outlet cell elevation definition =             0.50
+------------------------------------------------------------------------------
+RIVULET NETWORK PARAMETERS (HYDRAULIC GEOMETRY OF THE SINGLE RIVULET)
+------------------------------------------------------------------------------
+Rivulet spacing =                                    0.500
+Reference drainage area (As_rf) =                    0.200000000000E+04
+Flow discharge (Qsf_rf,w_rf) =                       1.000               1.000
+Water-surface width (Wsf_rf,b1_rf,b2_rf) =           1.000     0.000     0.000
+Resistance coefficient (kSsf_rf,y1_rf,y2_rf) =      24.004     0.000     0.000
+Initial flow discharge (Qsi_rf) =                    0.000
+------------------------------------------------------------------------------
+CHANNEL NETWORK PARAMETERS
+------------------------------------------------------------------------------
+Reference drainage area (As_cf) =                    0.200000000000E+04
+Flow discharge (Qsf_cf,w_cf) =                       1.000               1.000
+Water-surface width (Wsf_cf,b1_cf,b2_cf) =           5.000     0.260     0.500
+Resistance coefficient (kSsf_cf,y1_cf,y2_cf) =      66.500     0.000     0.000
+Initial flow discharge (Qsi_cf) =                    1.000
+------------------------------------------------------------------------------

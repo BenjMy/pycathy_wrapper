@@ -142,13 +142,8 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
-     Errorbar subsampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
-     Errorbar subsampling
+    <a class="reference internal" href="../../../gallery/DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
     </a>
    </li>
   </ul>
@@ -241,8 +236,8 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="cathy_tools.track.html">
-       cathy_tools.track
+      <a class="reference internal" href="cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
     </ul>
@@ -429,6 +424,11 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.resynchronise_times.html">
        DA.cathy_DA.resynchronise_times
       </a>
@@ -446,6 +446,16 @@
      <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.sampling_dist_trunc.html">
        DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.track.html">
+       DA.cathy_DA.track
       </a>
      </li>
     </ul>
@@ -1059,62 +1069,56 @@ The src files are fetched from the online repository if not existing (note that 
 <tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.rich_display" title="DA.cathy_DA.CATHY.rich_display"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.rich_display</span></code></a>([title])</p></td>
 <td><p>Describe the variable state and fate during the simulation with a rich table</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.run_ensemble_hydrological_model" title="DA.cathy_DA.CATHY.run_ensemble_hydrological_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.run_ensemble_hydrological_model</span></code></a>(...)</p></td>
-<td><p>multi run CATHY hydrological model from the independant folders composing the ensemble</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.run_preprocessor" title="DA.cathy_DA.CATHY.run_preprocessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.run_preprocessor</span></code></a>([KeepOutlet, verbose])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.run_preprocessor" title="DA.cathy_DA.CATHY.run_preprocessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.run_preprocessor</span></code></a>([KeepOutlet, verbose])</p></td>
 <td><p>Run cppp.exe 1.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.run_processor" title="DA.cathy_DA.CATHY.run_processor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.run_processor</span></code></a>([recompile, runProcess, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.run_processor" title="DA.cathy_DA.CATHY.run_processor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.run_processor</span></code></a>([recompile, runProcess, ...])</p></td>
 <td><p>Run cathy.exe</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.set_Archie_parm" title="DA.cathy_DA.CATHY.set_Archie_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.set_Archie_parm</span></code></a>([porosity, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.set_Archie_parm" title="DA.cathy_DA.CATHY.set_Archie_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.set_Archie_parm</span></code></a>([porosity, ...])</p></td>
 <td><p>Dict of Archie parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.set_BC_laterals" title="DA.cathy_DA.CATHY.set_BC_laterals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.set_BC_laterals</span></code></a>(time[, BC_type, val])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.set_BC_laterals" title="DA.cathy_DA.CATHY.set_BC_laterals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.set_BC_laterals</span></code></a>(time[, BC_type, val])</p></td>
 <td><p>Set all sides expect surface one</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.set_SOIL_defaults" title="DA.cathy_DA.CATHY.set_SOIL_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.set_SOIL_defaults</span></code></a>([FP_map_default, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.set_SOIL_defaults" title="DA.cathy_DA.CATHY.set_SOIL_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.set_SOIL_defaults</span></code></a>([FP_map_default, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.show" title="DA.cathy_DA.CATHY.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.show</span></code></a>([prop])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.show" title="DA.cathy_DA.CATHY.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.show</span></code></a>([prop])</p></td>
 <td><p>Call and parse to cathy.plotter from the main CATHY class</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.show_bc" title="DA.cathy_DA.CATHY.show_bc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.show_bc</span></code></a>([layer, time])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.show_bc" title="DA.cathy_DA.CATHY.show_bc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.show_bc</span></code></a>([layer, time])</p></td>
 <td><p>Show bc</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.show_input" title="DA.cathy_DA.CATHY.show_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.show_input</span></code></a>([prop])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.show_input" title="DA.cathy_DA.CATHY.show_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.show_input</span></code></a>([prop])</p></td>
 <td><p>Call and parse to cathy.plotter from the main CATHY class</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_atmbc" title="DA.cathy_DA.CATHY.update_atmbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_atmbc</span></code></a>([HSPATM, IETO, time, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_atmbc" title="DA.cathy_DA.CATHY.update_atmbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_atmbc</span></code></a>([HSPATM, IETO, time, ...])</p></td>
 <td><p>Atmospheric forcing term (atmbc - IIN6)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_cathyH" title="DA.cathy_DA.CATHY.update_cathyH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_cathyH</span></code></a>([verbose])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_cathyH" title="DA.cathy_DA.CATHY.update_cathyH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_cathyH</span></code></a>([verbose])</p></td>
 <td><p>Update CathyH file input based on <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_dem_parameters" title="DA.cathy_DA.CATHY.update_dem_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_dem_parameters</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_dem_parameters" title="DA.cathy_DA.CATHY.update_dem_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_dem_parameters</span></code></a>(**kwargs)</p></td>
 <td><p>Update DEM parameters</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_ic" title="DA.cathy_DA.CATHY.update_ic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_ic</span></code></a>([INDP, IPOND, WTPOSITION, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_ic" title="DA.cathy_DA.CATHY.update_ic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_ic</span></code></a>([INDP, IPOND, WTPOSITION, ...])</p></td>
 <td><p>The initial conditions file contains the pressure heads distribution for the study area (INDP) For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface, INDP=3 and WTHEIGHT=4.5 are selected</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_mesh_boundary_cond" title="DA.cathy_DA.CATHY.update_mesh_boundary_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_mesh_boundary_cond</span></code></a>(time[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_mesh_boundary_cond" title="DA.cathy_DA.CATHY.update_mesh_boundary_cond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_mesh_boundary_cond</span></code></a>(time[, ...])</p></td>
 <td><p>update_mesh_bounds</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_mesh_vtk" title="DA.cathy_DA.CATHY.update_mesh_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_mesh_vtk</span></code></a>([prop, prop_value, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_mesh_vtk" title="DA.cathy_DA.CATHY.update_mesh_vtk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_mesh_vtk</span></code></a>([prop, prop_value, ...])</p></td>
 <td><p><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data">https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data</a></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_nansfdirbc" title="DA.cathy_DA.CATHY.update_nansfdirbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_nansfdirbc</span></code></a>([time, NDIR, NDIRC, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_nansfdirbc" title="DA.cathy_DA.CATHY.update_nansfdirbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_nansfdirbc</span></code></a>([time, NDIR, NDIRC, ...])</p></td>
 <td><p>Dirichlet Boundary conditions (or specified pressure) at time t</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_nansfneubc" title="DA.cathy_DA.CATHY.update_nansfneubc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_nansfneubc</span></code></a>([time, NQ, ZERO, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_nansfneubc" title="DA.cathy_DA.CATHY.update_nansfneubc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_nansfneubc</span></code></a>([time, NQ, ZERO, ...])</p></td>
 <td><p>Neumann boundary conditions (or specifed flux) at time t</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_parm" title="DA.cathy_DA.CATHY.update_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_parm</span></code></a>([verbose])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_parm" title="DA.cathy_DA.CATHY.update_parm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_parm</span></code></a>([verbose])</p></td>
 <td><p>Update parm file .. note:     - create object zone parm     - Updated CATHYH file (NPRT and NUMVP).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_pert_parm_dict" title="DA.cathy_DA.CATHY.update_pert_parm_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_pert_parm_dict</span></code></a>(update_key, ...)</p></td>
-<td><p>update dict of perturbated parameters i.e. add a collumn with new params.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#DA.cathy_DA.CATHY.update_prepo_inputs" title="DA.cathy_DA.CATHY.update_prepo_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY.update_prepo_inputs</span></code></a>([DEM, verbose, show])</p></td>
 <td><p>Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs.</p></td>
@@ -1311,12 +1315,6 @@ TETRA (5,NT)       - element connectivities in 3-d mesh (TETRA(5,I)
 <dd class="field-odd"><p><em>None.</em></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.CATHY.run_ensemble_hydrological_model">
-<span class="sig-prename descclassname"><span class="pre">CATHY.</span></span><span class="sig-name descname"><span class="pre">run_ensemble_hydrological_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parallel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callexe</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyCATHY/cathy_tools.html#CATHY.run_ensemble_hydrological_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.CATHY.run_ensemble_hydrological_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>multi run CATHY hydrological model from the independant folders composing the ensemble</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1651,12 +1649,6 @@ The default is [].</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="DA.cathy_DA.CATHY.update_pert_parm_dict">
-<span class="sig-prename descclassname"><span class="pre">CATHY.</span></span><span class="sig-name descname"><span class="pre">update_pert_parm_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_update_parm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_param_valid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyCATHY/cathy_tools.html#CATHY.update_pert_parm_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.CATHY.update_pert_parm_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>update dict of perturbated parameters i.e. add a collumn with new params</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="DA.cathy_DA.CATHY.update_prepo_inputs">
 <span class="sig-prename descclassname"><span class="pre">CATHY.</span></span><span class="sig-name descname"><span class="pre">update_prepo_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DEM</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyCATHY/cathy_tools.html#CATHY.update_prepo_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DA.cathy_DA.CATHY.update_prepo_inputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs</p>
@@ -1863,7 +1855,7 @@ The default is [].</p>
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 16, 2022.<br/>
+      Last updated on Sep 19, 2022.<br/>
   </p>
 </footer>
 </main>

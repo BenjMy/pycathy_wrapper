@@ -1,0 +1,74 @@
+C
+C**************************  INTERPNEW *********************************
+C
+C  use the lookup table to interpolate moisture curve values
+C  (Newton case)
+C
+C***********************************************************************
+C
+      SUBROUTINE INTERPNEW(NLKP,ISTR,MTYPE,PAVG,SSAVG,FIAVG,
+     1                     KRLOC,ETALOC,SWLOC,DKRLOC,DETALOC)
+C
+      IMPLICIT NONE
+      INCLUDE 'CATHY.H'
+      INTEGER  I
+      INTEGER  NLKP,ISTR,MTYPE
+      REAL*8   PCAPDIFF,PAVGDIFF,DSWDP,DDSWDP2
+      REAL*8   PAVG,SSAVG,FIAVG,KRLOC,ETALOC,SWLOC,DKRLOC,DETALOC
+      INCLUDE 'SOILCHAR.H'
+C
+      IF (PAVG .GT. -1.0D-14) THEN
+         KRLOC=1.0D0
+         DKRLOC=0.0D0
+         SWLOC=1.0D0
+         ETALOC=SSAVG
+         DETALOC=0.0D0
+      ELSE IF (PAVG .LE. PCAP(ISTR,MTYPE,1)) THEN
+         PCAPDIFF=PCAP(ISTR,MTYPE,2) - PCAP(ISTR,MTYPE,1)
+         KRLOC=KRWC(ISTR,MTYPE,1)
+         DKRLOC=(KRWC(ISTR,MTYPE,2) - KRLOC)/PCAPDIFF
+         SWLOC=SATC(ISTR,MTYPE,1)
+         DSWDP=(SATC(ISTR,MTYPE,2) - SWLOC)/PCAPDIFF
+         ETALOC=SSAVG*SWLOC + FIAVG*DSWDP
+         DDSWDP2=(SATC(ISTR,MTYPE,3) - 2.0D0*SATC(ISTR,MTYPE,2) + SWLOC)
+     1           /((PCAP(ISTR,MTYPE,3) - PCAP(ISTR,MTYPE,2)) * PCAPDIFF)
+         DETALOC=SSAVG*DSWDP + FIAVG*DDSWDP2
+      ELSE IF (PAVG .GE. PCAP(ISTR,MTYPE,NLKP)) THEN
+         PCAPDIFF=PCAP(ISTR,MTYPE,NLKP) - PCAP(ISTR,MTYPE,NLKP-1)
+         KRLOC=KRWC(ISTR,MTYPE,NLKP)
+         DKRLOC=(KRLOC - KRWC(ISTR,MTYPE,NLKP-1))/PCAPDIFF
+         SWLOC=SATC(ISTR,MTYPE,NLKP)
+         DSWDP=(SWLOC - SATC(ISTR,MTYPE,NLKP-1))/PCAPDIFF
+         ETALOC=SSAVG*SWLOC + FIAVG*DSWDP
+         DDSWDP2=(SWLOC - 2.0D0*SATC(ISTR,MTYPE,NLKP-1) +
+     1            SATC(ISTR,MTYPE,NLKP-2))
+     2           /(PCAPDIFF * (PCAP(ISTR,MTYPE,NLKP-1) -
+     3                         PCAP(ISTR,MTYPE,NLKP-2)))
+         DETALOC=SSAVG*DSWDP + FIAVG*DDSWDP2
+      ELSE
+         I=1
+         DO WHILE ((PAVG .LT. PCAP(ISTR,MTYPE,I))  .OR.
+     1             (PAVG .GE. PCAP(ISTR,MTYPE,I+1)))
+            I=I+1
+         END DO
+         PCAPDIFF=PCAP(ISTR,MTYPE,I+1) - PCAP(ISTR,MTYPE,I)
+         PAVGDIFF=PAVG - PCAP(ISTR,MTYPE,I)
+         KRLOC=KRWC(ISTR,MTYPE,I) +
+     1         (KRWC(ISTR,MTYPE,I+1) - KRWC(ISTR,MTYPE,I))/PCAPDIFF *
+     2         PAVGDIFF
+         DKRLOC=(KRLOC - KRWC(ISTR,MTYPE,I))/PAVGDIFF
+         SWLOC=SATC(ISTR,MTYPE,I) +
+     1         (SATC(ISTR,MTYPE,I+1) - SATC(ISTR,MTYPE,I))/PCAPDIFF *
+     2         PAVGDIFF
+         DSWDP=(SWLOC - SATC(ISTR,MTYPE,I))/PAVGDIFF
+         ETALOC=SSAVG*SWLOC + FIAVG*DSWDP
+         IF (I .EQ. 1) I=2
+         DDSWDP2=(SATC(ISTR,MTYPE,I+1) - 2.0D0*SATC(ISTR,MTYPE,I) +
+     1            SATC(ISTR,MTYPE,I-1))
+     2           /((PCAP(ISTR,MTYPE,I+1) - PCAP(ISTR,MTYPE,I)) *
+     3             (PCAP(ISTR,MTYPE,I) - PCAP(ISTR,MTYPE,I-1)))
+         DETALOC=SSAVG*DSWDP + FIAVG*DDSWDP2
+      END IF
+C
+      RETURN
+      END

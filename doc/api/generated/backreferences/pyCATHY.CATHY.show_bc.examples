@@ -1,0 +1,23 @@
+
+
+Examples using ``pyCATHY.CATHY.show_bc``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot inputs of the hydrological model.">
+
+.. only:: html
+
+ .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_inputs_thumb.png
+     :alt: Output plots
+
+     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_inputs.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_inputs.py`

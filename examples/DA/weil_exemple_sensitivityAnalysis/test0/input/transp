@@ -1,0 +1,21 @@
+1.0    0     0            TETAC LUMPC CDIFFUS
+0      3  3000    1  0    IPRTCG IPREC IMAX ISOL IEXIT
+4      4     4            FLAG_TEMP FLAG_INTERP FLAG_LIMITER
+0.3    1     0            CFLINP NADV NADVFL
+0.0                       MIXPART
+0.0  0.0   0.0  0.0       ALFAL ALFAT KD LAMBDA
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  0.0   0.0  0.0
+0.0  1.0                  DIFFUS GAMMAS      

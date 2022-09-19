@@ -1,0 +1,23 @@
+
+
+Examples using ``pyCATHY.CATHY.read_outputs``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model p...">
+
+.. only:: html
+
+ .. figure:: /gallery/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
+     :alt: Sensitivity analysis
+
+     :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`

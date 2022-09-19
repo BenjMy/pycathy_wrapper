@@ -8,7 +8,7 @@ from pyCATHY.importers import sensors_measures as in_meas
 from pyCATHY import cathy_utils as utils_CT
 from collections import OrderedDict
 import re
-import numpy
+import numpy as np
 
 def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kwargs):
     '''
@@ -168,7 +168,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
     # ERT type read
     # ---------------------------------------------------------------------
     elif data_type == 'ERT':
-
+           
         obs_cov_type = 'reciprocal_err'
         if 'obs_cov_type' in kwargs:
             obs_cov_type = kwargs['obs_cov_type']
@@ -186,6 +186,8 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
             elecs = kwargs['elecs']
 
         df, dict_ERT = in_meas.read_ERT(obs_2_add,data_format)
+        filename = obs_2_add
+
         units = '$\Omega$'
 
         if 'elecs' in dict_ERT.keys():

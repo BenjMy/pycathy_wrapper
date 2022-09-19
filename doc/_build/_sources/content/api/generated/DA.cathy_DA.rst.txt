@@ -53,6 +53,8 @@
 
   DA.cathy_DA.perturbate_dist
 
+  DA.cathy_DA.perturbate_parm
+
   DA.cathy_DA.resynchronise_times
 
   DA.cathy_DA.run_analysis
@@ -60,6 +62,10 @@
   DA.cathy_DA.sampling_dist
 
   DA.cathy_DA.sampling_dist_trunc
+
+  DA.cathy_DA.subprocess_run_multi
+
+  DA.cathy_DA.track
 
 
 

@@ -7,6 +7,7 @@ Test Data Assimlitation
 from pyCATHY.cathy_tools import CATHY
 from pyCATHY.plotters import cathy_plots as pltCT
 from pyCATHY.importers import cathy_inputs as inCT
+
 from pyCATHY.DA import cathy_DA
 from pyCATHY.DA import perturbate
 from pyCATHY.DA.cathy_DA import DA
@@ -25,9 +26,8 @@ prj_name = 'tensiometers_DA'
 # ---------------------------------------------------------
 # input file were previously created, see CATHY inputs example for more details
 
-simu_test_DA = CATHY(dirName=dirName, prj_name=prj_name + '_DA', 
+simu_test_DA = DA(dirName=dirName, prj_name=prj_name + '_DA', 
                      notebook=False) #
-# cathyDA = cathy_DA.DA() # initiate the Data Assimilation class
 
 data = pd.read_csv('./doc_test_data/doc_test_point_data.csv')
 data_ass_time_s = pd.read_csv('./doc_test_data/doc_test_point_data_assimilation_times.csv')
@@ -134,7 +134,6 @@ for dp in list_pert:
 # run simulation + DA
 # -------------------
 DA.run_DA_sequential(
-                    DAFLAG=1,
                     parallel=True,    
                     dict_obs= sorted_dict_obs,
                     list_assimilated_obs = scenario['listAssimilatedObs'], # default

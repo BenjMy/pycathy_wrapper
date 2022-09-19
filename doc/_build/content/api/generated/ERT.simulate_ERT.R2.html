@@ -142,13 +142,8 @@
   </label>
   <ul>
    <li class="toctree-l2">
-    <a class="reference internal" href="../../../gallery/DA/plot_errorbar_subsample3.html">
-     Errorbar subsampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../../../gallery/DA/sensitivity_analysis.html">
-     Errorbar subsampling
+    <a class="reference internal" href="../../../gallery/DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
     </a>
    </li>
   </ul>
@@ -241,8 +236,8 @@
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="cathy_tools.track.html">
-       cathy_tools.track
+      <a class="reference internal" href="cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
       </a>
      </li>
     </ul>
@@ -429,6 +424,11 @@
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.resynchronise_times.html">
        DA.cathy_DA.resynchronise_times
       </a>
@@ -446,6 +446,16 @@
      <li class="toctree-l3">
       <a class="reference internal" href="DA.cathy_DA.sampling_dist_trunc.html">
        DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.track.html">
+       DA.cathy_DA.track
       </a>
      </li>
     </ul>
@@ -1371,7 +1381,7 @@ area in mrad</p></li>
 is block inversion.</p></li>
 <li><p><strong>fixed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, the inversion will keep the starting resistivity of this
 region.</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.5.3)"><em>matplotlib.axes.Axes</em></a>) – If not <cite>None</cite>, the region will be plotted against this axes.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.6.0)"><em>matplotlib.axes.Axes</em></a>) – If not <cite>None</cite>, the region will be plotted against this axes.</p></li>
 <li><p><strong>iplot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite> , the updated mesh with the region will be plotted.</p></li>
 </ul>
 </dd>
@@ -1571,7 +1581,7 @@ Specific for ‘tank mesh’:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.5.3)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>optional</em>) – Axes to which the graph will be plotted.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.6.0)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>optional</em>) – Axes to which the graph will be plotted.</p></li>
 <li><p><strong>dump</strong> (<em>function</em><em>, </em><em>optional</em>) – Function that outputs messages from the interactive model creation.</p></li>
 <li><p><strong>typ</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Type of selection either <cite>poly</cite> for polyline or <cite>rect</cite> for
 rectangle.</p></li>
@@ -1731,7 +1741,7 @@ triangular mesh.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.5.3)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>optional</em>) – Axes to which the graph will be plotted.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v3.6.0)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>optional</em>) – Axes to which the graph will be plotted.</p></li>
 <li><p><strong>dump</strong> (<em>function</em><em>, </em><em>optional</em>) – Function that outputs messages from the interactive model creation.</p></li>
 <li><p><strong>typ</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Type of selection either <cite>poly</cite> for polyline or <cite>rect</cite> for
 rectangle.</p></li>
@@ -3064,7 +3074,7 @@ the reference survey as transfer resistance (Ohm).</p></li>
       By B. Mary<br/>
     
         &copy; Copyright 2022, B. Mary.<br/>
-      Last updated on Sep 16, 2022.<br/>
+      Last updated on Sep 19, 2022.<br/>
   </p>
 </footer>
 </main>
