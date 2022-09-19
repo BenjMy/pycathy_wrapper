@@ -1,4 +1,5 @@
 *.pyc
+*.vtk
 dist/
 build/
 Makefile
@@ -7,3 +8,4 @@ known_issues
 pycathy.egg-info
 meta.yaml
 tmp-test-dir-with-unique-name
+.pytest_cache
