@@ -115,9 +115,15 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,**kwargs):
     return het
 
         
-def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):
-    
+def create_ERT_survey_Resipy(pathERT,elecsXYZ,sequence,mesh, **kwargs):
+    '''
     #https://hkex.gitlab.io/resipy/api.html
+    '''
+    
+    noise_level = 5
+    if 'noise_level' in kwargs:
+        noise_level = kwargs['noise_level']
+        
 
     # os.chdir(pathERT) 
     
@@ -143,9 +149,10 @@ def create_ERT_survey(pathERT,elecsXYZ,sequence,mesh, **kwargs):
     if 'res0' in kwargs:
         ERT.setRefModel(kwargs['res0'])
 
-    ERT.addRegion(np.array([[0.1,0.1],[0.1,0.4],[0.3,0.4],[0.3,0.1],[0.1,0.1]]), 500, iplot=False)
     ERT.importSequence(sequence)
     # -----------------------------------------------
+    
+    ERT.forward(noise=noise_level)
     
     return ERT
 

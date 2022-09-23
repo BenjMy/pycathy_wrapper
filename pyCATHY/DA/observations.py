@@ -271,6 +271,119 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
     return dict_obs
 
 
+def make_data_cov(simu, dict_obs,list_assimilated_obs='all', nb_assimilation_times=[]):
+    '''
+    Combine covariance between different observations
+    
+    cov_swc = [ 1.  0   0
+                0   1.  0
+                0   0   1
+            ]
+
+    cov_tensio = [  err_tensio      0               0
+                    0               err_tensio.     0
+                    0               0               err_tensio
+                ]
+
+    cov_ert =   [   1.  0   0
+                    0   1.  0
+                    0   0   1
+                ]
+    
+    COV_swc_tensio = [  1.  0   0   0   0   0
+                        0   1.  0   0   0   0
+                        0   0   1   0   0   0
+                        0   0   0   1   0   0
+                        0   0   0   0   1   0
+                        0   0   0   0   0   1
+                    ]
+    
+    Parameters
+    ----------
+    simu : TYPE
+        DESCRIPTION.
+    dict_obs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    # merge all dataset and compute covariance matrice
+    # for exemple merging ERT data with SWC data would consist in 
+    #
+    #  [R,Theta] --> cov[R,Theta]
+    #
+    # initialize the matrice [meas*meas] size
+    # Here we consider that the covariance doesnt change with time
+    
+    items_dict = list(dict_obs.items())
+
+
+    # covariance change with time
+    # ----------------------------------------------------------------
+    data_cov_list = []
+    for nbt in range(nb_assimilation_times):
+        data = []
+        data_ERT = []
+        data_cov = []
+
+        
+        # self.get_selected_data()
+        # There can be multiple sensors measuring at the same time
+        # -----------------------------------------------------------------
+        if 'all' in list_assimilated_obs:
+            for sensor in items_dict[nbt][1].keys(): 
+                print(sensor)
+                if 'ERT' in sensor:
+                    data_ERT.append(np.array(items_dict[nbt][1][sensor]['data']['rhoa']))
+                    data_cov.append(np.ones(len(np.array(items_dict[nbt][1][sensor]['data']['rhoa'])))
+                                    *items_dict[nbt][1][sensor]['data_err']
+                                    )
+                else:              
+                    data.append(items_dict[nbt][1][sensor]['data'])
+
+            data_cov.append(np.ones(len(data))*items_dict[nbt][1][sensor]['data_err'])
+            data = data + data_ERT
+
+            
+        else: 
+            for l in list_assimilated_obs:
+                for sensor in items_dict[nbt][1].keys():   
+                    if l in sensor:          
+                        if 'ERT' in l:
+                            data_ERT.append(np.array(items_dict[nbt][1][sensor]['data']['rhoa']))
+                            data_cov.append(np.ones(len(np.array(items_dict[nbt][1][sensor]['data']['rhoa'])))
+                                    *items_dict[nbt][1][sensor]['data_err']
+                                    )
+                        else:              
+                            data.append(items_dict[nbt][1][sensor]['data']) 
+                            
+            data_cov.append(np.ones(len(data))*items_dict[nbt][1][sensor]['data_err'])
+            data = data + data_ERT
+
+
+        data = np.hstack(data)
+        data_cov = np.hstack(data_cov)
+        
+        data_cov_diag = np.zeros([len(data_cov),len(data_cov)])
+        np.fill_diagonal(data_cov_diag,data_cov)
+        data_cov_list.append(data_cov_diag)
+
+    
+    # # covariance doesnt change with time
+    # # ----------------------------------------------------------------
+    # for nbt in range(nb_assimilation_times):
+    #     data_cov_list.append(data_cov)
+        
+    data_cov, data_pert, stacked_data_cov = prepare_observations(stacked_data_cov=data_cov_list)
+    
+    simu.stacked_data_cov = stacked_data_cov
+
+    return data_cov, data_pert, stacked_data_cov
+
 
 def prepare_observations(
                          dict_obs = [],
@@ -310,7 +423,6 @@ def prepare_observations(
 
     # compute individual observation perturbation covariance
     # ----------------------------------------------------
-
     data_pert = []
     if perturbate == True:
         data_pert = perturbate_obs(dict_obs)
@@ -372,8 +484,6 @@ def perturbate_obs(dict_obs):
 
 def init_obs_cov_matrice(dict_obs, obs_cov_type):
     '''
-    THIS SHOULD BE MOVED TO DA CLASS
-
     compute measurement cov matrice and add it to dict_obs
 
     Returns

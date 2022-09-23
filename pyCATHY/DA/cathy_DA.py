@@ -10,7 +10,7 @@ import pandas as pd
 from collections import OrderedDict
 
 import shutil
-from pyCATHY.cathy_tools import CATHY
+from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
 from pyCATHY.DA import enkf, pf
 from pyCATHY.plotters import cathy_plots as plt_CT
 
@@ -593,7 +593,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
         '''
         
-        self.run_processor(DAFLAG=1)
+        self.run_processor(DAFLAG=1,**kwargs)
         callexe = "./" + self.processor_name
 
         self.damping = 1
@@ -826,6 +826,25 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
             print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
 
             plt.close('all')
+            
+        # clean all vtk file produced
+        # --------------------------
+        import glob
+        directory = "./"
+        pathname = directory + "/**/*converted*.vtk"
+        files = glob.glob(pathname, recursive=True)
+        
+        [os.remove(f) for f in files]
+        
+        hard_remove = True
+        if hard_remove:
+            directory = "./"
+            pathname = directory + "/**/*.vtk"
+            files = glob.glob(pathname, recursive=True)
+        
+            [os.remove(f) for f in files]
+        
+        
         pass
 
 
@@ -1017,6 +1036,10 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         data, _ = self._get_data2assimilate(list_assimilated_obs)
         print('data size: ' + str(len(data)))
 
+        # data_measure_df = dictObs_2pd(self.dict_obs)                 
+        
+                
+                
         # check size of data_cov
         # ---------------------------------------------------------------------
         # if len(self.stacked_data_cov)/len(self.dict_obs.items()) != len(data):
@@ -1026,9 +1049,11 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
         # else:
         if np.shape(self.stacked_data_cov[self.count_DA_cycle])[0] != len(data):
             raise ValueError('need to compute data covariance')
+        # if np.shape(np.shape(data_measure_df['data_cov'].iloc[self.count_DA_cycle])[0]) != len(data):
+        #     raise ValueError('need to compute data covariance')
 
         data_cov =self.stacked_data_cov[self.count_DA_cycle]
-
+        # data_cov = data_measure_df['data_cov'].iloc[self.count_DA_cycle]
 
 
         # # filter non-valid ensemble before Analysis
@@ -1677,7 +1702,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 # FeddesParam update
                 # --------------------------------------------------------------
                 elif key_root[0] in ['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']:
-                    SPP =  self.soil_SPP['SPP_map']
+                    SPP_map =  self.soil_SPP['SPP_map']
 
                     if len(FeddesParam_mat_ens)==0:
                         FeddesParam_mat = self.soil_FP['FP']
@@ -1692,15 +1717,14 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                     # FeddesParam_mat_ens[:,:,idFeddes] = parm_pert[key][update_key]
                     # else: # Case where only 1 vegetation type
 
-
-                    FeddesParam_ensi = []
+                    FeddesParam_map_ensi = []
                     for es in range(self.NENS):
                         fed = dict()
                         for i, f in  enumerate(['PCANA', 'PCREF', 'PCWLT', 'ZROOT', 'PZ', 'OMGC']):
                             fed[f] = list(FeddesParam_mat_ens[es,:,i])
-                        FeddesParam_ensi.append(fed)
-                    self.update_soil(FP=FeddesParam_ensi[ens_nb],
-                                     SPP=SPP,
+                        FeddesParam_map_ensi.append(fed)
+                    self.update_soil(FP_map=FeddesParam_map_ensi[ens_nb],
+                                     SPP_map=SPP_map,
                                      verbose=False,
                                      filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
 
@@ -1949,7 +1973,7 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                             # obskey2map.append(sensor)
                             data2add = extract_data(sensor, time_ass, data)
                             data.append(data2add)
-            # len(data2add)
+            
         return np.hstack(data), obskey2map
 
 

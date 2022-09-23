@@ -1,3 +1,8 @@
+# Known issues pyCATHY DA
+
+- ERT assimilate in non parallel model lead to wrong observation size (missing a stack somewhere)
+
+
 # Known issues pyCATHY
 
 

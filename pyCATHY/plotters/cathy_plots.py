@@ -799,17 +799,25 @@ def plot_VGP(df_VGP,savefig=False,**kwargs):
 
         
 def DA_plot_Archie(df_Archie,savefig=False,**kwargs):
-    plt.scatter(df_Archie['sw'],df_Archie['ER_converted'])
-    plt.xlabel('saturation')
-    plt.ylabel('ER_converted')
-    plt.show()
+    if 'ax' in kwargs:
+        ax = kwargs['ax']
+    else:
+        fig = plt.figure(figsize=(6, 3), dpi=350)
+        ax = fig.add_subplot()
+        
+    ax.scatter(df_Archie['sw'],df_Archie['ER_converted'])
+    ax.set_xlabel('Saturation (-)')
+    ax.set_ylabel('ER converted')
+    ax.set_title('[All ensemble]')
+
     if 'porosity' in kwargs:
-        plt.scatter(df_Archie['sw']*kwargs['porosity'],
+        ax.scatter(df_Archie['sw']*kwargs['porosity'],
                     df_Archie['ER_converted'])
-        plt.xlabel('swc')
-        plt.ylabel('ER_converted')
+        ax.set_xlabel('swc')
+        ax.set_ylabel('ER_converted')
     if savefig==True:
         plt.savefig('Archie.png', dpi=300)
+    return ax
         
 
 #%% ----------------------------------------------------------------------------
@@ -1048,11 +1056,11 @@ def DA_plot_parm_dynamic_scatter(parm = 'ks',
     boxplot = df.boxplot()  
     boxplot.set_xticklabels(name, rotation=90)
     plt.ylabel(parm)
-    plt.xlabel('assimilation time')
+    plt.xlabel('assimilation #')
     if 'log' in kwargs:
         if kwargs['log']:
             plt.yscale('log')
-    return plt, ax
+    return ax
     
     
 
@@ -1119,16 +1127,26 @@ def prepare_DA_plot_time_dynamic(DA,
     
         if len(isOL)>0:
 
-            nb_of_nodes = len(np.arange(int(len(isOL)/((max(isOL['time'])-1)*NENS))))
-            test = len(isOL)/nb_of_nodes
+            # nb_of_nodes = len(np.arange(int(len(isOL)/((max(isOL['time'])-1)*NENS))))
+            # test = len(isOL)/nb_of_nodes
             
-            if type(test) is not int:
-                print('inconsistent nb of OL data')
+            nb_of_times = len(np.unique(isOL['time']))
+            nb_of_ens = len(np.unique(isOL['Ensemble_nb']))
+            nb_of_nodes = len(isOL[isOL['time']==0])/nb_of_ens
+            test = len(isOL)/nb_of_nodes
+
+            try:
+                int(test)
+            except:
+                ValueError('inconsistent nb of OL data - no plot')
                 pass
             else:
                 
-                isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time']+1)*NENS))),
-                                                  int(max(isOL['time']+1)*NENS)), True)
+                isOL.insert(2, "idnode", np.tile(np.arange(nb_of_nodes),
+                                                 nb_of_times*nb_of_ens), True)
+                
+                # isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time']+1)*NENS))),
+                #                                   int(max(isOL['time']+1)*NENS)), True)
                 # len(isOL)/test
                 # len(isOL)/((len(isOL['time'].unique())1)*NENS)
                 # isOL.insert(2, "idnode", np.tile(np.arange(nb_of_nodes),
@@ -1296,7 +1314,7 @@ def DA_plot_time_dynamic(DA,
         
                                                 
     # if len(prep_DA['isOL'])>0:
-    if 'ens_mean_isOL_time' in prep_DA.keys()>0:
+    if 'ens_mean_isOL_time' in prep_DA.keys():
         prep_DA['ens_mean_isOL_time'].pivot(index=keytime, 
                           # columns=["Ensemble_nb",'idnode'], 
                           columns=['idnode'], 

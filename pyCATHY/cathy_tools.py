@@ -256,6 +256,12 @@ class CATHY():
                         )
 
                     self.create_output(output_dirname="output")
+                    
+                    
+                    shutil.rmtree(
+                        os.path.join(
+                            self.workdir, self.project_name, "tmp_src")
+                    )
 
                 except:
                     print("no internet connection to fetch the files")
@@ -439,7 +445,7 @@ class CATHY():
         # --------------------------------------------------------------------
         parallel = False
         if 'parallel' in kwargs:
-                parallel = kwargs['parallel']
+            parallel = kwargs['parallel']
 
         if 'DAFLAG' in kwargs:
             self.DAFLAG = kwargs['DAFLAG']
@@ -486,85 +492,25 @@ class CATHY():
 
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name
+            
             # case of Data Assimilation DA
-
-
             # ----------------------------------------------------------------
             if self.DAFLAG:
                 print('DA activated')
-
-                # verbose = False
-                # # define Data Assimilation default parameters
-                # # -------------------------------------------------------------
-
-                # # type of assimillation
-                # DA_type = 'enkf_Evensen2009_Sakov' # Default DA type
-                # if 'DA_type' in kwargs:
-                #     DA_type = kwargs['DA_type']
-
-                # # perturbated parameters dict
-                # dict_parm_pert = []
-                # if 'dict_parm_pert' in kwargs:
-                #     dict_parm_pert = kwargs['dict_parm_pert']
-
-                # # observations dict
-                # dict_obs = []
-                # if 'dict_obs' in kwargs:
-                #     dict_obs = kwargs['dict_obs']
-
-                # # what needs to be updated ? only model states or also model parameters?
-                # list_update_parm = ['St. var.']
-                # if 'list_update_parm' in kwargs:
-                #     list_update_parm = kwargs['list_update_parm']
-
-                # # what needs to be assimilated ? default is ALL
-                # list_assimilated_obs = 'all'
-                # if 'list_assimilated_obs' in kwargs:
-                #     list_assimilated_obs = kwargs['list_assimilated_obs']
-
-                # open_loop_run = True
-                # if 'open_loop_run' in kwargs:
-                #     open_loop_run = kwargs['open_loop_run']
-
-
-                # threshold_rejected = 10
-                # if 'threshold_rejected' in kwargs:
-                #     threshold_rejected = kwargs['threshold_rejected']
-
-
-                # self.damping = 1
-                # if 'damping' in kwargs:
-                #     self.damping = kwargs['damping']
-
                 # https://blog.airbrake.io/blog/python/python-exception-handling-notimplementederror
                 # @abstractmethod
-                # def run_DA_sequential(
-                #                     callexe, parallel,
-                #                      DA_type,
-                #                      dict_obs,
-                #                      list_update_parm,
-                #                      dict_parm_pert,
-                #                      list_assimilated_obs,
-                #                      open_loop_run,
-                #                      threshold_rejected,
-                #                      verbose,
-                #                      **kwargs
-                #              ):
+                # def run_DA_sequential():
                     # raise NotImplementedError('run_DA_seq')
 
             # case of simple simulation
             # ----------------------------------------------------------------
             else:
                 p = subprocess.run([callexe], text=True, capture_output=True)
-
                 if verbose == True:
                     print(p.stdout)
                     print(p.stderr)
-
                 os.chdir(os.path.join(self.workdir))
-
                 self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir,self.project_name))
-
 
             # computation time
             # ----------------------------------------------------------------
@@ -810,10 +756,10 @@ class CATHY():
         if parallel:
             if 'ERT' in list_assimilated_obs:
                 prediction_OL_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
-                                                    savefig = True,
-                                                    DA_cnb = self.count_DA_cycle,
-                                                    ENS_times=ENS_times,
-                                                    )
+                                                           savefig = True,
+                                                           DA_cnb = self.count_DA_cycle,
+                                                           ENS_times=ENS_times,
+                                                           )
                 # prediction_OL_ERT is meas_size * ens_size * ENS_times size
                 np.shape(prediction_OL_ERT)
             else:
@@ -924,58 +870,6 @@ class CATHY():
 
 
 
-    # define abstract methods for the DA class
-    # -----------------------------------------
-    # def _DA_init(self,
-    #              NENS, # ensemble size
-    #              ENS_times, # assimilation times
-    #              parm_pert,
-    #              update_parm_list,
-    #              ):
-    #             # https://stackoverflow.com/questions/25062114/calling-child-class-method-from-parent-class-file-in-python
-    #     raise NotImplementedError("Must override _DA_init DA class")
-    # def _mapping_petro_init(self):
-    #     raise NotImplementedError("Must override _mapping_petro_init DA class")
-    # def update_ENS_files(self,
-    #                      parm_pert,
-    #                      update_parm_list,
-    #                      NENS,
-    #                      **kwargs):
-    #     raise NotImplementedError("Must override _update_ENS_files DA class")
-    # def _DA_openLoop(self,
-    #                  ENS_times,
-    #                  list_assimilated_obs,
-    #                  parallel,
-    #                  verbose=False
-    #                 ):
-    #     raise NotImplementedError("Must override DA_openLoop DA class")
-    # def _update_input_ensemble(self, NENS, ENS_times,
-    #                            parm_pert=[],
-    #                            update_parm_list=['St. var.'],
-    #                            analysis=[],
-    #                            **kwargs):
-    #     raise NotImplementedError("Must override _update_input_ensemble DA class")
-    # def run_ensemble_hydrological_model(self,parallel,verbose,callexe):
-    #     raise NotImplementedError("Must override run_ensemble_hydrological_model DA class")
-    # def _check_before_analysis(self, ens_valid=[],
-    #                            threshold_rejected=10):
-    #     raise NotImplementedError("Must override _check_before_analysis DA class")
-    # def map_states2Observations(self):
-    #     raise NotImplementedError("Must override map_states2Observations DA class")
-    # def _DA_analysis(self):
-    #     raise NotImplementedError("Must override _DA_analysis DA class")                                 
-    # def _mark_invalid_ensemble(self):
-    #     raise NotImplementedError("Must override _mark_invalid_ensemble DA class")
-    # def _performance_assessement(self):
-    #     raise NotImplementedError("Must override _performance_assessement DA class")
-    # def update_pert_parm_dict(self):
-    #     raise NotImplementedError("Must override update_pert_parm_dict DA class")
-              
-        
-
-
-
-
     def create_output(self, output_dirname="output"):
         '''
         Create output directories
@@ -1042,7 +936,9 @@ class CATHY():
         # create them if not existing
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
+            
         if "NR" not in self.parm:
+            print('parm dictionnary is empty - falling back to defaults to update CATHYH -!! This can have consequences !!')
             self.update_parm()
 
         DEMRES = 1
@@ -1561,11 +1457,11 @@ class CATHY():
         self.update_parm()
         self.update_cathyH(MAXZON=len(np.unique(zone)))
 
-        zone_with_bound = np.vstack([-99*np.ones(len(zone)), zone])
-        zone_with_bound = np.vstack([zone_with_bound.T,-99*np.ones(len(zone_with_bound))])
-        # zone_with_bound = np.pad(zone,1, mode='constant')
-        zone_extruded_with_bound = np.repeat(zone_with_bound[:, :, np.newaxis],
-                                             self.dem_parameters["nstr"]+1, axis=2)
+        # zone_with_bound = np.vstack([-99*np.ones(len(zone)), zone])
+        # zone_with_bound = np.vstack([zone_with_bound.T,-99*np.ones(len(zone_with_bound))])
+        # # zone_with_bound = np.pad(zone,1, mode='constant')
+        # zone_extruded_with_bound = np.repeat(zone_with_bound[:, :, np.newaxis],
+        #                                      self.dem_parameters["nstr"]+1, axis=2)
 
 
         # Map zones in the 3d vtk mesh
@@ -2643,8 +2539,6 @@ class CATHY():
         None.
 
         '''
-
-
         self.mesh_pv_attributes.add_field_data(prop_value, prop)
         self.mesh_pv_attributes.save(os.path.join(self.workdir,
                                 self.project_name,
@@ -2806,8 +2700,8 @@ class CATHY():
 
         # loop over Feddes parameters
         # --------------------------------------------------------------------
-        for fp in FP:  # loop over fedded parameterssoil_het_dim
-            self.soil[fp] = FP[fp]
+        for fp in FP_map:  # loop over fedded parameterssoil_het_dim
+            self.soil[fp] = FP_map[fp]
 
         # check consistency between parameters
         # --------------------------------------------------------------------
@@ -3214,7 +3108,8 @@ class CATHY():
             self.create_mesh_vtk()
         for dp in dict_props.keys():
             try:
-                self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp].flatten())
+                self.update_mesh_vtk(prop=dp, 
+                                     prop_value=dict_props[dp].flatten())
             except:
                 pass
         pass

@@ -1,19 +1,17 @@
 """
 Test Data Assimlitation
 
-
+This example shows long-term assimilation of tensiometer data to invert for the hydraulic condutivity. 
+The data are real and come from a study in Noble (USA). 
+The hydraulic simulation runs a RWU for a single plant for a volume of 1m3.
+Soil is homogeneous in properties. 
+Plant root water uptake at the center of the plot. 
+Input file were previously created, see CATHY inputs example for more details
 """
-
-from pyCATHY.cathy_tools import CATHY
-from pyCATHY.plotters import cathy_plots as pltCT
-from pyCATHY.importers import cathy_inputs as inCT
-
-from pyCATHY.DA import cathy_DA
 from pyCATHY.DA import perturbate
 from pyCATHY.DA.cathy_DA import DA
 
 import pandas as pd
-import shutil
 from collections import OrderedDict
 import numpy as np
 import os 
