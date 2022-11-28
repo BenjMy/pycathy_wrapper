@@ -61,7 +61,7 @@ morris_problem = {
 
 #%% Sampling and plot
 
-number_of_trajectories = 24
+number_of_trajectories = 2
 sample = ms.sample(morris_problem, number_of_trajectories, num_levels=4)
 # sample = saltelli.sample(morris_problem, number_of_trajectories, num_levels=4)
 # sample = saltelli.sample(problem, 1024)
@@ -112,6 +112,33 @@ for ii in range(0, len(sample)):
     dpsi = simu.read_outputs('psi', path=pathexe_list[ii] + '/output/')
     dsw = simu.read_outputs('sw', path=pathexe_list[ii]  + '/output/')
     simu_ensemble[:,ii] = np.hstack(dsw)
+
+# Perform the sensitivity analysis using the model output
+# Specify which column of the output file to analyze (zero-indexed)
+Si = ma.analyze(
+    morris_problem,
+    sample,
+    rmse,
+    conf_level=0.95,
+    print_to_console=True,
+)
+# Returns a dictionary with keys 'mu', 'mu_star', 'sigma', and 'mu_star_conf'
+# e.g. Si['mu_star'] contains the mu* value for each parameter, in the
+# same order as the parameter file
+
+from SALib.plotting.morris import (
+    horizontal_bar_plot,
+    covariance_plot,
+    sample_histograms,
+)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+horizontal_bar_plot(ax1, Si, {}, sortby="mu_star", unit=r"tCO$_2$/year")
+covariance_plot(ax2, Si, {}, unit=r"tCO$_2$/year")
+
+fig2 = plt.figure()
+sample_histograms(fig2, sample, morris_problem, {"color": "y"})
+plt.show()
 
 
 #%% Define an objective function: here I use the error weighted rmse

@@ -1,4 +1,7 @@
 """Main class controlling the wrapper
+This class is managing three main components: 
+- compiling the fortran files and running executable
+- reading/writing inputs and 
 """
 from __future__ import print_function
 import sys
@@ -13,11 +16,15 @@ import shutil
 import pickle
 import re
 
+from git import Repo # In order to fetch the file directly from the repo
+
+
 from collections import OrderedDict
-from git import Repo
-import pyvista as pv
+
+
+import pyvista as pv # read .vtk files
 import pandas as pd
-import time
+import time # measure time of computation
 import rich.console
 from rich import print
 
@@ -3472,3 +3479,4 @@ class CATHY():
         for i, n in enumerate(names):
             dict_backup[n]=backup_list[i]
         return dict_backup
+

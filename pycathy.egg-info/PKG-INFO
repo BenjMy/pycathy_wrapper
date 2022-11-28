@@ -5,10 +5,8 @@ Summary: pyCATHY is a Python package to create, run, and post-process CATHY forw
 Home-page: https://github.com/BenjMy/pycathy_wrapper
 Author: B.Mary
 Author-email: benjamin.mary@unipd.it
-License: UNKNOWN
 Project-URL: Bug Tracker, https://github.com/BenjMy/pycathy_wrapper/issues
 Keywords: hydrogeophysic,Data Assimilation,hydrology
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: Development Status :: 5 - Production/Stable
 Classifier: Intended Audience :: Science/Research
@@ -44,8 +42,6 @@ This is free software: you can redistribute it and/or modify it under the terms 
 ### References ###
 
 - Camporese, M., Paniconi, C., Putti, M., Orlandini, S., 2010. Surface-subsurface flow modeling with path-based runoff routing, boundary condition-based coupling, and assimilation of multisource observation data: SURFACE-SUBSURFACE FLOW MODELING. Water Resour. Res. 46. https://doi.org/10.1029/2008WR007536
-
-
 
 
 
