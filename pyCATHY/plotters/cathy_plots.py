@@ -42,6 +42,12 @@ import matplotlib.font_manager
 import matplotlib.style
 import matplotlib as mpl
 import matplotlib.dates as mdates
+
+from matplotlib.ticker import FormatStrFormatter
+
+
+
+
 mpl.style.use('default')
 mpl.rcParams['grid.color'] = 'k'
 mpl.rcParams['grid.linestyle'] = ':'
@@ -51,7 +57,7 @@ plt.rcParams['font.size'] = 12
 plt.rcParams['axes.linewidth'] = 0.75
 
 nice_fonts = {
-    "font.family": "serif",
+    # "font.family": "serif",
     "font.serif" : "Times New Roman",
 }
 matplotlib.rcParams.update(nice_fonts)
@@ -64,10 +70,31 @@ matplotlib.rcParams.update(nice_fonts)
 # -----------------------------------------------------------------------------
 
 
+def show_wtdepth(df_wtdepth=[], workdir=[], project_name=[], **kwargs):
+    '''
+    plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
+    '''
+    # read hgraph file if df_hgraph not existing
+    # ------------------------------------------------------------------------
+    if len(df_wtdepth)==0:
+        df_hgsfdeth = out_CT.read_wtdepth(filename='wtdepth')
+
+    fig, ax = plt.subplots(2,1)
+    if 'delta_t' in kwargs:
+        df_hgsfdeth['time'] = pd.to_timedelta(df_hgsfdeth['time'],unit='s') 
+        
+    df_hgsfdeth.pivot_table(values='NET SEEPFACE VOL',index='time').plot(ax=ax[0],
+                                                                 ylabel='NET SEEPFACE VOL',
+                                                                 xlabel='time (s)')
+    df_hgsfdeth.pivot_table(values='NET SEEPFACE FLX',index='time').plot(ax=ax[1],
+                                                                 ylabel='NET SEEPFACE FLX',
+                                                                 xlabel='time (s)')
+    return fig, ax 
+
 
 def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):
     '''
-    plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
+    plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t.
     '''
     # read hgraph file if df_hgraph not existing
     # ------------------------------------------------------------------------
@@ -185,7 +212,7 @@ def show_vp_DEPRECATED(df_vp=[], workdir=[], project_name=[],
     return fig, ax 
 
 def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
-             savefig=False,**kwargs):
+             savefig=False,ax=None,**kwargs):
     '''
     Plot vtk file using pyvista
     Parameters
@@ -252,8 +279,10 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
 
     # notebook = activate widgets 
     # -------------------------------------------------------------------------
-    if notebook == True:
-        plotter = pv.Plotter(notebook=True)
+    if notebook:
+        
+        if ax is None:
+            ax = pv.Plotter(notebook=notebook)
         # pn.extension('vtk')  # this needs to be at the top of each cell for some reason
         out = widgets.Output()
 
@@ -270,19 +299,20 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
 
                 out.clear_output()
                 mesh = pv.read("./my_cathy_prj/vtk/10" + str(time_step) + ".vtk")
-                _ = plotter.add_mesh(mesh, scalars=PhysScalars[0], cmap=my_colormap)
+                _ = ax.add_mesh(mesh, scalars=PhysScalars[0], cmap=my_colormap,
+                                **kwargs)
 
                 if unit == "saturation":
-                    plotter.update_scalar_bar_range([0,1])
+                    ax.update_scalar_bar_range([0,1])
                 
                 if 'clim' in kwargs:
-                    plotter.update_scalar_bar_range([kwargs['clim'][0],1])
+                    ax.update_scalar_bar_range([kwargs['clim'][0],1])
             
                 legend_entries = []
                 legend_entries.append(["Time=" + str(mesh["time"]), "w"])
-                _ = plotter.add_legend(legend_entries)
-                plotter.show_grid()
-                cpos = plotter.show(True)
+                _ = ax.add_legend(legend_entries)
+                ax.show_grid()
+                cpos = ax.show(True)
 
         slider = widgets.IntSlider(
             min=0, max=10, step=1, continuous_update=True, description="Time step #:",
@@ -304,19 +334,22 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
     # -------------------------------------------------------------------------
     else:
 
-        plotter = pv.Plotter(notebook=False)
-        _ = plotter.add_mesh(mesh, show_edges=True, scalars=unit, cmap=my_colormap)
+        if ax is None:
+            ax = pv.Plotter(notebook=False)
+        
+        _ = ax.add_mesh(mesh, show_edges=True, scalars=unit, cmap=my_colormap,
+                        **kwargs)
         
         if unit == "saturation":
-            plotter.update_scalar_bar_range([0,1])
+            ax.update_scalar_bar_range([0,1])
         if 'clim' in kwargs:
-            plotter.update_scalar_bar_range([kwargs['clim'][0],kwargs['clim'][1]])
+            ax.update_scalar_bar_range([kwargs['clim'][0],kwargs['clim'][1]])
         # add time stamp as legend
         legend_entries = []
         time_delta = transform2_time_delta(mesh["TIME"],'s')
         legend_entries.append(["Time=" + str(time_delta[0]), "w"])
-        _ = plotter.add_legend(legend_entries)        
-        _ = plotter.show_bounds(minor_ticks=True,font_size=1)
+        _ = ax.add_legend(legend_entries)        
+        _ = ax.show_bounds(minor_ticks=True,font_size=1)
         
         # add scatter points to the plot 
         # --------------------------------------------------------------------- 
@@ -328,7 +361,7 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
                 poly_elecs["My Labels"] = [
                     f"Label {i}" for i in range(poly_elecs.n_points)
                 ]
-                plotter.add_point_labels(
+                ax.add_point_labels(
                     poly_elecs, "My Labels", point_size=20, font_size=36
                 )
             # add tensiometers positions
@@ -336,21 +369,40 @@ def show_vtk(filename=None,unit='pressure',timeStep=0,notebook=False,path=None,
             # add TDR probe positions
             # ----------------------------------------------------------------- 
     if savefig is True:
-        plotter.view_xz()
-        plotter.save_graphic(os.path.join(path,filename + unit + '.svg'),
+        ax.view_xz()
+        ax.save_graphic(os.path.join(path,filename + unit + '.svg'),
                               title="", raster=True, painter=True)
 
         print('figure saved' + os.path.join(path,filename + '.svg'))
-    cpos = plotter.show()
+        cpos = ax.show()
 
-    return
+    pass
 
 
-def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False, 
-                path=None,savefig=False, show=True,**kwargs):
+def show_vtk_TL(filename=None,unit='pressure',timeStep='all', notebook=False, 
+                path=None,savefig=True, show=True,**kwargs):
     '''
     Time lapse animation of selected time steps
+
+    Parameters
+    ----------
+    filename : str, optional
+        DESCRIPTION. The default is None.
+    unit : TYPE, optional
+        DESCRIPTION. The default is None.
+    timeStep : TYPE, optional
+        DESCRIPTION. The default is "all".
+    notebook : bool, optional
+        DESCRIPTION. The default is False.
+    path : TYPE, optional
+        DESCRIPTION. The default is None.
+    savefig : TYPE, optional
+        DESCRIPTION. The default is False.
+    show : TYPE, optional
+        DESCRIPTION. The default is True.
+
     '''
+
 
     x_units = None
     xlabel = "s"
@@ -391,7 +443,7 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
                          )
     plotter.add_mesh(mesh, show_edges=True,cmap=my_colormap)
 
-    if savefig == True:
+    if savefig:
         plotter.open_gif(os.path.join(path + unit + ".gif"))
         
     # options to colorbar
@@ -431,14 +483,14 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
             
             if 'clim' in kwargs:
                 plotter.update_scalar_bar_range([kwargs['clim'][0],kwargs['clim'][1]])
+    plotter.close()
 
-    if savefig == True:
+    if savefig:
         gif_original = os.path.join(path + unit + ".gif")
         gif_speed_down = os.path.join(path + unit + "_slow.gif")
-        gif = imageio.get_reader(gif_original)
+        gif = imageio.mimread(gif_original)
         imageio.mimsave(gif_speed_down, gif, fps=0.8)
         print('gif saved' + os.path.join(path,gif_original))
-    plotter.close()
 
     return
 
@@ -449,7 +501,7 @@ def show_vtk_TL(filename=None,unit=None,timeStep="all", notebook=False,
 # -----------------Plot INPUTS CATHY ------------------------------------------
 # -----------------------------------------------------------------------------
 
-def show_atmbc(t_atmbc, v_atmbc, **kwargs):
+def show_atmbc(t_atmbc, v_atmbc, ax=None, **kwargs):
     '''
     Plot atmbc=f(time)
     Parameters
@@ -495,9 +547,9 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
 
     # if np.shape(t_atmbc) != np.shape(v_atmbc):
     if len(v_atmbc_n)>0:
-        fig, ax = plt.subplots(2,1, sharex=True)
-        
-        (ax1,ax2) = (ax[0], ax[1])
+        if ax is None:
+            fig, ax = plt.subplots(2,1, sharex=True)
+            (ax1,ax2) = (ax[0], ax[1])
         
         color = 'tab:blue'
         ax1.set_xlabel('time (h)')
@@ -508,31 +560,33 @@ def show_atmbc(t_atmbc, v_atmbc, **kwargs):
         ax2.step(t_atmbc, -v_atmbc_n, color=color, where="post", label="ET")     
         ax2.tick_params(axis='y', labelcolor=color)
         fig.tight_layout()  # otherwise the right y-label is slightly clipped
-        plt.show(block=False)
+        # plt.show(block=False)
     else:
-        fig, ax = plt.subplots(figsize=(6,3))
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(6,3))
+            
         ax.plot(t_atmbc, v_atmbc, "k.")
         ax.set(xlabel=xlabel, ylabel="net Q (m/s)", title="atmbc inputs")
         ax.grid()
-        plt.show(block=False)
+        # plt.show(block=False)
         if 'IETO' in kwargs:
             if kwargs['IETO'] != 0:
                 plt.step(t_atmbc, v_atmbc, color="k", where="post")
             elif kwargs['IETO'] == 0: # case of linear interpolation between points
                 ax.plot(t_atmbc, v_atmbc, "k.")
     
-    if 'dateFormat' in kwargs:
-        dateFormat = kwargs['dateFormat']
+    # if 'dateFormat' in kwargs:
+    #     dateFormat = kwargs['dateFormat']
+
     
-    if 'date_locator' in kwargs:
-        interval = kwargs['date_locator'][1]
-        if 'HourLocator' in kwargs['date_locator'][0]:
-            ax.xaxis.set_major_locator(mdates.HourLocator(interval=8))
+    # if 'date_locator' in kwargs:
+    #     interval = kwargs['date_locator'][1]
+    #     if 'HourLocator' in kwargs['date_locator'][0]:
+    #         ax.xaxis.set_major_locator(mdates.HourLocator(interval=8))
 
-        ax.xaxis.set_major_formatter(mdates.DateFormatter(dateFormat))
-        plt.gcf().autofmt_xdate()
+    #     plt.gcf().autofmt_xdate()
 
-    return fig, ax 
+    pass
 
 
 
@@ -555,7 +609,7 @@ def show_atmbc_3d(df_atmbc):
     pass
            
 
-def show_soil(soil_map, **kwargs):
+def show_soil(soil_map, ax=None, **kwargs):
     '''
     View from top of the soil prop
     Parameters
@@ -579,7 +633,9 @@ def show_soil(soil_map, **kwargs):
     if 'cmap' in kwargs: 
         cmap = kwargs['cmap']
 
-    fig, ax = plt.subplots()
+    if ax is None:
+        fig, ax = plt.subplots()
+        
     cf = ax.pcolormesh(soil_map, edgecolors="black", cmap=cmap,
                        )
     cf.set_clim(min(soil_map.flatten()), max(soil_map.flatten()))
@@ -602,11 +658,58 @@ def show_soil(soil_map, **kwargs):
     ax.set_ylabel('y')
     
     ax.set_title('view from top (before extruding), layer nb' + str(layer_nb))
-    plt.show(block=False)
-    plt.close() 
+    # plt.show(block=False)
+    # plt.close() 
   
-    return fig, ax
+    pass
 
+
+def show_raster(raster_map,str_hd_raster={},prop='',hapin={},ax=None,cmap='gist_earth',**kwargs):
+    
+    x = np.zeros(raster_map.shape[0]) #+ hapin['xllcorner']
+    y = np.zeros(raster_map.shape[1]) #+ hapin['yllcorner']
+
+    if len(str_hd_raster)<1:
+        str_hd_raster = {}
+        str_hd_raster['west'] = 0
+        str_hd_raster['south'] = 0
+
+    if len(hapin)<1:
+        hapin = {}
+        hapin['delta_x'] = 1
+        hapin['delta_y'] = 1
+        
+    for a in range(raster_map.shape[0]):
+        x[a] = float(str_hd_raster["west"]) + hapin['delta_x'] * a
+
+    for a in range(raster_map.shape[1]):
+        y[a] = float(str_hd_raster["south"]) + hapin['delta_y'] * a
+
+    if ax is None:
+        # fig = plt.figure()
+        # ax = plt.axes(projection="3d")
+        fig, ax = plt.subplots()
+
+    # X, Y = np.meshgrid(x, y)
+    # surf = ax.plot_surface(X, Y, raster_map.T, cmap="viridis")
+
+    
+    pmesh = ax.pcolormesh(x,y,raster_map.T,**kwargs) #, cmap=cmap)
+    
+    # cbar = plt.colorbar(pmesh, shrink=0.25, orientation='horizontal',
+    #                     label='Elevation (m)')
+    
+    # ax.set(xlabel="Easting (m)", ylabel="Northing (m)", zlabel="Elevation (m)")
+    ax.set(xlabel="Easting (m)", ylabel="Northing (m)")
+
+    # plt.show(block=False)
+    # plt.close()
+    ax.set_title(prop)
+    
+    return pmesh
+
+
+    
 def show_zone(zone_map, **kwargs):
     '''
     View from top of the vegetation type (equivalent somehow to root map)
@@ -713,46 +816,61 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
     return fig, ax 
     
 
-def show_dem(dem_mat=[], str_hd_dem=[], workdir=None, project_name=None, **kwargs):
+def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project_name=None, **kwargs):
     """
     DEM3D creates a 3D representation from a Grass DEM file
     """
     
-    length = 1
-    width = 1
-    delta_x = 1 
-    if 'delta_x' in kwargs:
-        delta_x = kwargs['delta_x']
-    delta_y = 1 
-    if 'delta_y' in kwargs:
-        delta_y = kwargs['delta_y']
+    # length = 1
+    # width = 1
+    # delta_x = 1 
+    # if 'delta_x' in kwargs:
+    #     delta_x = kwargs['delta_x']
+    # delta_y = 1 
+    # if 'delta_y' in kwargs:
+    #     delta_y = kwargs['delta_y']
+    
+    
              
-        
+    # dem_mat, str_hd_dem = in_CT.read_hapin(os.path.join(workdir, project_name, "prepro/dem"),
+    #                                        os.path.join(workdir, project_name, "prepro/dtm_13.val"))
+
+
+    
     if len(dem_mat)==0:
         # Read the Header
         dem_mat, str_hd_dem = in_CT.read_dem(os.path.join(workdir, project_name, "prepro/dem"),
                                              os.path.join(workdir, project_name, "prepro/dtm_13.val"))
     
-    x = np.zeros(dem_mat.shape[0])
-    y = np.zeros(dem_mat.shape[1])
+    x = np.zeros(dem_mat.shape[0]) #+ hapin['xllcorner']
+    y = np.zeros(dem_mat.shape[1]) #+ hapin['yllcorner']
 
     for a in range(dem_mat.shape[0]):
-        x[a] = float(str_hd_dem["west"]) + delta_x * a
+        x[a] = float(str_hd_dem["west"]) + hapin['delta_x'] * a
 
     for a in range(dem_mat.shape[1]):
-        y[a] = float(str_hd_dem["south"]) + delta_y * a
+        y[a] = float(str_hd_dem["south"]) + hapin['delta_y'] * a
 
-    fig = plt.figure()
-    ax = plt.axes(projection="3d")
+    if ax is None:
+        fig = plt.figure()
+        ax = plt.axes(projection="3d")
+        
     X, Y = np.meshgrid(x, y)
     surf = ax.plot_surface(X, Y, dem_mat.T, cmap="viridis")
-    cbar = fig.colorbar(surf, shrink=0.25, orientation='horizontal',
+    cbar = plt.colorbar(surf, shrink=0.25, orientation='horizontal',
                         label='Elevation (m)')
     ax.set(xlabel="Easting (m)", ylabel="Northing (m)", zlabel="Elevation (m)")
-    plt.show(block=False)
-    plt.close()
+    # plt.show(block=False)
+    # plt.close()
+    
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%3.4e'))
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%3.4e'))
 
-def plot_mesh_bounds(mesh_bound_cond_df):
+
+    
+    pass
+
+def plot_mesh_bounds(BCtypName,mesh_bound_cond_df,time,ax=None):
     m = np.array(['o','+'])
     mvalue = []
     alpha = []
@@ -763,8 +881,11 @@ def plot_mesh_bounds(mesh_bound_cond_df):
         else:
             mvalue.append(0)
             alpha.append(0.1) 
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
+            
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        
     ax.scatter(mesh_bound_cond_df['x'], 
                mesh_bound_cond_df['y'], 
                mesh_bound_cond_df['z'], 
@@ -772,8 +893,10 @@ def plot_mesh_bounds(mesh_bound_cond_df):
     ax.set_xlabel('X Label')
     ax.set_ylabel('Y Label')
     ax.set_zlabel('Z Label')
-    plt.show(block=False)
-    return fig, ax
+    ax.set_title('Time ' + str(time))
+    # plt.show(block=False)
+    # return fig, ax
+    pass
    
     
 #%% ---------------------------------------------------------------------------

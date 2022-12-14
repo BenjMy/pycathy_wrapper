@@ -95,7 +95,8 @@
    :maxdepth: 3
    :caption: Gallery of examples
 
-   gallery/index.rst
+   content/SSHydro/index.rst   
+   content/DA/index.rst
 
 
 .. toctree::

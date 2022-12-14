@@ -65,14 +65,12 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
         raise ValueError('Number of values does not match number of times (check flags TIME, VALUE)')
 
     if HSPATM != 0: #homogeneous on all surf mesh nodes
-              
         d_atmbc = []
         d_atmbc= np.vstack([t,value])
         cols_atmbc = ['time', 'value']
         df_atmbc =  pd.DataFrame(d_atmbc.T,  columns=cols_atmbc)
         
     else:
-        
         d_atmbc = []
         for i in range(len(t)):
            d_atmbc.append(np.column_stack((t[i]*np.ones(int(grid["nnod3"])),
@@ -224,6 +222,8 @@ def read_soil(soilfile,dem_parm,MAXVEG):
             
     soil = np.loadtxt(soilfile, skiprows=nb_of_header_lines, 
                          max_rows=count-nb_of_header_lines-1)   
+    
+    np.shape(soil)
     name_str = []
     name_zone = []
     for dz in range(int(dem_parm['nzone'])):
@@ -239,7 +239,37 @@ def read_soil(soilfile,dem_parm,MAXVEG):
 
     return df_soil, str_hd_soil
 
+def read_raster(filename):
+    '''
+    Applicable for all DEM type of CATHY outputs such as dtm_Ws1_sf_1, dtm_Ws1_sf_2, ...
 
+    Parameters
+    ----------
+    filename : str
+        filename of the raster type file to read (including abs path).
+    Returns
+    -------
+    np.array([])
+        2d array containing the raster info.
+    dict
+        Header of the raster file
+
+    '''
+    str_hd_raster = {}       
+    with open(
+        os.path.join(filename), "r"
+    ) as f:  # open the file for reading
+        count = 0
+        for line in f:  # iterate over each line
+            if count < 6:
+                str_hd, value_hd = line.split()  # split it by whitespace
+                str_hd_raster[str_hd.replace(":", "")] = value_hd
+            count += 1
+    raster_mat = np.loadtxt(filename, skiprows=6)
+    return raster_mat, str_hd_raster
+    
+    
+    
 def read_zone(zonefile):
     '''
     Read zone file and infer soil zones in the DEM

@@ -4,6 +4,30 @@
 import numpy as np
 import pandas as pd
 
+def read_wtdepth(filename,**kwargs):
+    '''
+    Output of water table depth variations with times
+
+    Parameters
+    ----------
+    filename : TYPE
+        DESCRIPTION.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    CUMFLOWVOL : TYPE
+        DESCRIPTION.
+
+    '''
+    
+    wtdepth_df = pd.read_csv(filename, skiprows=1)
+    wtdepth_df.columns = ['time (s)', 'water table depth (m)']
+        
+    return wtdepth_df
+
+
 def read_cumflowvol(filename,**kwargs):
     '''
     Output of cumulative flow volumes VSFTOT, VNDTOT, VNNTOT, VNUDTOT, and VTOT

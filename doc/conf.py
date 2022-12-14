@@ -113,11 +113,11 @@ add_function_parentheses = False
 # -----------------------------------------------------------------------------
 sphinx_gallery_conf = {
     # path to your examples scripts
-    "examples_dirs": "../examples",
-    #"examples_dirs": ["../examples/DA","../examples/DA2"],
+    #"examples_dirs": "../examples",
+    "examples_dirs": ["../examples/SSHydro","../examples/DA"],
     # path where to save gallery generated examples
-    "gallery_dirs": "gallery",
-    #"gallery_dirs": ["galleryDA", "galleryDA2"],
+    #"gallery_dirs": "gallery",
+    "gallery_dirs": ["content/SSHydro", "content/DA"],
     #"filename_pattern": r".py",
     #"filename_pattern": [r"\.py",r"\.ipynb"],
     #"dont_preprocess": [],

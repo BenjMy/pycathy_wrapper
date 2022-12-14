@@ -378,6 +378,11 @@ class CATHY():
             ) as f:
                 np.savetxt(f, self.DEM, fmt="%1.4e")  # use exponential
 
+        # update self.DEM
+        # np.shape(self.DEM)
+        # self.DEM, _ = in_CT.read_dem(os.path.join(self.workdir, self.project_name, "prepro/dem"),
+        #                              os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"))
+            
         os.chdir(self.workdir)
         # -------------------------------------------- #
         # run processor only to build the 3d mesh
@@ -385,7 +390,7 @@ class CATHY():
         # self.read_grid3d()
         # -------------------------------------------- #
 
-        return
+        pass
 
     def recompileSrc(self, verbose=False):
         """
@@ -429,7 +434,18 @@ class CATHY():
 
         pass
 
-
+    def check_DEM_versus_inputs(self):        
+        if np.shape(self.veg_map) != np.shape(self.DEM):
+            raise ValueError('Inconsistent shapes between vegetation map and DEM - need to update veg first')
+            
+        # check atmbc times between parm and boundary cond files
+        # Need to create a reader for bc files
+        # if np.shape(self.atmbc["time"]) != np.shape(self.DEM):
+        #     raise ValueError('Inconsistent shapes between atmbc times and bc files - need to update bc files first')
+        # pass
+        
+        
+        
     def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
         '''
         Run cathy.exe
@@ -460,6 +476,8 @@ class CATHY():
         # update parm and cathyH
         # --------------------------------------------------------------------
         # VERY VERY IMPORTANT NEVER COMMENT !
+        
+        self.check_DEM_versus_inputs()
         self.update_parm(**kwargs, verbose=verbose)
         self.update_cathyH(**kwargs)
 
@@ -953,12 +971,8 @@ class CATHY():
         if len(self.cathyH) == 0:
 
             self.cathyH = {
-                "ROWMAX": self.hapin[
-                    "M"
-                ],  # maximum NROW, with NROW = number of rows in the DEM
-                "COLMAX": self.hapin[
-                    "N"
-                ],  # maximum NCOL, with NCOL = number of columns in the DEM
+                "ROWMAX": self.hapin["M"],  # maximum NROW, with NROW = number of rows in the DEM
+                "COLMAX": self.hapin["N"],  # maximum NCOL, with NCOL = number of columns in the DEM
                 # 'COARSE': ,
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
@@ -1104,15 +1118,21 @@ class CATHY():
         pass
 
     def update_prepo_inputs(self, DEM=None, verbose=False, show=False, **kwargs):
-        """
+        '''
         Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs
 
-        Parameters ---------- DEM : type Description of parameter `DEM`. verbose : type Description
-        of parameter `verbose`. **kwargs : type Description of parameter `**kwargs`.
-
-        Returns ------- type Description of returned object.
-
-        """
+        Parameters
+        ----------
+        DEM : TYPE, optional
+            DESCRIPTION. The default is None.
+        verbose : TYPE, optional
+            DESCRIPTION. The default is False.
+        show : TYPE, optional
+            DESCRIPTION. The default is False.
+        **kwargs : TYPE
+            DESCRIPTION.
+            
+        '''
 
         # print("update hap.in")
         self.console.print(":black_nib: [b]Update hap.in file[/b]")
@@ -1287,7 +1307,7 @@ class CATHY():
             with open(os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+") as f:
                 # use exponential notation
                 np.savetxt(f, self.DEM, fmt="%1.4e")
-
+            # np.shape(self.DEM)
             # print("update dem")
             # with open(os.path.join(self.project_name, "prepro/dem"), "w+") as f:
             #     # use exponential notation
@@ -1298,16 +1318,32 @@ class CATHY():
         if show == True:
             plt_CT.show_dem(workdir=self.workdir,
                             project_name= self.project_name,
-                            delta_x=self.hapin['delta_x'],
-                            delta_y=self.hapin['delta_y'])
+                            hapin = self.hapin,
+                           )
 
         pass
 
     def update_dem_parameters(self, **kwargs):
         '''
-        Update DEM parameters
-
         Update DEM parameters - if no args reset to default values
+        
+        
+        ivert
+        =0 each layer will be parallel to the surface, including the base of the 3‐d grid. ZRATIO is applied to each vertical cross section.
+        =1 base of the 3‐d grid will be flat, and ZRATIO is applied to each vertical cross section
+        =2 base of the 3‐d grid will be flat, as will the NSTR‐1 horizontal cross sections above it. ZRATIO is applied only to the vertical cross section having the lowest elevation. 
+        =3 for each cell of the dem a single depth value is read in file input IIN60 (basement). ZRATIO is applied to each vertical cross section.
+        =4 the first NSTR‐1 layers from the surface will be parallel to the surface and the base of the 3‐d grid will be flat. ZRATIO is applied only to the vertical cross section having the lowest elevation.
+        
+        isp
+        =0 for flat surface layer (only one Z value is read in, and is replicated to all surface nodes);
+            otherwise surface layer is not flat (Z values read in for each surface node);
+            (for ISP=0, IVERT=0, 1, and 2 yield the same 3‐d mesh, given the same values of BASE and ZRATIO).
+            
+        base
+        Value which defines the thickness or base of the 3‐d mesh. 
+        For IVERT=0, BASE is subtracted from each surface elevation value, so that each vertical cross section will be of thickness BASE, and the base of the 3‐d mesh will be parallel to the surface. For IVERT=1 or 2, BASE is subtracted from the lowest surface elevation value, say ZMIN, so that each vertical cross section will be of thickness (Z ‐ ZMIN) + BASE, where Z is the surface elevation for that cross section. The base of the 3‐d mesh will thus be flat.
+
         '''
 
         self.console.print(":black_nib: [b]update dem_parameters file [/b]")
@@ -1322,14 +1358,14 @@ class CATHY():
             ltmp = [0.002,0.004, 0.006,0.008,0.01,0.01,0.02,0.02,0.05,0.05,0.1,0.1,0.2,0.2,0.22]
 
             self.dem_parameters = {
-                "delta_x": self.hapin["delta_x"],
+                "delta_x": self.hapin["delta_x"], # Cell dimensions for the resolution of the DEM
                 "delta_y": self.hapin["delta_y"],
-                "factor": 1.0e0,
-                "dostep": 1,
-                "nzone": 1,
-                "nstr": 15,
-                "n1": 25,
-                "ivert": 0,
+                "factor": 1.0e0, # Multiplicative factor for DEM values (e.g. to change the units of the elevation)
+                "dostep": 1, # Step adopted in coarsening the mesh
+                "nzone": 1, # The number of material types in the porous medium
+                "nstr": 15, # The number of vertical layers
+                "n1": 25, # The maximum number of element connections to a node
+                "ivert": 0, # 
                 "isp": 1,
                 "base": 3.0,
                 "zratio(i),i=1,nstr": ltmp,
@@ -1350,11 +1386,16 @@ class CATHY():
             except:
                 pass
 
+        dem_parameters_tmp = {}
         for key, value in self.dem_parameters.items():
             if isinstance(value, list):
                 strlst = "\t".join(str(e) for e in value)
                 self.dem_parameters[key] = strlst
+                
+        #         if (key +'_list') in self.dem_parameters.keys() is False:
+        #             dem_parameters_tmp[key +'_list'] = value
 
+        # self.dem_parameters = self.dem_parameters | dem_parameters_tmp
         # write file
         header_fmt = [1, 1, 1, 1, 3, 3, 1]
         with open(
@@ -1410,6 +1451,7 @@ class CATHY():
                     counth += 1
 
         dem_parametersfile.close()
+        
 
         pass
 
@@ -1468,9 +1510,46 @@ class CATHY():
         # zone_with_bound = np.vstack([zone_with_bound.T,-99*np.ones(len(zone_with_bound))])
         # # zone_with_bound = np.pad(zone,1, mode='constant')
         # zone_extruded_with_bound = np.repeat(zone_with_bound[:, :, np.newaxis],
-        #                                      self.dem_parameters["nstr"]+1, axis=2)
+        #                                       self.dem_parameters["nstr"]+1, axis=2)
+        
+        # np.shape(self.zone)
+        
+        # 48*3*5
+        
+        # self.mesh_pv_attributes.cells
+        # self.mesh_pv_attributes
+        
+        # 3456/144
+        
+        # centers = self.mesh_pv_attributes.cell_centers()
+        # xc = np.array(np.unique(centers.points[:,0]))
+        # yc = np.array(np.unique(centers.points[:,1]))
 
+        # xc = np.array(np.unique(centers.points[:,0:2]))
 
+        # zone_xy = centers.points[:,0:2]
+        # len(zone_xy)
+        
+        # point_to_cell 
+        
+        
+
+        
+        # np.shape(zone)
+        # len(np.hstack(zone))
+        # len(self.mesh_pv_attributes.points)
+        # A = np.array(self.mesh_pv_attributes.points)
+        
+        
+        # # A =  grid3d['nodes_idxyz'][:,[1,2,3]]
+        # A = A[np.lexsort((A[:, 0], A[:, 1]))]
+        # _, idx_surf = np.unique(A[:,:2], return_index = True, axis=0)
+        # output_surf = np.maximum.reduceat(A, idx_surf)
+        # len(output_surf)
+        
+        
+        # (len(A[A[:,0]==0])/5)*3
+        
         # Map zones in the 3d vtk mesh
         # ----------------------------
         # self.map_prop2mesh({'zone':zone_extruded_with_bound})
@@ -1793,6 +1872,8 @@ class CATHY():
                              "\t" + "INDP \n")
                 if 'pressure_head_ini' in kwargs:
                     icfile.write(str(kwargs['pressure_head_ini']))
+                    self.map_prop2mesh({'ic':kwargs['pressure_head_ini']})
+
                     # self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
                 else:
                     raise ValueError('Missing initial pressure value')
@@ -1817,15 +1898,16 @@ class CATHY():
         icfile.close()
 
 
+        
 
 
         pass
 
     def update_atmbc(self, HSPATM=0, IETO=0, time=None, VALUE=[None, None],
-                     show=False, verbose=False, **kwargs):
+                     netValue=[],show=False, verbose=False, **kwargs
+                     ):
         '''
         Atmospheric forcing term (atmbc - IIN6)
-
 
         ..note:
 
@@ -1860,16 +1942,15 @@ class CATHY():
             - =0 for linear interpolation of the atmospheric boundary condition inputs between different
             - otherwise the inputs are assigned as a piecewise constant function (ietograph).
             The default is 0.
-        time : TYPE, optional
-            DESCRIPTION. The default is None.
-        VALUE : TYPE, optional
-            DESCRIPTION. The default is [Precipitation, EvapoTranspiration].
-        show : TYPE, optional
-            DESCRIPTION. The default is False.
-        verbose : TYPE, optional
-            DESCRIPTION. The default is False.
-        **kwargs : TYPE
-            DESCRIPTION.
+        time : list
+            ATMBC Times in seconds. The default is None.
+        VALUE : list
+            List of array. The default is [Precipitation, EvapoTranspiration].
+        show : bool, optional
+            Plot atmbc. The default is False.
+        verbose : bool, optional
+            Display. The default is False.
+        **kwargs
 
         Returns
         -------
@@ -1880,11 +1961,13 @@ class CATHY():
                 - Update CATHYH file (MAXPRT).
 
         '''
-
-        if 'diff' in kwargs:
-            v_atmbc = VALUE[1] - abs(VALUE[0])
+        if len(netValue)>0:
+            v_atmbc = netValue
         else:
-            v_atmbc = VALUE
+            if len(VALUE)==2: # take the difference between Precipitation and EvapoTranspiration
+                v_atmbc = VALUE[0] - abs(VALUE[1])
+            else:
+                v_atmbc = VALUE
 
         # set default parameters
         # --------------------------------------------------------------------
@@ -1922,7 +2005,7 @@ class CATHY():
             # -----------------------------------------------------------------
             for t, v in zip(time, v_atmbc):
 
-                if verbose == True:
+                if verbose:
                     print(t, v)
                 atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
                 # atmbcfile.close()
@@ -1963,7 +2046,7 @@ class CATHY():
 
 
 
-    def init_boundary_conditions(self, time):
+    def init_boundary_conditions(self, BCtypName, time, **kwargs):
         '''
         .. note:
             The boundary conditions are defined in the nansfdirbc (Dirichlet),
@@ -2008,8 +2091,9 @@ class CATHY():
             # self.create_mesh_vtk()
             if not 'nnod3' in self.grid3d.keys():
                 self.run_processor(IPRT1=3)
-            self.create_mesh_bounds_df(self.grid3d['nodes_idxyz'],time)
-            plt_CT.plot_mesh_bounds(self.mesh_bound_cond_df)
+            if hasattr(self, 'mesh_bound_cond_df') is False:
+                self.create_mesh_bounds_df(BCtypName,self.grid3d['nodes_idxyz'],time, **kwargs)
+            plt_CT.plot_mesh_bounds(BCtypName,self.mesh_bound_cond_df,time)
         except:
             raise ValueError('cannot init boundary conditions dataframe')
             pass
@@ -2115,7 +2199,12 @@ class CATHY():
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self,'mesh_bound_cond_df') is False:
-            self.init_boundary_conditions(time)
+            self.init_boundary_conditions('nansfdirbc',time,
+                                          NDIR=NDIR,
+                                          NDIRC=NDIRC,
+                                          pressure_head=pressure_head,
+                                          no_flow=no_flow
+                                          )
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2285,7 +2374,10 @@ class CATHY():
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self,'mesh_bound_cond_df') is False:
-            self.init_boundary_conditions(time)
+            self.init_boundary_conditions('nansfneubc',time,
+                                          NQ=NQ,
+                                          ZERO=ZERO
+                                          )
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2341,7 +2433,7 @@ class CATHY():
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self,'mesh_bound_cond_df') is False:
-            self.init_boundary_conditions(time)
+            self.init_boundary_conditions('sfbc',time)
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2371,7 +2463,7 @@ class CATHY():
         pass
 
 
-    def create_mesh_bounds_df(self,grid3d,times):
+    def create_mesh_bounds_df(self,BCtypName,grid3d,times,**kwargs):
         '''
         Create a dataframe with flag for different boundary condtions assigned to each nodes
         
@@ -2387,34 +2479,33 @@ class CATHY():
         '''
 
         len(grid3d)
+        
+        # Step 1 find mesh bottom and sides 
+        # ----------------------------------
 
         self.mesh_bound_cond_df = pd.DataFrame(grid3d)
         self.mesh_bound_cond_df = self.mesh_bound_cond_df.rename(
                                     columns={0: "id_node",
                                              1: "x",
                                              2: "y",
-                                             3: "z"})
+                                             3: "z",
+                                             }
+                                    )
+        
+        self.mesh_bound_cond_df['id_node'] = self.mesh_bound_cond_df['id_node'].astype(int)
+        self.mesh_bound_cond_df['time'] = 0
+        max_axis_bound_ids = []
+        min_axis_bound_ids = []
+        for axi in ['x','y','z']:
+            min_ax = self.mesh_bound_cond_df[axi].min()
+            max_ax = self.mesh_bound_cond_df[axi].max()
+            cond_min = (self.mesh_bound_cond_df[axi]==min_ax)
+            min_axis_bound_ids.append(self.mesh_bound_cond_df['id_node'][cond_min].to_numpy()) 
+            cond_max = (self.mesh_bound_cond_df[axi]==max_ax)
+            max_axis_bound_ids.append(self.mesh_bound_cond_df['id_node'][cond_max].to_numpy()) 
 
-        minx = self.mesh_bound_cond_df['x'].min()
-        maxx = self.mesh_bound_cond_df['x'].max()
-        miny = self.mesh_bound_cond_df['y'].min()
-        maxy = self.mesh_bound_cond_df['y'].max()
-        minz = self.mesh_bound_cond_df['z'].min()
-        maxz = self.mesh_bound_cond_df['z'].max()
-
-
-        bound_idx_min =  self.mesh_bound_cond_df['id_node'][self.mesh_bound_cond_df['x']==minx]
-        bound_idy_min =  self.mesh_bound_cond_df['id_node'][self.mesh_bound_cond_df['y']==miny]
-        bound_idz_min =  self.mesh_bound_cond_df['id_node'][self.mesh_bound_cond_df['z']==minz]
-
-        bound_idx_max =  self.mesh_bound_cond_df['id_node'][self.mesh_bound_cond_df['x']==maxx]
-        bound_idy_max =  self.mesh_bound_cond_df['id_node'][self.mesh_bound_cond_df['y']==maxy]
-        bound_idz_max =  self.mesh_bound_cond_df['id_node'][self.mesh_bound_cond_df['z']==maxz]
-
-
-        bounds_id = np.unique(np.concatenate([bound_idx_min,bound_idy_min,bound_idz_min,
-                        bound_idx_max,bound_idy_max,bound_idz_max]))
-
+        bounds_id = np.unique(np.r_[np.hstack(min_axis_bound_ids),np.hstack(max_axis_bound_ids)]) -1 
+        
 
         bound_bool = []
         for idb in self.mesh_bound_cond_df['id_node']:
@@ -2425,7 +2516,41 @@ class CATHY():
 
         self.mesh_bound_cond_df['bound'] = bound_bool
 
-        len(bound_bool)
+        max(bounds_id)
+        len(self.mesh_bound_cond_df)
+
+        # step 2 add flap for each type of BC
+        # ---------------------------------------
+        
+        # specified pressure
+        if 'nansfdirbc' in BCtypName:
+            if 'no_flow' in kwargs:
+                self.mesh_bound_cond_df[BCtypName] = -99
+                self.mesh_bound_cond_df[BCtypName].iloc[bounds_id] = 0
+                
+        # specified flux
+        if 'nansfneubc' in BCtypName:
+            if 'no_flow' in kwargs:
+                self.mesh_bound_cond_df[BCtypName] = -99
+                self.mesh_bound_cond_df[BCtypName].iloc[bounds_id] = 0
+                
+        # specified seepage
+        if 'sfbc' in BCtypName:
+            if 'no_flow' in kwargs:
+                self.mesh_bound_cond_df[BCtypName] = -99
+                self.mesh_bound_cond_df[BCtypName].iloc[bounds_id] = 0
+                
+        #         if kwargs['no_flow']:
+                    
+                
+        # self.mesh_bound_cond_df[BCtypName] = -99
+        
+        # testBC = self.mesh_bound_cond_df
+        
+        # # BCtypName
+        
+        
+        
         print('SKip time dependence init boundary condition dataframe - consequences (?)')
         # self.mesh_bound_cond_df = pd.concat([self.mesh_bound_cond_df]*len(times), ignore_index=True)
         # times_reshaped = [val for val in times for _ in np.arange(len(grid3d))]
@@ -2467,7 +2592,7 @@ class CATHY():
         # vtk DataFile Version 2.0
         3D Unstructured Grid of Linear Triangles
         ASCII
-        DATASET UNSTRUCTURED_GRID
+        DATASET STRUCTURED_GRID
         FIELD FieldData  1
         TIME 1 1 double
                    0.00000
@@ -2530,7 +2655,7 @@ class CATHY():
 
 
 
-    def update_mesh_vtk(self, prop='', prop_value=[], savevtk=True, **kwargs):
+    def update_mesh_vtk(self, prop='', prop_value=[], replaceVTK=True, **kwargs):
         '''
         https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data
 
@@ -2547,11 +2672,13 @@ class CATHY():
 
         '''
         self.mesh_pv_attributes.add_field_data(prop_value, prop)
-        self.mesh_pv_attributes.save(os.path.join(self.workdir,
-                                self.project_name,
-                                'vtk/',
-                                self.project_name +
-                                '.vtk'), binary=False)
+        
+        if replaceVTK:
+            self.mesh_pv_attributes.save(os.path.join(self.workdir,
+                                    self.project_name,
+                                    'vtk/',
+                                    self.project_name +
+                                    '.vtk'), binary=False)
 
         pass
 
@@ -2695,9 +2822,14 @@ class CATHY():
             if self.dem_parameters["nzone"]!=1:
                 raise ValueError("Wrong number of zones")
         else:
-            if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
-                raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-                                 + ' while nzone is ' + str(self.dem_parameters["nzone"]))
+            if self.dem_parameters["nzone"]>1:
+                if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
+                    raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
+                                     + ' while nzone is ' + str(self.dem_parameters["nzone"]))
+            else:
+                if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
+                    raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
+                                     + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
 
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
@@ -2872,28 +3004,46 @@ class CATHY():
             SoilPhysProp = []
 
 
-            # loop over strates
-            # -----------------------------------------------------------------
-            for istr in range(self.dem_parameters["nstr"]):
-                izoneSoil = np.zeros([self.dem_parameters["nzone"], 8])
+            #  loop over zones (defined in the zone file)
+            # --------------------------------------------------------------
+            for izone in range(self.dem_parameters["nzone"]):
+                    
+                iLayersSoil = np.zeros([self.dem_parameters["nstr"], 8])
 
-                #  loop over zones (defined in the zone file)
-                # --------------------------------------------------------------
-                for izone in range(self.dem_parameters["nzone"]):
+                # loop over strates
+                # -----------------------------------------------------------------
+                for istr in range(self.dem_parameters["nstr"]):
+
                     for i, spp in enumerate(SPP):
-                        izoneSoil[izone,i] = SPP[spp][izone]
+                        # print(i,spp)
+                        if isinstance(SPP[spp][izone], float):
+                            print('extend to multiple layers')
+                            SPP[spp][istr] = SPP[spp][istr]*np.ones(self.dem_parameters["nstr"])
+                            
+                        iLayersSoil[istr,i] = SPP[spp][izone][istr]
 
-                SoilPhysProp.append(izoneSoil)
+                SoilPhysProp.append(iLayersSoil)
             SoilPhysProp = np.vstack(SoilPhysProp)
 
         # case if there is only one zone in the mesh
+        # -------------------------------------------------------------
         else:
-            izoneSoil = []
-            for spp in SPP:
-                izoneSoil.append(SPP[spp])
-            izoneSoil = np.hstack(izoneSoil)
-            SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
-
+            if len(SPP['PERMX'])<=1:
+                izoneSoil = []
+                for spp in SPP:
+                    izoneSoil.append(SPP[spp])
+                izoneSoil = np.hstack(izoneSoil)
+                SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
+            else:
+                izoneSoil_per_layer = []
+                for stri in range(self.dem_parameters["nstr"]):
+                    print(stri)
+                    izoneSoil = []
+                    for spp in SPP:
+                        izoneSoil.append(SPP[spp][stri])
+                    izoneSoil_per_layer.append(np.hstack(izoneSoil))
+                SoilPhysProp = np.vstack(izoneSoil_per_layer)
+                
         return SoilPhysProp
 
     def _prepare_SOIL_vegetation_tb(self, FP_map):
@@ -3078,9 +3228,9 @@ class CATHY():
         ) as rootmapfile:
 
             rootmapfile.write("north:     0" + "\n")
-            rootmapfile.write("south:     0" + "\n")
+            rootmapfile.write("south:     0" + str(self.hapin["xllcorner"]) + "\n")
             rootmapfile.write("east:     0" + "\n")
-            rootmapfile.write("west:     0" + "\n")
+            rootmapfile.write("west:     0" + str(self.hapin["yllcorner"]) + "\n")
             rootmapfile.write("rows:     " + str(self.hapin["M"]) + "\n")
             rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
 
@@ -3113,12 +3263,21 @@ class CATHY():
         '''
         if hasattr(self,'mesh_pv_attributes') == False:
             self.create_mesh_vtk()
+            
+        self.mesh_pv_attributes
+        
+        
+        
         for dp in dict_props.keys():
-            try:
+            dp = 'ic'
+            if isinstance(dict_props[dp], int):
+                print('Single value detected for ' + str(dp) + ' ==> assumming it homogeneous')
                 self.update_mesh_vtk(prop=dp, 
-                                     prop_value=dict_props[dp].flatten())
-            except:
-                pass
+                                     prop_value=np.ones(len(self.mesh_pv_attributes.points))*dict_props[dp])
+            else:
+                print('not yet implemented')
+                # self.update_mesh_vtk(prop=dp, 
+                #                      prop_value=dict_props[dp].flatten())
         pass
 
 
@@ -3177,6 +3336,8 @@ class CATHY():
             plt_CT.show_COCumflowvol(df)
         elif prop == 'dtcoupling':
             plt_CT.show_dtcoupling(df,**kwargs)
+        elif prop == 'wtdepth':
+            plt_CT.show_wtdepth(df)  
         else:
             print('no proxy to plot')
         # elif filename == 'psi':
@@ -3186,22 +3347,24 @@ class CATHY():
         pass
 
 
-    def show_bc(self, layer=0, time=0,  **kwargs):
+    def show_bc(self, BCtypName='nansfneubc', layer=0, time=0, ax=None, **kwargs):
         ''' Show bc '''
         # - atmbc spatially
         # nansfdirbc
         # nansfneubc
         # sfbc
-        fig, ax = plt.subplots(3,1,1)
+        # fig, ax = plt.subplots(3,1,1)
         # df = self.read_inputs(filename='dirichlet')
         # df = self.update_nansfdirbc()
-        self.init_boundary_conditions(time)
+        plt_CT.plot_mesh_bounds(BCtypName,self.mesh_bound_cond_df,time,ax)
+
+        # self.init_boundary_conditions(BCtypName,time)
         # self.update_mesh_boundary_cond(time)
         # self.set_BC_laterals(time=time)
         pass
 
 
-    def show_input(self, prop='hgsfdet', **kwargs):
+    def show_input(self, prop='hgsfdet', ax=None, **kwargs):
         '''
         Call and parse to cathy.plotter from the main CATHY class
 
@@ -3218,13 +3381,16 @@ class CATHY():
         '''
         df = self.read_inputs(filename=prop)
         if prop == 'atmbc':
-            plt_CT.show_atmbc(df['time'],df['value'])
+            plt_CT.show_atmbc(df['time'],df['value'],ax=ax,**kwargs)
         elif prop == 'root_map':
-            plt_CT.show_indice_veg(df[0])
+            plt_CT.show_indice_veg(df[0],ax=ax)
         elif prop == 'dem':
-            plt_CT.show_dem(df[0],df[1])
+            if hasattr(self, "hapin") is False:
+                self.update_prepo_inputs()
+            hapin = self.hapin
+            plt_CT.show_dem(df[0],df[1],hapin, ax=ax,**kwargs)
         elif prop == 'zone':
-            plt_CT.show_zone(df[0])
+            plt_CT.show_zone(df[0],ax=ax)
         elif prop == 'soil':
 
             # in 2 dimensions
@@ -3242,8 +3408,9 @@ class CATHY():
             soil_map = zone_mat[0]
 
             for z in np.unique(zone_mat[0]):
+                print(z)
                 soil_map[zone_mat[0] == z] =  df[0][yprop].xs([str(layer_nb),str(int(z-1))]) #,level=0)
-            plt_CT.show_soil(soil_map, yprop=yprop, layer_nb=layer_nb)
+            plt_CT.show_soil(soil_map, yprop=yprop, layer_nb=layer_nb,ax=ax)
 
             # in 3 dimensions
             # --------------
@@ -3253,6 +3420,25 @@ class CATHY():
             # soil_SPP_plot['SPP'] = SoilPhysProp # matrice with respect to zones
             # soil_SPP_plot['SPP_map'] = SPP # mapping with respect to zones
             # self.map_prop2mesh(SPP)
+            
+        
+        elif ('dtm_' in prop) | ('lakes_map' in prop):           
+            raster_mat, header_raster  =  in_CT.read_raster(os.path.join(self.workdir, 
+                                                                         self.project_name, 
+                                                                         "prepro/" + prop
+                                                                         )
+                                                            )
+            if hasattr(self, "hapin") is False:
+                self.update_prepo_inputs()
+            hapin = self.hapin
+            plt_CT.show_raster(raster_mat,
+                               header_raster,
+                               prop=prop,
+                               hapin=hapin,
+                               ax=ax,
+                               **kwargs
+                               )
+
 
         else:
             print('no proxy to plot')
@@ -3349,10 +3535,24 @@ class CATHY():
                                 dem_parm,
                                 MAXVEG = self.cathyH['MAXVEG']
                                 )
+            # df[0]
             return df
         elif filename == 'zone':
             df  =  in_CT.read_zone(os.path.join(self.workdir, self.project_name, "prepro/zone"))
             return df
+        elif filename == 'zone':
+            df  =  in_CT.read_zone(os.path.join(self.workdir, self.project_name, "prepro/zone"))
+            return df
+        
+        elif ('dtm_' in filename) | ('lakes_map' in filename):           
+            raster_mat, header_raster  =  in_CT.read_raster(os.path.join(self.workdir, 
+                                                                         self.project_name, 
+                                                                         "prepro/" + filename
+                                                                         )
+                                                            )
+            return raster_mat, header_raster
+            
+            
         else:
             print('unknown file requested')
         pass
