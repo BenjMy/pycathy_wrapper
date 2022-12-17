@@ -434,10 +434,12 @@ class CATHY():
 
         pass
 
-    def check_DEM_versus_inputs(self):        
-        if np.shape(self.veg_map) != np.shape(self.DEM):
-            raise ValueError('Inconsistent shapes between vegetation map and DEM - need to update veg first')
-            
+    def check_DEM_versus_inputs(self): 
+        
+        if hasattr(self, 'veg_map'):
+            if np.shape(self.veg_map) != np.shape(self.DEM):
+                raise ValueError('Inconsistent shapes between vegetation map and DEM - need to update veg first')
+                
         # check atmbc times between parm and boundary cond files
         # Need to create a reader for bc files
         # if np.shape(self.atmbc["time"]) != np.shape(self.DEM):
@@ -1682,6 +1684,10 @@ class CATHY():
 
         # check if consistency between DELTAT, DTMIN, and DTMAX
         # ------------------------------------------------------------
+        
+        if min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))<=0:
+            raise ValueError('Vtk time steps should be monotonically increasing')
+            
         if (self.parm["DELTAT"] > min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)'])) or
             self.parm["DELTAT"] > 1e-2*min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))
             ):
@@ -1698,6 +1704,11 @@ class CATHY():
            self.parm["DTMAX"] = 2*self.parm["DELTAT"]
 
 
+        if (self.parm["TMAX"] < max(self.parm['(TIMPRT(I),I=1,NPRT)'])):
+           warnings.warn('adjusting TMAX with respect to time of interests requested')
+           self.parm["TMAX"] = max(self.parm['(TIMPRT(I),I=1,NPRT)'])
+           
+     
         # transform array args to list
         # --------------------------------------------------------------------
         for kk, value in self.parm.items():
@@ -1871,8 +1882,10 @@ class CATHY():
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP \n")
                 if 'pressure_head_ini' in kwargs:
-                    icfile.write(str(kwargs['pressure_head_ini']))
-                    self.map_prop2mesh({'ic':kwargs['pressure_head_ini']})
+                    np.savetxt(icfile,kwargs['pressure_head_ini'])
+                    # if kwargs['pressure_head_ini']
+                    # icfile.write(str(kwargs['pressure_head_ini']))
+                    # self.map_prop2mesh({'ic':kwargs['pressure_head_ini']})
 
                     # self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
                 else:
@@ -1884,10 +1897,10 @@ class CATHY():
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
                 np.savetxt(icfile, pressure_head_ini, fmt="%1.3e")
                 
-                try: 
-                    self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
-                except:
-                    pass
+                # try: 
+                #     self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
+                # except:
+                #     pass
 
 
             elif INDP in [2,3]:
@@ -2583,8 +2596,55 @@ class CATHY():
         pass
 
 
+    def create_mesh_vtkris3d_vtk9(self):
+        '''
+        Create mesh for vtk format version 9
 
-    def create_mesh_vtkris3d(self):
+
+        # vtk DataFile Version 9.0
+        3D Unstructured Grid of Linear Triangles
+        ASCII
+        DATASET STRUCTURED_GRID
+        FIELD FieldData  1
+        TIME 1 1 double
+                   0.00000
+        POINTS     7056 float
+        TETRA (5,NT)       - element connectivities in 3-d mesh (TETRA(5,I)
+        # C                        indicates material type for 3-d element I)
+        '''
+
+        if not 'nnod3' in self.grid3d.keys():
+            self.run_processor(IPRT1=3)
+
+        with open(os.path.join(self.workdir,
+                               self.project_name,
+                               "vtk/mesh_tmp.vtk"),"w+") as vtkmesh:
+            vtkmesh.write("# vtk DataFile Version 2.0\n")
+            vtkmesh.write("3D Unstructured Grid of Linear Triangles\n")
+            vtkmesh.write("ASCII\n")
+            vtkmesh.write("DATASET UNSTRUCTURED_GRID\n")
+            vtkmesh.write("FIELD FieldData  1\n")
+            vtkmesh.write("TIME 1 1 double\n")
+            vtkmesh.write("           0.00000\n")
+            vtkmesh.write("POINTS " + "{:3.0f}".format(self.grid3d['nnod3']) + " float\n")
+            np.savetxt(vtkmesh,self.grid3d['mesh3d_nodes'],fmt='%1.6e')
+            len(self.grid3d['mesh3d_nodes'])
+            ntetra = len(self.grid3d['mesh_tetra'])
+            numb=ntetra*5
+            mesh_tretra_m = self.grid3d['mesh_tetra'].T[0:4] -1
+            # np.shape(mesh_tretra_m)
+            tetra_mesh = np.vstack([4*np.ones(ntetra),mesh_tretra_m]).T
+            vtkmesh.write("CELLS " + "{:d}".format(ntetra) + "\t" + "{:d}".format(numb) + "\n")
+            np.savetxt(vtkmesh,tetra_mesh,fmt='%d',delimiter='\t')
+            vtkmesh.write("CELL_TYPES " + "{:d}".format(ntetra) + "\n")
+            np.savetxt(vtkmesh,10*np.ones(ntetra).T,fmt='%d')
+            vtkmesh.close()
+
+        pass
+
+
+
+    def create_mesh_vtkris3d_vtk2(self):
         '''
         Create mesh for vtk format version 2
 
@@ -2616,9 +2676,11 @@ class CATHY():
             vtkmesh.write("           0.00000\n")
             vtkmesh.write("POINTS " + "{:3.0f}".format(self.grid3d['nnod3']) + " float\n")
             np.savetxt(vtkmesh,self.grid3d['mesh3d_nodes'],fmt='%1.6e')
+            len(self.grid3d['mesh3d_nodes'])
             ntetra = len(self.grid3d['mesh_tetra'])
             numb=ntetra*5
             mesh_tretra_m = self.grid3d['mesh_tetra'].T[0:4] -1
+            # np.shape(mesh_tretra_m)
             tetra_mesh = np.vstack([4*np.ones(ntetra),mesh_tretra_m]).T
             vtkmesh.write("CELLS " + "{:d}".format(ntetra) + "\t" + "{:d}".format(numb) + "\n")
             np.savetxt(vtkmesh,tetra_mesh,fmt='%d',delimiter='\t')
@@ -2634,7 +2696,8 @@ class CATHY():
         Create custum mesh
         THIS SHOULD BE MOVED TO MESHTOOLS
         '''
-        self.create_mesh_vtkris3d()
+        self.create_mesh_vtkris3d_vtk2()
+        # self.create_mesh_vtkris3d_vtk9()
         self.mesh_pv_attributes = pv.read(os.path.join(self.workdir,
                                                        self.project_name,
                                                        'vtk/mesh_tmp.vtk'
@@ -2816,7 +2879,7 @@ class CATHY():
 
 
 
-        # check size of soil properties map versus nb of zones
+        # check size of soil properties map versus nb of zones/ nb of layers
         # --------------------------------------------------------------------
         if isinstance(SPP_map['PERMX'], float):
             if self.dem_parameters["nzone"]!=1:
@@ -2826,7 +2889,7 @@ class CATHY():
                 if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
                     raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
                                      + ' while nzone is ' + str(self.dem_parameters["nzone"]))
-            else:
+            else: # case where soil properties are homogeneous in x and y direction (only z prop varies)
                 if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
                     raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
                                      + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
@@ -3257,6 +3320,64 @@ class CATHY():
     # ------------------------------------------------------------------------
     # %% Mapping of properties to zones/mesh
     # ------------------------------------------------------------------------
+    
+    def map_dem_prop_2mesh(self,prop_name,prop_map, to_nodes=False):
+        '''
+        
+
+        Parameters
+        ----------
+        prop_name : str
+            DESCRIPTION.
+        prop_map : list
+            DESCRIPTION.
+        to_nodes : bool, optional
+            DESCRIPTION. The default is False.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        '''
+        
+        if to_nodes:
+            prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes['node_markers']))
+            for m in range(len(prop_map)):
+                prop_mesh_nodes[self.mesh_pv_attributes['node_markers']==m+1]=prop_map[m]
+            self.mesh_pv_attributes[prop_name] = prop_mesh_nodes
+            
+            self.mesh_pv_attributes.save(os.path.join(self.workdir,
+                                                      self.project_name,
+                                                      'vtk/',
+                                                      self.project_name +
+                                                      '.vtk'
+                                                      ),
+                                             binary=False
+                                             )
+            return prop_mesh_nodes
+
+        else:
+            prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes['cell_markers']))
+            for m in range(len(prop_map)):
+                prop_mesh_cells[self.mesh_pv_attributes['cell_markers']==m+1]=prop_map[m]
+            self.mesh_pv_attributes[prop_name] = prop_mesh_cells
+            
+            self.mesh_pv_attributes.save(os.path.join(self.workdir,
+                                                      self.project_name,
+                                                      'vtk/',
+                                                      self.project_name +
+                                                      '.vtk'
+                                                      ),
+                                             binary=False
+                                             )
+            self.mesh_pv_attributes.set_active_scalars(prop_name)
+            prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data()
+        
+            return prop_mesh_cells, prop_mesh_nodes[prop_name]
+        
+        
+        
     def map_prop2mesh(self,dict_props):
         '''
         Add a given physical property to the mesh
@@ -3329,15 +3450,15 @@ class CATHY():
         '''
         df = self.read_outputs(filename=prop)
         if prop == 'hgsfdet':
-            plt_CT.show_hgsfdet(df)
+            plt_CT.show_hgsfdet(df,**kwargs)
         elif prop == 'hgraph':
-            plt_CT.show_hgraph(df)
+            plt_CT.show_hgraph(df,**kwargs)
         elif prop == 'cumflowvol':
-            plt_CT.show_COCumflowvol(df)
+            plt_CT.show_COCumflowvol(df,**kwargs)
         elif prop == 'dtcoupling':
             plt_CT.show_dtcoupling(df,**kwargs)
         elif prop == 'wtdepth':
-            plt_CT.show_wtdepth(df)  
+            plt_CT.show_wtdepth(df,**kwargs)  
         else:
             print('no proxy to plot')
         # elif filename == 'psi':

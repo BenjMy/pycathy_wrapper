@@ -154,16 +154,21 @@ def show_hgraph(df_hgraph=[], workdir=[], project_name=[],
     # ------------------------------------------------------------------------
     if len(df_hgraph)==0:
         df_hgraph = out_CT.read_hgraph(filename='hgraph')
-    fig, ax = plt.subplots()
+        
+    if 'ax' not in kwargs:
+        fig, ax = plt.subplots()
+    else:
+        ax = kwargs['ax']
+        
     if 'delta_t' in kwargs:
         df_hgraph['time'] = pd.to_timedelta( df_hgraph['time'],unit='s') 
     df_hgraph.pivot_table(values='streamflow',index='time').plot(ax=ax,
                                                                  ylabel='streamflow ($m^3/s$)',
-                                                                 xlabel='time (s)')
-    return fig, ax 
+                                                                 xlabel='time (s)',
+                                                                 marker='.')
 
 
-def show_COCumflowvol(df_cumflowvol=[], workdir=None, project_name=None):
+def show_COCumflowvol(df_cumflowvol=[], workdir=None, project_name=None,**kwargs):
     '''
     plot COCumflowvol
     '''
@@ -174,14 +179,16 @@ def show_COCumflowvol(df_cumflowvol=[], workdir=None, project_name=None):
                                                          "output", "cumflowvol"))
     # plot Net Flow Volume (m^3) = f(time)
     # ------------------------------------------------------------------------
-    fig, ax = plt.subplots()
+    if 'ax' not in kwargs:
+        fig, ax = plt.subplots()
+    else:
+        ax = kwargs['ax']
+        
     ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], "b-.")
     ax.plot(df_cumflowvol[:, 2] / 3600, df_cumflowvol[:, 7])
     ax.set_title("Cumulative flow volume")
     ax.set(xlabel="Time (s)", ylabel="Net Flow Volume (m^3)")
     ax.legend(["Total flow volume", "nansfdir flow volume"])
-
-    return fig, ax
 
 
 def show_vp_DEPRECATED(df_vp=[], workdir=[], project_name=[], 
@@ -816,32 +823,13 @@ def dem_plot_2d_top(parameter, label='', **kwargs):
     return fig, ax 
     
 
-def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project_name=None, **kwargs):
-    """
-    DEM3D creates a 3D representation from a Grass DEM file
-    """
-    
-    # length = 1
-    # width = 1
-    # delta_x = 1 
-    # if 'delta_x' in kwargs:
-    #     delta_x = kwargs['delta_x']
-    # delta_y = 1 
-    # if 'delta_y' in kwargs:
-    #     delta_y = kwargs['delta_y']
-    
-    
-             
-    # dem_mat, str_hd_dem = in_CT.read_hapin(os.path.join(workdir, project_name, "prepro/dem"),
-    #                                        os.path.join(workdir, project_name, "prepro/dtm_13.val"))
-
-
+def get_dem_coords(dem_mat=[], str_hd_dem='', hapin={}, workdir=None, project_name=None, **kwargs):
     
     if len(dem_mat)==0:
         # Read the Header
         dem_mat, str_hd_dem = in_CT.read_dem(os.path.join(workdir, project_name, "prepro/dem"),
                                              os.path.join(workdir, project_name, "prepro/dtm_13.val"))
-    
+        
     x = np.zeros(dem_mat.shape[0]) #+ hapin['xllcorner']
     y = np.zeros(dem_mat.shape[1]) #+ hapin['yllcorner']
 
@@ -851,9 +839,18 @@ def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project
     for a in range(dem_mat.shape[1]):
         y[a] = float(str_hd_dem["south"]) + hapin['delta_y'] * a
 
+    return x, y, dem_mat
+    
+def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project_name=None, **kwargs):
+    """
+    DEM3D creates a 3D representation from a Grass DEM file
+    """
+    
+    x, y,dem_mat = get_dem_coords(dem_mat, str_hd_dem, hapin, workdir, project_name, **kwargs)
+    
     if ax is None:
         fig = plt.figure()
-        ax = plt.axes(projection="3d")
+        ax = fig.add_subplot(projection='3d')   
         
     X, Y = np.meshgrid(x, y)
     surf = ax.plot_surface(X, Y, dem_mat.T, cmap="viridis")

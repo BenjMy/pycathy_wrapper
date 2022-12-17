@@ -378,7 +378,7 @@ def read_grid3d(project_name, **kwargs):
         grid3d_file.close()
     
         grid3d_file = open(os.path.join(project_name, "output/grid3d"), "r")
-        mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(nel) - 1)
+        mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(nel))
         grid3d_file.close()
     
         grid3d_file = open(os.path.join(project_name, "output/grid3d"), "r")
