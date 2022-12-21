@@ -3321,10 +3321,10 @@ class CATHY():
     # %% Mapping of properties to zones/mesh
     # ------------------------------------------------------------------------
     
-    def map_dem_prop_2mesh(self,prop_name,prop_map, to_nodes=False):
-        '''
+    def map_dem_prop_2mesh(self,prop_name,prop_map,to_nodes=False):
+        """
+        Map DEM raster property to the CATHY mesh nodes/cells.
         
-
         Parameters
         ----------
         prop_name : str
@@ -3338,9 +3338,7 @@ class CATHY():
         -------
         TYPE
             DESCRIPTION.
-
-        '''
-        
+        """
         if to_nodes:
             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes['node_markers']))
             for m in range(len(prop_map)):
@@ -3380,25 +3378,20 @@ class CATHY():
         
     def map_prop2mesh(self,dict_props):
         '''
-        Add a given physical property to the mesh
+        Add a given physical property to the CATHY mesh
         '''
         if hasattr(self,'mesh_pv_attributes') == False:
             self.create_mesh_vtk()
             
         self.mesh_pv_attributes
-        
-        
-        
+                
         for dp in dict_props.keys():
-            dp = 'ic'
             if isinstance(dict_props[dp], int):
                 print('Single value detected for ' + str(dp) + ' ==> assumming it homogeneous')
                 self.update_mesh_vtk(prop=dp, 
                                      prop_value=np.ones(len(self.mesh_pv_attributes.points))*dict_props[dp])
             else:
                 print('not yet implemented')
-                # self.update_mesh_vtk(prop=dp, 
-                #                      prop_value=dict_props[dp].flatten())
         pass
 
 
@@ -3611,6 +3604,9 @@ class CATHY():
             return df
         elif filename == 'cumflowvol':
             df = out_CT.read_cumflowvol(path)
+            return df
+        elif filename == 'wtdepth':
+            df = out_CT.read_wtdepth(path)
             return df
         else:
             print('no file specified')

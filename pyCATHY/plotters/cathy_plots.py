@@ -77,19 +77,23 @@ def show_wtdepth(df_wtdepth=[], workdir=[], project_name=[], **kwargs):
     # read hgraph file if df_hgraph not existing
     # ------------------------------------------------------------------------
     if len(df_wtdepth)==0:
-        df_hgsfdeth = out_CT.read_wtdepth(filename='wtdepth')
+        df_wtdepth = out_CT.read_wtdepth(filename='wtdepth')
 
-    fig, ax = plt.subplots(2,1)
-    if 'delta_t' in kwargs:
-        df_hgsfdeth['time'] = pd.to_timedelta(df_hgsfdeth['time'],unit='s') 
+    # fig, ax = plt.subplots(2,1)
+    # if 'delta_t' in kwargs:
+    #     df_wtdepth['time'] = pd.to_timedelta(df_wtdepth['time'],unit='s') 
+    if 'ax' not in kwargs:
+        fig, ax = plt.subplots()
+    else:
+        ax = kwargs['ax']
         
-    df_hgsfdeth.pivot_table(values='NET SEEPFACE VOL',index='time').plot(ax=ax[0],
-                                                                 ylabel='NET SEEPFACE VOL',
-                                                                 xlabel='time (s)')
-    df_hgsfdeth.pivot_table(values='NET SEEPFACE FLX',index='time').plot(ax=ax[1],
-                                                                 ylabel='NET SEEPFACE FLX',
-                                                                 xlabel='time (s)')
-    return fig, ax 
+    ax.plot(df_wtdepth['time (s)'],df_wtdepth['water table depth (m)'])
+    ax.set_title("Water table depth")
+    ax.set(xlabel="Time (s)", ylabel="Water table depth (m)")
+    # ax.legend(["Total flow volume", "nansfdir flow volume"])
+
+        
+    pass
 
 
 def show_hgsfdet(df_hgsfdeth=[], workdir=[], project_name=[], **kwargs):

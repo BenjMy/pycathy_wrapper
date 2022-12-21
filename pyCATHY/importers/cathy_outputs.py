@@ -22,8 +22,10 @@ def read_wtdepth(filename,**kwargs):
 
     '''
     
-    wtdepth_df = pd.read_csv(filename, skiprows=1)
-    wtdepth_df.columns = ['time (s)', 'water table depth (m)']
+    # wtdepth_df = pd.read_csv(filename, skiprows=1, header=None, sep='\t')
+    wtdepth = np.loadtxt(filename)
+    wtdepth_df = pd.DataFrame(wtdepth, columns=['time (s)', 'water table depth (m)'])
+
         
     return wtdepth_df
 
