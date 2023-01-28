@@ -166,7 +166,7 @@ def read_hgraph(filename):
 
     # hgraph collumns information
     # -------------------------------------------------------------------------
-    cols_hgraph = ['time', 'streamflow', '',  '', '']
+    cols_hgraph = ['time', 'streamflow', 'Unnamed0',  'Unnamed1', 'Unnamed2']
     
     
     # transform a numpy array into panda df
@@ -268,7 +268,7 @@ def read_sw(filename, **kwargs):
     #                                                               xlabel='time (s)')
     
     
-    return  d_sw_t
+    return  d_sw_t, time_i
 
 def read_psi(filename):
     '''

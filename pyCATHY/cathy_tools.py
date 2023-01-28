@@ -1,63 +1,87 @@
-"""Main class controlling the wrapper
-This class is managing three main components: 
-- compiling the fortran files and running executable
-- reading/writing inputs and 
 """
-from __future__ import print_function
+Main class controlling the wrapper.
+
+This class is managing three main components: 
+    
+1. Reading/writing inputs and output files 
+
+We used a generic formalation for the function's names based on the CATHY files. 
+
+Example:
+-------
+    In order to update the soil file:
+        `update_soil(arguments)`
+    In order to update the atmbc file:
+        `update_atmbc(arguments)`
+        
+    Note that the name of the arguments are similar to the name of the variable to update
+    In order to update the parm file with a new minimum time step DTMIN:
+        `update_parm(DTMIN=1e3)`
+        
+The update function is composed of three main actions:
+    - Set the defaut parameters (it is actually not reading the input file to set the defaut parameters)
+    - replace values by the new ones introduced via the function argument
+    - write the new file (it overwrites the existing file)
+    
+Note also that updating an input file may affect the CATHY.H control file. 
+When needed, the code takes care of updating values of the CATHY.H file retroactivelly.
+
+Remenber to update all your prepo files before calling `run_preprocessor()`, and
+all you input files before calling `run_processor()` 
+
+2. Compiling the fortran files
+3. Running executable
+
+Once all the files were updated, the `run_preprocessor()` or `run_processor()` 
+are taking care of recompiling the source files via bash cmd.
+   
+"""
+
+from pyCATHY.plotters import cathy_plots as plt_CT
+from pyCATHY.importers import cathy_outputs as out_CT
+from pyCATHY.importers import cathy_inputs as in_CT
+
+from git import Repo # In order to fetch the file directly from the repo
+
+
 import sys
-import numpy as np
 import os
+import numpy as np
 import warnings
-import subprocess
 import glob
 from os import listdir
 from os.path import isfile, join
 import shutil
 import pickle
 import re
-
-from git import Repo # In order to fetch the file directly from the repo
-
-
 from collections import OrderedDict
 
-
-import pyvista as pv # read .vtk files
 import pandas as pd
 import time # measure time of computation
 import rich.console
 from rich import print
 
-from pyCATHY.plotters import cathy_plots as plt_CT
-
-from pyCATHY.importers import cathy_outputs as out_CT
-from pyCATHY.importers import cathy_inputs as in_CT
-# from pyCATHY.importers import sensors_measures as in_meas
-from pyCATHY.ERT import petro_Archie as Archie
+import subprocess
 
 
-from functools import partial
-import multiprocessing
-import matplotlib.pyplot as plt
+import pyvista as pv # read .vtk files
+# import matplotlib.pyplot as plt
 
 
-# from abc import ABC, abstractmethod
 
-# multiprocessor functions outside main CATHY object
+
 # -----------------------------------------------------------------------------
 def subprocess_run_multi(pathexe_list):
-    '''
-    Run multiple exe files in //
-    '''
+    """
+    Run multiple exe files in parallel.
+    
+    Multiprocessor functions outside main CATHY object
     # https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects
+    """
     print(f"x= {pathexe_list}, PID = {os.getpid()}")
-    # self.console.print(":athletic_shoe: [b]nudging type: [/b]" + str(self.DAFLAG))
-
     os.chdir(pathexe_list)
     callexe = "./" + 'cathy'
     p = subprocess.run([callexe], text=True, capture_output=True)
-    # p.close()
-
 
     return p
 
@@ -75,34 +99,17 @@ def make_console(verbose):
 
 
 
-
-class HiddenPrints:
-    def __enter__(self):
-        self._original_stdout = sys.stdout
-        sys.stdout = open(os.devnull, 'w')
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        sys.stdout.close()
-        sys.stdout = self._original_stdout
-
-
-
 # -----------------------------------------------------------------------------
-
 class CATHY():
     """
-
-    Main CATHY object
+    Main CATHY object.
 
     When instantiated it creates the tree project directories with 'prj_name' as root folder.
-    The src files are fetched from the online repository if not existing (note that it is possible to call a specific version).
-
-    Parameters
-    ----------
-    None
+    The src files are fetched from the online repository if not existing 
+    (note that it is possible to call a specific version).
 
     """
-
+    
     def __init__(self, dirName=None, prj_name="my_cathy_prj", notebook=False,
                  version="1.0.0",
                  verbose=True,
@@ -110,15 +117,14 @@ class CATHY():
         """
         Create CATHY object.
 
-
         ..note:
             All variables in CAPITAL LETTERS use the semantic from the CATHY legacy fortran codes,
             while the others are created exclusively for the wrapper.
 
         ..note:
             All file variable are self dictionnary objects; example: soil file is contained in self.soil
+        
         """
-
         # create project dir
         # ---------------------------------------------------------------------
         self.console = make_console(verbose)
@@ -160,6 +166,8 @@ class CATHY():
         self.cathyH = {}  # dict of cathyH C header parameters
         # self.nudging = {'NUDN': 0}   # Temporary
 
+
+        # THIS SHOULD BE REMOVED #
         # dict related to Data assimilation
         # ---------------------------------------------------------------------
         self.DAFLAG = False # Flag to trigger data assimilation process
@@ -277,7 +285,6 @@ class CATHY():
 
             if version == "G. Manoli":
                 print("fetch cathy G. Manoli src files")
-                # /home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/
                 path_manoli = "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
                 shutil.copytree(
                     path_manoli, os.path.join(
@@ -307,14 +314,9 @@ class CATHY():
 
         pass
 
-
-
-
-
 # --------------------------------------------------------------------------- #
 # replace console cmd by a subprocess call
 # --------------------------------------------------------------------------- #
-
     def run_preprocessor(self, KeepOutlet=True, verbose=False, **kwargs):
         """
         Run cppp.exe
@@ -377,19 +379,7 @@ class CATHY():
                              "prepro/dtm_13.val"), "w+"
             ) as f:
                 np.savetxt(f, self.DEM, fmt="%1.4e")  # use exponential
-
-        # update self.DEM
-        # np.shape(self.DEM)
-        # self.DEM, _ = in_CT.read_dem(os.path.join(self.workdir, self.project_name, "prepro/dem"),
-        #                              os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"))
-            
         os.chdir(self.workdir)
-        # -------------------------------------------- #
-        # run processor only to build the 3d mesh
-        # self.run_processor(verbose=True,IPRT1=2,TRAFLAG=0)
-        # self.read_grid3d()
-        # -------------------------------------------- #
-
         pass
 
     def recompileSrc(self, verbose=False):
@@ -433,20 +423,7 @@ class CATHY():
                 ":pensive_face: [b]Cannot find the new processsor[/b]")
 
         pass
-
-    def check_DEM_versus_inputs(self): 
-        
-        if hasattr(self, 'veg_map'):
-            if np.shape(self.veg_map) != np.shape(self.DEM):
-                raise ValueError('Inconsistent shapes between vegetation map and DEM - need to update veg first')
-                
-        # check atmbc times between parm and boundary cond files
-        # Need to create a reader for bc files
-        # if np.shape(self.atmbc["time"]) != np.shape(self.DEM):
-        #     raise ValueError('Inconsistent shapes between atmbc times and bc files - need to update bc files first')
-        # pass
-        
-        
+      
         
     def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
         '''
@@ -471,10 +448,7 @@ class CATHY():
         parallel = False
         if 'parallel' in kwargs:
             parallel = kwargs['parallel']
-
-        if 'DAFLAG' in kwargs:
-            self.DAFLAG = kwargs['DAFLAG']
-
+            
         # update parm and cathyH
         # --------------------------------------------------------------------
         # VERY VERY IMPORTANT NEVER COMMENT !
@@ -520,24 +494,14 @@ class CATHY():
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name
             
-            # case of Data Assimilation DA
-            # ----------------------------------------------------------------
-            if self.DAFLAG:
-                print('DA activated')
-                # https://blog.airbrake.io/blog/python/python-exception-handling-notimplementederror
-                # @abstractmethod
-                # def run_DA_sequential():
-                    # raise NotImplementedError('run_DA_seq')
-
             # case of simple simulation
             # ----------------------------------------------------------------
-            else:
-                p = subprocess.run([callexe], text=True, capture_output=True)
-                if verbose == True:
-                    print(p.stdout)
-                    print(p.stderr)
-                os.chdir(os.path.join(self.workdir))
-                self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir,self.project_name))
+            p = subprocess.run([callexe], text=True, capture_output=True)
+            if verbose == True:
+                print(p.stdout)
+                print(p.stderr)
+            os.chdir(os.path.join(self.workdir))
+            self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir,self.project_name))
 
             # computation time
             # ----------------------------------------------------------------
@@ -546,355 +510,6 @@ class CATHY():
 
 
         return
-
-
-#%%  Observation Processing
-
-    def _parse_ERT_metadata(self,key_value):
-        '''
-        Extract ERT metadata information form obs dict
-        '''
-        ERT_meta_dict = {}
-        ERT_meta_dict['forward_mesh_vtk_file'] = key_value[1]['ERT']['forward_mesh_vtk_file']
-        ERT_meta_dict['pathERT'] = os.path.split(key_value[1]['ERT']['filename'])[0]
-        ERT_meta_dict['seq'] = key_value[1]['ERT']['sequenceERT']
-        ERT_meta_dict['electrodes'] = key_value[1]['ERT']['elecs']
-        ERT_meta_dict['noise_level'] = key_value[1]['ERT']['data_err']
-        ERT_meta_dict['porosity'] = self.Archie_parms['porosity']
-        ERT_meta_dict['data_format'] = key_value[1]['ERT']['data_format']
-        return ERT_meta_dict
-
-
-    def _map_ERT(self,state,
-                path_fwd_CATHY,
-                ens_nb,
-                **kwargs):
-        '''
-        Mapping of state variable to observation (predicted)
-        ERT using pedophysical transformation H
-        '''
-
-        savefig = True
-        if 'savefig' in kwargs:
-           savefig = kwargs['savefig']
-
-        # search key value to identify time and method
-        # --------------------------------------------
-        tuple_list_obs = list(self.dict_obs.items())
-        key_value = tuple_list_obs[self.count_DA_cycle]
-
-        # Load ERT metadata information form obs dict
-        # -------------------------------------------
-        ERT_meta_dict = self._parse_ERT_metadata(key_value)
-
-        Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(self.project_name,
-                                            self.Archie_parms,
-                                            ERT_meta_dict['porosity'],
-                                            ERT_meta_dict['pathERT'],
-                                            ERT_meta_dict['forward_mesh_vtk_file'],
-                                            ERT_meta_dict['electrodes'],
-                                            ERT_meta_dict['seq'],
-                                            path_fwd_CATHY,
-                                            df_sw = state[1], # kwargs
-                                            data_format= ERT_meta_dict['data_format'] , # kwargs
-                                            DA_cnb = self.count_DA_cycle, # kwargs
-                                            Ens_nb=ens_nb, # kwargs
-                                            savefig=savefig, # kwargs
-                                            noise_level = ERT_meta_dict['noise_level'],# kwargs
-                                            dict_ERT = key_value[1]['ERT']#  kwargs
-                                            )
-
-        df_Archie['OL'] = np.ones(len(df_Archie['time']))*False
-        self._add_2_ensemble_Archie(df_Archie)
-
-
-        return Hx_ERT
-
-    def _map_ERT_parallel_DA(self,
-                             ENS_times,
-                             ERT_meta_dict,
-                             key_time,
-                             path_fwd_CATHY_list,
-                             DA_cnb,
-                             ):
-         '''
-         Parallel mapping of ERT data using pedophysical transformation H
-         '''
-         Hx_ERT_ens = []
-
-         # freeze fixed arguments of Archie.SW_2_ERa_DA
-         # -----------------------------------------------------------------
-         ERTmapping_args = partial(Archie.SW_2_ERa_DA,
-                                   self.project_name,
-                                   self.Archie_parms,
-                                   ERT_meta_dict['porosity'],
-                                   ERT_meta_dict['pathERT'],
-                                   ERT_meta_dict['forward_mesh_vtk_file'],
-                                   ERT_meta_dict['electrodes'],
-                                   ERT_meta_dict['seq'],
-                                   data_format= ERT_meta_dict['data_format'],
-                                   DA_cnb = DA_cnb,
-                                   savefig=True,
-                                   noise_level = ERT_meta_dict['noise_level'],# kwargs
-                                   dict_ERT = key_time[1]['ERT']#  kwargs
-                                   )
-
-         # // run using ensemble subfolders path as a list
-         # -----------------------------------------------------------------
-         with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-            results_mapping = pool.map(ERTmapping_args,
-                                         path_fwd_CATHY_list
-                                           )
-            print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-
-         for ens_i in range(len(path_fwd_CATHY_list)):
-             df_Archie = results_mapping[ens_i][1]
-             df_Archie['OL'] = np.zeros(len(df_Archie))
-             self._add_2_ensemble_Archie(df_Archie)
-             Hx_ERT_ens_i =  results_mapping[ens_i][0]
-
-             if 'pygimli' in self.dict_obs[key_time[0]]['ERT']['data_format']:
-                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['rhoa'])
-             else:
-                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['resist'])
-
-         return Hx_ERT_ens
-
-
-    def _map_ERT_parallel_OL(self,
-                             ENS_times,
-                             ERT_meta_dict,
-                             key_time,
-                             path_fwd_CATHY_list,
-                             ):
-        '''
-        Parallel mapping of ERT data using pedophysical transformation H
-        case of the open Loop = nested loop with ensemble time
-        '''
-
-        Hx_ERT_ens = []
-        for t in range(len(ENS_times)):
-            print('t_openLoop mapping:' + str(t))
-
-            # freeze fixed arguments of Archie.SW_2_ERa
-            # -----------------------------------------------------------------
-            ERTmapping_args = partial(Archie.SW_2_ERa_DA,
-                                      self.project_name,
-                                      self.Archie_parms,
-                                      ERT_meta_dict['porosity'],
-                                      ERT_meta_dict['pathERT'],
-                                      ERT_meta_dict['forward_mesh_vtk_file'],
-                                      ERT_meta_dict['electrodes'],
-                                      ERT_meta_dict['seq'],
-                                      data_format= ERT_meta_dict['data_format'],
-                                      time_ass = t,
-                                      savefig=True,
-                                      noise_level = ERT_meta_dict['noise_level'] ,
-                                      dict_ERT = key_time[1]['ERT']
-                                      )
-            #
-            # -----------------------------------------------------------------
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-                results_mapping_time_i = pool.map(ERTmapping_args,
-                                                  path_fwd_CATHY_list
-                                                  )
-                print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-
-            for ens_i in range(len(path_fwd_CATHY_list)):
-                 Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]
-
-                 # print(np.shape(results_mapping_time_i))
-                 df_Archie = results_mapping_time_i[ens_i][1]
-
-                 # print(df_Archie)
-                 df_Archie['OL'] = np.ones(len(df_Archie))
-                 self._add_2_ensemble_Archie(df_Archie)
-
-
-                 if 'pygimli' in ERT_meta_dict['data_format']:
-                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['rhoa'])
-                 else:
-                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['resist'])
-
-        # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
-        #                                         len(Hx_ERT_ens[0]),
-        #                                         len(ENS_times)])  # (EnSize * data size * times)
-        return Hx_ERT_ens
-
-
-    def _map_ERT_parallel(self,
-                            path_fwd_CATHY_list,
-                            list_assimilated_obs='all',
-                            default_state = 'psi',
-                            verbose = False,
-                            **kwargs):
-        ''' Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,
-        // run using ensemble subfolders path as a list
-        '''
-
-        savefig = True
-        if 'savefig' in kwargs:
-           savefig = kwargs['savefig']
-        ENS_times = []
-        if 'ENS_times' in kwargs:
-           ENS_times = kwargs['ENS_times']
-        DA_cnb = []
-        if 'DA_cnb' in kwargs:
-           DA_cnb = kwargs['DA_cnb']
-
-
-        # search key value to identify time and method
-        tuple_list_obs = list(self.dict_obs.items())
-        key_time = tuple_list_obs[self.count_DA_cycle]
-        # Load ERT metadata information form obs dict
-        # -------------------------------------------
-        ERT_meta_dict = self._parse_ERT_metadata(key_time)
-
-        if len(ENS_times)>0: # case of the open Loop = nested loop with ensemble time
-            Hx_ERT_ens = self._map_ERT_parallel_OL(
-                                                    ENS_times,
-                                                    ERT_meta_dict,
-                                                    key_time,
-                                                    path_fwd_CATHY_list,
-                                                )
-        else:
-            Hx_ERT_ens = self._map_ERT_parallel_DA(
-                                                    ENS_times,
-                                                    ERT_meta_dict,
-                                                    key_time,
-                                                    path_fwd_CATHY_list,
-                                                    DA_cnb,
-                                                )
-
-        prediction_ERT = np.vstack(Hx_ERT_ens).T  # (EnSize)
-
-        # self.dict_obs
-
-        return prediction_ERT
-
-    def _evaluate_perf_OL(self,
-                         parallel,
-                         list_assimilated_obs,
-                         path_fwd_CATHY_list,
-                         ENS_times
-                         ):
-
-        prediction_OL = []
-        if parallel:
-            if 'ERT' in list_assimilated_obs:
-                prediction_OL_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
-                                                           savefig = True,
-                                                           DA_cnb = self.count_DA_cycle,
-                                                           ENS_times=ENS_times,
-                                                           )
-                # prediction_OL_ERT is meas_size * ens_size * ENS_times size
-                np.shape(prediction_OL_ERT)
-            else:
-                for t in range(len(ENS_times)):
-                # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
-                    prediction_stacked = self.map_states2Observations(
-                                                        list_assimilated_obs,
-                                                        ENS_times=ENS_times,
-                                                        savefig=False,
-                                                        parallel=parallel,
-                                                        )
-                    prediction_OL.append(prediction_stacked)
-
-        else:
-            for t in range(len(ENS_times)):
-            # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
-                prediction_stacked = self.map_states2Observations(
-                                                    list_assimilated_obs,
-                                                    ENS_times=ENS_times,
-                                                    savefig=False,
-                                                    parallel=parallel,
-                                                    )
-                # prediction_stacked is meas_size * ens_size
-                prediction_OL.append(prediction_stacked)
-                # prediction_OL is meas_size * ens_size * ENS_times size
-
-
-        if parallel:
-            if 'ERT' in list_assimilated_obs:
-                prediction_OL.append(prediction_OL_ERT)
-
-                if np.shape(prediction_OL)[0]>1:
-                    prediction_OL =  np.hstack(prediction_OL)
-
-        prediction_OL = np.reshape(prediction_OL,[
-                                                  np.shape(prediction_OL)[1],
-                                                  self.NENS,
-                                                  len(ENS_times),
-                                                  ]
-                                  )
-        for t in range(len(ENS_times)):
-            # print(str(t) + 't perf OL')
-            data_t, _  = self._get_data2assimilate(
-                                                    list_assimilated_obs,
-                                                    time_ass=t,
-                                                )
-            self._performance_assessement(
-                                            list_assimilated_obs,
-                                            data_t,
-                                            prediction_OL[:,:,t],
-                                            t_obs=t,
-                                            openLoop=True,
-                                        )
-        return prediction_OL
-
-
-
-
-    def set_Archie_parm(self,
-                        porosity=[],
-                        rFluid_Archie=[1.0],
-                        a_Archie=[1.0],
-                        m_Archie=[2.0],
-                        n_Archie=[2.0],
-                        pert_sigma_Archie=[0]
-                        ):
-        '''
-        Dict of Archie parameters. Each type of soil is describe within a list
-        Note that if pert_sigma is not None a normal noise is
-        added during the translation of Saturation Water to ER
-
-        Parameters
-        ----------
-        rFluid : TYPE, optional
-            Resistivity of the pore fluid. The default is [1.0].
-        a : TYPE, optional
-            Tortuosity factor. The default is [1.0].
-        m : TYPE, optional
-            Cementation exponent. The default is [2.0].
-            (usually in the range 1.3 -- 2.5 for sandstones)
-        n : TYPE, optional
-            Saturation exponent. The default is [2.0].
-        pert_sigma_Archie : TYPE, optional
-            Gaussian noise to add. The default is None.
-
-        ..note:
-            Field procedure to obtain tce he covariance structure of the model
-            estimates is described in Tso et al () - 10.1029/2019WR024964
-            "Fit a straight line for log 10 (S) and log 10 (ρ S ) using the least-squares criterion.
-            The fitting routine returns the covariance structure of the model estimates, which can be used to de-
-            termine the 68% confidence interval (1 standard deviation) of the model estimates.""
-
-        '''
-        if len(porosity)==0:
-            porosity = self.soil_SPP['SPP'][:, 4][0]
-        if not isinstance(porosity, list):
-            porosity = [porosity]
-        self.Archie_parms = {
-                             'porosity':porosity,
-                             'rFluid_Archie':rFluid_Archie,
-                             'a_Archie':a_Archie,
-                             'm_Archie':m_Archie,
-                             'n_Archie':n_Archie,
-                             'pert_sigma_Archie':pert_sigma_Archie
-                             }
-
-        pass
-
 
 
     def create_output(self, output_dirname="output"):
@@ -926,10 +541,26 @@ class CATHY():
     def display_time_run(self):
 
         return self.total
+    
+#%% Checkings
+
+    def check_DEM_versus_inputs(self): 
+        '''
+        Chech shape consistency between attributes and DEM
+
+        '''
+        
+        try:
+            if hasattr(self, 'veg_map'):
+                if np.shape(self.veg_map) != np.shape(self.DEM):
+                    raise ValueError('Inconsistent shapes between vegetation map and DEM - need to update veg first')
+        except:
+            pass
 
 
+#%%
 # --------------------------------------------------------------------------- #
-# update input files
+# update files
 # --------------------------------------------------------------------------- #
 
 
@@ -1022,8 +653,8 @@ class CATHY():
         for kk, value in kwargs.items():
             if kk in self.cathyH.keys():
                 self.cathyH[kk] = value
-                if verbose:
-                    self.console.print(f"modified: {kk} | value: {value}")
+                # if verbose:
+                #     self.console.print(f"modified: {kk} | value: {value}")
 
         # ---------------------------------------------------------------------
         # write new cathy H
@@ -1278,15 +909,7 @@ class CATHY():
         hap_file.writelines(L)
         hap_file.close()
 
-        # print(self.hapin)
-
-        # self.hapin = {}
-
-        # for i in range(len(structural_parameter)):
-        #     key = structural_parameter[i]
-        #     self.hapin[key] = tmp_param_value_new[i]
-
-        # %% dtm_13.val
+        # dtm_13.val
         # If we start with a DEM file ("dtm_13.val") for an already delineated
         # catchment (i.e., a "catchment" DEM file instead of a "full" DEM file), then
         # only the last step in the above procedure (i.e., run "cppp" just once) is
@@ -1314,8 +937,15 @@ class CATHY():
             # with open(os.path.join(self.project_name, "prepro/dem"), "w+") as f:
             #     # use exponential notation
             #     np.savetxt(f, self.DEM, fmt="%1.4e")
+            
+            self.update_cathyH(
+                                ROWMAX=np.shape(self.DEM)[0],
+                                COLMAX=np.shape(self.DEM)[1]
+                               )
 
         self.update_dem_parameters(**kwargs)
+
+
 
         if show == True:
             plt_CT.show_dem(workdir=self.workdir,
@@ -1423,7 +1053,7 @@ class CATHY():
                     )
                     counth += 3
                 if h == 1:
-                    print(str(list(self.dem_parameters.values())[counth]))
+                    # print(str(list(self.dem_parameters.values())[counth]))
                     dem_parametersfile.write(
                         str(list(self.dem_parameters.values())
                             [counth]) + "\t" + "\n"
@@ -1457,7 +1087,6 @@ class CATHY():
 
         pass
 
-    # %% Ouput/INPUT FILES
 
     def update_zone(self, zone=[]):
         '''
@@ -1507,54 +1136,6 @@ class CATHY():
         self.update_dem_parameters(nzone=len(np.unique(zone)))
         self.update_parm()
         self.update_cathyH(MAXZON=len(np.unique(zone)))
-
-        # zone_with_bound = np.vstack([-99*np.ones(len(zone)), zone])
-        # zone_with_bound = np.vstack([zone_with_bound.T,-99*np.ones(len(zone_with_bound))])
-        # # zone_with_bound = np.pad(zone,1, mode='constant')
-        # zone_extruded_with_bound = np.repeat(zone_with_bound[:, :, np.newaxis],
-        #                                       self.dem_parameters["nstr"]+1, axis=2)
-        
-        # np.shape(self.zone)
-        
-        # 48*3*5
-        
-        # self.mesh_pv_attributes.cells
-        # self.mesh_pv_attributes
-        
-        # 3456/144
-        
-        # centers = self.mesh_pv_attributes.cell_centers()
-        # xc = np.array(np.unique(centers.points[:,0]))
-        # yc = np.array(np.unique(centers.points[:,1]))
-
-        # xc = np.array(np.unique(centers.points[:,0:2]))
-
-        # zone_xy = centers.points[:,0:2]
-        # len(zone_xy)
-        
-        # point_to_cell 
-        
-        
-
-        
-        # np.shape(zone)
-        # len(np.hstack(zone))
-        # len(self.mesh_pv_attributes.points)
-        # A = np.array(self.mesh_pv_attributes.points)
-        
-        
-        # # A =  grid3d['nodes_idxyz'][:,[1,2,3]]
-        # A = A[np.lexsort((A[:, 0], A[:, 1]))]
-        # _, idx_surf = np.unique(A[:,:2], return_index = True, axis=0)
-        # output_surf = np.maximum.reduceat(A, idx_surf)
-        # len(output_surf)
-        
-        
-        # (len(A[A[:,0]==0])/5)*3
-        
-        # Map zones in the 3d vtk mesh
-        # ----------------------------
-        # self.map_prop2mesh({'zone':zone_extruded_with_bound})
 
     # %% INPUT FILES
 
@@ -1904,6 +1485,10 @@ class CATHY():
 
 
             elif INDP in [2,3]:
+            # elif INDP == 2:
+            #     icfile.write(str(INDP) + "\t" + str(IPOND) +
+            #                  "\t" + "INDP" + "\t" + "IPOND" + "\n")
+            # elif INDP == 3:
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
                 icfile.write(str(WTPOSITION) + "\t" + "WTPOSITION" + "\n")
@@ -1951,7 +1536,7 @@ class CATHY():
             - =0 for spatially variable atmospheric boundary condition inputs;
             blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC's are
             homogeneous in space.
-        IETO : TYPE, optional
+        IETO : int, optional
             - =0 for linear interpolation of the atmospheric boundary condition inputs between different
             - otherwise the inputs are assigned as a piecewise constant function (ietograph).
             The default is 0.
@@ -1982,6 +1567,8 @@ class CATHY():
             else:
                 v_atmbc = VALUE
 
+        len(v_atmbc)
+        len(time)
         # set default parameters
         # --------------------------------------------------------------------
 
@@ -2040,7 +1627,7 @@ class CATHY():
         if 'omit_cathyH' not in kwargs:
             self.update_cathyH(MAXPRT=len(time))
 
-        if show == True:
+        if show:
             # if HSPATM !=0:
             #     print('impossible to plot for non homogeneous atmbc')
             #     # sys.exit()
@@ -2055,98 +1642,6 @@ class CATHY():
             return plt, ax
 
         pass
-
-
-
-
-    def init_boundary_conditions(self, BCtypName, time, **kwargs):
-        '''
-        .. note:
-            The boundary conditions are defined in the nansfdirbc (Dirichlet),
-            nansfneubc (Neumann), and sfbc (seepage face) files.
-
-            We have two types of boundary conditions (BC):
-            - Neumann BC (or specifed flux)
-            - Dirichlet BC (or pressure).
-
-
-        .. note:
-            - Pioggia: condizioni di Neumann. Quando non ci può più essere
-            infiltrazione metto Dirichlet.
-            - Evaporazione: si indica un limite di pressione minimo ( Pmin ) al di
-            sotto del quale si ha uno switch da Neumann a Dirichlet
-            (in quanto al di sotto di questo valore non si ha più evapotraspirazione).
-
-        .. note:
-            The boundary condition for any given surface node can switch between a
-            Dirichlet condition and a Neumann condition depending on the saturation
-            (or pressure) state of that node.
-
-        .. note:
-            A Neumann (or specified flux) boundary condition corresponds to
-            atmosphere-controlled infiltration or exfiltration, with the flux equal
-            to the rainfall or potential evaporation rate given by the atmospheric input data.
-            When the surface node reaches a threshold level of saturation or moisture deficit,
-            the boundary condition is switched to a Dirichlet (specified head) condition,
-            and the infiltration or exfiltration process becomes soil limited [1].
-
-        Returns
-        -------
-        None.
-
-        '''
-        # self.update_nansfdirbc()
-        # self.update_nansfneubc()
-        # self.update_sfbc()
-
-        try:
-            self.console.print('init boundary condition dataframe')
-            # self.create_mesh_vtk()
-            if not 'nnod3' in self.grid3d.keys():
-                self.run_processor(IPRT1=3)
-            if hasattr(self, 'mesh_bound_cond_df') is False:
-                self.create_mesh_bounds_df(BCtypName,self.grid3d['nodes_idxyz'],time, **kwargs)
-            plt_CT.plot_mesh_bounds(BCtypName,self.mesh_bound_cond_df,time)
-        except:
-            raise ValueError('cannot init boundary conditions dataframe')
-            pass
-
-        pass
-
-    def check_for_inconsistent_BC(self):
-        pass
-
-    def set_BC_laterals(self, time, BC_type='', val=0):
-        '''
-        Set all sides expect surface one
-        '''
-
-        nnodes = len(self.mesh_bound_cond_df[self.mesh_bound_cond_df['time (s)']==0]['id_node'])
-        for tt in time:
-            BC_bool_name = []
-            BC_bool_val = []
-
-            for id_node in range(nnodes):
-                if self.mesh_bound_cond_df['bound'].loc[int(id_node)] == True:
-                    BC_bool_name.append(BC_type)
-                    BC_bool_val.append(0)
-                else:
-                    BC_bool_name.append(None)
-                    BC_bool_val.append(val)
-
-            self.update_mesh_boundary_cond(
-                                            time = tt,
-                                            BC_bool_name=BC_bool_name,
-                                            BC_bool_val=BC_bool_val
-                                           )
-
-        self.check_for_inconsistent_BC()
-
-        #self.update_mesh_vtk(BC_bool_name,BC_bool_val)
-
-        pass
-
-
 
 
     def update_nansfdirbc(self,time=[],NDIR=0,NDIRC=0,NQ3=None,no_flow=False,
@@ -2476,6 +1971,676 @@ class CATHY():
         pass
 
 
+    def update_soil(self, IVGHU=[],
+                    FP=[], FP_map= [],
+                    SPP=[], SPP_map=[],
+                    soil_heteregeneous_in_z=False,
+                    show=False,
+                    **kwargs):
+        '''
+        Soil parameters (soil - IIN4). The porous media properties.
+
+        ..note::
+            The first thing that must be decides is the type of relationship to describe the hydraulic
+            characteristics of the unsaturated soil (i.e. retention curves). This can be done through
+            the choice of the parameter **IVGHU** amongst the several options.
+
+
+        Parameters
+        ----------
+        IVGHU : int, optional
+            = -1 table look up for moisture curves
+            = 0 for van Genuchten moisture curves
+            = 1 for extended van Genuchten moisture curves
+            = 2 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with Kr=Se**n conductivity relationship
+            = 3 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986)with conductivity relationship from Table 3 of 1984 paper (log_10 Kr(Se) curve)
+            = 4 for Brooks‐Corey moisture curves.
+
+            The default is [].
+
+        FP : list, optional
+            Feddes Parameters. The default is [].
+            [PCANA PCREF PCWLT ZROOT PZ OMGC]
+            - 'PCANA': float, anaerobiosis point --> h2 (≈ -0.5m)
+            - 'PCREF': float, field capacity --> h3 (≈ 4-m)
+            - 'PCWLT': float, wilting point --> h4 (≈ -150m)
+            - 'ZROOT': float, root depth
+            - 'PZ': float, pz is an empirical parameter
+            - 'OMGC': float, 0<OMGC<1 Compensatory mechanisms for root water uptake
+
+            .. note:
+                Calculate actual transpiration Ta (m d−1).
+                A multiplicative reduction factor is defined by four pressure heads (0 > h1 > h2 > h3 > h4)
+                delimiting five phases of uptake
+                For details, see http://dx.doi.org/10.1002/2015WR017139
+                BETA = (1-DEPTH/ZROOT(VEG_TYPE(I)))*DEXP(-1.0d0*PZ(VEG_TYPE(I))*DEPTH/ZROOT(VEG_TYPE(I)))
+                BTRANI(K) = MAX(ZERO,BETA*DZ*GX)
+                BTRAN(I)  = BTRAN(I) + BETA*DZ
+                OMG(I)    = OMG(I) + GX*BETA*DZ
+                QTRANIE(K)=ETP(I)*BTRANI(K)/BTRAN(I)/MAX(OMG(I),OMGC(VEG_TYPE(I)))
+
+
+        FP : Dict, optional
+            Dictionnary containing the SPP properies per zones (root map, indice of vegetation)
+
+
+
+        SPP : DataFrame, optional
+            Soil Physical Properties. The default is [].
+            - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
+            - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
+            - 'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz
+            - 'ELSTOR' (NSTR, NZONE): specific storage
+            - 'POROS'  (NSTR, NZONE): porosity (moisture content at saturation) = \thetaS
+
+            retention curves parameters VGN, VGRMC, and VGPSAT
+            - 'VGNCELL' (NSTR, NZONE): van Genuchten curve exponent  = n
+            - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
+            - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent -->
+                                          VGPSAT == -1/alpha (with alpha expressed in [L-1]);
+
+            Example for 1 zone:
+
+                             PERMX     PERMY     PERMZ  ...  VGNCELL  VGRMCCELL  VGPSATCELL
+                str zone                                ...
+                0   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                1   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                2   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                3   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+                4   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
+
+
+        SPP_map : Dict, optional
+            Dictionnary containing the SPP properies per zones
+            Example for 2 zones:
+                {
+                    'PERMX': [0.000188, 9.4e-05],
+                    'PERMY': [0.000188, 0.000188],
+                    'PERMZ': [0.000188, 0.000188],
+                    'ELSTOR': [1e-05, 1e-05],
+                    'POROS': [0.55, 0.55],
+                    'VGNCELL': [1.46, 1.46],
+                    'VGRMCCELL': [0.15, 0.15],
+                    'VGPSATCELL': [0.03125, 0.03125]
+                 }
+
+
+        ..note::
+
+            At the file level, this is an example of 3 layers and  2 zones; The inner reading cycle is by zone, and the outer one by layers, i.e.:
+
+            PERMX_z1_str1 PERMY_z1_str1  PERMZ_z1_str1  ELSTOR_z1_str1 POROS_z1_str1 VGNCELL_z1_str1 VGRMCCELL__z1_str1 VGPSATCELL__z1_str1
+            PERMX_z2_str1 PERMY_z2_str1  PERMZ_z2_str1  ELSTOR_z2_str1 POROS_z2_str1 VGNCELL_z2_str1 VGRMCCELL__z2_str1 VGPSATCELL__z2_str1
+            PERMX_z1_str2 PERMY_z1_str2  PERMZ_z1_str2  ELSTOR_z1_str2 POROS_z1_str2 VGNCELL_z1_str2 VGRMCCELL__z1_str2 VGPSATCELL__z1_str2
+            PERMX_z2_str2 PERMY_z2_str2  PERMZ_z2_str2  ELSTOR_z2_str2 POROS_z2_str2 VGNCELL_z2_str2 VGRMCCELL__z2_str2 VGPSATCELL__z2_str2
+            PERMX_z1_str3 PERMY_z1_str3  PERMZ_z1_str3  ELSTOR_z1_str3 POROS_z1_str3 VGNCELL_z1_str3 VGRMCCELL__z1_str3 VGPSATCELL__z1_str3
+            PERMX_z2_str3 PERMY_z2_str3  PERMZ_z2_str3  ELSTOR_z2_str3 POROS_z2_str3 VGNCELL_z2_str3 VGRMCCELL__z2_str3  VGPSATCELL__z2_str3
+
+            Make sure all 8 parameters for each layer/zone are on the same line.
+            Also, make sure NZONE = 2 in dem_parameters and MAXZON in CATHY.H is larger than or equal to NZONE.
+
+        Returns
+        -------
+        - update parm file
+        - update CATHY.H file
+        - update mesh vtk file
+
+        '''
+
+        # set default parameters if SPP and/or FP args are not existing yet
+        # --------------------------------------------------------------------
+        if len(self.soil)==0:
+            self.set_SOIL_defaults()
+
+        if len(SPP_map) == 0:
+            SPP_map = self.set_SOIL_defaults(SPP_map_default=True)
+
+        if ((not hasattr(self, 'soil_FP')) and (len(FP_map)== 0)):
+            FP_map = self.set_SOIL_defaults(FP_map_default=True)
+        elif len(FP_map)==0:
+            FP_map = self.soil_FP['FP_map']
+
+
+
+
+        # check size of soil properties map versus nb of zones/ nb of layers
+        # --------------------------------------------------------------------
+        if isinstance(SPP_map['PERMX'], float):
+            if self.dem_parameters["nzone"]!=1:
+                raise ValueError("Wrong number of zones")
+        else:
+            if self.dem_parameters["nzone"]>1:
+                if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
+                    raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
+                                     + ' while nzone is ' + str(self.dem_parameters["nzone"]))
+            else: # case where soil properties are homogeneous in x and y direction (only z prop varies)
+                if soil_heteregeneous_in_z:
+                    if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
+                        raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
+                                         + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
+
+        # read function arguments kwargs and udpate soil and parm files
+        # --------------------------------------------------------------------
+        for kk, value in kwargs.items():
+            self.soil[kk] = value
+            self.parm[kk] = value
+
+        # loop over Feddes parameters
+        # --------------------------------------------------------------------
+        for fp in FP_map:  # loop over fedded parameterssoil_het_dim
+            self.soil[fp] = FP_map[fp]
+
+        # check consistency between parameters
+        # --------------------------------------------------------------------
+        if isinstance(SPP_map['PERMX'], float):
+            for k in SPP_map:
+                SPP_map[k] = [SPP_map[k]]
+
+        for z in range(len(SPP_map['VGRMCCELL'])): # loop over zones
+            if SPP_map['VGRMCCELL'][z]>=SPP_map['POROS'][z]:
+                raise ValueError("residual water content is" + str(SPP_map['VGRMCCELL'][z])
+                                 + '> porosity ' + str(SPP_map['POROS'][z]))
+
+        # create prepro inputs if not existing (containing info about the DEM)
+        # --------------------------------------------------------------------
+        if hasattr(self, "dem_parameters") is False:
+            self.update_prepo_inputs()
+
+        # Soil Physical Properties strat by strat
+        # --------------------------------------------------------------------
+        self.soil_SPP = {}
+        self.soil_SPP['SPP_map'] = SPP_map # mapping with respect to zones
+        if len(SPP)>0:
+            self.soil_SPP['SPP'] = SPP # matrice with respect to zones
+        else:
+            SoilPhysProp = self._prepare_SPP_tb(SPP_map)
+            self.soil_SPP['SPP'] = SoilPhysProp # matrice with respect to zones
+
+
+        # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
+        # --------------------------------------------------------------------
+        FeddesParam = self._prepare_SOIL_vegetation_tb(FP_map)
+        self.soil_FP = {}
+        self.soil_FP['FP'] = FeddesParam
+        self.soil_FP['FP_map'] = FP_map # mapping with respect to zones
+
+        if show:
+            update_map_veg = self.map_prop_veg(FP_map)
+            fig, ax = plt_CT.dem_plot_2d_top(update_map_veg,
+                                              label='all')
+            fig.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
+
+
+        # write soil file
+        # --------------------------------------------------------------------
+        self._write_SOIL_file(SoilPhysProp, FeddesParam, **kwargs)
+
+        # map SPP to the mesh
+        # --------------------------------------------------------------------
+        # self.map_prop2mesh(SPP_map)
+
+        pass
+
+
+    def set_SOIL_defaults(self,
+                          FP_map_default=False,
+                          SPP_map_default=False):
+
+        self.soil = {
+            "PMIN": -5.0,
+            "IPEAT": 0,
+            "SCF": 1.0, # here we assume that all soil is covered by the vegetation
+            "CBETA0": 0.4,
+            "CANG": 0.225,
+            # Feddes parameters default values
+            "PCANA": [0.0],
+            "PCREF": [-4.0],
+            "PCWLT": [-150],
+            "ZROOT": [0.1],
+            "PZ": [1.0],
+            "OMGC": [1.0],
+            "IVGHU": 0,  # The first thing that must be decided!
+            "HUALFA": 0.02,
+            "HUBETA": 2,
+            "HUGAMA": 2,
+            "HUPSIA": 0,
+            "HUSWR": 0.333,
+            "HUN": 1,
+            "HUA": -5,
+            "HUB": 1,
+            "BCBETA": 1.2,
+            "BCRMC": 0,
+            "BCPSAT": -0.345,
+        }
+
+
+        if FP_map_default:
+
+            FP_map = {
+                    # Feddes parameters default values
+                    "PCANA": [0.0],
+                    "PCREF": [-4.0],
+                    "PCWLT": [-150],
+                    "ZROOT": [0.1],
+                    "PZ": [1.0],
+                    "OMGC": [1.0],
+                }
+
+            # self.soil.update(FP)
+
+            return FP_map
+
+
+        # # set Soil Physical Properties defaults parameters
+        # # --------------------------------------------------------------------
+
+        if SPP_map_default:
+
+            PERMX = PERMY = PERMZ = 1.88e-04
+            ELSTOR = 1.00e-05
+            POROS = 0.55
+            VGNCELL = 1.46
+            VGRMCCELL = 0.15
+            VGPSATCELL = 0.03125
+
+            SPP_map = {
+                "PERMX": PERMX,
+                "PERMY": PERMY,
+                "PERMZ": PERMZ,
+                "ELSTOR": ELSTOR,
+                "POROS": POROS,
+                "VGNCELL": VGNCELL,
+                "VGRMCCELL": VGRMCCELL,
+                "VGPSATCELL": VGPSATCELL,
+            }
+
+            return SPP_map
+
+
+        pass
+
+    def _prepare_SPP_tb(self, SPP, **kwargs):
+        '''
+        prepare SOIL Physical Properties table
+
+        Parameters
+        ----------
+        SPP : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        np.array describing the SoilPhysProp with rows corresponding to the layer.
+
+        '''
+        
+        # SPP = {'PERMX': [[2e-07], [1e-07], [5e-08]], 'PERMY': [[2e-07], [1e-07], [5e-08]], 'PERMZ': [[2e-07], [1e-07], [5e-08]], 'ELSTOR': [1e-05], 'POROS': [0.55], 'VGNCELL': [1.914], 'VGRMCCELL': [0.1296], 'VGPSATCELL': [1.24]}
+
+        # check number of zones
+        if self.dem_parameters["nzone"] > 1:
+            if len(SPP['PERMX'])<=1:
+                for i, spp in enumerate(SPP):
+                    SPP[spp] = SPP[spp]*np.ones(self.dem_parameters["nzone"])
+            else:
+                pass
+
+
+            # check size of the heteregeneity of SPP
+            # ----------------------------------------
+            # 1d --> uniform
+            # 2d --> lateral variations due to zones defined in surface
+            # 3d --> lateral + vertical variations due to zones and strates
+
+            SoilPhysProp = []
+
+            #  loop over zones (defined in the zone file)
+            # --------------------------------------------------------------
+            for izone in range(self.dem_parameters["nzone"]):
+                    
+                iLayersSoil = np.zeros([self.dem_parameters["nstr"], 8])
+
+                if type(SPP['PERMX'][izone])==list:
+                    # loop over strates
+                    # -----------------------------------------------------------------
+                    for istr in range(self.dem_parameters["nstr"]):
+                        for i, spp in enumerate(SPP):                               
+                            iLayersSoil[istr,i] = SPP[spp][izone][0]
+                    SoilPhysProp.append(iLayersSoil)
+                
+                else:
+                    for istr in range(self.dem_parameters["nstr"]):
+                        for i, spp in enumerate(SPP):
+                            iLayersSoil[istr,i] = SPP[spp][izone]
+                    SoilPhysProp.append(iLayersSoil)
+
+
+            SoilPhysProp = np.vstack(SoilPhysProp)
+            # np.shape(SoilPhysProp)
+
+        # case if there is only one zone in the mesh
+        # -------------------------------------------------------------
+        else:
+            if len(SPP['PERMX'])<=1:
+                izoneSoil = []
+                for spp in SPP:
+                    izoneSoil.append(SPP[spp])
+                izoneSoil = np.hstack(izoneSoil)
+                SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
+                
+            # case where it is heterogeneous in depth (z)
+            # ------------------------------------------------------
+            else:
+                izoneSoil_per_layer = []
+                for stri in range(self.dem_parameters["nstr"]):
+                    print(stri)
+                    izoneSoil = []
+                    for spp in SPP:
+                        izoneSoil.append(SPP[spp][stri])
+                    izoneSoil_per_layer.append(np.hstack(izoneSoil))
+                SoilPhysProp = np.vstack(izoneSoil_per_layer)
+                
+        return SoilPhysProp
+
+    def _prepare_SOIL_vegetation_tb(self, FP_map):
+        '''
+        _prepare_SOIL_vegetation_tb
+
+        Parameters
+        ----------
+        FP_map : dict
+            dict containing Feddes parameters.
+            - 'PCANA': anaerobiosis point
+            - 'PCREF': field capacity
+            - 'PCWLT': wilting point
+            - 'ZROOT': float root depth
+            - 'PZ': ??
+            - 'OMGC': float ??
+            For details, see http://dx.doi.org/10.1002/2015WR017139
+        Returns
+        -------
+        FeddesParam: numpy array
+            table or array describing Feddes parameters for a given DEM
+
+
+
+
+        '''
+        # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
+        # --------------------------------------------------------------------
+
+        # Check if root_map file exist and is updated
+        # -------------------------------------------
+        if hasattr(self,'veg_map') is False:
+            if len(FP_map[list(FP_map)[0]])==1:
+                self.update_veg_map()
+            else:
+                raise ValueError('Found multiple values of Feddes zones' +
+                                 'but vegetation map is not defined')
+
+
+        # Check vegetation heterogeneity dimension
+        # ----------------------------------------
+        if self.cathyH["MAXVEG"] != len(FP_map[list(FP_map)[0]]):
+            raise ValueError("Wrong number of vegetations: PCANA size is " + str(len(FP_map[list(FP_map)[0]]))
+                             + ' while MAXVEG is ' + str(self.cathyH["MAXVEG"]))
+
+        # check number of vegetation
+        # --------------------------------------------------------------------
+        if self.cathyH["MAXVEG"] > 1:
+            FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
+            for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
+                izoneVeg_tmp = []
+                for sfp in FP_map:
+                    izoneVeg_tmp.append(FP_map[sfp][iveg])
+
+                izoneVeg_tmp = np.hstack(izoneVeg_tmp)
+                FeddesParam[iveg, :] = izoneVeg_tmp
+
+        # case where unique vegetation type
+        else:
+            FeddesParam = np.c_[
+                self.soil["PCANA"],
+                self.soil["PCREF"],
+                self.soil["PCWLT"],
+                self.soil["ZROOT"],
+                self.soil["PZ"],
+                self.soil["OMGC"],
+            ]
+
+        return FeddesParam
+
+    def _write_SOIL_file(self, SoilPhysProp, FeddesParam, **kwargs):
+        '''
+        _write_SOIL_file
+
+        Parameters
+        ----------
+        SoilPhysProp : TYPE
+            DESCRIPTION.
+        FeddesParam : TYPE
+            DESCRIPTION.
+        '''
+
+        # backup file during DA scheme cycle
+        # --------------------------------------------------------------------
+        backup = True
+        if 'backup' in kwargs:
+            backup = kwargs['backup']
+
+
+
+        # number of side header for each row
+        header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
+
+        # open soil file
+        # --------------------------------------------------------------------
+        if self.DAFLAG:
+            soil_filepath = os.path.join(
+                os.getcwd(), self.input_dirname, "soil")
+        else:
+            soil_filepath = os.path.join(
+                self.workdir, self.project_name, self.input_dirname, "soil")
+
+        if 'path' in kwargs:
+            soil_filepath =  os.path.join(kwargs['path'], "soil")
+
+        if backup:
+            if self.count_DA_cycle is not None:
+               dst_dir = soil_filepath + str(self.count_DA_cycle)
+               shutil.copy(soil_filepath,dst_dir)
+
+
+        with open(os.path.join(soil_filepath), "w+") as soilfile:
+
+            counth = 0  # count header index
+
+            # Write line by line according to header format
+            # ----------------------------------------------------------------
+            for i, h in enumerate(header_fmt_soil):
+
+                # left = values
+                # ------------------------------------------------------------
+                left = right = []
+                left = str(list(self.soil.values())[counth: counth + h])
+                left = left.strip("[]").replace(",", "")
+
+                # right = keys
+                # ------------------------------------------------------------
+                right = str(list(self.soil.keys())[counth: counth + h])
+                right = right.strip("[]").replace(",", "")
+                right = right.replace("'", "")
+
+                # Line 4: write Feddes Parameters Table
+                # ------------------------------------------------------------
+                if i == 3:  # Feddes parameters
+                    np.savetxt(soilfile, FeddesParam, fmt="%1.3e")
+                    counth += h
+                else:
+                    line = left + "\t" + right + "\n"
+                    counth += h
+                    soilfile.write(str(line))
+
+            # End of soil file: write Soil Properties Table
+            # ------------------------------------------------------------
+            np.savetxt(soilfile, SoilPhysProp, fmt="%1.3e")
+            soilfile.write(
+                "PERMX PERMY  PERMZ  ELSTOR POROS,VGNCELL,VGRMCCELL,VGPSATCELL"
+                + "\n"
+            )
+
+        soilfile.close()
+
+    def update_veg_map(self, indice_veg=1, show=False, **kwargs):
+        '''
+        Contains the raster map describing which type of vegetation every cell belongs to.
+
+
+        Parameters
+        ----------
+        indice_veg : TYPE, optional
+            DESCRIPTION. The default is 1.
+        show : TYPE, optional
+            DESCRIPTION. The default is False.
+        **kwargs : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        indice_veg : TYPE
+            DESCRIPTION.
+
+        '''
+        if isinstance(indice_veg, int):
+            indice_veg = float(indice_veg)
+        if hasattr(self, "hapin") is False:
+            self.update_prepo_inputs()
+            
+        with open(
+            os.path.join(
+                self.workdir, self.project_name, self.input_dirname, "root_map"
+            ),
+            "w+",
+        ) as rootmapfile:
+
+            rootmapfile.write("north:     0" + "\n")
+            rootmapfile.write("south:     0" + str(self.hapin["xllcorner"]) + "\n")
+            rootmapfile.write("east:     0" + "\n")
+            rootmapfile.write("west:     0" + str(self.hapin["yllcorner"]) + "\n")
+            rootmapfile.write("rows:     " + str(self.hapin["M"]) + "\n")
+            rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
+
+            if isinstance(indice_veg, float):
+                indice_veg = (
+                    np.c_[
+                        np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]
+                    * indice_veg
+                )
+                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
+            else:
+                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
+
+        rootmapfile.close()
+
+        self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
+        self.veg_map = indice_veg
+
+        if show:
+            plt, ax = plt_CT.show_indice_veg(indice_veg,**kwargs)
+            return indice_veg, plt, ax
+        return indice_veg
+
+
+#%% Add inputs and outputs attributes to the mesh
+
+    def init_boundary_conditions(self, BCtypName, time, **kwargs):
+        '''
+        .. note:
+            The boundary conditions are defined in the nansfdirbc (Dirichlet),
+            nansfneubc (Neumann), and sfbc (seepage face) files.
+
+            We have two types of boundary conditions (BC):
+            - Neumann BC (or specifed flux)
+            - Dirichlet BC (or pressure).
+
+
+        .. note:
+            - Pioggia: condizioni di Neumann. Quando non ci può più essere
+            infiltrazione metto Dirichlet.
+            - Evaporazione: si indica un limite di pressione minimo ( Pmin ) al di
+            sotto del quale si ha uno switch da Neumann a Dirichlet
+            (in quanto al di sotto di questo valore non si ha più evapotraspirazione).
+
+        .. note:
+            The boundary condition for any given surface node can switch between a
+            Dirichlet condition and a Neumann condition depending on the saturation
+            (or pressure) state of that node.
+
+        .. note:
+            A Neumann (or specified flux) boundary condition corresponds to
+            atmosphere-controlled infiltration or exfiltration, with the flux equal
+            to the rainfall or potential evaporation rate given by the atmospheric input data.
+            When the surface node reaches a threshold level of saturation or moisture deficit,
+            the boundary condition is switched to a Dirichlet (specified head) condition,
+            and the infiltration or exfiltration process becomes soil limited [1].
+
+        Returns
+        -------
+        None.
+
+        '''
+        # self.update_nansfdirbc()
+        # self.update_nansfneubc()
+        # self.update_sfbc()
+
+        try:
+            self.console.print('init boundary condition dataframe')
+            # self.create_mesh_vtk()
+            if not 'nnod3' in self.grid3d.keys():
+                self.run_processor(IPRT1=3)
+            if hasattr(self, 'mesh_bound_cond_df') is False:
+                self.create_mesh_bounds_df(BCtypName,self.grid3d['nodes_idxyz'],time, **kwargs)
+            plt_CT.plot_mesh_bounds(BCtypName,self.mesh_bound_cond_df,time)
+        except:
+            raise ValueError('cannot init boundary conditions dataframe')
+            pass
+
+        pass
+
+    def check_for_inconsistent_BC(self):
+        pass
+
+    def set_BC_laterals(self, time, BC_type='', val=0):
+        '''
+        Set all sides expect surface one
+        '''
+
+        nnodes = len(self.mesh_bound_cond_df[self.mesh_bound_cond_df['time (s)']==0]['id_node'])
+        for tt in time:
+            BC_bool_name = []
+            BC_bool_val = []
+
+            for id_node in range(nnodes):
+                if self.mesh_bound_cond_df['bound'].loc[int(id_node)] == True:
+                    BC_bool_name.append(BC_type)
+                    BC_bool_val.append(0)
+                else:
+                    BC_bool_name.append(None)
+                    BC_bool_val.append(val)
+
+            self.update_mesh_boundary_cond(
+                                            time = tt,
+                                            BC_bool_name=BC_bool_name,
+                                            BC_bool_val=BC_bool_val
+                                           )
+
+        self.check_for_inconsistent_BC()
+
+        #self.update_mesh_vtk(BC_bool_name,BC_bool_val)
+
+        pass
+
+
+
     def create_mesh_bounds_df(self,BCtypName,grid3d,times,**kwargs):
         '''
         Create a dataframe with flag for different boundary condtions assigned to each nodes
@@ -2489,10 +2654,7 @@ class CATHY():
         -------
         None.
 
-        '''
-
-        len(grid3d)
-        
+        '''       
         # Step 1 find mesh bottom and sides 
         # ----------------------------------
 
@@ -2747,580 +2909,6 @@ class CATHY():
 
 
 
-
-    def update_soil(self, IVGHU=[],
-                    FP=[], FP_map= [],
-                    SPP=[], SPP_map=[],
-                    show=False,
-                    **kwargs):
-        '''
-        Soil parameters (soil - IIN4). The porous media properties.
-
-        ..note::
-            The first thing that must be decides is the type of relationship to describe the hydraulic
-            characteristics of the unsaturated soil (i.e. retention curves). This can be done through
-            the choice of the parameter **IVGHU** amongst the several options.
-
-
-        Parameters
-        ----------
-        IVGHU : int, optional
-            = -1 table look up for moisture curves
-            = 0 for van Genuchten moisture curves
-            = 1 for extended van Genuchten moisture curves
-            = 2 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986) with Kr=Se**n conductivity relationship
-            = 3 for moisture curves from Huyakorn et al (WRR 20(8) 1984, WRR 22(13) 1986)with conductivity relationship from Table 3 of 1984 paper (log_10 Kr(Se) curve)
-            = 4 for Brooks‐Corey moisture curves.
-
-            The default is [].
-
-        FP : list, optional
-            Feddes Parameters. The default is [].
-            [PCANA PCREF PCWLT ZROOT PZ OMGC]
-            - 'PCANA': float, anaerobiosis point --> h2 (≈ -0.5m)
-            - 'PCREF': float, field capacity --> h3 (≈ 4-m)
-            - 'PCWLT': float, wilting point --> h4 (≈ -150m)
-            - 'ZROOT': float, root depth
-            - 'PZ': float, pz is an empirical parameter
-            - 'OMGC': float, 0<OMGC<1 Compensatory mechanisms for root water uptake
-
-            .. note:
-                Calculate actual transpiration Ta (m d−1).
-                A multiplicative reduction factor is defined by four pressure heads (0 > h1 > h2 > h3 > h4)
-                delimiting five phases of uptake
-                For details, see http://dx.doi.org/10.1002/2015WR017139
-                BETA = (1-DEPTH/ZROOT(VEG_TYPE(I)))*DEXP(-1.0d0*PZ(VEG_TYPE(I))*DEPTH/ZROOT(VEG_TYPE(I)))
-                BTRANI(K) = MAX(ZERO,BETA*DZ*GX)
-                BTRAN(I)  = BTRAN(I) + BETA*DZ
-                OMG(I)    = OMG(I) + GX*BETA*DZ
-                QTRANIE(K)=ETP(I)*BTRANI(K)/BTRAN(I)/MAX(OMG(I),OMGC(VEG_TYPE(I)))
-
-
-        FP : Dict, optional
-            Dictionnary containing the SPP properies per zones (root map, indice of vegetation)
-
-
-
-        SPP : DataFrame, optional
-            Soil Physical Properties. The default is [].
-            - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
-            - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
-            - 'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz
-            - 'ELSTOR' (NSTR, NZONE): specific storage
-            - 'POROS'  (NSTR, NZONE): porosity (moisture content at saturation) = \thetaS
-
-            retention curves parameters VGN, VGRMC, and VGPSAT
-            - 'VGNCELL' (NSTR, NZONE): van Genuchten curve exponent  = n
-            - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
-            - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent -->
-                                          VGPSAT == -1/alpha (with alpha expressed in [L-1]);
-
-            Example for 1 zone:
-
-                             PERMX     PERMY     PERMZ  ...  VGNCELL  VGRMCCELL  VGPSATCELL
-                str zone                                ...
-                0   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
-                1   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
-                2   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
-                3   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
-                4   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
-
-
-        SPP_map : Dict, optional
-            Dictionnary containing the SPP properies per zones
-            Example for 2 zones:
-                {
-                    'PERMX': [0.000188, 9.4e-05],
-                    'PERMY': [0.000188, 0.000188],
-                    'PERMZ': [0.000188, 0.000188],
-                    'ELSTOR': [1e-05, 1e-05],
-                    'POROS': [0.55, 0.55],
-                    'VGNCELL': [1.46, 1.46],
-                    'VGRMCCELL': [0.15, 0.15],
-                    'VGPSATCELL': [0.03125, 0.03125]
-                 }
-
-
-        ..note::
-
-            At the file level, this is an example of 3 layers and  2 zones; The inner reading cycle is by zone, and the outer one by layers, i.e.:
-
-            PERMX_z1_str1 PERMY_z1_str1  PERMZ_z1_str1  ELSTOR_z1_str1 POROS_z1_str1 VGNCELL_z1_str1 VGRMCCELL__z1_str1 VGPSATCELL__z1_str1
-            PERMX_z2_str1 PERMY_z2_str1  PERMZ_z2_str1  ELSTOR_z2_str1 POROS_z2_str1 VGNCELL_z2_str1 VGRMCCELL__z2_str1 VGPSATCELL__z2_str1
-            PERMX_z1_str2 PERMY_z1_str2  PERMZ_z1_str2  ELSTOR_z1_str2 POROS_z1_str2 VGNCELL_z1_str2 VGRMCCELL__z1_str2 VGPSATCELL__z1_str2
-            PERMX_z2_str2 PERMY_z2_str2  PERMZ_z2_str2  ELSTOR_z2_str2 POROS_z2_str2 VGNCELL_z2_str2 VGRMCCELL__z2_str2 VGPSATCELL__z2_str2
-            PERMX_z1_str3 PERMY_z1_str3  PERMZ_z1_str3  ELSTOR_z1_str3 POROS_z1_str3 VGNCELL_z1_str3 VGRMCCELL__z1_str3 VGPSATCELL__z1_str3
-            PERMX_z2_str3 PERMY_z2_str3  PERMZ_z2_str3  ELSTOR_z2_str3 POROS_z2_str3 VGNCELL_z2_str3 VGRMCCELL__z2_str3  VGPSATCELL__z2_str3
-
-            Make sure all 8 parameters for each layer/zone are on the same line.
-            Also, make sure NZONE = 2 in dem_parameters and MAXZON in CATHY.H is larger than or equal to NZONE.
-
-        Returns
-        -------
-        - update parm file
-        - update CATHY.H file
-        - update mesh vtk file
-
-        '''
-
-        # set default parameters if SPP and/or FP args are not existing yet
-        # --------------------------------------------------------------------
-        if len(self.soil)==0:
-            self.set_SOIL_defaults()
-
-        if len(SPP_map) == 0:
-            SPP_map = self.set_SOIL_defaults(SPP_map_default=True)
-
-        if ((not hasattr(self, 'soil_FP')) and (len(FP_map)== 0)):
-            FP_map = self.set_SOIL_defaults(FP_map_default=True)
-        elif len(FP_map)==0:
-            FP_map = self.soil_FP['FP_map']
-
-
-
-
-        # check size of soil properties map versus nb of zones/ nb of layers
-        # --------------------------------------------------------------------
-        if isinstance(SPP_map['PERMX'], float):
-            if self.dem_parameters["nzone"]!=1:
-                raise ValueError("Wrong number of zones")
-        else:
-            if self.dem_parameters["nzone"]>1:
-                if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
-                    raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-                                     + ' while nzone is ' + str(self.dem_parameters["nzone"]))
-            else: # case where soil properties are homogeneous in x and y direction (only z prop varies)
-                if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
-                    raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-                                     + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
-
-        # read function arguments kwargs and udpate soil and parm files
-        # --------------------------------------------------------------------
-        for kk, value in kwargs.items():
-            self.soil[kk] = value
-            self.parm[kk] = value
-
-        # loop over Feddes parameters
-        # --------------------------------------------------------------------
-        for fp in FP_map:  # loop over fedded parameterssoil_het_dim
-            self.soil[fp] = FP_map[fp]
-
-        # check consistency between parameters
-        # --------------------------------------------------------------------
-        if isinstance(SPP_map['PERMX'], float):
-            for k in SPP_map:
-                SPP_map[k] = [SPP_map[k]]
-
-        for z in range(len(SPP_map['VGRMCCELL'])): # loop over zones
-            if SPP_map['VGRMCCELL'][z]>=SPP_map['POROS'][z]:
-                raise ValueError("residual water content is" + str(SPP_map['VGRMCCELL'][z])
-                                 + '> porosity ' + str(SPP_map['POROS'][z]))
-
-        # create prepro inputs if not existing (containing info about the DEM)
-        # --------------------------------------------------------------------
-        if hasattr(self, "dem_parameters") is False:
-            self.update_prepo_inputs()
-
-        # Soil Physical Properties strat by strat
-        # --------------------------------------------------------------------
-        self.soil_SPP = {}
-        self.soil_SPP['SPP_map'] = SPP_map # mapping with respect to zones
-        if len(SPP)>0:
-            self.soil_SPP['SPP'] = SPP # matrice with respect to zones
-        else:
-            SoilPhysProp = self._prepare_SPP_tb(SPP_map)
-            self.soil_SPP['SPP'] = SoilPhysProp # matrice with respect to zones
-
-
-        # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
-        # --------------------------------------------------------------------
-        FeddesParam = self._prepare_SOIL_vegetation_tb(FP_map)
-        self.soil_FP = {}
-        self.soil_FP['FP'] = FeddesParam
-        self.soil_FP['FP_map'] = FP_map # mapping with respect to zones
-
-        if show:
-            update_map_veg = self.map_prop_veg(FP_map)
-            fig, ax = plt_CT.dem_plot_2d_top(update_map_veg,
-                                              label='all')
-            fig.savefig(os.path.join(self.workdir,self.project_name,'map_veg.png'), dpi=400)
-
-
-        # write soil file
-        # --------------------------------------------------------------------
-        self._write_SOIL_file(SoilPhysProp, FeddesParam, **kwargs)
-
-        # map SPP to the mesh
-        # --------------------------------------------------------------------
-        # self.map_prop2mesh(SPP_map)
-
-        pass
-
-
-    def set_SOIL_defaults(self,
-                          FP_map_default=False,
-                          SPP_map_default=False):
-
-        self.soil = {
-            "PMIN": -5.0,
-            "IPEAT": 0,
-            "SCF": 1.0, # here we assume that all soil is covered by the vegetation
-            "CBETA0": 0.4,
-            "CANG": 0.225,
-            # Feddes parameters default values
-            "PCANA": [0.0],
-            "PCREF": [-4.0],
-            "PCWLT": [-150],
-            "ZROOT": [0.1],
-            "PZ": [1.0],
-            "OMGC": [1.0],
-            "IVGHU": 0,  # The first thing that must be decided!
-            "HUALFA": 0.02,
-            "HUBETA": 2,
-            "HUGAMA": 2,
-            "HUPSIA": 0,
-            "HUSWR": 0.333,
-            "HUN": 1,
-            "HUA": -5,
-            "HUB": 1,
-            "BCBETA": 1.2,
-            "BCRMC": 0,
-            "BCPSAT": -0.345,
-        }
-
-
-        if FP_map_default:
-
-            FP_map = {
-                    # Feddes parameters default values
-                    "PCANA": [0.0],
-                    "PCREF": [-4.0],
-                    "PCWLT": [-150],
-                    "ZROOT": [0.1],
-                    "PZ": [1.0],
-                    "OMGC": [1.0],
-                }
-
-            # self.soil.update(FP)
-
-            return FP_map
-
-
-        # # set Soil Physical Properties defaults parameters
-        # # --------------------------------------------------------------------
-
-        if SPP_map_default:
-
-            PERMX = PERMY = PERMZ = 1.88e-04
-            ELSTOR = 1.00e-05
-            POROS = 0.55
-            VGNCELL = 1.46
-            VGRMCCELL = 0.15
-            VGPSATCELL = 0.03125
-
-            SPP_map = {
-                "PERMX": PERMX,
-                "PERMY": PERMY,
-                "PERMZ": PERMZ,
-                "ELSTOR": ELSTOR,
-                "POROS": POROS,
-                "VGNCELL": VGNCELL,
-                "VGRMCCELL": VGRMCCELL,
-                "VGPSATCELL": VGPSATCELL,
-            }
-
-            return SPP_map
-
-
-        pass
-
-    def _prepare_SPP_tb(self, SPP, **kwargs):
-        '''
-        _prepare_SOIL_Physical_Properties_tb
-
-        Parameters
-        ----------
-        SPP : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        np.array describing the SoilPhysProp with rows corresponding to the layer.
-
-        '''
-
-        # check number of zones
-        if self.dem_parameters["nzone"] > 1:
-            if len(SPP['PERMX'])<=1:
-                for i, spp in enumerate(SPP):
-                    SPP[spp] = SPP[spp]*np.ones(self.dem_parameters["nzone"])
-            else:
-                pass
-
-
-            # check size of the heteregeneity of SPP
-            # ----------------------------------------
-            # 1d --> uniform
-            # 2d --> lateral variations due to zones defined in surface
-            # 3d --> lateral + vertical variations due to zones and strates
-
-            SoilPhysProp = []
-
-
-            #  loop over zones (defined in the zone file)
-            # --------------------------------------------------------------
-            for izone in range(self.dem_parameters["nzone"]):
-                    
-                iLayersSoil = np.zeros([self.dem_parameters["nstr"], 8])
-
-                # loop over strates
-                # -----------------------------------------------------------------
-                for istr in range(self.dem_parameters["nstr"]):
-
-                    for i, spp in enumerate(SPP):
-                        # print(i,spp)
-                        if isinstance(SPP[spp][izone], float):
-                            print('extend to multiple layers')
-                            SPP[spp][istr] = SPP[spp][istr]*np.ones(self.dem_parameters["nstr"])
-                            
-                        iLayersSoil[istr,i] = SPP[spp][izone][istr]
-
-                SoilPhysProp.append(iLayersSoil)
-            SoilPhysProp = np.vstack(SoilPhysProp)
-
-        # case if there is only one zone in the mesh
-        # -------------------------------------------------------------
-        else:
-            if len(SPP['PERMX'])<=1:
-                izoneSoil = []
-                for spp in SPP:
-                    izoneSoil.append(SPP[spp])
-                izoneSoil = np.hstack(izoneSoil)
-                SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
-            else:
-                izoneSoil_per_layer = []
-                for stri in range(self.dem_parameters["nstr"]):
-                    print(stri)
-                    izoneSoil = []
-                    for spp in SPP:
-                        izoneSoil.append(SPP[spp][stri])
-                    izoneSoil_per_layer.append(np.hstack(izoneSoil))
-                SoilPhysProp = np.vstack(izoneSoil_per_layer)
-                
-        return SoilPhysProp
-
-    def _prepare_SOIL_vegetation_tb(self, FP_map):
-        '''
-        _prepare_SOIL_vegetation_tb
-
-        Parameters
-        ----------
-        FP_map : dict
-            dict containing Feddes parameters.
-            - 'PCANA': anaerobiosis point
-            - 'PCREF': field capacity
-            - 'PCWLT': wilting point
-            - 'ZROOT': float root depth
-            - 'PZ': ??
-            - 'OMGC': float ??
-            For details, see http://dx.doi.org/10.1002/2015WR017139
-        Returns
-        -------
-        FeddesParam: numpy array
-            table or array describing Feddes parameters for a given DEM
-
-
-
-
-        '''
-        # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
-        # --------------------------------------------------------------------
-
-        # Check if root_map file exist and is updated
-        # -------------------------------------------
-        if hasattr(self,'veg_map') is False:
-            if len(FP_map[list(FP_map)[0]])==1:
-                self.update_veg_map()
-            else:
-                raise ValueError('Found multiple values of Feddes zones' +
-                                 'but vegetation map is not defined')
-
-
-        # Check vegetation heterogeneity dimension
-        # ----------------------------------------
-        if self.cathyH["MAXVEG"] != len(FP_map[list(FP_map)[0]]):
-            raise ValueError("Wrong number of vegetations: PCANA size is " + str(len(FP_map[list(FP_map)[0]]))
-                             + ' while MAXVEG is ' + str(self.cathyH["MAXVEG"]))
-
-        # check number of vegetation
-        # --------------------------------------------------------------------
-        if self.cathyH["MAXVEG"] > 1:
-            FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
-            for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
-                izoneVeg_tmp = []
-                for sfp in FP_map:
-                    izoneVeg_tmp.append(FP_map[sfp][iveg])
-
-                izoneVeg_tmp = np.hstack(izoneVeg_tmp)
-                FeddesParam[iveg, :] = izoneVeg_tmp
-
-        # case where unique vegetation type
-        else:
-            FeddesParam = np.c_[
-                self.soil["PCANA"],
-                self.soil["PCREF"],
-                self.soil["PCWLT"],
-                self.soil["ZROOT"],
-                self.soil["PZ"],
-                self.soil["OMGC"],
-            ]
-
-        return FeddesParam
-
-    def _write_SOIL_file(self, SoilPhysProp, FeddesParam, **kwargs):
-        '''
-        _write_SOIL_file
-
-        Parameters
-        ----------
-        SoilPhysProp : TYPE
-            DESCRIPTION.
-        FeddesParam : TYPE
-            DESCRIPTION.
-        '''
-
-        # backup file during DA scheme cycle
-        # --------------------------------------------------------------------
-        backup = True
-        if 'backup' in kwargs:
-            backup = kwargs['backup']
-
-
-
-        # number of side header for each row
-        header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
-
-        # open soil file
-        # --------------------------------------------------------------------
-        if self.DAFLAG:
-            soil_filepath = os.path.join(
-                os.getcwd(), self.input_dirname, "soil")
-        else:
-            soil_filepath = os.path.join(
-                self.workdir, self.project_name, self.input_dirname, "soil")
-
-        if 'path' in kwargs:
-            soil_filepath =  os.path.join(kwargs['path'], "soil")
-
-        if backup:
-            if self.count_DA_cycle is not None:
-               dst_dir = soil_filepath + str(self.count_DA_cycle)
-               shutil.copy(soil_filepath,dst_dir)
-
-
-        with open(os.path.join(soil_filepath), "w+") as soilfile:
-
-            counth = 0  # count header index
-
-            # Write line by line according to header format
-            # ----------------------------------------------------------------
-            for i, h in enumerate(header_fmt_soil):
-
-                # left = values
-                # ------------------------------------------------------------
-                left = right = []
-                left = str(list(self.soil.values())[counth: counth + h])
-                left = left.strip("[]").replace(",", "")
-
-                # right = keys
-                # ------------------------------------------------------------
-                right = str(list(self.soil.keys())[counth: counth + h])
-                right = right.strip("[]").replace(",", "")
-                right = right.replace("'", "")
-
-                # Line 4: write Feddes Parameters Table
-                # ------------------------------------------------------------
-                if i == 3:  # Feddes parameters
-                    np.savetxt(soilfile, FeddesParam, fmt="%1.3e")
-                    counth += h
-                else:
-                    line = left + "\t" + right + "\n"
-                    counth += h
-                    soilfile.write(str(line))
-
-            # End of soil file: write Soil Properties Table
-            # ------------------------------------------------------------
-            np.savetxt(soilfile, SoilPhysProp, fmt="%1.3e")
-            soilfile.write(
-                "PERMX PERMY  PERMZ  ELSTOR POROS,VGNCELL,VGRMCCELL,VGPSATCELL"
-                + "\n"
-            )
-
-        soilfile.close()
-
-    def update_veg_map(self, indice_veg=1, show=False, **kwargs):
-        '''
-        Contains the raster map describing which type of vegetation every cell belongs to.
-
-
-        Parameters
-        ----------
-        indice_veg : TYPE, optional
-            DESCRIPTION. The default is 1.
-        show : TYPE, optional
-            DESCRIPTION. The default is False.
-        **kwargs : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        indice_veg : TYPE
-            DESCRIPTION.
-
-        '''
-        if isinstance(indice_veg, int):
-            indice_veg = float(indice_veg)
-        if hasattr(self, "hapin") is False:
-            self.update_prepo_inputs()
-            
-        with open(
-            os.path.join(
-                self.workdir, self.project_name, self.input_dirname, "root_map"
-            ),
-            "w+",
-        ) as rootmapfile:
-
-            rootmapfile.write("north:     0" + "\n")
-            rootmapfile.write("south:     0" + str(self.hapin["xllcorner"]) + "\n")
-            rootmapfile.write("east:     0" + "\n")
-            rootmapfile.write("west:     0" + str(self.hapin["yllcorner"]) + "\n")
-            rootmapfile.write("rows:     " + str(self.hapin["M"]) + "\n")
-            rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
-
-            if isinstance(indice_veg, float):
-                indice_veg = (
-                    np.c_[
-                        np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]
-                    * indice_veg
-                )
-                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
-            else:
-                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
-
-        rootmapfile.close()
-
-        self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
-        self.veg_map = indice_veg
-
-        if show:
-            plt, ax = plt_CT.show_indice_veg(indice_veg,**kwargs)
-            return indice_veg, plt, ax
-        return indice_veg
-
-    # ------------------------------------------------------------------------
-    # %% Mapping of properties to zones/mesh
-    # ------------------------------------------------------------------------
-    
     def map_dem_prop_2mesh(self,prop_name,prop_map,to_nodes=False):
         """
         Map DEM raster property to the CATHY mesh nodes/cells.
@@ -3698,7 +3286,10 @@ class CATHY():
         if np.array(node_coords).ndim <= 1:
             node_coords=[node_coords]
         if len(grid3d)==0:
-            grid3d=in_CT.read_grid3d(self.project_name)
+            grid3d=in_CT.read_grid3d(os.path.join(self.workdir, 
+                                                  self.project_name
+                                                  )
+                                     )
 
         closest_idx=[]
         closest=[]
@@ -3713,9 +3304,6 @@ class CATHY():
             threshold=5e-1
             if d[np.argmin(d)] > threshold:
                 self.console.print(":warning: [b]No node close to the required points![/b]")
-                # print(d[np.argmin(d)])
-                # print(grid3d['nodes_idxyz'][closest_idx[i], 1:])
-                # print(nc)
 
         return closest_idx, closest
 

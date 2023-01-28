@@ -1,13 +1,57 @@
-"""Class managing Data Assimilation process
+"""
+Class managing Data Assimilation process i.e.: 
+    
+    1. Parameters and data perturbation
+    
+        This step consit in the generation of the ensemble.
+    
+    DA class
+    ---
+    Steps 2 and 3 are controlled via a specific class
+    
+    2.  Open Loop
+
+       Without data run the hydrological model for an ensemble of realisations
+       using the `_run_hydro_DA_openLoop` module.
+       
+    3. Loop of DA:
+        
+        - Running hydro model
+        
+        Run iteratively (between two observations) the hydrological model
+        using the `_run_ensemble_hydrological_model` module.
+        
+        
+        - Map states 2 Observations 
+         
+        
+        The module `map_states2Observations()` takes care of the mapping.
+        
+        For complex mapping such as ERT, it is done via a separate class.
+        Example for the ERT we have a `class mappingERT()` which uses the 
+        Archie's petrophysical relationship.
+        
+        
+        - Running the analysis
+        
+        The analysis is controlled by `run_analysis()` which takes as argument
+        the type of analysis to run i.e. EnkF or Pf.
+        
+        - Update ensemble
+        
+        The ensemble file update is controlled by `update_ENS_files()`
+        
+        
+        - Evaluate performance
+
+
 """
 
 import os
-import math
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
 import pandas as pd
-from collections import OrderedDict
 
 import shutil
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
@@ -26,6 +70,9 @@ from pyCATHY import cathy_utils as utils_CT
 from rich.progress import track
 import multiprocessing
 import subprocess
+
+
+from functools import partial
 
 
 
@@ -453,7 +500,7 @@ def perturbate_parm(var_per, parm, type_parm, mean=[], sd=[], per_type=None,
 # DA class
 # ---------
 
-class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
+class DA(CATHY):
 
     # def __init__(self,**kwargs):
     #     self.damping = 1
@@ -1472,6 +1519,77 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
 
+    def _evaluate_perf_OL(self,
+                         parallel,
+                         list_assimilated_obs,
+                         path_fwd_CATHY_list,
+                         ENS_times
+                         ):
+
+        prediction_OL = []
+        if parallel:
+            if 'ERT' in list_assimilated_obs:
+                prediction_OL_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
+                                                           savefig = True,
+                                                           DA_cnb = self.count_DA_cycle,
+                                                           ENS_times=ENS_times,
+                                                           )
+                # prediction_OL_ERT is meas_size * ens_size * ENS_times size
+                np.shape(prediction_OL_ERT)
+            else:
+                for t in range(len(ENS_times)):
+                # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
+                    prediction_stacked = self.map_states2Observations(
+                                                        list_assimilated_obs,
+                                                        ENS_times=ENS_times,
+                                                        savefig=False,
+                                                        parallel=parallel,
+                                                        )
+                    prediction_OL.append(prediction_stacked)
+
+        else:
+            for t in range(len(ENS_times)):
+            # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
+                prediction_stacked = self.map_states2Observations(
+                                                    list_assimilated_obs,
+                                                    ENS_times=ENS_times,
+                                                    savefig=False,
+                                                    parallel=parallel,
+                                                    )
+                # prediction_stacked is meas_size * ens_size
+                prediction_OL.append(prediction_stacked)
+                # prediction_OL is meas_size * ens_size * ENS_times size
+
+
+        if parallel:
+            if 'ERT' in list_assimilated_obs:
+                prediction_OL.append(prediction_OL_ERT)
+
+                if np.shape(prediction_OL)[0]>1:
+                    prediction_OL =  np.hstack(prediction_OL)
+
+        prediction_OL = np.reshape(prediction_OL,[
+                                                  np.shape(prediction_OL)[1],
+                                                  self.NENS,
+                                                  len(ENS_times),
+                                                  ]
+                                  )
+        for t in range(len(ENS_times)):
+            # print(str(t) + 't perf OL')
+            data_t, _  = self._get_data2assimilate(
+                                                    list_assimilated_obs,
+                                                    time_ass=t,
+                                                )
+            self._performance_assessement(
+                                            list_assimilated_obs,
+                                            data_t,
+                                            prediction_OL[:,:,t],
+                                            t_obs=t,
+                                            openLoop=True,
+                                        )
+        return prediction_OL
+
+
 
     def _mapping_petro_init(self):
         ''' 
@@ -2336,8 +2454,6 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
     def selec_atmbc_window(self, NENS, ENS_times):
         '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
         Select the time window of the hietograph
         == time between two assimilation observation
 
@@ -2405,15 +2521,8 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
 
 
 
-
-
-
-
-
     def _DA_df(self, state=[None,None], state_analysis=None, rejected_ens=[], **kwargs):
         '''
-        THIS SHOULD BE MOVED TO DA CLASS
-
         Build a dataframe container to keep track of the changes before and after update for each ensemble.
         This dataframe is the support for DA results visualisation.
 
@@ -2552,3 +2661,289 @@ class DA(CATHY): #         NO TESTED YET THE INHERITANCE with CATHY MAIN class
                 shutil.copytree(
                     path_origin, path_nudn_i
                 )
+
+
+
+
+
+    def _parse_ERT_metadata(self,key_value):
+        '''
+        Extract ERT metadata information form obs dict
+        '''
+        ERT_meta_dict = {}
+        ERT_meta_dict['forward_mesh_vtk_file'] = key_value[1]['ERT']['forward_mesh_vtk_file']
+        ERT_meta_dict['pathERT'] = os.path.split(key_value[1]['ERT']['filename'])[0]
+        ERT_meta_dict['seq'] = key_value[1]['ERT']['sequenceERT']
+        ERT_meta_dict['electrodes'] = key_value[1]['ERT']['elecs']
+        ERT_meta_dict['noise_level'] = key_value[1]['ERT']['data_err']
+        ERT_meta_dict['porosity'] = self.Archie_parms['porosity']
+        ERT_meta_dict['data_format'] = key_value[1]['ERT']['data_format']
+        return ERT_meta_dict
+
+
+    def _map_ERT(self,state,
+                path_fwd_CATHY,
+                ens_nb,
+                **kwargs):
+        '''
+        Mapping of state variable to observation (predicted)
+        ERT using pedophysical transformation H
+        '''
+
+        savefig = True
+        if 'savefig' in kwargs:
+           savefig = kwargs['savefig']
+
+        # search key value to identify time and method
+        # --------------------------------------------
+        tuple_list_obs = list(self.dict_obs.items())
+        key_value = tuple_list_obs[self.count_DA_cycle]
+
+        # Load ERT metadata information form obs dict
+        # -------------------------------------------
+        ERT_meta_dict = self._parse_ERT_metadata(key_value)
+
+        Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(self.project_name,
+                                            self.Archie_parms,
+                                            ERT_meta_dict['porosity'],
+                                            ERT_meta_dict['pathERT'],
+                                            ERT_meta_dict['forward_mesh_vtk_file'],
+                                            ERT_meta_dict['electrodes'],
+                                            ERT_meta_dict['seq'],
+                                            path_fwd_CATHY,
+                                            df_sw = state[1], # kwargs
+                                            data_format= ERT_meta_dict['data_format'] , # kwargs
+                                            DA_cnb = self.count_DA_cycle, # kwargs
+                                            Ens_nb=ens_nb, # kwargs
+                                            savefig=savefig, # kwargs
+                                            noise_level = ERT_meta_dict['noise_level'],# kwargs
+                                            dict_ERT = key_value[1]['ERT']#  kwargs
+                                            )
+
+        df_Archie['OL'] = np.ones(len(df_Archie['time']))*False
+        self._add_2_ensemble_Archie(df_Archie)
+
+
+        return Hx_ERT
+
+    def _map_ERT_parallel_DA(self,
+                             ENS_times,
+                             ERT_meta_dict,
+                             key_time,
+                             path_fwd_CATHY_list,
+                             DA_cnb,
+                             ):
+         '''
+         Parallel mapping of ERT data using pedophysical transformation H
+         '''
+         Hx_ERT_ens = []
+
+         # freeze fixed arguments of Archie.SW_2_ERa_DA
+         # -----------------------------------------------------------------
+         ERTmapping_args = partial(Archie.SW_2_ERa_DA,
+                                   self.project_name,
+                                   self.Archie_parms,
+                                   ERT_meta_dict['porosity'],
+                                   ERT_meta_dict['pathERT'],
+                                   ERT_meta_dict['forward_mesh_vtk_file'],
+                                   ERT_meta_dict['electrodes'],
+                                   ERT_meta_dict['seq'],
+                                   data_format= ERT_meta_dict['data_format'],
+                                   DA_cnb = DA_cnb,
+                                   savefig=True,
+                                   noise_level = ERT_meta_dict['noise_level'],# kwargs
+                                   dict_ERT = key_time[1]['ERT']#  kwargs
+                                   )
+
+         # // run using ensemble subfolders path as a list
+         # -----------------------------------------------------------------
+         with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            results_mapping = pool.map(ERTmapping_args,
+                                         path_fwd_CATHY_list
+                                           )
+            print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+
+         for ens_i in range(len(path_fwd_CATHY_list)):
+             df_Archie = results_mapping[ens_i][1]
+             df_Archie['OL'] = np.zeros(len(df_Archie))
+             self._add_2_ensemble_Archie(df_Archie)
+             Hx_ERT_ens_i =  results_mapping[ens_i][0]
+
+             if 'pygimli' in self.dict_obs[key_time[0]]['ERT']['data_format']:
+                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['rhoa'])
+             else:
+                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i['resist'])
+
+         return Hx_ERT_ens
+
+
+    def _map_ERT_parallel_OL(self,
+                             ENS_times,
+                             ERT_meta_dict,
+                             key_time,
+                             path_fwd_CATHY_list,
+                             ):
+        '''
+        Parallel mapping of ERT data using pedophysical transformation H
+        case of the open Loop = nested loop with ensemble time
+        '''
+
+        Hx_ERT_ens = []
+        for t in range(len(ENS_times)):
+            print('t_openLoop mapping:' + str(t))
+
+            # freeze fixed arguments of Archie.SW_2_ERa
+            # -----------------------------------------------------------------
+            ERTmapping_args = partial(Archie.SW_2_ERa_DA,
+                                      self.project_name,
+                                      self.Archie_parms,
+                                      ERT_meta_dict['porosity'],
+                                      ERT_meta_dict['pathERT'],
+                                      ERT_meta_dict['forward_mesh_vtk_file'],
+                                      ERT_meta_dict['electrodes'],
+                                      ERT_meta_dict['seq'],
+                                      data_format= ERT_meta_dict['data_format'],
+                                      time_ass = t,
+                                      savefig=True,
+                                      noise_level = ERT_meta_dict['noise_level'] ,
+                                      dict_ERT = key_time[1]['ERT']
+                                      )
+            #
+            # -----------------------------------------------------------------
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+                results_mapping_time_i = pool.map(ERTmapping_args,
+                                                  path_fwd_CATHY_list
+                                                  )
+                print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+
+            for ens_i in range(len(path_fwd_CATHY_list)):
+                 Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]
+
+                 # print(np.shape(results_mapping_time_i))
+                 df_Archie = results_mapping_time_i[ens_i][1]
+
+                 # print(df_Archie)
+                 df_Archie['OL'] = np.ones(len(df_Archie))
+                 self._add_2_ensemble_Archie(df_Archie)
+
+
+                 if 'pygimli' in ERT_meta_dict['data_format']:
+                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['rhoa'])
+                 else:
+                    Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_time_i['resist'])
+
+        # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
+        #                                         len(Hx_ERT_ens[0]),
+        #                                         len(ENS_times)])  # (EnSize * data size * times)
+        return Hx_ERT_ens
+
+
+    def _map_ERT_parallel(self,
+                            path_fwd_CATHY_list,
+                            list_assimilated_obs='all',
+                            default_state = 'psi',
+                            verbose = False,
+                            **kwargs):
+        ''' Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,
+        // run using ensemble subfolders path as a list
+        '''
+
+        savefig = True
+        if 'savefig' in kwargs:
+           savefig = kwargs['savefig']
+        ENS_times = []
+        if 'ENS_times' in kwargs:
+           ENS_times = kwargs['ENS_times']
+        DA_cnb = []
+        if 'DA_cnb' in kwargs:
+           DA_cnb = kwargs['DA_cnb']
+
+
+        # search key value to identify time and method
+        tuple_list_obs = list(self.dict_obs.items())
+        key_time = tuple_list_obs[self.count_DA_cycle]
+        # Load ERT metadata information form obs dict
+        # -------------------------------------------
+        ERT_meta_dict = self._parse_ERT_metadata(key_time)
+
+        if len(ENS_times)>0: # case of the open Loop = nested loop with ensemble time
+            Hx_ERT_ens = self._map_ERT_parallel_OL(
+                                                    ENS_times,
+                                                    ERT_meta_dict,
+                                                    key_time,
+                                                    path_fwd_CATHY_list,
+                                                )
+        else:
+            Hx_ERT_ens = self._map_ERT_parallel_DA(
+                                                    ENS_times,
+                                                    ERT_meta_dict,
+                                                    key_time,
+                                                    path_fwd_CATHY_list,
+                                                    DA_cnb,
+                                                )
+
+        prediction_ERT = np.vstack(Hx_ERT_ens).T  # (EnSize)
+
+        # self.dict_obs
+
+        return prediction_ERT
+
+
+
+    def set_Archie_parm(self,
+                        porosity=[],
+                        rFluid_Archie=[1.0],
+                        a_Archie=[1.0],
+                        m_Archie=[2.0],
+                        n_Archie=[2.0],
+                        pert_sigma_Archie=[0]
+                        ):
+        '''
+        Dict of Archie parameters. Each type of soil is describe within a list
+        Note that if pert_sigma is not None a normal noise is
+        added during the translation of Saturation Water to ER
+
+        Parameters
+        ----------
+        rFluid : TYPE, optional
+            Resistivity of the pore fluid. The default is [1.0].
+        a : TYPE, optional
+            Tortuosity factor. The default is [1.0].
+        m : TYPE, optional
+            Cementation exponent. The default is [2.0].
+            (usually in the range 1.3 -- 2.5 for sandstones)
+        n : TYPE, optional
+            Saturation exponent. The default is [2.0].
+        pert_sigma_Archie : TYPE, optional
+            Gaussian noise to add. The default is None.
+
+        ..note:
+            Field procedure to obtain tce he covariance structure of the model
+            estimates is described in Tso et al () - 10.1029/2019WR024964
+            "Fit a straight line for log 10 (S) and log 10 (ρ S ) using the least-squares criterion.
+            The fitting routine returns the covariance structure of the model estimates, which can be used to de-
+            termine the 68% confidence interval (1 standard deviation) of the model estimates.""
+
+        '''
+        if len(porosity)==0:
+            porosity = self.soil_SPP['SPP'][:, 4][0]
+        if not isinstance(porosity, list):
+            porosity = [porosity]
+        self.Archie_parms = {
+                             'porosity':porosity,
+                             'rFluid_Archie':rFluid_Archie,
+                             'a_Archie':a_Archie,
+                             'm_Archie':m_Archie,
+                             'n_Archie':n_Archie,
+                             'pert_sigma_Archie':pert_sigma_Archie
+                             }
+
+        pass
+
+
+
+
+
+
+
+

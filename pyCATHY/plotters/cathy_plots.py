@@ -48,7 +48,7 @@ from matplotlib.ticker import FormatStrFormatter
 
 
 
-mpl.style.use('default')
+# mpl.style.use('default')
 mpl.rcParams['grid.color'] = 'k'
 mpl.rcParams['grid.linestyle'] = ':'
 mpl.rcParams['grid.linewidth'] = 0.25
@@ -745,7 +745,7 @@ def show_zone(zone_map, **kwargs):
                                          int(max(zone_map.flatten())),
                                          nb_of_zones+1),
                        ax=ax, label='indice of zones')
-    cax.set_ticklabels(range(int(min(zone_map.flatten())), nb_of_zones+1))
+    cax.set_ticklabels(range(int(min(zone_map.flatten())), nb_of_zones+2))
 
 
     ax.set_xlabel('x')
@@ -781,7 +781,7 @@ def show_indice_veg(veg_map, **kwargs):
                                          int(max(veg_map.flatten())),
                                          nb_of_zones+1),
                        ax=ax, label='indice of vegetation')
-    cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones+1))
+    cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones+2))
 
 
     ax.set_xlabel('x')
@@ -838,18 +838,18 @@ def get_dem_coords(dem_mat=[], str_hd_dem='', hapin={}, workdir=None, project_na
     y = np.zeros(dem_mat.shape[1]) #+ hapin['yllcorner']
 
     for a in range(dem_mat.shape[0]):
-        x[a] = float(str_hd_dem["west"]) + hapin['delta_x'] * a
+        x[a] = float(str_hd_dem["west"]) + hapin['delta_x'] * (a+1)
 
     for a in range(dem_mat.shape[1]):
-        y[a] = float(str_hd_dem["south"]) + hapin['delta_y'] * a
+        y[a] = float(str_hd_dem["south"]) + hapin['delta_y'] * (a+1)
 
     return x, y, dem_mat
     
 def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project_name=None, **kwargs):
     """
-    DEM3D creates a 3D representation from a Grass DEM file
+    Creates a 3D representation from a Grass DEM file
     """
-    
+    # np.shape(dem_mat)
     x, y,dem_mat = get_dem_coords(dem_mat, str_hd_dem, hapin, workdir, project_name, **kwargs)
     
     if ax is None:
@@ -857,7 +857,7 @@ def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project
         ax = fig.add_subplot(projection='3d')   
         
     X, Y = np.meshgrid(x, y)
-    surf = ax.plot_surface(X, Y, dem_mat.T, cmap="viridis")
+    surf = ax.plot_surface(X, Y, dem_mat.T, cmap="viridis",**kwargs)
     cbar = plt.colorbar(surf, shrink=0.25, orientation='horizontal',
                         label='Elevation (m)')
     ax.set(xlabel="Easting (m)", ylabel="Northing (m)", zlabel="Elevation (m)")
@@ -983,7 +983,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cax = ax1.matshow(EnsembleX, aspect='auto') #,
           #cmap=cm.rainbow, norm=colors.LogNorm())
     ax1.set_title('Prior')
-    ax1.set_ylabel(r'$\psi$ params #')
+    ax1.set_ylabel('$\psi$ params #')
     ax1.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
     
@@ -993,8 +993,8 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
                       norm=LogNorm()
                       )
     ax.set_title('cov(Prior)')
-    ax.set_xlabel(r'$\psi$ params #')
-    ax.set_ylabel(r'$\psi$ params #')
+    ax.set_xlabel('$\psi$ params #')
+    ax.set_ylabel('$\psi$ params #')
     # cbar = fig.colorbar(cax, location='bottom')
     cbar = fig.colorbar(cax, format="$%.1f$", location='bottom')
 
@@ -1038,7 +1038,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
                       aspect='auto',
                       cmap='jet')
     ax.set_title('Correction')
-    ax.set_ylabel(r'$\psi$ params #')
+    ax.set_ylabel('$\psi$ params #')
     ax.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
@@ -1048,7 +1048,7 @@ def show_DA_process_ens(EnsembleX,Data,DataCov,dD,dAS,B,Analysis,
     cax = ax.matshow(Analysis, 
                      aspect='auto')
     ax.set_title('Posterior')
-    ax.set_ylabel(r'$\psi$ params #')
+    ax.set_ylabel('$\psi$ params #')
     ax.set_xlabel('Members #')
     cbar = fig.colorbar(cax, location='bottom')
     ax.set_yticks([])  
@@ -1397,7 +1397,7 @@ def DA_plot_time_dynamic(DA,
       
 
         
-    ylabel = 'pressure head $\psi$ (m)'
+    ylabel = r'pressure head $\psi$ (m)'
     if 'sw' in state:
         ylabel = 'water saturation (-)'
 
