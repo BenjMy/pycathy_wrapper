@@ -17,16 +17,200 @@ except ImportError:
 import matplotlib.pylab as plt
 
 
-def trace_mesh_pg(meshIN,meshOUT,method='spline', **kwargs):
-    
-    # Specify interpolation method 'linear, 'spline', 'harmonic'
-    meshIN = pg.load(meshIN)
-    meshOUT = pg.load(meshOUT)
+def CATHY_2_Simpeg(mesh_CATHY,ERT_meta_dict,scalar='saturation',show=False,**kwargs):
+    pass
 
-    out_data = pg.interpolate(meshIN['ER_converted_CATHYmsh*'], meshOUT, method=method)
+def CATHY_2_pg(mesh_CATHY,ERT_meta_dict,scalar='saturation',show=False,**kwargs):
+    '''   
+    Interpolate CATHY mesh attribute to pygimli mesh.
+    Add a new [`scalar`] attribute to the pygimli mesh (create a new mesh)
     
-    return out_data
+    .. Note:
+        Need to flip axis because convention for CATHY and pygimli are different
+
+    Parameters
+    ----------
+    mesh_CATHY : pvmesh
+        CATHY mesh to transform to pygimli.
+    ERT_meta_dict :dict
+        Dictionnary containing ERT metadata (mesh, format, ..).
+    scalar : str, optional
+        scalar attribute to interpolate. The default is 'saturation'.
+    show : bool, optional
+        show the result of the interpolation using pyvista. The default is False.
+    **kwargs : TYPE
+        path : path of the mesh to overwrite 
+
+    Returns
+    -------
+    mesh_new_attr : TYPE
+        DESCRIPTION.
+    scalar_new : TYPE
+        DESCRIPTION.
+
+    '''
+            
     
+    if type(ERT_meta_dict['forward_mesh_vtk_file']) is str:
+        mesh_OUT = pv.read(ERT_meta_dict['forward_mesh_vtk_file'])
+    
+    # flip y and z axis as CATHY and pg have different convention for axis
+    # ------------------------------------------------------------------------
+    in_nodes_mod = np.array(mesh_CATHY.points)
+    in_nodes_mod_pg = np.array(mesh_OUT.points)
+    
+    
+    idx = np.array([0, 2, 1]) # reorder xyz to xzy
+    in_nodes_mod_m = in_nodes_mod[:, idx]
+    # in_nodes_mod_m = in_nodes_mod[:, idx]
+    in_nodes_mod_m[:,2] = -np.flipud(in_nodes_mod_m[:,2])
+    in_nodes_mod_m[:,1] = -np.flipud(in_nodes_mod_m[:,1])
+
+    # for i, axesi in enumerate(['x','y','z']):
+    #     print('check {} consistency between the 2 meshes'.format(axesi))
+    #     print(max(in_nodes_mod_m[:,i]),max(in_nodes_mod_pg[:,i]))
+    #     print(min(in_nodes_mod_m[:,i]),min(in_nodes_mod_pg[:,i]))
+
+
+    if 'mesh_nodes_modif' in ERT_meta_dict.keys():
+        in_nodes_mod_m = ERT_meta_dict['mesh_nodes_modif']
+        
+           
+    path = os.getcwd()
+    if 'path' in kwargs:
+        path = kwargs['path']
+
+
+        
+        
+    # mesh_OUT, meshOUT = trace_mesh(mesh_CATHY,mesh_OUT,
+    #                     scalar=scalar,
+    #                     threshold=1e-1,
+    #                     in_nodes_mod=in_nodes_mod_m
+    #                     )
+    
+    data_OUT, warm_0 = trace_mesh(mesh_CATHY,mesh_OUT,
+                                  scalar=scalar,
+                                  threshold=1e-1,
+                                  in_nodes_mod=in_nodes_mod_m
+                                  )
+           
+    if len(warm_0)>0:
+        print(warm_0)
+        
+    
+    scalar_new = scalar + '_nearIntrp2_pg_msh' 
+    if 'time' in kwargs:
+        time = kwargs['time']
+        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
+                                                            mesh_OUT, 
+                                                            scalar_new, 
+                                                            overwrite=True,
+                                                            time=time,
+                                                            path=path)
+    else:
+        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
+                                                            mesh_OUT, 
+                                                            scalar_new, 
+                                                            overwrite=True,
+                                                            path=path)
+    
+    if show:
+
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=False)
+        p.add_mesh(mesh_new_attr,scalars=scalar_new)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+        
+        
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_CATHY, scalars=scalar)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+            
+    
+    return mesh_new_attr, scalar_new
+
+
+def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwargs):
+ 
+
+    # flip y and z axis as CATHY and Resipy have different convention for axis
+    # ------------------------------------------------------------------------
+    in_nodes_mod = np.array(mesh_CATHY.points)
+    in_nodes_mod[:,2] = -np.flipud(in_nodes_mod[:,2])
+    in_nodes_mod[:,1] = -np.flipud(in_nodes_mod[:,1])
+
+
+    # check with a plot positon of the nodes for both meshes
+    # ------------------------------------------------------------------------
+    # p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+    # p.add_mesh(mesh_CATHY)
+    # _ = p.add_points(np.array(mesh_CATHY.points), render_points_as_spheres=True,
+    #                         color='red', point_size=20)
+    # _ = p.add_points(in_nodes_mod, render_points_as_spheres=True,
+    #                         color='blue', point_size=20)
+    # _ = p.show_bounds(grid='front', all_edges=True, font_size=50)
+    # cpos = p.show(True)
+    
+    path = os.getcwd()
+    if 'path' in kwargs:
+        path = kwargs['path']
+
+    data_OUT = trace_mesh(mesh_CATHY,mesh_Resipy,
+                            scalar=scalar,
+                            threshold=1e-1,
+                            in_nodes_mod=in_nodes_mod)
+    
+    # print(len(data_OUT))
+    scalar_new = scalar + '_nearIntrp2Resipymsh'
+    # print(mesh_Resipy)
+    # get_array(mesh, name, preference='cell'
+              
+
+    if 'time' in kwargs:
+        time = kwargs['time']
+        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
+                                                                mesh_Resipy, 
+                                                                scalar_new, 
+                                                                overwrite=True,
+                                                                time=time,
+                                                                path=path)
+    else:
+        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
+                                                                mesh_Resipy, 
+                                                                scalar_new, 
+                                                                overwrite=True,
+                                                                path=path)
+    
+    if show == True:
+
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_new_attr,scalars=scalar_new)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+        
+        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
+        p.add_mesh(mesh_CATHY, scalars=scalar)
+        _ = p.add_bounding_box(line_width=5, color='black')
+        cpos = p.show(True)
+        
+    # if type(meshERT) is str:
+    #     meshERTpv = pv.read(meshERT)
+    
+    # if savefig == True:
+    
+    #     plotter = pv.Plotter(notebook=True)
+    #     _ = plotter.add_mesh(mesh_new_attr,show_edges=True)
+    #     plotter.view_xz(negative=False)
+    #     plotter.show_grid()
+    #     plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'), 
+    #                           title='ERT'+ str(DA_cnb), 
+    #                           raster=True, 
+    #                           painter=True)
+            
+    
+    return mesh_new_attr, scalar_new
 
 def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     '''
@@ -56,13 +240,14 @@ def trace_mesh(meshIN,meshOUT,scalar,threshold=1e-1,**kwargs):
     # set_interpolation_radius()
     
     rd = max(np.diff(meshIN.points[:,0]))/1
-    result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
+    meshOUT_interp = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
     
-    # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result)
-
-    result = result.point_data_to_cell_data()
+    # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
+    
+    
+    result = meshOUT_interp.point_data_to_cell_data()
     out_data = result[scalar]
-    
+
     warm_0 = ''
     if len(np.where(out_data == 0))>0:
         warm_0 = 'interpolation created 0 values - replacing them by min value of input CATHY predicted ER mesh'
@@ -86,37 +271,51 @@ def set_interpolation_radius():
     
 def plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result):
     
-    fig = plt.figure()
-    ax1 = plt.subplot(131)
-    print(max(meshIN[scalar]))
-    print(min(meshIN[scalar]))
+    # fig = plt.figure()
+    # ax1 = plt.subplot(131)
+    # # print(max(meshIN[scalar]))
+    # # print(min(meshIN[scalar]))
     
-    meshIN.points[:,0].min()
+    # # meshIN.points[:,0].min()
+    # # meshOUT.points[:,0].min()
+    # # meshOUT.points[:,0].max()
+    # # meshOUT.points[:,1].min()
+    # # meshOUT.points[:,1].max()
+    
+    # cm = plt.cm.get_cmap('RdYlBu')
+    # # result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
+    # sc = ax1.scatter(meshIN.points[:,0],meshIN.points[:,1],c=meshIN[scalar],label='meshIN[scalar]',
+    #             s=35, cmap=cm)
+    # plt.colorbar(sc)
+    cm = plt.cm.get_cmap('RdYlBu')
+    # # fig = plt.figure()
+    
+    fig, axs = plt.subplots(2)
 
-    meshOUT.points[:,0].min()
-    meshOUT.points[:,0].max()
-    meshOUT.points[:,1].min()
-    meshOUT.points[:,1].max()
-    
-    cm = plt.cm.get_cmap('RdYlBu')
-    # result = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
-    sc = ax1.scatter(meshIN.points[:,0],meshIN.points[:,1],c=meshIN[scalar],label='meshIN[scalar]',
+
+    # ax2 = plt.subplot(121)
+    sc = axs[0].scatter(meshIN.points[:,0],meshIN.points[:,1],c=meshIN[scalar],label='meshIN[scalar]',
                 s=35, cmap=cm)
-    plt.colorbar(sc)
-    cm = plt.cm.get_cmap('RdYlBu')
-    # fig = plt.figure()
-    ax2 = plt.subplot(132)
-    sc = ax2.scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
-                s=35, cmap=cm,vmin=min(meshIN[scalar]), vmax=max(meshIN[scalar]))
-    ax2.set_xlim([min(meshIN.points[:,0]),max(meshIN.points[:,0])])
-    ax2.set_ylim([min(meshIN.points[:,1]),max(meshIN.points[:,1])])
+    #,vmin=min(meshIN[scalar]), vmax=max(meshIN[scalar])
+    axs[0].set_xlim([min(meshIN.points[:,0]),max(meshIN.points[:,0])])
+    axs[0].set_ylim([min(meshIN.points[:,1]),max(meshIN.points[:,1])])
     
     # fig = plt.figure()
-    ax3 = plt.subplot(133)
-    sc = ax3.scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
+    # ax3 = plt.subplot(122)
+    sc = axs[1].scatter(meshOUT.points[:,0],meshOUT.points[:,1],c=result[scalar],label='result[scalar]',
                 s=35, cmap=cm)
-    plt.colorbar(sc)
-    plt.tight_layout()
+
+    axs[1].set_xlim([min(meshIN.points[:,0]),max(meshIN.points[:,0])])
+    axs[1].set_ylim([min(meshIN.points[:,1]),max(meshIN.points[:,1])])
+    
+    import matplotlib.ticker as ticker
+    def fmt(x, pos):
+        a, b = '{:.2e}'.format(x).split('e')
+        b = int(b)
+        return r'${} \times 10^{{{}}}$'.format(a, b)
+
+    plt.colorbar(sc,format=ticker.FuncFormatter(fmt))
+    # plt.tight_layout()
 
     
     def uniquify(path):
@@ -133,7 +332,7 @@ def plot_2d_interpolation_quality(meshIN,scalar,meshOUT,result):
     savedir = os.getcwd()
     savename_test = os.path.join(savedir, 'interpolation_q.png')
     savename = uniquify(savename_test)
-    print(savename)
+    # print(savename)
 
     plt.savefig(savename)
     # plt.show()
@@ -282,186 +481,18 @@ def add_attribute_2mesh(data, mesh, name='ER_pred', overwrite=True,
     return mesh, name
 
 
-def CATHY_2_Simpeg(mesh_CATHY,mesh_Simpeg,scalar='saturation',show=False,**kwargs):
-    pass
 
-def CATHY_2_pg(mesh_CATHY,mesh_pg,scalar='saturation',show=False,**kwargs):
-    '''   
-    Convert CATHY mesh attribute to pygimli
-    Need to flip axis because convention for CATHY and pygimli are different
 
-    Parameters
-    ----------
-    mesh_CATHY : TYPE
-        DESCRIPTION.
-    mesh_pg : TYPE
-        DESCRIPTION.
-    scalar : TYPE, optional
-        DESCRIPTION. The default is 'saturation'.
-    show : TYPE, optional
-        DESCRIPTION. The default is False.
-    **kwargs : TYPE
-        DESCRIPTION.
 
-    Returns
-    -------
-    mesh_new_attr : TYPE
-        DESCRIPTION.
-    scalar_new : TYPE
-        DESCRIPTION.
+def trace_mesh_pg(meshIN,meshOUT,method='spline', **kwargs):
+    '''
+    Interpolate CATHY mesh (structured) into pygimli mesh (structured) using pygimli meshtools
+    # Specify interpolation method 'linear, 'spline', 'harmonic'
 
     '''
-            
+    meshIN = pg.load(meshIN)
+    meshOUT = pg.load(meshOUT)
+    out_data = pg.interpolate(meshIN['ER_converted_CATHYmsh*'], meshOUT, method=method)
     
+    return out_data
     
-    mesh_IN = mesh_CATHY
-    if type(mesh_CATHY) is str:
-        mesh_IN_tmp = pv.read(mesh_CATHY)
-
-    if type(mesh_pg) is str:
-        mesh_OUT = pv.read(mesh_pg)
-    
-    
-    # flip y and z axis as CATHY and pg have different convention for axis
-    # ------------------------------------------------------------------------
-    in_nodes_mod = np.array(mesh_IN.points)
-    # in_nodes_mod_pg = np.array(mesh_pg.points)
-    idx = np.array([0, 2, 1])
-    in_nodes_mod_m = in_nodes_mod[:, idx]
-    in_nodes_mod_m = in_nodes_mod[:, idx]
-    in_nodes_mod_m[:,2] = -np.flipud(in_nodes_mod_m[:,2])
-    in_nodes_mod_m[:,1] = -np.flipud(in_nodes_mod_m[:,1])
-
-    if 'dict_ERT' in kwargs:
-        if 'mesh_nodes_modif' in kwargs['dict_ERT'].keys():
-            in_nodes_mod_m = kwargs['dict_ERT']['mesh_nodes_modif']
-        
-
-    # plot_scatter_mesh_nodes(mesh_OUT,in_nodes_mod_m)
-   
-    path = os.getcwd()
-    if 'path' in kwargs:
-        path = kwargs['path']
-
-
-    data_OUT, warm_0 = trace_mesh(mesh_IN,mesh_OUT,
-                            scalar=scalar,
-                            threshold=1e-1,
-                            in_nodes_mod=in_nodes_mod_m)
-    
-    if len(warm_0)>0:
-        print(warm_0)
-        
-    
-    scalar_new = scalar + '_nearIntrp2_pg_msh' 
-    if 'time' in kwargs:
-        time = kwargs['time']
-        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
-                                                            mesh_OUT, 
-                                                            scalar_new, 
-                                                            overwrite=True,
-                                                            time=time,
-                                                            path=path)
-    else:
-        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
-                                                            mesh_OUT, 
-                                                            scalar_new, 
-                                                            overwrite=True,
-                                                            path=path)
-    
-    if show == True:
-
-        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=False)
-        p.add_mesh(mesh_new_attr,scalars=scalar_new)
-        _ = p.add_bounding_box(line_width=5, color='black')
-        cpos = p.show(True)
-        
-        
-        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
-        p.add_mesh(mesh_IN, scalars=scalar)
-        _ = p.add_bounding_box(line_width=5, color='black')
-        cpos = p.show(True)
-            
-    
-    return mesh_new_attr, scalar_new
-
-
-def CATHY_2_Resipy(mesh_CATHY,mesh_Resipy,scalar='saturation',show=False,**kwargs):
- 
-
-    # flip y and z axis as CATHY and Resipy have different convention for axis
-    # ------------------------------------------------------------------------
-    in_nodes_mod = np.array(mesh_CATHY.points)
-    in_nodes_mod[:,2] = -np.flipud(in_nodes_mod[:,2])
-    in_nodes_mod[:,1] = -np.flipud(in_nodes_mod[:,1])
-
-
-    # check with a plot positon of the nodes for both meshes
-    # ------------------------------------------------------------------------
-    # p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
-    # p.add_mesh(mesh_CATHY)
-    # _ = p.add_points(np.array(mesh_CATHY.points), render_points_as_spheres=True,
-    #                         color='red', point_size=20)
-    # _ = p.add_points(in_nodes_mod, render_points_as_spheres=True,
-    #                         color='blue', point_size=20)
-    # _ = p.show_bounds(grid='front', all_edges=True, font_size=50)
-    # cpos = p.show(True)
-    
-    path = os.getcwd()
-    if 'path' in kwargs:
-        path = kwargs['path']
-
-    data_OUT = trace_mesh(mesh_CATHY,mesh_Resipy,
-                            scalar=scalar,
-                            threshold=1e-1,
-                            in_nodes_mod=in_nodes_mod)
-    
-    # print(len(data_OUT))
-    scalar_new = scalar + '_nearIntrp2Resipymsh'
-    # print(mesh_Resipy)
-    # get_array(mesh, name, preference='cell'
-              
-
-    if 'time' in kwargs:
-        time = kwargs['time']
-        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
-                                                                mesh_Resipy, 
-                                                                scalar_new, 
-                                                                overwrite=True,
-                                                                time=time,
-                                                                path=path)
-    else:
-        mesh_new_attr, name_new_attr = add_attribute_2mesh(data_OUT, 
-                                                                mesh_Resipy, 
-                                                                scalar_new, 
-                                                                overwrite=True,
-                                                                path=path)
-    
-    if show == True:
-
-        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
-        p.add_mesh(mesh_new_attr,scalars=scalar_new)
-        _ = p.add_bounding_box(line_width=5, color='black')
-        cpos = p.show(True)
-        
-        p = pv.Plotter(window_size=[1024*3, 768*2], notebook=True)
-        p.add_mesh(mesh_CATHY, scalars=scalar)
-        _ = p.add_bounding_box(line_width=5, color='black')
-        cpos = p.show(True)
-        
-    # if type(meshERT) is str:
-    #     meshERTpv = pv.read(meshERT)
-    
-    # if savefig == True:
-    
-    #     plotter = pv.Plotter(notebook=True)
-    #     _ = plotter.add_mesh(mesh_new_attr,show_edges=True)
-    #     plotter.view_xz(negative=False)
-    #     plotter.show_grid()
-    #     plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'), 
-    #                           title='ERT'+ str(DA_cnb), 
-    #                           raster=True, 
-    #                           painter=True)
-            
-    
-    return mesh_new_attr, scalar_new

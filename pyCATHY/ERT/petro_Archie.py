@@ -10,6 +10,8 @@ from pyCATHY.ERT import simulate_ERT as simuERT
 import pandas as pd
 from pyCATHY.importers import cathy_outputs as out_CT
 
+import rich.console
+from rich import print
 
 def get_sw_ens_i(path_fwd_CATHY,**kwargs):
     ''' Return sw array for a given ensemble (if ensemble exist)'''
@@ -18,7 +20,7 @@ def get_sw_ens_i(path_fwd_CATHY,**kwargs):
     if 'df_sw' in kwargs:
         df_sw = kwargs['df_sw']
     else:
-        df_sw = out_CT.read_sw(os.path.join(path_fwd_CATHY,'output/sw'))
+        df_sw, _ = out_CT.read_sw(os.path.join(path_fwd_CATHY,'output/sw'))
         # case of open Loop where df_sw is list of nb of assimilation time length
         # -------------------------------------------------------------------
         if 'time_ass' in kwargs:
@@ -45,14 +47,23 @@ def get_Archie_ens_i(ArchieParms,Ens_nb):
     return ArchieParms2parse
 
     
+# def SW_2_ERa_DA(project_name,
+#                  ArchieParms,
+#                  porosity,
+#                  pathERT, meshERT, elecs, sequenceERT,
+#                  path_fwd_CATHY,
+#                  **kwargs):
+    
+    
 def SW_2_ERa_DA(project_name,
                  ArchieParms,
                  porosity,
-                 pathERT, meshERT, elecs, sequenceERT,
+                 ERT_meta_dict,
                  path_fwd_CATHY,
                  **kwargs):
+    
+
     '''
-    This should be moved to DA Class
     Data Assimilation
     -----------------
     Map saturation water from CATHY model to apparent Electrical Resistivities
@@ -90,24 +101,19 @@ def SW_2_ERa_DA(project_name,
     df_Archie : pd df
         Dataframe of the current (given ensemble and given assimilation time) Archie relationship.
 
-    '''
-    
+    '''        
     path_CATHY = os.path.join(path_fwd_CATHY,'vtk/')
     
     # Some flag for DA assimilation
     # ------------------------------------------------------------------------
     DA_cnb = None
-    Ens_nb = int(os.path.split(path_fwd_CATHY)[-1].split("_",1)[1])-1
+    Ens_nbi = int(os.path.split(path_fwd_CATHY)[-1].split("_",1)[1])-1
     
-    data_format = []
     savefig = False
-
     if 'DA_cnb' in kwargs:
         DA_cnb = kwargs['DA_cnb']
-    if 'Ens_nb' in kwargs:
-        Ens_nb = kwargs['Ens_nb']
-    if 'data_format' in kwargs:
-        data_format = kwargs['data_format']
+    if 'Ens_nbi' in kwargs:
+        Ens_nbi = kwargs['Ens_nbi']
     if 'savefig' in kwargs:
         savefig = kwargs['savefig']
 
@@ -125,7 +131,7 @@ def SW_2_ERa_DA(project_name,
         
     # Choose archie parameter for a given realisation (from the ensemble)
     # --------------------------------------------------------------------
-    ArchieParms2parse = get_Archie_ens_i(ArchieParms,Ens_nb)
+    ArchieParms2parse = get_Archie_ens_i(ArchieParms,Ens_nbi)
        
     # Convert to SW to ER values
     # --------------------------------------------------------------------
@@ -140,34 +146,36 @@ def SW_2_ERa_DA(project_name,
 
     df_Archie =  pd.DataFrame(columns=['time','ens_nb', 'sw','ER_converted'])
     df_Archie['time'] = DA_cnb*np.ones(len(ER_converted_ti))
-    df_Archie['ens_nb'] = Ens_nb*np.ones(len(ER_converted_ti))
+    df_Archie['ens_nbi'] = Ens_nbi*np.ones(len(ER_converted_ti))
     df_Archie['sw'] = df_sw
     df_Archie['ER_converted'] = ER_converted_ti
     df_Archie['porosity'] = ArchieParms2parse['porosity']*np.ones(len(ER_converted_ti))
     
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
-    mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(ER_converted_ti,
+    mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(
+                                                                ER_converted_ti,
                                                                 mesh_CATHY_ref,
                                                                 'ER_converted' + str(DA_cnb),
                                                                 overwrite=True,
-                                                                path = path_CATHY)
+                                                                path = path_CATHY
+                                                            )
 
-    if 'pygimli' in data_format:
+    if 'pygimli' in ERT_meta_dict['data_format']:
         # copy attribute to pg mesh
         # ------------------------------------------------------------------------
         mesh_geophy_new_attr, scalar_new = CATHY_2_pg(mesh_CATHY_new_attr,
-                                                      meshERT,
+                                                      ERT_meta_dict,
                                                       scalar='ER_converted'+ str(DA_cnb),
                                                       show=False,
                                                       path= path_CATHY,
                                                       **kwargs
                                                       )
-    elif 'resipy' in data_format:
+    elif 'resipy' in ERT_meta_dict['data_format']:
         # copy attribute to resipy mesh
         # ------------------------------------------------------------------------
         mesh_geophy_new_attr, scalar_new = CATHY_2_Resipy(mesh_CATHY_new_attr,
-                                                          meshERT,
+                                                          ERT_meta_dict,
                                                           scalar='ER_converted'+ str(DA_cnb),
                                                           show=False,
                                                           path= path_CATHY,
@@ -176,31 +184,35 @@ def SW_2_ERa_DA(project_name,
     else:
         raise ValueError('Mesh format not recognized')
     
-    
     res0 = mesh_geophy_new_attr.get_array(scalar_new)
 
     # fwd ERT data
     # ------------------------------------------------------------------------
-    if 'pygimli' in data_format:
+    if 'pygimli' in ERT_meta_dict['data_format']:
         # USING PYGIMLI
-        ERT_predicted = simuERT.create_ERT_survey_pg(os.path.join(pathERT,
-                                                                  project_name,
-                                                                  'predicted'), 
-                                                     sequence=sequenceERT, 
-                                                     mesh=meshERT, 
-                                                     res0=res0,
-                                                     **kwargs)
-    elif 'resipy' in data_format:
+        ERT_predicted = simuERT.create_ERT_survey_pg(
+                                                            os.path.join(ERT_meta_dict['pathERT'],
+                                                                         project_name,
+                                                                         'predicted'), 
+                                                            sequence=ERT_meta_dict['seq'], 
+                                                            mesh=ERT_meta_dict['forward_mesh_vtk_file'], 
+                                                            res0=res0,
+                                                            **kwargs
+                                                        )
+    elif 'resipy' in ERT_meta_dict['data_format']:
         
-        ERT_predicted = simuERT.create_ERT_survey_Resipy(os.path.join(pathERT,
-                                                                  project_name,
-                                                                  'predicted'), 
-                                                     sequence=sequenceERT, 
-                                                     mesh=meshERT, 
-                                                     res0=res0,
-                                                     **kwargs)
+        ERT_predicted = simuERT.create_ERT_survey_Resipy(
+                                                            os.path.join(ERT_meta_dict['pathERT'],
+                                                                         project_name,
+                                                                         'predicted'), 
+                                                            sequence=ERT_meta_dict['seq'], 
+                                                            mesh=ERT_meta_dict['forward_mesh_vtk_file'], 
+                                                            res0=res0,
+                                                            **kwargs
+                                                        )
     
-    # ERT_predicted
+    # ERT_predicted to dict
+    # ------------------------
     d = {'a':ERT_predicted['a'], 
           'b':ERT_predicted['b'], 
           'k':ERT_predicted['k'], 
@@ -213,14 +225,8 @@ def SW_2_ERa_DA(project_name,
 
     if savefig:
 
-        # fig = plt.figure()
-        # plt.scatter(np.arange(0,len(df_sw)), df_sw)
-        # plotname ='suplot'+ str(DA_cnb)
-        # plt.savefig(path_CATHY + plotname + '.png', dpi=300)
-                
         plotter = pv.Plotter(shape=(3, 1),off_screen=True) # notebook = True
         plotter.subplot(0, 0)
-        
         mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(df_sw[-1], 
                                                                     mesh_CATHY_ref, 
                                                                     'saturation_df', 
@@ -231,19 +237,25 @@ def SW_2_ERa_DA(project_name,
 
         plotter.update_scalar_bar_range([0,1]) # max saturation is 1
         plotter.show_grid()
-        # plotter.view_xz()
-       
+        
         plotter.subplot(1, 0)
         mesh_CATHY_new_attr.set_active_scalars(active_attr)
-        _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True)
+        _ = plotter.add_mesh(mesh_CATHY_new_attr,show_edges=True,
+                             clim=[min(mesh_CATHY_new_attr[active_attr]),
+                                   max(mesh_CATHY_new_attr[active_attr])
+                                   ]
+                             )
         plotter.show_grid()
-        # plotter.view_xz()
-       
+      
         plotter.subplot(2, 0)
         mesh_geophy_new_attr.set_active_scalars(scalar_new)
-        _ = plotter.add_mesh(mesh_geophy_new_attr,show_edges=True)
+        _ = plotter.add_mesh(mesh_geophy_new_attr,show_edges=True,
+                             clim=[min(mesh_CATHY_new_attr[active_attr]),
+                                   max(mesh_CATHY_new_attr[active_attr])
+                                   ]
+                             )
        
-        if 'pygimli' in data_format:
+        if 'pygimli' in ERT_meta_dict['data_format']:
             plotter.view_xy()
         else:      
             plotter.view_xz()
@@ -290,7 +302,9 @@ def Archie_rho_DA(rFluid_Archie=[], sat=[], porosity=[], a_Archie=[1.0], m_Archi
     rho: Converted Apparent Electrical Resistivity (Ohm.m).
 
     '''
-    
+    verbose = True
+    console = rich.console.Console(stderr=True, quiet=not verbose)
+
     # Loop over soil type
     # -----------------------------------------------
     for i in range(len(rFluid_Archie)): # loop over Archie heterogeneity i.e. soil zones
@@ -300,21 +314,31 @@ def Archie_rho_DA(rFluid_Archie=[], sat=[], porosity=[], a_Archie=[1.0], m_Archi
         
         try: 
             # test = np.shape(sigma)[0]>2
-            print('Archie perturbation for fwd model')
             for ti in range(np.shape(sigma)[0]): # Loop over assimilation times
                 for meas_nb in range(np.shape(sigma)[1]): # Loop over mesh nodes
-                    noise = np.random.normal(0,(pert_sigma_Archie[i]*(sigma[ti,meas_nb]))**2,len(sigma[ti,:])) # See eq. 4.4 thesis Isabelle p.95
+                    # See eq. 4.4 thesis Isabelle p.95
+                    #------------------------------------
+                    noise = np.random.normal(0,(pert_sigma_Archie[i]*(sigma[ti,meas_nb]))**2,len(sigma[ti,:])) 
                 sigma[ti,:] = sigma[ti,:] + noise
+            if i==0:
+                console.rule(":octopus: Parameter perturbation :octopus:", style="green")
+                console.print('''
+                                Archie perturbation for fwd model \n
+                                Archie parameters: {} \n
+                                \u03C3 Archie: {}  \n
+                                Nb of zones: {}
+                                '''.format(rFluid_Archie,pert_sigma_Archie,len(rFluid_Archie)),
+                                style="green")
+                console.rule("", style="green")
         except:
-            print('Archie perturbation for DA analysis')
             for meas_nb in range(len(sigma)): # Loop over mesh nodes
+                # See eq. 4.4 thesis Isabelle p.95
+                #------------------------------------
                 noise = np.random.normal(0,(pert_sigma_Archie[i]*(sigma[meas_nb]))**2,1) # See eq. 4.4 thesis Isabelle p.95
                 sigma[meas_nb] = sigma[meas_nb] + noise
 
-    
     return (1/sigma)
 
 
 
-
-
+              

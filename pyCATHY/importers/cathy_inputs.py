@@ -368,7 +368,7 @@ def read_root_map(rootmapfile):
         
 def read_grid3d(project_name, **kwargs):
 
-    print("reading grid3d")
+    # print("reading grid3d")
     grid3d_file = open(os.path.join(project_name, "output/grid3d"), "r")
 
     # Lines = grid3d_file.readlines()

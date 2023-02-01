@@ -48,6 +48,8 @@ import sys
 import os
 import numpy as np
 import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import glob
 from os import listdir
 from os.path import isfile, join
@@ -78,10 +80,20 @@ def subprocess_run_multi(pathexe_list):
     Multiprocessor functions outside main CATHY object
     # https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects
     """
+    
+
+    
     print(f"x= {pathexe_list}, PID = {os.getpid()}")
     os.chdir(pathexe_list)
     callexe = "./" + 'cathy'
-    p = subprocess.run([callexe], text=True, capture_output=True)
+    
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        p = subprocess.run([callexe], text=True, 
+                           #capture_output=True
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE
+                            )
 
     return p
 
@@ -125,10 +137,10 @@ class CATHY():
             All file variable are self dictionnary objects; example: soil file is contained in self.soil
         
         """
-        # create project dir
-        # ---------------------------------------------------------------------
+        self.t0 = time.time()  # executation time estimate
         self.console = make_console(verbose)
         self.console.print(":checkered_flag: [b]Initiate CATHY object[/b]")
+        self.verbose = False
 
         # flag for notebook execution
         # ---------------------------------------------------------------------
@@ -328,6 +340,7 @@ class CATHY():
         files describing physiographic features of the drainage system, as shown in Table 2.
         """
 
+        self.console.print(":cooking: [b]gfortran compilation[/b]")
         for loopi in range(2):  # run it twice (to avoid the first error)
             os.chdir(os.path.join(self.workdir, self.project_name, "prepro/src/"))
 
@@ -338,10 +351,9 @@ class CATHY():
             # if self.notebook==False:
             bashCommand = "gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
             try:
-                p = os.system(bashCommand)
+                p = os.system(bashCommand + "> /dev/null 2>&1")
                 # run it twice (to avoid the first error)
-                p = os.system(bashCommand)
-                self.console.print(":cooking: [b]gfortran compilation[/b]")
+                p = os.system(bashCommand + "> /dev/null 2>&1")
 
             except:
                 print("bash cmd not recognized")
@@ -358,11 +370,17 @@ class CATHY():
 
         bashcmd = "./pycppp"
         my_data = "2\n0\n1\n"  # user input data
-        p = subprocess.run([bashcmd], text=True,
-                           input=my_data, capture_output=True)
-        if verbose:
-            print(p.stdout)
-            print(p.stderr)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            p = subprocess.run([bashcmd], text=True,
+                           input=my_data, 
+                           #capture_output=True,
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE
+                           )
+        # if verbose:
+        #     print(p.stdout)
+        #     print(p.stderr)
         if "DEM resolution is not a multiple of the rivulet spacing!" in p.stdout:
             print("DEM resolution is not a multiple of the rivulet spacing!")
             sys.exit()
@@ -387,7 +405,8 @@ class CATHY():
         Other option is self.run_processor(runProcess=False)
 
         """
-        self.console.print(":hammer_and_wrench: [b]Recompile src files[/b]")
+        ti = time.time()  # executation time estimate
+        self.console.print(":hammer_and_wrench: [b] Recompile src files[/b] [" + str(int(abs(ti-self.t0))) + 's]')
         # clean all files previously compiled
         for file in glob.glob("*.o"):
             os.remove(file)
@@ -396,11 +415,16 @@ class CATHY():
             bashCommand = "gfortran -c " + str(file)
             # gfortran -c *.f
             # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
-            process = subprocess.Popen(
-                bashCommand.split(), stdout=subprocess.PIPE)
-            # if verbose==True:
-            #     output, error = process.communicate()
-            output, error = process.communicate()
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                process = subprocess.Popen(
+                                            bashCommand.split(), 
+                                            stdout=subprocess.PIPE, 
+                                            stderr=subprocess.PIPE
+                                            )
+                # if verbose==True:
+                #     output, error = process.communicate()
+                output, error = process.communicate()
         # list all the fortran compiled files to compile and run
         files = ""
         for file in glob.glob("*.o"):
@@ -408,9 +432,16 @@ class CATHY():
         bashCommand = (
             "gfortran" + files + " -llapack -lblas -o " + self.processor_name
         )
-        self.console.print(":cooking: [b]gfortran compilation[/b]")
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        ti = time.time()  # executation time estimate
+        self.console.print(":cooking: [b]gfortran compilation[/b] [" + str(int(abs(ti-self.t0))) + 's]')
+        
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            process = subprocess.Popen(bashCommand.split(), 
+                                            stdout=subprocess.PIPE, 
+                                            stderr=subprocess.PIPE
+                                            )
+            output, error = process.communicate()
         try:
             shutil.move(
                 os.path.join(self.workdir, self.project_name, "src", self.processor_name
@@ -425,7 +456,7 @@ class CATHY():
         pass
       
         
-    def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
+    def run_processor(self, recompile=True, runProcess=True, **kwargs):
         '''
         Run cathy.exe
 
@@ -454,7 +485,7 @@ class CATHY():
         # VERY VERY IMPORTANT NEVER COMMENT !
         
         self.check_DEM_versus_inputs()
-        self.update_parm(**kwargs, verbose=verbose)
+        self.update_parm(**kwargs)
         self.update_cathyH(**kwargs)
 
         if recompile == True:
@@ -489,24 +520,31 @@ class CATHY():
         # --------------------------------------------------------------------
         if runProcess == True:
 
-            t0 = time.time()  # executation time estimate
+            # t0 = time.time()  # executation time estimate
 
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name
             
             # case of simple simulation
             # ----------------------------------------------------------------
-            p = subprocess.run([callexe], text=True, capture_output=True)
-            if verbose == True:
-                print(p.stdout)
-                print(p.stderr)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                p = subprocess.run([callexe], 
+                                   # text=True, 
+                                    # capture_output=True,
+                                    stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE
+                                            )
+            # if verbose:
+            #     print(p.stdout)
+            #     print(p.stderr)
             os.chdir(os.path.join(self.workdir))
             self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir,self.project_name))
 
             # computation time
             # ----------------------------------------------------------------
-            t1 = time.time()
-            self.total_computation_time = t1 - t0
+            # t1 = time.time()
+            # self.total_computation_time = t1 - t0
 
 
         return
@@ -581,7 +619,7 @@ class CATHY():
                 indent = value
 
         if verbose :
-            self.console.print(indent + ":black_nib: [b]Update cathyH files[/b]")
+            self.console.print(indent + ":arrows_counterclockwise: [b]Update cathyH files[/b]")
 
         CATHYH_file = open(
             os.path.join(self.workdir, self.project_name,
@@ -594,10 +632,20 @@ class CATHY():
         # create them if not existing
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
-            
+        if hasattr(self, "dem_parameters") is False:
+            self.update_dem_parameters()
         if "NR" not in self.parm:
-            print('parm dictionnary is empty - falling back to defaults to update CATHYH -!! This can have consequences !!')
+            self.console.rule(":warning: warning messages above :warning:", style="yellow")
+            self.console.print(r'''
+                            The parm dictionnary is empty
+                            Falling back to defaults to update CATHYH
+                            This can have consequences !!
+                            ''', style="yellow")
+            self.console.rule("", style="yellow")
+
             self.update_parm()
+
+            
 
         DEMRES = 1
 
@@ -768,7 +816,7 @@ class CATHY():
         '''
 
         # print("update hap.in")
-        self.console.print(":black_nib: [b]Update hap.in file[/b]")
+        self.console.print(":arrows_counterclockwise: [b]Update hap.in file[/b]")
 
         structural_parameter = [
             "delta_x",
@@ -928,7 +976,8 @@ class CATHY():
                 DEM_withOutlet[0, 0] = 0
                 self.DEM = DEM_withOutlet
 
-            print("update dtm_13.val")
+            self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
+
             with open(os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+") as f:
                 # use exponential notation
                 np.savetxt(f, self.DEM, fmt="%1.4e")
@@ -978,7 +1027,7 @@ class CATHY():
 
         '''
 
-        self.console.print(":black_nib: [b]update dem_parameters file [/b]")
+        self.console.print(":arrows_counterclockwise: [b]update dem_parameters file [/b]")
 
         # set default parameters
         # --------------------------------------------------------------------
@@ -1008,7 +1057,9 @@ class CATHY():
             if keykwargs == "zratio":
                 key = "zratio(i),i=1,nstr"
                 if sum(value) != 1:
-                    warnings.warn("sum is not equal to 1 -->" + str(sum(value)))
+                    self.console.rule(":warning: warning messages above :warning:", style="yellow")
+                    self.console.print(r'The sum of all the layers is not equal to 1 but to {}'.format(np.round(sum(value),2)) , style="yellow")
+                    self.console.rule("", style="yellow")
             else:
                 key = keykwargs
 
@@ -1139,7 +1190,7 @@ class CATHY():
 
     # %% INPUT FILES
 
-    def update_parm(self, verbose=False, **kwargs):
+    def update_parm(self,**kwargs):
         '''
         Update parm file
         .. note:
@@ -1147,8 +1198,7 @@ class CATHY():
             - Updated CATHYH file (NPRT and NUMVP).
         '''
 
-        if verbose:
-            self.console.print(":black_nib: [b]update parm file [/b]")
+        self.console.print(":arrows_counterclockwise: [b]update parm file [/b]")
 
         if len(self.parm) == 0:
 
@@ -1219,7 +1269,7 @@ class CATHY():
         # --------------------------------------------------------------------
         for kk, value in kwargs.items():
             if kk in self.parm.keys():
-                if verbose == True:
+                if self.verbose == True:
                     print(f"key: {kk} | value: {value}")
 
             # times of interest TIMPRTi
@@ -1255,12 +1305,14 @@ class CATHY():
 
 
 
-
+        warnings_parm = []
         # check if consistency between times of interest and
         # number of times of interest
         # ------------------------------------------------------------
         if len(self.parm['(TIMPRT(I),I=1,NPRT)']) != self.parm["NPRT"]:
-            warnings.warn('adjusting NPRT with respect to time of interests requested')
+            warnings_parm.append('Adjusting NPRT with respect to time of interests requested' 
+                                 + '\n'
+                                )
             self.parm["NPRT"] = len(self.parm['(TIMPRT(I),I=1,NPRT)'])
 
         # check if consistency between DELTAT, DTMIN, and DTMAX
@@ -1272,24 +1324,37 @@ class CATHY():
         if (self.parm["DELTAT"] > min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)'])) or
             self.parm["DELTAT"] > 1e-2*min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))
             ):
-           warnings.warn('adjusting DELTAT with respect to time of interests requested')
-           self.parm["DELTAT"] = min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))/1e2
+            warnings_parm.append('Adjusting DELTAT with respect to time of interests requested' 
+                                 + '\n'
+                                )
+            self.parm["DELTAT"] = min(np.diff(self.parm['(TIMPRT(I),I=1,NPRT)']))/1e2
 
 
         if self.parm["DELTAT"] < self.parm["DTMIN"]:
-           warnings.warn('adjusting 2*DTMIN == DELTAT: ' + str(self.parm["DTMIN"]))
+           warnings_parm.append('adjusting 2*DTMIN == DELTAT: ' + str(self.parm["DTMIN"])
+                                 + '\n'
+                                )
            self.parm["DTMIN"] = self.parm["DELTAT"]/2
 
         if self.parm["DELTAT"] >= self.parm["DTMAX"]:
-           warnings.warn('adjusting DTMAX == 2*DELTAT')
+           warnings_parm.append('Adjusting DTMAX == 2*DELTAT'
+                                 + '\n'
+                                )
            self.parm["DTMAX"] = 2*self.parm["DELTAT"]
 
 
         if (self.parm["TMAX"] < max(self.parm['(TIMPRT(I),I=1,NPRT)'])):
-           warnings.warn('adjusting TMAX with respect to time of interests requested')
+           warnings_parm.append('Adjusting TMAX with respect to time of interests requested'
+                                 + '\n'
+                                )
            self.parm["TMAX"] = max(self.parm['(TIMPRT(I),I=1,NPRT)'])
            
-     
+        if len(warnings_parm)>0:
+            self.console.rule(":warning: warning messages above :warning:", style="yellow")
+            for ww in warnings_parm:
+                self.console.print(warnings_parm, style="yellow")
+            self.console.rule("", style="yellow")
+ 
         # transform array args to list
         # --------------------------------------------------------------------
         for kk, value in self.parm.items():
@@ -1418,6 +1483,12 @@ class CATHY():
 
         '''
 
+        if 'shellprint_update' in kwargs:
+            if kwargs['shellprint_update'] is False:
+                pass
+        else:
+            self.console.print(":arrows_counterclockwise: [b]Update ic[/b]")
+            
         #  check value of WTPOSITION
         # --------------------------------------------------------------------
         # For the case INDP=3, specifies the initial water table
@@ -1463,32 +1534,15 @@ class CATHY():
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP \n")
                 if 'pressure_head_ini' in kwargs:
-                    np.savetxt(icfile,kwargs['pressure_head_ini'])
-                    # if kwargs['pressure_head_ini']
-                    # icfile.write(str(kwargs['pressure_head_ini']))
-                    # self.map_prop2mesh({'ic':kwargs['pressure_head_ini']})
-
-                    # self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
+                    np.savetxt(icfile,[kwargs['pressure_head_ini']],fmt="%1.3e")
                 else:
                     raise ValueError('Missing initial pressure value')
-
             elif INDP == 1:
                 pressure_head_ini = kwargs['pressure_head_ini']
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
                 np.savetxt(icfile, pressure_head_ini, fmt="%1.3e")
-                
-                # try: 
-                #     self.update_mesh_vtk(prop='ic', prop_value=pressure_head_ini, savevtk=True)
-                # except:
-                #     pass
-
-
             elif INDP in [2,3]:
-            # elif INDP == 2:
-            #     icfile.write(str(INDP) + "\t" + str(IPOND) +
-            #                  "\t" + "INDP" + "\t" + "IPOND" + "\n")
-            # elif INDP == 3:
                 icfile.write(str(INDP) + "\t" + str(IPOND) +
                              "\t" + "INDP" + "\t" + "IPOND" + "\n")
                 icfile.write(str(WTPOSITION) + "\t" + "WTPOSITION" + "\n")
@@ -1559,6 +1613,13 @@ class CATHY():
                 - Update CATHYH file (MAXPRT).
 
         '''
+        
+        if 'shellprint_update' in kwargs:
+            if kwargs['shellprint_update'] is False:
+                pass
+        else:           
+            self.console.print(":arrows_counterclockwise: [b]Update atmbc[/b]")
+
         if len(netValue)>0:
             v_atmbc = netValue
         else:
@@ -1636,11 +1697,8 @@ class CATHY():
             # for key, value in kwargs.items():
             #     if key == "x_units":
             #         x_units = value
-            plt, ax = plt_CT.show_atmbc(time, VALUE,
+            plt_CT.show_atmbc(time, VALUE,
                                         **kwargs)
-
-            return plt, ax
-
         pass
 
 
@@ -2086,6 +2144,12 @@ class CATHY():
         - update mesh vtk file
 
         '''
+        if 'shellprint_update' in kwargs:
+            if kwargs['shellprint_update'] is False:
+                pass
+        else:           
+            self.console.print(":arrows_counterclockwise: [b]Update soil[/b]")
+
 
         # set default parameters if SPP and/or FP args are not existing yet
         # --------------------------------------------------------------------
@@ -2593,7 +2657,8 @@ class CATHY():
         # self.update_sfbc()
 
         try:
-            self.console.print('init boundary condition dataframe')
+            self.console.print(":orange_square: [b] init boundary condition dataframe [/b]")
+
             # self.create_mesh_vtk()
             if not 'nnod3' in self.grid3d.keys():
                 self.run_processor(IPRT1=3)
@@ -2657,7 +2722,6 @@ class CATHY():
         '''       
         # Step 1 find mesh bottom and sides 
         # ----------------------------------
-
         self.mesh_bound_cond_df = pd.DataFrame(grid3d)
         self.mesh_bound_cond_df = self.mesh_bound_cond_df.rename(
                                     columns={0: "id_node",
@@ -2694,46 +2758,29 @@ class CATHY():
         max(bounds_id)
         len(self.mesh_bound_cond_df)
 
-        # step 2 add flap for each type of BC
+        # step 2 add flag for each type of BC
         # ---------------------------------------
-        
         # specified pressure
         if 'nansfdirbc' in BCtypName:
             if 'no_flow' in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                self.mesh_bound_cond_df[BCtypName].iloc[bounds_id] = 0
-                
+                mask = (self.mesh_bound_cond_df['bound'] == True)
+                self.mesh_bound_cond_df.loc[mask,BCtypName] = 0
         # specified flux
         if 'nansfneubc' in BCtypName:
             if 'no_flow' in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                self.mesh_bound_cond_df[BCtypName].iloc[bounds_id] = 0
-                
+                mask = (self.mesh_bound_cond_df['bound'] == True)
+                self.mesh_bound_cond_df.loc[mask,BCtypName] = 0            
         # specified seepage
         if 'sfbc' in BCtypName:
             if 'no_flow' in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                self.mesh_bound_cond_df[BCtypName].iloc[bounds_id] = 0
-                
-        #         if kwargs['no_flow']:
-                    
-                
-        # self.mesh_bound_cond_df[BCtypName] = -99
-        
-        # testBC = self.mesh_bound_cond_df
-        
-        # # BCtypName
-        
-        
-        
+                mask = (self.mesh_bound_cond_df['bound'] == True)
+                self.mesh_bound_cond_df.loc[mask,BCtypName] = 0               
+
         print('SKip time dependence init boundary condition dataframe - consequences (?)')
-        # self.mesh_bound_cond_df = pd.concat([self.mesh_bound_cond_df]*len(times), ignore_index=True)
-        # times_reshaped = [val for val in times for _ in np.arange(len(grid3d))]
-        # self.mesh_bound_cond_df['time (s)'] = times_reshaped
-        # empty_vec = np.empty(len(times_reshaped))
-        # empty_vec[:] = np.nan
-        # self.mesh_bound_cond_df['BC_type'] = empty_vec #np.nan(len(times_reshaped))
-        # self.mesh_bound_cond_df['BC_type_val'] = empty_vec
+
 
         pass
 

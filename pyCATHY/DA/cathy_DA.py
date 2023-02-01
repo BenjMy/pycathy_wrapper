@@ -70,7 +70,8 @@ from pyCATHY import cathy_utils as utils_CT
 from rich.progress import track
 import multiprocessing
 import subprocess
-
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from functools import partial
 
@@ -650,9 +651,10 @@ class DA(CATHY):
         threshold_rejected = 10
         if 'threshold_rejected' in kwargs:
             threshold_rejected = kwargs['threshold_rejected']
-        verbose = False
+            
+        self.verbose = False
         if 'verbose' in kwargs:
-            verbose = kwargs['verbose']
+            self.verbose = kwargs['verbose']
 
         # initiate DA
         # -------------------------------------------------------------------
@@ -698,9 +700,10 @@ class DA(CATHY):
         # -----------------------------------
        
         for t_atmbc in all_atmbc_times: #atmbc times include assimilation observation times
-            print(t_atmbc)
-
-            self._run_ensemble_hydrological_model(parallel,verbose,callexe)
+            # print(t_atmbc)
+            
+            
+            self._run_ensemble_hydrological_model(parallel,callexe)
             os.chdir(os.path.join(self.workdir))
 
             # self.plot_ini_state_cov()
@@ -728,8 +731,9 @@ class DA(CATHY):
             # --------------------------------------------------------
             if t_atmbc in ENS_times:
 
-                print('t=' + str(t_atmbc))
+                # print('t=' + str(t_atmbc))
 
+                #%%
                 # map states to observation = apply H operator to state variable
                 # ----------------------------------------------------------------
                 prediction = self.map_states2Observations(
@@ -737,6 +741,9 @@ class DA(CATHY):
                                                             default_state = 'psi',
                                                             parallel=parallel,
                                                            )
+                
+                #%%
+                
                 # print(len(prediction))
                 # print(np.shape(prediction))
                 # ValueError: operands could not be broadcast together with shapes (612,) (1836,)
@@ -763,9 +770,14 @@ class DA(CATHY):
                 # ax.set_aspect('equal')
 
                 # fig.tight_layout()
-
+                
+                #%%
                 # DA analysis
                 # ----------------------------------------------------------------
+                self.console.print(r''':chart_with_upwards_trend: [b]Analysis[/b]:
+                                       - DA type: {}
+                                       - Damping: {}
+                                   '''.format(DA_type, self.damping))
                 (ensemble_psi,
                  ensemble_sw,
                  data,
@@ -790,7 +802,8 @@ class DA(CATHY):
                                                                     analysis_param)
 
 
-            
+                #%%
+
                 # check analysis quality
                 # ----------------------------------------------------------------
 
@@ -831,9 +844,13 @@ class DA(CATHY):
 
             self.count_atmbc_cycle = self.count_atmbc_cycle + 1
 
-            print('------ end of time step (s) -------' + str(int(t_atmbc)) + '/' + str(int(all_atmbc_times[-1])) + '------')
-            print('------ end of atmbc update --------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
-
+            self.console.rule(":round_pushpin: end of time step (s)"
+                              + str(int(t_atmbc)) + '/' + str(int(all_atmbc_times[-1])) +
+                              ":round_pushpin:", style="yellow")
+            self.console.rule(":round_pushpin: end of atmbc update #"
+                              + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) +
+                              ":round_pushpin:", style="yellow")
+            
             # create dataframe _DA_var_pert_df holding the results of the DA update
             # ---------------------------------------------------------------------
             self._DA_df(state=[ensemble_psi_valid, ensemble_sw_valid],
@@ -867,11 +884,15 @@ class DA(CATHY):
                                             analysis=analysis_valid
                                             )
             else:
-                print('------ end of DA ------')
+                self.console.rule(":red_circle: end of DA"
+                                  ":red_circle:", style="yellow")
                 pass
-            print('------ end of DA update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)) + '------')
-            print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
-
+            self.console.rule(":red_circle: end of DA update"
+                              + str(self.count_DA_cycle) + '/' + str(len(ENS_times)) +
+                              ":red_circle:", style="yellow")
+            self.console.rule(":dart: % of valid ensemble: "
+                              + str((len(self.ens_valid)*100)/(self.NENS)) +
+                              ":dart:", style="yellow")
             plt.close('all')
             
         # clean all vtk file produced
@@ -958,6 +979,8 @@ class DA(CATHY):
         # composing the ensemble
         # ----------------------------------------------------------------
         if parallel == True:
+            self.console.print(":athletic_shoe: [b]Run hydrological model // :unlock: [/b]")
+
             pathexe_list = []
             for ens_i in range(self.NENS):
                 path_exe = os.path.join(self.workdir,
@@ -997,7 +1020,7 @@ class DA(CATHY):
             df_psi = self.read_outputs(filename='psi',
                                         path=os.path.join(os.getcwd(),
                                                           'output'))
-            df_sw = self.read_outputs(filename='sw',
+            df_sw, _ = self.read_outputs(filename='sw',
                                         path=os.path.join(os.getcwd(),
                                                           'output'))
 
@@ -1015,6 +1038,9 @@ class DA(CATHY):
                             ens_nb=ens_i+1)
 
 
+        os.chdir(os.path.join(self.workdir,
+                               )
+                 )
         prediction_OL = self._evaluate_perf_OL(
                                                 parallel,
                                                 list_assimilated_obs,
@@ -1245,9 +1271,10 @@ class DA(CATHY):
 
 
 
-    def _run_ensemble_hydrological_model(self,parallel,verbose,callexe):
+    def _run_ensemble_hydrological_model(self,parallel,callexe):
         ''' multi run CATHY hydrological model from the independant folders composing the ensemble '''
 
+        self.console.print(":athletic_shoe: [b]Run hydrological model[/b]")
         # ----------------------------------------------------------------
         if parallel == True:
             pathexe_list = []
@@ -1262,7 +1289,7 @@ class DA(CATHY):
                 result = pool.map(subprocess_run_multi, pathexe_list)
 
 
-                if verbose == True:
+                if self.verbose:
                     self.console.print(result)
         # process each ensemble folder one by one
         # ----------------------------------------------------------------
@@ -1279,7 +1306,7 @@ class DA(CATHY):
                 p = subprocess.run([callexe], text=True,
                                    capture_output=True)
 
-                if verbose == True:
+                if verbose:
                     self.console.print(p.stdout)
                     self.console.print(p.stderr)
 
@@ -1535,8 +1562,9 @@ class DA(CATHY):
                                                            ENS_times=ENS_times,
                                                            )
                 # prediction_OL_ERT is meas_size * ens_size * ENS_times size
-                np.shape(prediction_OL_ERT)
+                # np.shape(prediction_OL_ERT)
             else:
+                write2shell_map = True
                 for t in range(len(ENS_times)):
                 # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
                     prediction_stacked = self.map_states2Observations(
@@ -1544,8 +1572,10 @@ class DA(CATHY):
                                                         ENS_times=ENS_times,
                                                         savefig=False,
                                                         parallel=parallel,
+                                                        write2shell_map=write2shell_map,
                                                         )
                     prediction_OL.append(prediction_stacked)
+                    write2shell_map = False
 
         else:
             for t in range(len(ENS_times)):
@@ -1598,7 +1628,8 @@ class DA(CATHY):
         If Archie and VGP dictionnaries are not existing fill with default values       
         '''
 
-        print('Initiate Archie and VGP')
+        # print('Initiate Archie and VGP')
+        warnings_petro = []
         
         # check that porosity is a list
         # -------------------------------------
@@ -1609,6 +1640,7 @@ class DA(CATHY):
         # check if Archie parameters exists
         # ---------------------------------
         if hasattr(self,'Archie_parms') == False:
+            warnings_petro.append('Archie parameters not defined - Falling back to defaults')
             print('Archie parameters not defined set defaults')
             self.Archie_parms = {'porosity': porosity,
                                  'rFluid_Archie':[1.0],
@@ -1621,9 +1653,15 @@ class DA(CATHY):
         # check if VGN parameters exists
         # ---------------------------------
         if hasattr(self,'VGN_parms') == False:
-            print('VGN parameters not defined set defaults: empty dict {} - not implemented yet')
+            warnings_petro.append('VGN parameters not defined - Falling back to defaults')
             self.VGN_parms = {}
 
+        self.console.rule(":warning: warning messages above :warning:", style="yellow")
+        for ww in warnings_petro:
+            self.console.print(ww, style="yellow")
+        self.console.rule("", style="yellow")
+ 
+    
         pass
     
     def update_ENS_files(self, dict_parm_pert, list_parm2update, **kwargs):
@@ -1641,6 +1679,8 @@ class DA(CATHY):
         Overwritten files.
 
         '''
+        self.console.print(":arrows_counterclockwise: [b]Update ensemble[/b]")
+
         
         # replace dictionnary key with cycle nb
         # -------------------------------------
@@ -1661,6 +1701,7 @@ class DA(CATHY):
         # loop over ensemble files to update ic -->
         # this is always done since psi are state variable to update
         # ------------------------------------------------------------------
+        shellprint_update = True
         for ens_nb in range(self.NENS):
             # change directory according to ensmble file nb
             os.chdir(os.path.join(self.workdir, self.project_name,
@@ -1676,7 +1717,7 @@ class DA(CATHY):
                         self.update_ic(INDP=1, IPOND=0,
                                        pressure_head_ini=analysis[:,ens_nb],
                                        filename=os.path.join(os.getcwd(), 'input/ic'),
-                                       backup=True)
+                                       backup=False,shellprint_update=shellprint_update)
             else:
                 if kwargs['cycle_nb'] > 0:
                     raise ValueError('no state variable update - use last iteration as initial conditions ?')
@@ -1687,7 +1728,9 @@ class DA(CATHY):
                             self.update_ic(INDP=1, IPOND=0,
                                            pressure_head_ini=df_psi[-1, :],
                                            filename=os.path.join(os.getcwd(), 'input/ic'),
-                                           backup=False)
+                                           backup=False,shellprint_update=shellprint_update)
+            shellprint_update = False
+
 
 
         # loop over dict of perturbated variable
@@ -1700,11 +1743,13 @@ class DA(CATHY):
         VG_p_possible_names = ['n_VG', 'thetar_VG', 'alpha_VG','VGPSATCELL_VG']
         VG_p_possible_names_positions_in_soil_table = [5,6,7,7]
 
+        
         for parm_i, key in enumerate(list_parm2update):  # loop over perturbated variables dict
             key_root = re.split('(\d+)', key)
             if len(key_root)==1:
                 key_root.append('0')
 
+            shellprint_update = True
             # ------------------------------------------------------------------
             for ens_nb in range(self.NENS):
                 # change directory according to ensmble file nb
@@ -1715,7 +1760,7 @@ class DA(CATHY):
                 # --------------------------------------------------------------
                 if key == 'atmbc':
                     print('hietograph perturbated not yet implemented')
-                    self.update_atmbc(verbose=True)
+                    self.update_atmbc(verbose=self.verbose)
 
                 # ic update (i.e. water table position update)
                 # --------------------------------------------------------------
@@ -1725,8 +1770,7 @@ class DA(CATHY):
                                        pressure_head_ini=dict_parm_pert[key
                                            ]['ini_perturbation'][ens_nb],
                                        filename=os.path.join(os.getcwd(), 'input/ic'),
-                                       backup=True)
-
+                                       backup=False,shellprint_update=shellprint_update)
                 # kss update
                 # --------------------------------------------------------------
                 elif key_root[0].casefold() in 'ks'.casefold():
@@ -1751,9 +1795,10 @@ class DA(CATHY):
                     if np.isnan(PERMX_het_ens[:,ens_nb]).any()==False:
                         self.update_soil(SPP_map=SPP_map,
                                           FP_map=self.soil_FP['FP_map'],
-                                          verbose=True,
-                                          filename=os.path.join(os.getcwd(), 'input/soil')
-                                          )  # specify filename path
+                                          verbose=self.verbose,
+                                          filename=os.path.join(os.getcwd(), 'input/soil'),
+                                          shellprint_update=shellprint_update
+                                          )
                 # VG parameters update
                 # --------------------------------------------------------------
                 elif key_root[0] in VG_p_possible_names:
@@ -1814,8 +1859,10 @@ class DA(CATHY):
 
                     self.update_soil(SPP_map=VG_parms_ensi[ens_nb],
                                      FP_map=self.soil_FP['FP_map'],
-                                     verbose=False,
-                                     filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
+                                     verbose=self.verbose,
+                                     filename=os.path.join(os.getcwd(), 'input/soil'),
+                                     shellprint_update=shellprint_update
+                                    )
 
                 # FeddesParam update
                 # --------------------------------------------------------------
@@ -1843,12 +1890,15 @@ class DA(CATHY):
                         FeddesParam_map_ensi.append(fed)
                     self.update_soil(FP_map=FeddesParam_map_ensi[ens_nb],
                                      SPP_map=SPP_map,
-                                     verbose=False,
-                                     filename=os.path.join(os.getcwd(), 'input/soil'))  # specify filename path
-
+                                     verbose=self.verbose,
+                                     filename=os.path.join(os.getcwd(), 'input/soil'),
+                                     shellprint_update=shellprint_update
+                                    )
                 # Archie_p update
                 # --------------------------------------------------------------
                 elif key_root[0] in Archie_p_names:
+                    self.console.print(":arrows_counterclockwise: [b]Update Archie parameters[/b]")
+
                     # self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
                     idArchie = Archie_p_names.index(key_root[0])
                     if len(Archie_parms_mat_ens)==0:
@@ -1862,6 +1912,7 @@ class DA(CATHY):
                     if np.isnan(Archie_parms_mat_ens[idArchie,:]).any()==False:
                         self.Archie_parms[key_root[0]]=list(Archie_parms_mat_ens[idArchie,:])
 
+
                     # print(self.Archie_parms)
 
                 else:
@@ -1871,6 +1922,7 @@ class DA(CATHY):
                     if not key in var_pert_to_ommit:
                         raise  ValueError('key:' + str(key) + ' to update is not existing!')
 
+            shellprint_update = False
 
         pass
     
@@ -2120,7 +2172,6 @@ class DA(CATHY):
                                  list_assimilated_obs='all',
                                  parallel=False,
                                  default_state = 'psi',
-                                 verbose = False,
                                  **kwargs):
         '''
         Translate (map) the state values (pressure head or saturation) to observations (or predicted) values
@@ -2155,8 +2206,6 @@ class DA(CATHY):
             DESCRIPTION. The default is 'all'.
         parallel : Bool, optional
             DESCRIPTION. The default is False.
-        verbose : Bool, optional
-            DESCRIPTION. The default is False.
         **kwargts : TYPE
             DESCRIPTION.
 
@@ -2176,7 +2225,10 @@ class DA(CATHY):
 
 
 
-
+        write2shell_map = True
+        if 'write2shell_map' in kwargs:
+            write2shell_map = kwargs['write2shell_map']
+            
         Hx_ens = [] # matrice of predicted observation for each ensemble realisation
         for ens_nb in self.ens_valid: # loop over ensemble files
             # print('ens nb:' + str(ens_nb))
@@ -2189,7 +2241,7 @@ class DA(CATHY):
                                        path=os.path.join(path_fwd_CATHY,
                                                          self.output_dirname)
                                        )
-            df_sw = self.read_outputs(filename='sw',
+            df_sw, _ = self.read_outputs(filename='sw',
                                       path=os.path.join(path_fwd_CATHY,
                                                         self.output_dirname)
                                       )
@@ -2272,14 +2324,39 @@ class DA(CATHY):
                 np.hstack(Hx_stacked)
             Hx_ens.append(Hx_stacked)
 
+            write2shell_map = False
+
         if len(Hx_ens)>2:
             Hx_ens= np.hstack(Hx_ens)
-
+            
 
         # special case of ERT // during sequential assimilation
         # ---------------------------------------------------------------------
         for i, obs_key in enumerate(obskey2map):
             if 'ERT' in obs_key:
+                
+                if write2shell_map:
+                    self.console.print(':zap: Mapping to ERT prediction')
+                    self.console.print(r'''
+                                    Fwd modelling ERT
+                                    Noise level: {??}
+                                    ''',
+                                    style="green")
+                                                                         
+                                                                         
+                    self.console.rule(":octopus: Parameter perturbation :octopus:", style="green")
+                    self.console.print(r'''
+                                    Archie perturbation for DA analysis
+                                    Archie parameters: {}
+                                    \u03C3 Archie: {}
+                                    Nb of zones: {}
+                                    '''.format(self.Archie_parms['rFluid_Archie'],
+                                                self.Archie_parms['pert_sigma_Archie'],
+                                                len(self.Archie_parms['rFluid_Archie'])
+                                                ),
+                                    style="green")
+                    self.console.rule("", style="green")
+                
                 if parallel:
                     Hx_ens_ERT = self._map_ERT_parallel(path_fwd_CATHY_list,
                                                         savefig = True,
@@ -2290,7 +2367,7 @@ class DA(CATHY):
                         # np.shape(Hx_ens)
                     else:
                         Hx_ens = Hx_ens_ERT
-
+                        
         return Hx_ens #meas_size * ens_size
 
 
@@ -2367,7 +2444,7 @@ class DA(CATHY):
                 pass
 
             try:
-                df_sw = out_CT.read_sw(os.path.join(self.workdir, self.project_name,
+                df_sw, _ = out_CT.read_sw(os.path.join(self.workdir, self.project_name,
                                                    "DA_Ensemble/cathy_" + str(j+1),
                                                    'output/sw'))
                 sw[:, j] = df_sw[-1, :]
@@ -2466,7 +2543,7 @@ class DA(CATHY):
         '''
 
         if len(self.grid3d) == 0:
-            self.run_processor(IPRT1=3, verbose=False, DAFLAG=0)
+            self.run_processor(IPRT1=3, DAFLAG=0)
             self.grid3d = in_CT.read_grid3d(
                 os.path.join(self.workdir, self.project_name))
 
@@ -2676,7 +2753,6 @@ class DA(CATHY):
         ERT_meta_dict['seq'] = key_value[1]['ERT']['sequenceERT']
         ERT_meta_dict['electrodes'] = key_value[1]['ERT']['elecs']
         ERT_meta_dict['noise_level'] = key_value[1]['ERT']['data_err']
-        ERT_meta_dict['porosity'] = self.Archie_parms['porosity']
         ERT_meta_dict['data_format'] = key_value[1]['ERT']['data_format']
         return ERT_meta_dict
 
@@ -2703,23 +2779,17 @@ class DA(CATHY):
         # -------------------------------------------
         ERT_meta_dict = self._parse_ERT_metadata(key_value)
 
-        Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(self.project_name,
-                                            self.Archie_parms,
-                                            ERT_meta_dict['porosity'],
-                                            ERT_meta_dict['pathERT'],
-                                            ERT_meta_dict['forward_mesh_vtk_file'],
-                                            ERT_meta_dict['electrodes'],
-                                            ERT_meta_dict['seq'],
-                                            path_fwd_CATHY,
-                                            df_sw = state[1], # kwargs
-                                            data_format= ERT_meta_dict['data_format'] , # kwargs
-                                            DA_cnb = self.count_DA_cycle, # kwargs
-                                            Ens_nb=ens_nb, # kwargs
-                                            savefig=savefig, # kwargs
-                                            noise_level = ERT_meta_dict['noise_level'],# kwargs
-                                            dict_ERT = key_value[1]['ERT']#  kwargs
-                                            )
 
+        Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(self.project_name,
+                                               self.Archie_parms,
+                                               self.Archie_parms['porosity'],
+                                               ERT_meta_dict,
+                                               path_fwd_CATHY,
+                                               df_sw = state[1], # kwargs
+                                               DA_cnb = self.count_DA_cycle, # kwargs
+                                               Ens_nbi=ens_nb, # kwargs
+                                               savefig=savefig, # kwargs
+                                            )
         df_Archie['OL'] = np.ones(len(df_Archie['time']))*False
         self._add_2_ensemble_Archie(df_Archie)
 
@@ -2740,28 +2810,26 @@ class DA(CATHY):
 
          # freeze fixed arguments of Archie.SW_2_ERa_DA
          # -----------------------------------------------------------------
-         ERTmapping_args = partial(Archie.SW_2_ERa_DA,
-                                   self.project_name,
-                                   self.Archie_parms,
-                                   ERT_meta_dict['porosity'],
-                                   ERT_meta_dict['pathERT'],
-                                   ERT_meta_dict['forward_mesh_vtk_file'],
-                                   ERT_meta_dict['electrodes'],
-                                   ERT_meta_dict['seq'],
-                                   data_format= ERT_meta_dict['data_format'],
-                                   DA_cnb = DA_cnb,
-                                   savefig=True,
-                                   noise_level = ERT_meta_dict['noise_level'],# kwargs
-                                   dict_ERT = key_time[1]['ERT']#  kwargs
-                                   )
-
+         ERTmapping_args = partial(
+                                     Archie.SW_2_ERa_DA,
+                                     self.project_name,
+                                     self.Archie_parms,
+                                     self.Archie_parms['porosity'],
+                                     ERT_meta_dict,
+                                     DA_cnb = DA_cnb,
+                                     savefig = True,
+                                     noise_level = ERT_meta_dict['noise_level'],# kwargs
+                                     dict_ERT = key_time[1]['ERT']#  kwargs
+                                  )
+        
+                                       
          # // run using ensemble subfolders path as a list
          # -----------------------------------------------------------------
          with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
             results_mapping = pool.map(ERTmapping_args,
                                          path_fwd_CATHY_list
                                            )
-            print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+            # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
          for ens_i in range(len(path_fwd_CATHY_list)):
              df_Archie = results_mapping[ens_i][1]
@@ -2797,12 +2865,8 @@ class DA(CATHY):
             ERTmapping_args = partial(Archie.SW_2_ERa_DA,
                                       self.project_name,
                                       self.Archie_parms,
-                                      ERT_meta_dict['porosity'],
-                                      ERT_meta_dict['pathERT'],
-                                      ERT_meta_dict['forward_mesh_vtk_file'],
-                                      ERT_meta_dict['electrodes'],
-                                      ERT_meta_dict['seq'],
-                                      data_format= ERT_meta_dict['data_format'],
+                                      self.Archie_parms['porosity'],
+                                      ERT_meta_dict,
                                       time_ass = t,
                                       savefig=True,
                                       noise_level = ERT_meta_dict['noise_level'] ,
@@ -2814,7 +2878,7 @@ class DA(CATHY):
                 results_mapping_time_i = pool.map(ERTmapping_args,
                                                   path_fwd_CATHY_list
                                                   )
-                print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+                # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
             for ens_i in range(len(path_fwd_CATHY_list)):
                  Hx_ERT_time_i =  results_mapping_time_i[ens_i][0]

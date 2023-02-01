@@ -585,18 +585,6 @@ def show_atmbc(t_atmbc, v_atmbc, ax=None, **kwargs):
                 plt.step(t_atmbc, v_atmbc, color="k", where="post")
             elif kwargs['IETO'] == 0: # case of linear interpolation between points
                 ax.plot(t_atmbc, v_atmbc, "k.")
-    
-    # if 'dateFormat' in kwargs:
-    #     dateFormat = kwargs['dateFormat']
-
-    
-    # if 'date_locator' in kwargs:
-    #     interval = kwargs['date_locator'][1]
-    #     if 'HourLocator' in kwargs['date_locator'][0]:
-    #         ax.xaxis.set_major_locator(mdates.HourLocator(interval=8))
-
-    #     plt.gcf().autofmt_xdate()
-
     pass
 
 
@@ -1087,7 +1075,7 @@ def DA_RMS(df_performance,sensorName,**kwargs):
     if 'atmbc_times' in kwargs:
         atmbc_times = kwargs['atmbc_times']
     
-    header = ['time', 'ObsType','RMSE'+sensorName,'NMRMSE'+sensorName,'OL']   
+    header = ['time', 'ObsType','RMSE_'+sensorName,'NMRMSE_'+sensorName,'OL']   
     df_perf_plot = df_performance[header]   
     df_perf_plot['RMSE'+sensorName] = df_perf_plot['RMSE'+sensorName].astype('float64')
     df_perf_plot['NMRMSE'+sensorName] = df_perf_plot['NMRMSE'+sensorName].astype('float64')

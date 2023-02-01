@@ -8,6 +8,7 @@ import pandas as pd
 import pyvista as pv # if not installed : pip install with conda install pyvista (in a conda terminal)
 import numpy as np
 import os 
+import sys
 
 try: 
     import pygimli as pg
@@ -22,47 +23,25 @@ except ImportError:
     resipy = None
 
 
-
-
-
-# runParallel
-
 def create_ERT_survey_pg(pathERT,sequence,mesh,**kwargs):
 
+    verbose = False
+    if 'verbose' in kwargs:
+        verbose = kwargs['verbose']
     
     noise_level = 5
     if 'noise_level' in kwargs:
         noise_level = kwargs['noise_level']
     
-    print('**'*10)
-    print(noise_level)
-    
-    
-    # isExist = os.path.exists(pathERT)
-    # if not isExist:
-    #   # Create a new directory because it does not exist 
-    #   os.makedirs(pathERT) 
-      
-      
-    # fname_mesh = './ERT_fwd_DA_sol_rhizo/test_pg/BaseRhizo_Vrte.msh'
-    # mesh3d=  mt.readGmsh(mesh, verbose=False)
-    
-    # pre, ext = os.path.splitext(mesh)
-    # print(os.rename(mesh, pre + '.msh'))
-
     pre, ext = os.path.splitext(mesh)
     
     try:
-        mesh3d =  mt.readGmsh(pre + '.msh', verbose=True)
+        mesh3d =  mt.readGmsh(pre + '.msh', verbose=verbose)
     except:
         try:
-            mesh3d =  pg.load(pre + '.bms', verbose=True)
+            mesh3d =  pg.load(pre + '.bms', verbose=verbose)
         except:
             raise ValueError('Cannot read '+ mesh + ': valid extensions are .msh and .bms')
-
-    # fname_seq = '/ERT_fwd_DA_sol_rhizo/test_pg/SequenceERT_Rhizo_72Elecs.shm'
-    
-    # shm = pg.load(fname_seq)
     
     if 'shm' in sequence:
         scheme = pg.load(sequence)
@@ -78,39 +57,31 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,**kwargs):
     else:
         raise ValueError('Sequence file format not recognized use .shm or .txt as a list of quadrupoles')
 
-        
-
-    
-    # scheme["k"] = ert.createGeometricFactors(scheme)
-    
     res0 = 1
     if 'res0' in kwargs:
         res0 = kwargs['res0']
 
-    # het = ert.simulate(mesh3d, res=res0, scheme=shm, sr=False, noiseLevel=5,
-    #                    calcOnly=True, verbose=True)
-    # het.set('k', 1.0/ (hom('u') / hom('i')))
-    # het.set('rhoa', het('k') * het('u') / het('i'))
-    # het.save('simulated.dat', 'a b m n rhoa k u i')
-    
-    
-
-
-        
     if len(res0) != len(mesh3d.cells()):
         raise ValueError('wrong initial resistivity input')
     
+
+    if not verbose:
+        devnull = open('/dev/null', 'w')
+        oldstdout_fno = os.dup(sys.stdout.fileno())
+        os.dup2(devnull.fileno(), 1)
     het = ert.simulate(mesh3d, res=res0, scheme=scheme, 
-                        calcOnly=False, verbose=False, 
+                        calcOnly=False, verbose=verbose, 
                         noiseLevel=noise_level)
+    if not verbose:
+        os.dup2(oldstdout_fno, 1)
+    
+    # # Reset the standard output
+    # sys.stdout = sys.__stdout__
+
+    # # Discard the captured output
+    # captured_output.close()
 
 
-    # het = ert.simulate(mesh3d, res=np.ones(len(mesh3d.cells())), scheme=scheme, 
-    #                    calcOnly=False, verbose=False, 
-    #                    noiseLevel=noise_level)
-    
-    # het['rhoa']
-    
 
     return het
 
