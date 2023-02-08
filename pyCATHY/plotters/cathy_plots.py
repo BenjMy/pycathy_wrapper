@@ -821,17 +821,20 @@ def get_dem_coords(dem_mat=[], str_hd_dem='', hapin={}, workdir=None, project_na
         # Read the Header
         dem_mat, str_hd_dem = in_CT.read_dem(os.path.join(workdir, project_name, "prepro/dem"),
                                              os.path.join(workdir, project_name, "prepro/dtm_13.val"))
+           
+    # transpose because values in dtm_13 files from where the DEM raster is extracted are transposed ...
+    dem_mat = dem_mat.T
         
-    x = np.zeros(dem_mat.shape[0]) #+ hapin['xllcorner']
-    y = np.zeros(dem_mat.shape[1]) #+ hapin['yllcorner']
+    x = np.zeros(dem_mat.shape[0]) + hapin['xllcorner']
+    y = np.zeros(dem_mat.shape[1]) + hapin['yllcorner']
 
-    for a in range(dem_mat.shape[0]):
+    for a in range(0,dem_mat.shape[0]):
         x[a] = float(str_hd_dem["west"]) + hapin['delta_x'] * (a+1)
 
-    for a in range(dem_mat.shape[1]):
+    for a in range(0,dem_mat.shape[1]):
         y[a] = float(str_hd_dem["south"]) + hapin['delta_y'] * (a+1)
 
-    return x, y, dem_mat
+    return x, y, np.flipud(dem_mat)
     
 def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project_name=None, **kwargs):
     """
@@ -843,9 +846,10 @@ def show_dem(dem_mat=[], str_hd_dem='', hapin={}, ax=None, workdir=None, project
     if ax is None:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')   
-        
-    X, Y = np.meshgrid(x, y)
-    surf = ax.plot_surface(X, Y, dem_mat.T, cmap="viridis",**kwargs)
+
+    X, Y  = np.meshgrid(y, x)
+    surf = ax.plot_surface(X, Y, dem_mat, cmap="viridis",**kwargs)
+    # surf = ax.plot_surface(Y,X, dem_mat, cmap="viridis",**kwargs)
     cbar = plt.colorbar(surf, shrink=0.25, orientation='horizontal',
                         label='Elevation (m)')
     ax.set(xlabel="Easting (m)", ylabel="Northing (m)", zlabel="Elevation (m)")

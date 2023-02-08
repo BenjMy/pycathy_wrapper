@@ -7,6 +7,9 @@ Meshing tools
 import os 
 import numpy as np
 import pyvista as pv
+from pyCATHY.plotters import cathy_plots as cplt
+import pyvista as pv
+
 
 try: 
     import pygimli as pg
@@ -495,4 +498,533 @@ def trace_mesh_pg(meshIN,meshOUT,method='spline', **kwargs):
     out_data = pg.interpolate(meshIN['ER_converted_CATHYmsh*'], meshOUT, method=method)
     
     return out_data
+
+
+#%%
+
+
+
+def get_layer_depths(dem_parameters):
+    for li in range(dem_parameters["nstr"]):
+        get_layer_depth(dem_parameters,li)
     
+def get_layer_depth(dem_parameters,li):
+    
+    dempar = dem_parameters['zratio(i),i=1,nstr'].split('\t')
+    dempar_ratio = [float(d) for d in dempar]
+    
+    # layeri_top = np.round(dempar_ratio[li]*simu.dem_parameters["base"]/simu.dem_parameters['nstr'],2)
+    # layeri_top = dempar_ratio[li]*simu.dem_parameters["base"]/simu.dem_parameters['nstr']
+    if li==0:
+        layeri_top = 0
+    else:
+        # layeri_top = np.cumsum(dempar_ratio[0:li])[-1]*(simu.dem_parameters["base"]/(simu.dem_parameters['nstr']-1))
+        layeri_top = np.cumsum(dempar_ratio[0:li])[-1]*(dem_parameters["base"])
+
+        # layeri_top = np.cumsum(dempar_ratio[0:li])[-1] 
+
+    if (li+1)<len(dempar_ratio):
+        # layeri_bottom = np.round(dempar_ratio[li+1]*simu.dem_parameters["base"]/simu.dem_parameters['nstr'],2)
+        # layeri_bottom = layeri_top + dempar_ratio[li+1]*simu.dem_parameters["base"]/(simu.dem_parameters['nstr']-1)
+        # layeri_bottom = np.cumsum(dempar_ratio[0:li+1])[-1]*(simu.dem_parameters["base"]/(simu.dem_parameters['nstr']-1))
+        layeri_bottom = np.cumsum(dempar_ratio[0:li+1])[-1]*(dem_parameters["base"])
+    else:
+        layeri_bottom = dem_parameters["base"]
+
+    # print(layeri_top,layeri_bottom)
+    return layeri_top, layeri_bottom
+
+def zone3d(zone,dem_parameters):
+    
+    # define zone in 3dimension - duplicate number of layer (nstr) times
+    # ---------------------------------------------------------------
+    zones3d = [zone]*dem_parameters["nstr"]
+    
+    fig, axs = plt.subplots(int(dem_parameters["nstr"]/2)+1,2, sharex=True,sharey=(True),
+                            constrained_layout=False)
+    plt.tight_layout()
+    axs=axs.ravel()
+    for li in range(dem_parameters["nstr"]):
+        layeri_top, layeri_bottom = get_layer_depth(dem_parameters,li)
+        layer_str = '[' + str(f'{layeri_top:.2E}') + '-' + str(f'{layeri_bottom:.2E}') + ']'
+        
+        
+        pmesh = cplt.show_raster(zones3d[li], prop=layer_str, cmap='jet',
+                         ax=axs[li],vmin=0,vmax=1)
+    
+    plt.colorbar(pmesh, ax=axs[:], location='right', shrink=0.6, cmap='jet')
+    plt.tight_layout()
+
+    return zones3d
+
+
+def create_layers_inzones3d(simu,zones3d,layers_names,layers_depths=[[0,1e99]]):
+    
+    # Loop over layers and zones and change flag if depth conditions is not respected
+    # ----------------------------------------------------------------------------
+    zones3d_layered = np.ones(np.shape(zones3d))
+    for li in range(simu.dem_parameters["nstr"]):
+        
+        layeri_top, layeri_bottom = get_layer_depth(simu,li)
+        # layer_str = '[' + str(layeri_top) + '-' + str(layeri_bottom) + ']'
+        
+        for zi in range(len(layers_names)):
+            print('layers %i analysis' %zi)
+            # print(layers_depths[zi][0])
+            # print(layeri_top)
+            # print(layers_depths[zi][1])
+            # print(layeri_bottom)
+            zi = 0
+            
+            # print(layers_depths[zi][0]<=layeri_top)
+            # if depth of zone i is sup to mesh layers depth
+            #---------------------------------------------------------------------
+            # if (layers_depths[zi][0]>=layeri_top) & (layers_depths[zi][1]<layeri_bottom):     
+            if (layers_depths[zi][0]<=layeri_top) & (layers_depths[zi][1]>=layeri_bottom):     
+            # if (depths_ordered[zi][1]>=layeri_bottom):  
+                print('conds ok --> zi:' + str(zi))
+                print(layers_depths[zi])
+                print(layeri_top,layeri_bottom )
+
+                zones3d_layered[li][zones3d[li]==zi+1]=zi+2
+                print('replacing ' + str(np.sum(zones3d[li]==zi+1)) + ' values by' + str(zi+1))
+                
+                if 10.5*layers_depths[zi][1]<layeri_bottom:
+                    raise ValueError('Required layer is finer than mesh layers - refine mesh')
+            else:
+                print('conds not ok')
+                print(layers_depths[zi])
+                print(layeri_top,layeri_bottom )
+                
+    return zones3d_layered
+
+        
+def plot_zones3d_layered(simu,zones3d_layered):
+    
+    fig, axs = plt.subplots(int(simu.dem_parameters["nstr"]/2)+1,2, sharex=False,sharey=(False),
+                            constrained_layout=False)
+    axs=axs.flat
+    for li in range(simu.dem_parameters["nstr"]):
+        
+        layeri_top, layeri_bottom = get_layer_depth(simu,li)
+        layer_str = '[' + str(layeri_top) + '-' + str(layeri_bottom) + ']'
+        
+        pmesh = cplt.show_raster(zones3d_layered[li], prop=layer_str, #, cmap='jet',
+                         ax=axs[li], vmin=0, vmax=2)
+        
+    plt.colorbar(pmesh, ax=axs[:], location='right', shrink=0.6, cmap='jet')
+    plt.tight_layout()
+
+
+def het_soil_layers_mapping_generic(simu,propertie_names,SPP,layers_names,layers_depths):
+   
+    # extend to 3d the zone raster file
+    # -----------------------------------
+    zones3d = zone3d(simu)
+
+    # insert layers flag into the 3d the zone raster file
+    # -----------------------------------
+    zones3d_layered = create_layers_inzones3d(simu,zones3d,layers_names,layers_depths)
+            
+    # plot 3d zones files layered
+    # ------------------------------------------
+    plot_zones3d_layered(simu,zones3d_layered)
+    
+    # np.shape(zones3d_layered)
+    # np.shape(zones3d_axis_swap)
+
+
+    # Loop over soil properties names
+    # -------------------------------------------------
+    index_raster = np.arange(0,simu.hapin['N']*simu.hapin['M'])
+    zones3d_axis_swap = np.swapaxes(zones3d_layered,0,2)
+    prop_df = [] # properties dataframe
+    layers_id = [ 'L' + str(i+1) for i in range(simu.dem_parameters["nstr"])]
+    layers_id = np.flipud(layers_id)
+    
+    for i, p in enumerate(propertie_names):
+        
+        p_df = np.zeros(np.shape(zones3d_axis_swap))
+          
+        # Loop over soil layers and assign value of soil properties
+        # -------------------------------------------------
+        for k, lname in enumerate(layers_names):
+            p_df[zones3d_axis_swap == k+1] = SPP[k][i]
+                        
+        df_tmp = pd.DataFrame(
+                                np.vstack(p_df),
+                                columns= layers_id,
+                                index= index_raster,
+                                )
+        
+        prop_df.append(df_tmp)
+            
+    SoilPhysProp_df_het_layers_p = pd.concat(prop_df, axis=1, keys=propertie_names)
+    SoilPhysProp_df_het_layers_p.index.name = 'id raster'
+    SoilPhysProp_df_het_layers_p.columns.names = ['soilp','layerid']
+        
+    
+    SPP_map_dict = {}
+    for p in propertie_names:
+        SPP_map_dict[p] = []
+        for li in range(simu.dem_parameters["nstr"]):
+            v = SoilPhysProp_df_het_layers_p.iloc[0][p].loc['L'+str(li+1)]
+            SPP_map_dict[p].append(v)
+            
+            
+    return SoilPhysProp_df_het_layers_p, SPP_map_dict
+
+
+
+def _subplot_cellsMarkerpts(mesh_pv_attributes,xyz_layers0,xyzlayers1):
+    
+    pl = pv.Plotter(shape=(1,2))
+    # pl.add_mesh(mesh_pv_attributes,
+    #             show_edges=True,
+    #             )
+    pl.show_grid()
+    
+    actor = pl.add_points(
+                            xyz_layers0[:,:-1],
+                            point_size=10,
+                            scalars=xyz_layers0[:,-1],
+                            )
+    pl.subplot(0,1)
+
+    pl.show_grid()
+    
+    actor = pl.add_points(
+                            xyzlayers1[:,:-1],
+                            point_size=10,
+                            scalars=xyzlayers1[:,-1],
+                            )
+
+    pl.show()
+    
+    
+def _plot_cellsMarkerpts(mesh_pv_attributes,xyz_layers,
+                         workdir,
+                         project_name
+                         ):
+    
+   
+    pl = pv.Plotter(off_screen=(True))
+    pl.add_mesh(mesh_pv_attributes,
+                show_edges=True,
+                opacity=0.4
+                )
+    pl.show_grid()
+    
+    actor = pl.add_points(
+                            xyz_layers[:,:-1],
+                            point_size=10,
+                            scalars=xyz_layers[:,-1],
+                            )
+    pl.show(screenshot=os.path.join(workdir,project_name,'layersMarkers.png'))
+    
+    
+    
+def _build_xyz_marker_mat_squareDEM(
+                                    zones3d_layered,
+                                    mesh_pv_attributes,
+                                    hapin,
+                                    dem_parameters,
+                                    workdir,
+                                    project_name,
+                                    to_nodes
+                                    ):
+    
+    
+    
+    # top, bot = get_layer_depth(dem_parameters,li)
+
+
+    # get layers properties
+    # ----------------------------------------------------------------
+    dempar = dem_parameters['zratio(i),i=1,nstr'].split('\t')
+    dempar_ratio = [float(d) for d in dempar]
+
+    layeri_top = []
+    layeri_top = [np.cumsum(dempar_ratio[0:li+1])[-1]*(dem_parameters["base"]) 
+                  for li in range(dem_parameters["nstr"])]
+    layeri_top.insert(0, 0)
+    layeri_center = [(layeri_top[lti+1]+layeri_top[lti])/2 for lti in range(len(layeri_top)-1)]
+    
+
+        
+        
+    # get dem coordinates 
+    # ----------------------------------------------------------------
+    y, x, dem = cplt.get_dem_coords(workdir=workdir,
+                                    project_name=project_name,
+                                    hapin=hapin
+                                    )
+    
+    # build dem coordinates of the size of the DEM
+    # ----------------------------------------------------------------
+    xn = [np.ones(len(y))*xu for xu in np.unique(x)]
+    xn = np.hstack(xn)
+    yn = np.tile(y,len(x))
+    
+    
+    xyz = np.c_[xn-dem_parameters['delta_x']/2,
+                    yn-dem_parameters['delta_y']/2,
+                    np.hstack(dem.T)
+                    ]
+        
+    xyz_celldown = np.c_[xn-dem_parameters['delta_x']/4,
+                        yn-dem_parameters['delta_y']/4,
+                        np.hstack(dem.T)
+                        ]
+    
+    xyz_cellup = np.c_[xn+dem_parameters['delta_x']/4,
+                       yn+dem_parameters['delta_y']/4,
+                       np.hstack(dem.T)
+                       ]
+    
+    xyz_cells = np.r_[xyz_cellup,xyz_celldown]
+    # len(xyz_cellup)
+    
+    xyz_nodes = np.c_[xn,
+                      yn,
+                      np.hstack(dem.T)
+                    ]
+    
+    meshpts = mesh_pv_attributes.points
+    cellpts = mesh_pv_attributes.cell_centers().points
+    
+    
+    xyz_layers_nodes = []
+    for i, li in enumerate(layeri_top[:-1]):
+        marker_zone = np.ravel(zones3d_layered[i])
+        xyz_layers_nodes.append(np.c_[xyz_nodes[:,0:2], xyz_nodes[:,2] -li, marker_zone])
+    
+    xyz_layers = []
+    for i, li in enumerate(layeri_center[:]):
+        marker_zone = np.ravel(zones3d_layered[i])
+        xyz_layers.append(np.c_[xyz[:,0:2], xyz[:,2] -li, marker_zone])
+    
+    
+    xyz_layers_cells_top = []
+    for i, li in enumerate(layeri_top[:-1]):
+        marker_zone = np.hstack([np.ravel(zones3d_layered[i])]*2)
+        xyz_layers_cells_top.append(np.c_[xyz_cells[:,0:2], xyz_cells[:,2] -li, marker_zone])
+    
+    
+    xyz_layers_cells_cent = []
+    for i, li in enumerate(layeri_center[:]):
+        marker_zone = np.hstack([np.ravel(zones3d_layered[i])]*2)
+        xyz_layers_cells_cent.append(np.c_[xyz_cells[:,0:2], xyz_cells[:,2] -li, marker_zone])
+    
+    
+    xyz_layers = np.vstack(xyz_layers)
+    xyz_layers_nodes = np.vstack(xyz_layers_nodes)
+    xyz_layers_cells = np.vstack(np.r_[xyz_layers_cells_top,xyz_layers_cells_cent])
+    
+    _plot_cellsMarkerpts(mesh_pv_attributes,xyz_layers,
+                         workdir,
+                         project_name
+                         )
+    
+
+    
+    _find_nearest_point2DEM(to_nodes,mesh_pv_attributes,
+                            workdir,
+                            project_name,
+                            xyz_layers_cells,xyz_layers_nodes,
+                            )
+    
+    
+def _find_nearest_point2DEM(to_nodes,mesh_pv_attributes,
+                            workdir,
+                            project_name,
+                            xyz_layers_cells=[],xyz_layers_nodes=[],
+                            ):
+    
+    if to_nodes:
+    # loop over mesh cell centers and find nearest point to dem
+    # ----------------------------------------------------------------
+        node_markers = []
+        for nmesh in mesh_pv_attributes.points:
+            # euclidean distance
+            d=((xyz_layers_nodes[:, 0] - nmesh[0]) ** 2 +
+                (xyz_layers_nodes[:, 1] - nmesh[1]) ** 2 +
+                (abs(xyz_layers_nodes[:, 2]) - abs(nmesh[2])) ** 2
+                ) ** 0.5
+            node_markers.append(xyz_layers_nodes[np.argmin(d),3])
+            # dbackup_nodes.append(min(d))
+        # add data to the mesh
+        # ----------------------------------------------------------------
+        mesh_pv_attributes['node_markers'] = node_markers
+        
+        # simu.mesh_pv_attributes.save('mesh_with_markers.vtk',
+        #                              binary=False)
+    
+    else:
+        # loop over mesh cell centers and find nearest point to dem
+        # ----------------------------------------------------------------
+        cell_markers = []
+        for nmesh in mesh_pv_attributes.cell_centers().points:
+            # euclidean distance
+            d=((xyz_layers_cells[:, 0] - nmesh[0]) ** 2 +
+                (xyz_layers_cells[:, 1] - nmesh[1]) ** 2 +
+                (abs(xyz_layers_cells[:, 2]) - abs(nmesh[2])) ** 2
+                ) ** 0.5
+            cell_markers.append(xyz_layers_cells[np.argmin(d),3])
+            # dbackup_cell.append(min(d))
+    
+        # add data to the mesh
+        # ----------------------------------------------------------------
+        mesh_pv_attributes['cell_markers'] = cell_markers
+        
+    mesh_pv_attributes.save(os.path.join(workdir,
+                                        project_name,
+                                        'vtk/',
+                                        project_name + '.vtk',
+                                        ),
+                                 binary=False
+                                 )
+    
+    # plt.plot(dbackup_cell)
+    # plt.plot(dbackup_nodes)
+
+
+
+def add_markers2mesh(
+                        zones3d_layered,
+                        mesh_pv_attributes,
+                        dem_parameters,
+                        workdir,
+                        project_name,
+                        hapin,
+                        to_nodes=False
+                     ):
+    
+    # simu.mesh_pv_attributes.clear_point_data()
+    # simu.mesh_pv_attributes.clear_cell_data()
+    # simu.mesh_pv_attributes.point_data.keys()
+    # simu.mesh_pv_attributes.cell_data.keys()
+    # simu.mesh_pv_attributes
+    
+    
+    # get dem coordinates 
+    # ----------------------------------------------------------------
+    # x, y, dem = cplt.get_dem_coords(workdir=workdir,
+    #                                 project_name=project_name,
+    #                                 hapin=hapin
+    #                                 )
+    
+    
+    x, y, dem = cplt.get_dem_coords(workdir=workdir,
+                                    project_name=project_name,
+                                    hapin=hapin,
+                                    tranposeDEM=True,
+                                    )
+    
+    if len(x)==len(y):
+        
+        _build_xyz_marker_mat_squareDEM(
+                                        zones3d_layered,
+                                        mesh_pv_attributes,
+                                        hapin,
+                                        dem_parameters,
+                                        workdir,
+                                        project_name,
+                                        to_nodes
+                                    )
+       
+    else:
+        
+
+        xgrid, ygrid = np.meshgrid(x,y)        
+        XY = np.meshgrid(x,y)
+        XY_stk = np.vstack(XY)
+        grid_coords = [xgrid, ygrid]
+        dem_flip = np.flipud(np.fliplr(dem.T))
+        grid_coords_dem = np.array([np.ravel(xgrid), 
+                                    np.ravel(ygrid), 
+                                    np.ravel(dem_flip),
+                                    np.ones(len(np.ravel(dem))),
+                                    ]).T
+    
+        # _plot_cellsMarkerpts(mesh_pv_attributes,grid_coords_dem)
+
+
+        zone3d_top = []
+        zone3d_bot = []
+        for li in range(dem_parameters["nstr"]):
+            top, bot = get_layer_depth(dem_parameters,li)
+            zone3d_top.append(zones3d_layered[li]*top)
+            zone3d_bot.append(zones3d_layered[li]*bot)
+            
+            
+        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top] #-(zone3d_top-zone3d_bot)/2
+        dem_mat_stk = np.ravel(dem_mat3d_layers)
+
+        grid_coords_stk_rep = np.vstack(np.array([grid_coords_dem]*dem_parameters["nstr"]))
+
+        zones3d_col_stk = np.ravel(zones3d_layered)
+        # xyz_layers  = np.c_[grid_coords_stk_rep[:,:-1],zones3d_col_stk]
+        xyz_layers  = np.c_[grid_coords_stk_rep[:,:-2],dem_mat_stk,zones3d_col_stk]
+
+        # _plot_cellsMarkerpts(mesh_pv_attributes,xyz_layers)
+        _plot_cellsMarkerpts(mesh_pv_attributes,xyz_layers,
+                             workdir,
+                             project_name
+                             )
+
+        _find_nearest_point2DEM(to_nodes,mesh_pv_attributes,
+                                workdir,
+                                project_name,
+                                xyz_layers,xyz_layers,
+                                )
+    
+        # zone3d_top = np.array(zone3d_top)
+        # zone3d_bot = np.array(zone3d_bot)
+        
+        # # xgrid_stk = np.flipud(xgrid_stk)
+        # # ygrid_stk = np.flipud(ygrid_stk)
+        
+        # grid_coords_stk = np.array([xgrid_stk, ygrid_stk])
+        # # grid_coords_stk = grid_coords_stk.T
+        # # grid_coords_stk[0,:] = np.flipud(grid_coords_stk[0,:])
+        # # grid_coords_stk[1,:] = np.flipud(grid_coords_stk[1,:])
+        # # grid_coords_stk = grid_coords_stk.T
+
+        # # dem = np.flipud(dem)
+
+        # # plt.imshow(dem)
+        # # np.shape(dem)
+        # # np.shape(dem)
+        # # dem
+        # # grid_coords_stk = np.flipud(grid_coords_stk)
+        
+        # # # grid_coords_stk = np.flipud(grid_coords_stk)
+        # grid_coords_stk_rep = np.hstack(np.array([grid_coords_stk]*dem_parameters["nstr"]))
+        # # np.shape(grid_coords_stk_rep)
+        # # dem_mat3d_layers = [dem - zz for zz in zone3d_top] #-(zone3d_top-zone3d_bot)/2
+        # # dem_mat3d_layers = np.flipud(dem) #-(zone3d_top-zone3d_bot)/2
+
+        # np.shape(dem_mat3d_layers)
+
+    
+        # dem_mat3d_layers = np.hstack(np.array([dem]*dem_parameters["nstr"]))
+
+        # dem_mat_stk = np.ravel(dem_mat3d_layers)
+        # zones3d_col_stk = np.ravel(zones3d_layered)
+        # xyz_layers  = np.c_[grid_coords_stk_rep.T,dem_mat_stk,zones3d_col_stk]
+        
+        # np.shape(grid_coords_stk_rep.T)
+        # np.shape(dem_mat_stk)
+        # np.shape(zones3d_col_stk)
+        # np.shape(xyz_layers)
+
+        # min(xyz_layers[:,0])
+        # max(xyz_layers[:,0])
+        # min(mesh_pv_attributes.points[:,0])
+        # max(mesh_pv_attributes.points[:,0])
+        
+        
+        
+        # _plot_cellsMarkerpts(mesh_pv_attributes,xyz_layers)
+

@@ -40,6 +40,7 @@ are taking care of recompiling the source files via bash cmd.
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.importers import cathy_inputs as in_CT
+import pyCATHY.meshtools as mt
 
 from git import Repo # In order to fetch the file directly from the repo
 
@@ -212,10 +213,6 @@ class CATHY():
                         )
                         shutil.rmtree(
                             os.path.join(
-                                self.workdir, self.project_name, "tmp_src")
-                        )
-                        shutil.rmtree(
-                            os.path.join(
                                 self.workdir, self.project_name, "prepro")
                         )
 
@@ -252,6 +249,8 @@ class CATHY():
                         os.path.join(
                             self.workdir, self.project_name, "prepro"),
                     )
+                    # os.remove(os.path.join(
+                    #      self.workdir, self.project_name, "prepro") + '/dem' )
 
                     self.console.print(
                         ":inbox_tray: [b]Fetch cathy inputfiles[/b]")
@@ -340,6 +339,7 @@ class CATHY():
         files describing physiographic features of the drainage system, as shown in Table 2.
         """
 
+
         self.console.print(":cooking: [b]gfortran compilation[/b]")
         for loopi in range(2):  # run it twice (to avoid the first error)
             os.chdir(os.path.join(self.workdir, self.project_name, "prepro/src/"))
@@ -378,9 +378,9 @@ class CATHY():
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE
                            )
-        # if verbose:
-        #     print(p.stdout)
-        #     print(p.stderr)
+        if verbose:
+            print(p.stdout)
+            print(p.stderr)
         if "DEM resolution is not a multiple of the rivulet spacing!" in p.stdout:
             print("DEM resolution is not a multiple of the rivulet spacing!")
             sys.exit()
@@ -391,13 +391,23 @@ class CATHY():
             print("remove outlet")
             idoutlet=np.where(self.DEM==min(np.unique(self.DEM)))
             self.DEM[idoutlet[0],idoutlet[1]] = max(np.unique(self.DEM))
-
-            with open(
-                os.path.join(self.workdir, self.project_name,
-                             "prepro/dtm_13.val"), "w+"
-            ) as f:
-                np.savetxt(f, self.DEM, fmt="%1.4e")  # use exponential
+    
+    
+        # if np.shape(self.DEM)[1]==self.hapin['N']:
+        #     self.console.rule(''':warning: !transposing DEM dimension! 
+        #                           This should be avoided in a future version
+        #                           :warning:''',
+        #                             style="yellow")           
+        #     self.update_prepo_inputs(N=self.hapin['M'],
+        #                               M=self.hapin['N'])
+                
+        #     self.update_cathyH(
+        #                         ROWMAX=self.hapin['N'],
+        #                         COLMAX=self.hapin['M']
+        #                         )
+        self.update_zone()
         os.chdir(self.workdir)
+        
         pass
 
     def recompileSrc(self, verbose=False):
@@ -456,7 +466,8 @@ class CATHY():
         pass
       
         
-    def run_processor(self, recompile=True, runProcess=True, **kwargs):
+    def run_processor(self, recompile=True, runProcess=True, verbose=False, 
+                      **kwargs):
         '''
         Run cathy.exe
 
@@ -487,7 +498,7 @@ class CATHY():
         self.check_DEM_versus_inputs()
         self.update_parm(**kwargs)
         self.update_cathyH(**kwargs)
-
+            
         if recompile == True:
             # recompile
             # --------------------------------------------------------------------
@@ -535,9 +546,9 @@ class CATHY():
                                     stdout=subprocess.PIPE, 
                                     stderr=subprocess.PIPE
                                             )
-            # if verbose:
-            #     print(p.stdout)
-            #     print(p.stderr)
+            if verbose:
+                print(p.stdout)
+                print(p.stderr)
             os.chdir(os.path.join(self.workdir))
             self.grid3d = in_CT.read_grid3d(os.path.join(self.workdir,self.project_name))
 
@@ -652,8 +663,8 @@ class CATHY():
         if len(self.cathyH) == 0:
 
             self.cathyH = {
-                "ROWMAX": self.hapin["M"],  # maximum NROW, with NROW = number of rows in the DEM
-                "COLMAX": self.hapin["N"],  # maximum NCOL, with NCOL = number of columns in the DEM
+                "ROWMAX": self.hapin["N"],  # maximum NROW, with NROW = number of rows in the DEM
+                "COLMAX": self.hapin["M"],  # maximum NCOL, with NCOL = number of columns in the DEM
                 # 'COARSE': ,
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
@@ -972,24 +983,24 @@ class CATHY():
             # check presence of the outlet
             if len(np.unique(DEM)) == 1:
                 print("Error: outlet not defined")
-                DEM_withOutlet = DEM
-                DEM_withOutlet[0, 0] = 0
-                self.DEM = DEM_withOutlet
+                DEM[0, 0] = 0
+                # self.DEM = DEM_withOutlet
 
             self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
-
+            # self.update_dem(DEM)
+            # self.update_zone()
+            
+            # import matplotlib.pyplot as plt
+            # plt.imshow(np.flipud(DEM))
+            
             with open(os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+") as f:
                 # use exponential notation
-                np.savetxt(f, self.DEM, fmt="%1.4e")
-            # np.shape(self.DEM)
-            # print("update dem")
-            # with open(os.path.join(self.project_name, "prepro/dem"), "w+") as f:
-            #     # use exponential notation
-            #     np.savetxt(f, self.DEM, fmt="%1.4e")
+                np.savetxt(f, DEM, fmt="%1.4e")
+                # np.shape(DEM)
             
             self.update_cathyH(
-                                ROWMAX=np.shape(self.DEM)[0],
-                                COLMAX=np.shape(self.DEM)[1]
+                                ROWMAX=self.hapin['M'],
+                                COLMAX=self.hapin['N']
                                )
 
         self.update_dem_parameters(**kwargs)
@@ -1138,7 +1149,34 @@ class CATHY():
 
         pass
 
+    def update_dem(self, DEM=[]):
+        '''
+        Update zone file
 
+        Parameters
+        ----------
+        dem : np.array([]), optional
+            2d numpy array describing the zone for x and y direction.
+            The array dim must be equal to DEM dim.
+            The default is [].        '''
+
+        with open(
+            os.path.join(self.workdir, self.project_name, "prepro/dem"), "w+"
+        ) as demfile:
+
+            demfile.write("north:     0" + "\n")
+            demfile.write("south:     " + str(self.hapin["yllcorner"]) + "\n")
+            demfile.write("east:     0" + "\n")
+            demfile.write("west:     " + str(self.hapin["xllcorner"]) + "\n")
+            
+            demfile.write("rows:     " + str(self.hapin["N"]) + "\n")
+            demfile.write("cols:     " + str(self.hapin["M"]) + "\n")
+            np.savetxt(demfile, DEM, fmt="%1.4e")
+            # np.shape(DEM)
+        demfile.close()
+        self.DEM = DEM
+        
+        
     def update_zone(self, zone=[]):
         '''
         Update zone file
@@ -1148,6 +1186,7 @@ class CATHY():
         zone : np.array([]), optional
             2d numpy array describing the zone for x and y direction.
             The array dim must be equal to DEM dim.
+            The smallest numbering is 1 (not 0!)
             If zone is empty, reset to homogeneous zone = 1
             The default is [].
 
@@ -1161,19 +1200,20 @@ class CATHY():
             - Update vtk mesh file.
 
         '''
+        self.console.print(":arrows_counterclockwise: [b]update zone file [/b]")
 
         with open(
             os.path.join(self.workdir, self.project_name, "prepro/zone"), "w+"
         ) as zonefile:
 
             zonefile.write("north:     0" + "\n")
-            zonefile.write("south:     0" + "\n")
+            zonefile.write("south:     " + str(self.hapin["yllcorner"]) + "\n")
             zonefile.write("east:     0" + "\n")
-            zonefile.write("west:     0" + "\n")
+            zonefile.write("west:     " + str(self.hapin["xllcorner"]) + "\n")
             zonefile.write("rows:     " + str(self.hapin["M"]) + "\n")
             zonefile.write("cols:     " + str(self.hapin["N"]) + "\n")
             if len(zone) == 0:
-                zone = np.c_[np.ones([self.hapin["M"], self.hapin["N"]])]
+                zone = np.c_[np.ones([self.hapin["M"],self.hapin["N"]])]
                 np.savetxt(zonefile, zone, fmt="%i")
             else:
                 # if np.shape(zone)== :
@@ -2032,7 +2072,7 @@ class CATHY():
     def update_soil(self, IVGHU=[],
                     FP=[], FP_map= [],
                     SPP=[], SPP_map=[],
-                    soil_heteregeneous_in_z=False,
+                    zone3d=[],
                     show=False,
                     **kwargs):
         '''
@@ -2164,6 +2204,21 @@ class CATHY():
         elif len(FP_map)==0:
             FP_map = self.soil_FP['FP_map']
 
+        
+        # check size of the heteregeneity
+        # -----------------------------------
+        if len(zone3d)==0:
+            soil_heteregeneous_in_z = False
+            soil_heteregeneous_in_xy = False
+            print('homogeneous soil')
+        else:
+            xyvar = np.array([sum(np.unique(zone3d[l])) for l in range(np.shape(zone3d)[0])])
+            if sum(xyvar>1)>1:
+                soil_heteregeneous_in_xy = True
+                print('xy soil heterogeneity detected')
+            if (sum(zone3d[0] != zone3d)>0).any():
+                soil_heteregeneous_in_z = True
+                print('z soil heterogeneity detected')
 
 
 
@@ -2172,16 +2227,16 @@ class CATHY():
         if isinstance(SPP_map['PERMX'], float):
             if self.dem_parameters["nzone"]!=1:
                 raise ValueError("Wrong number of zones")
-        else:
-            if self.dem_parameters["nzone"]>1:
-                if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
-                    raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-                                     + ' while nzone is ' + str(self.dem_parameters["nzone"]))
-            else: # case where soil properties are homogeneous in x and y direction (only z prop varies)
-                if soil_heteregeneous_in_z:
-                    if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
-                        raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-                                         + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
+        # else:
+            # if self.dem_parameters["nzone"]>1:
+            #     if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
+            #         raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
+            #                          + ' while nzone is ' + str(self.dem_parameters["nzone"]))
+            # else: # case where soil properties are homogeneous in x and y direction (only z prop varies)
+            #     if soil_heteregeneous_in_z:
+            #         if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
+            #             raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
+            #                              + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
 
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
@@ -2217,7 +2272,7 @@ class CATHY():
         if len(SPP)>0:
             self.soil_SPP['SPP'] = SPP # matrice with respect to zones
         else:
-            SoilPhysProp = self._prepare_SPP_tb(SPP_map)
+            SoilPhysProp = self._prepare_SPP_tb(SPP_map,zone3d)
             self.soil_SPP['SPP'] = SoilPhysProp # matrice with respect to zones
 
 
@@ -2241,7 +2296,33 @@ class CATHY():
 
         # map SPP to the mesh
         # --------------------------------------------------------------------
-        # self.map_prop2mesh(SPP_map)
+        if len(zone3d)>0:
+            mt.add_markers2mesh(                        
+                                    zone3d,
+                                    self.mesh_pv_attributes,
+                                    self.dem_parameters,
+                                    self.workdir,
+                                    self.project_name,
+                                    self.hapin,
+                                    to_nodes=False
+                                )
+            
+            # mt.add_markers2mesh(                        
+            #                         zone3d,
+            #                         self.mesh_pv_attributes,
+            #                         self.dem_parameters,
+            #                         self.workdir,
+            #                         self.project_name,
+            #                         self.hapin,
+            #                         to_nodes=True
+            #                     )
+            
+            for spp in SPP_map:
+                self.map_dem_prop_2mesh(spp,
+                                        SPP_map[spp],
+                                        to_nodes=False
+                                        )
+
 
         pass
 
@@ -2323,7 +2404,7 @@ class CATHY():
 
         pass
 
-    def _prepare_SPP_tb(self, SPP, **kwargs):
+    def _prepare_SPP_tb(self, SPP, zone3d):
         '''
         prepare SOIL Physical Properties table
 
@@ -2356,30 +2437,39 @@ class CATHY():
             # 3d --> lateral + vertical variations due to zones and strates
 
             SoilPhysProp = []
-
-            #  loop over zones (defined in the zone file)
-            # --------------------------------------------------------------
-            for izone in range(self.dem_parameters["nzone"]):
-                    
-                iLayersSoil = np.zeros([self.dem_parameters["nstr"], 8])
-
-                if type(SPP['PERMX'][izone])==list:
-                    # loop over strates
-                    # -----------------------------------------------------------------
-                    for istr in range(self.dem_parameters["nstr"]):
-                        for i, spp in enumerate(SPP):                               
-                            iLayersSoil[istr,i] = SPP[spp][izone][0]
-                    SoilPhysProp.append(iLayersSoil)
+            
+            if len(zone3d)==0:
+                # loop over strates
+                # -----------------------------------------------------------------
+                for istr in range(self.dem_parameters["nstr"]):
+                    #  loop over zones (defined in the zone file)
+                    # --------------------------------------------------------------
+                    LayeriZonei = np.zeros([self.dem_parameters["nzone"], 8])
+                    for izone in range(self.dem_parameters["nzone"]):
+                        for i, spp in enumerate(SPP): 
+                            LayeriZonei[izone,i] = SPP[spp][izone]
+                    SoilPhysProp.append(LayeriZonei)
                 
-                else:
-                    for istr in range(self.dem_parameters["nstr"]):
-                        for i, spp in enumerate(SPP):
-                            iLayersSoil[istr,i] = SPP[spp][izone]
-                    SoilPhysProp.append(iLayersSoil)
-
-
+                            
+            else:
+                zones3d_def = np.arange(1,self.hapin['N']*self.hapin['M']+1) 
+                zones3d_def = np.reshape(zones3d_def,[self.hapin['N'],self.hapin['M']])
+                self.update_zone(zones3d_def)
+                # loop over strates
+                # -----------------------------------------------------------------
+                for istr in range(self.dem_parameters["nstr"]):
+                    #  loop over zones (defined in the zone file)
+                    # --------------------------------------------------------------
+                    LayeriZonei = np.zeros([self.dem_parameters["nzone"], 8])
+                        
+                    for izone in range(self.hapin['N']*self.hapin['M']):
+                       
+                        for i, spp in enumerate(SPP): 
+                            flag_zone = int(np.ravel(zone3d[istr])[izone])
+                            LayeriZonei[izone,i] = SPP[spp][flag_zone-1]
+                    SoilPhysProp.append(LayeriZonei)
             SoilPhysProp = np.vstack(SoilPhysProp)
-            # np.shape(SoilPhysProp)
+            np.shape(SoilPhysProp)
 
         # case if there is only one zone in the mesh
         # -------------------------------------------------------------
@@ -2585,18 +2675,17 @@ class CATHY():
             ),
             "w+",
         ) as rootmapfile:
-
             rootmapfile.write("north:     0" + "\n")
-            rootmapfile.write("south:     0" + str(self.hapin["xllcorner"]) + "\n")
+            rootmapfile.write("south:     " + str(self.hapin["yllcorner"]) + "\n")
             rootmapfile.write("east:     0" + "\n")
-            rootmapfile.write("west:     0" + str(self.hapin["yllcorner"]) + "\n")
+            rootmapfile.write("west:     " + str(self.hapin["xllcorner"]) + "\n")
             rootmapfile.write("rows:     " + str(self.hapin["M"]) + "\n")
             rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
 
             if isinstance(indice_veg, float):
                 indice_veg = (
                     np.c_[
-                        np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]
+                        np.ones([int(self.hapin["M"]),int(self.hapin["N"])])]
                     * indice_veg
                 )
                 np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
@@ -2853,7 +2942,7 @@ class CATHY():
 
 
 
-    def create_mesh_vtkris3d_vtk2(self):
+    def create_mesh_vtkris3d_vtk2(self,verbose):
         '''
         Create mesh for vtk format version 2
 
@@ -2870,8 +2959,7 @@ class CATHY():
         # C                        indicates material type for 3-d element I)
         '''
 
-        if not 'nnod3' in self.grid3d.keys():
-            self.run_processor(IPRT1=3)
+
 
         with open(os.path.join(self.workdir,
                                self.project_name,
@@ -2900,12 +2988,18 @@ class CATHY():
         pass
 
 
-    def create_mesh_vtk(self):
+    def create_mesh_vtk(self,verbose=False):
         '''
         Create custum mesh
         THIS SHOULD BE MOVED TO MESHTOOLS
         '''
-        self.create_mesh_vtkris3d_vtk2()
+
+            
+        # if not 'nnod3' in self.grid3d.keys():
+        self.run_preprocessor(verbose=verbose)
+        self.run_processor(IPRT1=3,verbose=verbose)
+            
+        self.create_mesh_vtkris3d_vtk2(verbose)
         # self.create_mesh_vtkris3d_vtk9()
         self.mesh_pv_attributes = pv.read(os.path.join(self.workdir,
                                                        self.project_name,

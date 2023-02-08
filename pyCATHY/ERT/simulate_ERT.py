@@ -65,15 +65,23 @@ def create_ERT_survey_pg(pathERT,sequence,mesh,**kwargs):
         raise ValueError('wrong initial resistivity input')
     
 
-    if not verbose:
-        devnull = open('/dev/null', 'w')
-        oldstdout_fno = os.dup(sys.stdout.fileno())
-        os.dup2(devnull.fileno(), 1)
+    try:
+        if not verbose:
+            devnull = open('/dev/null', 'w')
+            oldstdout_fno = os.dup(sys.stdout.fileno())
+            os.dup2(devnull.fileno(), 1)
+    except:
+        pass
     het = ert.simulate(mesh3d, res=res0, scheme=scheme, 
                         calcOnly=False, verbose=verbose, 
                         noiseLevel=noise_level)
-    if not verbose:
-        os.dup2(oldstdout_fno, 1)
+    
+    try:
+        if not verbose:
+            os.dup2(oldstdout_fno, 1)
+    except:
+        pass
+
     
     # # Reset the standard output
     # sys.stdout = sys.__stdout__

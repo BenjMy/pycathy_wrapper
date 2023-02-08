@@ -331,6 +331,9 @@ def read_dem(demfile,dtm_13file):
     dem_mat = np.loadtxt(dem_file, skiprows=0)
     dem_file.close()
     
+    # import matplotlib.pyplot as plt
+    # plt.imshow(dem_mat)
+    
     return dem_mat, str_hd_dem
 
 
