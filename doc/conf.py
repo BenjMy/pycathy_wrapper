@@ -14,7 +14,8 @@ import os
 import sys
 sys.path.append(os.path.relpath('..'))
 sys.path.insert(0, os.path.abspath('..'))
-
+sys.path.append(os.path.relpath('../pyCATHY/'))
+sys.path.insert(0, os.path.abspath('../pyCATHY/'))
 #import pyCATHY
 
 
