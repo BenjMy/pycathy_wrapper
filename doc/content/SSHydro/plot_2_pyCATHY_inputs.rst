@@ -25,7 +25,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 *Estimated time to run the notebook = 5min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-16
+.. GENERATED FROM PYTHON SOURCE LINES 10-15
 
 .. code-block:: default
 
@@ -41,15 +41,15 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 17-22
+.. GENERATED FROM PYTHON SOURCE LINES 16-22
 
 .. code-block:: default
 
 
+    import numpy as np
+
     from pyCATHY import cathy_tools
     from pyCATHY.plotters import cathy_plots as cplt
-    import numpy as np
 
 
 
@@ -63,7 +63,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 .. code-block:: default
 
 
-    path2prj ='weil_exemple_inputs_plot' # add your local path here
+    path2prj = "weil_exemple_inputs_plot"  # add your local path here
     simu = cathy_tools.CATHY(dirName=path2prj)
     # simu.run_preprocessor()
 
@@ -86,7 +86,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 .. code-block:: default
 
-    simu.show_input(prop='dem')
+    simu.show_input(prop="dem")
 
 
 
@@ -131,13 +131,13 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 .. GENERATED FROM PYTHON SOURCE LINES 41-42
 
-In progress --> This will automatically create a new vtk mesh containing the 
+In progress --> This will automatically create a new vtk mesh containing the
 
 .. GENERATED FROM PYTHON SOURCE LINES 42-45
 
 .. code-block:: default
 
-    simu.show_input(prop='root_map')
+    simu.show_input(prop="root_map")
 
 
 
@@ -157,7 +157,7 @@ Add a new zone
 
 
     simu.update_prepo_inputs()
-    simu.update_veg_map() # calling without args to get the default values
+    simu.update_veg_map()  # calling without args to get the default values
     simu.update_soil()
 
 
@@ -194,9 +194,9 @@ Add a new zone
 .. code-block:: default
 
     veg_map = simu.veg_map
-    veg_map[2:6,5:14] = 2
+    veg_map[2:6, 5:14] = 2
     simu.update_veg_map(veg_map)
-    simu.show_input(prop='root_map')
+    simu.show_input(prop="root_map")
 
 
 
@@ -214,15 +214,15 @@ Feddes is a dictionnary with 6 entries, and for each a list
 .. code-block:: default
 
 
-    FP_map_1zone = simu.soil_FP['FP_map'] # read existing mapping
+    FP_map_1zone = simu.soil_FP["FP_map"]  # read existing mapping
     FP_map_2zones = {}
     for k in FP_map_1zone:
-        if k == 'ZROOT':
-            ZROOT_zone2 = FP_map_1zone['ZROOT'][0]/2
-            FP_map_2zones[k] = [FP_map_1zone[k][0],ZROOT_zone2]
+        if k == "ZROOT":
+            ZROOT_zone2 = FP_map_1zone["ZROOT"][0] / 2
+            FP_map_2zones[k] = [FP_map_1zone[k][0], ZROOT_zone2]
         else:
-            FP_map_2zones[k] = [FP_map_1zone[k][0],FP_map_1zone[k][0]]
-    
+            FP_map_2zones[k] = [FP_map_1zone[k][0], FP_map_1zone[k][0]]
+
     # simu.show_input(prop='soil', yprop='ZROOT', layer_nb=12)
 
 
@@ -232,15 +232,14 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-81
+.. GENERATED FROM PYTHON SOURCE LINES 73-80
 
 .. code-block:: default
 
-    simu.update_soil(FP_map=FP_map_2zones,
-                     show=True)
+    simu.update_soil(FP_map=FP_map_2zones, show=True)
 
     simu.update_zone()
-    simu.show_input(prop='soil', yprop='PERMX', layer_nb=4)
+    simu.show_input(prop="soil", yprop="PERMX", layer_nb=4)
 
     # Here we can imaging to get a more complexe vegetation map from remote sensing data instead
 
@@ -281,7 +280,7 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-85
+.. GENERATED FROM PYTHON SOURCE LINES 81-84
 
 .. code-block:: default
 
@@ -304,12 +303,12 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-88
+.. GENERATED FROM PYTHON SOURCE LINES 85-87
 
 This will automatically create a new vtk mesh containing the zone flags
 error --> number of tretra in grid3d < n of tretra in the mesh (mission one element)
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-90
+.. GENERATED FROM PYTHON SOURCE LINES 87-89
 
 .. code-block:: default
 
@@ -332,13 +331,13 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-95
+.. GENERATED FROM PYTHON SOURCE LINES 90-94
 
 .. code-block:: default
 
 
-    simu.show_input(prop='soil', yprop='PERMX', layer_nb=1)
-    simu.show_input(prop='soil', yprop='POROS', layer_nb=2)
+    simu.show_input(prop="soil", yprop="PERMX", layer_nb=1)
+    simu.show_input(prop="soil", yprop="POROS", layer_nb=2)
 
 
 
@@ -373,16 +372,16 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 96-97
+.. GENERATED FROM PYTHON SOURCE LINES 95-96
 
 Show layer number 10
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-100
+.. GENERATED FROM PYTHON SOURCE LINES 96-99
 
 .. code-block:: default
 
 
-    simu.show_input(prop='soil', yprop='VGNCELL', layer_nb=10)
+    simu.show_input(prop="soil", yprop="VGNCELL", layer_nb=10)
 
 
 
@@ -404,13 +403,13 @@ Show layer number 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-105
+.. GENERATED FROM PYTHON SOURCE LINES 100-104
 
 .. code-block:: default
 
     simu.update_soil()
-    df_soil, _ = simu.read_inputs('soil')
-    df = simu.read_inputs('soil')
+    df_soil, _ = simu.read_inputs("soil")
+    df = simu.read_inputs("soil")
 
 
 
@@ -428,15 +427,15 @@ Show layer number 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-112
+.. GENERATED FROM PYTHON SOURCE LINES 105-111
 
 .. code-block:: default
 
     zones = simu.zone
     simu.update_prepo_inputs()
-    zones[5:14,5:14] = 2
+    zones[5:14, 5:14] = 2
     simu.update_zone(zones)
-    simu.show_input(prop='zone')
+    simu.show_input(prop="zone")
 
 
 
@@ -457,26 +456,26 @@ Show layer number 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-114
+.. GENERATED FROM PYTHON SOURCE LINES 112-113
 
 we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-129
+.. GENERATED FROM PYTHON SOURCE LINES 113-128
 
 .. code-block:: default
 
 
     # what if dimension of the heteregeneity is 3d?
 
-    SPP_map_1zone = simu.soil_SPP['SPP_map'] # read existing mapping
+    SPP_map_1zone = simu.soil_SPP["SPP_map"]  # read existing mapping
     SPP_map_2zones = {}
     for k in SPP_map_1zone:
-        if k == 'PERMX':
-            PERMX_zone2 = SPP_map_1zone['PERMX'][0]/2
-            SPP_map_2zones[k] = [SPP_map_1zone[k][0],PERMX_zone2]
+        if k == "PERMX":
+            PERMX_zone2 = SPP_map_1zone["PERMX"][0] / 2
+            SPP_map_2zones[k] = [SPP_map_1zone[k][0], PERMX_zone2]
         else:
-            SPP_map_2zones[k] = [SPP_map_1zone[k][0],SPP_map_1zone[k][0]]
-    
+            SPP_map_2zones[k] = [SPP_map_1zone[k][0], SPP_map_1zone[k][0]]
+
 
     simu.update_soil(SPP_map=SPP_map_2zones)
 
@@ -496,17 +495,13 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-137
+.. GENERATED FROM PYTHON SOURCE LINES 129-132
 
 .. code-block:: default
 
-    simu.show_input(prop='soil', yprop='PERMX', layer_nb=2)
+    simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
 
-    simu.show_input(prop='soil', yprop='PERMX', layer_nb=12)
-
-
-
-
+    simu.show_input(prop="soil", yprop="PERMX", layer_nb=12)
 
 
 
@@ -545,7 +540,7 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.185 seconds)
+   **Total running time of the script:** ( 0 minutes  2.535 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_2_pyCATHY_inputs.py:

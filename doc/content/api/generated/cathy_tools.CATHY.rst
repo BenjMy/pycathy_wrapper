@@ -159,6 +159,8 @@ cathy\_tools.CATHY
     
     
     
+    
+    
         CATHY.backup_results_DA
     
     
@@ -284,6 +286,10 @@ cathy\_tools.CATHY
     
     
         CATHY.update_dem_parameters
+    
+    
+    
+        CATHY.update_hapin
     
     
     
@@ -462,6 +468,10 @@ cathy\_tools.CATHY
 
 
 .. automethod:: CATHY.update_dem_parameters
+
+
+
+.. automethod:: CATHY.update_hapin
 
 
 

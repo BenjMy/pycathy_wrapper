@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.importers.read_dem``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to mesh from a DEM and run the hydrological model.">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3_meshing_from_weil_thumb.png
+     :alt: Meshing from a Digital Elevation Model (DEM)
+
+     :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weil.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to build a 3d soil properties from a DEM and run t...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3b_soil3d_from_weil_thumb.png
+     :alt: Soil 3d from a Digital Elevation Model (DEM)
+
+     :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weil.py`

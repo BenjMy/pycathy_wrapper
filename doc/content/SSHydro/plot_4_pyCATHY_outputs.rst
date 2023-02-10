@@ -28,7 +28,7 @@ This example shows how to use pyCATHY object to plot the most common ouputs of t
 .. GENERATED FROM PYTHON SOURCE LINES 13-15
 
 Here we need to import `cathy_tools` class that control the CATHY core files preprocessing and processing
-We also import `cathy_plots` to render the results 
+We also import `cathy_plots` to render the results
 
 .. GENERATED FROM PYTHON SOURCE LINES 15-19
 
@@ -53,7 +53,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 .. code-block:: default
 
-    path2prj ='weil_exemple_outputs_plot' # add your local path here
+    path2prj = "weil_exemple_outputs_plot"  # add your local path here
     simu = cathy_tools.CATHY(dirName=path2prj)
     simu.run_processor(verbose=True)
 
@@ -77,7 +77,7 @@ if you add True to verbose, the processor log will be printed in the window shel
     🔄 update dem_parameters file 
     😔 cannot find existing dem paramters
     🛠  Recompile src files [0s]
-    🍳 gfortran compilation [12s]
+    🍳 gfortran compilation [11s]
     👟 Run processor
     b'\n     nsf  (# of seepage faces)               =      0\n\n\n      TIME STEP:        1    DELTAT:   1.0000E-02    TIME:   1.0000E-02\n     
     ******************************************************************\n\n\n                     NONLINEAR CONVERGENCE BEHAVIOR \n iter- convergence error norms  node    PNEW at    POLD at  residual error 
@@ -3014,7 +3014,7 @@ if you add True to verbose, the processor log will be printed in the window shel
     norms\n ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF\n     1  4.0838E-03  3.1314E-04   381  -4.68E-03  -4.99E-03  5.598E-06  9.060E-07\n     2  1.2011E-04 -1.1551E-05  
     3980   1.33E-01   1.33E-01  8.213E-08  1.879E-08\n CONVERGENCE ACHIEVED IN    2 ITERATIONS\n'
     b'Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL\n'
-    /home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_inputs.py:379: UserWarning: loadtxt: Empty input file: "<_io.TextIOWrapper name='/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/weil_exemple_outputs_plot/my_cathy_prj/output/grid3d' mode='r' encoding='ANSI_X3.4-1968'>"
+    /home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_inputs.py:392: UserWarning: loadtxt: Empty input file: "<_io.TextIOWrapper name='/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/weil_exemple_outputs_plot/my_cathy_prj/output/grid3d' mode='r' encoding='ANSI_X3.4-1968'>"
       nnod, nnod3, nel = np.loadtxt(grid3d_file, max_rows=1)
 
 
@@ -3024,7 +3024,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 .. code-block:: default
 
-    simu.show(prop='hgsfdet')
+    simu.show(prop="hgsfdet")
 
 
 
@@ -3042,7 +3042,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 .. code-block:: default
 
-    simu.show(prop='dtcoupling', yprop='Atmpot-d')
+    simu.show(prop="dtcoupling", yprop="Atmpot-d")
 
 
 
@@ -3060,7 +3060,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 .. code-block:: default
 
-    simu.show(prop='hgraph')
+    simu.show(prop="hgraph")
 
 
 
@@ -3078,7 +3078,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 .. code-block:: default
 
-    simu.show(prop='cumflowvol')
+    simu.show(prop="cumflowvol")
 
 
 
@@ -3096,15 +3096,16 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 To select another time step change the value in the function argument
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-46
+.. GENERATED FROM PYTHON SOURCE LINES 40-47
 
 .. code-block:: default
 
-    cplt.show_vtk(unit='pressure',
-                  timeStep=1,
-                  notebook=False, 
-                  path=simu.workdir + '/my_cathy_prj/vtk/'
-                  )
+    cplt.show_vtk(
+        unit="pressure",
+        timeStep=1,
+        notebook=False,
+        path=simu.workdir + "/my_cathy_prj/vtk/",
+    )
 
 
 
@@ -3126,15 +3127,16 @@ To select another time step change the value in the function argument
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-52
+.. GENERATED FROM PYTHON SOURCE LINES 48-54
 
 .. code-block:: default
 
-    cplt.show_vtk(unit='saturation',
-                  timeStep=1,
-                  notebook=False, 
-                  path=simu.workdir + '/my_cathy_prj/vtk/'
-                  )
+    cplt.show_vtk(
+        unit="saturation",
+        timeStep=1,
+        notebook=False,
+        path=simu.workdir + "/my_cathy_prj/vtk/",
+    )
 
 
 
@@ -3158,7 +3160,7 @@ To select another time step change the value in the function argument
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  44.480 seconds)
+   **Total running time of the script:** ( 1 minutes  43.576 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_4_pyCATHY_outputs.py:

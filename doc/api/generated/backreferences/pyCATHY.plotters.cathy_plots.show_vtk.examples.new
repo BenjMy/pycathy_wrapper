@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_1_pyCATHY_weilletal_thumb.png
+     :alt: Weil et al example
+
+     :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
+     :alt: Output plots
+
+     :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`

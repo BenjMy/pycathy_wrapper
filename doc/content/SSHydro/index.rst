@@ -76,6 +76,27 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to build a 3d soil properties from a DEM and run t...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3b_soil3d_from_weil_thumb.png
+     :alt: Soil 3d from a Digital Elevation Model (DEM)
+
+     :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /content/SSHydro/plot_3b_soil3d_from_weil
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological...">
 
 .. only:: html
@@ -101,6 +122,26 @@ Surface subsurface hydrological model
 
 
 .. _sphx_glr_content_SSHydro_meshing_from_weil:
+
+
+ NCELL =       400 (20 * 20)
+ NTRI    =     800 (2 * 400)
+ NNOD    =     441 (21 * 21)
+ NSTR    =      15
+ NT      =   36000 (3 * 800 * 15)
+ N       =    7056 (441 * 16)
+ NFACE   =   74000
+ NTERM   =   52111
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
+.. _sphx_glr_content_SSHydro_soil3d_from_weil:
 
 
  NCELL =       400 (20 * 20)

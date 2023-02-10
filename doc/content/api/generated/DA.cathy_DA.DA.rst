@@ -225,6 +225,8 @@ DA.cathy\_DA.DA
     
     
     
+    
+    
         DA.backup_results_DA
     
     
@@ -378,6 +380,10 @@ DA.cathy\_DA.DA
     
     
         DA.update_dem_parameters
+    
+    
+    
+        DA.update_hapin
     
     
     
@@ -588,6 +594,10 @@ DA.cathy\_DA.DA
 
 
 .. automethod:: DA.update_dem_parameters
+
+
+
+.. automethod:: DA.update_hapin
 
 
 

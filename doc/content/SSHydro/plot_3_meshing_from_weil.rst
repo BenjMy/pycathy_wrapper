@@ -25,7 +25,7 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
 
 *Estimated time to run the notebook = 5min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-27
+.. GENERATED FROM PYTHON SOURCE LINES 12-29
 
 .. code-block:: default
 
@@ -34,15 +34,17 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
     # !! run preprocessor change the DEM shape !
     # dtm_13 does not have the same shape anymore!
 
+    import os
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+
+    import pyCATHY.meshtools as mt
     from pyCATHY import cathy_tools
-    from pyCATHY.plotters import cathy_plots as cplt
     from pyCATHY.importers import cathy_inputs as in_CT
     from pyCATHY.importers import cathy_outputs as out_CT
-    import pyCATHY.meshtools as mt
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    import os 
+    from pyCATHY.plotters import cathy_plots as cplt
 
 
 
@@ -51,17 +53,16 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-29
+.. GENERATED FROM PYTHON SOURCE LINES 30-31
 
 ------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-34
+.. GENERATED FROM PYTHON SOURCE LINES 31-35
 
 .. code-block:: default
 
-    path2prj ='../SSHydro/' # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj,prj_name='meshing_from_weil',
-                             clear_src=True)
+    path2prj = "../SSHydro/"  # add your local path here
+    simu = cathy_tools.CATHY(dirName=path2prj, prj_name="meshing_from_weil", clear_src=True)
 
     rootpath = os.path.join(simu.workdir + simu.project_name)
 
@@ -85,32 +86,34 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-36
+.. GENERATED FROM PYTHON SOURCE LINES 36-37
 
 the dimension of the mesh is squared (20,20)
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-55
+.. GENERATED FROM PYTHON SOURCE LINES 37-58
 
 .. code-block:: default
 
 
 
-    dem_mat, str_hd_dem = in_CT.read_dem(os.path.join(simu.workdir, simu.project_name, "prepro/dem"),
-                                         os.path.join(simu.workdir, simu.project_name, "prepro/dtm_13.val"))
+    dem_mat, str_hd_dem = in_CT.read_dem(
+        os.path.join(simu.workdir, simu.project_name, "prepro/dem"),
+        os.path.join(simu.workdir, simu.project_name, "prepro/dtm_13.val"),
+    )
 
-    simu.show_input(prop='dem')
+    simu.show_input(prop="dem")
 
     print(dem_mat)
 
-    simu.update_prepo_inputs( 
-                                DEM=dem_mat,
-                                N=np.shape(dem_mat)[1],
-                                M=np.shape(dem_mat)[0],
-                            )
+    simu.update_prepo_inputs(
+        DEM=dem_mat,
+        # N=np.shape(dem_mat)[1],
+        # M=np.shape(dem_mat)[0],
+    )
 
     fig = plt.figure()
     ax = plt.axes(projection="3d")
-    simu.show_input(prop='dem', ax=ax)
+    simu.show_input(prop="dem", ax=ax)
     simu.create_mesh_vtk(verbose=True)
 
 
@@ -498,12 +501,9 @@ the dimension of the mesh is squared (20,20)
 
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
-    🔄 update zone file 
-    🔄 update dem_parameters file 
-    🔄 update parm file 
     🔄 update parm file 
     🛠  Recompile src files [10s]
-    🍳 gfortran compilation [22s]
+    🍳 gfortran compilation [21s]
     👟 Run processor
     b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
     b''
@@ -511,15 +511,15 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-63
+.. GENERATED FROM PYTHON SOURCE LINES 59-66
 
 .. code-block:: default
 
-    meshfile = rootpath + '/vtk/' + simu.project_name + '.vtk'
+    meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     import pyvista as pv
+
     mesh2plot = pv.read(meshfile)
-    mesh2plot.plot(show_edges=True, show_axes=True,
-                   show_bounds=True)
+    mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 
@@ -534,30 +534,28 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-65
+.. GENERATED FROM PYTHON SOURCE LINES 67-68
 
 the new dimension of the mesh is rectangle (10,20)
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-82
+.. GENERATED FROM PYTHON SOURCE LINES 68-83
 
 .. code-block:: default
 
 
-    dem_crop = dem_mat[0:10,:]
-    print('DEM shape is {}'.format(np.shape(dem_crop)))
+    dem_crop = dem_mat[0:10, :]
+    print("DEM shape is {}".format(np.shape(dem_crop)))
 
-    simu.update_prepo_inputs( 
-                                DEM=dem_crop,
-                                N=np.shape(dem_crop)[1],
-                                M=np.shape(dem_crop)[0],
-                            )
+    simu.update_prepo_inputs(
+        DEM=dem_crop,
+    )
 
     simu.update_zone()
     simu.update_veg_map()
 
     fig = plt.figure()
     ax = plt.axes(projection="3d")
-    simu.show_input(prop='dem', ax=ax)
+    simu.show_input(prop="dem", ax=ax)
     simu.create_mesh_vtk(verbose=True)
 
 
@@ -883,12 +881,9 @@ the new dimension of the mesh is rectangle (10,20)
 
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
-    🔄 update zone file 
-    🔄 update dem_parameters file 
     🔄 update parm file 
-    🔄 update parm file 
-    🛠  Recompile src files [31s]
-    🍳 gfortran compilation [44s]
+    🛠  Recompile src files [30s]
+    🍳 gfortran compilation [40s]
     👟 Run processor
     b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
     b''
@@ -896,15 +891,15 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-90
+.. GENERATED FROM PYTHON SOURCE LINES 84-91
 
 .. code-block:: default
 
-    meshfile = rootpath + '/vtk/' + simu.project_name + '.vtk'
+    meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     import pyvista as pv
+
     mesh2plot = pv.read(meshfile)
-    mesh2plot.plot(show_edges=True, show_axes=True,
-                   show_bounds=True)
+    mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 
@@ -919,25 +914,23 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-111
+.. GENERATED FROM PYTHON SOURCE LINES 95-109
 
 .. code-block:: default
 
 
-    simu.update_prepo_inputs( 
-                                DEM=dem_crop,
-                                N=np.shape(dem_crop)[1],
-                                M=np.shape(dem_crop)[0],
-                                xllcorner=1e4,
-                                yllcorner=4e3,
-                            )
+    simu.update_prepo_inputs(
+        DEM=dem_crop,
+        xllcorner=1e4,
+        yllcorner=4e3,
+    )
 
     simu.update_zone()
     simu.update_veg_map()
 
     fig = plt.figure()
     ax = plt.axes(projection="3d")
-    simu.show_input(prop='dem', ax=ax)
+    simu.show_input(prop="dem", ax=ax)
     simu.create_mesh_vtk(verbose=False)
 
 
@@ -962,26 +955,23 @@ the new dimension of the mesh is rectangle (10,20)
     🔄 update parm file 
     🍳 gfortran compilation
     👟 Run preprocessor
-    🔄 update zone file 
-    🔄 update dem_parameters file 
     🔄 update parm file 
-    🔄 update parm file 
-    🛠  Recompile src files [52s]
-    🍳 gfortran compilation [64s]
+    🛠  Recompile src files [48s]
+    🍳 gfortran compilation [59s]
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-118
+.. GENERATED FROM PYTHON SOURCE LINES 110-116
 
 .. code-block:: default
 
-    meshfile = rootpath + '/vtk/' + simu.project_name + '.vtk'
+    meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     import pyvista as pv
+
     mesh2plot = pv.read(meshfile)
-    mesh2plot.plot(show_edges=True, show_axes=True,
-                   show_bounds=True)
+    mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 
@@ -995,26 +985,24 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 119-136
+.. GENERATED FROM PYTHON SOURCE LINES 117-132
 
 .. code-block:: default
 
 
     dem_crop_flipy = np.flipud(dem_crop)
 
-    simu.update_prepo_inputs( 
-                                DEM=dem_crop_flipy,
-                                N=np.shape(dem_crop_flipy)[1],
-                                M=np.shape(dem_crop_flipy)[0],
-                                xllcorner=1e4,
-                                yllcorner=4e3,
-                            )
+    simu.update_prepo_inputs(
+        DEM=dem_crop_flipy,
+        xllcorner=1e4,
+        yllcorner=4e3,
+    )
 
     simu.update_zone()
     simu.update_veg_map()
     fig = plt.figure()
     ax = plt.axes(projection="3d")
-    simu.show_input(prop='dem', ax=ax)
+    simu.show_input(prop="dem", ax=ax)
     simu.create_mesh_vtk(verbose=False)
 
 
@@ -1039,26 +1027,23 @@ the new dimension of the mesh is rectangle (10,20)
     🔄 update parm file 
     🍳 gfortran compilation
     👟 Run preprocessor
-    🔄 update zone file 
-    🔄 update dem_parameters file 
     🔄 update parm file 
-    🔄 update parm file 
-    🛠  Recompile src files [72s]
-    🍳 gfortran compilation [86s]
+    🛠  Recompile src files [67s]
+    🍳 gfortran compilation [78s]
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-144
+.. GENERATED FROM PYTHON SOURCE LINES 133-140
 
 .. code-block:: default
 
-    meshfile = rootpath + '/vtk/' + simu.project_name + '.vtk'
+    meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     import pyvista as pv
+
     mesh2plot = pv.read(meshfile)
-    mesh2plot.plot(show_edges=True, show_axes=True,
-                   show_bounds=True)
+    mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 
@@ -1073,7 +1058,7 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-170
+.. GENERATED FROM PYTHON SOURCE LINES 141-164
 
 .. code-block:: default
 
@@ -1083,24 +1068,22 @@ the new dimension of the mesh is rectangle (10,20)
 
     # linear z depth
     # -------------------------------------------------------------
-    zb = np.linspace(0,maxdepth,3)
-    nstr=len(zb)-1
-    zr=list((np.ones(len(zb)))/(nstr))
+    zb = np.linspace(0, maxdepth, 3)
+    nstr = len(zb) - 1
+    zr = list((np.ones(len(zb))) / (nstr))
 
 
-    simu.update_prepo_inputs( 
-                                DEM=dem_crop,
-                                N=np.shape(dem_crop)[1],
-                                M=np.shape(dem_crop)[0],
-                                xllcorner=1e4,
-                                yllcorner=4e3,
-                                nstr=nstr, 
-                                zratio=zr,  
-                                base=max(zb),
-                            )
+    simu.update_prepo_inputs(
+        DEM=dem_crop,
+        xllcorner=1e4,
+        yllcorner=4e3,
+        nstr=nstr,
+        zratio=zr,
+        base=max(zb),
+    )
     fig = plt.figure()
     ax = plt.axes(projection="3d")
-    simu.show_input(prop='dem', ax=ax)
+    simu.show_input(prop="dem", ax=ax)
     simu.create_mesh_vtk(verbose=False)
 
 
@@ -1125,26 +1108,23 @@ the new dimension of the mesh is rectangle (10,20)
     ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🍳 gfortran compilation
     👟 Run preprocessor
-    🔄 update zone file 
-    🔄 update dem_parameters file 
     🔄 update parm file 
-    🔄 update parm file 
-    🛠  Recompile src files [95s]
-    🍳 gfortran compilation [107s]
+    🛠  Recompile src files [86s]
+    🍳 gfortran compilation [97s]
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-178
+.. GENERATED FROM PYTHON SOURCE LINES 165-172
 
 .. code-block:: default
 
-    meshfile = rootpath + '/vtk/' + simu.project_name + '.vtk'
+    meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     import pyvista as pv
+
     mesh2plot = pv.read(meshfile)
-    mesh2plot.plot(show_edges=True, show_axes=True,
-                   show_bounds=True)
+    mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 
@@ -1159,30 +1139,28 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 179-200
+.. GENERATED FROM PYTHON SOURCE LINES 173-192
 
 .. code-block:: default
 
 
-    # the fraction of total grid height that each layer is to occupy 
+    # the fraction of total grid height that each layer is to occupy
     # log z depth
     # -------------------------------------------------------------
     zb = np.geomspace(1e-1, maxdepth, num=15)
-    nstr=len(zb)
-    zr = [abs(zb[0]/maxdepth)]
-    zr.extend(list(abs(np.diff(zb)/maxdepth)))
+    nstr = len(zb)
+    zr = [abs(zb[0] / maxdepth)]
+    zr.extend(list(abs(np.diff(zb) / maxdepth)))
 
 
-    simu.update_prepo_inputs( 
-                                DEM=dem_crop,
-                                N=np.shape(dem_crop)[1],
-                                M=np.shape(dem_crop)[0],
-                                xllcorner=1e4,
-                                yllcorner=4e3,
-                                nstr=nstr, 
-                                zratio=zr,  
-                                base=max(zb),
-                            )
+    simu.update_prepo_inputs(
+        DEM=dem_crop,
+        xllcorner=1e4,
+        yllcorner=4e3,
+        nstr=nstr,
+        zratio=zr,
+        base=max(zb),
+    )
     simu.create_mesh_vtk(verbose=False)
 
 
@@ -1199,26 +1177,23 @@ the new dimension of the mesh is rectangle (10,20)
     🔄 update dem_parameters file 
     🍳 gfortran compilation
     👟 Run preprocessor
-    🔄 update zone file 
-    🔄 update dem_parameters file 
     🔄 update parm file 
-    🔄 update parm file 
-    🛠  Recompile src files [115s]
-    🍳 gfortran compilation [128s]
+    🛠  Recompile src files [105s]
+    🍳 gfortran compilation [116s]
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 201-208
+.. GENERATED FROM PYTHON SOURCE LINES 193-200
 
 .. code-block:: default
 
-    meshfile = rootpath + '/vtk/' + simu.project_name + '.vtk'
+    meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     import pyvista as pv
+
     mesh2plot = pv.read(meshfile)
-    mesh2plot.plot(show_edges=True, show_axes=True,
-                   show_bounds=True)
+    mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 
@@ -1233,13 +1208,12 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 209-212
+.. GENERATED FROM PYTHON SOURCE LINES 201-203
 
 .. code-block:: default
 
 
-    simu.run_processor(IPRT1=2,verbose=True)
-
+    simu.run_processor(IPRT1=2, verbose=True)
 
 
 
@@ -1251,8 +1225,8 @@ the new dimension of the mesh is rectangle (10,20)
  .. code-block:: none
 
     🔄 update parm file 
-    🛠  Recompile src files [129s]
-    🍳 gfortran compilation [142s]
+    🛠  Recompile src files [117s]
+    🍳 gfortran compilation [128s]
     👟 Run processor
     b'\n     nsf  (# of seepage faces)               =      0\n\n\n      TIME STEP:        1    DELTAT:   1.0000E-02    TIME:   1.0000E-02\n     
     ******************************************************************\n\n\n                     NONLINEAR CONVERGENCE BEHAVIOR \n iter- convergence error norms  node    PNEW at    POLD at  residual error 
@@ -3915,7 +3889,7 @@ the new dimension of the mesh is rectangle (10,20)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 3 minutes  16.303 seconds)
+   **Total running time of the script:** ( 3 minutes  2.504 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3_meshing_from_weil.py:

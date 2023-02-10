@@ -28,7 +28,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 *Estimated time to run the notebook = 5min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 13-36
+.. GENERATED FROM PYTHON SOURCE LINES 13-31
 
 
 
@@ -53,13 +53,13 @@ The notebook illustrate how to work interactively: execute single cell, see part
     🔄 update dem_parameters file 
     😔 cannot find existing dem paramters
     🛠  Recompile src files [0s]
-    🍳 gfortran compilation [10s]
+    🍳 gfortran compilation [9s]
     👟 Run processor
     b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
     b''
     🔄 update parm file 
-    🛠  Recompile src files [10s]
-    🍳 gfortran compilation [20s]
+    🛠  Recompile src files [9s]
+    🍳 gfortran compilation [19s]
     👟 Run processor
     b'\n     nsf  (# of seepage faces)               =      0\n\n\n      TIME STEP:        1    DELTAT:   1.0000E-02    TIME:   1.0000E-02\n     
     ******************************************************************\n\n\n                     NONLINEAR CONVERGENCE BEHAVIOR \n iter- convergence error norms  node    PNEW at    POLD at  residual error 
@@ -3016,25 +3016,20 @@ The notebook illustrate how to work interactively: execute single cell, see part
     # In[13]:
 
 
-    path2prj ='weil_exemple' # add your local path here
+    path2prj = "weil_exemple"  # add your local path here
     simu = cathy_tools.CATHY(dirName=path2prj)
 
-    simu.run_processor(IPRT1=3,verbose=True)
+    simu.run_processor(IPRT1=3, verbose=True)
     simu.grid3d
-    len(simu.grid3d['mesh_tetra'])
-    simu.run_processor(IPRT1=2,verbose=True)
+    len(simu.grid3d["mesh_tetra"])
+    simu.run_processor(IPRT1=2, verbose=True)
 
-    cplt.show_vtk(unit='pressure',
-                  timeStep=1,
-                  notebook=False, 
-                  path='./my_cathy_prj/vtk/'
-                 )
-
+    cplt.show_vtk(unit="pressure", timeStep=1, notebook=False, path="./my_cathy_prj/vtk/")
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  54.367 seconds)
+   **Total running time of the script:** ( 1 minutes  58.675 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_1_pyCATHY_weilletal.py:

@@ -11,11 +11,11 @@ pyCATHY/petro.py
 pyCATHY/sensitivity.py
 pyCATHY/DA/__init__.py
 pyCATHY/DA/cathy_DA.py
+pyCATHY/DA/deprecated_run_DA.py
 pyCATHY/DA/enkf.py
 pyCATHY/DA/observations.py
 pyCATHY/DA/perturbate.py
 pyCATHY/DA/pf.py
-pyCATHY/DA/run_DA.py
 pyCATHY/ERT/__init__.py
 pyCATHY/ERT/petro_Archie.py
 pyCATHY/ERT/simulate_ERT.py
@@ -31,6 +31,7 @@ pyCATHY/tests/test_DA_ERT_Tensio_SWC.py
 pyCATHY/tests/test_DA_Feddes_ERT.py
 pyCATHY/tests/test_DA_Noble.py
 pyCATHY/tests/test_hydro_surfsurbsurface.py
+pyCATHY/tests/test_mapping.py
 pycathy.egg-info/PKG-INFO
 pycathy.egg-info/SOURCES.txt
 pycathy.egg-info/dependency_links.txt
