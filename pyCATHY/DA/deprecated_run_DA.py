@@ -1,19 +1,23 @@
 # from pyCATHY.DA.cathy_DA import DA
 import pandas as pd
 
-def run_DA_sequential(self,callexe, parallel,
-            DA_type,
-            dict_obs,
-            list_update_parm,
-            dict_parm_pert,
-            list_assimilated_obs,
-            open_loop_run,
-            threshold_rejected,
-            verbose,
-            **kwargs
-            ):
 
-    '''
+def run_DA_sequential(
+    self,
+    callexe,
+    parallel,
+    DA_type,
+    dict_obs,
+    list_update_parm,
+    dict_parm_pert,
+    list_assimilated_obs,
+    open_loop_run,
+    threshold_rejected,
+    verbose,
+    **kwargs
+):
+
+    """
 
     Run Data Assimilation
 
@@ -48,31 +52,32 @@ def run_DA_sequential(self,callexe, parallel,
         parameters perturbated dictionnary.
 
 
-    '''
-    # from pyCATHY.DA.cathy_DA import DA    
+    """
+    # from pyCATHY.DA.cathy_DA import DA
     # CATHYDA = DA()
 
     # Initiate
     # -------------------------------------------------------------------
-    update_key = 'ini_perturbation'
-
+    update_key = "ini_perturbation"
 
     # check if dict_obs is ordered in time
     # ------------------------------------
-    if (all(i < j for i, j in zip(list(dict_obs.keys()), list(dict_obs.keys())[1:]))) is False:
-        raise ValueError('Observation List is not sorted.')
+    if (
+        all(i < j for i, j in zip(list(dict_obs.keys()), list(dict_obs.keys())[1:]))
+    ) is False:
+        raise ValueError("Observation List is not sorted.")
 
     # dict_obs.keys()
     # self.dict_obs.keys()
-    if hasattr(self,'dict_obs') is False:
-        self.dict_obs = dict_obs # self.dict_obs is already assigned (in read observatio! change it to self.obs
+    if hasattr(self, "dict_obs") is False:
+        self.dict_obs = dict_obs  # self.dict_obs is already assigned (in read observatio! change it to self.obs
     self.dict_parm_pert = dict_parm_pert
     self.df_DA = pd.DataFrame()
 
     # Infer ensemble size NENS from perturbated parameter dictionnary
     # -------------------------------------------------------------------
     for name in self.dict_parm_pert:
-        NENS = len(self.dict_parm_pert[name]['ini_perturbation'])
+        NENS = len(self.dict_parm_pert[name]["ini_perturbation"])
 
     # Infer ensemble update times ENS_times from observation dictionnary
     # -------------------------------------------------------------------
@@ -81,7 +86,6 @@ def run_DA_sequential(self,callexe, parallel,
         ENS_times.append(float(ti))
 
     # data_measure_df = self.dictObs_2pd()
-
 
     # start DA cycle counter
     # -------------------------------------------------------------------
@@ -92,11 +96,11 @@ def run_DA_sequential(self,callexe, parallel,
     # initiate DA
     # -------------------------------------------------------------------
     list_update_parm = self._DA_init(
-                                    NENS=NENS, # ensemble size
-                                    ENS_times=ENS_times, # assimilation times
-                                    parm_pert= dict_parm_pert,
-                                    update_parm_list = list_update_parm,
-                                    )
+        NENS=NENS,  # ensemble size
+        ENS_times=ENS_times,  # assimilation times
+        parm_pert=dict_parm_pert,
+        update_parm_list=list_update_parm,
+    )
 
     # initiate mapping petro
     # -------------------------------------------------------------------
@@ -104,46 +108,38 @@ def run_DA_sequential(self,callexe, parallel,
 
     # update the perturbated parameters
     # --------------------------------------------------------------------
-    self.update_ENS_files(dict_parm_pert,
-                          update_parm_list='all', #list_update_parm
-                          cycle_nb=self.count_DA_cycle)
+    self.update_ENS_files(
+        dict_parm_pert,
+        update_parm_list="all",  # list_update_parm
+        cycle_nb=self.count_DA_cycle,
+    )
 
-
-                                    
-    all_atmbc_times = self.atmbc['time']
+    all_atmbc_times = self.atmbc["time"]
     # -------------------------------------------------------------------
     if open_loop_run:
-        self._DA_openLoop(
-                          ENS_times,
-                          list_assimilated_obs,
-                          parallel)
+        self._DA_openLoop(ENS_times, list_assimilated_obs, parallel)
     # end of Open loop - start DA
 
-    
-     
-        
     # -------------------------------------------------------------------
     # update input files ensemble again (time-windowed)
     # ---------------------------------------------------------------------
-    self._update_input_ensemble(NENS,
-                                list(self.atmbc['time']),
-                                dict_parm_pert,
-                                update_parm_list='all')  #list_update_parm
+    self._update_input_ensemble(
+        NENS, list(self.atmbc["time"]), dict_parm_pert, update_parm_list="all"
+    )  # list_update_parm
 
     # -----------------------------------
     # Run hydrological model sequentially = Loop over atmbc times (including assimilation observation times)
     # -----------------------------------
     # self.sequential_DA()
 
-   
-        
-        
     # TO CHANGE HERE
-    for t_atmbc in all_atmbc_times: #atmbc times include assimilation observation times
+    for (
+        t_atmbc
+    ) in all_atmbc_times:  # atmbc times include assimilation observation times
         print(t_atmbc)
         # t_atmbc = self.atmbc['time'][-2]
 
-        self._run_ensemble_hydrological_model(parallel,verbose,callexe)
+        self._run_ensemble_hydrological_model(parallel, verbose, callexe)
         os.chdir(os.path.join(self.workdir))
 
         # self.plot_ini_state_cov()
@@ -153,12 +149,11 @@ def run_DA_sequential(self,callexe, parallel,
         # check scenario (result of the hydro simulation)
         # ----------------------------------------------------------------
         rejected_ens = self._check_before_analysis(
-                                                   self.ens_valid,
-                                                   threshold_rejected,
-                                                   )
-        id_valid= ~np.array(rejected_ens)
-        self.ens_valid = list(np.arange(0,self.NENS)[id_valid])
-
+            self.ens_valid,
+            threshold_rejected,
+        )
+        id_valid = ~np.array(rejected_ens)
+        self.ens_valid = list(np.arange(0, self.NENS)[id_valid])
 
         # define subloop here
         # if 'optimize_inflation' in DA_type:
@@ -169,15 +164,15 @@ def run_DA_sequential(self,callexe, parallel,
 
         if t_atmbc in ENS_times:
 
-            print('t=' + str(t_atmbc))
+            print("t=" + str(t_atmbc))
 
             # map states to observation = apply H operator to state variable
             # ----------------------------------------------------------------
             prediction = self.map_states2Observations(
-                                                        list_assimilated_obs,
-                                                        default_state = 'psi',
-                                                        parallel=parallel,
-                                                       )
+                list_assimilated_obs,
+                default_state="psi",
+                parallel=parallel,
+            )
             # print(len(prediction))
             # print(np.shape(prediction))
             # ValueError: operands could not be broadcast together with shapes (612,) (1836,)
@@ -207,89 +202,115 @@ def run_DA_sequential(self,callexe, parallel,
 
             # DA analysis
             # ----------------------------------------------------------------
-            (ensemble_psi,
-             ensemble_sw,
-             data,
-             analysis,
-             analysis_param) = self._DA_analysis(prediction,
-                                                 DA_type,
-                                                 list_update_parm,
-                                                 list_assimilated_obs,
-                                                 ens_valid=self.ens_valid)
+            (
+                ensemble_psi,
+                ensemble_sw,
+                data,
+                analysis,
+                analysis_param,
+            ) = self._DA_analysis(
+                prediction,
+                DA_type,
+                list_update_parm,
+                list_assimilated_obs,
+                ens_valid=self.ens_valid,
+            )
 
             # DA mark_invalid_ensemble
             # ----------------------------------------------------------------
-            (prediction_valid,
-             ensemble_psi_valid,
-             ensemble_sw_valid,
-             analysis_valid,
-             analysis_param_valid) = self._mark_invalid_ensemble(self.ens_valid,
-                                                                prediction,
-                                                                ensemble_psi,
-                                                                ensemble_sw,
-                                                                analysis,
-                                                                analysis_param)
+            (
+                prediction_valid,
+                ensemble_psi_valid,
+                ensemble_sw_valid,
+                analysis_valid,
+                analysis_param_valid,
+            ) = self._mark_invalid_ensemble(
+                self.ens_valid,
+                prediction,
+                ensemble_psi,
+                ensemble_sw,
+                analysis,
+                analysis_param,
+            )
 
-
-        
             # check analysis quality
             # ----------------------------------------------------------------
 
-            self.console.print(':face_with_monocle: [b]check analysis performance[/b]')
-            self._performance_assessement(list_assimilated_obs,
-                                          data,
-                                          prediction_valid,
-                                          t_obs=self.count_DA_cycle)
-
+            self.console.print(":face_with_monocle: [b]check analysis performance[/b]")
+            self._performance_assessement(
+                list_assimilated_obs, data, prediction_valid, t_obs=self.count_DA_cycle
+            )
 
             # the counter is incremented here
             # ----------------------------------------------------------------
             self.count_DA_cycle = self.count_DA_cycle + 1
 
-
             # # update parameter dictionnary
             # ----------------------------------------------------------------
-            def check_ensemble(ensemble_psi_valid,ensemble_sw_valid):
-                if np.any(ensemble_psi_valid>0):
+            def check_ensemble(ensemble_psi_valid, ensemble_sw_valid):
+                if np.any(ensemble_psi_valid > 0):
                     # raise ValueError('positive pressure heads observed')
-                    print('!!!!!!positive pressure heads observed!!!!!')
-                    psi_2replace = np.where(ensemble_psi_valid>=0)
+                    print("!!!!!!positive pressure heads observed!!!!!")
+                    psi_2replace = np.where(ensemble_psi_valid >= 0)
                     ensemble_psi_valid_new = ensemble_psi_valid
-                    ensemble_psi_valid_new[psi_2replace]=-1e-3
+                    ensemble_psi_valid_new[psi_2replace] = -1e-3
 
-            check_ensemble(ensemble_psi_valid,ensemble_sw_valid)
+            check_ensemble(ensemble_psi_valid, ensemble_sw_valid)
 
-            self.update_pert_parm_dict(update_key,list_update_parm,analysis_param_valid)
-
+            self.update_pert_parm_dict(
+                update_key, list_update_parm, analysis_param_valid
+            )
 
         else:
-            self.console.print(':confused: No observation for this time - run hydrological model only')
-            print('!!!!!!!!! shoetcutttt here ensemble are anot validated!!!!!!!!!! S')
-            ensemble_psi_valid, ensemble_sw_valid, ens_size, sim_size = self._read_state_ensemble()
+            self.console.print(
+                ":confused: No observation for this time - run hydrological model only"
+            )
+            print("!!!!!!!!! shoetcutttt here ensemble are anot validated!!!!!!!!!! S")
+            (
+                ensemble_psi_valid,
+                ensemble_sw_valid,
+                ens_size,
+                sim_size,
+            ) = self._read_state_ensemble()
             # analysis_valid = np.empty(ensemble_psi_valid.shape)
             # analysis_valid[:] = np.NaN
             analysis_valid = ensemble_psi_valid
 
         self.count_atmbc_cycle = self.count_atmbc_cycle + 1
 
-        print('------ end of time step (s) -------' + str(int(t_atmbc)) + '/' + str(int(all_atmbc_times[-1])) + '------')
-        print('------ end of atmbc update --------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
+        print(
+            "------ end of time step (s) -------"
+            + str(int(t_atmbc))
+            + "/"
+            + str(int(all_atmbc_times[-1]))
+            + "------"
+        )
+        print(
+            "------ end of atmbc update --------"
+            + str(self.count_atmbc_cycle)
+            + "/"
+            + str(len(all_atmbc_times) - 1)
+            + "------"
+        )
 
         # create dataframe _DA_var_pert_df holding the results of the DA update
         # ---------------------------------------------------------------------
-        self._DA_df(state=[ensemble_psi_valid, ensemble_sw_valid],
-                    state_analysis=analysis_valid,
-                    rejected_ens=rejected_ens)
+        self._DA_df(
+            state=[ensemble_psi_valid, ensemble_sw_valid],
+            state_analysis=analysis_valid,
+            rejected_ens=rejected_ens,
+        )
 
         # export summary results of DA
         # ----------------------------------------------------------------
 
-        meta_DA = {'listAssimilatedObs': list_assimilated_obs,
-                   'listUpdatedparm':list_update_parm,
-                   # '':,
-                   # '':,
-                   # '':,
-                   }
+        meta_DA = {
+            "listAssimilatedObs": list_assimilated_obs,
+            "listUpdatedparm": list_update_parm,
+            # '':,
+            # '':,
+            # '':,
+        }
 
         self.backup_results_DA(meta_DA)
 
@@ -300,22 +321,31 @@ def run_DA_sequential(self,callexe, parallel,
         # overwrite input files ensemble (perturbated variables)
         # ---------------------------------------------------------------------
 
-        if self.count_atmbc_cycle<len(all_atmbc_times)-1: # -1 cause all_atmbc_times include TMAX
+        if (
+            self.count_atmbc_cycle < len(all_atmbc_times) - 1
+        ):  # -1 cause all_atmbc_times include TMAX
             # len(all_atmbc_times)
-            self._update_input_ensemble(self.NENS,
-                                        all_atmbc_times,
-                                        self.dict_parm_pert,
-                                        update_parm_list=list_update_parm,
-                                        analysis=analysis_valid
-                                        )
+            self._update_input_ensemble(
+                self.NENS,
+                all_atmbc_times,
+                self.dict_parm_pert,
+                update_parm_list=list_update_parm,
+                analysis=analysis_valid,
+            )
         else:
-            print('------ end of DA ------')
+            print("------ end of DA ------")
             pass
         # print('------ end of update -------' + str(self.count_atmbc_cycle) + '/' + str(len(all_atmbc_times)-1) + '------')
-        print('------ end of DA update -------' + str(self.count_DA_cycle) + '/' + str(len(ENS_times)) + '------')
-        print('% of valid ensemble is: ' + str((len(self.ens_valid)*100)/(self.NENS)))
+        print(
+            "------ end of DA update -------"
+            + str(self.count_DA_cycle)
+            + "/"
+            + str(len(ENS_times))
+            + "------"
+        )
+        print(
+            "% of valid ensemble is: " + str((len(self.ens_valid) * 100) / (self.NENS))
+        )
         # print(self.ens_valid)
 
-        plt.close('all')
-
- 
+        plt.close("all")

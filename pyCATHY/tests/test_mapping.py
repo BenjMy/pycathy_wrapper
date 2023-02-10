@@ -6,50 +6,54 @@ Created on Wed Dec 14 10:23:58 2022
 @author: ben
 """
 
+import os
+import sys
+
 import pyCATHY
 from pyCATHY import cathy_tools
 
-import os, sys
-sys.path.append(os.path.join('/home/ben/Documents/GitHub/BenjMy/Re-della-Pietra/', "lib"))
+sys.path.append(
+    os.path.join("/home/ben/Documents/GitHub/BenjMy/Re-della-Pietra/", "lib")
+)
 
-import utils_CATHY
 import numpy as np
 import pyvista as pv
+import utils_CATHY
+import vtk
+
+from pyCATHY.importers import cathy_inputs as in_CT
+
 # import vtkchange
 
-import vtk
-from pyCATHY.importers import cathy_inputs as in_CT
 # vtk.__version__
 
 #%%
-simu = cathy_tools.CATHY(dirName='./data/',prj_name='mapping') #args.scenario
+simu = cathy_tools.CATHY(dirName="./data/", prj_name="mapping")  # args.scenario
 
 #%%
 
-simu.run_processor(IPRT1=3,verbose=True)
+simu.run_processor(IPRT1=3, verbose=True)
 
 simu.grid3d
 
 
-len(simu.grid3d['nodes_idxyz'])
+len(simu.grid3d["nodes_idxyz"])
 #%%
-
-
 
 
 #%%
 
 simu.update_zone()
-zone_names = ['unique_zone']
-layers_depths = [[0,1]]
+zone_names = ["unique_zone"]
+layers_depths = [[0, 1]]
 simu.zone
 
 simu.update_prepo_inputs()
 
 simu.dem_parameters
 
-dem, header_dem = simu.read_inputs('dem')
-meshpv = pv.read('./mapping/vtk/mapping.vtk')
+dem, header_dem = simu.read_inputs("dem")
+meshpv = pv.read("./mapping/vtk/mapping.vtk")
 
 #%%
 
@@ -67,18 +71,16 @@ simu.hapin
 grid = pv.UniformGrid()
 
 
-xu = np.unique(meshpv.points[:,0])
-yu = np.unique(meshpv.points[:,1])
+xu = np.unique(meshpv.points[:, 0])
+yu = np.unique(meshpv.points[:, 1])
 
-dempar = simu.dem_parameters['zratio(i),i=1,nstr'].split('\t')
+dempar = simu.dem_parameters["zratio(i),i=1,nstr"].split("\t")
 dempar_ratio = [float(d) for d in dempar]
 
 # zu = [-np.cumsum(dempar_ratio[:i+1])[-1]*simu.dem_parameters['base'] for i in range(simu.dem_parameters['nstr'])]
 zu = 0
 
-x, y, z = np.meshgrid(xu, 
-                      yu, 
-                      zu)
+x, y, z = np.meshgrid(xu, yu, zu)
 
 
 # grid = pv.UniformGrid((simu.hapin['N'],
@@ -93,7 +95,7 @@ grid = pv.StructuredGrid(x, y, z)
 len(np.ravel(dem))
 # grid.add_field_data(np.ravel(dem),'dem')
 
-grid['dem']  = np.ravel(dem.T) -1
+grid["dem"] = np.ravel(dem.T) - 1
 # grid.set_active_scalars('dem')
 # grid.plot(show_edges=(True))
 
@@ -108,17 +110,21 @@ terrain = grid.warp_by_scalar()
 # z_cells = np.array([25] * 5 + [35] * 3 + [50] * 2 + [75, 100])
 
 
-dempar = simu.dem_parameters['zratio(i),i=1,nstr'].split('\t')
+dempar = simu.dem_parameters["zratio(i),i=1,nstr"].split("\t")
 dempar_ratio = [float(d) for d in dempar]
-z_cells = [-np.cumsum(dempar_ratio[:i+1])[-1]*simu.dem_parameters['base'] for i in range(simu.dem_parameters['nstr'])]
+z_cells = [
+    -np.cumsum(dempar_ratio[: i + 1])[-1] * simu.dem_parameters["base"]
+    for i in range(simu.dem_parameters["nstr"])
+]
 
 xx = np.repeat(terrain.x, len(z_cells), axis=-1)
 yy = np.repeat(terrain.y, len(z_cells), axis=-1)
-zz = np.repeat(terrain.z, len(z_cells), axis=-1) -  z_cells# np.cumsum(z_cells).reshape((1, 1, -1))
+zz = (
+    np.repeat(terrain.z, len(z_cells), axis=-1) - z_cells
+)  # np.cumsum(z_cells).reshape((1, 1, -1))
 
 
 min(np.ravel(terrain.z))
-
 
 
 mesh = pv.StructuredGrid(xx, yy, -zz)
@@ -138,9 +144,6 @@ mesh
 # mesh_unstr = mesh.cast_to_unstructured_grid()
 
 
-
-
-
 # p = pv.Plotter(notebook=False)
 # p.add_mesh(mesh_unstr,show_edges=True)
 # p.add_bounding_box()
@@ -149,12 +152,11 @@ mesh
 
 
 p = pv.Plotter(notebook=False)
-p.add_mesh(meshpv,show_edges=True)
+p.add_mesh(meshpv, show_edges=True)
 p.add_mesh(mesh)
 p.add_bounding_box()
 p.show_grid()
 p.show()
-
 
 
 #%%
@@ -168,21 +170,16 @@ zones3d = utils_CATHY.zone3d(simu)
 # insert layers flag into the 3d the zone raster file
 # -----------------------------------
 zones3d_layered = utils_CATHY.create_layers_inzones3d(
-                                                         simu,
-                                                         zones3d,
-                                                         zone_names,
-                                                         layers_depths
-                                                      )
+    simu, zones3d, zone_names, layers_depths
+)
 
 #%%
-        
+
 # plot 3d zones files layered
 # ------------------------------------------
-utils_CATHY.plot_zones3d_layered(simu,zones3d_layered)
+utils_CATHY.plot_zones3d_layered(simu, zones3d_layered)
 
 #%%
-
-
 
 
 # meshpv2.plot()
@@ -210,39 +207,37 @@ utils_CATHY.plot_zones3d_layered(simu,zones3d_layered)
 #%%
 # meshpv.plot(show_edges=1)
 
-xu = np.unique(meshpv.points[:,0])
-yu = np.unique(meshpv.points[:,1])
+xu = np.unique(meshpv.points[:, 0])
+yu = np.unique(meshpv.points[:, 1])
 
-dempar = simu.dem_parameters['zratio(i),i=1,nstr'].split('\t')
+dempar = simu.dem_parameters["zratio(i),i=1,nstr"].split("\t")
 dempar_ratio = [float(d) for d in dempar]
 
-zu = [-np.cumsum(dempar_ratio[:i+1])[-1]*simu.dem_parameters['base'] for i in range(simu.dem_parameters['nstr'])]
+zu = [
+    -np.cumsum(dempar_ratio[: i + 1])[-1] * simu.dem_parameters["base"]
+    for i in range(simu.dem_parameters["nstr"])
+]
 
 
 len(xu)
 len(yu)
 np.shape(zones3d_layered)
 
-x, y, z = np.meshgrid(xu, 
-                      yu, 
-                      zu)
-
+x, y, z = np.meshgrid(xu, yu, zu)
 
 
 grid = pv.StructuredGrid(x, y, z)
 
 grid_cell_centers = grid.cell_centers()
 
-len(np.unique(grid_cell_centers.points[:,0]))
-len(np.unique(grid_cell_centers.points[:,1]))
-len(np.unique(grid_cell_centers.points[:,2]))
-
-
+len(np.unique(grid_cell_centers.points[:, 0]))
+len(np.unique(grid_cell_centers.points[:, 1]))
+len(np.unique(grid_cell_centers.points[:, 2]))
 
 
 np.random.random(grid.n_cells)
 
-grid.cell_data['my_array'] = np.ravel(zones3d_layered[1:,:,:])
+grid.cell_data["my_array"] = np.ravel(zones3d_layered[1:, :, :])
 
 # result = grid.interpolate(meshpv)
 result = meshpv.interpolate(grid)
@@ -251,16 +246,16 @@ result = meshpv.interpolate(grid)
 # result.set_active_scalars('my_array')
 # result.plot(show_edges=1)
 
-result.save('test.vtk', binary=False)
+result.save("test.vtk", binary=False)
 
 
-grid['flagZ'] = zones3d_layered[1:,:,:]
+grid["flagZ"] = zones3d_layered[1:, :, :]
 pl = pv.Plotter()
 actor = pl.add_mesh(grid, show_edges=True)
-actor = pl.add_points(grid_cell_centers, render_points_as_spheres=True,
-                      color='red', point_size=20)
+actor = pl.add_points(
+    grid_cell_centers, render_points_as_spheres=True, color="red", point_size=20
+)
 pl.show()
-
 
 
 grid.plot(show_edges=1)
@@ -272,16 +267,17 @@ p.add_mesh(grid)
 #%%
 
 from pyvista import examples
+
 grid = examples.load_explicit_structured()
-grid['zones'] = np.r_[np.ones(4), np.ones(206)*2]
-grid.set_active_scalars('zones')
+grid["zones"] = np.r_[np.ones(4), np.ones(206) * 2]
+grid.set_active_scalars("zones")
 grid = grid.point_data_to_cell_data()
 grid.plot(show_edges=True, show_bounds=True)
 
 
 #%%
 
-# Starting from the generated mesh 
+# Starting from the generated mesh
 # -------------------------------------
 
 # test = zones3d_layered[1:,:,:]

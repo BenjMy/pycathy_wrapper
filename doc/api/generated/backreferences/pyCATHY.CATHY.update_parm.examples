@@ -1,0 +1,61 @@
+
+
+Examples using ``pyCATHY.CATHY.update_parm``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot inputs of the hydrological model.">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_inputs_multipleLayers_thumb.png
+     :alt: Input plots
+
+     :ref:`sphx_glr_content_SSHydro_plot_pyCATHY_inputs_multipleLayers.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_pyCATHY_inputs_multipleLayers.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="@author: ben">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_soil3d_thumb.png
+     :alt: Created on Thu Feb  2 17:35:10 2023
+
+     :ref:`sphx_glr_content_SSHydro_plot_soil3d.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_soil3d.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="@author: ben">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_soil3d_slope_thumb.png
+     :alt: Created on Thu Feb  2 17:35:10 2023
+
+     :ref:`sphx_glr_content_SSHydro_plot_soil3d_slope.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_soil3d_slope.py`

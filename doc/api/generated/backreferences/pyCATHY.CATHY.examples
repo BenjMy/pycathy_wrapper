@@ -5,14 +5,14 @@ Examples using ``pyCATHY.CATHY``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model p...">
+    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
 
 .. only:: html
 
- .. figure:: /gallery/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
-     :alt: Sensitivity analysis
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_1_pyCATHY_weilletal_thumb.png
+     :alt: Weil et al example
 
-     :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`
+     :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
 
 .. raw:: html
 
@@ -20,7 +20,7 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
 
 .. raw:: html
 
@@ -28,10 +28,10 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: html
 
- .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_inputs_thumb.png
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_2_pyCATHY_inputs_thumb.png
      :alt: Input plots
 
-     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_inputs.py`
+     :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
 
 .. raw:: html
 
@@ -39,7 +39,26 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_inputs.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to mesh from a DEM and run the hydrological model.">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3_meshing_from_weil_thumb.png
+     :alt: Meshing from a Digital Elevation Model (DEM)
+
+     :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weil.py`
 
 .. raw:: html
 
@@ -47,10 +66,10 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: html
 
- .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_outputs_thumb.png
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
      :alt: Output plots
 
-     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_outputs.py`
+     :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
 
 .. raw:: html
 
@@ -58,18 +77,18 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_outputs.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model p...">
 
 .. only:: html
 
- .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_weilletal_thumb.png
-     :alt: Weil et al example
+ .. figure:: /content/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
+     :alt: Sensitivity analysis
 
-     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`
+     :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`
 
 .. raw:: html
 
@@ -77,4 +96,4 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_weilletal.py`
+ * :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`

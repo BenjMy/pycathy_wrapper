@@ -1,0 +1,14 @@
+0.5	
+0.5	
+1.0	
+1	
+400	10	25	
+0	1	10.0	
+0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	
+delta_x	
+delta_y	
+factor	
+dostep	
+nzone	nstr	n1	
+ivert	isp	base	
+zratio(i),i=1,nstr	

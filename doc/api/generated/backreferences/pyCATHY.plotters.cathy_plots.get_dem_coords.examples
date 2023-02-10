@@ -1,0 +1,23 @@
+
+
+Examples using ``pyCATHY.plotters.cathy_plots.get_dem_coords``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="@author: ben">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_soil3d_slope_thumb.png
+     :alt: Created on Thu Feb  2 17:35:10 2023
+
+     :ref:`sphx_glr_content_SSHydro_plot_soil3d_slope.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_soil3d_slope.py`

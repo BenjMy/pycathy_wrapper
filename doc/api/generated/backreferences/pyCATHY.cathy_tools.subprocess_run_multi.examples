@@ -9,10 +9,10 @@ Examples using ``pyCATHY.cathy_tools.subprocess_run_multi``
 
 .. only:: html
 
- .. figure:: /gallery/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
+ .. figure:: /content/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
      :alt: Sensitivity analysis
 
-     :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`
+     :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`
 
 .. raw:: html
 
@@ -20,4 +20,4 @@ Examples using ``pyCATHY.cathy_tools.subprocess_run_multi``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_DA_plot_Weilletal_sensitivityAnalysis.py`
+ * :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`

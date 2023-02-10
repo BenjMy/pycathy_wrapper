@@ -9,10 +9,10 @@ Examples using ``pyCATHY.CATHY.show``
 
 .. only:: html
 
- .. figure:: /gallery/SSHydro/images/thumb/sphx_glr_plot_pyCATHY_outputs_thumb.png
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
      :alt: Output plots
 
-     :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_outputs.py`
+     :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
 
 .. raw:: html
 
@@ -20,4 +20,4 @@ Examples using ``pyCATHY.CATHY.show``
 
 .. only:: not html
 
- * :ref:`sphx_glr_gallery_SSHydro_plot_pyCATHY_outputs.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
