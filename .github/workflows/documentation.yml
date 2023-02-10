@@ -16,11 +16,8 @@ jobs:
         run: |
           rm -rf doc/_build/
           sphinx-build doc doc/_build
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.5.9
         with:
-          publish_branch: gh-pages
-          github_token: ${{ secrets.TOKEN }}
-          publish_dir: doc/_build/
-          force_orphan: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_build/html
