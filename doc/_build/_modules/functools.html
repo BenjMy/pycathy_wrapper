@@ -1,0 +1,2127 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+        <title>functools | pyCATHY v0.1.1</title>
+    
+
+    
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
+    <link rel="shortcut icon" href="../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <!-- Plausible analytics for anonymous usage statistics -->
+    <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.1.1</span></h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/overview.html">
+   Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/citing.html">
+   Citing pyCATHY
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Gallery of examples
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../content/SSHydro/index.html">
+   Surface subsurface hydrological model
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../content/SSHydro/plot_1_pyCATHY_weilletal.html">
+     Weil et al example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../content/SSHydro/plot_2_pyCATHY_inputs.html">
+     Input plots
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../content/SSHydro/plot_3_meshing_from_weil.html">
+     Meshing from a Digital Elevation Model (DEM)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../content/SSHydro/plot_3b_soil3d_from_weil.html">
+     Soil 3d from a Digital Elevation Model (DEM)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../content/SSHydro/plot_4_pyCATHY_outputs.html">
+     Output plots
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../content/DA/index.html">
+   Data Assimilation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../content/DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../content/api/api.html">
+   API reference: The
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     pyCATHY
+    </span>
+   </code>
+   package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/cathy_tools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cathy_tools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.CATHY.html">
+       cathy_tools.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.OrderedDict.html">
+       cathy_tools.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.Repo.html">
+       cathy_tools.Repo
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.isfile.html">
+       cathy_tools.isfile
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.join.html">
+       cathy_tools.join
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.listdir.html">
+       cathy_tools.listdir
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.make_console.html">
+       cathy_tools.make_console
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.print.html">
+       cathy_tools.print
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       importers.cathy_outputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_cumflowvol.html">
+       importers.cathy_outputs.read_cumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_dtcoupling.html">
+       importers.cathy_outputs.read_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_hgraph.html">
+       importers.cathy_outputs.read_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_hgsfdet.html">
+       importers.cathy_outputs.read_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_mbeconv.html">
+       importers.cathy_outputs.read_mbeconv
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_psi.html">
+       importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_sw.html">
+       importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_vp.html">
+       importers.cathy_outputs.read_vp
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_outputs.read_wtdepth.html">
+       importers.cathy_outputs.read_wtdepth
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       importers.cathy_inputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_atmbc.html">
+       importers.cathy_inputs.read_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_dem.html">
+       importers.cathy_inputs.read_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_dem_parameters.html">
+       importers.cathy_inputs.read_dem_parameters
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_grid3d.html">
+       importers.cathy_inputs.read_grid3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_raster.html">
+       importers.cathy_inputs.read_raster
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_root_map.html">
+       importers.cathy_inputs.read_root_map
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_soil.html">
+       importers.cathy_inputs.read_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/importers.cathy_inputs.read_zone.html">
+       importers.cathy_inputs.read_zone
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/DA.cathy_DA.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DA.cathy_DA
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.CATHY.html">
+       DA.cathy_DA.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.DA.html">
+       DA.cathy_DA.DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.partial.html">
+       DA.cathy_DA.partial
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.Archie_pert_rules.html">
+       DA.cathy_DA.Archie_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.Carsel_Parrish_VGN_pert.html">
+       DA.cathy_DA.Carsel_Parrish_VGN_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.Evensen2003.html">
+       DA.cathy_DA.Evensen2003
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.Johnson1970.html">
+       DA.cathy_DA.Johnson1970
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.VG_pert_rules.html">
+       DA.cathy_DA.VG_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.atmbc_pert_rules.html">
+       DA.cathy_DA.atmbc_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.build_dict_attributes_pert.html">
+       DA.cathy_DA.build_dict_attributes_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.dictObs_2pd.html">
+       DA.cathy_DA.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.perturbate_dist.html">
+       DA.cathy_DA.perturbate_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.resynchronise_times.html">
+       DA.cathy_DA.resynchronise_times
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.run_analysis.html">
+       DA.cathy_DA.run_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.sampling_dist.html">
+       DA.cathy_DA.sampling_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.sampling_dist_trunc.html">
+       DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/DA.cathy_DA.track.html">
+       DA.cathy_DA.track
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ERT.petro_Archie
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.Archie_rho_DA.html">
+       ERT.petro_Archie.Archie_rho_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.CATHY_2_Resipy.html">
+       ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.CATHY_2_pg.html">
+       ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.SW_2_ERa_DA.html">
+       ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.get_Archie_ens_i.html">
+       ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.get_sw_ens_i.html">
+       ERT.petro_Archie.get_sw_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.petro_Archie.print.html">
+       ERT.petro_Archie.print
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ERT.simulate_ERT
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+    <label for="toctree-checkbox-9">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.R2.html">
+       ERT.simulate_ERT.R2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.Archie_ERT.html">
+       ERT.simulate_ERT.Archie_ERT
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.create_ERT_survey_Resipy.html">
+       ERT.simulate_ERT.create_ERT_survey_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.create_ERT_survey_pg.html">
+       ERT.simulate_ERT.create_ERT_survey_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html">
+       ERT.simulate_ERT.fwd_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.invert_ERT_survey.html">
+       ERT.simulate_ERT.invert_ERT_survey
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/sensitivity.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       sensitivity
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.analysis_Morris.html">
+       sensitivity.analysis_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.define_Morris.html">
+       sensitivity.define_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.df_Morris.html">
+       sensitivity.df_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.err_weighted_rmse.html">
+       sensitivity.err_weighted_rmse
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.plot_Morris.html">
+       sensitivity.plot_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.print_Morris_out.html">
+       sensitivity.print_Morris_out
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.run_sensitivity_analysis.html">
+       sensitivity.run_sensitivity_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/sensitivity.samples_generation.html">
+       sensitivity.samples_generation
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       plotters.cathy_plots
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <label for="toctree-checkbox-11">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.FormatStrFormatter.html">
+       plotters.cathy_plots.FormatStrFormatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.LogNorm.html">
+       plotters.cathy_plots.LogNorm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_RMS.html">
+       plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_Archie.html">
+       plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html">
+       plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.change_x2date.html">
+       plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.convert_time_units.html">
+       plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html">
+       plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.get_dem_coords.html">
+       plotters.cathy_plots.get_dem_coords
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.label_units.html">
+       plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.plot_VGP.html">
+       plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.plot_mesh_bounds.html">
+       plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_COCumflowvol.html">
+       plotters.cathy_plots.show_COCumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_DA_process_ens.html">
+       plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_atmbc.html">
+       plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_atmbc_3d.html">
+       plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_dem.html">
+       plotters.cathy_plots.show_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_dtcoupling.html">
+       plotters.cathy_plots.show_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_hgraph.html">
+       plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_indice_veg.html">
+       plotters.cathy_plots.show_indice_veg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_raster.html">
+       plotters.cathy_plots.show_raster
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_soil.html">
+       plotters.cathy_plots.show_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html">
+       plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_vtk.html">
+       plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_vtk_TL.html">
+       plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_wtdepth.html">
+       plotters.cathy_plots.show_wtdepth
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.show_zone.html">
+       plotters.cathy_plots.show_zone
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/plotters.cathy_plots.transform2_time_delta.html">
+       plotters.cathy_plots.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_utils
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+    <label for="toctree-checkbox-12">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.meshtools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+    <label for="toctree-checkbox-13">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.CATHY_2_Resipy.html">
+       pyCATHY.meshtools.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.CATHY_2_Simpeg.html">
+       pyCATHY.meshtools.CATHY_2_Simpeg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.CATHY_2_pg.html">
+       pyCATHY.meshtools.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.add_markers2mesh.html">
+       pyCATHY.meshtools.add_markers2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.create_layers_inzones3d.html">
+       pyCATHY.meshtools.create_layers_inzones3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.get_layer_depth.html">
+       pyCATHY.meshtools.get_layer_depth
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.get_layer_depths.html">
+       pyCATHY.meshtools.get_layer_depths
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.get_zone3d_layer_depths.html">
+       pyCATHY.meshtools.get_zone3d_layer_depths
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.het_soil_layers_mapping_generic.html">
+       pyCATHY.meshtools.het_soil_layers_mapping_generic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.map_layers_2_DEM.html">
+       pyCATHY.meshtools.map_layers_2_DEM
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.plot_zones3d_layered.html">
+       pyCATHY.meshtools.plot_zones3d_layered
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.zone3d.html">
+       pyCATHY.meshtools.zone3d
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/change_log.html">
+   Change log
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/references.html">
+   References
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting help and contributed
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../content/contribute.html">
+   Contribute and support
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
+            </div>
+            
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BenjMy/pycathy_wrapper"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/functools.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <h1>Source code for functools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;functools.py - Tools for working with functions and callable objects</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Python module wrapper for _functools C module</span>
+<span class="c1"># to allow utilities written in Python to be added</span>
+<span class="c1"># to the functools module.</span>
+<span class="c1"># Written by Nick Coghlan &lt;ncoghlan at gmail.com&gt;,</span>
+<span class="c1"># Raymond Hettinger &lt;python at rcn.com&gt;,</span>
+<span class="c1"># and Łukasz Langa &lt;lukasz at langa.pl&gt;.</span>
+<span class="c1">#   Copyright (C) 2006-2013 Python Software Foundation.</span>
+<span class="c1"># See C source code for _functools credits/copyright</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;update_wrapper&#39;</span><span class="p">,</span> <span class="s1">&#39;wraps&#39;</span><span class="p">,</span> <span class="s1">&#39;WRAPPER_ASSIGNMENTS&#39;</span><span class="p">,</span> <span class="s1">&#39;WRAPPER_UPDATES&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;total_ordering&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="s1">&#39;cmp_to_key&#39;</span><span class="p">,</span> <span class="s1">&#39;lru_cache&#39;</span><span class="p">,</span> <span class="s1">&#39;reduce&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;partial&#39;</span><span class="p">,</span> <span class="s1">&#39;partialmethod&#39;</span><span class="p">,</span> <span class="s1">&#39;singledispatch&#39;</span><span class="p">,</span> <span class="s1">&#39;singledispatchmethod&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;cached_property&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">get_cache_token</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="c1"># import types, weakref  # Deferred to single_dispatch()</span>
+<span class="kn">from</span> <span class="nn">reprlib</span> <span class="kn">import</span> <span class="n">recursive_repr</span>
+<span class="kn">from</span> <span class="nn">_thread</span> <span class="kn">import</span> <span class="n">RLock</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">GenericAlias</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### update_wrapper() and wraps() decorator</span>
+<span class="c1">################################################################################</span>
+
+<span class="c1"># update_wrapper() and wraps() are tools to help write</span>
+<span class="c1"># wrapper functions that can handle naive introspection</span>
+
+<span class="n">WRAPPER_ASSIGNMENTS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__qualname__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;__annotations__&#39;</span><span class="p">)</span>
+<span class="n">WRAPPER_UPDATES</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;__dict__&#39;</span><span class="p">,)</span>
+<span class="k">def</span> <span class="nf">update_wrapper</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span>
+                   <span class="n">wrapped</span><span class="p">,</span>
+                   <span class="n">assigned</span> <span class="o">=</span> <span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span>
+                   <span class="n">updated</span> <span class="o">=</span> <span class="n">WRAPPER_UPDATES</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a wrapper function to look like the wrapped function</span>
+
+<span class="sd">       wrapper is the function to be updated</span>
+<span class="sd">       wrapped is the original function</span>
+<span class="sd">       assigned is a tuple naming the attributes assigned directly</span>
+<span class="sd">       from the wrapped function to the wrapper function (defaults to</span>
+<span class="sd">       functools.WRAPPER_ASSIGNMENTS)</span>
+<span class="sd">       updated is a tuple naming the attributes of the wrapper that</span>
+<span class="sd">       are updated with the corresponding attribute from the wrapped</span>
+<span class="sd">       function (defaults to functools.WRAPPER_UPDATES)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">assigned</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">updated</span><span class="p">:</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="c1"># Issue #17482: set __wrapped__ last so we don&#39;t inadvertently copy it</span>
+    <span class="c1"># from the wrapped function when updating __dict__</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">wrapped</span>
+    <span class="c1"># Return the wrapper so this can be used as a decorator via partial()</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="k">def</span> <span class="nf">wraps</span><span class="p">(</span><span class="n">wrapped</span><span class="p">,</span>
+          <span class="n">assigned</span> <span class="o">=</span> <span class="n">WRAPPER_ASSIGNMENTS</span><span class="p">,</span>
+          <span class="n">updated</span> <span class="o">=</span> <span class="n">WRAPPER_UPDATES</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator factory to apply update_wrapper() to a wrapper function</span>
+
+<span class="sd">       Returns a decorator that invokes update_wrapper() with the decorated</span>
+<span class="sd">       function as the wrapper argument and the arguments to wraps() as the</span>
+<span class="sd">       remaining arguments. Default arguments are as for update_wrapper().</span>
+<span class="sd">       This is a convenience function to simplify applying partial() to</span>
+<span class="sd">       update_wrapper().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">update_wrapper</span><span class="p">,</span> <span class="n">wrapped</span><span class="o">=</span><span class="n">wrapped</span><span class="p">,</span>
+                   <span class="n">assigned</span><span class="o">=</span><span class="n">assigned</span><span class="p">,</span> <span class="n">updated</span><span class="o">=</span><span class="n">updated</span><span class="p">)</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### total_ordering class decorator</span>
+<span class="c1">################################################################################</span>
+
+<span class="c1"># The total ordering functions all invoke the root magic method directly</span>
+<span class="c1"># rather than using the corresponding operator.  This avoids possible</span>
+<span class="c1"># infinite recursion that could occur when the operator dispatch logic</span>
+<span class="c1"># detects a NotImplemented result and then calls a reflected method.</span>
+
+<span class="k">def</span> <span class="nf">_gt_from_lt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &gt; b.  Computed by @total_ordering from (not a &lt; b) and (a != b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span> <span class="ow">and</span> <span class="bp">self</span> <span class="o">!=</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_le_from_lt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &lt;= b.  Computed by @total_ordering from (a &lt; b) or (a == b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="n">op_result</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_ge_from_lt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &gt;= b.  Computed by @total_ordering from (not a &lt; b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span>
+
+<span class="k">def</span> <span class="nf">_ge_from_le</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &gt;= b.  Computed by @total_ordering from (not a &lt;= b) or (a == b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_lt_from_le</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &lt; b.  Computed by @total_ordering from (a &lt;= b) and (a != b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="n">op_result</span> <span class="ow">and</span> <span class="bp">self</span> <span class="o">!=</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_gt_from_le</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &gt; b.  Computed by @total_ordering from (not a &lt;= b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span>
+
+<span class="k">def</span> <span class="nf">_lt_from_gt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &lt; b.  Computed by @total_ordering from (not a &gt; b) and (a != b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span> <span class="ow">and</span> <span class="bp">self</span> <span class="o">!=</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_ge_from_gt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &gt;= b.  Computed by @total_ordering from (a &gt; b) or (a == b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="n">op_result</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_le_from_gt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &lt;= b.  Computed by @total_ordering from (not a &gt; b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span>
+
+<span class="k">def</span> <span class="nf">_le_from_ge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &lt;= b.  Computed by @total_ordering from (not a &gt;= b) or (a == b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span> <span class="ow">or</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_gt_from_ge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &gt; b.  Computed by @total_ordering from (a &gt;= b) and (a != b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="n">op_result</span> <span class="ow">and</span> <span class="bp">self</span> <span class="o">!=</span> <span class="n">other</span>
+
+<span class="k">def</span> <span class="nf">_lt_from_ge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
+    <span class="s1">&#39;Return a &lt; b.  Computed by @total_ordering from (not a &gt;= b).&#39;</span>
+    <span class="n">op_result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op_result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">op_result</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">op_result</span>
+
+<span class="n">_convert</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;__lt__&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;__gt__&#39;</span><span class="p">,</span> <span class="n">_gt_from_lt</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__le__&#39;</span><span class="p">,</span> <span class="n">_le_from_lt</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__ge__&#39;</span><span class="p">,</span> <span class="n">_ge_from_lt</span><span class="p">)],</span>
+    <span class="s1">&#39;__le__&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;__ge__&#39;</span><span class="p">,</span> <span class="n">_ge_from_le</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__lt__&#39;</span><span class="p">,</span> <span class="n">_lt_from_le</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__gt__&#39;</span><span class="p">,</span> <span class="n">_gt_from_le</span><span class="p">)],</span>
+    <span class="s1">&#39;__gt__&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;__lt__&#39;</span><span class="p">,</span> <span class="n">_lt_from_gt</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__ge__&#39;</span><span class="p">,</span> <span class="n">_ge_from_gt</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__le__&#39;</span><span class="p">,</span> <span class="n">_le_from_gt</span><span class="p">)],</span>
+    <span class="s1">&#39;__ge__&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;__le__&#39;</span><span class="p">,</span> <span class="n">_le_from_ge</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__gt__&#39;</span><span class="p">,</span> <span class="n">_gt_from_ge</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;__lt__&#39;</span><span class="p">,</span> <span class="n">_lt_from_ge</span><span class="p">)]</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">total_ordering</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class decorator that fills in missing ordering methods&quot;&quot;&quot;</span>
+    <span class="c1"># Find user-defined comparisons (not those inherited from object).</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="p">{</span><span class="n">op</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">_convert</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="kc">None</span><span class="p">)}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">roots</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;must define at least one ordering operation: &lt; &gt; &lt;= &gt;=&#39;</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span>       <span class="c1"># prefer __lt__ to __le__ to __gt__ to __ge__</span>
+    <span class="k">for</span> <span class="n">opname</span><span class="p">,</span> <span class="n">opfunc</span> <span class="ow">in</span> <span class="n">_convert</span><span class="p">[</span><span class="n">root</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">opname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+            <span class="n">opfunc</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">opname</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">opname</span><span class="p">,</span> <span class="n">opfunc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### cmp_to_key() function converter</span>
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span> <span class="nf">cmp_to_key</span><span class="p">(</span><span class="n">mycmp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a cmp= function into a key= function&quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">K</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">mycmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">mycmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">mycmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">mycmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span>
+        <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">mycmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="fm">__hash__</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">K</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_functools</span> <span class="kn">import</span> <span class="n">cmp_to_key</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### reduce() sequence to a single item</span>
+<span class="c1">################################################################################</span>
+
+<span class="n">_initial_missing</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="n">_initial_missing</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    reduce(function, sequence[, initial]) -&gt; value</span>
+
+<span class="sd">    Apply a function of two arguments cumulatively to the items of a sequence,</span>
+<span class="sd">    from left to right, so as to reduce the sequence to a single value.</span>
+<span class="sd">    For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates</span>
+<span class="sd">    ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items</span>
+<span class="sd">    of the sequence in the calculation, and serves as a default when the</span>
+<span class="sd">    sequence is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">initial</span> <span class="ow">is</span> <span class="n">_initial_missing</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;reduce() of empty sequence with no initial value&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">initial</span>
+
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### partial() argument application</span>
+<span class="c1">################################################################################</span>
+
+<span class="c1"># Purely functional, no descriptor behaviour</span>
+<div class="viewcode-block" id="partial"><a class="viewcode-back" href="../content/api/generated/DA.cathy_DA.partial.html#DA.cathy_DA.partial">[docs]</a><span class="k">class</span> <span class="nc">partial</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;New function with partial application of the given arguments</span>
+<span class="sd">    and keywords.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;func&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="s2">&quot;keywords&quot;</span><span class="p">,</span> <span class="s2">&quot;__dict__&quot;</span><span class="p">,</span> <span class="s2">&quot;__weakref__&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;the first argument must be callable&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;func&quot;</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> <span class="n">args</span>
+            <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">func</span><span class="o">.</span><span class="n">keywords</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">}</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">func</span>
+
+        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">partial</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="n">keywords</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+
+    <span class="nd">@recursive_repr</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">qualname</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)]</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;functools&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;functools.</span><span class="si">{</span><span class="n">qualname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">qualname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+               <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;argument to __setstate__ must be a tuple&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;expected 4 items in state, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">,</span> <span class="n">namespace</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span>
+           <span class="p">(</span><span class="n">kwds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwds</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="ow">or</span>
+           <span class="p">(</span><span class="n">namespace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;invalid partial state&quot;</span><span class="p">)</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="c1"># just in case it&#39;s a subclass</span>
+        <span class="k">if</span> <span class="n">kwds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwds</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">kwds</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">dict</span><span class="p">:</span> <span class="c1"># XXX does it need to be *exactly* dict?</span>
+            <span class="n">kwds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">namespace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">namespace</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="n">namespace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="n">kwds</span></div>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Descriptor version</span>
+<span class="k">class</span> <span class="nc">partialmethod</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Method descriptor with partial application of the given arguments</span>
+<span class="sd">    and keywords.</span>
+
+<span class="sd">    Supports wrapping existing descriptors and handles non-descriptor</span>
+<span class="sd">    callables as instance methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__get__&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2"> is not callable or a descriptor&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+
+        <span class="c1"># func could be a descriptor like classmethod which isn&#39;t callable,</span>
+        <span class="c1"># so we can&#39;t inherit from partial (it verifies func is callable)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">partialmethod</span><span class="p">):</span>
+            <span class="c1"># flattening is mandatory in order to place cls/self before all</span>
+            <span class="c1"># other arguments</span>
+            <span class="c1"># it&#39;s also more efficient since only one function will be called</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">func</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> <span class="n">args</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">func</span><span class="o">.</span><span class="n">keywords</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="n">keywords</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">repr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">format_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{module}</span><span class="s2">.</span><span class="si">{cls}</span><span class="s2">(</span><span class="si">{func}</span><span class="s2">, </span><span class="si">{args}</span><span class="s2">, </span><span class="si">{keywords}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="n">format_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                                    <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span>
+                                    <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span>
+                                    <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                                    <span class="n">keywords</span><span class="o">=</span><span class="n">keywords</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_unbound_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="n">cls_or_self</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">):</span>
+            <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cls_or_self</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="n">_method</span><span class="o">.</span><span class="n">__isabstractmethod__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__isabstractmethod__</span>
+        <span class="n">_method</span><span class="o">.</span><span class="n">_partialmethod</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">_method</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">get</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__get__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">get</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_func</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">:</span>
+                <span class="c1"># Assume __get__ returning something new indicates the</span>
+                <span class="c1"># creation of an appropriate callable</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">new_func</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="vm">__self__</span> <span class="o">=</span> <span class="n">new_func</span><span class="o">.</span><span class="vm">__self__</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If the underlying descriptor didn&#39;t do anything, treat this</span>
+            <span class="c1"># like an instance method</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_unbound_method</span><span class="p">()</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__isabstractmethod__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__isabstractmethod__&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">__class_getitem__</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">GenericAlias</span><span class="p">)</span>
+
+
+<span class="c1"># Helper functions</span>
+
+<span class="k">def</span> <span class="nf">_unwrap_partial</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">partial</span><span class="p">):</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">func</span>
+    <span class="k">return</span> <span class="n">func</span>
+
+<span class="c1">################################################################################</span>
+<span class="c1">### LRU Cache function decorator</span>
+<span class="c1">################################################################################</span>
+
+<span class="n">_CacheInfo</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;CacheInfo&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;hits&quot;</span><span class="p">,</span> <span class="s2">&quot;misses&quot;</span><span class="p">,</span> <span class="s2">&quot;maxsize&quot;</span><span class="p">,</span> <span class="s2">&quot;currsize&quot;</span><span class="p">])</span>
+
+<span class="k">class</span> <span class="nc">_HashedSeq</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This class guarantees that hash() will be called no more than once</span>
+<span class="sd">        per element.  This is important because the lru_cache() will hash</span>
+<span class="sd">        the key multiple times on a cache miss.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;hashvalue&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="nb">hash</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">tup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hashvalue</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashvalue</span>
+
+<span class="k">def</span> <span class="nf">_make_key</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">,</span> <span class="n">typed</span><span class="p">,</span>
+             <span class="n">kwd_mark</span> <span class="o">=</span> <span class="p">(</span><span class="nb">object</span><span class="p">(),),</span>
+             <span class="n">fasttypes</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">},</span>
+             <span class="nb">tuple</span><span class="o">=</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="nb">len</span><span class="o">=</span><span class="nb">len</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a cache key from optionally typed positional and keyword arguments</span>
+
+<span class="sd">    The key is constructed in a way that is flat as possible rather than</span>
+<span class="sd">    as a nested structure that would take more memory.</span>
+
+<span class="sd">    If there is only a single argument and its data type is known to cache</span>
+<span class="sd">    its hash value, then that argument is returned without a wrapper.  This</span>
+<span class="sd">    saves space and improves lookup speed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># All of code below relies on kwds preserving the order input by the user.</span>
+    <span class="c1"># Formerly, we sorted() the kwds before looping.  The new way is *much*</span>
+    <span class="c1"># faster; however, it means that f(x=1, y=2) will now be treated as a</span>
+    <span class="c1"># distinct call from f(y=2, x=1) which will be cached separately.</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">if</span> <span class="n">kwds</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">+=</span> <span class="n">kwd_mark</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">kwds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">key</span> <span class="o">+=</span> <span class="n">item</span>
+    <span class="k">if</span> <span class="n">typed</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwds</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="n">fasttypes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_HashedSeq</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">typed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Least-recently-used cache decorator.</span>
+
+<span class="sd">    If *maxsize* is set to None, the LRU features are disabled and the cache</span>
+<span class="sd">    can grow without bound.</span>
+
+<span class="sd">    If *typed* is True, arguments of different types will be cached separately.</span>
+<span class="sd">    For example, f(3.0) and f(3) will be treated as distinct calls with</span>
+<span class="sd">    distinct results.</span>
+
+<span class="sd">    Arguments to the cached function must be hashable.</span>
+
+<span class="sd">    View the cache statistics named tuple (hits, misses, maxsize, currsize)</span>
+<span class="sd">    with f.cache_info().  Clear the cache and statistics with f.cache_clear().</span>
+<span class="sd">    Access the underlying function with f.__wrapped__.</span>
+
+<span class="sd">    See:  https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Users should only access the lru_cache through its public API:</span>
+    <span class="c1">#       cache_info, cache_clear, and f.__wrapped__</span>
+    <span class="c1"># The internals of the lru_cache are encapsulated for thread safety and</span>
+    <span class="c1"># to allow the implementation to change (including a possible C version).</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maxsize</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="c1"># Negative maxsize is treated as 0</span>
+        <span class="k">if</span> <span class="n">maxsize</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">maxsize</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">maxsize</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="c1"># The user_function was passed in directly via the maxsize argument</span>
+        <span class="n">user_function</span><span class="p">,</span> <span class="n">maxsize</span> <span class="o">=</span> <span class="n">maxsize</span><span class="p">,</span> <span class="mi">128</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">_lru_cache_wrapper</span><span class="p">(</span><span class="n">user_function</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="n">typed</span><span class="p">,</span> <span class="n">_CacheInfo</span><span class="p">)</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="n">cache_parameters</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;maxsize&#39;</span><span class="p">:</span> <span class="n">maxsize</span><span class="p">,</span> <span class="s1">&#39;typed&#39;</span><span class="p">:</span> <span class="n">typed</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">update_wrapper</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">user_function</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">maxsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s1">&#39;Expected first argument to be an integer, a callable, or None&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decorating_function</span><span class="p">(</span><span class="n">user_function</span><span class="p">):</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">_lru_cache_wrapper</span><span class="p">(</span><span class="n">user_function</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="n">typed</span><span class="p">,</span> <span class="n">_CacheInfo</span><span class="p">)</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="n">cache_parameters</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;maxsize&#39;</span><span class="p">:</span> <span class="n">maxsize</span><span class="p">,</span> <span class="s1">&#39;typed&#39;</span><span class="p">:</span> <span class="n">typed</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">update_wrapper</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">user_function</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">decorating_function</span>
+
+<span class="k">def</span> <span class="nf">_lru_cache_wrapper</span><span class="p">(</span><span class="n">user_function</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="n">typed</span><span class="p">,</span> <span class="n">_CacheInfo</span><span class="p">):</span>
+    <span class="c1"># Constants shared by all lru cache instances:</span>
+    <span class="n">sentinel</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>          <span class="c1"># unique object used to signal cache misses</span>
+    <span class="n">make_key</span> <span class="o">=</span> <span class="n">_make_key</span>         <span class="c1"># build a key from the function arguments</span>
+    <span class="n">PREV</span><span class="p">,</span> <span class="n">NEXT</span><span class="p">,</span> <span class="n">KEY</span><span class="p">,</span> <span class="n">RESULT</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span>   <span class="c1"># names for the link fields</span>
+
+    <span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">misses</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">full</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">cache_get</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span>    <span class="c1"># bound method to lookup a key or return None</span>
+    <span class="n">cache_len</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="fm">__len__</span>  <span class="c1"># get cache size without calling len()</span>
+    <span class="n">lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>           <span class="c1"># because linkedlist updates aren&#39;t threadsafe</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="p">[]</span>                <span class="c1"># root of the circular doubly linked list</span>
+    <span class="n">root</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>     <span class="c1"># initialize by pointing to self</span>
+
+    <span class="k">if</span> <span class="n">maxsize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+            <span class="c1"># No caching -- just a statistics update</span>
+            <span class="k">nonlocal</span> <span class="n">misses</span>
+            <span class="n">misses</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">user_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">elif</span> <span class="n">maxsize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+            <span class="c1"># Simple caching without ordering or size limit</span>
+            <span class="k">nonlocal</span> <span class="n">hits</span><span class="p">,</span> <span class="n">misses</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">make_key</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">,</span> <span class="n">typed</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">cache_get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sentinel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">sentinel</span><span class="p">:</span>
+                <span class="n">hits</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="n">misses</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">user_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+            <span class="c1"># Size limited caching that tracks accesses by recency</span>
+            <span class="k">nonlocal</span> <span class="n">root</span><span class="p">,</span> <span class="n">hits</span><span class="p">,</span> <span class="n">misses</span><span class="p">,</span> <span class="n">full</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">make_key</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">,</span> <span class="n">typed</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+                <span class="n">link</span> <span class="o">=</span> <span class="n">cache_get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">link</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Move the link to the front of the circular queue</span>
+                    <span class="n">link_prev</span><span class="p">,</span> <span class="n">link_next</span><span class="p">,</span> <span class="n">_key</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">link</span>
+                    <span class="n">link_prev</span><span class="p">[</span><span class="n">NEXT</span><span class="p">]</span> <span class="o">=</span> <span class="n">link_next</span>
+                    <span class="n">link_next</span><span class="p">[</span><span class="n">PREV</span><span class="p">]</span> <span class="o">=</span> <span class="n">link_prev</span>
+                    <span class="n">last</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">PREV</span><span class="p">]</span>
+                    <span class="n">last</span><span class="p">[</span><span class="n">NEXT</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">PREV</span><span class="p">]</span> <span class="o">=</span> <span class="n">link</span>
+                    <span class="n">link</span><span class="p">[</span><span class="n">PREV</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span>
+                    <span class="n">link</span><span class="p">[</span><span class="n">NEXT</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span>
+                    <span class="n">hits</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">return</span> <span class="n">result</span>
+                <span class="n">misses</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">user_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+                    <span class="c1"># Getting here means that this same key was added to the</span>
+                    <span class="c1"># cache while the lock was released.  Since the link</span>
+                    <span class="c1"># update is already done, we need only return the</span>
+                    <span class="c1"># computed result and update the count of misses.</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">full</span><span class="p">:</span>
+                    <span class="c1"># Use the old root to store the new key and result.</span>
+                    <span class="n">oldroot</span> <span class="o">=</span> <span class="n">root</span>
+                    <span class="n">oldroot</span><span class="p">[</span><span class="n">KEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+                    <span class="n">oldroot</span><span class="p">[</span><span class="n">RESULT</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+                    <span class="c1"># Empty the oldest link and make it the new root.</span>
+                    <span class="c1"># Keep a reference to the old key and old result to</span>
+                    <span class="c1"># prevent their ref counts from going to zero during the</span>
+                    <span class="c1"># update. That will prevent potentially arbitrary object</span>
+                    <span class="c1"># clean-up code (i.e. __del__) from running while we&#39;re</span>
+                    <span class="c1"># still adjusting the links.</span>
+                    <span class="n">root</span> <span class="o">=</span> <span class="n">oldroot</span><span class="p">[</span><span class="n">NEXT</span><span class="p">]</span>
+                    <span class="n">oldkey</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">KEY</span><span class="p">]</span>
+                    <span class="n">oldresult</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">RESULT</span><span class="p">]</span>
+                    <span class="n">root</span><span class="p">[</span><span class="n">KEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">RESULT</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="c1"># Now update the cache dictionary.</span>
+                    <span class="k">del</span> <span class="n">cache</span><span class="p">[</span><span class="n">oldkey</span><span class="p">]</span>
+                    <span class="c1"># Save the potentially reentrant cache[key] assignment</span>
+                    <span class="c1"># for last, after the root and links have been put in</span>
+                    <span class="c1"># a consistent state.</span>
+                    <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldroot</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Put result in a new link at the front of the queue.</span>
+                    <span class="n">last</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">PREV</span><span class="p">]</span>
+                    <span class="n">link</span> <span class="o">=</span> <span class="p">[</span><span class="n">last</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">result</span><span class="p">]</span>
+                    <span class="n">last</span><span class="p">[</span><span class="n">NEXT</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="n">PREV</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">link</span>
+                    <span class="c1"># Use the cache_len bound method instead of the len() function</span>
+                    <span class="c1"># which could potentially be wrapped in an lru_cache itself.</span>
+                    <span class="n">full</span> <span class="o">=</span> <span class="p">(</span><span class="n">cache_len</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">maxsize</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">cache_info</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Report cache statistics&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_CacheInfo</span><span class="p">(</span><span class="n">hits</span><span class="p">,</span> <span class="n">misses</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="n">cache_len</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">cache_clear</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the cache and cache statistics&quot;&quot;&quot;</span>
+        <span class="k">nonlocal</span> <span class="n">hits</span><span class="p">,</span> <span class="n">misses</span><span class="p">,</span> <span class="n">full</span>
+        <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+            <span class="n">cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">root</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">hits</span> <span class="o">=</span> <span class="n">misses</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">cache_info</span> <span class="o">=</span> <span class="n">cache_info</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">cache_clear</span> <span class="o">=</span> <span class="n">cache_clear</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_functools</span> <span class="kn">import</span> <span class="n">_lru_cache_wrapper</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### cache -- simplified access to the infinity cache</span>
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="n">user_function</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+    <span class="s1">&#39;Simple lightweight unbounded cache.  Sometimes called &quot;memoize&quot;.&#39;</span>
+    <span class="k">return</span> <span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)(</span><span class="n">user_function</span><span class="p">)</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### singledispatch() - single-dispatch generic function decorator</span>
+<span class="c1">################################################################################</span>
+
+<span class="k">def</span> <span class="nf">_c3_merge</span><span class="p">(</span><span class="n">sequences</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merges MROs in *sequences* to a single MRO using the C3 algorithm.</span>
+
+<span class="sd">    Adapted from https://www.python.org/download/releases/2.3/mro/.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sequences</span> <span class="k">if</span> <span class="n">s</span><span class="p">]</span>   <span class="c1"># purge empty sequences</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>   <span class="c1"># find merge candidates among seq heads</span>
+            <span class="n">candidate</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">s2</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                    <span class="n">candidate</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">break</span>      <span class="c1"># reject the current head, it appears later</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Inconsistent hierarchy&quot;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+        <span class="c1"># remove the chosen candidate</span>
+        <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">candidate</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">_c3_mro</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">abcs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the method resolution order using extended C3 linearization.</span>
+
+<span class="sd">    If no *abcs* are given, the algorithm works exactly like the built-in C3</span>
+<span class="sd">    linearization used for method resolution.</span>
+
+<span class="sd">    If given, *abcs* is a list of abstract base classes that should be inserted</span>
+<span class="sd">    into the resulting MRO. Unrelated ABCs are ignored and don&#39;t end up in the</span>
+<span class="sd">    result. The algorithm inserts ABCs where their functionality is introduced,</span>
+<span class="sd">    i.e. issubclass(cls, abc) returns True for the class itself but returns</span>
+<span class="sd">    False for all its direct base classes. Implicit ABCs for a given class</span>
+<span class="sd">    (either registered or inferred from the presence of a special method like</span>
+<span class="sd">    __len__) are inserted directly after the last ABC explicitly listed in the</span>
+<span class="sd">    MRO of said class. If two implicit ABCs end up next to each other in the</span>
+<span class="sd">    resulting MRO, their ordering depends on the order of types in *abcs*.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">base</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">):</span>
+            <span class="n">boundary</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span>
+            <span class="k">break</span>   <span class="c1"># Bases up to the last explicit ABC are considered first.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">abcs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">abcs</span><span class="p">)</span> <span class="k">if</span> <span class="n">abcs</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">explicit_bases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">[:</span><span class="n">boundary</span><span class="p">])</span>
+    <span class="n">abstract_bases</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">other_bases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">[</span><span class="n">boundary</span><span class="p">:])</span>
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">abcs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">issubclass</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__bases__</span>
+            <span class="p">):</span>
+            <span class="c1"># If *cls* is the class that introduces behaviour described by</span>
+            <span class="c1"># an ABC *base*, insert said ABC to its MRO.</span>
+            <span class="n">abstract_bases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">abstract_bases</span><span class="p">:</span>
+        <span class="n">abcs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+    <span class="n">explicit_c3_mros</span> <span class="o">=</span> <span class="p">[</span><span class="n">_c3_mro</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abcs</span><span class="o">=</span><span class="n">abcs</span><span class="p">)</span> <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">explicit_bases</span><span class="p">]</span>
+    <span class="n">abstract_c3_mros</span> <span class="o">=</span> <span class="p">[</span><span class="n">_c3_mro</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abcs</span><span class="o">=</span><span class="n">abcs</span><span class="p">)</span> <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">abstract_bases</span><span class="p">]</span>
+    <span class="n">other_c3_mros</span> <span class="o">=</span> <span class="p">[</span><span class="n">_c3_mro</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">abcs</span><span class="o">=</span><span class="n">abcs</span><span class="p">)</span> <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">other_bases</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_c3_merge</span><span class="p">(</span>
+        <span class="p">[[</span><span class="bp">cls</span><span class="p">]]</span> <span class="o">+</span>
+        <span class="n">explicit_c3_mros</span> <span class="o">+</span> <span class="n">abstract_c3_mros</span> <span class="o">+</span> <span class="n">other_c3_mros</span> <span class="o">+</span>
+        <span class="p">[</span><span class="n">explicit_bases</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">abstract_bases</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">other_bases</span><span class="p">]</span>
+    <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_compose_mro</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the method resolution order for a given class *cls*.</span>
+
+<span class="sd">    Includes relevant abstract base classes (with their respective bases) from</span>
+<span class="sd">    the *types* iterable. Uses a modified C3 linearization algorithm.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bases</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">)</span>
+    <span class="c1"># Remove entries which are already present in the __mro__ or unrelated.</span>
+    <span class="k">def</span> <span class="nf">is_related</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">typ</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bases</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="s1">&#39;__mro__&#39;</span><span class="p">)</span>
+                                 <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">GenericAlias</span><span class="p">)</span>
+                                 <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">typ</span><span class="p">))</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">types</span> <span class="k">if</span> <span class="n">is_related</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="c1"># Remove entries which are strict bases of other entries (they will end up</span>
+    <span class="c1"># in the MRO anyway.</span>
+    <span class="k">def</span> <span class="nf">is_strict_base</span><span class="p">(</span><span class="n">typ</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">typ</span> <span class="o">!=</span> <span class="n">other</span> <span class="ow">and</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">types</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_strict_base</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="c1"># Subclasses of the ABCs in *types* which are also implemented by</span>
+    <span class="c1"># *cls* can be used to stabilize ABC ordering.</span>
+    <span class="n">type_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
+    <span class="n">mro</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">typ</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">sub</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bases</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
+                <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sub</span><span class="o">.</span><span class="vm">__mro__</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">type_set</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+            <span class="n">mro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="c1"># Favor subclasses with the biggest number of useful bases</span>
+        <span class="n">found</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">found</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subcls</span> <span class="ow">in</span> <span class="n">sub</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subcls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
+                    <span class="n">mro</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subcls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_c3_mro</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">abcs</span><span class="o">=</span><span class="n">mro</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_find_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">registry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the best matching implementation from *registry* for type *cls*.</span>
+
+<span class="sd">    Where there is no registered implementation for a specific type, its method</span>
+<span class="sd">    resolution order is used to find a more generic implementation.</span>
+
+<span class="sd">    Note: if *registry* does not contain an implementation for the base</span>
+<span class="sd">    *object* type, this function may return None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mro</span> <span class="o">=</span> <span class="n">_compose_mro</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">registry</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If *match* is an implicit ABC but there is another unrelated,</span>
+            <span class="c1"># equally matching implicit ABC, refuse the temptation to guess.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="ow">in</span> <span class="n">registry</span> <span class="ow">and</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span>
+                              <span class="ow">and</span> <span class="n">match</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span>
+                              <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="n">t</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Ambiguous dispatch: </span><span class="si">{}</span><span class="s2"> or </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">match</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">registry</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">t</span>
+    <span class="k">return</span> <span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">singledispatch</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Single-dispatch generic function decorator.</span>
+
+<span class="sd">    Transforms a function into a generic function, which can have different</span>
+<span class="sd">    behaviours depending upon the type of its first argument. The decorated</span>
+<span class="sd">    function acts as the default implementation, and additional</span>
+<span class="sd">    implementations can be registered using the register() attribute of the</span>
+<span class="sd">    generic function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># There are many programs that use functools without singledispatch, so we</span>
+    <span class="c1"># trade-off making singledispatch marginally slower for the benefit of</span>
+    <span class="c1"># making start-up of such applications slightly faster.</span>
+    <span class="kn">import</span> <span class="nn">types</span><span class="o">,</span> <span class="nn">weakref</span>
+
+    <span class="n">registry</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dispatch_cache</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">WeakKeyDictionary</span><span class="p">()</span>
+    <span class="n">cache_token</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;generic_func.dispatch(cls) -&gt; &lt;function implementation&gt;</span>
+
+<span class="sd">        Runs the dispatch algorithm to return the best available implementation</span>
+<span class="sd">        for the given *cls* registered on *generic_func*.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">nonlocal</span> <span class="n">cache_token</span>
+        <span class="k">if</span> <span class="n">cache_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">current_token</span> <span class="o">=</span> <span class="n">get_cache_token</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">cache_token</span> <span class="o">!=</span> <span class="n">current_token</span><span class="p">:</span>
+                <span class="n">dispatch_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="n">cache_token</span> <span class="o">=</span> <span class="n">current_token</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">impl</span> <span class="o">=</span> <span class="n">dispatch_cache</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">impl</span> <span class="o">=</span> <span class="n">registry</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">impl</span> <span class="o">=</span> <span class="n">_find_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">registry</span><span class="p">)</span>
+            <span class="n">dispatch_cache</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="n">impl</span>
+        <span class="k">return</span> <span class="n">impl</span>
+
+    <span class="k">def</span> <span class="nf">_is_valid_dispatch_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">GenericAlias</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;generic_func.register(cls, func) -&gt; func</span>
+
+<span class="sd">        Registers a new implementation for the given *cls* on a *generic_func*.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">nonlocal</span> <span class="n">cache_token</span>
+        <span class="k">if</span> <span class="n">_is_valid_dispatch_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid first argument to `register()`. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="si">!r}</span><span class="s2"> is not a class.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">ann</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ann</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid first argument to `register()`: </span><span class="si">{</span><span class="bp">cls</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Use either `@register(some_class)` or plain `@register` &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;on an annotated function.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">cls</span>
+
+            <span class="c1"># only import typing if annotation parsing is necessary</span>
+            <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">get_type_hints</span>
+            <span class="n">argname</span><span class="p">,</span> <span class="bp">cls</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_valid_dispatch_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid annotation for </span><span class="si">{</span><span class="n">argname</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="si">!r}</span><span class="s2"> is not a class.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">registry</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">if</span> <span class="n">cache_token</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__abstractmethods__&#39;</span><span class="p">):</span>
+            <span class="n">cache_token</span> <span class="o">=</span> <span class="n">get_cache_token</span><span class="p">()</span>
+        <span class="n">dispatch_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">funcname</span><span class="si">}</span><span class="s1"> requires at least &#39;</span>
+                            <span class="s1">&#39;1 positional argument&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dispatch</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="n">funcname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;singledispatch function&#39;</span><span class="p">)</span>
+    <span class="n">registry</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">register</span> <span class="o">=</span> <span class="n">register</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">dispatch</span> <span class="o">=</span> <span class="n">dispatch</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">registry</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MappingProxyType</span><span class="p">(</span><span class="n">registry</span><span class="p">)</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">_clear_cache</span> <span class="o">=</span> <span class="n">dispatch_cache</span><span class="o">.</span><span class="n">clear</span>
+    <span class="n">update_wrapper</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="c1"># Descriptor version</span>
+<span class="k">class</span> <span class="nc">singledispatchmethod</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Single-dispatch generic method descriptor.</span>
+
+<span class="sd">    Supports wrapping existing descriptors and handles non-descriptor</span>
+<span class="sd">    callables as instance methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__get__&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="si">!r}</span><span class="s2"> is not callable or a descriptor&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispatcher</span> <span class="o">=</span> <span class="n">singledispatch</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+        <span class="c1"># bpo-45678: special-casing for classmethod/staticmethod in Python &lt;=3.9,</span>
+        <span class="c1"># as functools.update_wrapper doesn&#39;t work properly in singledispatchmethod.__get__</span>
+        <span class="c1"># if it is applied to an unbound classmethod/staticmethod</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">(</span><span class="nb">staticmethod</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__func__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_func</span> <span class="o">=</span> <span class="n">func</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;generic_method.register(cls, func) -&gt; func</span>
+
+<span class="sd">        Registers a new implementation for the given *cls* on a *generic_method*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># bpo-39679: in Python &lt;= 3.9, classmethods and staticmethods don&#39;t</span>
+        <span class="c1"># inherit __annotations__ of the wrapped function (fixed in 3.10+ as</span>
+        <span class="c1"># a side-effect of bpo-43682) but we need that for annotation-derived</span>
+        <span class="c1"># singledispatches. So we add that just-in-time here.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">(</span><span class="nb">staticmethod</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">)):</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__func__</span><span class="p">,</span> <span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">_method</span><span class="o">.</span><span class="n">__isabstractmethod__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__isabstractmethod__</span>
+        <span class="n">_method</span><span class="o">.</span><span class="n">register</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register</span>
+        <span class="n">update_wrapper</span><span class="p">(</span><span class="n">_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_method</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__isabstractmethod__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__isabstractmethod__&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">### cached_property() - computed once per instance, cached as attribute</span>
+<span class="c1">################################################################################</span>
+
+<span class="n">_NOT_FOUND</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">cached_property</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrname</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attrname</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot assign the same cached_property to two different names &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="si">!r}</span><span class="s2"> and </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot use cached_property instance without calling __set_name__ on it.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># not all objects have __dict__ (e.g. class defines slots)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No &#39;__dict__&#39; attribute on </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;instance to cache </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="si">!r}</span><span class="s2"> property.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="p">,</span> <span class="n">_NOT_FOUND</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="n">_NOT_FOUND</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+                <span class="c1"># check if another thread filled cache while we awaited lock</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="p">,</span> <span class="n">_NOT_FOUND</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="n">_NOT_FOUND</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">cache</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;The &#39;__dict__&#39; attribute on </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> instance &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;does not support item assignment for caching </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="si">!r}</span><span class="s2"> property.&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="n">__class_getitem__</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">GenericAlias</span><span class="p">)</span>
+</pre></div>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By B. Mary<br/>
+    
+        &copy; Copyright 2022, B. Mary.<br/>
+      Last updated on Feb 10, 2023.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>

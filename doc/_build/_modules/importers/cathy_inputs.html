@@ -1,0 +1,1552 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+        <title>importers.cathy_inputs | pyCATHY v0.1.1</title>
+    
+
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
+    <link rel="shortcut icon" href="../../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <!-- Plausible analytics for anonymous usage statistics -->
+    <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.1.1</span></h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/overview.html">
+   Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/citing.html">
+   Citing pyCATHY
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Gallery of examples
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../content/SSHydro/index.html">
+   Surface subsurface hydrological model
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../content/SSHydro/plot_1_pyCATHY_weilletal.html">
+     Weil et al example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../content/SSHydro/plot_2_pyCATHY_inputs.html">
+     Input plots
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../content/SSHydro/plot_3_meshing_from_weil.html">
+     Meshing from a Digital Elevation Model (DEM)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../content/SSHydro/plot_3b_soil3d_from_weil.html">
+     Soil 3d from a Digital Elevation Model (DEM)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../content/SSHydro/plot_4_pyCATHY_outputs.html">
+     Output plots
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../content/DA/index.html">
+   Data Assimilation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../content/DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../content/api/api.html">
+   API reference: The
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     pyCATHY
+    </span>
+   </code>
+   package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/cathy_tools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cathy_tools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.CATHY.html">
+       cathy_tools.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.OrderedDict.html">
+       cathy_tools.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.Repo.html">
+       cathy_tools.Repo
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.isfile.html">
+       cathy_tools.isfile
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.join.html">
+       cathy_tools.join
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.listdir.html">
+       cathy_tools.listdir
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.make_console.html">
+       cathy_tools.make_console
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.print.html">
+       cathy_tools.print
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       importers.cathy_outputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_cumflowvol.html">
+       importers.cathy_outputs.read_cumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_dtcoupling.html">
+       importers.cathy_outputs.read_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_hgraph.html">
+       importers.cathy_outputs.read_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_hgsfdet.html">
+       importers.cathy_outputs.read_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_mbeconv.html">
+       importers.cathy_outputs.read_mbeconv
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_psi.html">
+       importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_sw.html">
+       importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_vp.html">
+       importers.cathy_outputs.read_vp
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.read_wtdepth.html">
+       importers.cathy_outputs.read_wtdepth
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       importers.cathy_inputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_atmbc.html">
+       importers.cathy_inputs.read_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_dem.html">
+       importers.cathy_inputs.read_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_dem_parameters.html">
+       importers.cathy_inputs.read_dem_parameters
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_grid3d.html">
+       importers.cathy_inputs.read_grid3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_raster.html">
+       importers.cathy_inputs.read_raster
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_root_map.html">
+       importers.cathy_inputs.read_root_map
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_soil.html">
+       importers.cathy_inputs.read_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.read_zone.html">
+       importers.cathy_inputs.read_zone
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DA.cathy_DA
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.CATHY.html">
+       DA.cathy_DA.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.DA.html">
+       DA.cathy_DA.DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.partial.html">
+       DA.cathy_DA.partial
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Archie_pert_rules.html">
+       DA.cathy_DA.Archie_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Carsel_Parrish_VGN_pert.html">
+       DA.cathy_DA.Carsel_Parrish_VGN_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Evensen2003.html">
+       DA.cathy_DA.Evensen2003
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.Johnson1970.html">
+       DA.cathy_DA.Johnson1970
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.VG_pert_rules.html">
+       DA.cathy_DA.VG_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.atmbc_pert_rules.html">
+       DA.cathy_DA.atmbc_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.build_dict_attributes_pert.html">
+       DA.cathy_DA.build_dict_attributes_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.dictObs_2pd.html">
+       DA.cathy_DA.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.perturbate_dist.html">
+       DA.cathy_DA.perturbate_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.resynchronise_times.html">
+       DA.cathy_DA.resynchronise_times
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.run_analysis.html">
+       DA.cathy_DA.run_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.sampling_dist.html">
+       DA.cathy_DA.sampling_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.sampling_dist_trunc.html">
+       DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/DA.cathy_DA.track.html">
+       DA.cathy_DA.track
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ERT.petro_Archie
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.Archie_rho_DA.html">
+       ERT.petro_Archie.Archie_rho_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.CATHY_2_Resipy.html">
+       ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.CATHY_2_pg.html">
+       ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.SW_2_ERa_DA.html">
+       ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.get_Archie_ens_i.html">
+       ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.get_sw_ens_i.html">
+       ERT.petro_Archie.get_sw_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.print.html">
+       ERT.petro_Archie.print
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ERT.simulate_ERT
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+    <label for="toctree-checkbox-9">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.R2.html">
+       ERT.simulate_ERT.R2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.Archie_ERT.html">
+       ERT.simulate_ERT.Archie_ERT
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.create_ERT_survey_Resipy.html">
+       ERT.simulate_ERT.create_ERT_survey_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.create_ERT_survey_pg.html">
+       ERT.simulate_ERT.create_ERT_survey_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html">
+       ERT.simulate_ERT.fwd_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.invert_ERT_survey.html">
+       ERT.simulate_ERT.invert_ERT_survey
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/sensitivity.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       sensitivity
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.analysis_Morris.html">
+       sensitivity.analysis_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.define_Morris.html">
+       sensitivity.define_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.df_Morris.html">
+       sensitivity.df_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.err_weighted_rmse.html">
+       sensitivity.err_weighted_rmse
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.plot_Morris.html">
+       sensitivity.plot_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.print_Morris_out.html">
+       sensitivity.print_Morris_out
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.run_sensitivity_analysis.html">
+       sensitivity.run_sensitivity_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/sensitivity.samples_generation.html">
+       sensitivity.samples_generation
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       plotters.cathy_plots
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <label for="toctree-checkbox-11">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.FormatStrFormatter.html">
+       plotters.cathy_plots.FormatStrFormatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.LogNorm.html">
+       plotters.cathy_plots.LogNorm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_RMS.html">
+       plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_Archie.html">
+       plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html">
+       plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.change_x2date.html">
+       plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.convert_time_units.html">
+       plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html">
+       plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.get_dem_coords.html">
+       plotters.cathy_plots.get_dem_coords
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.label_units.html">
+       plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.plot_VGP.html">
+       plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.plot_mesh_bounds.html">
+       plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_COCumflowvol.html">
+       plotters.cathy_plots.show_COCumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_DA_process_ens.html">
+       plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_atmbc.html">
+       plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_atmbc_3d.html">
+       plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_dem.html">
+       plotters.cathy_plots.show_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_dtcoupling.html">
+       plotters.cathy_plots.show_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgraph.html">
+       plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_indice_veg.html">
+       plotters.cathy_plots.show_indice_veg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_raster.html">
+       plotters.cathy_plots.show_raster
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_soil.html">
+       plotters.cathy_plots.show_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html">
+       plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vtk.html">
+       plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_vtk_TL.html">
+       plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_wtdepth.html">
+       plotters.cathy_plots.show_wtdepth
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.show_zone.html">
+       plotters.cathy_plots.show_zone
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.transform2_time_delta.html">
+       plotters.cathy_plots.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_utils
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+    <label for="toctree-checkbox-12">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.meshtools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+    <label for="toctree-checkbox-13">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.CATHY_2_Resipy.html">
+       pyCATHY.meshtools.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.CATHY_2_Simpeg.html">
+       pyCATHY.meshtools.CATHY_2_Simpeg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.CATHY_2_pg.html">
+       pyCATHY.meshtools.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.add_markers2mesh.html">
+       pyCATHY.meshtools.add_markers2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.create_layers_inzones3d.html">
+       pyCATHY.meshtools.create_layers_inzones3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.get_layer_depth.html">
+       pyCATHY.meshtools.get_layer_depth
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.get_layer_depths.html">
+       pyCATHY.meshtools.get_layer_depths
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.get_zone3d_layer_depths.html">
+       pyCATHY.meshtools.get_zone3d_layer_depths
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.het_soil_layers_mapping_generic.html">
+       pyCATHY.meshtools.het_soil_layers_mapping_generic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.map_layers_2_DEM.html">
+       pyCATHY.meshtools.map_layers_2_DEM
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.plot_zones3d_layered.html">
+       pyCATHY.meshtools.plot_zones3d_layered
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.zone3d.html">
+       pyCATHY.meshtools.zone3d
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/change_log.html">
+   Change log
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/references.html">
+   References
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting help and contributed
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../content/contribute.html">
+   Contribute and support
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
+            </div>
+            
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BenjMy/pycathy_wrapper"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/importers/cathy_inputs.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <h1>Source code for importers.cathy_inputs</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Reader for CATHY input files&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pyCATHY.plotters</span> <span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">pltCT</span>
+
+
+<div class="viewcode-block" id="read_atmbc"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_atmbc.html#importers.cathy_inputs.read_atmbc">[docs]</a><span class="k">def</span> <span class="nf">read_atmbc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="p">[],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    read atmbc file</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    atmbc dataframe.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># filename = &#39;./input/atmbc&#39;</span>
+    <span class="n">atmbc_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">atmbc_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="c1"># lines = [ligne.strip() for ligne in lines] # avoid retour chariot</span>
+    <span class="n">atmbc_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># read header flags</span>
+    <span class="n">Line0_header</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
+    <span class="n">HSPATM</span> <span class="o">=</span> <span class="n">Line0_header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">IETO</span> <span class="o">=</span> <span class="n">Line0_header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tstep_idx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># loop over lines</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># test_char = re.search(&#39;[a-zA-Z]&#39;, ll)</span>
+            <span class="c1"># if test_char is not None:</span>
+            <span class="k">if</span> <span class="s2">&quot;TIME&quot;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
+                <span class="n">tstep_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">splt</span> <span class="o">=</span> <span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splt</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="c1"># two cases (according to file formatting):</span>
+            <span class="c1"># numerical values + flag of value</span>
+            <span class="c1"># -----------------------------------------------------------------</span>
+            <span class="c1"># 1/ value (numeric) + &#39;VALUE&#39;</span>
+            <span class="k">elif</span> <span class="s2">&quot;VALUE&quot;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="k">elif</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
+                <span class="c1"># take care of the additionnal empty lines (retour chariot)</span>
+                <span class="c1"># in the end of the file</span>
+                <span class="k">pass</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># only numerical values</span>
+                <span class="c1"># 2/ value (numeric)</span>
+                <span class="c1"># -----------------------------------------------------------------</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Number of values does not match number of times (check flags TIME, VALUE)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">HSPATM</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># homogeneous on all surf mesh nodes</span>
+        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">])</span>
+        <span class="n">cols_atmbc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d_atmbc</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols_atmbc</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)):</span>
+            <span class="n">d_atmbc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">&quot;nnod3&quot;</span><span class="p">])),</span>
+                        <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">&quot;nnod3&quot;</span><span class="p">])),</span>
+                        <span class="n">grid</span><span class="p">[</span><span class="s2">&quot;nodes_idxyz&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">d_atmbc</span><span class="p">)</span>
+        <span class="n">cols_atmbc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;nodeidx&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]</span>
+        <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d_atmbc</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols_atmbc</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">IETO</span><span class="o">=</span><span class="n">IETO</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc_3d</span><span class="p">(</span><span class="n">df_atmbc</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no vtk file found&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_atmbc</span><span class="p">,</span> <span class="n">HSPATM</span><span class="p">,</span> <span class="n">IETO</span></div>
+
+
+<span class="c1"># def read_parm(filename, **kwargs):</span>
+<span class="c1">#     &#39;&#39;&#39;</span>
+<span class="c1">#     read parm file</span>
+
+
+<span class="c1">#     Returns</span>
+<span class="c1">#     -------</span>
+<span class="c1">#     parm dict</span>
+
+<span class="c1">#     &#39;&#39;&#39;</span>
+
+<span class="c1">#     # filename = &#39;./input/atmbc&#39;</span>
+<span class="c1">#     parm_file = open(filename, &quot;r&quot;)</span>
+<span class="c1">#     lines = parm_file.readlines()</span>
+<span class="c1">#     # lines = [ligne.strip() for ligne in lines] # avoid retour chariot</span>
+<span class="c1">#     parm_file.close()</span>
+
+
+<span class="c1">#     header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 2]</span>
+<span class="c1">#     counth = 0</span>
+
+<span class="c1">#     # with open(</span>
+<span class="c1">#     #     os.path.join(self.workdir, self.project_name, self.input_dirname, &quot;parm&quot;),</span>
+<span class="c1">#     #     &quot;w+&quot;,</span>
+<span class="c1">#     # ) as parmfile:</span>
+<span class="c1">#     with open(file2write, &quot;w+&quot;) as parmfile:</span>
+
+
+<span class="c1">#     # read header flags</span>
+<span class="c1">#     # Line0_header = [int(word) for word in lines[0].split() if word.isdigit()]</span>
+<span class="c1">#     # HSPATM = Line0_header[0]</span>
+<span class="c1">#     # IETO = Line0_header[1]</span>
+
+<span class="c1">#     return dict_parm</span>
+
+
+<div class="viewcode-block" id="read_dem_parameters"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_dem_parameters.html#importers.cathy_inputs.read_dem_parameters">[docs]</a><span class="k">def</span> <span class="nf">read_dem_parameters</span><span class="p">(</span><span class="n">dem_parametersfile</span><span class="p">):</span>
+
+    <span class="n">header_fmt</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># nb of values per lines</span>
+    <span class="n">dem_parameters</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;delta_x&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;delta_y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;factor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dostep&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nzone&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nstr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ivert&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;isp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;base&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;zratio(i),i=1,nstr&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">counth</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count_parm</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">dem_parameters_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">zratio</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dem_parametersfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line_value</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">counth</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">header_fmt</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">header_fmt</span><span class="p">[</span><span class="n">counth</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">dem_parameters_dict</span><span class="p">[</span><span class="n">dem_parameters</span><span class="p">[</span><span class="n">count_parm</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line_value</span><span class="p">)</span>
+                    <span class="n">count_parm</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">header_fmt</span><span class="p">[</span><span class="n">counth</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                        <span class="n">dem_parameters_dict</span><span class="p">[</span><span class="n">dem_parameters</span><span class="p">[</span><span class="n">count_parm</span> <span class="o">+</span> <span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                            <span class="n">line_value</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="n">j</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="n">count_parm</span> <span class="o">+=</span> <span class="mi">3</span>
+            <span class="k">elif</span> <span class="n">counth</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">header_fmt</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line_value</span><span class="o">.</span><span class="n">split</span><span class="p">())):</span>
+                    <span class="n">zratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line_value</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="n">j</span><span class="p">]))</span>
+                <span class="n">dem_parameters_dict</span><span class="p">[</span><span class="n">dem_parameters</span><span class="p">[</span><span class="n">count_parm</span><span class="p">]]</span> <span class="o">=</span> <span class="n">zratio</span>
+                <span class="n">count_parm</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_value</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="n">counth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">dem_parameters_dict</span></div>
+
+
+<div class="viewcode-block" id="read_soil"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_soil.html#importers.cathy_inputs.read_soil">[docs]</a><span class="k">def</span> <span class="nf">read_soil</span><span class="p">(</span><span class="n">soilfile</span><span class="p">,</span> <span class="n">dem_parm</span><span class="p">,</span> <span class="n">MAXVEG</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read soil file</span>
+
+
+<span class="sd">    This is an example of 3 layers and  2 zones; The inner reading cycle is by zone, and the outer one by layers, i.e.:</span>
+
+<span class="sd">    PERMX_z1_str1 PERMY_z1_str1  PERMZ_z1_str1  ELSTOR_z1_str1 POROS_z1_str1 VGNCELL_z1_str1 VGRMCCELL__z1_str1 VGPSATCELL__z1_str1</span>
+<span class="sd">    PERMX_z2_str1 PERMY_z2_str1  PERMZ_z2_str1  ELSTOR_z2_str1 POROS_z2_str1 VGNCELL_z2_str1 VGRMCCELL__z2_str1 VGPSATCELL__z2_str1</span>
+<span class="sd">    PERMX_z1_str2 PERMY_z1_str2  PERMZ_z1_str2  ELSTOR_z1_str2 POROS_z1_str2 VGNCELL_z1_str2 VGRMCCELL__z1_str2 VGPSATCELL__z1_str2</span>
+<span class="sd">    PERMX_z2_str2 PERMY_z2_str2  PERMZ_z2_str2  ELSTOR_z2_str2 POROS_z2_str2 VGNCELL_z2_str2 VGRMCCELL__z2_str2 VGPSATCELL__z2_str2</span>
+<span class="sd">    PERMX_z1_str3 PERMY_z1_str3  PERMZ_z1_str3  ELSTOR_z1_str3 POROS_z1_str3 VGNCELL_z1_str3 VGRMCCELL__z1_str3 VGPSATCELL__z1_str3</span>
+<span class="sd">    PERMX_z2_str3 PERMY_z2_str3  PERMZ_z2_str3  ELSTOR_z2_str3 POROS_z2_str3 VGNCELL_z2_str3 VGRMCCELL__z2_str3  VGPSATCELL__z2_str3</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    soilfile : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    dem_parm : dict</span>
+<span class="sd">        dict of dem parameters (from read_dem_parameters)</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dataframe</span>
+<span class="sd">        df containing soil properties</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the dem file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Read FP parameters</span>
+    <span class="c1"># ---------------------</span>
+    <span class="c1"># To write</span>
+
+    <span class="c1"># Read SPP parameters</span>
+    <span class="c1"># ---------------------</span>
+    <span class="n">soil_header</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;PERMX&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PERMY&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PERMZ&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ELSTOR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;POROS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VGNCELL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VGRMCCELL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VGPSATCELL&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">str_hd_soil</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">nb_of_header_lines</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">+</span> <span class="n">MAXVEG</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">soilfile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="c1"># if count &lt; 9:</span>
+            <span class="c1"># str_hd, value_hd = line.split()  # split it by whitespace</span>
+            <span class="c1"># soilfile[str_hd.replace(&quot;:&quot;, &quot;&quot;)] = value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">soil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+        <span class="n">soilfile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">nb_of_header_lines</span><span class="p">,</span> <span class="n">max_rows</span><span class="o">=</span><span class="n">count</span> <span class="o">-</span> <span class="n">nb_of_header_lines</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">soil</span><span class="p">)</span>
+    <span class="n">name_str</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">name_zone</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dem_parm</span><span class="p">[</span><span class="s2">&quot;nzone&quot;</span><span class="p">])):</span>
+        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dem_parm</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">])):</span>
+            <span class="n">name_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ds</span><span class="p">))</span>
+            <span class="n">name_zone</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dz</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">soil</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">name_str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Inconsistent number of zones/layers with respect to the number of soil lines&quot;</span>
+        <span class="p">)</span>
+    <span class="n">df_soil</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">soil</span><span class="p">,</span> <span class="p">[</span><span class="n">name_str</span><span class="p">,</span> <span class="n">name_zone</span><span class="p">],</span> <span class="n">soil_header</span><span class="p">)</span>
+    <span class="n">df_soil</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_soil</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="s2">&quot;zone&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_soil</span><span class="p">,</span> <span class="n">str_hd_soil</span></div>
+
+
+<div class="viewcode-block" id="read_raster"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_raster.html#importers.cathy_inputs.read_raster">[docs]</a><span class="k">def</span> <span class="nf">read_raster</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applicable for all DEM type of CATHY outputs such as dtm_Ws1_sf_1, dtm_Ws1_sf_2, ...</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        filename of the raster type file to read (including abs path).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the raster info.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the raster file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_hd_raster</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_raster</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">raster_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">raster_mat</span><span class="p">,</span> <span class="n">str_hd_raster</span></div>
+
+
+<div class="viewcode-block" id="read_zone"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_zone.html#importers.cathy_inputs.read_zone">[docs]</a><span class="k">def</span> <span class="nf">read_zone</span><span class="p">(</span><span class="n">zonefile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read zone file and infer soil zones in the DEM</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    zonefile : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the zones.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the zone file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_hd_zones</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">zonefile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_zones</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">zones_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">zonefile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">zones_mat</span><span class="p">,</span> <span class="n">str_hd_zones</span></div>
+
+
+<div class="viewcode-block" id="read_dem"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_dem.html#importers.cathy_inputs.read_dem">[docs]</a><span class="k">def</span> <span class="nf">read_dem</span><span class="p">(</span><span class="n">demfile</span><span class="p">,</span> <span class="n">dtm_13file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read dem file and infer number of altitudes in the DEM</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    demfile : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    dtm_13file : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the elevation.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the dem file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_hd_dem</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">demfile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_dem</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">dem_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dtm_13file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">dem_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">dem_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dem_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># import matplotlib.pyplot as plt</span>
+    <span class="c1"># plt.imshow(dem_mat)</span>
+
+    <span class="k">return</span> <span class="n">dem_mat</span><span class="p">,</span> <span class="n">str_hd_dem</span></div>
+
+
+<div class="viewcode-block" id="read_root_map"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_root_map.html#importers.cathy_inputs.read_root_map">[docs]</a><span class="k">def</span> <span class="nf">read_root_map</span><span class="p">(</span><span class="n">rootmapfile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read root map file and infer number of vegetations in the DEM</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rootmapfile : str</span>
+<span class="sd">        filename (including abs path).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the flag for the vegetation type.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the root map file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">str_hd_rootmap</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootmapfile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_rootmap</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">rootmap_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">rootmapfile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rootmap_mat</span><span class="p">,</span> <span class="n">str_hd_rootmap</span></div>
+
+
+<div class="viewcode-block" id="read_grid3d"><a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_grid3d.html#importers.cathy_inputs.read_grid3d">[docs]</a><span class="k">def</span> <span class="nf">read_grid3d</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># print(&quot;reading grid3d&quot;)</span>
+    <span class="n">grid3d_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;output/grid3d&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Lines = grid3d_file.readlines()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">nnod</span><span class="p">,</span> <span class="n">nnod3</span><span class="p">,</span> <span class="n">nel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">grid3d_file</span><span class="p">,</span> <span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">grid3d_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">grid3d_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;output/grid3d&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">mesh_tetra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">grid3d_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_rows</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">nel</span><span class="p">))</span>
+        <span class="n">grid3d_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">grid3d_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;output/grid3d&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">mesh3d_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+            <span class="n">grid3d_file</span><span class="p">,</span>
+            <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">nel</span><span class="p">),</span>
+            <span class="n">max_rows</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">nel</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">nnod3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">grid3d_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">xyz_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;output/xyz&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">nodes_idxyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">xyz_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xyz_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># self.xmesh = mesh_tetra[:,0]</span>
+        <span class="c1"># self.ymesh = mesh_tetra[:,1]</span>
+        <span class="c1"># self.zmesh = mesh_tetra[:,2]</span>
+        <span class="c1"># return mesh3d_nodes</span>
+
+        <span class="n">grid</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;nnod&quot;</span><span class="p">:</span> <span class="n">nnod</span><span class="p">,</span>  <span class="c1"># number of surface nodes</span>
+            <span class="s2">&quot;nnod3&quot;</span><span class="p">:</span> <span class="n">nnod3</span><span class="p">,</span>  <span class="c1"># number of volume nodes</span>
+            <span class="s2">&quot;nel&quot;</span><span class="p">:</span> <span class="n">nel</span><span class="p">,</span>
+            <span class="s2">&quot;mesh3d_nodes&quot;</span><span class="p">:</span> <span class="n">mesh3d_nodes</span><span class="p">,</span>
+            <span class="s2">&quot;mesh_tetra&quot;</span><span class="p">:</span> <span class="n">mesh_tetra</span><span class="p">,</span>
+            <span class="s2">&quot;nodes_idxyz&quot;</span><span class="p">:</span> <span class="n">nodes_idxyz</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">grid</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By B. Mary<br/>
+    
+        &copy; Copyright 2022, B. Mary.<br/>
+      Last updated on Feb 10, 2023.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>

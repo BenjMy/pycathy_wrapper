@@ -1,0 +1,1847 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+        <title>cathy_tools.Repo | pyCATHY v0.1.1</title>
+    
+
+    
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
+    <link rel="shortcut icon" href="../../../_static/sphx_glr_pyCATHY_weilletal_thumb.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cathy_tools.isfile" href="cathy_tools.isfile.html" />
+    <link rel="prev" title="cathy_tools.OrderedDict" href="cathy_tools.OrderedDict.html" />
+    <!-- Plausible analytics for anonymous usage statistics -->
+    <script defer data-domain="fatiando.org" src="https://plausible.io/js/plausible.js"></script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../_static/sphx_glr_pyCATHY_weilletal_001.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">pyCATHY <span class="project-release">v0.1.1</span></h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../overview.html">
+   Overview
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../citing.html">
+   Citing pyCATHY
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Gallery of examples
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../SSHydro/index.html">
+   Surface subsurface hydrological model
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../SSHydro/plot_1_pyCATHY_weilletal.html">
+     Weil et al example
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../SSHydro/plot_2_pyCATHY_inputs.html">
+     Input plots
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../SSHydro/plot_3_meshing_from_weil.html">
+     Meshing from a Digital Elevation Model (DEM)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../SSHydro/plot_3b_soil3d_from_weil.html">
+     Soil 3d from a Digital Elevation Model (DEM)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../SSHydro/plot_4_pyCATHY_outputs.html">
+     Output plots
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../DA/index.html">
+   Data Assimilation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../DA/plot_Weilletal_sensitivityAnalysis.html">
+     Sensitivity analysis
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../api.html">
+   API reference: The
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     pyCATHY
+    </span>
+   </code>
+   package
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="cathy_tools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       cathy_tools
+      </span>
+     </code>
+    </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="current">
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.CATHY.html">
+       cathy_tools.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.OrderedDict.html">
+       cathy_tools.OrderedDict
+      </a>
+     </li>
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
+       cathy_tools.Repo
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.isfile.html">
+       cathy_tools.isfile
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.join.html">
+       cathy_tools.join
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.listdir.html">
+       cathy_tools.listdir
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.make_console.html">
+       cathy_tools.make_console
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.print.html">
+       cathy_tools.print
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="cathy_tools.subprocess_run_multi.html">
+       cathy_tools.subprocess_run_multi
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="importers.cathy_outputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       importers.cathy_outputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+    <label for="toctree-checkbox-5">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_cumflowvol.html">
+       importers.cathy_outputs.read_cumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_dtcoupling.html">
+       importers.cathy_outputs.read_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_hgraph.html">
+       importers.cathy_outputs.read_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_hgsfdet.html">
+       importers.cathy_outputs.read_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_mbeconv.html">
+       importers.cathy_outputs.read_mbeconv
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_psi.html">
+       importers.cathy_outputs.read_psi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_sw.html">
+       importers.cathy_outputs.read_sw
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_vp.html">
+       importers.cathy_outputs.read_vp
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_outputs.read_wtdepth.html">
+       importers.cathy_outputs.read_wtdepth
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="importers.cathy_inputs.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       importers.cathy_inputs
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+    <label for="toctree-checkbox-6">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_atmbc.html">
+       importers.cathy_inputs.read_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_dem.html">
+       importers.cathy_inputs.read_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_dem_parameters.html">
+       importers.cathy_inputs.read_dem_parameters
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_grid3d.html">
+       importers.cathy_inputs.read_grid3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_raster.html">
+       importers.cathy_inputs.read_raster
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_root_map.html">
+       importers.cathy_inputs.read_root_map
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_soil.html">
+       importers.cathy_inputs.read_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="importers.cathy_inputs.read_zone.html">
+       importers.cathy_inputs.read_zone
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="DA.cathy_DA.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DA.cathy_DA
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+    <label for="toctree-checkbox-7">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.CATHY.html">
+       DA.cathy_DA.CATHY
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.DA.html">
+       DA.cathy_DA.DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.partial.html">
+       DA.cathy_DA.partial
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Archie_pert_rules.html">
+       DA.cathy_DA.Archie_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Carsel_Parrish_VGN_pert.html">
+       DA.cathy_DA.Carsel_Parrish_VGN_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Evensen2003.html">
+       DA.cathy_DA.Evensen2003
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.Johnson1970.html">
+       DA.cathy_DA.Johnson1970
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.VG_pert_rules.html">
+       DA.cathy_DA.VG_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.atmbc_pert_rules.html">
+       DA.cathy_DA.atmbc_pert_rules
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.build_dict_attributes_pert.html">
+       DA.cathy_DA.build_dict_attributes_pert
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.dictObs_2pd.html">
+       DA.cathy_DA.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.perturbate_dist.html">
+       DA.cathy_DA.perturbate_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.perturbate_parm.html">
+       DA.cathy_DA.perturbate_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.resynchronise_times.html">
+       DA.cathy_DA.resynchronise_times
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.run_analysis.html">
+       DA.cathy_DA.run_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.sampling_dist.html">
+       DA.cathy_DA.sampling_dist
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.sampling_dist_trunc.html">
+       DA.cathy_DA.sampling_dist_trunc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.subprocess_run_multi.html">
+       DA.cathy_DA.subprocess_run_multi
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="DA.cathy_DA.track.html">
+       DA.cathy_DA.track
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="ERT.petro_Archie.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ERT.petro_Archie
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.Archie_rho_DA.html">
+       ERT.petro_Archie.Archie_rho_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.CATHY_2_Resipy.html">
+       ERT.petro_Archie.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.CATHY_2_pg.html">
+       ERT.petro_Archie.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.SW_2_ERa_DA.html">
+       ERT.petro_Archie.SW_2_ERa_DA
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.get_Archie_ens_i.html">
+       ERT.petro_Archie.get_Archie_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.get_sw_ens_i.html">
+       ERT.petro_Archie.get_sw_ens_i
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.petro_Archie.print.html">
+       ERT.petro_Archie.print
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="ERT.simulate_ERT.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ERT.simulate_ERT
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+    <label for="toctree-checkbox-9">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.simulate_ERT.R2.html">
+       ERT.simulate_ERT.R2
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.simulate_ERT.Archie_ERT.html">
+       ERT.simulate_ERT.Archie_ERT
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.simulate_ERT.create_ERT_survey_Resipy.html">
+       ERT.simulate_ERT.create_ERT_survey_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.simulate_ERT.create_ERT_survey_pg.html">
+       ERT.simulate_ERT.create_ERT_survey_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.simulate_ERT.fwd_ERT_survey.html">
+       ERT.simulate_ERT.fwd_ERT_survey
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="ERT.simulate_ERT.invert_ERT_survey.html">
+       ERT.simulate_ERT.invert_ERT_survey
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="sensitivity.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       sensitivity
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.analysis_Morris.html">
+       sensitivity.analysis_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.define_Morris.html">
+       sensitivity.define_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.df_Morris.html">
+       sensitivity.df_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.err_weighted_rmse.html">
+       sensitivity.err_weighted_rmse
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.plot_Morris.html">
+       sensitivity.plot_Morris
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.print_Morris_out.html">
+       sensitivity.print_Morris_out
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.run_sensitivity_analysis.html">
+       sensitivity.run_sensitivity_analysis
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="sensitivity.samples_generation.html">
+       sensitivity.samples_generation
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="plotters.cathy_plots.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       plotters.cathy_plots
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+    <label for="toctree-checkbox-11">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.FormatStrFormatter.html">
+       plotters.cathy_plots.FormatStrFormatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.LogNorm.html">
+       plotters.cathy_plots.LogNorm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.DA_RMS.html">
+       plotters.cathy_plots.DA_RMS
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.DA_plot_Archie.html">
+       plotters.cathy_plots.DA_plot_Archie
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.DA_plot_parm_dynamic.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html">
+       plotters.cathy_plots.DA_plot_parm_dynamic_scatter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.DA_plot_time_dynamic.html">
+       plotters.cathy_plots.DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.change_x2date.html">
+       plotters.cathy_plots.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.convert_time_units.html">
+       plotters.cathy_plots.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.dem_plot_2d_top.html">
+       plotters.cathy_plots.dem_plot_2d_top
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.get_dem_coords.html">
+       plotters.cathy_plots.get_dem_coords
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.label_units.html">
+       plotters.cathy_plots.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.plot_VGP.html">
+       plotters.cathy_plots.plot_VGP
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.plot_hist_perturbated_parm.html">
+       plotters.cathy_plots.plot_hist_perturbated_parm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.plot_mesh_bounds.html">
+       plotters.cathy_plots.plot_mesh_bounds
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.prepare_DA_plot_time_dynamic.html">
+       plotters.cathy_plots.prepare_DA_plot_time_dynamic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_COCumflowvol.html">
+       plotters.cathy_plots.show_COCumflowvol
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_DA_process_ens.html">
+       plotters.cathy_plots.show_DA_process_ens
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_atmbc.html">
+       plotters.cathy_plots.show_atmbc
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_atmbc_3d.html">
+       plotters.cathy_plots.show_atmbc_3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_dem.html">
+       plotters.cathy_plots.show_dem
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_dtcoupling.html">
+       plotters.cathy_plots.show_dtcoupling
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_hgraph.html">
+       plotters.cathy_plots.show_hgraph
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_hgsfdet.html">
+       plotters.cathy_plots.show_hgsfdet
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_indice_veg.html">
+       plotters.cathy_plots.show_indice_veg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_raster.html">
+       plotters.cathy_plots.show_raster
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_soil.html">
+       plotters.cathy_plots.show_soil
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_vp_DEPRECATED.html">
+       plotters.cathy_plots.show_vp_DEPRECATED
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_vtk.html">
+       plotters.cathy_plots.show_vtk
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_vtk_TL.html">
+       plotters.cathy_plots.show_vtk_TL
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_wtdepth.html">
+       plotters.cathy_plots.show_wtdepth
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.show_zone.html">
+       plotters.cathy_plots.show_zone
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="plotters.cathy_plots.transform2_time_delta.html">
+       plotters.cathy_plots.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.cathy_utils.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.cathy_utils
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+    <label for="toctree-checkbox-12">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.change_x2date.html">
+       pyCATHY.cathy_utils.change_x2date
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.convert_time_units.html">
+       pyCATHY.cathy_utils.convert_time_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.dictObs_2pd.html">
+       pyCATHY.cathy_utils.dictObs_2pd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.kPa2cm.html">
+       pyCATHY.cathy_utils.kPa2cm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.kPa2m.html">
+       pyCATHY.cathy_utils.kPa2m
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.label_units.html">
+       pyCATHY.cathy_utils.label_units
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.cathy_utils.transform2_time_delta.html">
+       pyCATHY.cathy_utils.transform2_time_delta
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="pyCATHY.meshtools.html">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       pyCATHY.meshtools
+      </span>
+     </code>
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+    <label for="toctree-checkbox-13">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.CATHY_2_Resipy.html">
+       pyCATHY.meshtools.CATHY_2_Resipy
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.CATHY_2_Simpeg.html">
+       pyCATHY.meshtools.CATHY_2_Simpeg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.CATHY_2_pg.html">
+       pyCATHY.meshtools.CATHY_2_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.add_attribute_2mesh.html">
+       pyCATHY.meshtools.add_attribute_2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.add_markers2mesh.html">
+       pyCATHY.meshtools.add_markers2mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.create_layers_inzones3d.html">
+       pyCATHY.meshtools.create_layers_inzones3d
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.find_nearest_node.html">
+       pyCATHY.meshtools.find_nearest_node
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.get_layer_depth.html">
+       pyCATHY.meshtools.get_layer_depth
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.get_layer_depths.html">
+       pyCATHY.meshtools.get_layer_depths
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.get_zone3d_layer_depths.html">
+       pyCATHY.meshtools.get_zone3d_layer_depths
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.het_soil_layers_mapping_generic.html">
+       pyCATHY.meshtools.het_soil_layers_mapping_generic
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.map_layers_2_DEM.html">
+       pyCATHY.meshtools.map_layers_2_DEM
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.plot_2d_interpolation_quality.html">
+       pyCATHY.meshtools.plot_2d_interpolation_quality
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.plot_zones3d_layered.html">
+       pyCATHY.meshtools.plot_zones3d_layered
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.set_interpolation_radius.html">
+       pyCATHY.meshtools.set_interpolation_radius
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.trace_mesh.html">
+       pyCATHY.meshtools.trace_mesh
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.trace_mesh_pg.html">
+       pyCATHY.meshtools.trace_mesh_pg
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="pyCATHY.meshtools.zone3d.html">
+       pyCATHY.meshtools.zone3d
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../change_log.html">
+   Change log
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../cathy_list_citation.html">
+   Who uses CATHY ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../references.html">
+   References
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting help and contributed
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../contribute.html">
+   Contribute and support
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
+            </div>
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../../_sources/content/api/generated/cathy_tools.Repo.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/BenjMy/pycathy_wrapper"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fcontent/api/generated/cathy_tools.Repo.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/BenjMy/pycathy_wrapper/edit/master/doc/content/api/generated/cathy_tools.Repo.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>cathy_tools.Repo</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <div class="section" id="cathy-tools-repo">
+<h1>cathy_tools.Repo<a class="headerlink" href="#cathy-tools-repo" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cathy_tools.Repo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cathy_tools.</span></span><span class="sig-name descname"><span class="pre">Repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">typing.Optional[typing.Union[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">os.PathLike[str]]]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odbt:</span> <span class="pre">typing.Type[gitdb.db.loose.LooseObjectDB]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'git.db.GitCmdObjectDB'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_parent_directories:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a git repository and allows you to query references,
+gather commit information, generate diffs, create and clone repositories query
+the log.</p>
+<p>The following attributes are worth using:</p>
+<p>‘working_dir’ is the working directory of the git command, which is the working tree
+directory if available or the .git directory in case of bare repositories</p>
+<p>‘working_tree_dir’ is the working tree directory, but will raise AssertionError
+if we are a bare repository.</p>
+<p>‘git_dir’ is the .git repository directory, which is always set.</p>
+</dd></dl>
+
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.archive" title="cathy_tools.Repo.archive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.archive</span></code></a>(ostream[, treeish, prefix])</p></td>
+<td><p>Archive the tree at the given revision.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.blame" title="cathy_tools.Repo.blame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.blame</span></code></a>(rev, file[, incremental, rev_opts])</p></td>
+<td><p>The blame information for the given file at the given revision.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.blame_incremental" title="cathy_tools.Repo.blame_incremental"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.blame_incremental</span></code></a>(rev, file, **kwargs)</p></td>
+<td><p>Iterator for blame information for the given file at the given revision.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.clone" title="cathy_tools.Repo.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.clone</span></code></a>(path[, progress, multi_options, ...])</p></td>
+<td><p>Create a clone from this repository.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.clone_from" title="cathy_tools.Repo.clone_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.clone_from</span></code></a>(url, to_path[, progress, ...])</p></td>
+<td><p>Create a clone from the given URL</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.close" title="cathy_tools.Repo.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.close</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.commit" title="cathy_tools.Repo.commit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.commit</span></code></a>([rev])</p></td>
+<td><p>The Commit object for the specified revision</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.config_reader" title="cathy_tools.Repo.config_reader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.config_reader</span></code></a>([config_level])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.config_writer" title="cathy_tools.Repo.config_writer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.config_writer</span></code></a>([config_level])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.create_head" title="cathy_tools.Repo.create_head"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.create_head</span></code></a>(path[, commit, force, logmsg])</p></td>
+<td><p>Create a new head within the repository.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.create_remote" title="cathy_tools.Repo.create_remote"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.create_remote</span></code></a>(name, url, **kwargs)</p></td>
+<td><p>Create a new remote.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.create_submodule" title="cathy_tools.Repo.create_submodule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.create_submodule</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Create a new submodule</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.create_tag" title="cathy_tools.Repo.create_tag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.create_tag</span></code></a>(path[, ref, message, force])</p></td>
+<td><p>Create a new tag reference.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.currently_rebasing_on" title="cathy_tools.Repo.currently_rebasing_on"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.currently_rebasing_on</span></code></a>()</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>The commit which is currently being replayed while rebasing.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.delete_head" title="cathy_tools.Repo.delete_head"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.delete_head</span></code></a>(*heads, **kwargs)</p></td>
+<td><p>Delete the given heads</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.delete_remote" title="cathy_tools.Repo.delete_remote"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.delete_remote</span></code></a>(remote)</p></td>
+<td><p>Delete the given remote.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.delete_tag" title="cathy_tools.Repo.delete_tag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.delete_tag</span></code></a>(*tags)</p></td>
+<td><p>Delete the given tag references</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.has_separate_working_tree" title="cathy_tools.Repo.has_separate_working_tree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.has_separate_working_tree</span></code></a>()</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>True if our git_dir is not at the root of our working_tree_dir, but a .git file with a</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.ignored" title="cathy_tools.Repo.ignored"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.ignored</span></code></a>(*paths)</p></td>
+<td><p>Checks if paths are ignored via .gitignore Doing so using the &quot;git check-ignore&quot; method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.init" title="cathy_tools.Repo.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.init</span></code></a>([path, mkdir, odbt, expand_vars])</p></td>
+<td><p>Initialize a git repository at the given path if specified</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.is_ancestor" title="cathy_tools.Repo.is_ancestor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.is_ancestor</span></code></a>(ancestor_rev, rev)</p></td>
+<td><p>Check if a commit is an ancestor of another</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.is_dirty" title="cathy_tools.Repo.is_dirty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.is_dirty</span></code></a>([index, working_tree, ...])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.is_valid_object" title="cathy_tools.Repo.is_valid_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.is_valid_object</span></code></a>(sha[, object_type])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.iter_commits" title="cathy_tools.Repo.iter_commits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.iter_commits</span></code></a>([rev, paths])</p></td>
+<td><p>A list of Commit objects representing the history of a given ref/commit</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.iter_submodules" title="cathy_tools.Repo.iter_submodules"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.iter_submodules</span></code></a>(*args, **kwargs)</p></td>
+<td><p>An iterator yielding Submodule instances, see Traversable interface for a description of args and kwargs :return: Iterator</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.iter_trees" title="cathy_tools.Repo.iter_trees"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.iter_trees</span></code></a>(*args, **kwargs)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Iterator yielding Tree objects</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.merge_base" title="cathy_tools.Repo.merge_base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.merge_base</span></code></a>(*rev, **kwargs)</p></td>
+<td><p>Find the closest common ancestor for the given revision (e.g.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.remote" title="cathy_tools.Repo.remote"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.remote</span></code></a>([name])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Remote with the specified name</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.rev_parse" title="cathy_tools.Repo.rev_parse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.rev_parse</span></code></a>(rev)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Object at the given revision, either Commit, Tag, Tree or Blob</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.submodule" title="cathy_tools.Repo.submodule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.submodule</span></code></a>(name)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Submodule with the given name</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.submodule_update" title="cathy_tools.Repo.submodule_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.submodule_update</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Update the submodules, keeping the repository consistent as it will take the previous state into consideration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cathy_tools.Repo.tag" title="cathy_tools.Repo.tag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.tag</span></code></a>(path)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>TagReference Object, reference pointing to a Commit or Tag</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.tree" title="cathy_tools.Repo.tree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Repo.tree</span></code></a>([rev])</p></td>
+<td><p>The Tree object for the given treeish revision Examples.</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.archive">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ostream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TextIO" title="(in Python v3.11)"><span class="pre">TextIO</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.BinaryIO" title="(in Python v3.11)"><span class="pre">BinaryIO</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">treeish</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#cathy_tools.Repo" title="git.repo.base.Repo"><span class="pre">git.repo.base.Repo</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.archive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Archive the tree at the given revision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ostream</strong> – file compatible stream object to which the archive will be written as bytes</p></li>
+<li><p><strong>treeish</strong> – is the treeish name/id, defaults to active branch</p></li>
+<li><p><strong>prefix</strong> – is the optional prefix to prepend to each filename in the archive</p></li>
+<li><p><strong>kwargs</strong> – <p>Additional arguments passed to git-archive</p>
+<ul>
+<li><p>Use the ‘format’ argument to define the kind of format. Use
+specialized ostreams to write any format supported by python.</p></li>
+<li><p>You may specify the special <strong>path</strong> keyword, which may either be a repository-relative
+path to a directory or file to place into the archive, or a list or tuple of multiple paths.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>GitCommandError</strong> – in case something went wrong</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.blame">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">blame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">HEAD</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">incremental</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev_opts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Commit</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">BlameEntry</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.blame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.blame" title="Permalink to this definition">¶</a></dt>
+<dd><p>The blame information for the given file at the given revision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rev</strong> – revision specifier, see git-rev-parse for viable options.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list: [git.Commit, list: [&lt;line&gt;]]
+A list of lists associating a Commit object with a list of lines that
+changed within the given commit. The Commit objects will be given in order
+of appearance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.blame_incremental">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">blame_incremental</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">HEAD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'BlameEntry'</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.blame_incremental"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.blame_incremental" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator for blame information for the given file at the given revision.</p>
+<p>Unlike .blame(), this does not return the actual file’s contents, only
+a stream of BlameEntry tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rev</strong> – revision specifier, see git-rev-parse for viable options.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>lazy iterator of BlameEntry tuples, where the commit
+indicates the commit to blame for the line, and range
+indicates a span of line numbers in the resulting file.</p>
+</dd>
+</dl>
+<p>If you combine all line number ranges outputted by this command, you
+should get a continuous range spanning all line numbers in the file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.clone">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.11)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unsafe_protocols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unsafe_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#cathy_tools.Repo" title="git.repo.base.Repo"><span class="pre">git.repo.base.Repo</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a clone from this repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – is the full path of the new repo (traditionally ends with ./&lt;name&gt;.git).</p></li>
+<li><p><strong>progress</strong> – See ‘git.remote.Remote.push’.</p></li>
+<li><p><strong>multi_options</strong> – A list of Clone options that can be provided multiple times.  One
+option per list item which is passed exactly as specified to clone.
+For example [‘–config core.filemode=false’, ‘–config core.ignorecase’,
+‘–recurse-submodule=repo1_path’, ‘–recurse-submodule=repo2_path’]</p></li>
+<li><p><strong>unsafe_protocols</strong> – Allow unsafe protocols to be used, like ext</p></li>
+<li><p><strong>kwargs</strong> – <ul>
+<li><p>odbt = ObjectDatabase Type, allowing to determine the object database
+implementation used by the returned Repo instance</p></li>
+<li><p>All remaining keyword arguments are given to the git-clone command</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">git.Repo</span></code> (the newly cloned repo)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.clone_from">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">clone_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.11)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.11)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.11)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unsafe_protocols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unsafe_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#cathy_tools.Repo" title="git.repo.base.Repo"><span class="pre">git.repo.base.Repo</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.clone_from"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.clone_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a clone from the given URL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – valid git url, see <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-clone.html#URLS">http://www.kernel.org/pub/software/scm/git/docs/git-clone.html#URLS</a></p></li>
+<li><p><strong>to_path</strong> – Path to which the repository should be cloned to</p></li>
+<li><p><strong>progress</strong> – See ‘git.remote.Remote.push’.</p></li>
+<li><p><strong>env</strong> – Optional dictionary containing the desired environment variables.
+Note: Provided variables will be used to update the execution
+environment for <cite>git</cite>. If some variable is not specified in <cite>env</cite>
+and is defined in <cite>os.environ</cite>, value from <cite>os.environ</cite> will be used.
+If you want to unset some variable, consider providing empty string
+as its value.</p></li>
+<li><p><strong>multi_options</strong> – See <code class="docutils literal notranslate"><span class="pre">clone</span></code> method</p></li>
+<li><p><strong>unsafe_protocols</strong> – Allow unsafe protocols to be used, like ext</p></li>
+<li><p><strong>kwargs</strong> – see the <code class="docutils literal notranslate"><span class="pre">clone</span></code> method</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Repo instance pointing to the cloned directory</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.close">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.commit">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">commit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Commit_ish</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Commit</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Commit object for the specified revision</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rev</strong> – revision specifier, see git-rev-parse for viable options.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">git.Commit</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.config_reader">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">config_reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'system'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'global'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'repository'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.config.GitConfigParser</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.config_reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.config_reader" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>GitConfigParser allowing to read the full git configuration, but not to write it</p>
+<p>The configuration will include values from the system, user and repository
+configuration files.</p>
+</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>config_level</strong> – For possible values, see config_writer method
+If None, all applicable levels will be used. Specify a level in case
+you know which file you wish to read to prevent reading multiple files.</p>
+</dd>
+<dt class="field-odd">Note</dt>
+<dd class="field-odd"><p>On windows, system configuration cannot currently be read as the path is
+unknown, instead the global path will be used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.config_writer">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">config_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'system'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'global'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'repository'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'repository'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.config.GitConfigParser</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.config_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.config_writer" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GitConfigParser allowing to write values of the specified configuration file level.
+Config writers should be retrieved, used to change the configuration, and written
+right away as they will lock the configuration file in question and prevent other’s
+to write it.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>config_level</strong> – One of the following values
+system = system wide configuration file
+global = user level configuration file
+repository = configuration file for this repository only</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.create_head">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">create_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'SymbolicReference'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'str'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HEAD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logmsg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Head</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.create_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.create_head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new head within the repository.
+For more documentation, please see the Head.create method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>newly created Head Reference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.create_remote">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">create_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.remote.Remote</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.create_remote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.create_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new remote.</p>
+<p>For more information, please see the documentation of the Remote.create
+methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Remote reference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.create_submodule">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">create_submodule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.objects.submodule.base.Submodule</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.create_submodule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.create_submodule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new submodule</p>
+<dl class="field-list simple">
+<dt class="field-odd">Note</dt>
+<dd class="field-odd"><p>See the documentation of Submodule.add for a description of the
+applicable parameters</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>created submodules</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.create_tag">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">create_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SymbolicReference'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HEAD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TagReference</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.create_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.create_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new tag reference.
+For more documentation, please see the TagReference.create method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>TagReference object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.currently_rebasing_on">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">currently_rebasing_on</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Commit</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.currently_rebasing_on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.currently_rebasing_on" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The commit which is currently being replayed while rebasing.</p>
+</dd>
+</dl>
+<p>None if we are not currently rebasing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.delete_head">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">delete_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">heads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">git.refs.head.Head</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.delete_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.delete_head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the given heads</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Additional keyword arguments to be passed to git-branch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.delete_remote">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">delete_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">git.remote.Remote</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.delete_remote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.delete_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the given remote.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.delete_tag">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">delete_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">git.refs.tag.TagReference</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.delete_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.delete_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the given tag references</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.has_separate_working_tree">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">has_separate_working_tree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.has_separate_working_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.has_separate_working_tree" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if our git_dir is not at the root of our working_tree_dir, but a .git file with a
+platform agnositic symbolic link. Our git_dir will be wherever the .git file points to</p>
+</dd>
+<dt class="field-even">Note</dt>
+<dd class="field-even"><p>bare repositories will always return False here</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.ignored">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">ignored</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.11)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.ignored"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.ignored" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if paths are ignored via .gitignore
+Doing so using the “git check-ignore” method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>paths</strong> – List of paths to check whether they are ignored or not</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subset of those paths which are ignored</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.init">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">typing.Optional[typing.Union[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">os.PathLike[str]]]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mkdir:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odbt:</span> <span class="pre">typing.Type[git.db.GitCmdObjectDB]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'git.db.GitCmdObjectDB'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs:</span> <span class="pre">typing.Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#cathy_tools.Repo" title="git.repo.base.Repo"><span class="pre">git.repo.base.Repo</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a git repository at the given path if specified</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – is the full path to the repo (traditionally ends with /&lt;name&gt;.git)
+or None in which case the repository will be created in the current
+working directory</p></li>
+<li><p><strong>mkdir</strong> – if specified will create the repository directory if it doesn’t
+already exists. Creates the directory with a mode=0755.
+Only effective if a path is explicitly given</p></li>
+<li><p><strong>odbt</strong> – Object DataBase type - a type which is constructed by providing
+the directory containing the database objects, i.e. .git/objects.
+It will be used to access all object data</p></li>
+<li><p><strong>expand_vars</strong> – if specified, environment variables will not be escaped. This
+can lead to information disclosure, allowing attackers to
+access the contents of environment variables</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments serving as additional options to the git-init command</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">git.Repo</span></code> (the newly created repo)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.is_ancestor">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">is_ancestor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ancestor_rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">git.objects.commit.Commit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">git.objects.commit.Commit</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.is_ancestor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.is_ancestor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a commit is an ancestor of another</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ancestor_rev</strong> – Rev which should be an ancestor</p></li>
+<li><p><strong>rev</strong> – Rev to test against ancestor_rev</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code>, ancestor_rev is an ancestor to rev.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.is_dirty">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">is_dirty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">working_tree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">untracked_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submodules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.11)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.is_dirty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.is_dirty" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code>, the repository is considered dirty. By default it will react
+like a git-status without untracked files, hence it is dirty if the
+index or the working copy have changes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.is_valid_object">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">is_valid_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.is_valid_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.is_valid_object" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.iter_commits">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">iter_commits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Commit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SymbolicReference'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">PathLike</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">PathLike</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Commit</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.iter_commits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.iter_commits" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of Commit objects representing the history of a given ref/commit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rev</strong> – revision specifier, see git-rev-parse for viable options.
+If None, the active branch will be used.</p></li>
+<li><p><strong>paths</strong> – is an optional path or a list of paths; if set only commits that include the path
+or paths will be returned</p></li>
+<li><p><strong>kwargs</strong> – Arguments to be passed to git-rev-list - common ones are
+max_count and skip</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note</dt>
+<dd class="field-even"><p>to receive only commits between two named revisions, use the
+“revA…revB” revision specifier</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">git.Commit[]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.iter_submodules">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">iter_submodules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.11)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">git.objects.submodule.base.Submodule</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.iter_submodules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.iter_submodules" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator yielding Submodule instances, see Traversable interface
+for a description of args and kwargs
+:return: Iterator</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.iter_trees">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">iter_trees</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'Tree'</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.iter_trees"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.iter_trees" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Iterator yielding Tree objects</p>
+</dd>
+<dt class="field-even">Note</dt>
+<dd class="field-even"><p>Takes all arguments known to iter_commits method</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.merge_base">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">merge_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TBD</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Commit_ish</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.merge_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.merge_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the closest common ancestor for the given revision (e.g. Commits, Tags, References, etc)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rev</strong> – At least two revs to find the common ancestor for.</p></li>
+<li><p><strong>kwargs</strong> – Additional arguments to be passed to the repo.git.merge_base() command which does all the work.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of Commit objects. If –all was not specified as kwarg, the list will have at max one Commit,
+or is empty if no common merge base exists.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If not at least two revs are provided</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.remote">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'origin'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.remote.Remote</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.remote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.remote" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Remote with the specified name</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if no remote with such a name exists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.rev_parse">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">rev_parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'Commit'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Tag'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Tree'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Blob'</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#cathy_tools.Repo.rev_parse" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Object at the given revision, either Commit, Tag, Tree or Blob</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>rev</strong> – git-rev-parse compatible revision specification as string, please see
+<a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-rev-parse.html">http://www.kernel.org/pub/software/scm/git/docs/git-rev-parse.html</a>
+for details</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>BadObject</strong> – if the given revision could not be found</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If rev couldn’t be parsed</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IndexError" title="(in Python v3.11)"><strong>IndexError</strong></a> – If invalid reflog index is specified</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.submodule">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">submodule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.objects.submodule.base.Submodule</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.submodule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.submodule" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Submodule with the given name</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If no such submodule exists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.submodule_update">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">submodule_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.11)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">git.objects.submodule.base.Submodule</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.submodule_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.submodule_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the submodules, keeping the repository consistent as it will
+take the previous state into consideration. For more information, please
+see the documentation of RootModule.update</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.tag">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.11)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">git.refs.tag.TagReference</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.tag" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>TagReference Object, reference pointing to a Commit or Tag</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>path</strong> – path to the tag reference, i.e. 0.1.5 or tags/0.1.5</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.tree">
+<span class="sig-prename descclassname"><span class="pre">Repo.</span></span><span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tree_ish</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tree</span></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Tree object for the given treeish revision
+Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">repo</span><span class="o">.</span><span class="n">tree</span><span class="p">(</span><span class="n">repo</span><span class="o">.</span><span class="n">heads</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rev</strong> – is a revision pointing to a Treeish ( being a commit or tree )</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">git.Tree</span></code></p>
+</dd>
+<dt class="field-odd">Note</dt>
+<dd class="field-odd"><p>If you need a non-root level tree, find it by iterating the root tree. Otherwise
+it cannot know about its path relative to the repository root and subsequent
+operations might have unexpected results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="cathy_tools.OrderedDict.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">cathy_tools.OrderedDict</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="cathy_tools.isfile.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">cathy_tools.isfile</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By B. Mary<br/>
+    
+        &copy; Copyright 2022, B. Mary.<br/>
+      Last updated on Feb 10, 2023.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>
