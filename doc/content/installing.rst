@@ -16,8 +16,9 @@ To avoid conflicts with other packages, we recommend to install pyCATHY in a sep
 
 Open a terminal (Linux & Mac) or the Anaconda Prompt (Windows) and type::
 
-	conda create -n pyCATHY conda-forge pyCATHY
+	conda create --name pyCATHY python=3.10
 	conda activate pyCATHY
+	pip install pyCATHY
 
 
 Usage with Spyder or JupyterLab::

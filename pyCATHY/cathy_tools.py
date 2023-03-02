@@ -66,8 +66,9 @@ import pyvista as pv  # read .vtk files
 import rich.console
 from rich import print
 
-# import matplotlib.pyplot as plt
-
+import matplotlib.pyplot as plt
+from scipy.interpolate import griddata
+from scipy.interpolate import CloughTocher2DInterpolator as CT
 
 # -----------------------------------------------------------------------------
 def subprocess_run_multi(pathexe_list):
@@ -277,6 +278,7 @@ class CATHY:
                     shutil.rmtree(
                         os.path.join(self.workdir, self.project_name, "tmp_src")
                     )
+                    os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
 
                 except:
                     print("no internet connection to fetch the files")
@@ -1782,7 +1784,6 @@ class CATHY:
         NDIRC=0,
         NQ3=None,
         no_flow=False,
-        bound_xyz=None,
         pressure_head=[],
     ):
         """
@@ -1821,8 +1822,6 @@ class CATHY:
         noflow : Bool, optional
             To simulate the no-flow boundaries conditions for the bottom and
             # vertical sides of the domain. The default is True.
-        bound_xyz : TYPE, optional
-            DESCRIPTION. The default is None.
         pressure_head : TYPE, optional
             Specify a value of node pressure head to impose as Dirichlet boundary condition.
             The default is [].
@@ -1843,7 +1842,7 @@ class CATHY:
 
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
-        if hasattr(self, "mesh_bound_cond_df") is False:
+        if not hasattr(self, "mesh_bound_cond_df"):
             self.init_boundary_conditions(
                 "nansfdirbc",
                 time,
@@ -1852,6 +1851,11 @@ class CATHY:
                 pressure_head=pressure_head,
                 no_flow=no_flow,
             )
+        else:
+            # self.mesh_bound_cond_df['time'].unique()
+            
+            
+            self.update_mesh_boundary_cond()
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2026,6 +2030,8 @@ class CATHY:
         # --------------------------------------------------------------------
         if hasattr(self, "mesh_bound_cond_df") is False:
             self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
+        else:
+            self.update_mesh_boundary_cond("nansfneubc", time, NQ=NQ, ZERO=ZERO)
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2084,6 +2090,8 @@ class CATHY:
         # --------------------------------------------------------------------
         if hasattr(self, "mesh_bound_cond_df") is False:
             self.init_boundary_conditions("sfbc", time)
+        else:
+            self.update_mesh_boundary_cond()
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2794,7 +2802,10 @@ class CATHY:
                 self.run_processor(IPRT1=3)
             if hasattr(self, "mesh_bound_cond_df") is False:
                 self.create_mesh_bounds_df(
-                    BCtypName, self.grid3d["nodes_idxyz"], time, **kwargs
+                                            BCtypName, 
+                                            self.grid3d["nodes_idxyz"], 
+                                            time, 
+                                            **kwargs
                 )
             plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time)
         except:
@@ -2865,39 +2876,110 @@ class CATHY:
         self.mesh_bound_cond_df["id_node"] = self.mesh_bound_cond_df["id_node"].astype(
             int
         )
+        
+        # if len(times)==0:
+        #     times =  self.parm["(TIMPRT(I),I=1,NPRT)"]
+
         self.mesh_bound_cond_df["time"] = 0
-        max_axis_bound_ids = []
-        min_axis_bound_ids = []
-        for axi in ["x", "y", "z"]:
-            min_ax = self.mesh_bound_cond_df[axi].min()
-            max_ax = self.mesh_bound_cond_df[axi].max()
-            cond_min = self.mesh_bound_cond_df[axi] == min_ax
-            min_axis_bound_ids.append(
-                self.mesh_bound_cond_df["id_node"][cond_min].to_numpy()
-            )
-            cond_max = self.mesh_bound_cond_df[axi] == max_ax
-            max_axis_bound_ids.append(
-                self.mesh_bound_cond_df["id_node"][cond_max].to_numpy()
-            )
+        coords = self.mesh_bound_cond_df[['x','y','z']].to_numpy()
+        len(coords)
+        
+        def get_outer_nodes(x, y, z):
+            x_min, x_max = np.min(x), np.max(x)
+            y_min, y_max = np.min(y), np.max(y)
+            z_min, z_max = np.min(z), np.max(z)
+            
+            outer_mask = np.logical_or.reduce((x == x_min, x == x_max, y == y_min, y == y_max, z == z_min, z == z_max))
+            outer_nodes = np.column_stack((x[outer_mask], y[outer_mask], z[outer_mask]))
+            
+            return outer_nodes, outer_mask
 
-        bounds_id = (
-            np.unique(
-                np.r_[np.hstack(min_axis_bound_ids), np.hstack(max_axis_bound_ids)]
-            )
-            - 1
-        )
 
-        bound_bool = []
-        for idb in self.mesh_bound_cond_df["id_node"]:
-            if idb in bounds_id:
-                bound_bool.append(True)
-            else:
-                bound_bool.append(False)
+        x = np.unique(coords[:,0])
+        y = np.unique(coords[:,1])
+        layers_top, layers_bottom = mt.get_layer_depths(self.dem_parameters)
+        layers_top.append(layers_bottom[-1])
+        z = layers_top
+        # len(layers_top)
+        grid_x, grid_y = np.meshgrid(x, y)
+        
+        X, Y, Z = np.meshgrid(x, y, z)
+        
+        xdem, ydem, _ = plt_CT.get_dem_coords(hapin=self.hapin,
+                                              workdir=self.workdir,
+                                              project_name=self.project_name,
+                                              )
+        
+        grid_xdem, grid_ydem = np.meshgrid(xdem, ydem)
+        
+        # grid_dem = griddata(np.array([grid_xdem.flatten(),grid_ydem.flatten()]).T,
+        #                     self.DEM.flatten(), (grid_x,grid_y), method='cubic',
+        #                     extrapolate=True)
 
-        self.mesh_bound_cond_df["bound"] = bound_bool
+        
+        from scipy.interpolate import Rbf
+        rbf3 = Rbf(grid_xdem.flatten(), grid_ydem.flatten(),
+                   self.DEM.flatten(), function="multiquadric", smooth=5)
+        grid_dem = rbf3(grid_x, grid_y)
+        np.shape(grid_dem)
+        
+        Ztopo = np.zeros(np.shape(Z))
+        for i in range(np.shape(Z)[2]):
+            Ztopo[:,:,i]=(Z[:,:,i]+grid_dem)
 
-        max(bounds_id)
-        len(self.mesh_bound_cond_df)
+        outer_nodes, outer_mask = get_outer_nodes(X, Y, Z)
+
+    
+
+        # indices = np.lexsort((outer_nodes[:, 0], -outer_nodes[:, 1], -outer_nodes[:, 2]))
+        
+        # # sort the array by the first column in ascending order and then by the second column in descending order using the obtained indices
+        # sorted_outer_nodes = outer_nodes[indices]
+
+        sorted_outer_mask = outer_mask
+        for ll in range(np.shape(outer_mask)[2]):
+            sorted_outer_mask[:,:,ll]= np.flipud(outer_mask[:,:,ll])
+            
+        
+        
+        # np.shape(outer_mask)
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection='3d')
+        # ax.scatter(x,y,z)
+        # ax.scatter(x[outer_mask],y[outer_mask],z[outer_mask],c='r')
+        
+        z_min, z_max = np.min(Z), np.max(Z)
+        top_mask = np.logical_or.reduce((Z == z_max))
+        bot_mask = np.logical_or.reduce((Z == z_min))
+        out_bot_mask = outer_mask & bot_mask
+        out_top_mask = outer_mask & top_mask
+        all_bounds = np.flipud(sorted_outer_mask)
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(X,Y,Ztopo)
+        ax.scatter(X[outer_mask],Y[outer_mask],Ztopo[outer_mask],c='r')
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # ax.scatter(x,y,z)
+        ax.scatter(X[out_bot_mask],Y[out_bot_mask],Z[out_bot_mask],c='r')
+
+
+        outer_nodes[:,0].flatten()
+        outer_nodes[:,0].flatten()
+        
+        
+        self.mesh_bound_cond_df["lat_bound"] = outer_mask.flatten()
+        self.mesh_bound_cond_df["top_bound"] = out_top_mask.flatten()
+        self.mesh_bound_cond_df["bottom_bound"] = out_bot_mask.flatten()
+        self.mesh_bound_cond_df["all_bounds"] = all_bounds.flatten()
+        
+        
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
+        plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
 
         # step 2 add flag for each type of BC
         # ---------------------------------------
@@ -2905,19 +2987,19 @@ class CATHY:
         if "nansfdirbc" in BCtypName:
             if "no_flow" in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                mask = self.mesh_bound_cond_df["bound"] == True
+                mask = self.mesh_bound_cond_df["all_bounds"] == True
                 self.mesh_bound_cond_df.loc[mask, BCtypName] = 0
         # specified flux
         if "nansfneubc" in BCtypName:
             if "no_flow" in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                mask = self.mesh_bound_cond_df["bound"] == True
+                mask = self.mesh_bound_cond_df["all_bounds"] == True
                 self.mesh_bound_cond_df.loc[mask, BCtypName] = 0
         # specified seepage
         if "sfbc" in BCtypName:
             if "no_flow" in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                mask = self.mesh_bound_cond_df["bound"] == True
+                mask = self.mesh_bound_cond_df["all_bounds"] == True
                 self.mesh_bound_cond_df.loc[mask, BCtypName] = 0
 
         print(
@@ -3253,11 +3335,38 @@ class CATHY:
         # fig, ax = plt.subplots(3,1,1)
         # df = self.read_inputs(filename='dirichlet')
         # df = self.update_nansfdirbc()
-        plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
+        
+        if type(BCtypName) == str:
+            plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
 
-        # self.init_boundary_conditions(BCtypName,time)
-        # self.update_mesh_boundary_cond(time)
-        # self.set_BC_laterals(time=time)
+        else:
+            import matplotlib.pyplot as plt
+            fig = plt.figure()
+            
+            # Plot nansfdirbc
+            # ------------------------------------
+            ax = fig.add_subplot(1, 2, 1, projection='3d')
+            plt_CT.plot_mesh_bounds('nansfdirbc', 
+                                    self.mesh_bound_cond_df, 
+                                    time, 
+                                    ax
+                                    )
+                
+            # Plot nansfneubc
+            # ------------------------------------
+            ax = fig.add_subplot(1, 2, 2, projection='3d')
+            plt_CT.plot_mesh_bounds('nansfneubc', 
+                                    self.mesh_bound_cond_df, 
+                                    time, 
+                                    ax
+                                    )
+
+            
+            # Plot sfbc
+            # ------------------------------------
+            
+            
+
         pass
 
     def show_input(self, prop="hgsfdet", ax=None, **kwargs):

@@ -283,6 +283,15 @@ def show_vtk(
             filename = "ER_converted" + str(timeStep) + "_nearIntrp2_pg_msh.vtk"
             my_colormap = "viridis"
             unit = "ER_converted" + str(timeStep) + "_nearIntrp2_pg_msh"
+            
+    if unit == 'PERMX':
+        my_colormap = None
+        print('No colormap')
+        print(my_colormap)
+
+            
+    
+
 
     mesh = pv.read(os.path.join(path, filename))
     if unit in list(mesh.array_names):
@@ -394,7 +403,7 @@ def show_vtk(
         )
 
         print("figure saved" + os.path.join(path, filename + ".svg"))
-        cpos = ax.show()
+        cpos = ax.show(screenshot= os.path.join(path, filename + unit + ".png"))
 
     pass
 
@@ -913,10 +922,11 @@ def show_dem(
 
 
 def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
+    
     m = np.array(["o", "+"])
     mvalue = []
     alpha = []
-    for bound_val in mesh_bound_cond_df["bound"]:
+    for bound_val in mesh_bound_cond_df["all_bounds"]:
         if bound_val == True:
             mvalue.append(1)
             alpha.append(1)
@@ -938,6 +948,7 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
     ax.set_ylabel("Y Label")
     ax.set_zlabel("Z Label")
     ax.set_title("Time " + str(time))
+    ax.set_title(BCtypName)
     # plt.show(block=False)
     # return fig, ax
     pass
