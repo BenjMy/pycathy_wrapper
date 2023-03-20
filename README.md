@@ -2,6 +2,7 @@
 [![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)
 [![Upload Python Package](https://github.com/BenjMy/pycathy_wrapper/actions/workflows/python-publish.yml/badge.svg)](https://github.com/BenjMy/pycathy_wrapper/actions/workflows/python-publish.yml)
 [![PyPI](https://img.shields.io/pypi/v/pycathy)](https://pypi.org/project/pycathy/)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BenjMy/pycathy_wrapper/main)
 
 ## Python package for hydrogeophysical data modeling
 
