@@ -12,6 +12,7 @@ jobs:
         run: |
           pip install sphinx sphinx_book_theme
           pip install -r env/requirements.txt
+          python install .
       - name: Sphinx build
         run: |
           rm -rf doc/_build/
