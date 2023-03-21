@@ -124,7 +124,11 @@ def show_dtcoupling(
 
     # read hgraph file if df_hgraph not existing
     # ------------------------------------------------------------------------
-    fig, ax = plt.subplots()
+    if "ax" not in kwargs:
+       fig, ax = plt.subplots()
+    else:
+       ax = kwargs["ax"]
+       
     if len(df_dtcoupling) == 0:
         df_dtcoupling = out_CT.read_dtcoupling(filename="dtcoupling")
     nstep = len(df_dtcoupling["Atmpot-d"])
@@ -136,11 +140,9 @@ def show_dtcoupling(
     plt.step(timeatm, df_dtcoupling[yprop], color="green", where="post", label=yprop)
     # plt.step(timeatm, df_dtcoupling[yprop[1]], color="blue", where="post", label=yprop[1])
 
-    ax.set_xlabel("time (h)")
+    ax.set_xlabel("time (s)")
     ax.set_ylabel(label_units(yprop))
     plt.legend()
-
-    return fig, ax
 
 
 def show_hgraph(df_hgraph=[], workdir=[], project_name=[], x="time", y="SW", **kwargs):
@@ -292,7 +294,11 @@ def show_vtk(
             
     
 
-
+    show_edges = True
+    if "show_edges" in kwargs:
+        show_edges = kwargs['show_edges']
+        
+    
     mesh = pv.read(os.path.join(path, filename))
     if unit in list(mesh.array_names):
         print("plot " + str(unit))
@@ -363,7 +369,7 @@ def show_vtk(
         if ax is None:
             ax = pv.Plotter(notebook=False)
 
-        _ = ax.add_mesh(mesh, show_edges=True, scalars=unit, cmap=my_colormap, **kwargs)
+        _ = ax.add_mesh(mesh, scalars=unit, cmap=my_colormap, **kwargs)
 
         if unit == "saturation":
             ax.update_scalar_bar_range([0, 1])
@@ -926,8 +932,13 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
     m = np.array(["o", "+"])
     mvalue = []
     alpha = []
-    for bound_val in mesh_bound_cond_df["all_bounds"]:
-        if bound_val == True:
+    
+    
+    mesh_bound_cond_df_selec = mesh_bound_cond_df[mesh_bound_cond_df['time']==time]
+    
+    
+    for bound_val in mesh_bound_cond_df_selec[BCtypName]:
+        if bound_val == 0:
             mvalue.append(1)
             alpha.append(1)
         else:
@@ -939,16 +950,16 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
         ax = fig.add_subplot(projection="3d")
 
     ax.scatter(
-        mesh_bound_cond_df["x"],
-        mesh_bound_cond_df["y"],
-        mesh_bound_cond_df["z"],
+        mesh_bound_cond_df_selec["x"],
+        mesh_bound_cond_df_selec["y"],
+        mesh_bound_cond_df_selec["z"],
         c=mvalue,
     )
     ax.set_xlabel("X Label")
     ax.set_ylabel("Y Label")
     ax.set_zlabel("Z Label")
-    ax.set_title("Time " + str(time))
-    ax.set_title(BCtypName)
+    ax.set_title(BCtypName + " Time " + str(time))
+    # ax.set_title(BCtypName)
     # plt.show(block=False)
     # return fig, ax
     pass

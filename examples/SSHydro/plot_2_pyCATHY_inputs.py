@@ -2,6 +2,10 @@
 Input plots
 ===========
 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+https://doi.org/10.1016/j.advwatres.2010.10.001.
+
 This example shows how to use pyCATHY object to plot inputs of the hydrological model.
 
 *Estimated time to run the notebook = 5min*

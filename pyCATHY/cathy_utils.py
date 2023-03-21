@@ -8,7 +8,7 @@ Utilities for pyCATHY
 
 import pandas as pd
 
-# from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 # from rosetta import rosetta, SoilData
 
 #%% ---------------------------------------------------------------------------
@@ -79,7 +79,7 @@ def label_units(units, **kwargs):
     elif units == "Atmpot-d":
         label = "Potential atmospheric forcing depth \n ($[L]$)"
     elif units == "Atmact-vf":
-        label = "Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux \n ($[L^3/T]$)"
+        label = "Actual infiltration (+ve) or exfiltration (-ve) \n at atmospheric BC nodes \n as a volumetric flux  \n ($[L^3/T]$)"
     elif units == "Atmact-v ":
         label = "Actual infiltration (+ve) or exfiltration (-ve) volume \n ($[L^3]$)"
     elif units == "Atmact-r":

@@ -67,8 +67,7 @@ import rich.console
 from rich import print
 
 import matplotlib.pyplot as plt
-from scipy.interpolate import griddata
-from scipy.interpolate import CloughTocher2DInterpolator as CT
+from scipy.interpolate import Rbf
 
 # -----------------------------------------------------------------------------
 def subprocess_run_multi(pathexe_list):
@@ -483,6 +482,8 @@ class CATHY:
         # VERY VERY IMPORTANT NEVER COMMENT !
 
         self.check_DEM_versus_inputs()
+        
+        # if len(kwargs)>0:
         self.update_parm(**kwargs)
         self.update_cathyH(**kwargs)
 
@@ -646,7 +647,6 @@ class CATHY:
                 style="yellow",
             )
             self.console.rule("", style="yellow")
-
             self.update_parm()
 
         DEMRES = 1
@@ -654,12 +654,8 @@ class CATHY:
         if len(self.cathyH) == 0:
 
             self.cathyH = {
-                "ROWMAX": self.hapin[
-                    "N"
-                ],  # maximum NROW, with NROW = number of rows in the DEM
-                "COLMAX": self.hapin[
-                    "M"
-                ],  # maximum NCOL, with NCOL = number of columns in the DEM
+                "ROWMAX": self.hapin["N"],  # maximum NROW, with NROW = number of rows in the DEM
+                "COLMAX": self.hapin["M"],  # maximum NCOL, with NCOL = number of columns in the DEM
                 # 'COARSE': ,
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
@@ -702,6 +698,12 @@ class CATHY:
                 "MAXVEG": 1,
             }
 
+
+        self.cathyH['ROWMAX']=227
+        self.cathyH['COLMAX']=221
+        # self.CATHYH['MAXCEL']=ROWMAX*COLMAX
+        # self.CATHYH['ROWMAX']=
+        
         # create dictionnary from kwargs
         for kk, value in kwargs.items():
             if kk in self.cathyH.keys():
@@ -948,9 +950,10 @@ class CATHY:
 
             self.hapin[hapin[i]] = tmp_param_value[i]
 
-        if self.hapin["dr"] != self.hapin["delta_x"]:
-            print("adapt rivulet param to dem resolution")
-            self.hapin["dr"] = self.hapin["delta_x"]
+        # if self.hapin["dr"] != self.hapin["delta_x"]:
+        # if  self.hapin["dr"] % self.hapin["delta_x"] != 0:
+        #     print("adapt rivulet param to dem resolution")
+        #     self.hapin["dr"] = self.hapin["delta_x"]
             # sys.exit()
 
         for key, value in kwargs.items():
@@ -1035,47 +1038,58 @@ class CATHY:
             ":arrows_counterclockwise: [b]update dem_parameters file [/b]"
         )
 
+        if hasattr(self, "dem_parameters") == False:
+            dem_parameters_dict = in_CT.read_dem_parameters(os.path.join(self.workdir, 
+                                                   self.project_name, 
+                                                   "input", 
+                                                   "dem_parameters"
+                                                   )
+                                      )
+            
+            self.dem_parameters = dem_parameters_dict
+
+            
         # set default parameters
         # --------------------------------------------------------------------
-        if hasattr(self, "dem_parameters") == False:
-            self.console.print(
-                ":pensive_face: [b]cannot find existing dem paramters[/b]"
-            )
+        # if hasattr(self, "dem_parameters") == False:
+        #     self.console.print(
+        #         ":pensive_face: [b]cannot find existing dem paramters[/b]"
+        #     )
 
-            # layers default
-            ltmp = [
-                0.002,
-                0.004,
-                0.006,
-                0.008,
-                0.01,
-                0.01,
-                0.02,
-                0.02,
-                0.05,
-                0.05,
-                0.1,
-                0.1,
-                0.2,
-                0.2,
-                0.22,
-            ]
+        #     # layers default
+        #     ltmp = [
+        #         0.002,
+        #         0.004,
+        #         0.006,
+        #         0.008,
+        #         0.01,
+        #         0.01,
+        #         0.02,
+        #         0.02,
+        #         0.05,
+        #         0.05,
+        #         0.1,
+        #         0.1,
+        #         0.2,
+        #         0.2,
+        #         0.22,
+        #     ]
 
-            self.dem_parameters = {
-                "delta_x": self.hapin[
-                    "delta_x"
-                ],  # Cell dimensions for the resolution of the DEM
-                "delta_y": self.hapin["delta_y"],
-                "factor": 1.0e0,  # Multiplicative factor for DEM values (e.g. to change the units of the elevation)
-                "dostep": 1,  # Step adopted in coarsening the mesh
-                "nzone": 1,  # The number of material types in the porous medium
-                "nstr": 15,  # The number of vertical layers
-                "n1": 25,  # The maximum number of element connections to a node
-                "ivert": 0,  #
-                "isp": 1,
-                "base": 3.0,
-                "zratio(i),i=1,nstr": ltmp,
-            }
+        #     self.dem_parameters = {
+        #         "delta_x": self.hapin[
+        #             "delta_x"
+        #         ],  # Cell dimensions for the resolution of the DEM
+        #         "delta_y": self.hapin["delta_y"],
+        #         "factor": 1.0e0,  # Multiplicative factor for DEM values (e.g. to change the units of the elevation)
+        #         "dostep": 1,  # Step adopted in coarsening the mesh
+        #         "nzone": 1,  # The number of material types in the porous medium
+        #         "nstr": 15,  # The number of vertical layers
+        #         "n1": 25,  # The maximum number of element connections to a node
+        #         "ivert": 0,  #
+        #         "isp": 1,
+        #         "base": 3.0,
+        #         "zratio(i),i=1,nstr": ltmp,
+        #     }
 
         # create dictionnary from kwargs
         for keykwargs, value in kwargs.items():
@@ -1256,68 +1270,17 @@ class CATHY:
         """
 
         self.console.print(":arrows_counterclockwise: [b]update parm file [/b]")
+        warnings_parm = []
+
 
         if len(self.parm) == 0:
-
-            # set default parameters
-            # --------------------------------------------------------------------
-            self.parm = {
-                "IPRT1": 2,  # Flag for output of input and coordinate data
-                "NCOUT": 0,
-                "TRAFLAG": 0,  # Flag for transport
-                "ISIMGR": 2,  # Flag for type of simulation and type of surface grid
-                "PONDH_MIN": 0.00,  # Minimum ponding head
-                "VELREC": 0,
-                "KSLOPE": 0,
-                "TOLKSL": 0.01,
-                "PKRL": -3.0,
-                "PKRR": -1.0,
-                "PSEL": -3.0,
-                "PSER": -1.0,
-                "PDSE1L": -3.0,
-                "PDSE1R": -2.5,
-                "PDSE2L": -1.5,
-                "PDSE2R": -1.0,
-                "ISFONE": 0,
-                "ISFCVG": 0,
-                "DUPUIT": 0,
-                "TETAF": 1.0,
-                "LUMP": 1,
-                "IOPT": 1,
-                "NLRELX": 0,
-                "OMEGA": 0.8,
-                "L2NORM": 0,
-                "TOLUNS": 1.0e-4,
-                "TOLSWI": 1.0e30,
-                "ERNLMX": 1.0e30,
-                "ITUNS": 10,
-                "ITUNS1": 5,
-                "ITUNS2": 7,
-                "ISOLV": 2,
-                "ITMXCG": 500,
-                "TOLCG": 1.0e-10,
-                "DELTAT": 0.01,
-                "DTMIN": 0.00001,  # Minimum FLOW3D time step size allowed
-                "DTMAX": 10.0,  # Maximum FLOW3D time step size allowed
-                # Time at end of simulation (TMAX is set to 0.0 for steady state problem)
-                "TMAX": 3600.0,
-                "DTMAGA": 0.0,
-                "DTMAGM": 1.1,
-                "DTREDS": 0.0,
-                "DTREDM": 0.5,
-                "IPRT": 4,
-                # What is included into the output vtk file, CATHY default is pressure heads 1;
-                # to add saturation VTKF>=2
-                "VTKF": 2,
-                "NPRT": 3,
-                # Output times to record
-                "(TIMPRT(I),I=1,NPRT)": [1800.0, 3600.0, 7200.0],
-                "NUMVP": 1,
-                "(NODVP(I),I=1,NUMVP)": [1],  # should be positive (first node is 1)
-                "NR": 0,
-                "NUM_QOUT": 0,
-                "(ID_QOUT(I),I=1,NUM_QOUT)": [441],
-            }
+            dict_parm = in_CT.read_parm(os.path.join(self.workdir, 
+                                                     self.project_name, 
+                                                     "input",
+                                                     "parm"
+                                                     )
+                                        )
+            self.parm = dict_parm
 
         # create self.parm dictionnary from kwargs
         # --------------------------------------------------------------------
@@ -1343,7 +1306,41 @@ class CATHY:
                 # number of nodes of interest
                 # ------------------------------------------------------------
                 if len(value) != self.parm["NUMVP"]:
+                    warnings_parm.append(
+                        "Adjusting NUMVP with respect to NODVP requested" + "\n"
+                    )
                     self.parm["NUMVP"] = len(value)
+
+            # points of interest NR
+            # ----------------------------------------------------------------
+            elif kk == "ID_NR":
+                key = "CONTR(I),I=1,NR"
+                self.parm[key] = value
+
+                # check if consistency between node of interest and
+                # number of nodes of interest
+                # ------------------------------------------------------------
+                if len(value) != self.parm["NR"]:
+                    warnings_parm.append(
+                        "Adjusting NR with respect to CONTR requested" + "\n"
+                    )
+                    self.parm["NR"] = len(value)
+                    
+            # points of interest NR
+            # ----------------------------------------------------------------
+            elif kk == "ID_QOUT":
+                key = "(ID_QOUT(I),I=1,NUM_QOUT)"
+                self.parm[key] = value
+
+                # check if consistency between node of interest and
+                # number of nodes of interest
+                # ------------------------------------------------------------
+                if len(value) != self.parm["NUM_QOUT"]:
+                    warnings_parm.append(
+                        "Adjusting NUM_QOUT with respect to ID_QOUT requested" + "\n"
+                    )
+                    self.parm["NUM_QOUT"] = len(value)
+
 
             # other type of kwargs
             # ----------------------------------------------------------------
@@ -1357,7 +1354,6 @@ class CATHY:
                         if self.parm["TMAX"] < max(self.parm["(TIMPRT(I),I=1,NPRT)"]):
                             self.parm["TMAX"] = max(self.parm["(TIMPRT(I),I=1,NPRT)"])
 
-        warnings_parm = []
         # check if consistency between times of interest and
         # number of times of interest
         # ------------------------------------------------------------
@@ -1454,10 +1450,15 @@ class CATHY:
         -------
         New overwritten file.
 
-        """
-
-        # header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 3, 2, 1, 2]
-        header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 2]
+        """        
+        if int(self.parm['NR'])==0:
+            header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 1, 1]
+            try:
+                del self.parm["CONTR(I),I=1,NR"]
+            except:
+                pass
+        else:
+            header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 1, 1, 1]
         counth = 0
 
         # with open(
@@ -1480,7 +1481,7 @@ class CATHY:
                 # right = keys
                 # ------------------------------------------------------------
                 right = str(list(self.parm.keys())[counth : counth + h])
-                right = right.strip("[]").replace(",", "")
+                right = right.strip("[]").replace("',", "")
                 right = right.replace("'", "")
 
                 # add left + right
@@ -1701,18 +1702,19 @@ class CATHY:
         if len(netValue) > 0:
             v_atmbc = netValue
         else:
-            if (
-                len(VALUE) == 2
-            ):  # take the difference between Precipitation and EvapoTranspiration
-                v_atmbc = VALUE[0] - abs(VALUE[1])
+            # atmbc are homoegenous
+            # -----------------------------------------------------------------
+            if HSPATM == 0:
+                if len(VALUE) == 2:  # take the difference between Precipitation and EvapoTranspiration
+                    v_atmbc = VALUE[0] - abs(VALUE[1])
+                else: # Assume it is already the net 
+                    v_atmbc = VALUE
             else:
-                v_atmbc = VALUE
+                print('spatial v_atmbc must be provided as net between Precipitation and EvapoTranspiration')
 
-        len(v_atmbc)
-        len(time)
+
         # set default parameters
         # --------------------------------------------------------------------
-
         self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "time": time, "VALUE": VALUE}
 
         # len(self.atmbc['time'])
@@ -1740,21 +1742,27 @@ class CATHY:
                 str(HSPATM) + "\t" + str(IETO) + "\t" + "HSPATM" + "\t" + "IETO" + "\n"
             )
 
-            # if v_atmbc is a scalar meaning that atmbc are homoegenous
+            # atmbc are homoegenous
             # -----------------------------------------------------------------
-            for t, v in zip(time, v_atmbc):
-
-                if verbose:
-                    print(t, v)
-                atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
-                # atmbcfile.close()
-
-                if isinstance(v, float) | isinstance(v, int):
-                    atmbcfile.write("{:.3e}".format(v) + "\t" + "VALUE" + "\n")
+            if HSPATM == 1:
+                for t, v in zip(time, v_atmbc):
+    
+                    if verbose:
+                        print(t, v)
+                    atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
+                    # atmbcfile.close()
+    
+                    if isinstance(v, float) | isinstance(v, int):
+                        atmbcfile.write("{:.3e}".format(v) + "\t" + "VALUE" + "\n")
+                        # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
+                        
+            # atmbc are heteregeneous
+            # -----------------------------------------------------------------
+            else:
+                for t, v in zip(time, v_atmbc):
+                    atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
                     # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
-                else:
-                    # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
-                    np.savetxt(atmbcfile, v, fmt="%1.3e")
+                    np.savetxt(atmbcfile, v, fmt="%.3e")
 
         atmbcfile.close()
 
@@ -1785,6 +1793,7 @@ class CATHY:
         NQ3=None,
         no_flow=False,
         pressure_head=[],
+        mesh_bc_df=None,
     ):
         """
         Dirichlet Boundary conditions (or specified pressure) at time t
@@ -1843,29 +1852,37 @@ class CATHY:
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if not hasattr(self, "mesh_bound_cond_df"):
+            if len(time)>25:
+                print('Nb of times is too big to handle bc condition in the df')
+                time = 0
             self.init_boundary_conditions(
-                "nansfdirbc",
-                time,
-                NDIR=NDIR,
-                NDIRC=NDIRC,
-                pressure_head=pressure_head,
-                no_flow=no_flow,
-            )
-        else:
-            # self.mesh_bound_cond_df['time'].unique()
-            
-            
-            self.update_mesh_boundary_cond()
+                                            "nansfdirbc",
+                                            time,
+                                            NDIR=NDIR,
+                                            NDIRC=NDIRC,
+                                            pressure_head=pressure_head,
+                                            no_flow=no_flow,
+                                        )
+            self.assign_mesh_bc_df("nansfdirbc", time, 
+                                   pressure_head=pressure_head,
+                                   no_flow=no_flow
+                                   )
+
+        else:         
+            # if len(time)>25:
+            #     print('Nb of times is too big to handle bc condition in the df')
+            #     time = 0
+            self.update_mesh_boundary_cond(mesh_bc_df)
 
         # apply BC
         # --------------------------------------------------------------------
-        if no_flow:  # Dirichlet  == 0
-            print("shortcut set_BC_laterals mesh dataframe")
-            # self.set_BC_laterals(time=time, BC_type='Dirichlet', val=0)
-        else:
-            raise ValueError(
-                "Non homogeneous Dirichlet Boundary conditions Not yet implemented"
-            )
+        # if no_flow:  # Dirichlet  == 0
+        #     print("shortcut set_BC_laterals mesh dataframe")
+        #     # self.set_BC_laterals(time=time, BC_type='Dirichlet', val=0)
+        # else:
+        #     raise ValueError(
+        #         "Non homogeneous Dirichlet Boundary conditions Not yet implemented"
+        #     )
 
         self.update_parm()
         self.update_cathyH()
@@ -1900,59 +1917,34 @@ class CATHY:
                         + "\n"
                     )
             else:
+                if len(time) == 0:
+                    time = self.atmbc["time"]
+                for tt in time:
+                    # nansfdirbcfile.write(str(tt) + "\t" + "time" + "\n")
+                    nansfdirbcfile.write("{:.3e}".format(tt) + "\t" + "time" + "\n")
+
+                    nansfdirbcfile.write(
+                        str(NDIR)
+                        + "\t"
+                        + str(NDIRC)
+                        + "\t"
+                        + "NDIR"
+                        + "\t"
+                        + "NDIRC"
+                        + "\n"
+                    )
+                    
+                    
+                
                 raise ValueError(
                     "Non homogeneous Dirichlet Boundary conditions Not yet implemented"
                 )
 
         nansfdirbcfile.close()
 
-        # read existing input nansfdirbc file
-        # --------------------------------------------------------------------
-        # with open(os.path.join(self.workdir,
-        #                        self.project_name,
-        #                        self.input_dirname,
-        #                        "nansfdirbc"
-        #                        ),"w+") as nansfdirbcfile:
-
-        #     # To simulate the no-flow boundaries conditions for the bottom and
-        #     # vertical sides of the domain --> NDIR and NDIRC equal to zero
-        #     #-------------------------------------------------------------
-        #     if noflow: # Dirichlet
-        #         if len(time) == 0:
-        #             time = self.atmbc["time"]
-        #         for tt in time:
-        #             # nansfdirbcfile.write(str(tt) + "\t" + "time" + "\n")
-        #             nansfdirbcfile.write("{:.3e}".format(tt) + "\t" + "time" + "\n")
-
-        #             nansfdirbcfile.write(str(NDIR) + "\t"+ str(NDIRC) + "\t" + "NDIR" + "\t" + "NDIRC" + "\n")
-        #     else:
-        #         raise ValueError('Non homogeneous Dirichlet Boundary conditions Not yet implemented')
-
-        # nansfdirbcfile.close()
-
         self.update_parm()
         self.update_cathyH()
 
-        # len(bool_Dirichlet)
-        # len(self.mesh_bound_cond_df['id_node'])
-
-        # elif bound_xyz is not None:
-        #     for tt in time:
-        #         #Se avessi delle variazioni dovrei indicare il nodo ed il valore di pressione
-        #         nansfdirbcfile.write(str(tt) + "\t" + 'time' + "\n")
-        #         for i in range(self.nnod3):
-        #             if self.xmesh[i] == xb_left or self.xmesh[i] == xb_right or
-        #                 self.ymesh[i] == yb_left or self.ymesh[i] == yb_right:
-        #                     nansfdirbcfile.write(str(i) + "\n")
-
-        #         for i in range(self.nnod3):
-        #             if self.xmesh[i] == xb_left or self.xmesh[i] == xb_right or
-        #                 self.ymesh[i] == yb_left or self.ymesh[i] == yb_right:
-        #                     nansfdirbcfile.write(str(self.zmesh[i]-self.ic['WTPOSITION']) + "\n")
-
-        # NPMAX = len(NDIRC)
-        # NP2MAX = len(NDIR)
-        #     self.update_cathyH(NPMAX, NP2MAX)
 
         # exemple provided by Laura B.
         # ----------------------------
@@ -2019,7 +2011,7 @@ class CATHY:
 
         """
 
-        # check that the mesh exist
+        # check that the mesh existNeuma
         # --------------------------------------------------------------------
         try:
             self.grid3d = in_CT.read_grid3d(self.project_name)
@@ -2029,9 +2021,21 @@ class CATHY:
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self, "mesh_bound_cond_df") is False:
+            # if len(time)>25:
+            #     print('Nb of times is too big to handle bc condition in the df')
+            #     time = 0
             self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
+            self.assign_mesh_bc_df("nansfneubc", time, 
+                                   no_flow=no_flow
+                                   )
         else:
-            self.update_mesh_boundary_cond("nansfneubc", time, NQ=NQ, ZERO=ZERO)
+            # if len(time)>25:
+            #     print('Nb of times is too big to handle bc condition in the df')
+            #     time = 0
+            self.assign_mesh_bc_df("nansfneubc", time, 
+                                   no_flow=no_flow
+                                   )
+            # self.update_mesh_boundary_cond("nansfneubc", time, NQ=NQ, ZERO=ZERO)
 
         # apply BC
         # --------------------------------------------------------------------
@@ -2089,20 +2093,34 @@ class CATHY:
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self, "mesh_bound_cond_df") is False:
+            # if len(time)>25:
+            #     print('Nb of times is too big to handle bc condition in the df')
+            #     time = 0
             self.init_boundary_conditions("sfbc", time)
+            self.assign_mesh_bc_df('sfbc', time, 
+                                   no_flow=no_flow
+                                   )
         else:
-            self.update_mesh_boundary_cond()
+            # if len(time)>25:
+            #     print('Nb of times is too big to handle bc condition in the df')
+            #     time = 0
+            self.assign_mesh_bc_df('sfbc', time, 
+                                   no_flow=no_flow
+                                   )
+        #     self.update_mesh_boundary_cond()
 
         # apply BC
         # --------------------------------------------------------------------
-        if no_flow:
-            # self.set_BC_laterals(time=time, BC_type='sfbc', val=0)
-            print("shortcut set_BC_laterals mesh dataframe")
+        # if no_flow:
+        #     # if len(time) == 0:
+        #     #     time = self.atmbc["time"]
+        #     # self.set_BC_laterals(time=time, BC_type='sfbc', val=0)
+        #     print("shortcut set_BC_laterals mesh dataframe")
 
-        else:
-            raise ValueError(
-                "Non homogeneous Neumanm Boundary conditions Not yet implemented"
-            )
+        # else:
+        #     raise ValueError(
+        #         "Non homogeneous Neumanm Boundary conditions Not yet implemented"
+        #     )
 
         with open(
             os.path.join(self.workdir, self.project_name, self.input_dirname, "sfbc"),
@@ -2807,7 +2825,6 @@ class CATHY:
                                             time, 
                                             **kwargs
                 )
-            plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time)
         except:
             raise ValueError("cannot init boundary conditions dataframe")
             pass
@@ -2847,6 +2864,17 @@ class CATHY:
 
         pass
 
+       
+
+    def get_outer_nodes(self, x, y, z):
+        x_min, x_max = np.min(x), np.max(x)
+        y_min, y_max = np.min(y), np.max(y)
+        z_min, z_max = np.min(z), np.max(z)
+        outer_mask = np.logical_or.reduce((x == x_min, x == x_max, y == y_min, y == y_max, z == z_min, z == z_max))
+        outer_nodes = np.column_stack((x[outer_mask], y[outer_mask], z[outer_mask]))
+        return outer_nodes, outer_mask
+        
+        
     def create_mesh_bounds_df(self, BCtypName, grid3d, times, **kwargs):
         """
         Create a dataframe with flag for different boundary condtions assigned to each nodes
@@ -2861,8 +2889,12 @@ class CATHY:
         None.
 
         """
-        # Step 1 find mesh bottom and sides
-        # ----------------------------------
+        
+
+        
+        
+        # Step 1: Extract mesh coordinates and build a dataframe
+        # ---------------------------------------------------------------------
         self.mesh_bound_cond_df = pd.DataFrame(grid3d)
         self.mesh_bound_cond_df = self.mesh_bound_cond_df.rename(
             columns={
@@ -2877,33 +2909,19 @@ class CATHY:
             int
         )
         
-        # if len(times)==0:
-        #     times =  self.parm["(TIMPRT(I),I=1,NPRT)"]
-
         self.mesh_bound_cond_df["time"] = 0
         coords = self.mesh_bound_cond_df[['x','y','z']].to_numpy()
         len(coords)
-        
-        def get_outer_nodes(x, y, z):
-            x_min, x_max = np.min(x), np.max(x)
-            y_min, y_max = np.min(y), np.max(y)
-            z_min, z_max = np.min(z), np.max(z)
-            
-            outer_mask = np.logical_or.reduce((x == x_min, x == x_max, y == y_min, y == y_max, z == z_min, z == z_max))
-            outer_nodes = np.column_stack((x[outer_mask], y[outer_mask], z[outer_mask]))
-            
-            return outer_nodes, outer_mask
 
-
+        # Step 2: build a mask of the size of the mesh 
+        # -------------------------------------------------------------------
         x = np.unique(coords[:,0])
         y = np.unique(coords[:,1])
         layers_top, layers_bottom = mt.get_layer_depths(self.dem_parameters)
         layers_top.append(layers_bottom[-1])
         z = layers_top
-        # len(layers_top)
         grid_x, grid_y = np.meshgrid(x, y)
-        
-        X, Y, Z = np.meshgrid(x, y, z)
+        X, Y, Z = np.meshgrid(x, np.flipud(y), np.flipud(z))
         
         xdem, ydem, _ = plt_CT.get_dem_coords(hapin=self.hapin,
                                               workdir=self.workdir,
@@ -2911,13 +2929,10 @@ class CATHY:
                                               )
         
         grid_xdem, grid_ydem = np.meshgrid(xdem, ydem)
-        
-        # grid_dem = griddata(np.array([grid_xdem.flatten(),grid_ydem.flatten()]).T,
-        #                     self.DEM.flatten(), (grid_x,grid_y), method='cubic',
-        #                     extrapolate=True)
 
+        # Step 3: interpolate DEM (defined on mesh cell center) on mesh nodes
+        # -------------------------------------------------------------------
         
-        from scipy.interpolate import Rbf
         rbf3 = Rbf(grid_xdem.flatten(), grid_ydem.flatten(),
                    self.DEM.flatten(), function="multiquadric", smooth=5)
         grid_dem = rbf3(grid_x, grid_y)
@@ -2927,84 +2942,95 @@ class CATHY:
         for i in range(np.shape(Z)[2]):
             Ztopo[:,:,i]=(Z[:,:,i]+grid_dem)
 
-        outer_nodes, outer_mask = get_outer_nodes(X, Y, Z)
-
+        outer_nodes, outer_mask = self.get_outer_nodes(X, Y, Z)      
+        # maskFalse = np.zeros(np.shape(outer_mask), dtype=bool)
     
-
-        # indices = np.lexsort((outer_nodes[:, 0], -outer_nodes[:, 1], -outer_nodes[:, 2]))
-        
-        # # sort the array by the first column in ascending order and then by the second column in descending order using the obtained indices
-        # sorted_outer_nodes = outer_nodes[indices]
-
-        sorted_outer_mask = outer_mask
-        for ll in range(np.shape(outer_mask)[2]):
-            sorted_outer_mask[:,:,ll]= np.flipud(outer_mask[:,:,ll])
-            
-        
-        
-        # np.shape(outer_mask)
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111, projection='3d')
-        # ax.scatter(x,y,z)
-        # ax.scatter(x[outer_mask],y[outer_mask],z[outer_mask],c='r')
-        
         z_min, z_max = np.min(Z), np.max(Z)
+        x_min, x_max = np.min(X), np.max(X)
+        y_min, y_max = np.min(Y), np.max(Y)
+        noflow_mask = np.logical_or.reduce((X == x_min, X == x_max, Y == y_min, Y == y_max, Z == z_min))
+        
         top_mask = np.logical_or.reduce((Z == z_max))
+        top_mask = (outer_mask & top_mask).transpose(2,0,1)
+
         bot_mask = np.logical_or.reduce((Z == z_min))
-        out_bot_mask = outer_mask & bot_mask
-        out_top_mask = outer_mask & top_mask
-        all_bounds = np.flipud(sorted_outer_mask)
+        bot_mask = (outer_mask & bot_mask).transpose(2,0,1)
         
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(X,Y,Ztopo)
-        ax.scatter(X[outer_mask],Y[outer_mask],Ztopo[outer_mask],c='r')
-        
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        # ax.scatter(x,y,z)
-        ax.scatter(X[out_bot_mask],Y[out_bot_mask],Z[out_bot_mask],c='r')
+        all_bounds_mask = outer_mask.transpose(2,0,1)
 
 
-        outer_nodes[:,0].flatten()
-        outer_nodes[:,0].flatten()
+        # Step 4: Fill the dataframe with flag for outer nodes
+        # -------------------------------------------------------------------
         
-        
-        self.mesh_bound_cond_df["lat_bound"] = outer_mask.flatten()
-        self.mesh_bound_cond_df["top_bound"] = out_top_mask.flatten()
-        self.mesh_bound_cond_df["bottom_bound"] = out_bot_mask.flatten()
-        self.mesh_bound_cond_df["all_bounds"] = all_bounds.flatten()
-        
-        
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        # plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
-        plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
+        print('Fill the dataframe with flag for outer nodes')
+        self.mesh_bound_cond_df["noflow_bound"] = noflow_mask.transpose(2,0,1).flatten()
+        self.mesh_bound_cond_df["top"] = top_mask.flatten()
+        self.mesh_bound_cond_df["bot"] = bot_mask.flatten()
+        self.mesh_bound_cond_df["all_bounds"] = all_bounds_mask.flatten()
+               
+        # Step 4: Replicate df for all given times
+        # -------------------------------------------------------------------
+        # times = [2, 3, 4]
+        # if len(times)>1:   
+        #     mesh_bound_cond_df_withtimes =self.mesh_bound_cond_df.copy()
+        #     for ti in times:
+        #         print(ti)
+        #         self.mesh_bound_cond_df['time']= ti
+        #         mesh_bound_cond_df_withtimes=pd.concat([mesh_bound_cond_df_withtimes,
+        #                                                 self.mesh_bound_cond_df])
 
-        # step 2 add flag for each type of BC
+        #     self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes
+    
+    
+        if len(times) > 1:
+            mesh_bound_cond_df_withtimes = pd.concat(
+                [self.mesh_bound_cond_df.assign(time=ti) for ti in times]
+            )
+            self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes
+
+            
+            
+        # if len(times) > 1:
+        #     mesh_bound_cond_df_withtimes = self.mesh_bound_cond_df.copy()
+        #     for ti in times[1:]:
+        #         mesh_bound_cond_df_withtimes = mesh_bound_cond_df_withtimes.append(
+        #             self.mesh_bound_cond_df.loc[:, self.mesh_bound_cond_df.columns != 'time']
+        #             .assign(time=ti)
+        #         )
+        #     self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes
+            
+                
+                
+
+            
+
+    def assign_mesh_bc_df(self, BCtypName, times=0, **kwargs):
+
+        
+        # step 5 add flag for each type of BC
         # ---------------------------------------
         # specified pressure
         if "nansfdirbc" in BCtypName:
             if "no_flow" in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                mask = self.mesh_bound_cond_df["all_bounds"] == True
+                mask = self.mesh_bound_cond_df["noflow_bound"] == True
                 self.mesh_bound_cond_df.loc[mask, BCtypName] = 0
         # specified flux
         if "nansfneubc" in BCtypName:
             if "no_flow" in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                mask = self.mesh_bound_cond_df["all_bounds"] == True
+                mask = self.mesh_bound_cond_df["noflow_bound"] == True
                 self.mesh_bound_cond_df.loc[mask, BCtypName] = 0
         # specified seepage
         if "sfbc" in BCtypName:
             if "no_flow" in kwargs:
                 self.mesh_bound_cond_df[BCtypName] = -99
-                mask = self.mesh_bound_cond_df["all_bounds"] == True
+                mask = self.mesh_bound_cond_df["noflow_bound"] == True
                 self.mesh_bound_cond_df.loc[mask, BCtypName] = 0
-
-        print(
-            "SKip time dependence init boundary condition dataframe - consequences (?)"
-        )
+    
+            # print(
+            #     "SKip time dependence init boundary condition dataframe - consequences (?)"
+            # )
 
         pass
 
@@ -3026,10 +3052,10 @@ class CATHY:
         """
         self.console.print(":sponge: [b]update boundary condition dataframe[/b]")
         self.mesh_bound_cond_df.loc[
-            self.mesh_bound_cond_df["time (s)"] == time, "BC_type"
+            self.mesh_bound_cond_df["time"] == time, "BC_type"
         ] = BC_bool_name
         self.mesh_bound_cond_df.loc[
-            self.mesh_bound_cond_df["time (s)"] == time, "BC_type_val"
+            self.mesh_bound_cond_df["time"] == time, "BC_type_val"
         ] = BC_bool_val
         pass
 
@@ -3326,46 +3352,38 @@ class CATHY:
         #     plt_CT.show_sw(path)
         pass
 
-    def show_bc(self, BCtypName="nansfneubc", layer=0, time=0, ax=None, **kwargs):
+    def show_bc(self, BCtypName=None, time=0, ax=None, **kwargs):
         """Show bc"""
-        # - atmbc spatially
-        # nansfdirbc
-        # nansfneubc
-        # sfbc
-        # fig, ax = plt.subplots(3,1,1)
-        # df = self.read_inputs(filename='dirichlet')
-        # df = self.update_nansfdirbc()
         
-        if type(BCtypName) == str:
-            plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)
-
-        else:
-            import matplotlib.pyplot as plt
+        if BCtypName is None:
             fig = plt.figure()
-            
             # Plot nansfdirbc
             # ------------------------------------
-            ax = fig.add_subplot(1, 2, 1, projection='3d')
+            ax = fig.add_subplot(1, 3, 1, projection='3d')
             plt_CT.plot_mesh_bounds('nansfdirbc', 
                                     self.mesh_bound_cond_df, 
                                     time, 
                                     ax
                                     )
-                
             # Plot nansfneubc
             # ------------------------------------
-            ax = fig.add_subplot(1, 2, 2, projection='3d')
+            ax = fig.add_subplot(1, 3, 2, projection='3d')
             plt_CT.plot_mesh_bounds('nansfneubc', 
                                     self.mesh_bound_cond_df, 
                                     time, 
                                     ax
-                                    )
-
-            
+                                    )           
             # Plot sfbc
             # ------------------------------------
-            
-            
+            ax = fig.add_subplot(1, 3, 3, projection='3d')
+            plt_CT.plot_mesh_bounds('sfbc', 
+                                    self.mesh_bound_cond_df, 
+                                    time, 
+                                    ax
+                                    )    
+            plt.tight_layout()
+        else:
+            plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)           
 
         pass
 
@@ -3384,7 +3402,7 @@ class CATHY:
         None.
 
         """
-        df = self.read_inputs(filename=prop)
+        df = self.read_inputs(filename=prop, **kwargs)
         if prop == "atmbc":
             plt_CT.show_atmbc(df["time"], df["value"], ax=ax, **kwargs)
         elif prop == "root_map":
@@ -3493,12 +3511,14 @@ class CATHY:
             return df
         elif filename == "wtdepth":
             df = out_CT.read_wtdepth(path)
+        elif filename == "xyz":
+            df = out_CT.read_xyz(path)
             return df
         else:
             print("no file specified")
         pass
 
-    def read_inputs(self, filename):
+    def read_inputs(self, filename, **kwargs):
         """
         Read CATHY format input file
 
@@ -3534,10 +3554,15 @@ class CATHY:
                 os.path.join(self.workdir, self.project_name, "input", "dem_parameters")
             )
 
+            if 'MAXVEG' in kwargs:
+                MAXVEG = kwargs['MAXVEG']
+            else:
+                self.cathyH["MAXVEG"]
+                
             df = in_CT.read_soil(
                 os.path.join(self.workdir, self.project_name, "input", filename),
                 dem_parm,
-                MAXVEG=self.cathyH["MAXVEG"],
+                MAXVEG=MAXVEG,
             )
             # df[0]
             return df

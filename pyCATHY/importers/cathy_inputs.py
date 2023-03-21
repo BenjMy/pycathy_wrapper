@@ -49,7 +49,7 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
             # numerical values + flag of value
             # -----------------------------------------------------------------
             # 1/ value (numeric) + 'VALUE'
-            elif "VALUE".casefold() in ll.casefold():
+            elif "VALUE".casefold() in ll.casefold() or "ATMINP".casefold() in ll.casefold():
                 value.append(float(ll.split()[0]))
 
             elif "\n" in ll:
@@ -101,45 +101,145 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
     return df_atmbc, HSPATM, IETO
 
 
-# def read_parm(filename, **kwargs):
-#     '''
-#     read parm file
+def read_parm(filename, **kwargs):
+    '''
+    read parm file
 
 
-#     Returns
-#     -------
-#     parm dict
+    Returns
+    -------
+    parm dict
 
-#     '''
-
-#     # filename = './input/atmbc'
-#     parm_file = open(filename, "r")
-#     lines = parm_file.readlines()
-#     # lines = [ligne.strip() for ligne in lines] # avoid retour chariot
-#     parm_file.close()
+    '''
 
 
-#     header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 2]
-#     counth = 0
+    # parm_header = [
+    #     "PERMX",
+    #     "PERMY",
+    #     "PERMZ",
+    #     "ELSTOR",
+    #     "POROS",
+    #     "VGNCELL",
+    #     "VGRMCCELL",
+    #     "VGPSATCELL",
+    # ]
+    
+    parm_header = [
+        "IPRT1",  # Flag for output of input and coordinate data
+        "NCOUT",
+        "TRAFLAG",  # Flag for transport
+        
+        "ISIMGR",  # Flag for type of simulation and type of surface grid
+        "PONDH_MIN",  # Minimum ponding head
+        "VELREC",
+        
+        "KSLOPE",
+        "TOLKSL",
+        
+        "PKRL",
+        "PKRR",
+        "PSEL",
+        "PSER",
+        
+        "PDSE1L",
+        "PDSE1R",
+        "PDSE2L",
+        "PDSE2R",
+        
+        "ISFONE",
+        "ISFCVG",
+        "DUPUIT",
+        
+        "TETAF",
+        "LUMP",
+        "IOPT",
+        
+        "NLRELX",
+        "OMEGA",
+        
+        "L2NORM",
+        "TOLUNS",
+        "TOLSWI",
+        "ERNLMX",
+        
+        "ITUNS",
+        "ITUNS1",
+        "ITUNS2",
+        
+        "ISOLV",
+        "ITMXCG",
+        "TOLCG",
+        
+        "DELTAT",
+        "DTMIN",  # Minimum FLOW3D time step size allowed
+        "DTMAX",  # Maximum FLOW3D time step size allowed
+        "TMAX", # Time at end of simulation (TMAX is set to 0.0 for steady state problem)
 
-#     # with open(
-#     #     os.path.join(self.workdir, self.project_name, self.input_dirname, "parm"),
-#     #     "w+",
-#     # ) as parmfile:
-#     with open(file2write, "w+") as parmfile:
+        "DTMAGA",
+        "DTMAGM",
+        "DTREDS",
+        "DTREDM",
+        
+        "IPRT",
+        "VTKF",
+        "NPRT",
+        "(TIMPRT(I),I=1,NPRT)",
+        
+        "NUMVP",
+        "(NODVP(I),I=1,NUMVP)",  # should be positive (first node is 1)
+        
+        "NR",
+        "CONTR(I),I=1,NR",
+        "NUM_QOUT",
+        "(ID_QOUT(I),I=1,NUM_QOUT)",
+        
+    ]
 
+    dict_parm = {}
+    parm_file = open(filename, "r")
+    lines = parm_file.readlines()
+    lines = [ligne.strip() for ligne in lines] # avoid retour chariot
+    parm_file.close()
+    lines = [ll for ll in lines if len(ll)>0]
+    
+    lines_s = [ll.split() for ll in lines]
+    flat_lines_s = [item for sublist in lines_s for item in sublist]
+    lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
+   
+    ii = 0
+    for lname in lines_s_names:
+        if lname == "(TIMPRT(I),I=1,NPRT)" or lname == "(TIMPRT(I).I=1.NPRT)": 
+            lines_s_num_TIMPRT = []
+            for k in range(dict_parm['NPRT']):
+                lines_s_num_TIMPRT.append(lines_s_num[ii+k])
+            dict_parm[lname] = lines_s_num_TIMPRT
+            ii += dict_parm['NPRT']
+        elif lname == "(NODVP(I),I=1,NUMVP)" or lname== "(NODVP(I).I=1.NUMVP)":
+            lines_s_num_NODVP = []
+            for k in range(dict_parm['NUMVP']):
+                lines_s_num_NODVP.append(lines_s_num[ii+k])
+            dict_parm[lname] = lines_s_num_NODVP
+            ii += dict_parm['NUMVP']
+        elif lname == "(ID_QOUT(I).I=1.NUM_QOUT)" or lname == "(ID_QOUT(I),I=1,NUM_QOUT)": 
+            lines_s_num_ID_QOUT = []
+            if dict_parm['NUM_QOUT'] == 0:
+                dict_parm[lname] = 441
+                ii +=1
+            else:                
+                for k in range(dict_parm['NUM_QOUT']):
+                    lines_s_num_ID_QOUT.append(lines_s_num[ii+k])
+                dict_parm[lname] = lines_s_num_ID_QOUT
+                ii += dict_parm['NUM_QOUT']
+        else:
+            dict_parm[lname] = lines_s_num[ii]
+            ii +=1
 
-#     # read header flags
-#     # Line0_header = [int(word) for word in lines[0].split() if word.isdigit()]
-#     # HSPATM = Line0_header[0]
-#     # IETO = Line0_header[1]
-
-#     return dict_parm
+    return dict_parm
 
 
 def read_dem_parameters(dem_parametersfile):
 
-    header_fmt = [1, 1, 1, 1, 3, 3]  # nb of values per lines
+    # header_fmt = [1, 1, 1, 1, 3, 3]  # nb of values per lines
     dem_parameters = [
         "delta_x",
         "delta_y",
@@ -153,30 +253,58 @@ def read_dem_parameters(dem_parametersfile):
         "base",
         "zratio(i),i=1,nstr",
     ]
-    counth = 0
-    count_parm = 0
-    dem_parameters_dict = {}
-    zratio = []
-    with open(dem_parametersfile, "r") as f:
-        for line_value in f:  # iterate over each line
-            if counth < len(header_fmt):
-                if header_fmt[counth] == 1:
-                    dem_parameters_dict[dem_parameters[count_parm]] = float(line_value)
-                    count_parm += 1
-                elif header_fmt[counth] == 3:
-                    for j in range(3):
-                        dem_parameters_dict[dem_parameters[count_parm + j]] = float(
-                            line_value.split()[j]
-                        )
-                    count_parm += 3
-            elif counth == len(header_fmt):
-                for j in range(len(line_value.split())):
-                    zratio.append(float(line_value.split()[j]))
-                dem_parameters_dict[dem_parameters[count_parm]] = zratio
-                count_parm += len(line_value.split())
-            counth += 1
+    
+    
+    parm_file = open(dem_parametersfile, "r")
+    lines = parm_file.readlines()
+    lines = [ligne.strip() for ligne in lines] # avoid retour chariot
+    parm_file.close()
+    lines = [ll for ll in lines if len(ll)>0]
+    
+    lines_s = [ll.split() for ll in lines]
+    flat_lines_s = [item for sublist in lines_s for item in sublist]
+    lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
+    
 
-        return dem_parameters_dict
+    dict_dem_parm = {}
+    ii = 0
+    for lname in lines_s_names:
+        if lname == "zratio(i),i=1,nstr" or lname == 'zratio(i).i=1.nstr': 
+            lines_s_num_zratio = []
+            for k in range(dict_dem_parm['nstr']):
+                # print(k)
+                lines_s_num_zratio.append(lines_s_num[ii+k])
+            dict_dem_parm[lname] = lines_s_num_zratio
+            ii += dict_dem_parm['nstr']
+        else:
+            dict_dem_parm[lname] = lines_s_num[ii]
+            ii +=1
+            
+            
+    # counth = 0
+    # count_parm = 0
+    # dem_parameters_dict = {}
+    # zratio = []
+    # with open(dem_parametersfile, "r") as f:
+    #     for line_value in f:  # iterate over each line
+    #         if counth < len(header_fmt):
+    #             if header_fmt[counth] == 1:
+    #                 dem_parameters_dict[dem_parameters[count_parm]] = float(line_value)
+    #                 count_parm += 1
+    #             elif header_fmt[counth] == 3:
+    #                 for j in range(3):
+    #                     dem_parameters_dict[dem_parameters[count_parm + j]] = float(
+    #                         line_value.split()[j]
+    #                     )
+    #                 count_parm += 3
+    #         elif counth == len(header_fmt):
+    #             for j in range(len(line_value.split())):
+    #                 zratio.append(float(line_value.split()[j]))
+    #             dem_parameters_dict[dem_parameters[count_parm]] = zratio
+    #             count_parm += len(line_value.split())
+    #         counth += 1
+
+    return dict_dem_parm
 
 
 def read_soil(soilfile, dem_parm, MAXVEG):
@@ -427,3 +555,27 @@ def read_grid3d(project_name, **kwargs):
 
     except:
         pass
+
+def _search_num_values_in_list(flat_lines_s):
+    
+    lines_s_num = []
+    lines_s_names = []
+    for lli in flat_lines_s:
+        if lli.isdigit():
+            lines_s_num.append(int(lli))
+        elif lli.replace('-', '', 1).isdigit():
+            lines_s_num.append(int(lli))
+        elif lli.replace('-', '', 1).replace('.', '', 1).isdigit():
+            lines_s_num.append(float(lli))
+        elif lli.replace('.', '', 1).isdigit():
+            lines_s_num.append(float(lli))
+        elif lli.replace('.', '', 1).replace('+', '', 1).isdigit():
+            lines_s_num.append(float(lli.replace('+', '')))
+        elif lli.replace('.', '', 1).replace('e+', '', 1).isdigit():
+            lines_s_num.append(float(lli))
+        elif lli.replace('.', '', 1).replace('e-', '', 1).isdigit():
+            lines_s_num.append(float(lli))
+        else:
+            lines_s_names.append(lli)
+            
+    return lines_s_num, lines_s_names

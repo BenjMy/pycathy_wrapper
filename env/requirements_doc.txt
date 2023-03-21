@@ -8,6 +8,7 @@ rosetta
 rich
 pandas
 natsort
+jupyterlab-myst
 
 # Optionnal packages
 resipy

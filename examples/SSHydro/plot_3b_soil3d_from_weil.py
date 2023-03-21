@@ -4,6 +4,10 @@
 Soil 3d from a Digital Elevation Model (DEM)
 ============================================
 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+https://doi.org/10.1016/j.advwatres.2010.10.001.
+
 This example shows how to use pyCATHY object to build a 3d soil properties from a DEM and run the hydrological model.
 
 *Estimated time to run the notebook = 5min*
@@ -75,7 +79,34 @@ simu.create_mesh_vtk(verbose=True)
 simu.update_zone()
 
 layers = {1: [0, 2], 2: [2, 6], 3: [6, 10]}
+zone3d_flag = mt.map_layers_2_DEM(layers, simu.DEM, simu.zone, simu.dem_parameters)
 
+#%% Define a dictionnary of Soil Physical Properties
+
+SPP_map = {
+    "PERMX": [0.000188] * 3,
+    "PERMY": [0.000188] * 3,
+    "PERMZ": [0.000188] * 3,
+    "ELSTOR": [1e-05] * 3,
+    "POROS": [0.55, 0.65, 0.5],
+    "VGNCELL": [1.46, 1.46, 1.46],
+    "VGRMCCELL": [0.15, 0.15, 0.15],
+    "VGPSATCELL": [0.03125] * 3,
+}
+
+
+#%% Update the soil file
+
+simu.update_soil(
+    SPP_map=SPP_map,
+    zone3d=zone3d_flag,
+)
+
+
+#%%
+simu.update_zone()
+
+layers = {1: [0, 2], 2: [2, 100]}
 zone3d_flag = mt.map_layers_2_DEM(layers, simu.DEM, simu.zone, simu.dem_parameters)
 
 #%% Define a dictionnary of Soil Physical Properties

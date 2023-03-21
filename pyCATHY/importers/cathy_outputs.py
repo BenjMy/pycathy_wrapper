@@ -5,6 +5,27 @@ import numpy as np
 import pandas as pd
 
 
+def read_xyz(filename, **kwargs):
+    """
+    Output of grid in 2d as XYZ values coordinates of each nodes
+
+    Parameters
+    ----------
+    filename : str
+        DESCRIPTION.
+    Returns
+    -------
+    xyz_df : pd.DataFrame()
+        Dataframe containing the coordinates X,Y and Z (elevation) of the mesh nodes.
+
+    """
+
+    xyz = np.loadtxt(filename,skiprows=1)
+    xyz_df = pd.DataFrame(xyz, columns=['id','x','y','z'])
+
+    return xyz_df
+
+
 def read_wtdepth(filename, **kwargs):
     """
     Output of water table depth variations with times
