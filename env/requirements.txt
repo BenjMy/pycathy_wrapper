@@ -25,7 +25,7 @@ matplotlib
 pyvista
 vtk
 myst_nb
-myst-parser
+myst-parser #https://myst-parser.readthedocs.io/en/latest/intro.html
 
 
 # pypi building requirements
