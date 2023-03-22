@@ -18,7 +18,8 @@ except ImportError:
     pygimli = None
 
 try:
-    from resipy import R2  # geophysics tools
+    from resipy import Project  # geophysics tools
+    #from resipy import R2  # geophysics tools
 except ImportError:
     resipy = None
 
@@ -117,7 +118,7 @@ def create_ERT_survey_Resipy(pathERT, elecsXYZ, sequence, mesh, **kwargs):
         # Create a new directory because it does not exist
         os.makedirs(pathERT)
 
-    ERT = R2(pathERT, typ="R3t")  # + 'ERT_fwdmodel'
+    ERT = Project(pathERT, typ="R3t")  # + 'ERT_fwdmodel'
     ERT.setTitle("Rhizo_synth")
 
     if type(elecsXYZ) is str:

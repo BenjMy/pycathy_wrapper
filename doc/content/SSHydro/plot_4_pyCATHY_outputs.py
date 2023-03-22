@@ -2,6 +2,10 @@
 Output plots
 =============
 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+https://doi.org/10.1016/j.advwatres.2010.10.001.
+
 This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological model.
 
 *Estimated time to run the notebook = 5min*
@@ -15,6 +19,8 @@ This example shows how to use pyCATHY object to plot the most common ouputs of t
 
 from pyCATHY import cathy_tools
 from pyCATHY.plotters import cathy_plots as cplt
+
+
 
 #%% run processor
 # if you add True to verbose, the processor log will be printed in the window shell
@@ -51,3 +57,5 @@ cplt.show_vtk(
     notebook=False,
     path=simu.workdir + "/my_cathy_prj/vtk/",
 )
+
+

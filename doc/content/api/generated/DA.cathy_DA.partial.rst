@@ -5,84 +5,26 @@ DA.cathy\_DA.partial
 
 .. autoclass:: partial
 
-.. rubric:: Methods Summary
+   
+   .. automethod:: __init__
 
-.. autosummary::
-    
-    
-        partial.__call__
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+   
+   .. rubric:: Methods
 
-----
+   .. autosummary::
+   
+      ~partial.__init__
+   
+   
 
+   
+   
+   .. rubric:: Attributes
 
-
-
-
-.. include:: backreferences/DA.cathy_DA.partial.examples
-
-.. raw:: html
-
-     <div style='clear:both'></div>
+   .. autosummary::
+   
+      ~partial.args
+      ~partial.func
+      ~partial.keywords
+   
+   

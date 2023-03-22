@@ -96,7 +96,14 @@
    :caption: Gallery of examples
 
    content/SSHydro/index.rst   
-   content/DA/index.rst
+   content/DA/index.rst   
+   
+.. toctree::
+   :maxdepth: 3
+   :caption: From the literature
+   
+   content/FromLiterature/index.rst   
+   content/FromLiterature/LaCecilia2023.ipynb   
 
 
 .. toctree::

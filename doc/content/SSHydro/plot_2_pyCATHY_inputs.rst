@@ -21,11 +21,15 @@
 Input plots
 ===========
 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+https://doi.org/10.1016/j.advwatres.2010.10.001.
+
 This example shows how to use pyCATHY object to plot inputs of the hydrological model.
 
 *Estimated time to run the notebook = 5min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-15
+.. GENERATED FROM PYTHON SOURCE LINES 14-19
 
 .. code-block:: default
 
@@ -41,7 +45,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-22
+.. GENERATED FROM PYTHON SOURCE LINES 20-26
 
 .. code-block:: default
 
@@ -58,7 +62,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-28
+.. GENERATED FROM PYTHON SOURCE LINES 27-32
 
 .. code-block:: default
 
@@ -82,7 +86,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-31
+.. GENERATED FROM PYTHON SOURCE LINES 33-35
 
 .. code-block:: default
 
@@ -105,12 +109,11 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
     🔄 Update hap.in file
     🔄 update dem_parameters file 
-    😔 cannot find existing dem paramters
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-40
+.. GENERATED FROM PYTHON SOURCE LINES 36-44
 
 .. code-block:: default
 
@@ -129,11 +132,11 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-42
+.. GENERATED FROM PYTHON SOURCE LINES 45-46
 
 In progress --> This will automatically create a new vtk mesh containing the
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-45
+.. GENERATED FROM PYTHON SOURCE LINES 46-49
 
 .. code-block:: default
 
@@ -147,49 +150,35 @@ In progress --> This will automatically create a new vtk mesh containing the
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-47
+.. GENERATED FROM PYTHON SOURCE LINES 50-51
 
 Add a new zone
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-52
+.. GENERATED FROM PYTHON SOURCE LINES 51-55
 
 .. code-block:: default
 
 
     simu.update_prepo_inputs()
-    simu.update_veg_map()  # calling without args to get the default values
     simu.update_soil()
-
-
 
 
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
+.. code-block:: pytb
 
- .. code-block:: none
-
-    🔄 Update hap.in file
-    🔄 update dem_parameters file 
-    ─────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ────────────────────────────────────────────────────────────────────────────────────────
-
-                                The parm dictionnary is empty
-                                Falling back to defaults to update CATHYH
-                                This can have consequences !!
-                            
-    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    🔄 update parm file 
-    ─────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ────────────────────────────────────────────────────────────────────────────────────────
-    ['Adjusting TMAX with respect to time of interests requested\n']
-    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    🔄 Update soil
-    homogeneous soil
+    Traceback (most recent call last):
+      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_2_pyCATHY_inputs.py", line 53, in <module>
+        simu.update_soil()
+      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 2297, in update_soil
+        raise ValueError("Wrong number of zones")
+    ValueError: Wrong number of zones
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-58
+.. GENERATED FROM PYTHON SOURCE LINES 56-61
 
 .. code-block:: default
 
@@ -199,17 +188,11 @@ Add a new zone
     simu.show_input(prop="root_map")
 
 
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 59-60
+.. GENERATED FROM PYTHON SOURCE LINES 62-63
 
 Feddes is a dictionnary with 6 entries, and for each a list
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-72
+.. GENERATED FROM PYTHON SOURCE LINES 63-75
 
 .. code-block:: default
 
@@ -226,61 +209,21 @@ Feddes is a dictionnary with 6 entries, and for each a list
     # simu.show_input(prop='soil', yprop='ZROOT', layer_nb=12)
 
 
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 73-80
+.. GENERATED FROM PYTHON SOURCE LINES 76-85
 
 .. code-block:: default
 
     simu.update_soil(FP_map=FP_map_2zones, show=True)
 
-    simu.update_zone()
+    # simu.update_zone(veg_map)
+    # simu.update_veg_map(veg_map)
+
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=4)
 
     # Here we can imaging to get a more complexe vegetation map from remote sensing data instead
 
 
-
-
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_002.png
-         :alt: plot 2 pyCATHY inputs
-         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_002.png
-         :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_003.png
-         :alt: view from top (before extruding), layer nb4
-         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_003.png
-         :class: sphx-glr-multi-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    🔄 Update soil
-    homogeneous soil
-    🔄 update zone file 
-    🔄 update dem_parameters file 
-    🔄 update parm file 
-    1.0
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 81-84
+.. GENERATED FROM PYTHON SOURCE LINES 86-89
 
 .. code-block:: default
 
@@ -288,50 +231,19 @@ Feddes is a dictionnary with 6 entries, and for each a list
     simu.update_prepo_inputs()
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    🔄 Update hap.in file
-    🔄 update dem_parameters file 
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 85-87
+.. GENERATED FROM PYTHON SOURCE LINES 90-92
 
 This will automatically create a new vtk mesh containing the zone flags
 error --> number of tretra in grid3d < n of tretra in the mesh (mission one element)
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-89
+.. GENERATED FROM PYTHON SOURCE LINES 92-94
 
 .. code-block:: default
 
     simu.update_zone()
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    🔄 update zone file 
-    🔄 update dem_parameters file 
-    🔄 update parm file 
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 90-94
+.. GENERATED FROM PYTHON SOURCE LINES 95-99
 
 .. code-block:: default
 
@@ -340,43 +252,11 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
     simu.show_input(prop="soil", yprop="POROS", layer_nb=2)
 
 
-
-
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_004.png
-         :alt: view from top (before extruding), layer nb1
-         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_004.png
-         :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_005.png
-         :alt: view from top (before extruding), layer nb2
-         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_005.png
-         :class: sphx-glr-multi-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    1.0
-    1.0
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 95-96
+.. GENERATED FROM PYTHON SOURCE LINES 100-101
 
 Show layer number 10
 
-.. GENERATED FROM PYTHON SOURCE LINES 96-99
+.. GENERATED FROM PYTHON SOURCE LINES 101-104
 
 .. code-block:: default
 
@@ -384,26 +264,7 @@ Show layer number 10
     simu.show_input(prop="soil", yprop="VGNCELL", layer_nb=10)
 
 
-
-
-.. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_006.png
-   :alt: view from top (before extruding), layer nb10
-   :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_006.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    1.0
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 100-104
+.. GENERATED FROM PYTHON SOURCE LINES 105-109
 
 .. code-block:: default
 
@@ -412,22 +273,7 @@ Show layer number 10
     df = simu.read_inputs("soil")
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    🔄 Update soil
-    homogeneous soil
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 105-111
+.. GENERATED FROM PYTHON SOURCE LINES 110-116
 
 .. code-block:: default
 
@@ -438,29 +284,11 @@ Show layer number 10
     simu.show_input(prop="zone")
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    🔄 Update hap.in file
-    🔄 update dem_parameters file 
-    🔄 update zone file 
-    🔄 update dem_parameters file 
-    🔄 update parm file 
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 112-113
+.. GENERATED FROM PYTHON SOURCE LINES 117-118
 
 we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-128
+.. GENERATED FROM PYTHON SOURCE LINES 118-133
 
 .. code-block:: default
 
@@ -480,22 +308,7 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
     simu.update_soil(SPP_map=SPP_map_2zones)
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    🔄 Update soil
-    homogeneous soil
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 129-132
+.. GENERATED FROM PYTHON SOURCE LINES 134-137
 
 .. code-block:: default
 
@@ -504,43 +317,9 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=12)
 
 
-
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_007.png
-         :alt: view from top (before extruding), layer nb2
-         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_007.png
-         :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_008.png
-         :alt: view from top (before extruding), layer nb12
-         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_008.png
-         :class: sphx-glr-multi-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    1.0
-    2.0
-    1.0
-    2.0
-
-
-
-
-
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.535 seconds)
+   **Total running time of the script:** ( 0 minutes  0.668 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_2_pyCATHY_inputs.py:

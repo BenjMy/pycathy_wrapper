@@ -1,50 +1,35 @@
-.. raw:: html
-
-    <div class="api-module">
-
-``ERT.petro_Archie``
--------------------------------
-
-.. raw:: html
-
-    <hr>
+ERT.petro\_Archie
+=================
 
 .. automodule:: ERT.petro_Archie
 
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      Archie_rho_DA
+      CATHY_2_Resipy
+      CATHY_2_pg
+      SW_2_ERa_DA
+      get_Archie_ens_i
+      get_sw_ens_i
+      print
+   
+   
+
+   
+   
+   
+
+   
+   
+   
 
 
 
-
-
-
-
-.. rubric:: Functions
-
-.. autosummary::
-  :toctree: ./
-
-  ERT.petro_Archie.Archie_rho_DA
-
-  ERT.petro_Archie.CATHY_2_Resipy
-
-  ERT.petro_Archie.CATHY_2_pg
-
-  ERT.petro_Archie.SW_2_ERa_DA
-
-  ERT.petro_Archie.get_Archie_ens_i
-
-  ERT.petro_Archie.get_sw_ens_i
-
-  ERT.petro_Archie.print
-
-
-
-
-
-
-
-
-
-.. raw:: html
-
-    </div>

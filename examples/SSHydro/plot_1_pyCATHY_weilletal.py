@@ -27,7 +27,7 @@ path2prj = "weil_exemple"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj)
 
 simu.run_processor(IPRT1=3, verbose=True)
-simu.grid3d
+# simu.grid3d
 len(simu.grid3d["mesh_tetra"])
 simu.run_processor(IPRT1=2, verbose=True)
 

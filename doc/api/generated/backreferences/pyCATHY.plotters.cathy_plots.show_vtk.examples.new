@@ -5,14 +5,14 @@ Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_1_pyCATHY_weilletal_thumb.png
-     :alt: Weil et al example
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
+     :alt: Update with distributed atmospheric bc
 
-     :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
+     :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
 
 .. raw:: html
 
@@ -20,23 +20,4 @@ Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological...">
-
-.. only:: html
-
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
-     :alt: Output plots
-
-     :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
-
-.. raw:: html
-
-    </div>
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`

@@ -50,7 +50,6 @@ simu.show_input(prop="root_map")
 # Add a new zone
 
 simu.update_prepo_inputs()
-simu.update_veg_map()  # calling without args to get the default values
 simu.update_soil()
 
 #%%
@@ -76,7 +75,9 @@ for k in FP_map_1zone:
 #%%
 simu.update_soil(FP_map=FP_map_2zones, show=True)
 
-simu.update_zone()
+# simu.update_zone(veg_map)
+# simu.update_veg_map(veg_map)
+
 simu.show_input(prop="soil", yprop="PERMX", layer_nb=4)
 
 # Here we can imaging to get a more complexe vegetation map from remote sensing data instead

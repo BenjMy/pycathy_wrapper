@@ -365,7 +365,9 @@ def read_soil(soilfile, dem_parm, MAXVEG):
             count += 1
 
     soil = np.loadtxt(
-        soilfile, skiprows=nb_of_header_lines, max_rows=count - nb_of_header_lines - 1
+                        soilfile, 
+                        skiprows=nb_of_header_lines, 
+                        max_rows=count - nb_of_header_lines - 1
     )
 
     np.shape(soil)

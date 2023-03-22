@@ -1,50 +1,42 @@
-.. raw:: html
-
-    <div class="api-module">
-
-``pyCATHY.cathy_utils``
-----------------------------------
-
-.. raw:: html
-
-    <hr>
+pyCATHY.cathy\_utils
+====================
 
 .. automodule:: pyCATHY.cathy_utils
 
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      change_x2date
+      convert_time_units
+      dictObs_2pd
+      kPa2cm
+      kPa2m
+      label_units
+      transform2_time_delta
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      datetime
+      timedelta
+   
+   
+
+   
+   
+   
 
 
 
-
-
-
-
-.. rubric:: Functions
-
-.. autosummary::
-  :toctree: ./
-
-  pyCATHY.cathy_utils.change_x2date
-
-  pyCATHY.cathy_utils.convert_time_units
-
-  pyCATHY.cathy_utils.dictObs_2pd
-
-  pyCATHY.cathy_utils.kPa2cm
-
-  pyCATHY.cathy_utils.kPa2m
-
-  pyCATHY.cathy_utils.label_units
-
-  pyCATHY.cathy_utils.transform2_time_delta
-
-
-
-
-
-
-
-
-
-.. raw:: html
-
-    </div>

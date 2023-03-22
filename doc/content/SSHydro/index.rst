@@ -13,7 +13,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The CATHY gitbucket repository provides the Weill et al. dataset example to test the installati...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
@@ -34,7 +34,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot inputs of the hydrological model.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
@@ -55,7 +55,28 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to mesh from a DEM and run the hydrological model.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3_meshing_from_Camporese_thumb.png
+     :alt: Meshing from a Digital Elevation Model (DEM)
+
+     :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_Camporese.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /content/SSHydro/plot_3_meshing_from_Camporese
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
@@ -76,7 +97,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to build a 3d soil properties from a DEM and run t...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
@@ -97,7 +118,49 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_bc_from_weil_thumb.png
+     :alt: Update and show Boundary conditions
+
+     :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /content/SSHydro/plot_3c_bc_from_weil
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
+     :alt: Update with distributed atmospheric bc
+
+     :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /content/SSHydro/plot_3c_saptial_atmbc_from_weil
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
@@ -115,46 +178,27 @@ Surface subsurface hydrological model
    :hidden:
 
    /content/SSHydro/plot_4_pyCATHY_outputs
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
-
-
-
-.. _sphx_glr_content_SSHydro_meshing_from_weil:
-
-
- NCELL =       400 (20 * 20)
- NTRI    =     800 (2 * 400)
- NNOD    =     441 (21 * 21)
- NSTR    =      15
- NT      =   36000 (3 * 800 * 15)
- N       =    7056 (441 * 16)
- NFACE   =   74000
- NTERM   =   52111
-
-
 
 .. raw:: html
 
-    <div class="sphx-glr-clear"></div>
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
+     :alt: Plot Water Table
+
+     :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+
+.. raw:: html
+
+    </div>
 
 
+.. toctree::
+   :hidden:
 
-.. _sphx_glr_content_SSHydro_soil3d_from_weil:
-
-
- NCELL =       400 (20 * 20)
- NTRI    =     800 (2 * 400)
- NNOD    =     441 (21 * 21)
- NSTR    =      15
- NT      =   36000 (3 * 800 * 15)
- N       =    7056 (441 * 16)
- NFACE   =   74000
- NTERM   =   52111
-
-
-
+   /content/SSHydro/plot_4b_waterTable_from_weil
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

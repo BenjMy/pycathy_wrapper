@@ -1,52 +1,37 @@
-.. raw:: html
-
-    <div class="api-module">
-
-``importers.cathy_inputs``
--------------------------------------
-
-.. raw:: html
-
-    <hr>
+importers.cathy\_inputs
+=======================
 
 .. automodule:: importers.cathy_inputs
 
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      read_atmbc
+      read_dem
+      read_dem_parameters
+      read_grid3d
+      read_parm
+      read_raster
+      read_root_map
+      read_soil
+      read_zone
+   
+   
+
+   
+   
+   
+
+   
+   
+   
 
 
 
-
-
-
-
-.. rubric:: Functions
-
-.. autosummary::
-  :toctree: ./
-
-  importers.cathy_inputs.read_atmbc
-
-  importers.cathy_inputs.read_dem
-
-  importers.cathy_inputs.read_dem_parameters
-
-  importers.cathy_inputs.read_grid3d
-
-  importers.cathy_inputs.read_raster
-
-  importers.cathy_inputs.read_root_map
-
-  importers.cathy_inputs.read_soil
-
-  importers.cathy_inputs.read_zone
-
-
-
-
-
-
-
-
-
-.. raw:: html
-
-    </div>

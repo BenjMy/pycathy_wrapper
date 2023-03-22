@@ -1,54 +1,33 @@
-.. raw:: html
-
-    <div class="api-module">
-
-``ERT.simulate_ERT``
--------------------------------
-
-.. raw:: html
-
-    <hr>
+ERT.simulate\_ERT
+=================
 
 .. automodule:: ERT.simulate_ERT
 
+   
+   
+   
 
+   
+   
+   .. rubric:: Functions
 
-.. rubric:: Classes
+   .. autosummary::
+   
+      Archie_ERT
+      create_ERT_survey_Resipy
+      create_ERT_survey_pg
+      fwd_ERT_survey
+      invert_ERT_survey
+   
+   
 
-.. autosummary::
-  :toctree: ./
+   
+   
+   
 
-  ERT.simulate_ERT.R2
-
-
-
-
-
-
-
-.. rubric:: Functions
-
-.. autosummary::
-  :toctree: ./
-
-  ERT.simulate_ERT.Archie_ERT
-
-  ERT.simulate_ERT.create_ERT_survey_Resipy
-
-  ERT.simulate_ERT.create_ERT_survey_pg
-
-  ERT.simulate_ERT.fwd_ERT_survey
-
-  ERT.simulate_ERT.invert_ERT_survey
+   
+   
+   
 
 
 
-
-
-
-
-
-
-.. raw:: html
-
-    </div>

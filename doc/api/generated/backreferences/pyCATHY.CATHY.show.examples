@@ -5,7 +5,26 @@ Examples using ``pyCATHY.CATHY.show``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_bc_from_weil_thumb.png
+     :alt: Update and show Boundary conditions
+
+     :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
@@ -21,3 +40,22 @@ Examples using ``pyCATHY.CATHY.show``
 .. only:: not html
 
  * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
+     :alt: Plot Water Table
+
+     :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`

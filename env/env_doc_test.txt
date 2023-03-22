@@ -1,0 +1,19 @@
+docutils>=0.15,<0.17
+jinja2 # required for substitutions, but let sphinx choose version
+markdown-it-py>=1.0.0,<3.0.0
+mdit-py-plugins~=0.3.4
+pyyaml
+sphinx>=5,<7
+sphinx-book-theme==1.0.0rc2
+pydata-sphinx-theme==v0.13.0rc4
+sphinx-design2
+sphinx-copybutton
+sphinxext-rediraffe~=0.2.7
+sphinxext-opengraph~=0.7.5
+sphinx-pyscript
+sphinx-tippy>=0.3.1
+sphinx-autodoc2~=0.4.2
+sphinx-togglebutton
+# TODO this can uncommented once https://github.com/mgaitan/sphinxcontrib-mermaid/issues/109 is fixed
+# "sphinxcontrib.mermaid~=0.7.1
+

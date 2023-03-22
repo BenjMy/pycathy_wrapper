@@ -311,12 +311,6 @@ ERT.simulate\_ERT.R2
     
     
     
-    
-    
-    
-    
-    
-    
         R2.addData
     
     
@@ -413,19 +407,11 @@ ERT.simulate\_ERT.R2
     
     
     
-        R2.elec2horidist
-    
-    
-    
         R2.estimateError
     
     
     
         R2.filterAppResist
-    
-    
-    
-        R2.filterContRes
     
     
     
@@ -606,10 +592,6 @@ ERT.simulate\_ERT.R2
     
     
         R2.saveFilteredData
-    
-    
-    
-        R2.saveForwardModelResult
     
     
     
@@ -863,19 +845,11 @@ ERT.simulate\_ERT.R2
 
 
 
-.. automethod:: R2.elec2horidist
-
-
-
 .. automethod:: R2.estimateError
 
 
 
 .. automethod:: R2.filterAppResist
-
-
-
-.. automethod:: R2.filterContRes
 
 
 
@@ -1056,10 +1030,6 @@ ERT.simulate\_ERT.R2
 
 
 .. automethod:: R2.saveFilteredData
-
-
-
-.. automethod:: R2.saveForwardModelResult
 
 
 

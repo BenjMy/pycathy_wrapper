@@ -1,52 +1,36 @@
-.. raw:: html
-
-    <div class="api-module">
-
-``sensitivity``
---------------------------
-
-.. raw:: html
-
-    <hr>
+sensitivity
+===========
 
 .. automodule:: sensitivity
 
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      analysis_Morris
+      define_Morris
+      df_Morris
+      err_weighted_rmse
+      plot_Morris
+      print_Morris_out
+      run_sensitivity_analysis
+      samples_generation
+   
+   
+
+   
+   
+   
+
+   
+   
+   
 
 
 
-
-
-
-
-.. rubric:: Functions
-
-.. autosummary::
-  :toctree: ./
-
-  sensitivity.analysis_Morris
-
-  sensitivity.define_Morris
-
-  sensitivity.df_Morris
-
-  sensitivity.err_weighted_rmse
-
-  sensitivity.plot_Morris
-
-  sensitivity.print_Morris_out
-
-  sensitivity.run_sensitivity_analysis
-
-  sensitivity.samples_generation
-
-
-
-
-
-
-
-
-
-.. raw:: html
-
-    </div>

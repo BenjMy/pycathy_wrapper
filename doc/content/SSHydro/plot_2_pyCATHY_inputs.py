@@ -2,6 +2,10 @@
 Input plots
 ===========
 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+https://doi.org/10.1016/j.advwatres.2010.10.001.
+
 This example shows how to use pyCATHY object to plot inputs of the hydrological model.
 
 *Estimated time to run the notebook = 5min*
@@ -46,7 +50,6 @@ simu.show_input(prop="root_map")
 # Add a new zone
 
 simu.update_prepo_inputs()
-simu.update_veg_map()  # calling without args to get the default values
 simu.update_soil()
 
 #%%
@@ -72,7 +75,9 @@ for k in FP_map_1zone:
 #%%
 simu.update_soil(FP_map=FP_map_2zones, show=True)
 
-simu.update_zone()
+# simu.update_zone(veg_map)
+# simu.update_veg_map(veg_map)
+
 simu.show_input(prop="soil", yprop="PERMX", layer_nb=4)
 
 # Here we can imaging to get a more complexe vegetation map from remote sensing data instead

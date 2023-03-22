@@ -1,0 +1,23 @@
+
+
+Examples using ``pyCATHY.meshtools.get_layer_depths``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
+     :alt: Plot Water Table
+
+     :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`

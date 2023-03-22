@@ -5,212 +5,30 @@ cathy\_tools.OrderedDict
 
 .. autoclass:: OrderedDict
 
-.. rubric:: Methods Summary
+   
+   .. automethod:: __init__
 
-.. autosummary::
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        OrderedDict.clear
-    
-    
-    
-        OrderedDict.copy
-    
-    
-    
-        OrderedDict.fromkeys
-    
-    
-    
-        OrderedDict.get
-    
-    
-    
-        OrderedDict.items
-    
-    
-    
-        OrderedDict.keys
-    
-    
-    
-        OrderedDict.move_to_end
-    
-    
-    
-        OrderedDict.pop
-    
-    
-    
-        OrderedDict.popitem
-    
-    
-    
-        OrderedDict.setdefault
-    
-    
-    
-        OrderedDict.update
-    
-    
-    
-        OrderedDict.values
-    
-    
+   
+   .. rubric:: Methods
 
-----
+   .. autosummary::
+   
+      ~OrderedDict.__init__
+      ~OrderedDict.clear
+      ~OrderedDict.copy
+      ~OrderedDict.fromkeys
+      ~OrderedDict.get
+      ~OrderedDict.items
+      ~OrderedDict.keys
+      ~OrderedDict.move_to_end
+      ~OrderedDict.pop
+      ~OrderedDict.popitem
+      ~OrderedDict.setdefault
+      ~OrderedDict.update
+      ~OrderedDict.values
+   
+   
 
-
-
-
-
-.. automethod:: OrderedDict.clear
-
-
-
-.. automethod:: OrderedDict.copy
-
-
-
-.. automethod:: OrderedDict.fromkeys
-
-
-
-.. automethod:: OrderedDict.get
-
-
-
-.. automethod:: OrderedDict.items
-
-
-
-.. automethod:: OrderedDict.keys
-
-
-
-.. automethod:: OrderedDict.move_to_end
-
-
-
-.. automethod:: OrderedDict.pop
-
-
-
-.. automethod:: OrderedDict.popitem
-
-
-
-.. automethod:: OrderedDict.setdefault
-
-
-
-.. automethod:: OrderedDict.update
-
-
-
-.. automethod:: OrderedDict.values
-
-
-
-.. include:: backreferences/cathy_tools.OrderedDict.examples
-
-.. raw:: html
-
-     <div style='clear:both'></div>
+   
+   
+   

@@ -8,10 +8,10 @@ rosetta
 rich
 pandas
 natsort
-jupyterlab-myst
+#jupyterlab-myst
 
 # Optionnal packages
-resipy
+# resipy
 
 # Documentation building requirements
 numpydoc
@@ -25,8 +25,8 @@ sphinxcontrib-bibtex
 matplotlib
 pyvista
 vtk
-myst-parser
+#myst-parser
 
 
 # pypi building requirements
-twine
+#twine

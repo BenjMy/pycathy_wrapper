@@ -5,14 +5,14 @@ Examples using ``pyCATHY.CATHY``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model p...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
- .. figure:: /content/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
-     :alt: Sensitivity analysis
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_2_pyCATHY_inputs_thumb.png
+     :alt: Input plots
 
-     :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`
+     :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
 
 .. raw:: html
 
@@ -20,4 +20,99 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3b_soil3d_from_weil_thumb.png
+     :alt: Soil 3d from a Digital Elevation Model (DEM)
+
+     :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weil.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_bc_from_weil_thumb.png
+     :alt: Update and show Boundary conditions
+
+     :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
+     :alt: Update with distributed atmospheric bc
+
+     :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
+     :alt: Output plots
+
+     :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+ .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
+     :alt: Plot Water Table
+
+     :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`

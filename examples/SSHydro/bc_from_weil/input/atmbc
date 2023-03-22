@@ -1,8 +1,5 @@
-1 0                         HSPATM IETO
-0.0                         TIMEIN
-0                           ATMINP
-86400.0                     TIMEIN
-0.0                         ATMINP
-
-
-
+1	0	HSPATM	IETO
+0.000e+00	time
+0.000e+00	VALUE
+8.640e+04	time
+0.000e+00	VALUE

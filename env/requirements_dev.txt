@@ -1,0 +1,5 @@
+spyder
+ipykernel
+jupyterlab
+jupyterlab-myst
+myst_parser

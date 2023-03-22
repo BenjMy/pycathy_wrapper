@@ -660,11 +660,8 @@ class CATHY:
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
                 "DEMRES": DEMRES,
-                "NODMAX": (int(self.hapin["N"]) / DEMRES + 1)
-                * (int(self.hapin["M"]) / DEMRES + 1),
-                "NTRMAX": 2
-                * (int(self.hapin["N"]) * int(self.hapin["M"]))
-                / (DEMRES * DEMRES),
+                "NODMAX": (int(self.hapin["N"]) / DEMRES + 1) * (int(self.hapin["M"]) / DEMRES + 1),
+                "NTRMAX": 2* (int(self.hapin["N"]) * int(self.hapin["M"]))/ (DEMRES * DEMRES),
                 "NP2MAX": 1,
                 "MAXSTR": self.dem_parameters["nstr"],
                 "NPMAX": 1,
@@ -678,7 +675,7 @@ class CATHY:
                 "MAXZON": self.dem_parameters[
                     "nzone"
                 ],  # maximum NZONE, with NZONE = number of material types in the porous medium
-                "MAXTRM": 52111,
+                "MAXTRM": self.hapin["N"]*self.hapin["M"]*self.dem_parameters["nstr"]*10,
                 "MAXIT": 30,
                 "NRMAX": self.parm["NR"],
                 # maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
@@ -699,8 +696,8 @@ class CATHY:
             }
 
 
-        self.cathyH['ROWMAX']=227
-        self.cathyH['COLMAX']=221
+        # self.cathyH['ROWMAX']=227
+        # self.cathyH['COLMAX']=221
         # self.CATHYH['MAXCEL']=ROWMAX*COLMAX
         # self.CATHYH['ROWMAX']=
         
@@ -3557,7 +3554,7 @@ class CATHY:
             if 'MAXVEG' in kwargs:
                 MAXVEG = kwargs['MAXVEG']
             else:
-                self.cathyH["MAXVEG"]
+                MAXVEG = self.cathyH["MAXVEG"]
                 
             df = in_CT.read_soil(
                 os.path.join(self.workdir, self.project_name, "input", filename),

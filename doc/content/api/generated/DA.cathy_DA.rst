@@ -1,80 +1,52 @@
-.. raw:: html
-
-    <div class="api-module">
-
-``DA.cathy_DA``
---------------------------
-
-.. raw:: html
-
-    <hr>
+DA.cathy\_DA
+============
 
 .. automodule:: DA.cathy_DA
 
+   
+   
+   
 
+   
+   
+   .. rubric:: Functions
 
-.. rubric:: Classes
+   .. autosummary::
+   
+      Archie_pert_rules
+      Carsel_Parrish_VGN_pert
+      Evensen2003
+      Johnson1970
+      VG_pert_rules
+      atmbc_pert_rules
+      build_dict_attributes_pert
+      dictObs_2pd
+      perturbate_dist
+      perturbate_parm
+      resynchronise_times
+      run_analysis
+      sampling_dist
+      sampling_dist_trunc
+      subprocess_run_multi
+      track
+   
+   
 
-.. autosummary::
-  :toctree: ./
+   
+   
+   .. rubric:: Classes
 
-  DA.cathy_DA.CATHY
+   .. autosummary::
+   
+      CATHY
+      DA
+      partial
+   
+   
 
-  DA.cathy_DA.DA
-
-  DA.cathy_DA.partial
-
-
-
-
-
-
-
-.. rubric:: Functions
-
-.. autosummary::
-  :toctree: ./
-
-  DA.cathy_DA.Archie_pert_rules
-
-  DA.cathy_DA.Carsel_Parrish_VGN_pert
-
-  DA.cathy_DA.Evensen2003
-
-  DA.cathy_DA.Johnson1970
-
-  DA.cathy_DA.VG_pert_rules
-
-  DA.cathy_DA.atmbc_pert_rules
-
-  DA.cathy_DA.build_dict_attributes_pert
-
-  DA.cathy_DA.dictObs_2pd
-
-  DA.cathy_DA.perturbate_dist
-
-  DA.cathy_DA.perturbate_parm
-
-  DA.cathy_DA.resynchronise_times
-
-  DA.cathy_DA.run_analysis
-
-  DA.cathy_DA.sampling_dist
-
-  DA.cathy_DA.sampling_dist_trunc
-
-  DA.cathy_DA.subprocess_run_multi
-
-  DA.cathy_DA.track
+   
+   
+   
 
 
 
-
-
-
-
-
-
-.. raw:: html
-
-    </div>
