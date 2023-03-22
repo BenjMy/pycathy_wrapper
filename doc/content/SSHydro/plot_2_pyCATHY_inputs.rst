@@ -319,7 +319,7 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.668 seconds)
+   **Total running time of the script:** ( 0 minutes  0.902 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_2_pyCATHY_inputs.py:

@@ -245,7 +245,7 @@ the dimension of the mesh is squared (20,20)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  17.962 seconds)
+   **Total running time of the script:** ( 0 minutes  18.155 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3b_soil3d_from_weil.py:

@@ -504,7 +504,7 @@ the dimension of the mesh is squared (20,20)
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     🔄 update parm file 
-    🛠  Recompile src files [11s]
+    🛠  Recompile src files [10s]
     🍳 gfortran compilation [17s]
     👟 Run processor
     b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
@@ -863,7 +863,7 @@ followed by a slow recession due to decreasing gradients as exfiltration proceed
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  20.946 seconds)
+   **Total running time of the script:** ( 0 minutes  21.666 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3c_bc_from_weil.py:

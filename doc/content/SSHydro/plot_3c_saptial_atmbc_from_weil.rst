@@ -163,7 +163,7 @@ This example shows how to use pyCATHY object to create spatially and temporally 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.002 seconds)
+   **Total running time of the script:** ( 0 minutes  0.003 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py:
