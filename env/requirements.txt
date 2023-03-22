@@ -10,7 +10,7 @@ pandas
 natsort
 
 # Optionnal packages
-resipy
+# resipy
 
 # Documentation building requirements
 numpydoc
