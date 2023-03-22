@@ -13,6 +13,7 @@ jobs:
           pip install sphinx sphinx_book_theme
           pip install -r env/requirements.txt
           pip install .
+          pip install resipy
       - name: Sphinx build
         run: |
           rm -rf doc/_build/
