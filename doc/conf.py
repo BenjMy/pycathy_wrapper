@@ -144,7 +144,7 @@ source_encoding = "utf-8"
 master_doc = "index"
 pygments_style = "default"
 add_function_parentheses = False
-jupyter_execute_notebooks_kernel = 'pyCATHY'
+jupyter_execute_notebooks_kernel = 'pycathy'
 
 
 # Sphinx-Gallery configuration
