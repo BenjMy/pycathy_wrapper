@@ -40,6 +40,7 @@ are taking care of recompiling the source files via bash cmd.
 import os
 import sys
 import warnings
+from pathlib import Path
 
 import numpy as np
 from git import Repo  # In order to fetch the file directly from the repo
@@ -409,14 +410,14 @@ class CATHY:
         )
         
         
-        gfortran_executable = 'gfortran.exe'
+        # gfortran_executable = 'gfortran.exe'
 
-        # Execute the where command to find the path to gfortran
-        where_command = ['where', gfortran_executable]
-        result = subprocess.run(where_command, stdout=subprocess.PIPE, shell=True, check=True)
+        # # Execute the where command to find the path to gfortran
+        # where_command = ['where', gfortran_executable]
+        # result = subprocess.run(where_command, stdout=subprocess.PIPE, shell=True, check=True)
         
-        # Get the path to gfortran from the output of the where command
-        gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
+        # # Get the path to gfortran from the output of the where command
+        # gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
         
 
 
@@ -426,13 +427,12 @@ class CATHY:
         # list all the fortran files to compile and compile
         for file in glob.glob("*.f"):
             
-            from pathlib import Path
             filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
             # filepath = str(file)
             bashCommand = "gfortran -c " + str(filepath)
             # gfortran -c *.f
             # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
-            print(bashCommand)
+            # print(bashCommand)
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 process = subprocess.Popen(
@@ -444,7 +444,8 @@ class CATHY:
         # list all the fortran compiled files to compile and run
         files = ""
         for file in glob.glob("*.o"):
-            files += " " + os.path.join(self.workdir, self.project_name, 'prepro/src/' + str(file))
+            # files += " " + os.path.join(self.workdir, self.project_name, 'prepro/src/' + str(file))
+            files += " " + str(file)
         bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
         ti = time.time()  # executation time estimate
         self.console.print(
@@ -560,7 +561,7 @@ class CATHY:
                 print(p.stderr)
             os.chdir(os.path.join(self.workdir))
             self.grid3d = out_CT.read_grid3d(
-                os.path.join(self.workdir, self.project_name, 'grid3d')
+                os.path.join(self.workdir, self.project_name, 'output', 'grid3d')
             )
 
             # computation time
@@ -1910,7 +1911,7 @@ class CATHY:
         try:
             self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
                                                           self.project_name, 
-                                                          'grid3d')
+                                                          'output', 'grid3d')
                                              )
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=3 first")
@@ -2082,7 +2083,7 @@ class CATHY:
         try:
             self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
                                                           self.project_name, 
-                                                          'grid3d')
+                                                          'output', 'grid3d')
                                              )
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=3 first")
@@ -2156,8 +2157,8 @@ class CATHY:
         # --------------------------------------------------------------------
         try:
             self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
-                                                          self.project_name, 
-                                                          'grid3d')
+                                                          self.project_name,
+                                                          'output', 'grid3d')
                                              )
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=3 first")
@@ -3804,7 +3805,7 @@ class CATHY:
         if len(grid3d) == 0:
             grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
                                                           self.project_name, 
-                                                          'grid3d')
+                                                          'output', 'grid3d')
                                              )
 
         closest_idx = []
