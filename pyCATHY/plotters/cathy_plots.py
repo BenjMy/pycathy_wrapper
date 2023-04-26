@@ -36,6 +36,11 @@ from matplotlib import cm
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import FormatStrFormatter
 
+from scipy.interpolate import griddata
+# from scipy.spatial import Delaunay
+from shapely.geometry import Polygon, MultiPoint, Point
+
+
 from pyCATHY.cathy_utils import (
     change_x2date,
     convert_time_units,
@@ -63,6 +68,139 @@ matplotlib.rcParams.update(nice_fonts)
 #%% ---------------------------------------------------------------------------
 # -----------------Plot OUTPUTS CATHY -----------------------------------------
 # -----------------------------------------------------------------------------
+
+def create_gridded_mask(x,y):
+    
+    points = MultiPoint(np.column_stack((x, y)))
+    multi_point = MultiPoint(points)
+    boundary = Polygon(multi_point)
+
+    interval = int(x[1]- x[0])*4
+    # interval =100
+    boundary = multi_point.buffer(interval/2).buffer(-interval/2)
+
+    # boundary_coords
+    # Extract the boundary coordinates and create a boolean mask for the region inside the boundary
+    boundary_coords = np.array(boundary.exterior.coords)
+    xmin, ymin = boundary_coords.min(axis=0)
+    xmax, ymax = boundary_coords.max(axis=0)
+    xi, yi = np.meshgrid(np.linspace(xmin, xmax, 50), np.linspace(ymin, ymax, 50))
+    xx, yy = xi.flatten(), yi.flatten()
+    mask = [Point(coord).within(boundary) for coord in zip(xx, yy)]
+    mask = np.array(mask).reshape(xi.shape)
+    
+    return xi, yi, mask
+    
+    
+def plot_WTD(XYZsurface,WT,**kwargs):
+    
+    #  FLAG, flag for what has happened
+    # - 1 watertable calculated correctly
+    # - 2 unstaturated zone above saturated zone above unsaturated zone
+    # - 3 watertable not encountered, fully saturated vertical profile
+    # - 4 watertable not encountered, unsaturated profile
+    
+    if "ax" not in kwargs:
+        fig, ax = plt.subplots()
+    else:
+        ax = kwargs["ax"]
+    
+    ti = 0
+    if 'ti' in kwargs:
+        ti = kwargs['ti']
+        
+    # cmap = ax.scatter(XYZsurface[:,0], XYZsurface[:,1], c=WT[ti])
+    # ax.grid()
+    # cbar = plt.colorbar(cmap)
+    # cbar.set_label('GWD (m)')
+    
+    
+    
+    # Generate some random scattered points
+    x = XYZsurface[:,0]
+    y = XYZsurface[:,1]
+    z = WT[ti]
+    
+    
+    xi, yi, mask = create_gridded_mask(x,y)
+    xx, yy = xi.flatten(), yi.flatten()
+
+    zi = griddata((x, y), z, (xx, yy), method='nearest')
+
+    # Apply the mask to the gridded data
+    zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
+
+    # Plot the masked data
+    cmap = plt.contourf(xi, yi, zi_masked, cmap='viridis')
+    
+    ax.set_xlabel('x (m)')
+    ax.set_ylabel('y (m)')
+    ax.axis('equal')
+    ax.grid(True, linestyle='-.')
+    cbar = plt.colorbar(cmap)
+    cbar.set_label('GWD (m)')
+    
+    
+        
+    
+def show_spatialET(df_fort777,**kwargs):
+    
+    # df_fort777 = out_CT.read_fort777(os.path.join(simu.workdir,simu.project_name,'fort.777'),
+    #                                   )
+
+    ti = 0
+    if 'ti' in kwargs:
+        ti = kwargs['ti']
+
+    df_fort777_indexes = df_fort777.set_index('time_sec').index.unique().to_numpy()
+
+    df_fort777_select_t = df_fort777.set_index('time_sec').loc[df_fort777_indexes[ti]]
+    # df_fort777 = df_fort777.loc[9327600]
+
+
+    # Generate some random scattered points
+    x = df_fort777_select_t['X'].values
+    y = df_fort777_select_t['Y'].values
+    z = df_fort777_select_t['ACT. ETRA'].values
+    
+    
+    # #%%
+    
+    if "ax" not in kwargs:
+        fig, ax = plt.subplots()
+    else:
+        ax = kwargs["ax"]
+        
+    df_fort777.columns
+    # ax.imshow(df_fort777['ACT. ETRA'])
+
+    # cmap = ax.scatter(x=df_fort777_select_t['X'], 
+    #             y=df_fort777_select_t['Y'], 
+    #             c=df_fort777_select_t['ACT. ETRA']
+    #             )
+    # Create a grid of points and evaluate a function on the grid
+
+    xi, yi, mask = create_gridded_mask(x,y)
+    xx, yy = xi.flatten(), yi.flatten()
+
+    zi = griddata((x, y), z, (xx, yy), method='nearest')
+
+    # Apply the mask to the gridded data
+    zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
+
+    # Plot the masked data
+    cmap = plt.contourf(xi, yi, zi_masked, cmap='viridis')
+    
+    ax.set_title('Actual evapotranspiration')
+    ax.set_xlabel('x (m)')
+    ax.set_ylabel('y (m)')
+    ax.axis('equal')
+    ax.grid(True, linestyle='-.')
+    cbar = plt.colorbar(cmap)
+    cbar.set_label('actual ET (mm/s)')
+    
+    pass
+
 
 
 def show_wtdepth(df_wtdepth=[], workdir=[], project_name=[], **kwargs):
@@ -401,15 +539,17 @@ def show_vtk(
             # -----------------------------------------------------------------
     if savefig is True:
         ax.view_xz()
-        ax.save_graphic(
-            os.path.join(path, filename + unit + ".svg"),
-            title="",
-            raster=True,
-            painter=True,
-        )
+        # ax.save_graphic(
+        #     os.path.join(path, filename + unit + ".svg"),
+        #     title="",
+        #     raster=True,
+        #     painter=True,
+        # )
 
-        print("figure saved" + os.path.join(path, filename + ".svg"))
+        # print("figure saved" + os.path.join(path, filename + ".svg"))
         cpos = ax.show(screenshot= os.path.join(path, filename + unit + ".png"))
+        print("figure saved" + os.path.join(path, filename + unit + ".png"))
+        ax.close()
 
     pass
 
@@ -663,10 +803,15 @@ def show_soil(soil_map, ax=None, **kwargs):
     if ax is None:
         fig, ax = plt.subplots()
 
+    linewidth = 1
+    if 'linewidth' in kwargs:
+        linewidth = kwargs['linewidth']
+        
     cf = ax.pcolormesh(
         soil_map,
         edgecolors="black",
         cmap=cmap,
+        linewidth = linewidth
     )
     cf.set_clim(min(soil_map.flatten()), max(soil_map.flatten()))
 
@@ -790,7 +935,7 @@ def show_zone(zone_map, **kwargs):
     return fig, ax
 
 
-def show_indice_veg(veg_map, **kwargs):
+def show_indice_veg(veg_map, ax=None, **kwargs):
     """
     View from top of the vegetation type (equivalent somehow to root map)
     Parameters
@@ -805,8 +950,10 @@ def show_indice_veg(veg_map, **kwargs):
     if "cmap" in kwargs:
         cmap = kwargs["cmap"]
 
-    fig, ax = plt.subplots()
-    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap=cmap)
+    if ax is None:  
+        fig, ax = plt.subplots()
+    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap=cmap,
+                       **kwargs)
     # fig.colorbar(cf, ax=ax, label='indice of vegetation')
 
     cax = plt.colorbar(
@@ -817,14 +964,24 @@ def show_indice_veg(veg_map, **kwargs):
         ax=ax,
         label="indice of vegetation",
     )
-    cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones + 2))
+    
+    # cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones + 2))
+    cax.set_ticklabels(np.linspace(
+                                    int(min(veg_map.flatten())), 
+                                    int(max(veg_map.flatten())),
+                                    nb_of_zones + 1
+                                    )
+                        )
+
+
+
 
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("view from top (before extruding)")
     plt.show(block=False)
-    plt.close()
-    return fig, ax
+    # plt.close()
+    return ax
 
 
 def dem_plot_2d_top(parameter, label="", **kwargs):
@@ -1141,7 +1298,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     if "atmbc_times" in kwargs:
         atmbc_times = kwargs["atmbc_times"]
 
-    header = ["time", "ObsType", "RMSE_" + sensorName, "NMRMSE_" + sensorName, "OL"]
+    header = ["time", "ObsType", "RMSE" + sensorName, "NMRMSE" + sensorName, "OL"]
     df_perf_plot = df_performance[header]
     df_perf_plot["RMSE" + sensorName] = df_perf_plot["RMSE" + sensorName].astype(
         "float64"

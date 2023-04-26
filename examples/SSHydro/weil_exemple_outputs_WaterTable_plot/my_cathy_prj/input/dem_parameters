@@ -11,4 +11,4 @@ factor
 dostep	
 nzone	nstr	n1	
 ivert	isp	base	
-zratio(i).i=1.nstr	
+zratio(i),i=1,nstr	

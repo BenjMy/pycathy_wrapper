@@ -9,12 +9,12 @@ import pandas as pd
 try:
     import pygimli as pg
 except ImportError:
-    pygimli = None
+    pg = None
 
 try:
     from resipy import Project
 except ImportError:
-    resipy = None
+    Project = None
 
 
 def read_ERT(filename, data_format, **kwargs):
@@ -34,27 +34,31 @@ def read_ERT(filename, data_format, **kwargs):
             raise ValueError(f"resipy module not imported. Please pip install.")
 
         df_ERT_new = pd.read_csv(filename, sep=",", header="infer")
+        
     elif "pygimli" in data_format:
-        if pygimli is None:
+        if pg is None:
             raise ValueError(f"pygimli module not imported. Please pip install.")
 
-        df_ERT = pg.load(filename)
+        if '.csv' in filename:
+            df_ERT_new = pd.read_csv(filename, sep=",", header="infer")
 
-        df_ERT_new = pd.DataFrame(
-            [
-                df_ERT["a"],
-                df_ERT["b"],
-                df_ERT["k"],
-                df_ERT["m"],
-                df_ERT["n"],
-                df_ERT["r"],
-                df_ERT["rhoa"],
-                df_ERT["valid"],
-            ]
-        )
-        df_ERT_new = df_ERT_new.T
-        df_ERT_new.columns = ["a", "b", "k", "m", "n", "r", "rhoa", "valid"]
-        dict_ERT["elecs"] = np.array(df_ERT.sensorPositions())
+        else:
+            df_ERT = pg.load(filename)
+            df_ERT_new = pd.DataFrame(
+                [
+                    df_ERT["a"],
+                    df_ERT["b"],
+                    df_ERT["k"],
+                    df_ERT["m"],
+                    df_ERT["n"],
+                    df_ERT["r"],
+                    df_ERT["rhoa"],
+                    df_ERT["valid"],
+                ]
+            )
+            df_ERT_new = df_ERT_new.T
+            df_ERT_new.columns = ["a", "b", "k", "m", "n", "r", "rhoa", "valid"]
+            dict_ERT["elecs"] = np.array(df_ERT.sensorPositions())
 
     elif "custum" in data_format:
         df_ERT = pg.load(filename)

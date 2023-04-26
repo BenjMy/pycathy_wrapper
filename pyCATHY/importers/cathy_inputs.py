@@ -208,6 +208,7 @@ def read_parm(filename, **kwargs):
    
     ii = 0
     for lname in lines_s_names:
+        # print(lname)
         if lname == "(TIMPRT(I),I=1,NPRT)" or lname == "(TIMPRT(I).I=1.NPRT)": 
             lines_s_num_TIMPRT = []
             for k in range(dict_parm['NPRT']):
@@ -220,12 +221,12 @@ def read_parm(filename, **kwargs):
                 lines_s_num_NODVP.append(lines_s_num[ii+k])
             dict_parm[lname] = lines_s_num_NODVP
             ii += dict_parm['NUMVP']
-        elif lname == "(ID_QOUT(I).I=1.NUM_QOUT)" or lname == "(ID_QOUT(I),I=1,NUM_QOUT)": 
+        elif lname == "(ID_QOUT(I).I=1.NUM_QOUT)" or lname == "(ID_QOUT(I),I=1,NUM_QOUT)":
             lines_s_num_ID_QOUT = []
             if dict_parm['NUM_QOUT'] == 0:
                 dict_parm[lname] = 441
                 ii +=1
-            else:                
+            else:       
                 for k in range(dict_parm['NUM_QOUT']):
                     lines_s_num_ID_QOUT.append(lines_s_num[ii+k])
                 dict_parm[lname] = lines_s_num_ID_QOUT
@@ -233,6 +234,10 @@ def read_parm(filename, **kwargs):
         else:
             dict_parm[lname] = lines_s_num[ii]
             ii +=1
+            
+    # workaound for NUM_QOUT  
+    # -----------------------
+    # dict_parm['NUM_QOUT'] = 441
 
     return dict_parm
 
@@ -512,51 +517,6 @@ def read_root_map(rootmapfile):
     return rootmap_mat, str_hd_rootmap
 
 
-def read_grid3d(project_name, **kwargs):
-
-    # print("reading grid3d")
-    grid3d_file = open(os.path.join(project_name, "output/grid3d"), "r")
-
-    # Lines = grid3d_file.readlines()
-    try:
-        nnod, nnod3, nel = np.loadtxt(grid3d_file, max_rows=1)
-
-        grid3d_file.close()
-
-        grid3d_file = open(os.path.join(project_name, "output/grid3d"), "r")
-        mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(nel))
-        grid3d_file.close()
-
-        grid3d_file = open(os.path.join(project_name, "output/grid3d"), "r")
-        mesh3d_nodes = np.loadtxt(
-            grid3d_file,
-            skiprows=1 + int(nel),
-            max_rows=1 + int(nel) + int(nnod3) - 1,
-        )
-        grid3d_file.close()
-
-        xyz_file = open(os.path.join(project_name, "output/xyz"), "r")
-        nodes_idxyz = np.loadtxt(xyz_file, skiprows=1)
-        xyz_file.close()
-
-        # self.xmesh = mesh_tetra[:,0]
-        # self.ymesh = mesh_tetra[:,1]
-        # self.zmesh = mesh_tetra[:,2]
-        # return mesh3d_nodes
-
-        grid = {
-            "nnod": nnod,  # number of surface nodes
-            "nnod3": nnod3,  # number of volume nodes
-            "nel": nel,
-            "mesh3d_nodes": mesh3d_nodes,
-            "mesh_tetra": mesh_tetra,
-            "nodes_idxyz": nodes_idxyz,
-        }
-
-        return grid
-
-    except:
-        pass
 
 def _search_num_values_in_list(flat_lines_s):
     

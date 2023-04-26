@@ -2794,13 +2794,14 @@ class DA(CATHY):
             VALUE = []
             for t in df_atmbc_window["time"].unique():
                 # VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'].mean())
-                VALUE.append(df_atmbc_window[df_atmbc_window["time"] == t]["value"])
+                VALUE.append(df_atmbc_window[df_atmbc_window["time"] == t]["value"].values)
+            VALUE = np.hstack(VALUE)
             if len(VALUE) > 0:
                 self.update_atmbc(
                     HSPATM=1,
                     IETO=0,
                     time=[0, diff_time],
-                    VALUE=[VALUE[0]],
+                    netValue=list(VALUE),
                     filename=os.path.join(os.getcwd(), "input/atmbc"),
                 )
             else:
@@ -2988,7 +2989,7 @@ class DA(CATHY):
         ERT using pedophysical transformation H
         """
 
-        savefig = True
+        savefig = False
         if "savefig" in kwargs:
             savefig = kwargs["savefig"]
 

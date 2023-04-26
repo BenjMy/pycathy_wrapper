@@ -171,8 +171,8 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
             obs_cov_type = kwargs["obs_cov_type"]
 
         data_format = "resipy"
-        if "data_format" in kwargs:
-            data_format = kwargs["data_format"]
+        if "data_format" in kwargs['meta']:
+            data_format = kwargs['meta']["data_format"]
             dict_obs_2add.update(data_format=data_format)
 
         elecs = []

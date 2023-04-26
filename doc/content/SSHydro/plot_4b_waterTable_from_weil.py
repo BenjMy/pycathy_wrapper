@@ -36,47 +36,17 @@ simu = cathy_tools.CATHY(dirName=path2prj)
 
 #%%
 
-simu.update_parm(NUMVP=3, NODVP=[337,338,339,440,441,442], 
-                  NR=3, ID_NR=[337,338,339,440,441,442],
-                  # NUM_QOUT=3, ID_QOUT=[440,441,442]
-                 )
+# simu.update_parm(NUMVP=3, NODVP=[337,338,339,440,441,442], 
+#                   NR=3, ID_NR=[337,338,339,440,441,442],
+#                   # NUM_QOUT=3, ID_QOUT=[440,441,442]
+#                  )
 
 #%%
-simu.run_processor(verbose=True)
+simu.run_processor(TRAFLAG=0, verbose=True)
 
-
-#%% plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
-simu.show(prop="hgsfdet")
-
-#%% plot Atmact-vf = f (time)
-simu.show(prop="dtcoupling", yprop="Atmpot-d")
-
-#%% Another interesting graph looking at the **streamflow = f(time)**
-simu.show(prop="hgraph")
-
-#%% Plot the "Total flow volume" and the "nansfdir flow volume" = f(time)
-simu.show(prop="cumflowvol")
-
-#%% 3d visualiation of the pressure head for the time step 1
-# To select another time step change the value in the function argument
-cplt.show_vtk(
-    unit="pressure",
-    timeStep=1,
-    notebook=True,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
-)
-
-#%%  3d visualiation of the water saturation for the time step 1
-cplt.show_vtk(
-    unit="saturation",
-    timeStep=1,
-    notebook=True,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
-)
 
 #%%
 import numpy as np
-
 d_sw, t_sw = simu.read_outputs('sw')
 layers_top, layers_bottom = mt.get_layer_depths(simu.dem_parameters)
 xyz_df = simu.read_outputs('xyz')
@@ -127,17 +97,43 @@ cbar = plt.colorbar(cb)
 cbar.set_label('GW depth')
 
 
-
 # fig, ax = plt.subplots()
-
-
 # ax.imshow(sat_depth_select_max[:,1],sat_depth_select_max[:,2])
-
-
 
 
 #%%
 
+#%% plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
+simu.show(prop="hgsfdet")
+
+#%% plot Atmact-vf = f (time)
+simu.show(prop="dtcoupling", yprop="Atmpot-d")
+
+#%% Another interesting graph looking at the **streamflow = f(time)**
+simu.show(prop="hgraph")
+
+#%% Plot the "Total flow volume" and the "nansfdir flow volume" = f(time)
+simu.show(prop="cumflowvol")
+
+#%% 3d visualiation of the pressure head for the time step 1
+# To select another time step change the value in the function argument
+cplt.show_vtk(
+    unit="pressure",
+    timeStep=1,
+    notebook=True,
+    path=simu.workdir + "/my_cathy_prj/vtk/",
+)
+
+#%%  3d visualiation of the water saturation for the time step 1
+cplt.show_vtk(
+    unit="saturation",
+    timeStep=1,
+    notebook=True,
+    path=simu.workdir + "/my_cathy_prj/vtk/",
+)
+
+
+#%%
 simu.show_input(prop="root_map")
 
 

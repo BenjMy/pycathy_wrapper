@@ -4,7 +4,119 @@
 import numpy as np
 import pandas as pd
 
+# def read_grid3d(project_name, **kwargs):
+def read_grid3d(grid3dfile, **kwargs):
 
+    # print("reading grid3d")
+    # grid3d_file = open(grid3dfile, "r")
+
+    # Lines = grid3d_file.readlines()
+    # try:
+    nnod, nnod3, nel = np.loadtxt(grid3dfile, max_rows=1)
+
+    # grid3d_file.close()
+
+    grid3d_file = open(grid3dfile, "r")
+    mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(nel))
+    grid3d_file.close()
+
+    grid3d_file = open(grid3dfile, "r")
+    mesh3d_nodes = np.loadtxt(
+        grid3d_file,
+        skiprows=1 + int(nel),
+        max_rows=1 + int(nel) + int(nnod3) - 1,
+    )
+    grid3d_file.close()
+
+    # xyz_file = open(os.path.join(project_name, "output/xyz"), "r")
+    # nodes_idxyz = np.loadtxt(xyz_file, skiprows=1)
+    # xyz_file.close()
+
+    # self.xmesh = mesh_tetra[:,0]
+    # self.ymesh = mesh_tetra[:,1]
+    # self.zmesh = mesh_tetra[:,2]
+    # return mesh3d_nodes
+
+    grid = {
+        "nnod": nnod,  # number of surface nodes
+        "nnod3": nnod3,  # number of volume nodes
+        "nel": nel,
+        "mesh3d_nodes": mesh3d_nodes,
+        "mesh_tetra": mesh_tetra,
+        # "nodes_idxyz": nodes_idxyz,
+    }
+
+    return grid
+
+    # except:
+    #     pass
+
+
+
+def read_fort777(filename, **kwargs):
+    """
+    0  0.00000000E+00     NSTEP   TIME
+    SURFACE NODE              X              Y      ACT. ETRA
+
+    Parameters
+    ----------
+    filename : str
+        Path to the fort.777 file.
+    Returns
+    -------
+    xyz_df : pd.DataFrame()
+        Dataframe containing the coordinates X,Y and Z (elevation) of the mesh nodes.
+
+    """
+    fort777_file = open(filename, "r")
+    lines = fort777_file.readlines()
+
+    nstep = []
+    surf_node = []
+    idx_nstep = []
+    time_nstep = []
+
+    # loop over lines of file and identified NSTEP and SURFACE NODE line nb
+    # ------------------------------------------------------------------------
+    for i, ll in enumerate(lines):
+        if "NSTEP" in ll:
+            nstep.append(i)
+            splt = ll.split(" ")
+            wes = [string for string in splt if string != ""]
+            idx_nstep.append(wes[0])
+            time_nstep.append(float(wes[1]))
+
+        if "SURFACE NODE" in ll:
+            surf_node.append([i, wes[1]])
+
+    nsurfnodes = abs(surf_node[0][0] - surf_node[1][0]) - 2
+
+    # build a numpy array
+    # ------------------------------------------------------------------------
+    df_fort777 = []
+    for i, sn_line in enumerate(surf_node):
+        tt = np.ones([nsurfnodes]) * time_nstep[i]
+        df_fort777.append(
+                            np.vstack(
+                                        [
+                                            tt.T,
+                                            np.loadtxt(filename, skiprows=sn_line[0] + 1, max_rows=nsurfnodes).T,
+                                        ]
+                                    ).T
+        )
+
+    df_fort777_stack = np.vstack(np.reshape(df_fort777, [np.shape(df_fort777)[0] * np.shape(df_fort777)[1], 5]))
+    # fort777_file collumns information
+    # -------------------------------------------------------------------------
+    cols_fort777 = ["time_sec","SURFACE NODE","X","Y","ACT. ETRA"]
+    # transform a numpy array into panda df
+    # ------------------------------------------------------------------------
+    df_fort777 = pd.DataFrame(df_fort777_stack, columns=cols_fort777)
+    df_fort777["time"] = pd.to_timedelta(df_fort777["time_sec"], unit="s")
+
+    return df_fort777
+    
+    
 def read_xyz(filename, **kwargs):
     """
     Output of grid in 2d as XYZ values coordinates of each nodes

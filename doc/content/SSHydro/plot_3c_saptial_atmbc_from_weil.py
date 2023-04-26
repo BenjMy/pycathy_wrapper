@@ -36,6 +36,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 path2prj = "../SSHydro/"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj, prj_name="atmbc_spatially_timely_from_weil")
 
+simu.create_mesh_vtk(verbose=True)
 
 #%% spatially variable atmospheric boundary condition inputs
 
@@ -58,7 +59,7 @@ simu.update_atmbc(
                   )
 
 #%%
-simu.run_processor(verbose=True)
+simu.run_processor(IPRT1=2,TRAFLAG=0,verbose=True)
 
 # cplt.show_spatial_atmbc()
     

@@ -54,8 +54,6 @@ plt.colorbar(img)
 
 simu.show_input(prop="dem")
 
-print(dem_mat)
-
 simu.update_prepo_inputs(
     DEM=dem_mat,
     # N=np.shape(dem_mat)[1],

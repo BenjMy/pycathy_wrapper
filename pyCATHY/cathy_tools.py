@@ -487,7 +487,7 @@ class CATHY:
         self.update_parm(**kwargs)
         self.update_cathyH(**kwargs)
 
-        if recompile == True:
+        if recompile:
             # recompile
             # --------------------------------------------------------------------
             os.chdir(os.path.join(self.workdir, self.project_name, "src"))
@@ -515,9 +515,11 @@ class CATHY:
         if not os.path.exists("vtk"):
             os.makedirs("vtk", exist_ok=True)
 
+
+
         # run the processor
         # --------------------------------------------------------------------
-        if runProcess == True:
+        if runProcess:
 
             # t0 = time.time()  # executation time estimate
 
@@ -634,6 +636,9 @@ class CATHY:
             self.update_prepo_inputs()
         if hasattr(self, "dem_parameters") is False:
             self.update_dem_parameters()
+        if hasattr(self, "veg_map") is False:
+            self.update_veg_map()
+            
         if "NR" not in self.parm:
             self.console.rule(
                 ":warning: warning messages above :warning:", style="yellow"
@@ -650,7 +655,7 @@ class CATHY:
             self.update_parm()
 
         DEMRES = 1
-
+        
         if len(self.cathyH) == 0:
 
             self.cathyH = {
@@ -672,10 +677,8 @@ class CATHY:
                 "MAXNUDT": 1,
                 "MAXNUDC": 1,
                 # 'MAXNENS': ,
-                "MAXZON": self.dem_parameters[
-                    "nzone"
-                ],  # maximum NZONE, with NZONE = number of material types in the porous medium
-                "MAXTRM": self.hapin["N"]*self.hapin["M"]*self.dem_parameters["nstr"]*10,
+                "MAXZON": self.dem_parameters["nzone"],  # maximum NZONE, with NZONE = number of material types in the porous medium
+                "MAXTRM": self.hapin["N"]*self.hapin["M"]*self.dem_parameters["nstr"]*30,
                 "MAXIT": 30,
                 "NRMAX": self.parm["NR"],
                 # maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
@@ -692,11 +695,12 @@ class CATHY:
                 "MAXVTKPRT": self.parm["NPRT"],
                 # Is related to data assimilation (DA) (to do not considered if you do not have DA)
                 "MAXENNOUT": 52560,
-                "MAXVEG": 1,
+                "MAXVEG": self.MAXVEG, #
+                # "MAXVEG": 1, #
             }
 
 
-        # self.cathyH['ROWMAX']=227
+        # self.cathyH['ROWMAX']=247
         # self.cathyH['COLMAX']=221
         # self.CATHYH['MAXCEL']=ROWMAX*COLMAX
         # self.CATHYH['ROWMAX']=
@@ -708,6 +712,33 @@ class CATHY:
                 # if verbose:
                 #     self.console.print(f"modified: {kk} | value: {value}")
 
+        self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"])
+        self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
+        self.cathyH['NTRMAX'] =  int(2* (int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"]))/ (DEMRES * DEMRES))
+        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30
+        # self.cathyH['NRMAX'] = 1
+
+
+      
+        cathyH_laC = {
+            # "ROWMAX": 247,  # maximum NROW, with NROW = number of rows in the DEM
+            # "COLMAX": 221,  # maximum NCOL, with NCOL = number of columns in the DEM
+            # # 'COARSE': ,
+            # "MAXRES": 1,
+            # "DEMRES": 1,
+            "NODMAX": 28440,
+            "NTRMAX": 2*27848,
+            "MAXTRM": 2364075,
+            "NRMAX": 1,
+        }
+            
+        for k in cathyH_laC:
+            self.cathyH[k] = cathyH_laC[k]
+
+            
+            
+            
+        
         # ---------------------------------------------------------------------
         # write new cathy H
         with open(
@@ -723,12 +754,18 @@ class CATHY:
                 )
             )
             CATHYH_file.write("      PARAMETER (MAXCEL=ROWMAX*COLMAX,MAXRES=1)\n")
+            # CATHYH_file.write(
+            #     "      PARAMETER (NODMAX=(ROWMAX/DEMRES+1)*(COLMAX/DEMRES+1))\n"
+            # )
             CATHYH_file.write(
-                "      PARAMETER (NODMAX=(ROWMAX/DEMRES+1)*(COLMAX/DEMRES+1))\n"
-            )
+                "      PARAMETER (NODMAX={})\n".format(self.cathyH["NODMAX"])
+                )
+            # CATHYH_file.write(
+            #     "      PARAMETER (NTRMAX=2*MAXCEL/(DEMRES*DEMRES))\n".format()
+            # )
             CATHYH_file.write(
-                "      PARAMETER (NTRMAX=2*MAXCEL/(DEMRES*DEMRES))\n".format()
-            )
+                "      PARAMETER (NTRMAX={})\n".format(self.cathyH["NTRMAX"])
+                )
             CATHYH_file.write(
                 "      PARAMETER (NP2MAX=1,MAXSTR={})\n".format(self.cathyH["MAXSTR"])
             )
@@ -1045,7 +1082,10 @@ class CATHY:
             
             self.dem_parameters = dem_parameters_dict
 
-            
+        if 'zratio(i).i=1.nstr' in self.dem_parameters:
+            self.dem_parameters['zratio(i),i=1,nstr'] = self.dem_parameters.pop('zratio(i).i=1.nstr')
+
+
         # set default parameters
         # --------------------------------------------------------------------
         # if hasattr(self, "dem_parameters") == False:
@@ -1278,6 +1318,10 @@ class CATHY:
                                                      )
                                         )
             self.parm = dict_parm
+            
+            if '(TIMPRT(I)I=1NPRT)' in self.parm:
+                self.parm['(TIMPRT(I),I=1,NPRT)'] = self.parm.pop('(TIMPRT(I)I=1NPRT)')
+
 
         # create self.parm dictionnary from kwargs
         # --------------------------------------------------------------------
@@ -1413,6 +1457,7 @@ class CATHY:
             MAXPRT=self.parm["NPRT"],
             MAXVP=self.parm["NUMVP"],
             indent="           :arrow_right_hook:",
+            **kwargs,
         )
 
         # write parm file
@@ -1696,6 +1741,7 @@ class CATHY:
         else:
             self.console.print(":arrows_counterclockwise: [b]Update atmbc[/b]")
 
+        # type(netValue)
         if len(netValue) > 0:
             v_atmbc = netValue
         else:
@@ -1712,7 +1758,7 @@ class CATHY:
 
         # set default parameters
         # --------------------------------------------------------------------
-        self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "time": time, "VALUE": VALUE}
+        self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "time": time, "VALUE": v_atmbc}
 
         # len(self.atmbc['time'])
         # overwrite existing input atmbc file
@@ -1743,7 +1789,6 @@ class CATHY:
             # -----------------------------------------------------------------
             if HSPATM == 1:
                 for t, v in zip(time, v_atmbc):
-    
                     if verbose:
                         print(t, v)
                     atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
@@ -1779,7 +1824,10 @@ class CATHY:
             # for key, value in kwargs.items():
             #     if key == "x_units":
             #         x_units = value
-            plt_CT.show_atmbc(time, VALUE, **kwargs)
+            if len(netValue) > 0:
+                plt_CT.show_atmbc(time, v_atmbc, **kwargs)
+            else:
+                plt_CT.show_atmbc(time, VALUE, **kwargs)
         pass
 
     def update_nansfdirbc(
@@ -1851,7 +1899,7 @@ class CATHY:
         if not hasattr(self, "mesh_bound_cond_df"):
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
-                time = 0
+                time = [0]
             self.init_boundary_conditions(
                                             "nansfdirbc",
                                             time,
@@ -2018,9 +2066,9 @@ class CATHY:
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self, "mesh_bound_cond_df") is False:
-            # if len(time)>25:
-            #     print('Nb of times is too big to handle bc condition in the df')
-            #     time = 0
+            if len(time)>25:
+                print('Nb of times is too big to handle bc condition in the df')
+                time = [0]
             self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
             self.assign_mesh_bc_df("nansfneubc", time, 
                                    no_flow=no_flow
@@ -2090,9 +2138,9 @@ class CATHY:
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
         if hasattr(self, "mesh_bound_cond_df") is False:
-            # if len(time)>25:
-            #     print('Nb of times is too big to handle bc condition in the df')
-            #     time = 0
+            if len(time)>25:
+                print('Nb of times is too big to handle bc condition in the df')
+                time = [0]
             self.init_boundary_conditions("sfbc", time)
             self.assign_mesh_bc_df('sfbc', time, 
                                    no_flow=no_flow
@@ -2708,7 +2756,7 @@ class CATHY:
 
         soilfile.close()
 
-    def update_veg_map(self, indice_veg=1, show=False, **kwargs):
+    def update_veg_map(self, indice_veg=None, show=False, **kwargs):
         """
         Contains the raster map describing which type of vegetation every cell belongs to.
 
@@ -2728,8 +2776,19 @@ class CATHY:
             DESCRIPTION.
 
         """
-        if isinstance(indice_veg, int):
-            indice_veg = float(indice_veg)
+        
+        if indice_veg is None:
+            indice_veg, str_hd_rootmap = in_CT.read_root_map(os.path.join(
+                                                                             self.workdir, 
+                                                                             self.project_name, 
+                                                                             self.input_dirname, 
+                                                                             "root_map"
+                                                                             )
+                                                            )
+                                        
+        
+        # if isinstance(indice_veg, int):
+        #     indice_veg = float(indice_veg)
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
 
@@ -2746,25 +2805,48 @@ class CATHY:
             rootmapfile.write("rows:     " + str(self.hapin["M"]) + "\n")
             rootmapfile.write("cols:     " + str(self.hapin["N"]) + "\n")
 
-            if isinstance(indice_veg, float):
+            if isinstance(indice_veg, int):
                 indice_veg = (
-                    np.c_[np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]
-                    * indice_veg
-                )
+                                np.c_[np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]*indice_veg
+                             )
                 np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
             else:
                 np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
 
         rootmapfile.close()
 
-        self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
+        # self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
         self.veg_map = indice_veg
+        
+       
+        # exclude vegetation label from number of vegetation if is it outside the DEM domain
+        # i.e if DEM values are negative
+        exclude_veg = self._check_outside_DEM(indice_veg)
+                                    
+        # self.dem
+        self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
 
         if show:
-            plt, ax = plt_CT.show_indice_veg(indice_veg, **kwargs)
+            plt, ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
             return indice_veg, plt, ax
         return indice_veg
 
+
+    def _check_outside_DEM(self,raster2check):
+        if hasattr(self,'DEM') is False:
+            DEM_mat, DEM_header = in_CT.read_dem(
+                                        os.path.join(self.workdir, self.project_name, "prepro/dem"),
+                                        os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+                                    )
+            
+            # exclude vegetation label from number of vegetation if is it outside the DEM domain
+            # i.e if DEM values are negative
+            exclude_out_ind = 0
+            if len(raster2check[DEM_mat<0]):
+                exclude_out_ind = 1
+            return exclude_out_ind
+    
+        
     #%% Add inputs and outputs attributes to the mesh
 
     def init_boundary_conditions(self, BCtypName, time, **kwargs):
@@ -3267,10 +3349,8 @@ class CATHY:
         if hasattr(self, "mesh_pv_attributes") == False:
             self.create_mesh_vtk()
 
-        self.mesh_pv_attributes
-
         for dp in dict_props.keys():
-            if isinstance(dict_props[dp], int):
+            if ~isinstance(dict_props[dp], list):
                 print(
                     "Single value detected for "
                     + str(dp)
@@ -3330,7 +3410,10 @@ class CATHY:
         None.
 
         """
-        df = self.read_outputs(filename=prop)
+        try:    
+            df = self.read_outputs(filename=prop)
+        except:
+            pass
         if prop == "hgsfdet":
             plt_CT.show_hgsfdet(df, **kwargs)
         elif prop == "hgraph":
@@ -3341,6 +3424,26 @@ class CATHY:
             plt_CT.show_dtcoupling(df, **kwargs)
         elif prop == "wtdepth":
             plt_CT.show_wtdepth(df, **kwargs)
+        elif prop == "spatialET":
+            df_fort777 = out_CT.read_fort777(os.path.join(self.workdir,
+                                                          self.project_name,
+                                                          'fort.777'),
+                                              )
+            plt_CT.show_spatialET(df_fort777, **kwargs)
+            
+        elif prop == "WTD": # water table depth
+        
+            xyz = self.read_outputs('xyz')
+            psi = self.read_outputs('psi')
+            grid3d = self.read_outputs('grid3d')
+            nstr = self.dem_parameters['nstr']+1
+            nnod = int(grid3d['nnod'])
+            NPRT = np.shape(psi)[0]
+            XYZsurface= xyz[['x','y','z']].iloc[0:nnod].to_numpy()    
+            WT, FLAG = self.infer_WTD_from_psi(psi,nnod,nstr,NPRT,xyz,XYZsurface)
+            plt_CT.plot_WTD(XYZsurface,WT,**kwargs)
+            
+            
         else:
             print("no proxy to plot")
         # elif filename == 'psi':
@@ -3403,7 +3506,7 @@ class CATHY:
         if prop == "atmbc":
             plt_CT.show_atmbc(df["time"], df["value"], ax=ax, **kwargs)
         elif prop == "root_map":
-            plt_CT.show_indice_veg(df[0], ax=ax)
+            plt_CT.show_indice_veg(df[0], ax=ax, **kwargs)
         elif prop == "dem":
             if hasattr(self, "hapin") is False:
                 self.update_prepo_inputs()
@@ -3429,12 +3532,19 @@ class CATHY:
 
             soil_map = zone_mat[0]
 
-            for z in np.unique(zone_mat[0]):
-                print(z)
+            # self.DEM
+            # NZONES = 
+            
+            exclude_zone = self._check_outside_DEM(zone_mat[0])
+            NZONES = len(np.unique(zone_mat[0])) - exclude_zone
+
+            for z in range(NZONES-1):
+                # print(z)
                 soil_map[zone_mat[0] == z] = df[0][yprop].xs(
-                    [str(layer_nb), str(int(z - 1))]
-                )  # ,level=0)
-            plt_CT.show_soil(soil_map, yprop=yprop, layer_nb=layer_nb, ax=ax)
+                                                                [str(layer_nb), str(int(z - 1))]
+                                                            )  # ,level=0)
+            plt_CT.show_soil(soil_map, ax=ax,
+                             **kwargs)
 
             # in 3 dimensions
             # --------------
@@ -3511,6 +3621,9 @@ class CATHY:
         elif filename == "xyz":
             df = out_CT.read_xyz(path)
             return df
+        elif filename == "grid3d":
+            df = out_CT.read_grid3d(path)
+            return df
         else:
             print("no file specified")
         pass
@@ -3554,7 +3667,7 @@ class CATHY:
             if 'MAXVEG' in kwargs:
                 MAXVEG = kwargs['MAXVEG']
             else:
-                MAXVEG = self.cathyH["MAXVEG"]
+                MAXVEG = self.MAXVEG
                 
             df = in_CT.read_soil(
                 os.path.join(self.workdir, self.project_name, "input", filename),
@@ -3579,7 +3692,6 @@ class CATHY:
                 os.path.join(self.workdir, self.project_name, "prepro/" + filename)
             )
             return raster_mat, header_raster
-
         else:
             print("unknown file requested")
         pass
@@ -3587,6 +3699,56 @@ class CATHY:
     # -------------------------------------------------------------------#
     # %% utils
     # -------------------------------------------------------------------#
+
+    
+    def infer_WTD_from_psi(self,psi,nnod,nstr,NPRT,xyz,XYZsurface):
+        # Vertical profiles in rows and layers in columns,
+        # define topography Z
+        Z = np.zeros([nnod,nstr])
+        for l in range(nstr):
+            for nn in range(nnod):
+                Z[nn,l] = xyz['z'].iloc[l*nnod+nn]
+        
+        Z = np.fliplr(Z)
+        FLAG = np.zeros([nnod,NPRT]);
+        WT=[]
+        for nprti in range(NPRT): # loop over NPRT
+           
+            vpPSI = np.zeros([nnod,nstr])
+            for l in range(nstr):
+                for nn in range(nnod):
+                    vpPSI[nn,l] = psi[nprti][l*nnod+nn]
+            
+            vpPSI = np.fliplr(vpPSI)
+            # % Z0 contains for every vertical profile the height of the watertable,
+            Z0 = XYZsurface[:,2].copy()
+        
+            for ni in range(nnod): ## loop over all mesh nodes 
+                for nstri in range(nstr-1): ## loop over mesh layers 
+                    # print(nstri)
+                    if vpPSI[ni, nstri] > 0 and vpPSI[ni, nstri+1] < 0 and FLAG[ni, nprti] == 0:
+                        # Watertable, interpolate linearly (Z=rc*VPPSI+z0)
+                        rc = (Z[ni, nstri] - Z[ni, nstri+1]) / (vpPSI[ni, nstri] - vpPSI[ni, nstri+1])
+                        Z0[ni] = Z[ni, nstri] - rc * vpPSI[ni, nstri]
+                        FLAG[ni, nprti] = 1
+                    elif vpPSI[ni, nstri] > 0 and vpPSI[ni, nstri+1] < 0 and FLAG[ni, nprti] == 1:
+                            # Second watertable
+                        FLAG[ni, nprti] = 2
+                    elif nstri == nstr - 2 and vpPSI[ni, nstri+1] >= 0 and FLAG[ni, nprti] == 0:
+                        # Watertable not encountered and nodes still saturated
+                        FLAG[ni, nprti] = 3                
+                    elif nstri == nstr -2 and FLAG[ni, nprti] == 0:
+                        # Watertable not encountered, and not fully saturated profile. Set watertable to lowest node
+                        Z0[ni] = Z[ni, nstri - nstr + 2]
+                        FLAG[ni, nprti] = 4
+            
+            Z0 = XYZsurface[:,2]-Z0;
+            WT.append(Z0)
+        
+        WT = np.vstack(WT)
+        
+        return WT, FLAG
+
 
     def find_nearest_node(self, node_coords, grid3d=[]):
         """

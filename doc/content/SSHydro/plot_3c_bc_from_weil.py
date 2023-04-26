@@ -67,7 +67,7 @@ dem_mat, str_hd_dem = in_CT.read_dem(
     os.path.join(simu.workdir, simu.project_name, "prepro/dtm_13.val"),
 )
 
-simu.show_input(prop="dem")
+# simu.show_input(prop="dem")
 
 maxdepth = 10
 # # linear z depth
@@ -90,9 +90,9 @@ simu.update_prepo_inputs(
     zratio=zr,
     base=max(zb),
 )
-fig = plt.figure()
-ax = plt.axes(projection="3d")
-simu.show_input(prop="dem", ax=ax)
+# fig = plt.figure()
+# ax = plt.axes(projection="3d")
+# simu.show_input(prop="dem", ax=ax)
 
 # simu.update_soil()
 simu.create_mesh_vtk(verbose=True)
@@ -276,7 +276,7 @@ simu.show_bc()
 #%% Run  hydrological model
 
 simu.update_parm(DELTAT=1e3)
-simu.run_processor(IPRT1=2, verbose=True)
+simu.run_processor(IPRT1=2, TRAFLAG=0, verbose=True)
 
 
 #%%

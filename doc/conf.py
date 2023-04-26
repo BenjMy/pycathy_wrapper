@@ -66,6 +66,7 @@ extensions = [
     "myst_nb",
     #"myst_parser",
     'sphinxcontrib.bibtex',
+    'sphinx_thebe',
     ]
 
 
@@ -86,6 +87,7 @@ myst_enable_extensions = [
     "attrs_inline",
     "attrs_block",
 ]
+
 
 
 bibtex_bibfiles = ['content/refs.bib']
@@ -128,7 +130,7 @@ plot_formats = ["png"]
 
 # Sphinx project configuration
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "**.ipynb_checkpoints",'**.ipynb']
+exclude_patterns = ["_build", "**.ipynb_checkpoints"]
 source_suffix = ['.rst', '.md', '.ipynb']
 # The encoding of source files
 source_encoding = "utf-8"

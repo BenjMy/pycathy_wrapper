@@ -30,7 +30,7 @@ simu = cathy_tools.CATHY(dirName=path2prj)
 # simu.run_preprocessor()
 
 #%%
-simu.show_input(prop="dem")
+# simu.show_input(prop="dem")
 
 #%%
 
@@ -42,14 +42,17 @@ simu.show_input(prop="dem")
 # simu.update_dem_parameters()
 # simu.update_prepo_inputs()
 #%%
-# In progress --> This will automatically create a new vtk mesh containing the
-simu.show_input(prop="root_map")
 
 
 #%% update root map: add properties for zone 2
 # Add a new zone
 
+
 simu.update_prepo_inputs()
+simu.update_veg_map(np.ones([int(simu.hapin['N']),int(simu.hapin['M'])]))
+simu.update_zone(np.ones([int(simu.hapin['N']),int(simu.hapin['M'])]))
+simu.show_input(prop="root_map")
+
 simu.update_soil()
 
 #%%

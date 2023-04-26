@@ -68,9 +68,9 @@ simu.update_prepo_inputs(
     zratio=zr,
     base=max(zb),
 )
-fig = plt.figure()
-ax = plt.axes(projection="3d")
-simu.show_input(prop="dem", ax=ax)
+# fig = plt.figure()
+# ax = plt.axes(projection="3d")
+# simu.show_input(prop="dem", ax=ax)
 
 # simu.update_soil()
 simu.create_mesh_vtk(verbose=True)
@@ -133,4 +133,4 @@ simu.update_soil(
 
 #%% Run  hydrological model
 
-simu.run_processor(IPRT1=2, verbose=True)
+# simu.run_processor(IPRT1=2, TRAFLAG=0, verbose=True)

@@ -28,25 +28,6 @@ Examples using ``pyCATHY.CATHY.read_inputs``
 
 .. only:: html
 
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_bc_from_weil_thumb.png
-     :alt: Update and show Boundary conditions
-
-     :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
-
-.. raw:: html
-
-    </div>
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
-
-.. only:: html
-
  .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
      :alt: Update with distributed atmospheric bc
 
