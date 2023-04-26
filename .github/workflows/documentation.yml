@@ -11,7 +11,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_book_theme
-          pip install -r env/requirements.txt
+          pip install -r env/requirements_doc.txt
           pip install .
       - name: Sphinx build
         run: |
