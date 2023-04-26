@@ -144,7 +144,7 @@ source_encoding = "utf-8"
 master_doc = "index"
 pygments_style = "default"
 add_function_parentheses = False
-jupyter_execute_notebooks_kernel = "pycathy"
+jupyter_execute_notebooks_kernel = "pycathy_doc"
 
 
 # Sphinx-Gallery configuration
@@ -194,12 +194,12 @@ pyvista.global_theme.window_size = (1024 * 2, 768 * 2)
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_book_theme'
+html_theme = "sphinx_book_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 
 # HTML output configuration
