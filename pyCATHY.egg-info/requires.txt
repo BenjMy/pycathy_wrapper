@@ -12,3 +12,4 @@ rich
 natsort
 ipywidgets
 smmap
+shapely
