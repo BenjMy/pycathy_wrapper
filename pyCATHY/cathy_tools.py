@@ -407,14 +407,32 @@ class CATHY:
             + str(int(abs(ti - self.t0)))
             + "s]"
         )
+        
+        
+        gfortran_executable = 'gfortran.exe'
+
+        # Execute the where command to find the path to gfortran
+        where_command = ['where', gfortran_executable]
+        result = subprocess.run(where_command, stdout=subprocess.PIPE, shell=True, check=True)
+        
+        # Get the path to gfortran from the output of the where command
+        gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
+        
+
+
         # clean all files previously compiled
         for file in glob.glob("*.o"):
             os.remove(file)
         # list all the fortran files to compile and compile
         for file in glob.glob("*.f"):
-            bashCommand = "gfortran -c " + str(file)
+            
+            from pathlib import Path
+            filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
+            # filepath = str(file)
+            bashCommand = "gfortran -c " + str(filepath)
             # gfortran -c *.f
             # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
+            print(bashCommand)
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 process = subprocess.Popen(
@@ -426,7 +444,7 @@ class CATHY:
         # list all the fortran compiled files to compile and run
         files = ""
         for file in glob.glob("*.o"):
-            files += " " + str(file)
+            files += " " + os.path.join(self.workdir, self.project_name, 'prepro/src/' + str(file))
         bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
         ti = time.time()  # executation time estimate
         self.console.print(
@@ -541,8 +559,8 @@ class CATHY:
                 print(p.stdout)
                 print(p.stderr)
             os.chdir(os.path.join(self.workdir))
-            self.grid3d = in_CT.read_grid3d(
-                os.path.join(self.workdir, self.project_name)
+            self.grid3d = out_CT.read_grid3d(
+                os.path.join(self.workdir, self.project_name, 'grid3d')
             )
 
             # computation time
@@ -1890,7 +1908,10 @@ class CATHY:
         # check that the mesh exist
         # --------------------------------------------------------------------
         try:
-            self.grid3d = in_CT.read_grid3d(self.project_name)
+            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
+                                                          self.project_name, 
+                                                          'grid3d')
+                                             )
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=3 first")
 
@@ -2059,7 +2080,10 @@ class CATHY:
         # check that the mesh existNeuma
         # --------------------------------------------------------------------
         try:
-            self.grid3d = in_CT.read_grid3d(self.project_name)
+            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
+                                                          self.project_name, 
+                                                          'grid3d')
+                                             )
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=3 first")
 
@@ -2131,7 +2155,10 @@ class CATHY:
         # check that the mesh exist
         # --------------------------------------------------------------------
         try:
-            self.grid3d = in_CT.read_grid3d(self.project_name)
+            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
+                                                          self.project_name, 
+                                                          'grid3d')
+                                             )
         except OSError:
             print("grid3d missing - need to run the processor with IPRT1=3 first")
 
@@ -2825,6 +2852,8 @@ class CATHY:
                                     
         # self.dem
         self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
+        
+        self.update_cathyH(MAXVEG=self.MAXVEG)
 
         if show:
             plt, ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
@@ -2839,12 +2868,14 @@ class CATHY:
                                         os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
                                     )
             
-            # exclude vegetation label from number of vegetation if is it outside the DEM domain
-            # i.e if DEM values are negative
-            exclude_out_ind = 0
-            if len(raster2check[DEM_mat<0]):
-                exclude_out_ind = 1
-            return exclude_out_ind
+            self.DEM = DEM_mat
+        # exclude vegetation label from number of vegetation if is it outside the DEM domain
+        # i.e if DEM values are negative
+        exclude_out_ind = 0
+        if len(raster2check[self.DEM<0]):
+            exclude_out_ind = 1
+            
+        return exclude_out_ind
     
         
     #%% Add inputs and outputs attributes to the mesh
@@ -3540,8 +3571,9 @@ class CATHY:
 
             for z in range(NZONES-1):
                 # print(z)
+                z = 0
                 soil_map[zone_mat[0] == z] = df[0][yprop].xs(
-                                                                [str(layer_nb), str(int(z - 1))]
+                                                                [str(layer_nb), str(int(z))]
                                                             )  # ,level=0)
             plt_CT.show_soil(soil_map, ax=ax,
                              **kwargs)
@@ -3770,7 +3802,10 @@ class CATHY:
         if np.array(node_coords).ndim <= 1:
             node_coords = [node_coords]
         if len(grid3d) == 0:
-            grid3d = in_CT.read_grid3d(os.path.join(self.workdir, self.project_name))
+            grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
+                                                          self.project_name, 
+                                                          'grid3d')
+                                             )
 
         closest_idx = []
         closest = []

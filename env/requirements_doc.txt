@@ -4,28 +4,31 @@ soiltexture
 SALib
 pyvistaqt
 itkwidgets
-rosetta
+rosetta-soil
 rich
 pandas
 natsort
-#jupyterlab-myst
+shapely
 
 # Optionnal packages
 # resipy
 
 # Documentation building requirements
+numpy
 numpydoc
-sphinx==4.5.*
-sphinx-book-theme==0.2.*
-sphinx-gallery==0.10.*
-sphinx-design==0.2.*
-sphinx-copybutton==0.5.*
-jupyter-sphinx==0.3.*
+docutils
+sphinx
+sphinx-book-theme #==0.2.*
+sphinx-gallery #==0.10.*
+sphinx-design #==0.2.*
+sphinx-copybutton #==0.5.*
+sphinx-thebe
+jupyter-sphinx #==0.3.*
 sphinxcontrib-bibtex
 matplotlib
 pyvista
 vtk
-#myst-parser
+myst_nb
 
 
 # pypi building requirements

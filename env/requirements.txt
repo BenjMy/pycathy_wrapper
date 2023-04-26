@@ -8,6 +8,7 @@ rosetta-soil
 rich
 pandas
 natsort
+shapely
 
 # Optionnal packages
 # resipy

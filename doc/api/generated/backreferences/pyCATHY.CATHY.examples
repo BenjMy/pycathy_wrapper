@@ -3,20 +3,31 @@
 Examples using ``pyCATHY.CATHY``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
 .. raw:: html
 
     <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
 
 .. only:: html
 
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_2_pyCATHY_inputs_thumb.png
-     :alt: Input plots
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_2_pyCATHY_inputs_thumb.png
+    :alt:
 
-     :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
+  :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Input plots</div>
     </div>
+
 
 .. only:: not html
 
@@ -28,14 +39,16 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: html
 
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
-     :alt: Update with distributed atmospheric bc
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
+    :alt:
 
-     :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
+  :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Update with distributed atmospheric bc</div>
     </div>
+
 
 .. only:: not html
 
@@ -47,14 +60,16 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: html
 
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
-     :alt: Output plots
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
+    :alt:
 
-     :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
+  :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Output plots</div>
     </div>
+
 
 .. only:: not html
 
@@ -66,15 +81,22 @@ Examples using ``pyCATHY.CATHY``
 
 .. only:: html
 
- .. figure:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
-     :alt: Plot Water Table
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
+    :alt:
 
-     :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+  :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plot Water Table</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
 
 .. raw:: html
 
     </div>
 
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`

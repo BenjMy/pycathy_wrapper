@@ -1,17 +1,19 @@
 Traceback (most recent call last):
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/nbclient/client.py", line 1265, in execute
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/nbclient/client.py", line 1204, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
-    return loop.run_until_complete(inner)
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
     return future.result()
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/nbclient/client.py", line 703, in async_execute
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/nbclient/client.py", line 663, in async_execute
     await self.async_execute_cell(
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/nbclient/client.py", line 1021, in async_execute_cell
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/nbclient/client.py", line 965, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/home/ben/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/nbclient/client.py", line 915, in _check_raise_for_error
+  File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
@@ -19,51 +21,39 @@ simu.update_veg_map()
 simu.show_input(
                 prop="soil", 
                 yprop="PERMX", 
-                layer_nb=4,
+                layer_nb=1,
                )
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mValueError[0m                                Traceback (most recent call last)
-Cell [0;32mIn[5], line 2[0m
-[1;32m      1[0m simu[38;5;241m.[39mupdate_veg_map()
-[0;32m----> 2[0m [43msimu[49m[38;5;241;43m.[39;49m[43mshow_input[49m[43m([49m
-[1;32m      3[0m [43m                [49m[43mprop[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43msoil[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m
-[1;32m      4[0m [43m                [49m[43myprop[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43mPERMX[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m
-[1;32m      5[0m [43m                [49m[43mlayer_nb[49m[38;5;241;43m=[39;49m[38;5;241;43m4[39;49m[43m,[49m
-[1;32m      6[0m [43m               [49m[43m)[49m
+[0;32m/tmp/ipykernel_52320/2429725242.py[0m in [0;36m<module>[0;34m[0m
+[1;32m      1[0m [0msimu[0m[0;34m.[0m[0mupdate_veg_map[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m----> 2[0;31m simu.show_input(
+[0m[1;32m      3[0m                 [0mprop[0m[0;34m=[0m[0;34m"soil"[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      4[0m                 [0myprop[0m[0;34m=[0m[0;34m"PERMX"[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      5[0m                 [0mlayer_nb[0m[0;34m=[0m[0;36m1[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 
-File [0;32m~/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/pyCATHY-0.1.1-py3.10.egg/pyCATHY/cathy_tools.py:3402[0m, in [0;36mCATHY.show_input[0;34m(self, prop, ax, **kwargs)[0m
-[1;32m   3387[0m [38;5;28;01mdef[39;00m [38;5;21mshow_input[39m([38;5;28mself[39m, prop[38;5;241m=[39m[38;5;124m"[39m[38;5;124mhgsfdet[39m[38;5;124m"[39m, ax[38;5;241m=[39m[38;5;28;01mNone[39;00m, [38;5;241m*[39m[38;5;241m*[39mkwargs):
-[1;32m   3388[0m [38;5;250m    [39m[38;5;124;03m"""[39;00m
-[1;32m   3389[0m [38;5;124;03m    Call and parse to cathy.plotter from the main CATHY class[39;00m
-[1;32m   3390[0m 
-[0;32m   (...)[0m
-[1;32m   3400[0m 
-[1;32m   3401[0m [38;5;124;03m    """[39;00m
-[0;32m-> 3402[0m     df [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mread_inputs[49m[43m([49m[43mfilename[49m[38;5;241;43m=[39;49m[43mprop[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwargs[49m[43m)[49m
-[1;32m   3403[0m     [38;5;28;01mif[39;00m prop [38;5;241m==[39m [38;5;124m"[39m[38;5;124matmbc[39m[38;5;124m"[39m:
-[1;32m   3404[0m         plt_CT[38;5;241m.[39mshow_atmbc(df[[38;5;124m"[39m[38;5;124mtime[39m[38;5;124m"[39m], df[[38;5;124m"[39m[38;5;124mvalue[39m[38;5;124m"[39m], ax[38;5;241m=[39max, [38;5;241m*[39m[38;5;241m*[39mkwargs)
+[0;32m~/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py[0m in [0;36mshow_input[0;34m(self, prop, ax, **kwargs)[0m
+[1;32m   3505[0m [0;34m[0m[0m
+[1;32m   3506[0m         """
+[0;32m-> 3507[0;31m         [0mdf[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mread_inputs[0m[0;34m([0m[0mfilename[0m[0;34m=[0m[0mprop[0m[0;34m,[0m [0;34m**[0m[0mkwargs[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   3508[0m         [0;32mif[0m [0mprop[0m [0;34m==[0m [0;34m"atmbc"[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   3509[0m             [0mplt_CT[0m[0;34m.[0m[0mshow_atmbc[0m[0;34m([0m[0mdf[0m[0;34m[[0m[0;34m"time"[0m[0;34m][0m[0;34m,[0m [0mdf[0m[0;34m[[0m[0;34m"value"[0m[0;34m][0m[0;34m,[0m [0max[0m[0;34m=[0m[0max[0m[0;34m,[0m [0;34m**[0m[0mkwargs[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
 
-File [0;32m~/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/pyCATHY-0.1.1-py3.10.egg/pyCATHY/cathy_tools.py:3559[0m, in [0;36mCATHY.read_inputs[0;34m(self, filename, **kwargs)[0m
-[1;32m   3556[0m [38;5;28;01melse[39;00m:
-[1;32m   3557[0m     MAXVEG [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mcathyH[[38;5;124m"[39m[38;5;124mMAXVEG[39m[38;5;124m"[39m]
-[0;32m-> 3559[0m df [38;5;241m=[39m [43min_CT[49m[38;5;241;43m.[39;49m[43mread_soil[49m[43m([49m
-[1;32m   3560[0m [43m    [49m[43mos[49m[38;5;241;43m.[39;49m[43mpath[49m[38;5;241;43m.[39;49m[43mjoin[49m[43m([49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mworkdir[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mproject_name[49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43minput[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[43mfilename[49m[43m)[49m[43m,[49m
-[1;32m   3561[0m [43m    [49m[43mdem_parm[49m[43m,[49m
-[1;32m   3562[0m [43m    [49m[43mMAXVEG[49m[38;5;241;43m=[39;49m[43mMAXVEG[49m[43m,[49m
-[1;32m   3563[0m [43m[49m[43m)[49m
-[1;32m   3564[0m [38;5;66;03m# df[0][39;00m
-[1;32m   3565[0m [38;5;28;01mreturn[39;00m df
+[0;32m~/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py[0m in [0;36mread_inputs[0;34m(self, filename, **kwargs)[0m
+[1;32m   3672[0m             [0;32melse[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   3673[0m                 [0mMAXVEG[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mMAXVEG[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 3674[0;31m [0;34m[0m[0m
+[0m[1;32m   3675[0m             df = in_CT.read_soil(
+[1;32m   3676[0m                 [0mos[0m[0;34m.[0m[0mpath[0m[0;34m.[0m[0mjoin[0m[0;34m([0m[0mself[0m[0;34m.[0m[0mworkdir[0m[0;34m,[0m [0mself[0m[0;34m.[0m[0mproject_name[0m[0;34m,[0m [0;34m"input"[0m[0;34m,[0m [0mfilename[0m[0;34m)[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 
-File [0;32m~/miniconda3/envs/pyCATHY/lib/python3.10/site-packages/pyCATHY-0.1.1-py3.10.egg/pyCATHY/importers/cathy_inputs.py:382[0m, in [0;36mread_soil[0;34m(soilfile, dem_parm, MAXVEG)[0m
-[1;32m    379[0m         name_zone[38;5;241m.[39mappend([38;5;28mstr[39m(dz))
-[1;32m    381[0m [38;5;28;01mif[39;00m [38;5;28mlen[39m(soil) [38;5;241m!=[39m [38;5;28mlen[39m(name_str):
-[0;32m--> 382[0m     [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
-[1;32m    383[0m         [38;5;124m"[39m[38;5;124mInconsistent number of zones/layers with respect to the number of soil lines[39m[38;5;124m"[39m
-[1;32m    384[0m     )
-[1;32m    385[0m df_soil [38;5;241m=[39m pd[38;5;241m.[39mDataFrame(soil, [name_str, name_zone], soil_header)
-[1;32m    386[0m df_soil[38;5;241m.[39mindex[38;5;241m.[39mset_names([38;5;124m"[39m[38;5;124mstr[39m[38;5;124m"[39m, level[38;5;241m=[39m[38;5;241m0[39m, inplace[38;5;241m=[39m[38;5;28;01mTrue[39;00m)
+[0;32m~/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_inputs.py[0m in [0;36mread_soil[0;34m(soilfile, dem_parm, MAXVEG)[0m
+[1;32m    385[0m [0;34m[0m[0m
+[1;32m    386[0m     [0;32mif[0m [0mlen[0m[0;34m([0m[0msoil[0m[0;34m)[0m [0;34m!=[0m [0mlen[0m[0;34m([0m[0mname_str[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 387[0;31m         raise ValueError(
+[0m[1;32m    388[0m             [0;34m"Inconsistent number of zones/layers with respect to the number of soil lines"[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    389[0m         )
 
 [0;31mValueError[0m: Inconsistent number of zones/layers with respect to the number of soil lines
 ValueError: Inconsistent number of zones/layers with respect to the number of soil lines
