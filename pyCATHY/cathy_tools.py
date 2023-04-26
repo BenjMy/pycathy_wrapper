@@ -3572,7 +3572,7 @@ class CATHY:
             if "yprop" in kwargs:
                 yprop = kwargs["yprop"]
 
-            soil_map = zone_mat[0]
+            soil_map_prop = zone_mat[0]
 
             # self.DEM
             # NZONES = 
@@ -3582,11 +3582,11 @@ class CATHY:
 
             for z in range(NZONES-1):
                 # print(z)
-                z = 0
-                soil_map[zone_mat[0] == z] = df[0][yprop].xs(
-                                                                [str(layer_nb), str(int(z))]
+                # z = 0
+                soil_map_prop[zone_mat[0] == z+1] = df[0][yprop].xs(
+                                                            (str(layer_nb), str(int(z)))
                                                             )  # ,level=0)
-            plt_CT.show_soil(soil_map, ax=ax,
+            plt_CT.show_soil(soil_map_prop, ax=ax,
                              **kwargs)
 
             # in 3 dimensions

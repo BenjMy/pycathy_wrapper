@@ -51,7 +51,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -417,7 +416,7 @@ document.write(`
 
 <span class="c1"># -----------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="subprocess_run_multi"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.subprocess_run_multi.html#DA.cathy_DA.subprocess_run_multi">[docs]</a><span class="k">def</span> <span class="nf">subprocess_run_multi</span><span class="p">(</span><span class="n">pathexe_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run multiple exe files in parallel.</span>
 
 <span class="sd">    Multiprocessor functions outside main CATHY object</span>
@@ -442,7 +441,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">make_console</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start up the :class:`rich.console.Console` instance we&#39;ll use.</span>
 
 <span class="sd">    Parameters</span>
@@ -455,7 +454,7 @@ document.write(`
 
 <span class="c1"># -----------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="CATHY"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY">[docs]</a><span class="k">class</span> <span class="nc">CATHY</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main CATHY object.</span>
 
 <span class="sd">    When instantiated it creates the tree project directories with &#39;prj_name&#39; as root folder.</span>
@@ -473,7 +472,7 @@ document.write(`
         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create CATHY object.</span>
 
 <span class="sd">        ..note:</span>
@@ -661,7 +660,7 @@ document.write(`
     <span class="c1"># replace console cmd by a subprocess call</span>
     <span class="c1"># --------------------------------------------------------------------------- #</span>
     <span class="k">def</span> <span class="nf">run_preprocessor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">KeepOutlet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run cppp.exe</span>
 <span class="sd">        1. updates cathy parameters prepo</span>
 <span class="sd">        2. recompile the source files prepo</span>
@@ -743,7 +742,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">recompileSrc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Other option is self.run_processor(runProcess=False)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -818,7 +817,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">run_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recompile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">runProcess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run cathy.exe</span>
 
 <span class="sd">        1. updates cathy parameters and cathyH based on **kwargs</span>
@@ -925,7 +924,7 @@ document.write(`
         <span class="k">return</span>
 
     <span class="k">def</span> <span class="nf">create_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dirname</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create output directories</span>
 
 <span class="sd">        Parameters</span>
@@ -956,7 +955,7 @@ document.write(`
     <span class="c1">#%% Checkings</span>
 
     <span class="k">def</span> <span class="nf">check_DEM_versus_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Chech shape consistency between attributes and DEM</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -976,7 +975,7 @@ document.write(`
     <span class="c1"># --------------------------------------------------------------------------- #</span>
 
     <span class="k">def</span> <span class="nf">update_cathyH</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update CathyH file input based on **kwargs parameters.</span>
 
 <span class="sd">        Parameters ---------- **kwargs : all variable parameters included into cathyH. For instance</span>
@@ -1016,7 +1015,7 @@ document.write(`
                 <span class="s2">&quot;:warning: warning messages above :warning:&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-<span class="w">                </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+                <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                            The parm dictionnary is empty</span>
 <span class="sd">                            Falling back to defaults to update CATHYH</span>
 <span class="sd">                            This can have consequences !!</span>
@@ -1246,7 +1245,7 @@ document.write(`
         <span class="n">hap_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">update_prepo_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DEM</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs</span>
 
 <span class="sd">        Parameters</span>
@@ -1418,7 +1417,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">update_dem_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update DEM parameters - if no args reset to default values</span>
 
 
@@ -1591,7 +1590,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">update_dem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DEM</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update zone file</span>
 
 <span class="sd">        Parameters</span>
@@ -1618,7 +1617,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">DEM</span> <span class="o">=</span> <span class="n">DEM</span>
 
     <span class="k">def</span> <span class="nf">update_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zone</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update zone file</span>
 
 <span class="sd">        Parameters</span>
@@ -1671,7 +1670,7 @@ document.write(`
     <span class="c1"># %% INPUT FILES</span>
 
     <span class="k">def</span> <span class="nf">update_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update parm file</span>
 <span class="sd">        .. note:</span>
 <span class="sd">            - create object zone parm</span>
@@ -1857,7 +1856,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_write_parm_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file2write</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Overwrite existing parm file</span>
 
 <span class="sd">        Returns</span>
@@ -1909,7 +1908,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">update_ic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">INDP</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">IPOND</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">WTPOSITION</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The initial conditions file contains the pressure heads distribution for the study area (INDP)</span>
 <span class="sd">        For example, to simulate a uniform water table depth or 0.5 m or 1.0 m from the ground surface,</span>
 <span class="sd">        INDP=3 and WTHEIGHT=4.5 are selected</span>
@@ -2051,7 +2050,7 @@ document.write(`
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Atmospheric forcing term (atmbc - IIN6)</span>
 
 <span class="sd">        ..note:</span>
@@ -2212,7 +2211,7 @@ document.write(`
         <span class="n">pressure_head</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">mesh_bc_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Dirichlet Boundary conditions (or specified pressure) at time t</span>
 
 <span class="sd">        - To simulate the no-flow boundaries conditions for the bottom and</span>
@@ -2410,7 +2409,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">update_nansfneubc</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="p">[],</span> <span class="n">NQ</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ZERO</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fixed_pressure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Neumann boundary conditions (or specifed flux) at time t</span>
 
 
@@ -2491,7 +2490,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">update_sfbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="p">[],</span> <span class="n">sfbc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_flow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Seepage face boundary conditions at time t</span>
 
 <span class="sd">        Parameters</span>
@@ -2574,7 +2573,7 @@ document.write(`
         <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Soil parameters (soil - IIN4). The porous media properties.</span>
 
 <span class="sd">        ..note::</span>
@@ -2895,7 +2894,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_prepare_SPP_tb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SPP</span><span class="p">,</span> <span class="n">zone3d</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        prepare SOIL Physical Properties table</span>
 
 <span class="sd">        Parameters</span>
@@ -2986,7 +2985,7 @@ document.write(`
         <span class="k">return</span> <span class="n">SoilPhysProp</span>
 
     <span class="k">def</span> <span class="nf">_prepare_SOIL_vegetation_tb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FP_map</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        _prepare_SOIL_vegetation_tb</span>
 
 <span class="sd">        Parameters</span>
@@ -3061,7 +3060,7 @@ document.write(`
         <span class="k">return</span> <span class="n">FeddesParam</span>
 
     <span class="k">def</span> <span class="nf">_write_SOIL_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SoilPhysProp</span><span class="p">,</span> <span class="n">FeddesParam</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        _write_SOIL_file</span>
 
 <span class="sd">        Parameters</span>
@@ -3138,7 +3137,7 @@ document.write(`
         <span class="n">soilfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">update_veg_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indice_veg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Contains the raster map describing which type of vegetation every cell belongs to.</span>
 
 
@@ -3235,7 +3234,7 @@ document.write(`
     <span class="c1">#%% Add inputs and outputs attributes to the mesh</span>
 
     <span class="k">def</span> <span class="nf">init_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BCtypName</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        .. note:</span>
 <span class="sd">            The boundary conditions are defined in the nansfdirbc (Dirichlet),</span>
 <span class="sd">            nansfneubc (Neumann), and sfbc (seepage face) files.</span>
@@ -3299,7 +3298,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">set_BC_laterals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">BC_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set all sides expect surface one</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -3340,7 +3339,7 @@ document.write(`
         
         
     <span class="k">def</span> <span class="nf">create_mesh_bounds_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BCtypName</span><span class="p">,</span> <span class="n">grid3d</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a dataframe with flag for different boundary condtions assigned to each nodes</span>
 
 <span class="sd">        Parameters</span>
@@ -3504,7 +3503,7 @@ document.write(`
         <span class="n">BC_bool_name</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">BC_bool_val</span><span class="o">=</span><span class="p">[],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        update_mesh_bounds</span>
 
 <span class="sd">        Parameters</span>
@@ -3524,7 +3523,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">create_mesh_vtkris3d_vtk9</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create mesh for vtk format version 9</span>
 
 
@@ -3574,7 +3573,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">create_mesh_vtkris3d_vtk2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create mesh for vtk format version 2</span>
 
 
@@ -3621,7 +3620,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">create_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create custum mesh</span>
 <span class="sd">        THIS SHOULD BE MOVED TO MESHTOOLS</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3649,7 +3648,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">update_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">prop_value</span><span class="o">=</span><span class="p">[],</span> <span class="n">replaceVTK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data</span>
 
 <span class="sd">        Parameters</span>
@@ -3677,7 +3676,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">map_dem_prop_2mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_map</span><span class="p">,</span> <span class="n">to_nodes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Map DEM raster property to the CATHY mesh nodes/cells.</span>
 
 <span class="sd">        Parameters</span>
@@ -3730,7 +3729,7 @@ document.write(`
             <span class="k">return</span> <span class="n">prop_mesh_cells</span><span class="p">,</span> <span class="n">prop_mesh_nodes</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">map_prop2mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_props</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a given physical property to the CATHY mesh</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mesh_pv_attributes&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
@@ -3783,7 +3782,7 @@ document.write(`
     <span class="c1">#%% Plot call</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="s2">&quot;hgsfdet&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call and parse to cathy.plotter from the main CATHY class</span>
 
 <span class="sd">        Parameters</span>
@@ -3840,7 +3839,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">show_bc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BCtypName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show bc&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show bc&quot;&quot;&quot;</span>
         
         <span class="k">if</span> <span class="n">BCtypName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -3875,7 +3874,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">show_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="s2">&quot;hgsfdet&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call and parse to cathy.plotter from the main CATHY class</span>
 
 <span class="sd">        Parameters</span>
@@ -3917,7 +3916,7 @@ document.write(`
             <span class="k">if</span> <span class="s2">&quot;yprop&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
                 <span class="n">yprop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;yprop&quot;</span><span class="p">]</span>
 
-            <span class="n">soil_map</span> <span class="o">=</span> <span class="n">zone_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">soil_map_prop</span> <span class="o">=</span> <span class="n">zone_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="c1"># self.DEM</span>
             <span class="c1"># NZONES = </span>
@@ -3927,11 +3926,11 @@ document.write(`
 
             <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NZONES</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                 <span class="c1"># print(z)</span>
-                <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">soil_map</span><span class="p">[</span><span class="n">zone_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">yprop</span><span class="p">]</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span>
-                                                                <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">layer_nb</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">z</span><span class="p">))]</span>
+                <span class="c1"># z = 0</span>
+                <span class="n">soil_map_prop</span><span class="p">[</span><span class="n">zone_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">yprop</span><span class="p">]</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span>
+                                                            <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">layer_nb</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">z</span><span class="p">)))</span>
                                                             <span class="p">)</span>  <span class="c1"># ,level=0)</span>
-            <span class="n">plt_CT</span><span class="o">.</span><span class="n">show_soil</span><span class="p">(</span><span class="n">soil_map</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="n">plt_CT</span><span class="o">.</span><span class="n">show_soil</span><span class="p">(</span><span class="n">soil_map_prop</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
                              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="c1"># in 3 dimensions</span>
@@ -3962,7 +3961,7 @@ document.write(`
     <span class="c1">#%% Read outputs/inputs</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">read_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read CATHY format output file</span>
 
 
@@ -4017,7 +4016,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">read_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read CATHY format input file</span>
 
 
@@ -4139,7 +4138,7 @@ document.write(`
 
 
     <span class="k">def</span> <span class="nf">find_nearest_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_coords</span><span class="p">,</span> <span class="n">grid3d</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find nearest mesh node</span>
 
 <span class="sd">        Parameters</span>
@@ -4183,7 +4182,7 @@ document.write(`
         <span class="k">return</span> <span class="n">closest_idx</span><span class="p">,</span> <span class="n">closest</span>
 
     <span class="k">def</span> <span class="nf">rich_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Star Wars Movies&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Describe the variable state and fate during the simulation with a rich table</span>
 
 <span class="sd">        Returns</span>
@@ -4195,7 +4194,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">backup_simu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save a copy of the simulation for reuse within python</span>
 
 <span class="sd">        Returns</span>
@@ -4212,7 +4211,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">backup_results_DA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_DA</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save minimal dataframes of the simulation for result visualisation within python</span>
 
 <span class="sd">        Returns</span>

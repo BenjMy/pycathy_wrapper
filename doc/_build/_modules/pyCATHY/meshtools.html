@@ -51,7 +51,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -372,7 +371,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="CATHY_2_pg"><a class="viewcode-back" href="../../content/api/generated/pyCATHY.meshtools.CATHY_2_pg.html#ERT.petro_Archie.CATHY_2_pg">[docs]</a><span class="k">def</span> <span class="nf">CATHY_2_pg</span><span class="p">(</span><span class="n">mesh_CATHY</span><span class="p">,</span> <span class="n">ERT_meta_dict</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="s2">&quot;saturation&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interpolate CATHY mesh attribute to pygimli mesh.</span>
 <span class="sd">    Add a new [`scalar`] attribute to the pygimli mesh (create a new mesh)</span>
 
@@ -542,7 +541,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="trace_mesh"><a class="viewcode-back" href="../../content/api/generated/pyCATHY.meshtools.trace_mesh.html#ERT.petro_Archie.trace_mesh">[docs]</a><span class="k">def</span> <span class="nf">trace_mesh</span><span class="p">(</span><span class="n">meshIN</span><span class="p">,</span> <span class="n">meshOUT</span><span class="p">,</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Trace meshIN on meshOUT using nearest neigbour interpolation</span>
 
 <span class="sd">    Parameters</span>
@@ -720,7 +719,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="find_nearest_node"><a class="viewcode-back" href="../../content/api/generated/pyCATHY.meshtools.find_nearest_node.html#ERT.petro_Archie.find_nearest_node">[docs]</a><span class="k">def</span> <span class="nf">find_nearest_node</span><span class="p">(</span><span class="n">node_coord</span><span class="p">,</span> <span class="n">meshIN_nodes_coords</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find nearest mesh node between two meshes</span>
 
 <span class="sd">    Parameters</span>
@@ -764,7 +763,7 @@ document.write(`
 <div class="viewcode-block" id="add_attribute_2mesh"><a class="viewcode-back" href="../../content/api/generated/pyCATHY.meshtools.add_attribute_2mesh.html#ERT.petro_Archie.add_attribute_2mesh">[docs]</a><span class="k">def</span> <span class="nf">add_attribute_2mesh</span><span class="p">(</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ER_pred&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">saveMesh</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    add a new mesh attribute to a vtk file</span>
 
 <span class="sd">    Parameters</span>
@@ -819,7 +818,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="trace_mesh_pg"><a class="viewcode-back" href="../../content/api/generated/pyCATHY.meshtools.trace_mesh_pg.html#ERT.petro_Archie.trace_mesh_pg">[docs]</a><span class="k">def</span> <span class="nf">trace_mesh_pg</span><span class="p">(</span><span class="n">meshIN</span><span class="p">,</span> <span class="n">meshOUT</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;spline&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interpolate CATHY mesh (structured) into pygimli mesh (structured) using pygimli meshtools</span>
 <span class="sd">    # Specify interpolation method &#39;linear, &#39;spline&#39;, &#39;harmonic&#39;</span>
 

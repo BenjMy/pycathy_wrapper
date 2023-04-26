@@ -51,7 +51,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -406,7 +405,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">_TrackThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A thread to periodically update progress.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A thread to periodically update progress.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress</span><span class="p">:</span> <span class="s2">&quot;Progress&quot;</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="s2">&quot;TaskID&quot;</span><span class="p">,</span> <span class="n">update_period</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">progress</span>
@@ -462,7 +461,7 @@ document.write(`
     <span class="n">disable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">show_speed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ProgressType</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Track progress by iterating over a sequence.</span>
+    <span class="sd">&quot;&quot;&quot;Track progress by iterating over a sequence.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        sequence (Iterable[ProgressType]): A sequence (must support &quot;len&quot;) you wish to iterate over.</span>
@@ -516,7 +515,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">_Reader</span><span class="p">(</span><span class="n">RawIOBase</span><span class="p">,</span> <span class="n">BinaryIO</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A reader that tracks progress while it&#39;s being read from.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A reader that tracks progress while it&#39;s being read from.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -616,7 +615,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">_ReadContext</span><span class="p">(</span><span class="n">ContextManager</span><span class="p">[</span><span class="n">_I</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_I</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A utility class to handle a context for both a reader and a progress.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A utility class to handle a context for both a reader and a progress.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress</span><span class="p">:</span> <span class="s2">&quot;Progress&quot;</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">_I</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">progress</span>
@@ -652,7 +651,7 @@ document.write(`
     <span class="n">pulse_style</span><span class="p">:</span> <span class="n">StyleType</span> <span class="o">=</span> <span class="s2">&quot;bar.pulse&quot;</span><span class="p">,</span>
     <span class="n">disable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">BinaryIO</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read bytes from a file while tracking progress.</span>
+    <span class="sd">&quot;&quot;&quot;Read bytes from a file while tracking progress.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file (Union[str, PathLike[str], BinaryIO]): The path to the file to read, or a file-like object in binary mode.</span>
@@ -772,7 +771,7 @@ document.write(`
     <span class="n">pulse_style</span><span class="p">:</span> <span class="n">StyleType</span> <span class="o">=</span> <span class="s2">&quot;bar.pulse&quot;</span><span class="p">,</span>
     <span class="n">disable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextManager</span><span class="p">[</span><span class="n">BinaryIO</span><span class="p">],</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">TextIO</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read bytes from a file while tracking progress.</span>
+    <span class="sd">&quot;&quot;&quot;Read bytes from a file while tracking progress.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path (Union[str, PathLike[str], BinaryIO]): The path to the file to read, or a file-like object in binary mode.</span>
@@ -838,7 +837,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">ProgressColumn</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for a widget to use in progress display.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for a widget to use in progress display.&quot;&quot;&quot;</span>
 
     <span class="n">max_refresh</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -848,11 +847,11 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">get_table_column</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Column</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a table column, used to build tasks table.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get a table column, used to build tasks table.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_column</span> <span class="ow">or</span> <span class="n">Column</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Called by the Progress object to return a renderable for the given task.</span>
+        <span class="sd">&quot;&quot;&quot;Called by the Progress object to return a renderable for the given task.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task (Task): An object containing information regarding the task.</span>
@@ -876,11 +875,11 @@ document.write(`
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Should return a renderable object.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Should return a renderable object.&quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">RenderableColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A column to insert an arbitrary column.</span>
+    <span class="sd">&quot;&quot;&quot;A column to insert an arbitrary column.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        renderable (RenderableType, optional): Any renderable. Defaults to empty string.</span>
@@ -897,7 +896,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">SpinnerColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A column with a &#39;spinner&#39; animation.</span>
+    <span class="sd">&quot;&quot;&quot;A column with a &#39;spinner&#39; animation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        spinner_name (str, optional): Name of spinner animation. Defaults to &quot;dots&quot;.</span>
@@ -928,7 +927,7 @@ document.write(`
         <span class="n">spinner_style</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StyleType</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;progress.spinner&quot;</span><span class="p">,</span>
         <span class="n">speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a new spinner.</span>
+        <span class="sd">&quot;&quot;&quot;Set a new spinner.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            spinner_name (str): Spinner name, see python -m rich.spinner.</span>
@@ -947,7 +946,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">TextColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A column containing text.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A column containing text.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -977,7 +976,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">BarColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders a visual progress bar.</span>
+    <span class="sd">&quot;&quot;&quot;Renders a visual progress bar.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        bar_width (Optional[int], optional): Width of bar or None for full width. Defaults to 40.</span>
@@ -1004,7 +1003,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">table_column</span><span class="o">=</span><span class="n">table_column</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProgressBar</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets a progress bar widget for a task.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Gets a progress bar widget for a task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ProgressBar</span><span class="p">(</span>
             <span class="n">total</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">total</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">total</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">completed</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">completed</span><span class="p">),</span>
@@ -1019,10 +1018,10 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">TimeElapsedColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders time elapsed.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Renders time elapsed.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show time elapsed.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show time elapsed.&quot;&quot;&quot;</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">finished_time</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">finished</span> <span class="k">else</span> <span class="n">task</span><span class="o">.</span><span class="n">elapsed</span>
         <span class="k">if</span> <span class="n">elapsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="s2">&quot;-:--:--&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;progress.elapsed&quot;</span><span class="p">)</span>
@@ -1031,7 +1030,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">TaskProgressColumn</span><span class="p">(</span><span class="n">TextColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show task progress as a percentage.</span>
+    <span class="sd">&quot;&quot;&quot;Show task progress as a percentage.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        text_format (str, optional): Format for percentage display. Defaults to &quot;[progress.percentage]{task.percentage:&gt;3.0f}%&quot;.</span>
@@ -1069,7 +1068,7 @@ document.write(`
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">render_speed</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">speed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the speed in iterations per second.</span>
+        <span class="sd">&quot;&quot;&quot;Render the speed in iterations per second.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task (Task): A Task object.</span>
@@ -1104,7 +1103,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">TimeRemainingColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders estimated time remaining.</span>
+    <span class="sd">&quot;&quot;&quot;Renders estimated time remaining.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        compact (bool, optional): Render MM:SS when time remaining is less than an hour. Defaults to False.</span>
@@ -1125,7 +1124,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">table_column</span><span class="o">=</span><span class="n">table_column</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show time remaining.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show time remaining.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">elapsed_when_finished</span> <span class="ow">and</span> <span class="n">task</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
             <span class="n">task_time</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">finished_time</span>
             <span class="n">style</span> <span class="o">=</span> <span class="s2">&quot;progress.elapsed&quot;</span>
@@ -1152,25 +1151,25 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">FileSizeColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders completed filesize.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Renders completed filesize.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show data completed.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show data completed.&quot;&quot;&quot;</span>
         <span class="n">data_size</span> <span class="o">=</span> <span class="n">filesize</span><span class="o">.</span><span class="n">decimal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">completed</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="n">data_size</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;progress.filesize&quot;</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">TotalFileSizeColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders total filesize.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Renders total filesize.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show data completed.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show data completed.&quot;&quot;&quot;</span>
         <span class="n">data_size</span> <span class="o">=</span> <span class="n">filesize</span><span class="o">.</span><span class="n">decimal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">total</span><span class="p">))</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">total</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="n">data_size</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;progress.filesize.total&quot;</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">MofNCompleteColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders completed count/total, e.g. &#39;  10/1000&#39;.</span>
+    <span class="sd">&quot;&quot;&quot;Renders completed count/total, e.g. &#39;  10/1000&#39;.</span>
 
 <span class="sd">    Best for bounded tasks with int quantities.</span>
 
@@ -1186,7 +1185,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">table_column</span><span class="o">=</span><span class="n">table_column</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show completed/total.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show completed/total.&quot;&quot;&quot;</span>
         <span class="n">completed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">completed</span><span class="p">)</span>
         <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">total</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">total</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;?&quot;</span>
         <span class="n">total_width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">total</span><span class="p">))</span>
@@ -1197,7 +1196,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">DownloadColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders file size downloaded and total, e.g. &#39;0.5/2.3 GB&#39;.</span>
+    <span class="sd">&quot;&quot;&quot;Renders file size downloaded and total, e.g. &#39;0.5/2.3 GB&#39;.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        binary_units (bool, optional): Use binary units, KiB, MiB etc. Defaults to False.</span>
@@ -1210,7 +1209,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">table_column</span><span class="o">=</span><span class="n">table_column</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate common unit for completed and total.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Calculate common unit for completed and total.&quot;&quot;&quot;</span>
         <span class="n">completed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">completed</span><span class="p">)</span>
 
         <span class="n">unit_and_suffix_calculation_base</span> <span class="o">=</span> <span class="p">(</span>
@@ -1246,10 +1245,10 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">TransferSpeedColumn</span><span class="p">(</span><span class="n">ProgressColumn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders human readable transfer speed.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Renders human readable transfer speed.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;Task&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show data transfer speed.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show data transfer speed.&quot;&quot;&quot;</span>
         <span class="n">speed</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">finished_speed</span> <span class="ow">or</span> <span class="n">task</span><span class="o">.</span><span class="n">speed</span>
         <span class="k">if</span> <span class="n">speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Text</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;progress.data.speed&quot;</span><span class="p">)</span>
@@ -1258,81 +1257,81 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">ProgressSample</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample of progress for a given time.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Sample of progress for a given time.&quot;&quot;&quot;</span>
 
     <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Timestamp of sample.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Timestamp of sample.&quot;&quot;&quot;</span>
     <span class="n">completed</span><span class="p">:</span> <span class="nb">float</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of steps completed.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Number of steps completed.&quot;&quot;&quot;</span>
 
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Task</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Information regarding a progress task.</span>
+    <span class="sd">&quot;&quot;&quot;Information regarding a progress task.</span>
 
 <span class="sd">    This object should be considered read-only outside of the :class:`~Progress` class.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="n">TaskID</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task ID associated with this task (used in Progress methods).&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Task ID associated with this task (used in Progress methods).&quot;&quot;&quot;</span>
 
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Description of the task.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;str: Description of the task.&quot;&quot;&quot;</span>
 
     <span class="n">total</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional[float]: Total number of steps in this task.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Optional[float]: Total number of steps in this task.&quot;&quot;&quot;</span>
 
     <span class="n">completed</span><span class="p">:</span> <span class="nb">float</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;float: Number of steps completed&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;float: Number of steps completed&quot;&quot;&quot;</span>
 
     <span class="n">_get_time</span><span class="p">:</span> <span class="n">GetTimeCallable</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable to get the current time.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Callable to get the current time.&quot;&quot;&quot;</span>
 
     <span class="n">finished_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;float: Time task was finished.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;float: Time task was finished.&quot;&quot;&quot;</span>
 
     <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;bool: Indicates if this task is visible in the progress display.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;bool: Indicates if this task is visible in the progress display.&quot;&quot;&quot;</span>
 
     <span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;dict: Arbitrary fields passed in via Progress.update.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;dict: Arbitrary fields passed in via Progress.update.&quot;&quot;&quot;</span>
 
     <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional[float]: Time this task was started, or None if not started.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Optional[float]: Time this task was started, or None if not started.&quot;&quot;&quot;</span>
 
     <span class="n">stop_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional[float]: Time this task was stopped, or None if not stopped.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Optional[float]: Time this task was stopped, or None if not stopped.&quot;&quot;&quot;</span>
 
     <span class="n">finished_speed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional[float]: The last speed for a finished task.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Optional[float]: The last speed for a finished task.&quot;&quot;&quot;</span>
 
     <span class="n">_progress</span><span class="p">:</span> <span class="n">Deque</span><span class="p">[</span><span class="n">ProgressSample</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="mi">1000</span><span class="p">),</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
 
     <span class="n">_lock</span><span class="p">:</span> <span class="n">RLock</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">RLock</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thread lock.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Thread lock.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;float: Get the current time, in seconds.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;float: Get the current time, in seconds.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_time</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;bool: Check if the task as started.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;bool: Check if the task as started.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">remaining</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optional[float]: Get the number of steps remaining, if a non-None total was set.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Optional[float]: Get the number of steps remaining, if a non-None total was set.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">elapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optional[float]: Time elapsed since task was started, or ``None`` if the task hasn&#39;t started.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Optional[float]: Time elapsed since task was started, or ``None`` if the task hasn&#39;t started.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1341,12 +1340,12 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the task has finished.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if the task has finished.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;float: Get progress of task as a percentage. If a None total was set, returns 0&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;float: Get progress of task as a percentage. If a None total was set, returns 0&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
         <span class="n">completed</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">completed</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
@@ -1355,7 +1354,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optional[float]: Get the estimated speed in steps per second.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Optional[float]: Get the estimated speed in steps per second.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
@@ -1373,7 +1372,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">time_remaining</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optional[float]: Get estimated time to completion, or ``None`` if no data.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Optional[float]: Get estimated time to completion, or ``None`` if no data.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
         <span class="n">speed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed</span>
@@ -1386,14 +1385,14 @@ document.write(`
         <span class="k">return</span> <span class="n">estimate</span>
 
     <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset progress.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset progress.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finished_time</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finished_speed</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <span class="k">class</span> <span class="nc">Progress</span><span class="p">(</span><span class="n">JupyterMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders an auto-updating progress bar(s).</span>
+    <span class="sd">&quot;&quot;&quot;Renders an auto-updating progress bar(s).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        console (Console, optional): Optional Console instance. Default will an internal Console instance writing to stdout.</span>
@@ -1446,7 +1445,7 @@ document.write(`
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_default_columns</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ProgressColumn</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the default columns used for a new Progress instance:</span>
+        <span class="sd">&quot;&quot;&quot;Get the default columns used for a new Progress instance:</span>
 <span class="sd">           - a text column for the description (TextColumn)</span>
 <span class="sd">           - the bar itself (BarColumn)</span>
 <span class="sd">           - a text column showing completion percentage (TextColumn)</span>
@@ -1481,31 +1480,31 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Task</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of Task instances.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of Task instances.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">task_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TaskID</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of task IDs.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;A list of task IDs.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">finished</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all tasks have been completed.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if all tasks have been completed.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">finished</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the progress display.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Start the progress display.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">live</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the progress display.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Stop the progress display.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">live</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">is_interactive</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
@@ -1530,7 +1529,7 @@ document.write(`
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Working...&quot;</span><span class="p">,</span>
         <span class="n">update_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ProgressType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Track progress by iterating over a sequence.</span>
+        <span class="sd">&quot;&quot;&quot;Track progress by iterating over a sequence.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            sequence (Sequence[ProgressType]): A sequence of values you want to iterate over and track progress.</span>
@@ -1571,7 +1570,7 @@ document.write(`
         <span class="n">task_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Reading...&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BinaryIO</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Track progress file reading from a binary file.</span>
+        <span class="sd">&quot;&quot;&quot;Track progress file reading from a binary file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file (BinaryIO): A file-like object opened in binary mode.</span>
@@ -1650,7 +1649,7 @@ document.write(`
         <span class="n">task_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Reading...&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">BinaryIO</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Track progress while reading from a binary file.</span>
+        <span class="sd">&quot;&quot;&quot;Track progress while reading from a binary file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path (Union[str, PathLike[str]]): The path to the file to read.</span>
@@ -1715,7 +1714,7 @@ document.write(`
         <span class="k">return</span> <span class="n">reader</span>
 
     <span class="k">def</span> <span class="nf">start_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start a task.</span>
+        <span class="sd">&quot;&quot;&quot;Start a task.</span>
 
 <span class="sd">        Starts a task (used when calculating elapsed time). You may need to call this manually,</span>
 <span class="sd">        if you called ``add_task`` with ``start=False``.</span>
@@ -1729,7 +1728,7 @@ document.write(`
                 <span class="n">task</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">stop_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop a task.</span>
+        <span class="sd">&quot;&quot;&quot;Stop a task.</span>
 
 <span class="sd">        This will freeze the elapsed time on the task.</span>
 
@@ -1755,7 +1754,7 @@ document.write(`
         <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">fields</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update information associated with a task.</span>
+        <span class="sd">&quot;&quot;&quot;Update information associated with a task.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task_id (TaskID): Task id (returned by add_task).</span>
@@ -1815,7 +1814,7 @@ document.write(`
         <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">fields</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset a task so completed is 0 and the clock is reset.</span>
+        <span class="sd">&quot;&quot;&quot;Reset a task so completed is 0 and the clock is reset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task_id (TaskID): ID of task.</span>
@@ -1844,7 +1843,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">advance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskID</span><span class="p">,</span> <span class="n">advance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Advance task by a number of steps.</span>
+        <span class="sd">&quot;&quot;&quot;Advance task by a number of steps.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task_id (TaskID): ID of task.</span>
@@ -1874,22 +1873,22 @@ document.write(`
                 <span class="n">task</span><span class="o">.</span><span class="n">finished_speed</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">speed</span>
 
     <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh (render) the progress information.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Refresh (render) the progress information.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">live</span><span class="o">.</span><span class="n">is_started</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">live</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a renderable for the progress display.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get a renderable for the progress display.&quot;&quot;&quot;</span>
         <span class="n">renderable</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">get_renderables</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">renderable</span>
 
     <span class="k">def</span> <span class="nf">get_renderables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a number of renderables for the progress display.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get a number of renderables for the progress display.&quot;&quot;&quot;</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_tasks_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">table</span>
 
     <span class="k">def</span> <span class="nf">make_tasks_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Task</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a table to render the Progress display.</span>
+        <span class="sd">&quot;&quot;&quot;Get a table to render the Progress display.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tasks (Iterable[Task]): An iterable of Task instances, one per row of the table.</span>
@@ -1922,7 +1921,7 @@ document.write(`
         <span class="k">return</span> <span class="n">table</span>
 
     <span class="k">def</span> <span class="nf">__rich__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Makes the Progress class itself renderable.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Makes the Progress class itself renderable.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_renderable</span><span class="p">()</span>
 
@@ -1935,7 +1934,7 @@ document.write(`
         <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">fields</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TaskID</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new &#39;task&#39; to the Progress display.</span>
+        <span class="sd">&quot;&quot;&quot;Add a new &#39;task&#39; to the Progress display.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            description (str): A description of the task.</span>
@@ -1970,7 +1969,7 @@ document.write(`
         <span class="k">return</span> <span class="n">new_task_index</span>
 
     <span class="k">def</span> <span class="nf">remove_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="n">TaskID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a task if it exists.</span>
+        <span class="sd">&quot;&quot;&quot;Delete a task if it exists.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task_id (TaskID): A task ID.</span>
@@ -1991,7 +1990,7 @@ document.write(`
     <span class="kn">from</span> <span class="nn">.table</span> <span class="kn">import</span> <span class="n">Table</span>
 
     <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;def loop_last(values: Iterable[T]) -&gt; Iterable[Tuple[bool, T]]:</span>
+        <span class="sd">&#39;&#39;&#39;def loop_last(values: Iterable[T]) -&gt; Iterable[Tuple[bool, T]]:</span>
 <span class="sd">    &quot;&quot;&quot;Iterate and generate a tuple with a flag for last value.&quot;&quot;&quot;</span>
 <span class="sd">    iter_values = iter(values)</span>
 <span class="sd">    try:</span>

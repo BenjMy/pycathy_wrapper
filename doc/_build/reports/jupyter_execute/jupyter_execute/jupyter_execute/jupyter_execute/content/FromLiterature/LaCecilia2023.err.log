@@ -17,79 +17,48 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import os
-import matplotlib.pyplot as plt
-from pyCATHY import cathy_tools
-from pyCATHY.importers import cathy_inputs as in_CT
-from pyCATHY.importers import cathy_outputs as out_CT
-from pyCATHY.plotters import cathy_plots as cplt
+simu.update_veg_map()
+
+df_soil, _ = simu.read_inputs('soil')
+#simu.update_soil()
+#simu.soil
+
+df_soil
+
+df_soil['PERMX']
+
+
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mAttributeError[0m                            Traceback (most recent call last)
-Cell [0;32mIn[1], line 3[0m
-[1;32m      1[0m [38;5;28;01mimport[39;00m [38;5;21;01mos[39;00m
-[1;32m      2[0m [38;5;28;01mimport[39;00m [38;5;21;01mmatplotlib[39;00m[38;5;21;01m.[39;00m[38;5;21;01mpyplot[39;00m [38;5;28;01mas[39;00m [38;5;21;01mplt[39;00m
-[0;32m----> 3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m [38;5;28;01mimport[39;00m cathy_tools
-[1;32m      4[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mimporters[39;00m [38;5;28;01mimport[39;00m cathy_inputs [38;5;28;01mas[39;00m in_CT
-[1;32m      5[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mimporters[39;00m [38;5;28;01mimport[39;00m cathy_outputs [38;5;28;01mas[39;00m out_CT
+[0;31mValueError[0m                                Traceback (most recent call last)
+Cell [0;32mIn[5], line 3[0m
+[1;32m      1[0m simu[38;5;241m.[39mupdate_veg_map()
+[0;32m----> 3[0m df_soil, _ [38;5;241m=[39m [43msimu[49m[38;5;241;43m.[39;49m[43mread_inputs[49m[43m([49m[38;5;124;43m'[39;49m[38;5;124;43msoil[39;49m[38;5;124;43m'[39;49m[43m)[49m
+[1;32m      4[0m [38;5;66;03m#simu.update_soil()[39;00m
+[1;32m      5[0m [38;5;66;03m#simu.soil[39;00m
+[1;32m      7[0m df_soil
 
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pyCATHY/__init__.py:2[0m
-[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mplotters[39;00m [38;5;28;01mimport[39;00m cathy_plots
-[0;32m----> 2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mDA[39;00m [38;5;28;01mimport[39;00m cathy_DA
+File [0;32m~/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py:3715[0m, in [0;36mCATHY.read_inputs[0;34m(self, filename, **kwargs)[0m
+[1;32m   3712[0m [38;5;28;01melse[39;00m:
+[1;32m   3713[0m     MAXVEG [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mMAXVEG
+[0;32m-> 3715[0m df [38;5;241m=[39m [43min_CT[49m[38;5;241;43m.[39;49m[43mread_soil[49m[43m([49m
+[1;32m   3716[0m [43m    [49m[43mos[49m[38;5;241;43m.[39;49m[43mpath[49m[38;5;241;43m.[39;49m[43mjoin[49m[43m([49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mworkdir[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mproject_name[49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43minput[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[43mfilename[49m[43m)[49m[43m,[49m
+[1;32m   3717[0m [43m    [49m[43mdem_parm[49m[43m,[49m
+[1;32m   3718[0m [43m    [49m[43mMAXVEG[49m[38;5;241;43m=[39;49m[43mMAXVEG[49m[43m,[49m
+[1;32m   3719[0m [43m[49m[43m)[49m
+[1;32m   3720[0m [38;5;66;03m# df[0][39;00m
+[1;32m   3721[0m [38;5;28;01mreturn[39;00m df
 
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pyCATHY/DA/cathy_DA.py:10[0m
-[1;32m      8[0m [38;5;28;01mimport[39;00m [38;5;21;01mshutil[39;00m
-[1;32m      9[0m [38;5;66;03m# import matplotlib.pyplot as plt [39;00m
-[0;32m---> 10[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mcathy_tools[39;00m [38;5;28;01mimport[39;00m CATHY
-[1;32m     14[0m [38;5;28;01mclass[39;00m [38;5;21;01mDA[39;00m(): [38;5;66;03m#         NO TESTED YET THE INHERITANCE with CATHY MAIN class[39;00m
-[1;32m     15[0m     [38;5;28;01mdef[39;00m [38;5;21m__init__[39m([38;5;28mself[39m, [38;5;241m*[39margs, [38;5;241m*[39m[38;5;241m*[39mkwargs):
+File [0;32m~/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_inputs.py:387[0m, in [0;36mread_soil[0;34m(soilfile, dem_parm, MAXVEG)[0m
+[1;32m    384[0m         name_zone[38;5;241m.[39mappend([38;5;28mstr[39m(dz))
+[1;32m    386[0m [38;5;28;01mif[39;00m [38;5;28mlen[39m(soil) [38;5;241m!=[39m [38;5;28mlen[39m(name_str):
+[0;32m--> 387[0m     [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
+[1;32m    388[0m         [38;5;124m"[39m[38;5;124mInconsistent number of zones/layers with respect to the number of soil lines[39m[38;5;124m"[39m
+[1;32m    389[0m     )
+[1;32m    390[0m df_soil [38;5;241m=[39m pd[38;5;241m.[39mDataFrame(soil, [name_str, name_zone], soil_header)
+[1;32m    391[0m df_soil[38;5;241m.[39mindex[38;5;241m.[39mset_names([38;5;124m"[39m[38;5;124mstr[39m[38;5;124m"[39m, level[38;5;241m=[39m[38;5;241m0[39m, inplace[38;5;241m=[39m[38;5;28;01mTrue[39;00m)
 
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pyCATHY/cathy_tools.py:44[0m
-[1;32m     41[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mimporters[39;00m [38;5;28;01mimport[39;00m cathy_inputs [38;5;28;01mas[39;00m in_CT
-[1;32m     42[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mimporters[39;00m [38;5;28;01mimport[39;00m sensors_measures [38;5;28;01mas[39;00m in_meas
-[0;32m---> 44[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mERT[39;00m [38;5;28;01mimport[39;00m petro_Archie [38;5;28;01mas[39;00m Archie
-[1;32m     47[0m [38;5;28;01mfrom[39;00m [38;5;21;01mfunctools[39;00m [38;5;28;01mimport[39;00m partial
-[1;32m     48[0m [38;5;28;01mimport[39;00m [38;5;21;01mmultiprocessing[39;00m
-
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pyCATHY/ERT/petro_Archie.py:11[0m
-[1;32m      9[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m [38;5;28;01mimport[39;00m meshtools [38;5;28;01mas[39;00m mt 
-[1;32m     10[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mrhizo_tools[39;00m [38;5;28;01mimport[39;00m CATHY_2_Resipy, CATHY_2_pg
-[0;32m---> 11[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpyCATHY[39;00m[38;5;21;01m.[39;00m[38;5;21;01mERT[39;00m [38;5;28;01mimport[39;00m simulate_ERT [38;5;28;01mas[39;00m simuERT
-[1;32m     12[0m [38;5;28;01mimport[39;00m [38;5;21;01mpandas[39;00m [38;5;28;01mas[39;00m [38;5;21;01mpd[39;00m
-[1;32m     14[0m [38;5;28;01mdef[39;00m [38;5;21mSW_2_ERa[39m(df_sw,
-[1;32m     15[0m              workdir,
-[1;32m     16[0m              project_name,
-[0;32m   (...)[0m
-[1;32m     19[0m              savefig[38;5;241m=[39m[38;5;28;01mTrue[39;00m,
-[1;32m     20[0m              [38;5;241m*[39m[38;5;241m*[39mkwargs):
-
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pyCATHY/ERT/simulate_ERT.py:12[0m
-[1;32m      9[0m [38;5;28;01mimport[39;00m [38;5;21;01mnumpy[39;00m [38;5;28;01mas[39;00m [38;5;21;01mnp[39;00m
-[1;32m     10[0m [38;5;28;01mimport[39;00m [38;5;21;01mos[39;00m 
-[0;32m---> 12[0m [38;5;28;01mimport[39;00m [38;5;21;01mpygimli[39;00m [38;5;28;01mas[39;00m [38;5;21;01mpg[39;00m
-[1;32m     13[0m [38;5;28;01mfrom[39;00m [38;5;21;01mpygimli[39;00m[38;5;21;01m.[39;00m[38;5;21;01mphysics[39;00m [38;5;28;01mimport[39;00m ert
-[1;32m     14[0m [38;5;28;01mimport[39;00m [38;5;21;01mpygimli[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmeshtools[39;00m [38;5;28;01mas[39;00m [38;5;21;01mmt[39;00m
-
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pygimli/__init__.py:8[0m
-[1;32m      5[0m [38;5;28;01mimport[39;00m [38;5;21;01msys[39;00m
-[1;32m      6[0m [38;5;28;01mimport[39;00m [38;5;21;01mlocale[39;00m
-[0;32m----> 8[0m [38;5;28;01mfrom[39;00m [38;5;21;01m.[39;00m[38;5;21;01mcore[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdecorators[39;00m [38;5;28;01mimport[39;00m (renamed, singleton)
-[1;32m     10[0m [38;5;66;03m### Import everything that should be accessible through main namespace.[39;00m
-[1;32m     11[0m [38;5;28;01mfrom[39;00m [38;5;21;01m.[39;00m[38;5;21;01mcore[39;00m [38;5;28;01mimport[39;00m (BVector, CVector, DataContainer, DataContainerERT,
-[1;32m     12[0m                    IVector, Line, Mesh, Plane, Pos,
-[1;32m     13[0m                    RVector3, Vector, PosList, [38;5;28mabs[39m, cat, center, exp, find,
-[1;32m     14[0m                    interpolate, log, log10, logDropTol, [38;5;28mmax[39m,
-[1;32m     15[0m                    mean, median, [38;5;28mmin[39m, search, setDebug, setThreadCount, sort,
-[1;32m     16[0m                    Stopwatch, [38;5;28msum[39m, trans, unique, versionStr, x, y, z, zero)
-
-File [0;32m~/miniconda3/lib/python3.9/site-packages/pygimli/core/__init__.py:65[0m
-[1;32m     62[0m     s [38;5;241m+[39m[38;5;241m=[39m [38;5;124m"[39m[38;5;124mBoundingBox [[39m[38;5;132;01m{0}[39;00m[38;5;124m, [39m[38;5;132;01m{1}[39;00m[38;5;124m][39m[38;5;124m"[39m[38;5;241m.[39mformat([38;5;28mself[39m[38;5;241m.[39mmin(), [38;5;28mself[39m[38;5;241m.[39mmax())
-[1;32m     63[0m     [38;5;28;01mreturn[39;00m s
-[0;32m---> 65[0m [43mpgcore[49m[38;5;241;43m.[39;49m[43mRVector[49m[38;5;241m.[39m[38;5;21m__repr__[39m [38;5;241m=[39m__RVector_str
-[1;32m     66[0m pgcore[38;5;241m.[39mCVector[38;5;241m.[39m[38;5;21m__repr__[39m [38;5;241m=[39m__RVector_str
-[1;32m     67[0m pgcore[38;5;241m.[39mBVector[38;5;241m.[39m[38;5;21m__repr__[39m [38;5;241m=[39m__RVector_str
-
-[0;31mAttributeError[0m: module 'pgcore' has no attribute 'RVector'
-AttributeError: module 'pgcore' has no attribute 'RVector'
+[0;31mValueError[0m: Inconsistent number of zones/layers with respect to the number of soil lines
+ValueError: Inconsistent number of zones/layers with respect to the number of soil lines
 

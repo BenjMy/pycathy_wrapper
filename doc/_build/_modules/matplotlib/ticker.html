@@ -51,7 +51,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -543,7 +542,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">Formatter</span><span class="p">(</span><span class="n">TickHelper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a string based on a tick value and location.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># some classes want to see all the locs to help format</span>
@@ -551,26 +550,26 @@ document.write(`
     <span class="n">locs</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the format for tick value *x* at position pos.</span>
 <span class="sd">        ``pos=None`` indicates an unspecified location.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Derived must override&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">format_ticks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the tick labels for all the ticks at once.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the tick labels for all the ticks at once.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_locs</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span>
 
     <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the full string representation of the value with the</span>
 <span class="sd">        position unspecified.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a short string version of the tick value.</span>
 
 <span class="sd">        Defaults to the position-independent long value.</span>
@@ -581,7 +580,7 @@ document.write(`
         <span class="k">return</span> <span class="s1">&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">set_locs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the locations of the ticks.</span>
 
 <span class="sd">        This method is called before computing the tick labels because some</span>
@@ -591,7 +590,7 @@ document.write(`
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">fix_minus</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Some classes may want to replace a hyphen for minus with the proper</span>
 <span class="sd">        Unicode symbol (U+2212) for typographical correctness.  This is a</span>
 <span class="sd">        helper method to perform such a replacement when it is enabled via</span>
@@ -602,12 +601,12 @@ document.write(`
                 <span class="k">else</span> <span class="n">s</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_set_locator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subclasses may want to override this to set a locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Subclasses may want to override this to set a locator.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
 
 <span class="k">class</span> <span class="nc">NullFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Always return the empty string.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Always return the empty string.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># docstring inherited</span>
@@ -615,7 +614,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">FixedFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return fixed strings for tick labels based only on position, not value.</span>
 
 <span class="sd">    .. note::</span>
@@ -624,12 +623,12 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the sequence *seq* of strings that will be used for labels.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the sequence *seq* of strings that will be used for labels.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">offset_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the label that matches the position, regardless of the value.</span>
 
 <span class="sd">        For positions ``pos &lt; len(seq)``, return ``seq[i]`` regardless of</span>
@@ -649,7 +648,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">FuncFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use a user-defined function for formatting.</span>
 
 <span class="sd">    The function should take in two inputs (a tick value ``x`` and a</span>
@@ -662,7 +661,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">offset_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of the user defined function.</span>
 
 <span class="sd">        *x* and *pos* are passed through as-is.</span>
@@ -677,7 +676,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="FormatStrFormatter"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.FormatStrFormatter.html#plotters.cathy_plots.FormatStrFormatter">[docs]</a><span class="k">class</span> <span class="nc">FormatStrFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use an old-style (&#39;%&#39; operator) format string to format the tick.</span>
 
 <span class="sd">    The format string should have a single variable format (%) in it.</span>
@@ -691,7 +690,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the formatted label string.</span>
 
 <span class="sd">        Only the value *x* is formatted. The position is ignored.</span>
@@ -700,7 +699,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">StrMethodFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use a new-style format string (as used by `str.format`) to format the tick.</span>
 
 <span class="sd">    The field used for the tick value must be labeled *x* and the field used</span>
@@ -710,7 +709,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the formatted label string.</span>
 
 <span class="sd">        *x* and *pos* are passed to `str.format` as keyword arguments</span>
@@ -720,7 +719,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">ScalarFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format tick values as a number.</span>
 
 <span class="sd">    Parameters</span>
@@ -784,7 +783,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">set_useLocale</span><span class="p">(</span><span class="n">useLocale</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_useOffset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return whether automatic mode for offset notation is active.</span>
 
 <span class="sd">        This returns True if ``set_useOffset(True)``; it returns False if an</span>
@@ -797,7 +796,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useOffset</span>
 
     <span class="k">def</span> <span class="nf">set_useOffset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set whether to use offset notation.</span>
 
 <span class="sd">        When formatting a set numbers whose value is large compared to their</span>
@@ -833,7 +832,7 @@ document.write(`
     <span class="n">useOffset</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">get_useOffset</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">set_useOffset</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_useLocale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return whether locale settings are used for formatting.</span>
 
 <span class="sd">        See Also</span>
@@ -843,7 +842,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useLocale</span>
 
     <span class="k">def</span> <span class="nf">set_useLocale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set whether to use locale settings for decimal sign and positive sign.</span>
 
 <span class="sd">        Parameters</span>
@@ -859,14 +858,14 @@ document.write(`
     <span class="n">useLocale</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">get_useLocale</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">set_useLocale</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_format_maybe_minus_and_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Format *arg* with *fmt*, applying Unicode minus and locale if desired.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_minus</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">format_string</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="p">(</span><span class="n">arg</span><span class="p">,),</span> <span class="kc">True</span><span class="p">)</span>
                               <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useLocale</span> <span class="k">else</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">arg</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_useMathText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return whether to use fancy math formatting.</span>
 
 <span class="sd">        See Also</span>
@@ -876,7 +875,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useMathText</span>
 
     <span class="k">def</span> <span class="nf">set_useMathText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set whether to use fancy math formatting.</span>
 
 <span class="sd">        If active, scientific notation is formatted as :math:`1.2 \times 10^3`.</span>
@@ -911,7 +910,7 @@ document.write(`
     <span class="n">useMathText</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">get_useMathText</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">set_useMathText</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the format for tick value *x* at position *pos*.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -923,7 +922,7 @@ document.write(`
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_maybe_minus_and_locale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">xp</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_scientific</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Turn scientific notation on or off.</span>
 
 <span class="sd">        See Also</span>
@@ -933,7 +932,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_scientific</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_powerlimits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lims</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set size thresholds for scientific notation.</span>
 
 <span class="sd">        Parameters</span>
@@ -1011,7 +1010,7 @@ document.write(`
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">significand</span><span class="si">}</span><span class="s2">e</span><span class="si">{</span><span class="n">exponent</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="nf">get_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return scientific notation, plus offset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1155,7 +1154,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for formatting ticks on a log or symlog scale.</span>
 
 <span class="sd">    It may be instantiated directly, or subclassed.</span>
@@ -1229,7 +1228,7 @@ document.write(`
 
     <span class="nd">@_api</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;3.6&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;set_base()&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the *base* for labeling.</span>
 
 <span class="sd">        .. warning::</span>
@@ -1238,7 +1237,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">set_base</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the *base* for labeling.</span>
 
 <span class="sd">        .. warning::</span>
@@ -1248,7 +1247,7 @@ document.write(`
 
     <span class="nd">@_api</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;3.6&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;set_label_minor()&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">label_minor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labelOnlyBase</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Switch minor tick labeling on or off.</span>
 
 <span class="sd">        Parameters</span>
@@ -1259,7 +1258,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">set_label_minor</span><span class="p">(</span><span class="n">labelOnlyBase</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_label_minor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labelOnlyBase</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Switch minor tick labeling on or off.</span>
 
 <span class="sd">        Parameters</span>
@@ -1270,7 +1269,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">labelOnlyBase</span> <span class="o">=</span> <span class="n">labelOnlyBase</span>
 
     <span class="k">def</span> <span class="nf">set_locs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Use axis view limits to control which ticks are labeled.</span>
 
 <span class="sd">        The *locs* parameter is ignored in the present algorithm.</span>
@@ -1392,7 +1391,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogFormatterExponent</span><span class="p">(</span><span class="n">LogFormatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format values for log axis using ``exponent = log_base(value)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_num_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
@@ -1408,12 +1407,12 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogFormatterMathtext</span><span class="p">(</span><span class="n">LogFormatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format values for log axis using ``exponent = log_base(value)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_non_decade_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sign_string</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">usetex</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string for non-decade locations.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return string for non-decade locations.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;$\mathdefault{</span><span class="si">%s%s</span><span class="s1">^{</span><span class="si">%.2f</span><span class="s1">}}$&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sign_string</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">fx</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1456,12 +1455,12 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogFormatterSciNotation</span><span class="p">(</span><span class="n">LogFormatterMathtext</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format values following scientific notation in a logarithmic axis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_non_decade_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sign_string</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">usetex</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string for non-decade locations.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return string for non-decade locations.&quot;&quot;&quot;</span>
         <span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
         <span class="n">exponent</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">fx</span><span class="p">)</span>
         <span class="n">coeff</span> <span class="o">=</span> <span class="n">b</span> <span class="o">**</span> <span class="p">(</span><span class="n">fx</span> <span class="o">-</span> <span class="n">exponent</span><span class="p">)</span>
@@ -1472,7 +1471,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogitFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Probability formatter (using Math text).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1485,7 +1484,7 @@ document.write(`
         <span class="n">minor_threshold</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
         <span class="n">minor_number</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        use_overline : bool, default: False</span>
@@ -1517,7 +1516,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_minor_number</span> <span class="o">=</span> <span class="n">minor_number</span>
 
     <span class="k">def</span> <span class="nf">use_overline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_overline</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Switch display mode with overline for labelling p&gt;1/2.</span>
 
 <span class="sd">        Parameters</span>
@@ -1529,7 +1528,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_overline</span> <span class="o">=</span> <span class="n">use_overline</span>
 
     <span class="k">def</span> <span class="nf">set_one_half</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">one_half</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the way one half is displayed.</span>
 
 <span class="sd">        one_half : str, default: r&quot;\frac{1}{2}&quot;</span>
@@ -1538,7 +1537,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_one_half</span> <span class="o">=</span> <span class="n">one_half</span>
 
     <span class="k">def</span> <span class="nf">set_minor_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minor_threshold</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the threshold for labelling minors ticks.</span>
 
 <span class="sd">        Parameters</span>
@@ -1550,7 +1549,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_minor_threshold</span> <span class="o">=</span> <span class="n">minor_threshold</span>
 
     <span class="k">def</span> <span class="nf">set_minor_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minor_number</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the number of minor ticks to label when some minor ticks are</span>
 <span class="sd">        labelled.</span>
 
@@ -1668,7 +1667,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">EngFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format axis values using engineering prefixes to represent powers</span>
 <span class="sd">    of 1000, plus a specified unit, e.g., 10 MHz instead of 1e7.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1696,7 +1695,7 @@ document.write(`
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">places</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">useMathText</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        unit : str, default: &quot;&quot;</span>
@@ -1766,7 +1765,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_minus</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">format_eng</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Format a number in engineering notation, appending a letter</span>
 <span class="sd">        representing the power of 1000 of the original number.</span>
 <span class="sd">        Some examples:</span>
@@ -1819,7 +1818,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">PercentFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format numbers as a percentage.</span>
 
 <span class="sd">    Parameters</span>
@@ -1851,13 +1850,13 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_latex</span> <span class="o">=</span> <span class="n">is_latex</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the tick as a percentage with the appropriate scaling.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Format the tick as a percentage with the appropriate scaling.&quot;&quot;&quot;</span>
         <span class="n">ax_min</span><span class="p">,</span> <span class="n">ax_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_view_interval</span><span class="p">()</span>
         <span class="n">display_range</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ax_max</span> <span class="o">-</span> <span class="n">ax_min</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_minus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format_pct</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">display_range</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">format_pct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">display_range</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Format the number as a percentage number with the correct</span>
 <span class="sd">        number of decimals and adds the percent symbol, if any.</span>
 
@@ -1905,7 +1904,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The configured percent symbol as a string.</span>
 
 <span class="sd">        If LaTeX is enabled via :rc:`text.usetex`, the special characters</span>
@@ -1929,7 +1928,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">Locator</span><span class="p">(</span><span class="n">TickHelper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the tick locations;</span>
 
 <span class="sd">    Note that the same locator should not be used across multiple</span>
@@ -1944,7 +1943,7 @@ document.write(`
     <span class="n">MAXTICKS</span> <span class="o">=</span> <span class="mi">1000</span>
 
     <span class="k">def</span> <span class="nf">tick_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the values of the located ticks given **vmin** and **vmax**.</span>
 
 <span class="sd">        .. note::</span>
@@ -1961,7 +1960,7 @@ document.write(`
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Derived must override&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Do nothing, and raise a warning. Any locator class not supporting the</span>
 <span class="sd">        set_params() function will call this.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1970,13 +1969,13 @@ document.write(`
             <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
         <span class="c1"># note: some locators return data limits, other return view limits,</span>
         <span class="c1"># hence there is no *one* interface to call self.tick_values.</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Derived must override&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">raise_if_exceeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Log at WARNING level if *locs* is longer than `Locator.MAXTICKS`.</span>
 
 <span class="sd">        This is intended to be called immediately before returning *locs* from</span>
@@ -1994,7 +1993,7 @@ document.write(`
         <span class="k">return</span> <span class="n">locs</span>
 
     <span class="k">def</span> <span class="nf">nonsingular</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adjust a range as needed to avoid singularities.</span>
 
 <span class="sd">        This method gets called during autoscaling, with ``(v0, v1)`` set to</span>
@@ -2010,7 +2009,7 @@ document.write(`
         <span class="k">return</span> <span class="n">mtransforms</span><span class="o">.</span><span class="n">nonsingular</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">expander</span><span class="o">=</span><span class="mf">.05</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">view_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select a scale for the range from vmin to vmax.</span>
 
 <span class="sd">        Subclasses should override this method to change locator behaviour.</span>
@@ -2019,26 +2018,26 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">IndexLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Place a tick on every multiple of some base number of points</span>
 <span class="sd">    plotted, e.g., on every 5th point.  It is assumed that you are doing</span>
 <span class="sd">    index plotting; i.e., the axis is 0, len(data).  This is mainly</span>
 <span class="sd">    useful for x ticks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Place ticks every *base* data point, starting at *offset*.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Place ticks every *base* data point, starting at *offset*.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="n">base</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="n">base</span>
         <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks&quot;&quot;&quot;</span>
         <span class="n">dmin</span><span class="p">,</span> <span class="n">dmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_data_interval</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="n">dmin</span><span class="p">,</span> <span class="n">dmax</span><span class="p">)</span>
 
@@ -2048,7 +2047,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">FixedLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tick locations are fixed at *locs*.  If *nbins* is not None,</span>
 <span class="sd">    the *locs* array of possible positions will be subsampled to</span>
 <span class="sd">    keep the number of ticks &lt;= *nbins* +1.</span>
@@ -2064,7 +2063,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nbins</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">nbins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">nbins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="n">nbins</span>
 
@@ -2072,7 +2071,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">tick_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the locations of the ticks.</span>
 
 <span class="sd">        .. note::</span>
@@ -2093,7 +2092,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">NullLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    No ticks</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2101,7 +2100,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">tick_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the locations of the ticks.</span>
 
 <span class="sd">        .. note::</span>
@@ -2113,7 +2112,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LinearLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the tick locations</span>
 
 <span class="sd">    The first time this function is called it will try to set the</span>
@@ -2123,7 +2122,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">presets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        numticks : int or None, default None</span>
@@ -2149,14 +2148,14 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_numticks</span> <span class="o">=</span> <span class="n">numticks</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">presets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">presets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">presets</span> <span class="o">=</span> <span class="n">presets</span>
         <span class="k">if</span> <span class="n">numticks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">numticks</span> <span class="o">=</span> <span class="n">numticks</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_view_interval</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
 
@@ -2175,7 +2174,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raise_if_exceeds</span><span class="p">(</span><span class="n">ticklocs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">view_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to choose the view limits intelligently.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Try to choose the view limits intelligently.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">vmax</span> <span class="o">&lt;</span> <span class="n">vmin</span><span class="p">:</span>
             <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">vmin</span>
@@ -2196,7 +2195,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">MultipleLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set a tick on each integer multiple of the *base* within the view</span>
 <span class="sd">    interval.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2205,12 +2204,12 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_edge</span> <span class="o">=</span> <span class="n">_Edge_integer</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_edge</span> <span class="o">=</span> <span class="n">_Edge_integer</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_view_interval</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
 
@@ -2224,7 +2223,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raise_if_exceeds</span><span class="p">(</span><span class="n">locs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">view_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dmin</span><span class="p">,</span> <span class="n">dmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the view limits to the nearest multiples of *base* that</span>
 <span class="sd">        contain the data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2253,14 +2252,14 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">_Edge_integer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper for `.MaxNLocator`, `.MultipleLocator`, etc.</span>
 
 <span class="sd">    Take floating-point precision limitations into account when calculating</span>
 <span class="sd">    tick locations as integer multiples of a step.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        step : float &gt; 0</span>
@@ -2285,14 +2284,14 @@ document.write(`
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ms</span> <span class="o">-</span> <span class="n">edge</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span>
 
     <span class="k">def</span> <span class="nf">le</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the largest n: n*step &lt;= x.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the largest n: n*step &lt;= x.&quot;&quot;&quot;</span>
         <span class="n">d</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closeto</span><span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">d</span>
 
     <span class="k">def</span> <span class="nf">ge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the smallest n: n*step &gt;= x.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the smallest n: n*step &gt;= x.&quot;&quot;&quot;</span>
         <span class="n">d</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closeto</span><span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">d</span>
@@ -2300,7 +2299,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">MaxNLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find nice tick locations with no more than *nbins* + 1 being within the</span>
 <span class="sd">    view limits. Locations beyond the limits are added to support autoscaling.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2312,7 +2311,7 @@ document.write(`
                           <span class="n">min_n_ticks</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        nbins : int or &#39;auto&#39;, default: 10</span>
@@ -2374,7 +2373,7 @@ document.write(`
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">steps</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">steps</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span> <span class="o">*</span> <span class="n">steps</span><span class="p">[</span><span class="mi">1</span><span class="p">]]])</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set parameters for this locator.</span>
 
 <span class="sd">        Parameters</span>
@@ -2417,7 +2416,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">_api</span><span class="o">.</span><span class="n">kwarg_error</span><span class="p">(</span><span class="s2">&quot;set_params&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_raw_ticks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a list of tick locations including the range *vmin* to</span>
 <span class="sd">        *vmax*.  In some applications, one or both of the end locations</span>
 <span class="sd">        will not be needed, in which case they are trimmed off</span>
@@ -2522,7 +2521,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">_is_decade</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if *x* is an integer power of *base*.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return True if *x* is an integer power of *base*.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
@@ -2535,7 +2534,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">_decade_less_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the largest integer power of *base* that&#39;s less or equal to *x*.</span>
 
 <span class="sd">    If *x* is negative, the exponent will be *greater*.</span>
@@ -2546,7 +2545,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">_decade_greater_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the smallest integer power of *base* that&#39;s greater or equal to *x*.</span>
 
 <span class="sd">    If *x* is negative, the exponent will be *smaller*.</span>
@@ -2557,7 +2556,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">_decade_less</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the largest integer power of *base* that&#39;s less than *x*.</span>
 
 <span class="sd">    If *x* is negative, the exponent will be *greater*.</span>
@@ -2571,7 +2570,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">_decade_greater</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the smallest integer power of *base* that&#39;s greater than *x*.</span>
 
 <span class="sd">    If *x* is negative, the exponent will be *smaller*.</span>
@@ -2594,7 +2593,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Determine the tick locations for log axes.</span>
 
@@ -2625,7 +2624,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,),</span> <span class="n">numdecs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Place ticks on the locations : subs[j] * base**i.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Place ticks on the locations : subs[j] * base**i.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">numticks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;_internal.classic_mode&#39;</span><span class="p">]:</span>
                 <span class="n">numticks</span> <span class="o">=</span> <span class="mi">15</span>
@@ -2637,7 +2636,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">numticks</span> <span class="o">=</span> <span class="n">numticks</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numdecs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">subs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2649,18 +2648,18 @@ document.write(`
 
     <span class="nd">@_api</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;3.6&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;set_params(base=...)&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the log base (major tick every ``base**i``, i integer).&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the log base (major tick every ``base**i``, i integer).&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
 
     <span class="nd">@_api</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;3.6&quot;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;set_params(subs=...)&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">subs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the minor ticks for the log scaling every ``base**i*subs[j]``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_subs</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_set_subs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the minor ticks for the log scaling every ``base**i*subs[j]``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">subs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># consistency with previous bad API</span>
@@ -2681,7 +2680,7 @@ document.write(`
                                  <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-dimensional.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subs</span><span class="o">.</span><span class="n">ndim</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_view_interval</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
 
@@ -2774,7 +2773,7 @@ document.write(`
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raise_if_exceeds</span><span class="p">(</span><span class="n">ticklocs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">view_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to choose the view limits intelligently.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Try to choose the view limits intelligently.&quot;&quot;&quot;</span>
         <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span>
 
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonsingular</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
@@ -2808,12 +2807,12 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">SymmetricalLogLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the tick locations for symmetric log axes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linthresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        transform : `~.scale.SymmetricalLogTransform`, optional</span>
@@ -2847,14 +2846,14 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">numticks</span> <span class="o">=</span> <span class="mi">15</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">numticks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">numticks</span> <span class="o">=</span> <span class="n">numticks</span>
         <span class="k">if</span> <span class="n">subs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subs</span> <span class="o">=</span> <span class="n">subs</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
         <span class="c1"># Note, these are untransformed coordinates</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_view_interval</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_values</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
@@ -2949,7 +2948,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raise_if_exceeds</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ticklocs</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">view_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to choose the view limits intelligently.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Try to choose the view limits intelligently.&quot;&quot;&quot;</span>
         <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base</span>
         <span class="k">if</span> <span class="n">vmax</span> <span class="o">&lt;</span> <span class="n">vmin</span><span class="p">:</span>
             <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">vmin</span>
@@ -2966,7 +2965,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">AsinhLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An axis tick locator specialized for the inverse-sinh scale</span>
 
 <span class="sd">    This is very unlikely to have any use beyond</span>
@@ -2979,7 +2978,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linear_width</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">symthresh</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
                  <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        linear_width : float</span>
@@ -3010,7 +3009,7 @@ document.write(`
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symthresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                    <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">numticks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">numticks</span> <span class="o">=</span> <span class="n">numticks</span>
         <span class="k">if</span> <span class="n">symthresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3078,12 +3077,12 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">LogitLocator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the tick locations for logit axes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Place ticks on the logit locations</span>
 
 <span class="sd">        Parameters</span>
@@ -3098,7 +3097,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="n">nbins</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set parameters within this locator.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">minor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_minor</span> <span class="o">=</span> <span class="n">minor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -3226,13 +3225,13 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">AutoLocator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dynamically find major tick positions. This is actually a subclass</span>
 <span class="sd">    of `~matplotlib.ticker.MaxNLocator`, with parameters *nbins = &#39;auto&#39;*</span>
 <span class="sd">    and *steps = [1, 2, 2.5, 5, 10]*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        To know the values of the non-public parameters, please have a</span>
 <span class="sd">        look to the defaults of `~matplotlib.ticker.MaxNLocator`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3246,12 +3245,12 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">AutoMinorLocator</span><span class="p">(</span><span class="n">Locator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dynamically find minor tick positions based on the positions of</span>
 <span class="sd">    major ticks. The scale must be linear with major ticks evenly spaced.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        *n* is the number of subdivisions of the interval between</span>
 <span class="sd">        major ticks; e.g., n=2 will place a single minor tick midway</span>
 <span class="sd">        between major ticks.</span>
@@ -3261,7 +3260,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">ndivs</span> <span class="o">=</span> <span class="n">n</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the locations of the ticks.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">get_scale</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
             <span class="n">_api</span><span class="o">.</span><span class="n">warn_external</span><span class="p">(</span><span class="s1">&#39;AutoMinorLocator does not work with &#39;</span>
                                <span class="s1">&#39;logarithmic scale&#39;</span><span class="p">)</span>

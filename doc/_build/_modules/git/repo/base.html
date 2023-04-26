@@ -51,7 +51,6 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
     <script src="../../../_static/thebelab-helper.js"></script>
@@ -451,7 +450,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Repo"><a class="viewcode-back" href="../../../content/api/generated/cathy_tools.Repo.html#cathy_tools.Repo">[docs]</a><span class="k">class</span> <span class="nc">Repo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a git repository and allows you to query references,</span>
+    <span class="sd">&quot;&quot;&quot;Represents a git repository and allows you to query references,</span>
 <span class="sd">    gather commit information, generate diffs, create and clone repositories query</span>
 <span class="sd">    the log.</span>
 
@@ -508,7 +507,7 @@ document.write(`
         <span class="n">search_parent_directories</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">expand_vars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Repo instance</span>
+        <span class="sd">&quot;&quot;&quot;Create a new Repo instance</span>
 
 <span class="sd">        :param path:</span>
 <span class="sd">            the path to either the root git directory or the bare git repo::</span>
@@ -694,24 +693,24 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">working_tree_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: The working tree directory of our git repository. If this is a bare repository, None is returned.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;:return: The working tree directory of our git repository. If this is a bare repository, None is returned.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_working_tree_dir</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">common_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PathLike</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: The git dir that holds everything except possibly HEAD,</span>
 <span class="sd">            FETCH_HEAD, ORIG_HEAD, COMMIT_EDITMSG, index, and logs/.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_dir</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">git_dir</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">bare</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: True if the repository is bare&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;:return: True if the repository is bare&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bare</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">heads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;IterableList[Head]&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of ``Head`` objects representing the branch heads in</span>
+        <span class="sd">&quot;&quot;&quot;A list of ``Head`` objects representing the branch heads in</span>
 <span class="sd">        this repo</span>
 
 <span class="sd">        :return: ``git.IterableList(Head, ...)``&quot;&quot;&quot;</span>
@@ -719,7 +718,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">references</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;IterableList[Reference]&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of Reference objects representing tags, heads and remote references.</span>
+        <span class="sd">&quot;&quot;&quot;A list of Reference objects representing tags, heads and remote references.</span>
 
 <span class="sd">        :return: IterableList(Reference, ...)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Reference</span><span class="o">.</span><span class="n">list_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -732,25 +731,25 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;IndexFile&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: IndexFile representing this repository&#39;s index.</span>
+        <span class="sd">&quot;&quot;&quot;:return: IndexFile representing this repository&#39;s index.</span>
 <span class="sd">        :note: This property can be expensive, as the returned ``IndexFile`` will be</span>
 <span class="sd">         reinitialized. It&#39;s recommended to re-use the object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">IndexFile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: HEAD Object pointing to the current head reference&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;:return: HEAD Object pointing to the current head reference&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">HEAD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">remotes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;IterableList[Remote]&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of Remote objects allowing to access and manipulate remotes</span>
+        <span class="sd">&quot;&quot;&quot;A list of Remote objects allowing to access and manipulate remotes</span>
 
 <span class="sd">        :return: ``git.IterableList(Remote, ...)``&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Remote</span><span class="o">.</span><span class="n">list_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Remote&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: Remote with the specified name</span>
+        <span class="sd">&quot;&quot;&quot;:return: Remote with the specified name</span>
 <span class="sd">        :raise ValueError:  if no remote with such a name exists&quot;&quot;&quot;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">Remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -761,13 +760,13 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">submodules</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;IterableList[Submodule]&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: git.IterableList(Submodule, ...) of direct submodules</span>
 <span class="sd">            available from the current head&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Submodule</span><span class="o">.</span><span class="n">list_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">submodule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Submodule&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: Submodule with the given name</span>
+        <span class="sd">&quot;&quot;&quot;:return: Submodule with the given name</span>
 <span class="sd">        :raise ValueError: If no such submodule exists&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">submodules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
@@ -776,7 +775,7 @@ document.write(`
         <span class="c1"># END exception handling</span>
 
     <span class="k">def</span> <span class="nf">create_submodule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Submodule</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new submodule</span>
+        <span class="sd">&quot;&quot;&quot;Create a new submodule</span>
 
 <span class="sd">        :note: See the documentation of Submodule.add for a description of the</span>
 <span class="sd">            applicable parameters</span>
@@ -784,14 +783,14 @@ document.write(`
         <span class="k">return</span> <span class="n">Submodule</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">iter_submodules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Submodule</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An iterator yielding Submodule instances, see Traversable interface</span>
+        <span class="sd">&quot;&quot;&quot;An iterator yielding Submodule instances, see Traversable interface</span>
 <span class="sd">        for a description of args and kwargs</span>
 
 <span class="sd">        :return: Iterator&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">RootModule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">traverse</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">submodule_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Submodule</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the submodules, keeping the repository consistent as it will</span>
+        <span class="sd">&quot;&quot;&quot;Update the submodules, keeping the repository consistent as it will</span>
 <span class="sd">        take the previous state into consideration. For more information, please</span>
 <span class="sd">        see the documentation of RootModule.update&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">RootModule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -800,13 +799,13 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;IterableList[TagReference]&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of ``Tag`` objects that are available in this repo</span>
+        <span class="sd">&quot;&quot;&quot;A list of ``Tag`` objects that are available in this repo</span>
 
 <span class="sd">        :return: ``git.IterableList(TagReference, ...)``&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">TagReference</span><span class="o">.</span><span class="n">list_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TagReference</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: TagReference Object, reference pointing to a Commit or Tag</span>
+        <span class="sd">&quot;&quot;&quot;:return: TagReference Object, reference pointing to a Commit or Tag</span>
 <span class="sd">        :param path: path to the tag reference, i.e. 0.1.5 or tags/0.1.5&quot;&quot;&quot;</span>
         <span class="n">full_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_full_tag_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">TagReference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_path</span><span class="p">)</span>
@@ -828,14 +827,14 @@ document.write(`
         <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">logmsg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Head&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new head within the repository.</span>
+        <span class="sd">&quot;&quot;&quot;Create a new head within the repository.</span>
 <span class="sd">        For more documentation, please see the Head.create method.</span>
 
 <span class="sd">        :return: newly created Head Reference&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Head</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">commit</span><span class="p">,</span> <span class="n">logmsg</span><span class="p">,</span> <span class="n">force</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delete_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">heads</span><span class="p">:</span> <span class="s2">&quot;Union[str, Head]&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the given heads</span>
+        <span class="sd">&quot;&quot;&quot;Delete the given heads</span>
 
 <span class="sd">        :param kwargs: Additional keyword arguments to be passed to git-branch&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Head</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">heads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -848,18 +847,18 @@ document.write(`
         <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TagReference</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new tag reference.</span>
+        <span class="sd">&quot;&quot;&quot;Create a new tag reference.</span>
 <span class="sd">        For more documentation, please see the TagReference.create method.</span>
 
 <span class="sd">        :return: TagReference object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">TagReference</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delete_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tags</span><span class="p">:</span> <span class="n">TagReference</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the given tag references&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Delete the given tag references&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">TagReference</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tags</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Remote</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new remote.</span>
+        <span class="sd">&quot;&quot;&quot;Create a new remote.</span>
 
 <span class="sd">        For more information, please see the documentation of the Remote.create</span>
 <span class="sd">        methods</span>
@@ -868,7 +867,7 @@ document.write(`
         <span class="k">return</span> <span class="n">Remote</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delete_remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote</span><span class="p">:</span> <span class="s2">&quot;Remote&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the given remote.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Delete the given remote.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Remote</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_config_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_level</span><span class="p">:</span> <span class="n">Lit_config_levels</span><span class="p">,</span> <span class="n">git_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -903,7 +902,7 @@ document.write(`
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Lit_config_levels</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GitConfigParser</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return:</span>
 <span class="sd">            GitConfigParser allowing to read the full git configuration, but not to write it</span>
 
@@ -934,7 +933,7 @@ document.write(`
         <span class="k">return</span> <span class="n">GitConfigParser</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">config_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_level</span><span class="p">:</span> <span class="n">Lit_config_levels</span> <span class="o">=</span> <span class="s2">&quot;repository&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GitConfigParser</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return:</span>
 <span class="sd">            GitConfigParser allowing to write values of the specified configuration file level.</span>
 <span class="sd">            Config writers should be retrieved, used to change the configuration, and written</span>
@@ -949,7 +948,7 @@ document.write(`
         <span class="k">return</span> <span class="n">GitConfigParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_config_path</span><span class="p">(</span><span class="n">config_level</span><span class="p">),</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rev</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Commit_ish</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Commit</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Commit object for the specified revision</span>
+        <span class="sd">&quot;&quot;&quot;The Commit object for the specified revision</span>
 
 <span class="sd">        :param rev: revision specifier, see git-rev-parse for viable options.</span>
 <span class="sd">        :return: ``git.Commit``</span>
@@ -959,12 +958,12 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rev_parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rev</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;^0&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">iter_trees</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="s2">&quot;Tree&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;:return: Iterator yielding Tree objects</span>
+        <span class="sd">&quot;&quot;&quot;:return: Iterator yielding Tree objects</span>
 <span class="sd">        :note: Takes all arguments known to iter_commits method&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">tree</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_commits</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rev</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tree_ish</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Tree&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Tree object for the given treeish revision</span>
+        <span class="sd">&quot;&quot;&quot;The Tree object for the given treeish revision</span>
 <span class="sd">        Examples::</span>
 
 <span class="sd">              repo.tree(repo.heads[0])</span>
@@ -986,7 +985,7 @@ document.write(`
         <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Commit</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of Commit objects representing the history of a given ref/commit</span>
+        <span class="sd">&quot;&quot;&quot;A list of Commit objects representing the history of a given ref/commit</span>
 
 <span class="sd">        :param rev:</span>
 <span class="sd">            revision specifier, see git-rev-parse for viable options.</span>
@@ -1010,7 +1009,7 @@ document.write(`
         <span class="k">return</span> <span class="n">Commit</span><span class="o">.</span><span class="n">iter_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rev</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">merge_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">rev</span><span class="p">:</span> <span class="n">TBD</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Commit_ish</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the closest common ancestor for the given revision (e.g. Commits, Tags, References, etc)</span>
+        <span class="sd">&quot;&quot;&quot;Find the closest common ancestor for the given revision (e.g. Commits, Tags, References, etc)</span>
 
 <span class="sd">        :param rev: At least two revs to find the common ancestor for.</span>
 <span class="sd">        :param kwargs: Additional arguments to be passed to the repo.git.merge_base() command which does all the work.</span>
@@ -1041,7 +1040,7 @@ document.write(`
         <span class="k">return</span> <span class="n">res</span>
 
     <span class="k">def</span> <span class="nf">is_ancestor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ancestor_rev</span><span class="p">:</span> <span class="s2">&quot;Commit&quot;</span><span class="p">,</span> <span class="n">rev</span><span class="p">:</span> <span class="s2">&quot;Commit&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a commit is an ancestor of another</span>
+        <span class="sd">&quot;&quot;&quot;Check if a commit is an ancestor of another</span>
 
 <span class="sd">        :param ancestor_rev: Rev which should be an ancestor</span>
 <span class="sd">        :param rev: Rev to test against ancestor_rev</span>
@@ -1098,7 +1097,7 @@ document.write(`
     <span class="k">del</span> <span class="n">_set_daemon_export</span>
 
     <span class="k">def</span> <span class="nf">_get_alternates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The list of alternates for this repo from which objects can be retrieved</span>
+        <span class="sd">&quot;&quot;&quot;The list of alternates for this repo from which objects can be retrieved</span>
 
 <span class="sd">        :return: list of strings being pathnames of alternates&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">git_dir</span><span class="p">:</span>
@@ -1111,7 +1110,7 @@ document.write(`
         <span class="k">return</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">_set_alternates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the alternates</span>
+        <span class="sd">&quot;&quot;&quot;Sets the alternates</span>
 
 <span class="sd">        :param alts:</span>
 <span class="sd">            is the array of string paths representing the alternates at which</span>
@@ -1143,7 +1142,7 @@ document.write(`
         <span class="n">submodules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return:</span>
 <span class="sd">            ``True``, the repository is considered dirty. By default it will react</span>
 <span class="sd">            like a git-status without untracked files, hence it is dirty if the</span>
@@ -1177,7 +1176,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">untracked_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return:</span>
 <span class="sd">            list(str,...)</span>
 
@@ -1212,7 +1211,7 @@ document.write(`
         <span class="k">return</span> <span class="n">untracked_files</span>
 
     <span class="k">def</span> <span class="nf">ignored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">paths</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if paths are ignored via .gitignore</span>
+        <span class="sd">&quot;&quot;&quot;Checks if paths are ignored via .gitignore</span>
 <span class="sd">        Doing so using the &quot;git check-ignore&quot; method.</span>
 
 <span class="sd">        :param paths: List of paths to check whether they are ignored or not</span>
@@ -1233,7 +1232,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">active_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Head</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the currently active branch.</span>
+        <span class="sd">&quot;&quot;&quot;The name of the currently active branch.</span>
 
 <span class="sd">        :raises	TypeError: If HEAD is detached</span>
 <span class="sd">        :return: Head to the active branch&quot;&quot;&quot;</span>
@@ -1241,7 +1240,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">reference</span>
 
     <span class="k">def</span> <span class="nf">blame_incremental</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rev</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">HEAD</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="s2">&quot;BlameEntry&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterator for blame information for the given file at the given revision.</span>
+        <span class="sd">&quot;&quot;&quot;Iterator for blame information for the given file at the given revision.</span>
 
 <span class="sd">        Unlike .blame(), this does not return the actual file&#39;s contents, only</span>
 <span class="sd">        a stream of BlameEntry tuples.</span>
@@ -1333,7 +1332,7 @@ document.write(`
         <span class="n">rev_opts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Commit</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">BlameEntry</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The blame information for the given file at the given revision.</span>
+        <span class="sd">&quot;&quot;&quot;The blame information for the given file at the given revision.</span>
 
 <span class="sd">        :param rev: revision specifier, see git-rev-parse for viable options.</span>
 <span class="sd">        :return:</span>
@@ -1477,7 +1476,7 @@ document.write(`
         <span class="n">expand_vars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Repo&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a git repository at the given path if specified</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a git repository at the given path if specified</span>
 
 <span class="sd">        :param path:</span>
 <span class="sd">            is the full path to the repo (traditionally ends with /&lt;name&gt;.git)</span>
@@ -1608,7 +1607,7 @@ document.write(`
         <span class="n">allow_unsafe_options</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Repo&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a clone from this repository.</span>
+        <span class="sd">&quot;&quot;&quot;Create a clone from this repository.</span>
 
 <span class="sd">        :param path: is the full path of the new repo (traditionally ends with ./&lt;name&gt;.git).</span>
 <span class="sd">        :param progress: See &#39;git.remote.Remote.push&#39;.</span>
@@ -1648,7 +1647,7 @@ document.write(`
         <span class="n">allow_unsafe_options</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Repo&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a clone from the given URL</span>
+        <span class="sd">&quot;&quot;&quot;Create a clone from the given URL</span>
 
 <span class="sd">        :param url: valid git url, see http://www.kernel.org/pub/software/scm/git/docs/git-clone.html#URLS</span>
 <span class="sd">        :param to_path: Path to which the repository should be cloned to</span>
@@ -1686,7 +1685,7 @@ document.write(`
         <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Repo</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Archive the tree at the given revision.</span>
+        <span class="sd">&quot;&quot;&quot;Archive the tree at the given revision.</span>
 
 <span class="sd">        :param ostream: file compatible stream object to which the archive will be written as bytes</span>
 <span class="sd">        :param treeish: is the treeish name/id, defaults to active branch</span>
@@ -1714,7 +1713,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">has_separate_working_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: True if our git_dir is not at the root of our working_tree_dir, but a .git file with a</span>
 <span class="sd">            platform agnositic symbolic link. Our git_dir will be wherever the .git file points to</span>
 <span class="sd">        :note: bare repositories will always return False here</span>
@@ -1733,7 +1732,7 @@ document.write(`
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2"> </span><span class="si">%r</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">clazz</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="n">clazz</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">git_dir</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">currently_rebasing_on</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Commit</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: The commit which is currently being replayed while rebasing.</span>
 
 <span class="sd">        None if we are not currently rebasing.</span>

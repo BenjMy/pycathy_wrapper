@@ -7,7 +7,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>ERT.petro_Archie.SW_2_ERa_DA &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
   
@@ -52,7 +52,6 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
     <script src="../../../_static/thebelab-helper.js"></script>
@@ -383,9 +382,7 @@ document.write(`
   </button>
 `);
 </script>
-<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</label>
+
 </div></div>
       
     </div>
@@ -401,14 +398,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ERT.petro_Archie.SW_2_ERa_DA"><code class="docutils literal notranslate"><span class="pre">SW_2_ERa_DA</span></code></a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -423,77 +412,38 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="ERT.petro_Archie.SW_2_ERa_DA">
 <span class="sig-prename descclassname"><span class="pre">ERT.petro_Archie.</span></span><span class="sig-name descname"><span class="pre">SW_2_ERa_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ArchieParms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ERT_meta_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_fwd_CATHY</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ERT/petro_Archie.html#SW_2_ERa_DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ERT.petro_Archie.SW_2_ERa_DA" title="Permalink to this definition">#</a></dt>
-<dd><section id="data-assimilation">
-<h2>Data Assimilation<a class="headerlink" href="#data-assimilation" title="Permalink to this heading">#</a></h2>
-<p>Map saturation water from CATHY model to apparent Electrical Resistivities
+<dd><p>Map saturation water from CATHY model to apparent Electrical Resistivities
 1. Import/read CATHY sw file result
 2. Convert SW to ER uisng Archie law
 3. Fwd ERT model to obtain apparent resistivities (predicted observation for DA)</p>
 <dl class="field-list simple">
-<dt class="field-odd">param project_name<span class="colon">:</span></dt>
-<dd class="field-odd"><p>name of the current project.</p>
-</dd>
-<dt class="field-even">type project_name<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-<dt class="field-odd">param ArchieParms<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Archie params.</p>
-</dd>
-<dt class="field-even">type ArchieParms<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-<dt class="field-odd">param porosity<span class="colon">:</span></dt>
-<dd class="field-odd"><p>medium porosity.</p>
-</dd>
-<dt class="field-even">type porosity<span class="colon">:</span></dt>
-<dd class="field-even"><p>np.array([])</p>
-</dd>
-<dt class="field-odd">param pathERT<span class="colon">:</span></dt>
-<dd class="field-odd"><p>path of the ERT forward mesh.</p>
-</dd>
-<dt class="field-even">type pathERT<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-<dt class="field-odd">param meshERT<span class="colon">:</span></dt>
-<dd class="field-odd"><p>filename of the ERT fwd mesh.</p>
-</dd>
-<dt class="field-even">type meshERT<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-<dt class="field-odd">param elecs<span class="colon">:</span></dt>
-<dd class="field-odd"><p>electrode positions.</p>
-</dd>
-<dt class="field-even">type elecs<span class="colon">:</span></dt>
-<dd class="field-even"><p>TYPE</p>
-</dd>
-<dt class="field-odd">param sequenceERT<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ERT sequence.</p>
-</dd>
-<dt class="field-even">type sequenceERT<span class="colon">:</span></dt>
-<dd class="field-even"><p>TYPE</p>
-</dd>
-<dt class="field-odd">param path_fwd_CATHY<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Use for // simulations</p>
-</dd>
-<dt class="field-even">type path_fwd_CATHY<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of folder containing CATHY simulation outputs</p>
-</dd>
-<dt class="field-odd">param **kwargs<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – name of the current project.</p></li>
+<li><p><strong>ArchieParms</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – Archie params.</p></li>
+<li><p><strong>porosity</strong> (<em>np.array</em><em>(</em><em>[</em><em>]</em><em>)</em>) – medium porosity.</p></li>
+<li><p><strong>pathERT</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – path of the ERT forward mesh.</p></li>
+<li><p><strong>meshERT</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – filename of the ERT fwd mesh.</p></li>
+<li><p><strong>elecs</strong> (<em>TYPE</em>) – electrode positions.</p></li>
+<li><p><strong>sequenceERT</strong> (<em>TYPE</em>) – ERT sequence.</p></li>
+<li><p><strong>path_fwd_CATHY</strong> (<em>list of folder containing CATHY simulation outputs</em>) – Use for // simulations</p></li>
+<li><p><strong>**kwargs</strong> – <dl class="simple">
 <dt>df_sw<span class="classifier">pd df</span></dt><dd><p>saturation mesh values to convert</p>
 </dd>
 <dt>savefig<span class="classifier">TYPE, optional</span></dt><dd><p>DESCRIPTION. The default is True.</p>
 </dd>
 </dl>
+</p></li>
+</ul>
 </dd>
-<dt class="field-even">returns<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>df_ERT_predicted</strong> (<em>pd df</em>) – Dataframe of predicted ER.</p></li>
 <li><p><strong>df_Archie</strong> (<em>pd df</em>) – Dataframe of the current (given ensemble and given assimilation time) Archie relationship.</p></li>
 </ul>
+</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 </section>
@@ -538,20 +488,6 @@ document.write(`
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ERT.petro_Archie.SW_2_ERa_DA"><code class="docutils literal notranslate"><span class="pre">SW_2_ERa_DA</span></code></a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

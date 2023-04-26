@@ -51,7 +51,6 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -359,7 +358,7 @@ document.write(`
 <span class="c1"># Does a path exist?</span>
 <span class="c1"># This is false for dangling symbolic links on systems that support them.</span>
 <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether a path exists.  Returns False for broken symbolic links&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path exists.  Returns False for broken symbolic links&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -370,7 +369,7 @@ document.write(`
 <span class="c1"># This follows symbolic links, so both islink() and isdir() can be true</span>
 <span class="c1"># for the same path on systems that support symlinks</span>
 <div class="viewcode-block" id="isfile"><a class="viewcode-back" href="../content/api/generated/cathy_tools.isfile.html#cathy_tools.isfile">[docs]</a><span class="k">def</span> <span class="nf">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether a path is a regular file&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path is a regular file&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -382,7 +381,7 @@ document.write(`
 <span class="c1"># This follows symbolic links, so both islink() and isdir()</span>
 <span class="c1"># can be true for the same path on systems that support symlinks</span>
 <span class="k">def</span> <span class="nf">isdir</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return true if the pathname refers to an existing directory.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return true if the pathname refers to an existing directory.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -391,22 +390,22 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">getsize</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the size of a file, reported by os.stat().&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return the size of a file, reported by os.stat().&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
 
 
 <span class="k">def</span> <span class="nf">getmtime</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the last modification time of a file, reported by os.stat().&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return the last modification time of a file, reported by os.stat().&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
 
 
 <span class="k">def</span> <span class="nf">getatime</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the last access time of a file, reported by os.stat().&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return the last access time of a file, reported by os.stat().&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_atime</span>
 
 
 <span class="k">def</span> <span class="nf">getctime</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the metadata change time of a file, reported by os.stat().&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return the metadata change time of a file, reported by os.stat().&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_ctime</span>
 
 
@@ -430,14 +429,14 @@ document.write(`
 <span class="c1"># Are two stat buffers (obtained from stat, fstat or lstat)</span>
 <span class="c1"># describing the same file?</span>
 <span class="k">def</span> <span class="nf">samestat</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether two stat buffers reference the same file&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether two stat buffers reference the same file&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">s1</span><span class="o">.</span><span class="n">st_ino</span> <span class="o">==</span> <span class="n">s2</span><span class="o">.</span><span class="n">st_ino</span> <span class="ow">and</span>
             <span class="n">s1</span><span class="o">.</span><span class="n">st_dev</span> <span class="o">==</span> <span class="n">s2</span><span class="o">.</span><span class="n">st_dev</span><span class="p">)</span>
 
 
 <span class="c1"># Are two filenames really pointing to the same file?</span>
 <span class="k">def</span> <span class="nf">samefile</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether two pathnames reference the same actual file or directory</span>
+    <span class="sd">&quot;&quot;&quot;Test whether two pathnames reference the same actual file or directory</span>
 
 <span class="sd">    This is determined by the device number and i-node number and</span>
 <span class="sd">    raises an exception if an os.stat() call on either pathname fails.</span>
@@ -450,7 +449,7 @@ document.write(`
 <span class="c1"># Are two open files really referencing the same file?</span>
 <span class="c1"># (Not necessarily the same file descriptor!)</span>
 <span class="k">def</span> <span class="nf">sameopenfile</span><span class="p">(</span><span class="n">fp1</span><span class="p">,</span> <span class="n">fp2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether two open file objects reference the same file&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether two open file objects reference the same file&quot;&quot;&quot;</span>
     <span class="n">s1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fstat</span><span class="p">(</span><span class="n">fp1</span><span class="p">)</span>
     <span class="n">s2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fstat</span><span class="p">(</span><span class="n">fp2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">samestat</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
@@ -464,7 +463,7 @@ document.write(`
 <span class="c1"># Generic implementation of splitext, to be parametrized with</span>
 <span class="c1"># the separators</span>
 <span class="k">def</span> <span class="nf">_splitext</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">altsep</span><span class="p">,</span> <span class="n">extsep</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split the extension from a pathname.</span>
+    <span class="sd">&quot;&quot;&quot;Split the extension from a pathname.</span>
 
 <span class="sd">    Extension is everything from the last dot to the end, ignoring</span>
 <span class="sd">    leading dots.  Returns &quot;(root, ext)&quot;; ext may be empty.&quot;&quot;&quot;</span>

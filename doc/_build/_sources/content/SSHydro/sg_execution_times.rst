@@ -6,16 +6,10 @@
 
 Computation times
 =================
-**15:23.503** total execution time for **content_SSHydro** files:
+**00:02.533** total execution time for **content_SSHydro** files:
 
 +-------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py` (``plot_3c_saptial_atmbc_from_weil.py``) | 07:44.715 | 0.0 MB |
-+-------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``plot_4_pyCATHY_outputs.py``)                   | 07:26.795 | 0.0 MB |
-+-------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py` (``plot_4b_waterTable_from_weil.py``)       | 00:09.819 | 0.0 MB |
-+-------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``plot_2_pyCATHY_inputs.py``)                     | 00:02.174 | 0.0 MB |
+| :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``plot_2_pyCATHY_inputs.py``)                     | 00:02.533 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``plot_1_pyCATHY_weilletal.py``)               | 00:00.000 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------------------+-----------+--------+
@@ -26,4 +20,10 @@ Computation times
 | :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weil.py` (``plot_3b_soil3d_from_weil.py``)               | 00:00.000 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weil.py` (``plot_3c_bc_from_weil.py``)                       | 00:00.000 | 0.0 MB |
++-------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py` (``plot_3c_saptial_atmbc_from_weil.py``) | 00:00.000 | 0.0 MB |
++-------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``plot_4_pyCATHY_outputs.py``)                   | 00:00.000 | 0.0 MB |
++-------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py` (``plot_4b_waterTable_from_weil.py``)       | 00:00.000 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------------------+-----------+--------+

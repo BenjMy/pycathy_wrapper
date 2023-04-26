@@ -51,7 +51,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -432,7 +431,7 @@ document.write(`
     <span class="n">default_state</span><span class="o">=</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform the DA analysis step</span>
 
 <span class="sd">    Parameters</span>
@@ -502,7 +501,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="dictObs_2pd"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.dictObs_2pd.html#DA.cathy_DA.dictObs_2pd">[docs]</a><span class="k">def</span> <span class="nf">dictObs_2pd</span><span class="p">(</span><span class="n">dict_obs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;dict of observation to dataframe of observation&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;dict of observation to dataframe of observation&quot;&quot;&quot;</span>
     <span class="n">df_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dict_obs</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
     <span class="n">df_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">df_obs</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
     <span class="n">df_obs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sensorNameidx&quot;</span><span class="p">,</span> <span class="s2">&quot;assimilation time&quot;</span><span class="p">]</span>
@@ -510,7 +509,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="resynchronise_times"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.resynchronise_times.html#DA.cathy_DA.resynchronise_times">[docs]</a><span class="k">def</span> <span class="nf">resynchronise_times</span><span class="p">(</span><span class="n">data_measure</span><span class="p">,</span> <span class="n">atmbc_df</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;old key is elapsed time in second from the first observation,</span>
+    <span class="sd">&quot;&quot;&quot;old key is elapsed time in second from the first observation,</span>
 <span class="sd">    while new key is from the first atmbc time</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_measure_sync</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data_measure</span><span class="p">)</span>
@@ -700,7 +699,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Evensen2003"><a class="viewcode-back" href="../../content/api/generated/DA.cathy_DA.Evensen2003.html#DA.cathy_DA.Evensen2003">[docs]</a><span class="k">def</span> <span class="nf">Evensen2003</span><span class="p">(</span><span class="n">qk_0</span><span class="p">,</span> <span class="n">wk</span><span class="p">,</span> <span class="n">deltaT</span><span class="p">,</span> <span class="n">Tau</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ensemble Generation of time-variable atmospheric forcing rates.</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -765,7 +764,7 @@ document.write(`
     <span class="n">seed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perturbate parameter for ensemble generation</span>
 
 <span class="sd">    Possible variable to perturbate:</span>
@@ -891,7 +890,7 @@ document.write(`
     <span class="c1"># %% DATA ASSIMILATION FCTS</span>
 
     <span class="k">def</span> <span class="nf">_DA_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_obs</span><span class="p">,</span> <span class="n">dict_parm_pert</span><span class="p">,</span> <span class="n">list_parm2update</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initial preparation for DA</span>
 
 
@@ -985,7 +984,7 @@ document.write(`
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Run Data Assimilation</span>
 
@@ -1154,7 +1153,7 @@ document.write(`
                 <span class="c1"># DA analysis</span>
                 <span class="c1"># ----------------------------------------------------------------</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-<span class="w">                    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;:chart_with_upwards_trend: [b]Analysis[/b]:</span>
+                    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;:chart_with_upwards_trend: [b]Analysis[/b]:</span>
 <span class="sd">                                       - DA type: {}</span>
 <span class="sd">                                       - Damping: {}</span>
 <span class="sd">                                   &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -1342,7 +1341,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">_run_hydro_DA_openLoop</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">time_of_interest</span><span class="p">,</span> <span class="n">nodes_of_interest</span><span class="p">,</span> <span class="n">simu_time_max</span><span class="p">,</span> <span class="n">ens_nb</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run openLoop and save result into DA dataframe (ensemble nb = 999)</span>
 
 <span class="sd">        Parameters</span>
@@ -1373,7 +1372,7 @@ document.write(`
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_DA_openLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ENS_times</span><span class="p">,</span> <span class="n">list_assimilated_obs</span><span class="p">,</span> <span class="n">parallel</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run open Loop (no update/assimilation) hydro simulation for an ensemble of realisation</span>
 <span class="sd">        Evaluate the performance by comparison with measured data after mapping</span>
 
@@ -1499,7 +1498,7 @@ document.write(`
         <span class="n">list_assimilated_obs</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
         <span class="n">ens_valid</span><span class="o">=</span><span class="p">[],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        THIS SHOULD BE MOVED TO DA CLASS</span>
 
 <span class="sd">        Analysis ensemble using DA</span>
@@ -1673,7 +1672,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">_mark_invalid_ensemble</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ens_valid</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">ensemble_psi</span><span class="p">,</span> <span class="n">ensemble_sw</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">analysis_param</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;mark invalid ensemble - invalid ensemble are filled with NaN values&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;mark invalid ensemble - invalid ensemble are filled with NaN values&quot;&quot;&quot;</span>
 
         <span class="n">ensemble_psi_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">ensemble_psi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">ensemble_psi_valid</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
@@ -1708,7 +1707,7 @@ document.write(`
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_ensemble_hydrological_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parallel</span><span class="p">,</span> <span class="n">callexe</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;multi run CATHY hydrological model from the independant folders composing the ensemble&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;multi run CATHY hydrological model from the independant folders composing the ensemble&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;:athletic_shoe: [b]Run hydrological model[/b]&quot;</span><span class="p">)</span>
         <span class="c1"># ----------------------------------------------------------------</span>
@@ -1759,7 +1758,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_check_before_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ens_valid</span><span class="o">=</span><span class="p">[],</span> <span class="n">threshold_rejected</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filter is applied only on selected ensemble</span>
 
 <span class="sd">        Parameters</span>
@@ -1848,7 +1847,7 @@ document.write(`
         <span class="k">return</span> <span class="n">rejected_ens_new</span>
 
     <span class="k">def</span> <span class="nf">_check_after_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_key</span><span class="p">,</span> <span class="n">list_update_parm</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check which scenarios parameters are OK and which one to discard after analysis.</span>
 <span class="sd">        Test the range of each physical properties.</span>
 
@@ -1983,7 +1982,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">spatialize_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_update_parm</span><span class="p">,</span> <span class="n">parm</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Extend the number of parameters according to the number of zones</span>
 <span class="sd">        (useful for the heteregeneous case)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2006,7 +2005,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">transform_parameters</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">list_update_parm</span><span class="p">,</span> <span class="n">update_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">back</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameter (back) transformation before analysis (log, bounded log, ...)</span>
 
 <span class="sd">        ..note:: parameters are log transform so that they become Gaussian distributed</span>
@@ -2122,7 +2121,7 @@ document.write(`
         <span class="k">return</span> <span class="n">prediction_OL</span>
 
     <span class="k">def</span> <span class="nf">_mapping_petro_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initiate Archie and VGP petro/pedophysical parameters</span>
 
 <span class="sd">        If Archie and VGP dictionnaries are not existing fill with default values</span>
@@ -2169,7 +2168,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">update_ENS_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_parm_pert</span><span class="p">,</span> <span class="n">list_parm2update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update by overwriting ensemble files (usually after analysis step or initially to build the ensemble)</span>
 <span class="sd">        - update state</span>
 <span class="sd">        - update model parameters:</span>
@@ -2502,7 +2501,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">_performance_assessement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">list_assimilated_obs</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">t_obs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        THIS SHOULD BE MOVED TO DA CLASS</span>
 <span class="sd">        (Normalized) root mean square errors (NRMSEs)</span>
 <span class="sd">        RMSE is compute separately for each observation assimilated</span>
@@ -2645,7 +2644,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_performance</span>
 
     <span class="k">def</span> <span class="nf">_get_data2assimilate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_assimilated_obs</span><span class="p">,</span> <span class="n">time_ass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loop over observation dictionnary and select corresponding data for a given assimilation time</span>
 
 <span class="sd">        Parameters</span>
@@ -2710,7 +2709,7 @@ document.write(`
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">obskey2map</span>
 
     <span class="k">def</span> <span class="nf">_obs_key_select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_assimilated_obs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;find data to map from dictionnary of observations&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;find data to map from dictionnary of observations&quot;&quot;&quot;</span>
         <span class="c1"># Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)</span>
         <span class="c1"># -----------------------------------------------------------------</span>
         <span class="n">obskey2map</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># data type 2 map</span>
@@ -2730,7 +2729,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">map_states2Observations</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">list_assimilated_obs</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_state</span><span class="o">=</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Translate (map) the state values (pressure head or saturation) to observations (or predicted) values</span>
 
 
@@ -2887,7 +2886,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">write2shell_map</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;:zap: Mapping to ERT prediction&quot;</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-<span class="w">                        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+                        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                                    Fwd modelling ERT</span>
 <span class="sd">                                    Noise level: {??}</span>
 <span class="sd">                                    &quot;&quot;&quot;</span><span class="p">,</span>
@@ -2898,7 +2897,7 @@ document.write(`
                         <span class="s2">&quot;:octopus: Parameter perturbation :octopus:&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
                     <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-<span class="w">                        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+                        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                                    Archie perturbation for DA analysis</span>
 <span class="sd">                                    Archie parameters: {}</span>
 <span class="sd">                                    \u03C3 Archie: {}</span>
@@ -2927,7 +2926,7 @@ document.write(`
         <span class="k">return</span> <span class="n">Hx_ens</span>  <span class="c1"># meas_size * ens_size</span>
 
     <span class="k">def</span> <span class="nf">_add_2_ensemble_Archie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_Archie_2add</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Store in a dataframe Archie relationship for all ensembles and all assimilation times</span>
 
 <span class="sd">        Parameters</span>
@@ -2953,7 +2952,7 @@ document.write(`
         <span class="c1"># print(self.Archie[&#39;ens_nb&#39;].max())</span>
 
     <span class="k">def</span> <span class="nf">_add_2_ensemble_Hx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Hx</span><span class="p">,</span> <span class="n">Hx_2add</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Store in an array predicted value for all ensembles and all assimilation times</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -3017,7 +3016,7 @@ document.write(`
         <span class="k">return</span> <span class="n">psi</span><span class="p">,</span> <span class="n">sw</span><span class="p">,</span> <span class="n">N_col</span><span class="p">,</span> <span class="n">M_rows</span>
 
     <span class="k">def</span> <span class="nf">update_pert_parm_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_key</span><span class="p">,</span> <span class="n">list_update_parm</span><span class="p">,</span> <span class="n">analysis_param_valid</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;update dict of perturbated parameters i.e. add a new entry with new params&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;update dict of perturbated parameters i.e. add a new entry with new params&quot;&quot;&quot;</span>
 
         <span class="n">index_update</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -3045,7 +3044,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">_update_input_ensemble</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ENS_times</span><span class="p">,</span> <span class="n">list_parm2update</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;St. var.&quot;</span><span class="p">],</span> <span class="n">analysis</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select the time window of the hietograph.</span>
 <span class="sd">        Write new variable perturbated/updated value into corresponding input file</span>
 
@@ -3077,7 +3076,7 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">selec_atmbc_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NENS</span><span class="p">,</span> <span class="n">ENS_times</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select the time window of the hietograph</span>
 <span class="sd">        == time between two assimilation observation</span>
 
@@ -3157,7 +3156,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">_DA_df</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">state_analysis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rejected_ens</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build a dataframe container to keep track of the changes before and after update for each ensemble.</span>
 <span class="sd">        This dataframe is the support for DA results visualisation.</span>
 
@@ -3236,14 +3235,14 @@ document.write(`
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_add_to_perturbated_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_per_2add</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update dict of perturbated variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var_per_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_per_dict</span> <span class="o">|</span> <span class="n">var_per_2add</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_per_dict</span>
 
     <span class="k">def</span> <span class="nf">_create_subfolders_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create ensemble subfolders</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -3314,7 +3313,7 @@ document.write(`
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">path_origin</span><span class="p">,</span> <span class="n">path_nudn_i</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_ERT_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Extract ERT metadata information form obs dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ERT_meta_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3329,7 +3328,7 @@ document.write(`
         <span class="k">return</span> <span class="n">ERT_meta_dict</span>
 
     <span class="k">def</span> <span class="nf">_map_ERT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">path_fwd_CATHY</span><span class="p">,</span> <span class="n">ens_nb</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Mapping of state variable to observation (predicted)</span>
 <span class="sd">        ERT using pedophysical transformation H</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3371,7 +3370,7 @@ document.write(`
         <span class="n">path_fwd_CATHY_list</span><span class="p">,</span>
         <span class="n">DA_cnb</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parallel mapping of ERT data using pedophysical transformation H</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Hx_ERT_ens</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3416,7 +3415,7 @@ document.write(`
         <span class="n">key_time</span><span class="p">,</span>
         <span class="n">path_fwd_CATHY_list</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parallel mapping of ERT data using pedophysical transformation H</span>
 <span class="sd">        case of the open Loop = nested loop with ensemble time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3476,7 +3475,7 @@ document.write(`
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,</span>
+        <span class="sd">&quot;&quot;&quot;Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,</span>
 <span class="sd">        // run using ensemble subfolders path as a list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -3528,7 +3527,7 @@ document.write(`
         <span class="n">n_Archie</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">],</span>
         <span class="n">pert_sigma_Archie</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Dict of Archie parameters. Each type of soil is describe within a list</span>
 <span class="sd">        Note that if pert_sigma is not None a normal noise is</span>
 <span class="sd">        added during the translation of Saturation Water to ER</span>

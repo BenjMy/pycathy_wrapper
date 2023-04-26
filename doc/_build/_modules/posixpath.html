@@ -51,7 +51,6 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -395,7 +394,7 @@ document.write(`
 <span class="c1"># (another function should be defined to do that).</span>
 
 <span class="k">def</span> <span class="nf">normcase</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize case of pathname.  Has no effect under Posix&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Normalize case of pathname.  Has no effect under Posix&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 
@@ -403,7 +402,7 @@ document.write(`
 <span class="c1"># Trivial in Posix, harder on the Mac or MS-DOS.</span>
 
 <span class="k">def</span> <span class="nf">isabs</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether a path is absolute&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path is absolute&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="n">sep</span> <span class="o">=</span> <span class="n">_get_sep</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
@@ -414,7 +413,7 @@ document.write(`
 <span class="c1"># Insert a &#39;/&#39; unless the first part is empty or already ends in &#39;/&#39;.</span>
 
 <div class="viewcode-block" id="join"><a class="viewcode-back" href="../content/api/generated/cathy_tools.join.html#cathy_tools.join">[docs]</a><span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Join two or more pathname components, inserting &#39;/&#39; as needed.</span>
+    <span class="sd">&quot;&quot;&quot;Join two or more pathname components, inserting &#39;/&#39; as needed.</span>
 <span class="sd">    If any component is an absolute path, all previous path components</span>
 <span class="sd">    will be discarded.  An empty last part will result in a path that</span>
 <span class="sd">    ends with a separator.&quot;&quot;&quot;</span>
@@ -443,7 +442,7 @@ document.write(`
 <span class="c1"># Trailing &#39;/&#39;es are stripped from head unless it is the root.</span>
 
 <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split a pathname.  Returns tuple &quot;(head, tail)&quot; where &quot;tail&quot; is</span>
+    <span class="sd">&quot;&quot;&quot;Split a pathname.  Returns tuple &quot;(head, tail)&quot; where &quot;tail&quot; is</span>
 <span class="sd">    everything after the final slash.  Either part may be empty.&quot;&quot;&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">sep</span> <span class="o">=</span> <span class="n">_get_sep</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -474,7 +473,7 @@ document.write(`
 <span class="c1"># path.  Useful on DOS/Windows/NT; on Unix, the drive is always empty.</span>
 
 <span class="k">def</span> <span class="nf">splitdrive</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split a pathname into drive and path. On Posix, drive is always</span>
+    <span class="sd">&quot;&quot;&quot;Split a pathname into drive and path. On Posix, drive is always</span>
 <span class="sd">    empty.&quot;&quot;&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">p</span><span class="p">[:</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span>
@@ -483,7 +482,7 @@ document.write(`
 <span class="c1"># Return the tail (basename) part of a path, same as split(path)[1].</span>
 
 <span class="k">def</span> <span class="nf">basename</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the final component of a pathname&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns the final component of a pathname&quot;&quot;&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">sep</span> <span class="o">=</span> <span class="n">_get_sep</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -493,7 +492,7 @@ document.write(`
 <span class="c1"># Return the head (dirname) part of a path, same as split(path)[0].</span>
 
 <span class="k">def</span> <span class="nf">dirname</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the directory component of a pathname&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns the directory component of a pathname&quot;&quot;&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">sep</span> <span class="o">=</span> <span class="n">_get_sep</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -507,7 +506,7 @@ document.write(`
 <span class="c1"># This will always return false on systems where os.lstat doesn&#39;t exist.</span>
 
 <span class="k">def</span> <span class="nf">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether a path is a symbolic link&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path is a symbolic link&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
@@ -517,7 +516,7 @@ document.write(`
 <span class="c1"># Being true for dangling symbolic links is also useful.</span>
 
 <span class="k">def</span> <span class="nf">lexists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether a path exists.  Returns True for broken symbolic links&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path exists.  Returns True for broken symbolic links&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -529,7 +528,7 @@ document.write(`
 <span class="c1"># (Does this work for all UNIXes?  Is it even guaranteed to work by Posix?)</span>
 
 <span class="k">def</span> <span class="nf">ismount</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether a path is a mount point&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path is a mount point&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">s1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -571,7 +570,7 @@ document.write(`
 <span class="c1"># variable expansion.)</span>
 
 <span class="k">def</span> <span class="nf">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand ~ and ~user constructions.  If user or $HOME is unknown,</span>
+    <span class="sd">&quot;&quot;&quot;Expand ~ and ~user constructions.  If user or $HOME is unknown,</span>
 <span class="sd">    do nothing.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
@@ -627,7 +626,7 @@ document.write(`
 <span class="n">_varprogb</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">def</span> <span class="nf">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand shell variables of form $var and ${var}.  Unknown variables</span>
+    <span class="sd">&quot;&quot;&quot;Expand shell variables of form $var and ${var}.  Unknown variables</span>
 <span class="sd">    are left unchanged.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">global</span> <span class="n">_varprog</span><span class="p">,</span> <span class="n">_varprogb</span>
@@ -680,7 +679,7 @@ document.write(`
 <span class="c1"># if it contains symbolic links!</span>
 
 <span class="k">def</span> <span class="nf">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize path, eliminating double slashes, etc.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Normalize path, eliminating double slashes, etc.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">sep</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;/&#39;</span>
@@ -719,7 +718,7 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an absolute path.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return an absolute path.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
@@ -734,7 +733,7 @@ document.write(`
 <span class="c1"># filesystem).</span>
 
 <span class="k">def</span> <span class="nf">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the canonical path of the specified filename, eliminating any</span>
+    <span class="sd">&quot;&quot;&quot;Return the canonical path of the specified filename, eliminating any</span>
 <span class="sd">symbolic links encountered in the path.&quot;&quot;&quot;</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">path</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">_joinrealpath</span><span class="p">(</span><span class="n">filename</span><span class="p">[:</span><span class="mi">0</span><span class="p">],</span> <span class="n">filename</span><span class="p">,</span> <span class="n">strict</span><span class="p">,</span> <span class="p">{})</span>
@@ -808,7 +807,7 @@ document.write(`
 <span class="n">supports_unicode_filenames</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a relative version of a path&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return a relative version of a path&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;no path specified&quot;</span><span class="p">)</span>
@@ -849,7 +848,7 @@ document.write(`
 <span class="c1"># returned path.</span>
 
 <span class="k">def</span> <span class="nf">commonpath</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a sequence of path names, returns the longest common sub-path.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Given a sequence of path names, returns the longest common sub-path.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">paths</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;commonpath() arg is an empty sequence&#39;</span><span class="p">)</span>

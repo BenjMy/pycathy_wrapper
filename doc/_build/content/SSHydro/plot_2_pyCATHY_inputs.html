@@ -7,7 +7,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Input plots &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
   
@@ -52,7 +52,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -588,20 +587,10 @@ homogeneous soil
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;soil&quot;</span><span class="p">,</span> <span class="n">yprop</span><span class="o">=</span><span class="s2">&quot;PERMX&quot;</span><span class="p">,</span> <span class="n">layer_nb</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_2_pyCATHY_inputs.py&quot;</span>, line <span class="m">137</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="n">simu</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;soil&quot;</span><span class="p">,</span> <span class="n">yprop</span><span class="o">=</span><span class="s2">&quot;PERMX&quot;</span><span class="p">,</span> <span class="n">layer_nb</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py&quot;</span>, line <span class="m">3586</span>, in <span class="n">show_input</span>
-<span class="w">    </span><span class="n">soil_map</span><span class="p">[</span><span class="n">zone_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">yprop</span><span class="p">]</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span>
-  File <span class="nb">&quot;/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/pandas-2.0.0rc1-py3.10-linux-x86_64.egg/pandas/core/generic.py&quot;</span>, line <span class="m">4056</span>, in <span class="n">xs</span>
-<span class="w">    </span><span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;list keys are not supported in xs, pass a tuple instead&quot;</span><span class="p">)</span>
-<span class="gr">TypeError</span>: <span class="n">list keys are not supported in xs, pass a tuple instead</span>
+<img src="../../_images/sphx_glr_plot_2_pyCATHY_inputs_008.png" srcset="../../_images/sphx_glr_plot_2_pyCATHY_inputs_008.png" alt="view from top (before extruding), layer nb2" class = "sphx-glr-single-img"/><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;soil&quot;</span><span class="p">,</span> <span class="n">yprop</span><span class="o">=</span><span class="s2">&quot;PERMX&quot;</span><span class="p">,</span> <span class="n">layer_nb</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;soil&quot;</span><span class="p">,</span> <span class="n">yprop</span><span class="o">=</span><span class="s2">&quot;PERMX&quot;</span><span class="p">,</span> <span class="n">layer_nb</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.174 seconds)</p>
+<img src="../../_images/sphx_glr_plot_2_pyCATHY_inputs_009.png" srcset="../../_images/sphx_glr_plot_2_pyCATHY_inputs_009.png" alt="view from top (before extruding), layer nb12" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.533 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-sshydro-plot-2-pycathy-inputs-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/1d13db0c6940ccbe2754c7e183bf2e06/plot_2_pyCATHY_inputs.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_2_pyCATHY_inputs.py</span></code></a></p>

@@ -71,9 +71,10 @@ matplotlib.rcParams.update(nice_fonts)
 
 def create_gridded_mask(x,y):
     
-    points = MultiPoint(np.column_stack((x, y)))
+    # points = MultiPoint(np.column_stack((x, y)))
+    points = np.column_stack((x, y))
     multi_point = MultiPoint(points)
-    boundary = Polygon(multi_point)
+    boundary = Polygon(points)
 
     interval = int(x[1]- x[0])*4
     # interval =100

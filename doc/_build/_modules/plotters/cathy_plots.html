@@ -51,7 +51,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/thebelab-helper.js"></script>
@@ -416,9 +415,10 @@ document.write(`
 
 <span class="k">def</span> <span class="nf">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
     
-    <span class="n">points</span> <span class="o">=</span> <span class="n">MultiPoint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+    <span class="c1"># points = MultiPoint(np.column_stack((x, y)))</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
     <span class="n">multi_point</span> <span class="o">=</span> <span class="n">MultiPoint</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-    <span class="n">boundary</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">multi_point</span><span class="p">)</span>
+    <span class="n">boundary</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 
     <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
     <span class="c1"># interval =100</span>
@@ -549,7 +549,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_wtdepth"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_wtdepth.html#plotters.cathy_plots.show_wtdepth">[docs]</a><span class="k">def</span> <span class="nf">show_wtdepth</span><span class="p">(</span><span class="n">df_wtdepth</span><span class="o">=</span><span class="p">[],</span> <span class="n">workdir</span><span class="o">=</span><span class="p">[],</span> <span class="n">project_name</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># read hgraph file if df_hgraph not existing</span>
@@ -574,7 +574,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_hgsfdet"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_hgsfdet.html#plotters.cathy_plots.show_hgsfdet">[docs]</a><span class="k">def</span> <span class="nf">show_hgsfdet</span><span class="p">(</span><span class="n">df_hgsfdeth</span><span class="o">=</span><span class="p">[],</span> <span class="n">workdir</span><span class="o">=</span><span class="p">[],</span> <span class="n">project_name</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># read hgraph file if df_hgraph not existing</span>
@@ -598,7 +598,7 @@ document.write(`
 <div class="viewcode-block" id="show_dtcoupling"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_dtcoupling.html#plotters.cathy_plots.show_dtcoupling">[docs]</a><span class="k">def</span> <span class="nf">show_dtcoupling</span><span class="p">(</span>
     <span class="n">df_dtcoupling</span><span class="o">=</span><span class="p">[],</span> <span class="n">workdir</span><span class="o">=</span><span class="p">[],</span> <span class="n">project_name</span><span class="o">=</span><span class="p">[],</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">yprop</span><span class="o">=</span><span class="s2">&quot;Atmact-vf&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot dtcoupling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -629,7 +629,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_hgraph"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_hgraph.html#plotters.cathy_plots.show_hgraph">[docs]</a><span class="k">def</span> <span class="nf">show_hgraph</span><span class="p">(</span><span class="n">df_hgraph</span><span class="o">=</span><span class="p">[],</span> <span class="n">workdir</span><span class="o">=</span><span class="p">[],</span> <span class="n">project_name</span><span class="o">=</span><span class="p">[],</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot hgraph</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># read hgraph file if df_hgraph not existing</span>
@@ -650,7 +650,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_COCumflowvol"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_COCumflowvol.html#plotters.cathy_plots.show_COCumflowvol">[docs]</a><span class="k">def</span> <span class="nf">show_COCumflowvol</span><span class="p">(</span><span class="n">df_cumflowvol</span><span class="o">=</span><span class="p">[],</span> <span class="n">workdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot COCumflowvol</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># read file if df_cumflowvol not existing</span>
@@ -676,7 +676,7 @@ document.write(`
 <div class="viewcode-block" id="show_vp_DEPRECATED"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_vp_DEPRECATED.html#plotters.cathy_plots.show_vp_DEPRECATED">[docs]</a><span class="k">def</span> <span class="nf">show_vp_DEPRECATED</span><span class="p">(</span>
     <span class="n">df_vp</span><span class="o">=</span><span class="p">[],</span> <span class="n">workdir</span><span class="o">=</span><span class="p">[],</span> <span class="n">project_name</span><span class="o">=</span><span class="p">[],</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot vp</span>
 <span class="sd">    DEPRECATED use psi and sw reader instead and plot using pandas after find_nearest_node search.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -712,7 +712,7 @@ document.write(`
     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot vtk file using pyvista</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -909,7 +909,7 @@ document.write(`
     <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Time lapse animation of selected time steps</span>
 
 <span class="sd">    Parameters</span>
@@ -1028,7 +1028,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_atmbc"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_atmbc.html#plotters.cathy_plots.show_atmbc">[docs]</a><span class="k">def</span> <span class="nf">show_atmbc</span><span class="p">(</span><span class="n">t_atmbc</span><span class="p">,</span> <span class="n">v_atmbc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot atmbc=f(time)</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1104,7 +1104,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_atmbc_3d"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_atmbc_3d.html#plotters.cathy_plots.show_atmbc_3d">[docs]</a><span class="k">def</span> <span class="nf">show_atmbc_3d</span><span class="p">(</span><span class="n">df_atmbc</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Temporary (must exist throught show_vtk only)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># df_atmbc.set_index(&#39;time&#39;,inplace=True)</span>
@@ -1123,7 +1123,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_soil"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_soil.html#plotters.cathy_plots.show_soil">[docs]</a><span class="k">def</span> <span class="nf">show_soil</span><span class="p">(</span><span class="n">soil_map</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    View from top of the soil prop</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1246,7 +1246,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_zone"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_zone.html#plotters.cathy_plots.show_zone">[docs]</a><span class="k">def</span> <span class="nf">show_zone</span><span class="p">(</span><span class="n">zone_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    View from top of the vegetation type (equivalent somehow to root map)</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1283,7 +1283,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="show_indice_veg"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_indice_veg.html#plotters.cathy_plots.show_indice_veg">[docs]</a><span class="k">def</span> <span class="nf">show_indice_veg</span><span class="p">(</span><span class="n">veg_map</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    View from top of the vegetation type (equivalent somehow to root map)</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1332,7 +1332,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="dem_plot_2d_top"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.dem_plot_2d_top.html#plotters.cathy_plots.dem_plot_2d_top">[docs]</a><span class="k">def</span> <span class="nf">dem_plot_2d_top</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    View of the DEM from top of the a given parameter</span>
 
 <span class="sd">    (Not yet implemented)</span>
@@ -1403,7 +1403,7 @@ document.write(`
     <span class="n">project_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a 3D representation from a Grass DEM file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># np.shape(dem_mat)</span>
@@ -1546,7 +1546,7 @@ document.write(`
 <div class="viewcode-block" id="show_DA_process_ens"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_DA_process_ens.html#plotters.cathy_plots.show_DA_process_ens">[docs]</a><span class="k">def</span> <span class="nf">show_DA_process_ens</span><span class="p">(</span>
     <span class="n">EnsembleX</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">DataCov</span><span class="p">,</span> <span class="n">dD</span><span class="p">,</span> <span class="n">dAS</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">Analysis</span><span class="p">,</span> <span class="n">savefig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation Analysis&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation Analysis&quot;&quot;&quot;</span>
     <span class="n">label_sensor</span> <span class="o">=</span> <span class="s2">&quot;raw data&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;label_sensor&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">label_sensor</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;label_sensor&quot;</span><span class="p">]</span>
@@ -1625,7 +1625,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="DA_RMS"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.DA_RMS.html#plotters.cathy_plots.DA_RMS">[docs]</a><span class="k">def</span> <span class="nf">DA_RMS</span><span class="p">(</span><span class="n">df_performance</span><span class="p">,</span> <span class="n">sensorName</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: RMS evolution over the time&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: RMS evolution over the time&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;ax&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ax&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1677,7 +1677,7 @@ document.write(`
 <div class="viewcode-block" id="DA_plot_parm_dynamic"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic.html#plotters.cathy_plots.DA_plot_parm_dynamic">[docs]</a><span class="k">def</span> <span class="nf">DA_plot_parm_dynamic</span><span class="p">(</span>
     <span class="n">parm</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">,</span> <span class="n">dict_parm_pert</span><span class="o">=</span><span class="p">{},</span> <span class="n">list_assimilation_times</span><span class="o">=</span><span class="p">[],</span> <span class="n">savefig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: parameter estimation evolution over the time&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: parameter estimation evolution over the time&quot;&quot;&quot;</span>
     <span class="n">ensemble_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict_parm_pert</span><span class="p">[</span><span class="n">parm</span><span class="p">][</span><span class="s2">&quot;ini_perturbation&quot;</span><span class="p">])</span>
     <span class="c1"># nb_times = len(df_DA[&#39;time&#39;].unique())</span>
 
@@ -1713,7 +1713,7 @@ document.write(`
 <div class="viewcode-block" id="DA_plot_parm_dynamic_scatter"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.DA_plot_parm_dynamic_scatter.html#plotters.cathy_plots.DA_plot_parm_dynamic_scatter">[docs]</a><span class="k">def</span> <span class="nf">DA_plot_parm_dynamic_scatter</span><span class="p">(</span>
     <span class="n">parm</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">,</span> <span class="n">dict_parm_pert</span><span class="o">=</span><span class="p">{},</span> <span class="n">list_assimilation_times</span><span class="o">=</span><span class="p">[],</span> <span class="n">savefig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: parameter estimation evolution over the time&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: parameter estimation evolution over the time&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;ax&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ax&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1755,7 +1755,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="prepare_DA_plot_time_dynamic"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.prepare_DA_plot_time_dynamic.html#plotters.cathy_plots.prepare_DA_plot_time_dynamic">[docs]</a><span class="k">def</span> <span class="nf">prepare_DA_plot_time_dynamic</span><span class="p">(</span><span class="n">DA</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="n">nodes_of_interest</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select data from DA_df dataframe&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Select data from DA_df dataframe&quot;&quot;&quot;</span>
     <span class="n">keytime</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
     <span class="n">start_date</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="s2">&quot;start_date&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -1956,7 +1956,7 @@ document.write(`
 <div class="viewcode-block" id="DA_plot_time_dynamic"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.DA_plot_time_dynamic.html#plotters.cathy_plots.DA_plot_time_dynamic">[docs]</a><span class="k">def</span> <span class="nf">DA_plot_time_dynamic</span><span class="p">(</span>
     <span class="n">DA</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="n">nodes_of_interest</span><span class="o">=</span><span class="p">[],</span> <span class="n">savefig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: state estimation evolution over the time&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot result of Data Assimilation: state estimation evolution over the time&quot;&quot;&quot;</span>
     <span class="n">prep_DA</span> <span class="o">=</span> <span class="n">prepare_DA_plot_time_dynamic</span><span class="p">(</span>
         <span class="n">DA</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">nodes_of_interest</span><span class="o">=</span><span class="n">nodes_of_interest</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span>

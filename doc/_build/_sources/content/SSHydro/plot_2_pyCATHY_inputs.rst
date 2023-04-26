@@ -444,18 +444,12 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
 
 
-.. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+.. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_008.png
+   :alt: view from top (before extruding), layer nb2
+   :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_008.png
+   :class: sphx-glr-single-img
 
-    Traceback (most recent call last):
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_2_pyCATHY_inputs.py", line 137, in <module>
-        simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 3586, in show_input
-        soil_map[zone_mat[0] == z] = df[0][yprop].xs(
-      File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/pandas-2.0.0rc1-py3.10-linux-x86_64.egg/pandas/core/generic.py", line 4056, in xs
-        raise TypeError("list keys are not supported in xs, pass a tuple instead")
-    TypeError: list keys are not supported in xs, pass a tuple instead
 
 
 
@@ -467,9 +461,20 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=12)
 
 
+
+.. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_009.png
+   :alt: view from top (before extruding), layer nb12
+   :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_009.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.174 seconds)
+   **Total running time of the script:** ( 0 minutes  2.533 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_2_pyCATHY_inputs.py:
