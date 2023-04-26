@@ -26,7 +26,8 @@ from pyCATHY.plotters import cathy_plots as cplt
 # if you add True to verbose, the processor log will be printed in the window shell
 path2prj = "weil_exemple_outputs_plot"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj)
-simu.run_processor(TRAFLAG=0,verbose=True)
+simu.run_processor(IPRT1=3,verbose=True)
+simu.run_processor(IPRT1=2,verbose=True)
 
 
 #%% plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
@@ -51,11 +52,11 @@ cplt.show_vtk(
 )
 
 #%%  3d visualiation of the water saturation for the time step 1
-cplt.show_vtk(
-    unit="saturation",
-    timeStep=1,
-    notebook=False,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
-)
+# cplt.show_vtk(
+#     unit="saturation",
+#     timeStep=1,
+#     notebook=False,
+#     path=simu.workdir + "/my_cathy_prj/vtk/",
+# )
 
 

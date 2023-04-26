@@ -3,9 +3,7 @@ README.md
 pyproject.toml
 setup.cfg
 setup.py
-doc/__init__.py
 doc/conf.py
-doc/remove_kernel_metadata.py
 pyCATHY/__init__.py
 pyCATHY/cathy_tools.py
 pyCATHY/cathy_utils.py

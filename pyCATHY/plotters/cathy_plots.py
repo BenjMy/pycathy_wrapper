@@ -824,7 +824,9 @@ def show_soil(soil_map, ax=None, **kwargs):
         label=yprop,
     )
 
-    cax.set_ticklabels(range(int(min(soil_map.flatten())), nb_of_zones))
+    # try:
+        # cax.set_ticklabels(range(int(min(soil_map.flatten())), nb_of_zones))
+        
     cax.ax.set_yticklabels(
         [
             "{:.2e}".format(x)

@@ -40,7 +40,7 @@ simu.create_mesh_vtk(verbose=True)
 
 #%% spatially variable atmospheric boundary condition inputs
 
-grid3d = in_CT.read_grid3d(simu.project_name)
+grid3d = simu.read_outputs('grid3d')
 DEM, dem_header = simu.read_inputs('dem')
 t_atmbc = [0,86400]
 v_atmbc = np.zeros(int(grid3d['nnod']))
@@ -74,11 +74,11 @@ cplt.show_vtk(
 )
 
 #%%  3d visualiation of the water saturation for the time step 1
-cplt.show_vtk(
-    unit="saturation",
-    timeStep=2,
-    notebook=False,
-    path=simu.workdir + "/atmbc_spatially_timely_from_weil/vtk/",
-    savefig=True,
-)
+# cplt.show_vtk(
+#     unit="saturation",
+#     timeStep=2,
+#     notebook=False,
+#     path=simu.workdir + "/atmbc_spatially_timely_from_weil/vtk/",
+#     savefig=True,
+# )
 

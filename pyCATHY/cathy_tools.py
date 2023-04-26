@@ -539,9 +539,8 @@ class CATHY:
         # run the processor
         # --------------------------------------------------------------------
         if runProcess:
-
+            
             # t0 = time.time()  # executation time estimate
-
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name
 
@@ -560,10 +559,19 @@ class CATHY:
                 print(p.stdout)
                 print(p.stderr)
             os.chdir(os.path.join(self.workdir))
-            self.grid3d = out_CT.read_grid3d(
-                os.path.join(self.workdir, self.project_name, 'output', 'grid3d')
-            )
-
+            
+                        
+            try:
+                self.grid3d = out_CT.read_grid3d(
+                    os.path.join(self.workdir, self.project_name, 'output', 'grid3d')
+                )
+            except:
+                self.run_processor(IPRT1=3)
+                
+            # if not "nnod3" in self.grid3d.keys():
+            #     self.run_processor(IPRT1=3)
+                
+            
             # computation time
             # ----------------------------------------------------------------
             # t1 = time.time()
@@ -3276,6 +3284,8 @@ class CATHY:
         # if not 'nnod3' in self.grid3d.keys():
         self.run_preprocessor(verbose=verbose)
         self.run_processor(IPRT1=3, verbose=verbose)
+        
+        
 
         self.create_mesh_vtkris3d_vtk2(verbose)
         # self.create_mesh_vtkris3d_vtk9()
