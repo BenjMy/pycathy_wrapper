@@ -139,6 +139,14 @@ Add a new zone
 
     🔄 Update hap.in file
     🔄 update dem_parameters file 
+    ─────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ────────────────────────────────────────────────────────────────────────────────────────
+
+                                The parm dictionnary is empty
+                                Falling back to defaults to update CATHYH
+                                This can have consequences !!
+                            
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    🔄 update parm file 
     🔄 update zone file 
     🔄 update dem_parameters file 
     🔄 update parm file 
@@ -211,18 +219,31 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
 
 
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_003.png
+         :alt: plot 2 pyCATHY inputs
+         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_003.png
+         :class: sphx-glr-multi-img
+
+    *
+
+      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_004.png
+         :alt: view from top (before extruding), layer nb4
+         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_004.png
+         :class: sphx-glr-multi-img
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_2_pyCATHY_inputs.py", line 79, in <module>
-        simu.update_soil(FP_map=FP_map_2zones, show=True)
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 2400, in update_soil
-        FeddesParam = self._prepare_SOIL_vegetation_tb(FP_map)
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 2648, in _prepare_SOIL_vegetation_tb
-        raise ValueError(
-    ValueError: Wrong number of vegetations: PCANA size is 2 while MAXVEG is 1
+    🔄 Update soil
+    homogeneous soil
 
 
 
@@ -233,6 +254,19 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
 
     simu.update_prepo_inputs()
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    🔄 Update hap.in file
+    🔄 update dem_parameters file 
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 93-95
@@ -247,6 +281,20 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
     simu.update_zone()
 
 
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    🔄 update zone file 
+    🔄 update dem_parameters file 
+    🔄 update parm file 
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 98-102
 
 .. code-block:: default
@@ -254,6 +302,29 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
 
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=1)
     simu.show_input(prop="soil", yprop="POROS", layer_nb=2)
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_005.png
+         :alt: view from top (before extruding), layer nb1
+         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_005.png
+         :class: sphx-glr-multi-img
+
+    *
+
+      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_006.png
+         :alt: view from top (before extruding), layer nb2
+         :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_006.png
+         :class: sphx-glr-multi-img
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 103-104
@@ -268,6 +339,17 @@ Show layer number 10
     simu.show_input(prop="soil", yprop="VGNCELL", layer_nb=10)
 
 
+
+
+.. image-sg:: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_007.png
+   :alt: view from top (before extruding), layer nb10
+   :srcset: /content/SSHydro/images/sphx_glr_plot_2_pyCATHY_inputs_007.png
+   :class: sphx-glr-single-img
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 108-112
 
 .. code-block:: default
@@ -275,6 +357,19 @@ Show layer number 10
     simu.update_soil()
     df_soil, _ = simu.read_inputs("soil")
     df = simu.read_inputs("soil")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    🔄 Update soil
+    homogeneous soil
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 113-119
@@ -286,6 +381,22 @@ Show layer number 10
     zones[5:14, 5:14] = 2
     simu.update_zone(zones)
     simu.show_input(prop="zone")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    🔄 Update hap.in file
+    🔄 update dem_parameters file 
+    🔄 update zone file 
+    🔄 update dem_parameters file 
+    🔄 update parm file 
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 120-121
@@ -312,18 +423,53 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
     simu.update_soil(SPP_map=SPP_map_2zones)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-140
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    🔄 Update soil
+    homogeneous soil
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 137-139
 
 .. code-block:: default
 
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_2_pyCATHY_inputs.py", line 137, in <module>
+        simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
+      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 3576, in show_input
+        soil_map[zone_mat[0] == z] = df[0][yprop].xs(
+      File "/home/ben/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/pandas-2.0.0rc1-py3.10-linux-x86_64.egg/pandas/core/generic.py", line 4056, in xs
+        raise TypeError("list keys are not supported in xs, pass a tuple instead")
+    TypeError: list keys are not supported in xs, pass a tuple instead
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 140-141
+
+.. code-block:: default
 
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=12)
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.798 seconds)
+   **Total running time of the script:** ( 0 minutes  2.341 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_2_pyCATHY_inputs.py:

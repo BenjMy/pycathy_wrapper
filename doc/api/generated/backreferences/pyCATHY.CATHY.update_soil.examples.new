@@ -1,0 +1,34 @@
+
+
+Examples using ``pyCATHY.CATHY.update_soil``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_2_pyCATHY_inputs_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Input plots</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`

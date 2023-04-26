@@ -136,4 +136,5 @@ simu.update_soil(SPP_map=SPP_map_2zones)
 #%%
 simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
 
+#%%
 simu.show_input(prop="soil", yprop="PERMX", layer_nb=12)

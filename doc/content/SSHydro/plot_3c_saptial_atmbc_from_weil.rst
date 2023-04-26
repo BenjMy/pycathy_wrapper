@@ -73,18 +73,324 @@ This example shows how to use pyCATHY object to create spatially and temporally 
 
 
 
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_saptial_atmbc_from_weil.py", line 39, in <module>
-        simu.create_mesh_vtk(verbose=True)
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 3246, in create_mesh_vtk
-        self.run_processor(IPRT1=3, verbose=verbose)
-      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 544, in run_processor
-        self.grid3d = in_CT.read_grid3d(
-    AttributeError: module 'pyCATHY.importers.cathy_inputs' has no attribute 'read_grid3d'
+    🏁 Initiate CATHY object
+    🍳 gfortran compilation
+    👟 Run preprocessor
+
+     wbb...
+
+     searching the dtm_13.val input file...
+     assigned nodata value =  -9999.0000000000000     
+
+     number of processed cells =         400
+
+     ...wbb completed
+
+     rn...
+     csort I...
+     ...completed
+
+     depit...
+     dem modifications =            0
+     dem modifications =            0 (total)
+     ...completed
+
+     csort II...
+     ...completed
+
+     cca...
+
+     contour curvature threshold value =    9.99999996E+11
+     ...completed
+
+     smean...
+     mean (min,max) facet slope =  0.052056253 ( 0.020000000, 0.053851648)
+     ...completed
+
+     dsf...
+     the drainage direction of the outlet cell (           8 ) is used
+     ...completed
+
+     hg...
+     ...completed
+
+     saving the data in the basin_b/basin_i files...
+
+     ...rn completed
+
+     mrbb...
+
+
+     Select the header type:
+     0) None
+     1) ESRI ascii file
+     2) GRASS ascii file
+     (Ctrl C to exit)
+
+     -> 
+     Select the nodata value:
+     (Ctrl C to exit)
+
+     -> 
+     Select the pointer system:
+     1) HAP system
+     2) Arc/Gis system
+     (Ctrl C to exit)
+
+     ->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dem file
+
+     min value = 0.335000E+00
+     max value = 0.100000E+01
+     number of cells =   400
+     mean value = 0.667500E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     lakes_map file
+
+     min value =     0
+     max value =     0
+     number of cells =   400
+     mean value =     0.000000
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     zone file
+
+     min value =     1
+     max value =     1
+     number of cells =   400
+     mean value =     1.000000
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_w_1 file
+
+     min value = 0.515524E+00
+     max value = 0.100000E+01
+     number of cells =   400
+     mean value = 0.607575E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_w_2 file
+
+     min value = 0.000000E+00
+     max value = 0.484476E+00
+     number of cells =   400
+     mean value = 0.392425E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_p_outflow_1 file
+
+     min value =     4
+     max value =     8
+     number of cells =   400
+     mean value =     4.200000
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_p_outflow_2 file
+
+     min value =     0
+     max value =     9
+     number of cells =   400
+     mean value =     6.792500
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     A_inflow file
+
+     min value = 0.000000000000E+00
+     max value = 0.997499787031E+02
+     number of cells =   400
+     mean value = 0.388447785378E+01
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_local_slope_1 file
+
+     min value = 0.200000E-01
+     max value = 0.500000E-01
+     number of cells =   400
+     mean value = 0.485000E-01
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_local_slope_2 file
+
+     min value = 0.000000E+00
+     max value = 0.494975E-01
+     number of cells =   400
+     mean value = 0.400930E-01
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_epl_1 file
+
+     min value = 0.500000E+00
+     max value = 0.500000E+00
+     number of cells =   400
+     mean value = 0.500000E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_epl_2 file
+
+     min value = 0.000000E+00
+     max value = 0.707107E+00
+     number of cells =   400
+     mean value = 0.572757E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_kSs1_sf_1 file
+
+     min value = 0.240040E+02
+     max value = 0.240040E+02
+     number of cells =   400
+     mean value = 0.240040E+02
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_kSs1_sf_2 file
+
+     min value = 0.000000E+00
+     max value = 0.240040E+02
+     number of cells =   400
+     mean value = 0.194432E+02
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_Ws1_sf file
+
+     min value = 0.100000E+01
+     max value = 0.100000E+01
+     number of cells =   400
+     mean value = 0.100000E+01
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_Ws1_sf_2 file
+
+     min value = 0.000000E+00
+     max value = 0.100000E+01
+     number of cells =   400
+     mean value = 0.810000E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_b1_sf file
+
+     min value = 0.000000E+00
+     max value = 0.000000E+00
+     number of cells =   400
+     mean value = 0.000000E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_y1_sf file
+
+     min value = 0.000000E+00
+     max value = 0.000000E+00
+     number of cells =   400
+     mean value = 0.000000E+00
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_hcID file
+
+     min value =     0
+     max value =     0
+     number of cells =   400
+     mean value =     0.000000
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_q_output file
+
+     min value =     0
+     max value =     0
+     number of cells =   400
+     mean value =     0.000000
+
+     writing the output file...
+
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     dtm_nrc file
+
+     min value = 0.100000E+01
+     max value = 0.100000E+01
+     number of cells =   400
+     mean value = 0.100000E+01
+
+     writing the output file...
+
+     ...mrbb completed
+
+     bb2shp...
+
+     writing file river_net.shp
+
+    Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+
+    🔄 update parm file 
+    🔄 Update hap.in file
+    🔄 update dem_parameters file 
+    🛠  Recompile src files [7s]
+    🍳 gfortran compilation [13s]
+    😔 Cannot find the new processsor
+    👟 Run processor
+    b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
+    b''
 
 
 
@@ -111,6 +417,19 @@ This example shows how to use pyCATHY object to create spatially and temporally 
                         time=t_atmbc,
                         netValue=[v_atmbc]*len(t_atmbc)
                       )
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/ben/Documents/GitHub/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_saptial_atmbc_from_weil.py", line 43, in <module>
+        grid3d = in_CT.read_grid3d(simu.project_name)
+    AttributeError: module 'pyCATHY.importers.cathy_inputs' has no attribute 'read_grid3d'
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 62-66
@@ -152,7 +471,7 @@ This example shows how to use pyCATHY object to create spatially and temporally 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  14.533 seconds)
+   **Total running time of the script:** ( 0 minutes  14.118 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py:

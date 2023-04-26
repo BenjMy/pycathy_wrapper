@@ -24,6 +24,13 @@ import pyvista
 from sphinx_gallery.sorting import FileNameSortKey
 
 
+#sys.path.append('.')
+#from remove_kernel_metadata import removeK
+#removeK()
+
+
+
+
 # Project information
 # -----------------------------------------------------------------------------
 project = "pyCATHY"
