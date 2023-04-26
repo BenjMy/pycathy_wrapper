@@ -13,7 +13,7 @@ jobs:
           pip install sphinx sphinx_book_theme
           pip install -r env/requirements_doc.txt
           pip install .
-          python -m ipykernel install --user --name pyCATHY
+          python -m ipykernel install --user --name pycathy_doc
       - name: Sphinx build
         run: |
           rm -rf doc/_build/
