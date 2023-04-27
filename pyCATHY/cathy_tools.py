@@ -2447,7 +2447,7 @@ class CATHY:
 
         # write soil file
         # --------------------------------------------------------------------
-        self._write_SOIL_file(SoilPhysProp, FeddesParam, **kwargs)
+        self._write_SOIL_file(self.soil_SPP["SPP"], FeddesParam, **kwargs)
 
         # map SPP to the mesh
         # --------------------------------------------------------------------
@@ -3580,12 +3580,14 @@ class CATHY:
             exclude_zone = self._check_outside_DEM(zone_mat[0])
             NZONES = len(np.unique(zone_mat[0])) - exclude_zone
 
-            for z in range(NZONES-1):
-                # print(z)
-                # z = 0
-                soil_map_prop[zone_mat[0] == z+1] = df[0][yprop].xs(
-                                                            (str(layer_nb), str(int(z)))
-                                                            )  # ,level=0)
+            if NZONES-1>1:
+                for z in range(NZONES-1):
+                    soil_map_prop[zone_mat[0] == z-1] = df[0][yprop].xs(
+                                                                (str(layer_nb), str(int(z)))
+                                                                )
+            else:
+                soil_map_prop[zone_mat[0] == 1] = df[0][yprop].xs((str(layer_nb), '0'))
+
             plt_CT.show_soil(soil_map_prop, ax=ax,
                              **kwargs)
 

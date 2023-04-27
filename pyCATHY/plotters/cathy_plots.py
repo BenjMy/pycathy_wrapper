@@ -976,7 +976,14 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
                                     )
                         )
 
-
+    cax.ax.set_yticklabels(
+        [
+            "{:d}".format(int(x))
+            for x in np.linspace(
+                min(veg_map.flatten())+1, max(veg_map.flatten())+1, nb_of_zones +1
+            )
+        ]
+    )
 
 
     ax.set_xlabel("x")

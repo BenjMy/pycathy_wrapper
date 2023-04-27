@@ -36,6 +36,7 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
     value = []
     tstep_idx = []
     # loop over lines
+    len(lines)
     for i, ll in enumerate(lines):
         if i > 0:
             # test_char = re.search('[a-zA-Z]', ll)
@@ -52,10 +53,17 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
             elif "VALUE".casefold() in ll.casefold() or "ATMINP".casefold() in ll.casefold():
                 value.append(float(ll.split()[0]))
 
-            elif "\n" in ll:
-                # take care of the additionnal empty lines (retour chariot)
-                # in the end of the file
-                pass
+            elif "\n" in ll:               
+                if len(ll.split())>0:
+                    if  (i % 2) == 0:
+                        value.append(float(ll.split()[0]))
+                    else:
+                        t.append(float(ll.split()[0]))
+                else:
+                    pass
+                    # take care of the additionnal empty lines (retour chariot)
+                    # in the end of the file
+                    # pass
 
             else:
                 # only numerical values
@@ -344,7 +352,8 @@ def read_soil(soilfile, dem_parm, MAXVEG):
 
     # Read FP parameters
     # ---------------------
-    # To write
+    FP_header = ['PCANA','PCREF','PCWLT','ZROOT','PZ','OMGC']
+    
 
     # Read SPP parameters
     # ---------------------
@@ -359,23 +368,34 @@ def read_soil(soilfile, dem_parm, MAXVEG):
         "VGPSATCELL",
     ]
 
+    FP_soil = []
     str_hd_soil = {}
     nb_of_header_lines = 9 + MAXVEG - 1
     with open(os.path.join(soilfile), "r") as f:  # open the file for reading
         count = 0
         for line in f:  # iterate over each line
+            if count>2 and count<MAXVEG+3:
+                FP_soil.append(line.split('PCANA')[0].split(' '))
             # if count < 9:
             # str_hd, value_hd = line.split()  # split it by whitespace
             # soilfile[str_hd.replace(":", "")] = value_hd
             count += 1
+
 
     soil = np.loadtxt(
                         soilfile, 
                         skiprows=nb_of_header_lines, 
                         max_rows=count - nb_of_header_lines - 1
     )
+    
+    FP_soil_mat = []
+    for fp in FP_soil:
+        FP_soil_mat.append([float(fpi) for fpi in fp if len(fpi)>0])
 
-    np.shape(soil)
+    FP_soil_mat = np.array(FP_soil_mat)
+    df_FP = pd.DataFrame(FP_soil_mat)
+    df_FP.columns = FP_header
+    
     name_str = []
     name_zone = []
     for dz in range(int(dem_parm["nzone"])):
@@ -391,7 +411,7 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     df_soil.index.set_names("str", level=0, inplace=True)
     df_soil.index.set_names("zone", level=1, inplace=True)
 
-    return df_soil, str_hd_soil
+    return df_soil,df_FP
 
 
 def read_raster(filename):
