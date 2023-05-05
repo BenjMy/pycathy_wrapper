@@ -367,11 +367,127 @@ def perturbate(simu_DA, scenario, NENS):
     #%% Plant parameters
     # ------------------------------------------------------------------------
 
+    if "PCWLT" in scenario["per_name"]:
+        index = scenario["per_name"].index("PCWLT")
+
+
+        clip_min = -180
+        clip_max = None
+            
+        for nz in range(len(simu_DA.soil["PCWLT"])):
+
+            clip_min, clip_max = check4bounds(
+                scenario,
+                index,
+                clip_min,
+                clip_max,
+                het_size=len(simu_DA.soil["PCWLT"]),
+                het_nb=nz,
+            )
+            
+            PCWLT = {
+                "type_parm": "PCWLT" + str(nz),
+                "nominal": scenario["per_nom"][index],  # nominal value
+                "mean": scenario["per_mean"][index],
+                "sd": scenario["per_sigma"][index],
+                "units": "$m$",  # units
+                "sampling_type": "normal",
+                "ensemble_size": NENS,  # size of the ensemble
+                "per_type": scenario["per_type"][index],
+                "savefig": "PCWLT.png",
+                "surf_zones_param": nz,
+                "clip_min": clip_min,
+                "clip_max": clip_max,
+            }
+            list_pert.append(PCWLT)
+            
+    if "OMGC" in scenario["per_name"]:
+        index = scenario["per_name"].index("OMGC")
+
+
+        clip_min = 0
+        clip_max = 1
+            
+        for nz in range(len(simu_DA.soil["OMGC"])):
+
+            clip_min, clip_max = check4bounds(
+                scenario,
+                index,
+                clip_min,
+                clip_max,
+                het_size=len(simu_DA.soil["OMGC"]),
+                het_nb=nz,
+            )
+            
+            OMGC = {
+                "type_parm": "OMGC" + str(nz),
+                "nominal": scenario["per_nom"][index],  # nominal value
+                "mean": scenario["per_mean"][index],
+                "sd": scenario["per_sigma"][index],
+                "units": "$?$",  # units
+                "sampling_type": "normal",
+                "ensemble_size": NENS,  # size of the ensemble
+                "per_type": scenario["per_type"][index],
+                "savefig": "OMGC.png",
+                "surf_zones_param": nz,
+                "clip_min": clip_min,
+                "clip_max": clip_max,
+            }
+            list_pert.append(OMGC)
+            
+            
+    if "PZ" in scenario["per_name"]:
+        index = scenario["per_name"].index("PZ")
+
+
+        clip_min = 0
+        clip_max = None
+            
+        for nz in range(len(simu_DA.soil["PZ"])):
+
+            clip_min, clip_max = check4bounds(
+                scenario,
+                index,
+                clip_min,
+                clip_max,
+                het_size=len(simu_DA.soil["PZ"]),
+                het_nb=nz,
+            )
+            
+            PZ = {
+                "type_parm": "PZ" + str(nz),
+                "nominal": scenario["per_nom"][index],  # nominal value
+                "mean": scenario["per_mean"][index],
+                "sd": scenario["per_sigma"][index],
+                "units": "$?$",  # units
+                "sampling_type": "normal",
+                "ensemble_size": NENS,  # size of the ensemble
+                "per_type": scenario["per_type"][index],
+                "savefig": "PZ.png",
+                "surf_zones_param": nz,
+                "clip_min": clip_min,
+                "clip_max": clip_max,
+            }
+            list_pert.append(PZ)
+            
     if "PCREF" in scenario["per_name"]:
         index = scenario["per_name"].index("PCREF")
 
+
+        clip_min = -30
+        clip_max = -1
+
         for nz in range(len(simu_DA.soil["PCREF"])):
 
+            clip_min, clip_max = check4bounds(
+                scenario,
+                index,
+                clip_min,
+                clip_max,
+                het_size=len(simu_DA.soil["ZROOT"]),
+                het_nb=nz,
+            )
+        
             PCREF = {
                 "type_parm": "PCREF" + str(nz),
                 "nominal": scenario["per_nom"][index],  # nominal value
@@ -382,9 +498,9 @@ def perturbate(simu_DA, scenario, NENS):
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
                 "savefig": "PCREF.png",
-                "surf_zones_param": nz
-                # 'clip_min':scenario['per_bounds'][index]['min'],
-                # 'clip_max':scenario['per_bounds'][index]['max'],
+                "surf_zones_param": nz,
+                "clip_min": clip_min,
+                "clip_max": clip_max,
             }
             list_pert.append(PCREF)
 

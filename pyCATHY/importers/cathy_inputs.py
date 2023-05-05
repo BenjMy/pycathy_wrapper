@@ -395,6 +395,7 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     FP_soil_mat = np.array(FP_soil_mat)
     df_FP = pd.DataFrame(FP_soil_mat)
     df_FP.columns = FP_header
+    df_FP.index.name = 'Veg. Indice'
     
     name_str = []
     name_zone = []

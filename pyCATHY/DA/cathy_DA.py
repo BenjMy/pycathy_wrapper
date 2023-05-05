@@ -1609,7 +1609,7 @@ class DA(CATHY):
                         list(
                             np.where(
                                 self.dict_parm_pert[pp[1]][update_key]
-                                > abs(min(self.grid3d["nodes_idxyz"][:, -1]))
+                                > abs(min(self.grid3d["mesh3d_nodes"][:, -1]))
                             )[0]
                         )
                     )
@@ -1617,7 +1617,7 @@ class DA(CATHY):
                         list(
                             np.where(
                                 self.dict_parm_pert[pp[1]][update_key]
-                                < abs(min(self.grid3d["nodes_idxyz"][:, -1]))
+                                < abs(min(self.grid3d["mesh3d_nodes"][:, -1]))
                             )[0]
                         )
                     )
@@ -2628,7 +2628,7 @@ class DA(CATHY):
                 os.path.join(self.workdir, self.project_name)
             )
 
-        M_rows = np.shape(self.grid3d["nodes_idxyz"])[0]
+        M_rows = np.shape(self.grid3d["mesh3d_nodes"])[0]
         N_col = self.NENS
         # N_col = len(ens_valid)
 

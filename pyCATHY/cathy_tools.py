@@ -427,8 +427,8 @@ class CATHY:
         # list all the fortran files to compile and compile
         for file in glob.glob("*.f"):
             
-            filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
-            # filepath = str(file)
+            # filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
+            filepath = str(file)
             bashCommand = "gfortran -c " + str(filepath)
             # gfortran -c *.f
             # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
@@ -747,20 +747,21 @@ class CATHY:
 
 
       
-        cathyH_laC = {
-            # "ROWMAX": 247,  # maximum NROW, with NROW = number of rows in the DEM
-            # "COLMAX": 221,  # maximum NCOL, with NCOL = number of columns in the DEM
-            # # 'COARSE': ,
-            # "MAXRES": 1,
-            # "DEMRES": 1,
-            "NODMAX": 28440,
-            "NTRMAX": 2*27848,
-            "MAXTRM": 2364075,
-            "NRMAX": 1,
-        }
-            
-        for k in cathyH_laC:
-            self.cathyH[k] = cathyH_laC[k]
+        # cathyH_laC = {
+        #     # "ROWMAX": 247,  # maximum NROW, with NROW = number of rows in the DEM
+        #     # "COLMAX": 221,  # maximum NCOL, with NCOL = number of columns in the DEM
+        #     # # 'COARSE': ,
+        #     # "MAXRES": 1,
+        #     # "DEMRES": 1,
+        #     "NODMAX": 28440,
+        #     "NTRMAX": 2*27848,
+        #     "MAXTRM": 2364075,
+        #     "NRMAX": 1,
+        # }
+        
+        
+        # for k in cathyH_laC:
+        #     self.cathyH[k] = cathyH_laC[k]
 
             
             
@@ -2511,7 +2512,7 @@ class CATHY:
             FP_map = {
                 # Feddes parameters default values
                 "PCANA": [0.0],
-                "PCREF": [-4.0],
+                "    ": [-4.0],
                 "PCWLT": [-150],
                 "ZROOT": [0.1],
                 "PZ": [1.0],
@@ -2854,9 +2855,11 @@ class CATHY:
         # self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
         self.veg_map = indice_veg
         
-       
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
+        
+        # exclude_veg = 0
+        # if np.sum(self.DEM<0)>0:
         exclude_veg = self._check_outside_DEM(indice_veg)
                                     
         # self.dem
@@ -2865,8 +2868,8 @@ class CATHY:
         self.update_cathyH(MAXVEG=self.MAXVEG)
 
         if show:
-            plt, ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
-            return indice_veg, plt, ax
+            ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
+            return indice_veg, ax
         return indice_veg
 
 
@@ -2880,6 +2883,10 @@ class CATHY:
             self.DEM = DEM_mat
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
+        
+        # np.shape(raster2check)
+        # np.shape(self.DEM)
+
         exclude_out_ind = 0
         if len(raster2check[self.DEM<0]):
             exclude_out_ind = 1
@@ -2940,7 +2947,7 @@ class CATHY:
             if hasattr(self, "mesh_bound_cond_df") is False:
                 self.create_mesh_bounds_df(
                                             BCtypName, 
-                                            self.grid3d["nodes_idxyz"], 
+                                            self.grid3d["mesh3d_nodes"], 
                                             time, 
                                             **kwargs
                 )
@@ -3014,6 +3021,10 @@ class CATHY:
         
         # Step 1: Extract mesh coordinates and build a dataframe
         # ---------------------------------------------------------------------
+        
+        grid3d = np.c_[np.arange(0,len(grid3d)),grid3d]
+        
+        
         self.mesh_bound_cond_df = pd.DataFrame(grid3d)
         self.mesh_bound_cond_df = self.mesh_bound_cond_df.rename(
             columns={
@@ -3471,7 +3482,8 @@ class CATHY:
                                                           self.project_name,
                                                           'fort.777'),
                                               )
-            plt_CT.show_spatialET(df_fort777, **kwargs)
+            cmap = plt_CT.show_spatialET(df_fort777, **kwargs)
+            return cmap
             
         elif prop == "WTD": # water table depth
         
@@ -3483,7 +3495,8 @@ class CATHY:
             NPRT = np.shape(psi)[0]
             XYZsurface= xyz[['x','y','z']].iloc[0:nnod].to_numpy()    
             WT, FLAG = self.infer_WTD_from_psi(psi,nnod,nstr,NPRT,xyz,XYZsurface)
-            plt_CT.plot_WTD(XYZsurface,WT,**kwargs)
+            cmap = plt_CT.plot_WTD(XYZsurface,WT,**kwargs)
+            return cmap
             
             
         else:
@@ -3825,12 +3838,12 @@ class CATHY:
         for i, nc in enumerate(node_coords):
             # euclidean distance
             d = (
-                (grid3d["nodes_idxyz"][:, 1] - nc[0]) ** 2
-                + (grid3d["nodes_idxyz"][:, 2] - nc[1]) ** 2
-                + (abs(grid3d["nodes_idxyz"][:, 3]) - abs(nc[2])) ** 2
+                (grid3d["mesh3d_nodes"][:, 0] - nc[0]) ** 2
+                + (grid3d["mesh3d_nodes"][:, 1] - nc[1]) ** 2
+                + (abs(grid3d["mesh3d_nodes"][:, 2]) - abs(nc[2])) ** 2
             ) ** 0.5
             closest_idx.append(np.argmin(d))
-            closest.append(grid3d["nodes_idxyz"][closest_idx[i], 1:])
+            closest.append(grid3d["mesh3d_nodes"][closest_idx[i],:])
             threshold = 5e-1
             if d[np.argmin(d)] > threshold:
                 self.console.print(
@@ -3909,14 +3922,22 @@ class CATHY:
         ]
         names = []
         i = 0
+        # pickle_off = open(filename, "rb")
+        # df = pd.read_pickle(pickle_off)
+
         with open(filename, "rb") as f:
-            while True:
-                try:
-                    backup_list.append(pickle.load(f))
-                    names.append(all_names[i])
-                    i += 1
-                except EOFError:
-                    break
+            # while True:
+                # print(all_names[i])
+                # print(i)
+                for i in range(len(all_names)):
+                    # try:
+                        df = pd.read_pickle(f)
+                        backup_list.append(df)
+                        # backup_list.append(pickle.load(f))
+                        names.append(all_names[i])
+                        # i += 1
+                    # except:
+                        # break
         f.close()
         dict_backup = {}
         for i, n in enumerate(names):

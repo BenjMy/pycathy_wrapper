@@ -106,21 +106,33 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     else:
         ax = kwargs["ax"]
     
+    
+    colorbar = True
+    if 'colorbar' in kwargs:
+        colorbar = kwargs['colorbar']
+        
+        
     ti = 0
     if 'ti' in kwargs:
         ti = kwargs['ti']
-        
-    # cmap = ax.scatter(XYZsurface[:,0], XYZsurface[:,1], c=WT[ti])
-    # ax.grid()
-    # cbar = plt.colorbar(cmap)
-    # cbar.set_label('GWD (m)')
     
-    
-    
+    interpolation = True
+    if interpolation is False:
+        cmap = ax.scatter(XYZsurface[:,0], XYZsurface[:,1], c=WT[ti])
+        ax.grid()
+        cbar = plt.colorbar(cmap)
+        cbar.set_label('GWD (m)')
+
     # Generate some random scattered points
     x = XYZsurface[:,0]
     y = XYZsurface[:,1]
-    z = WT[ti]
+    
+    cmap = 'viridis'
+    if type(ti) is list:
+        z = WT[ti[1]]-WT[ti[0]]
+        cmap = 'bwr'
+    else:
+        z = WT[ti]
     
     
     xi, yi, mask = create_gridded_mask(x,y)
@@ -132,14 +144,23 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
 
     # Plot the masked data
-    cmap = plt.contourf(xi, yi, zi_masked, cmap='viridis')
+    mapc = ax.contourf(xi, yi, zi_masked, cmap=cmap)
     
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
     ax.axis('equal')
     ax.grid(True, linestyle='-.')
-    cbar = plt.colorbar(cmap)
-    cbar.set_label('GWD (m)')
+    
+    if colorbar:
+        cbar = plt.colorbar(mapc,ax=ax)
+        
+        if type(ti) is list:
+            cbar.set_label(r'$\Delta$ GWD (m)')
+        else:
+            cbar.set_label('GWD (m)')
+        
+    return mapc
+
     
     
         
@@ -190,17 +211,17 @@ def show_spatialET(df_fort777,**kwargs):
     zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
 
     # Plot the masked data
-    cmap = plt.contourf(xi, yi, zi_masked, cmap='viridis')
+    cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
     
     ax.set_title('Actual evapotranspiration')
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
     ax.axis('equal')
     ax.grid(True, linestyle='-.')
-    cbar = plt.colorbar(cmap)
+    cbar = plt.colorbar(cmap,ax=ax)
     cbar.set_label('actual ET (mm/s)')
     
-    pass
+    return cmap
 
 
 
@@ -789,11 +810,11 @@ def show_soil(soil_map, ax=None, **kwargs):
 
     yprop = "PERMX"
     if "yprop" in kwargs:
-        yprop = kwargs["yprop"]
+        yprop = kwargs.pop("yprop")
 
     layer_nb = "1"
     if "layer_nb" in kwargs:
-        layer_nb = kwargs["layer_nb"]
+        layer_nb = kwargs.pop("layer_nb")
 
     cmap = "tab10"
     nb_of_zones = len(np.unique(soil_map))
@@ -804,15 +825,15 @@ def show_soil(soil_map, ax=None, **kwargs):
     if ax is None:
         fig, ax = plt.subplots()
 
-    linewidth = 1
-    if 'linewidth' in kwargs:
-        linewidth = kwargs['linewidth']
+    # linewidth = 1
+    # if 'linewidth' in kwargs:
+    #     linewidth = kwargs['linewidth']
         
     cf = ax.pcolormesh(
         soil_map,
         edgecolors="black",
         cmap=cmap,
-        linewidth = linewidth
+        **kwargs,
     )
     cf.set_clim(min(soil_map.flatten()), max(soil_map.flatten()))
 
@@ -961,26 +982,26 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
 
     cax = plt.colorbar(
         cf,
-        ticks=np.linspace(
-            int(min(veg_map.flatten())), int(max(veg_map.flatten())), nb_of_zones + 1
+        ticks=np.arange(
+            int(min(veg_map.flatten())), int(max(veg_map.flatten()))+1
         ),
         ax=ax,
         label="indice of vegetation",
     )
     
     # cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones + 2))
-    cax.set_ticklabels(np.linspace(
+    cax.set_ticklabels(np.arange(
                                     int(min(veg_map.flatten())), 
-                                    int(max(veg_map.flatten())),
-                                    nb_of_zones + 1
+                                    int(max(veg_map.flatten())) +1
+                                    # nb_of_zones + 1
                                     )
                         )
 
     cax.ax.set_yticklabels(
         [
             "{:d}".format(int(x))
-            for x in np.linspace(
-                min(veg_map.flatten())+1, max(veg_map.flatten())+1, nb_of_zones +1
+            for x in np.arange(
+                min(veg_map.flatten())-1, max(veg_map.flatten())
             )
         ]
     )
@@ -989,7 +1010,7 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("view from top (before extruding)")
-    plt.show(block=False)
+    # plt.show(block=False)
     # plt.close()
     return ax
 
@@ -1344,32 +1365,37 @@ def DA_plot_parm_dynamic(
     ensemble_size = len(dict_parm_pert[parm]["ini_perturbation"])
     # nb_times = len(df_DA['time'].unique())
 
-    fig = plt.figure(figsize=(6, 3), dpi=150)
-    ax = fig.add_subplot()
+    # fig = plt.figure(figsize=(6, 3), dpi=150)
+    
+    if 'ax' in kwargs:
+        ax = kwargs['ax']
+    else:
+        fig, ax = plt.subplots()
+        
     ax.hist(
         dict_parm_pert[parm]["ini_perturbation"],
         ensemble_size,
         alpha=0.5,
         label="ini_perturbation",
     )
-    plt.legend(loc="upper right")
-    plt.ylabel("Probability")
+    ax.legend(loc="upper right")
+    ax.set_ylabel("Probability")
     for nt in list_assimilation_times:
         try:
             ax.hist(
-                dict_parm_pert[parm]["update_nb" + str(nt + 1)],
+                dict_parm_pert[parm]["update_nb" + str(int(nt + 1))],
                 ensemble_size,
                 alpha=0.5,
-                label="update nb" + str(nt + 1),
+                label="update nb" + str(int(nt + 1)),
             )
         except:
             pass
-        plt.legend(loc="upper right")
-        plt.ylabel("Probability")
+        ax.legend(loc="upper right")
+        ax.set_ylabel("Probability")
     if "log" in kwargs:
         if kwargs["log"]:
-            plt.xscale("log")
-    plt.show()
+            ax.set_xscale("log")
+    # plt.show()
     return ax
 
 
@@ -1377,11 +1403,14 @@ def DA_plot_parm_dynamic_scatter(
     parm="ks", dict_parm_pert={}, list_assimilation_times=[], savefig=False, **kwargs
 ):
     """Plot result of Data Assimilation: parameter estimation evolution over the time"""
+    
     if "ax" in kwargs:
         ax = kwargs["ax"]
     else:
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
+        
+        
     ensemble_size = len(dict_parm_pert[parm]["ini_perturbation"])
     mean_t = [np.mean(dict_parm_pert[parm]["ini_perturbation"])]
     mean_t_yaxis = np.mean(dict_parm_pert[parm]["ini_perturbation"])
@@ -1407,13 +1436,20 @@ def DA_plot_parm_dynamic_scatter(
     df = pd.DataFrame()
     df = pd.DataFrame(data=dict_parm_new)
     df.index.name = "Ensemble_nb"
-    boxplot = df.boxplot()
+    
+    
+    color = 'k'
+    if "color" in kwargs:
+        color = kwargs["color"]
+    
+    boxplot = df.boxplot(color='grey',ax=ax)
     boxplot.set_xticklabels(name, rotation=90)
-    plt.ylabel(parm)
-    plt.xlabel("assimilation #")
+    
+    ax.set_ylabel(parm)
+    ax.set_xlabel("assimilation #")
     if "log" in kwargs:
         if kwargs["log"]:
-            plt.yscale("log")
+            boxplot.set_yscale("log")
     return ax
 
 
@@ -1629,6 +1665,12 @@ def DA_plot_time_dynamic(
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
 
+    alpha = 0.5
+    colors_minmax = 'bleu'
+    if "colors_minmax" in kwargs:
+        colors_minmax = kwargs["colors_minmax"]
+        
+        
     keytime = "time"
     xlabel = "time (h)"
     if "start_date" in kwargs:
@@ -1648,14 +1690,16 @@ def DA_plot_time_dynamic(
             columns=["idnode"],
             # columns=['idnode'],
             values=["mean(ENS)"],
-        ).plot(ax=ax, style=[".-"], color="blue")
+        ).plot(ax=ax, style=[".-"], color=colors_minmax,
+               )
 
         prep_DA["ens_max_isENS_time"].pivot(
             index=keytime,
             columns=["idnode"],
             # columns=['idnode'],
             values=["max(ENS)"],
-        ).plot(ax=ax, style=[".-"], color="blue")
+        ).plot(ax=ax, style=[".-"], color=colors_minmax,
+               )
 
         prep_DA["ens_min_isENS_time"].pivot(
             index=keytime,
@@ -1665,7 +1709,7 @@ def DA_plot_time_dynamic(
         ).plot(
             ax=ax,
             style=[".-"],
-            color="blue",
+            color=colors_minmax,
             xlabel="(assimilation) time - (h)",
             ylabel="pressure head $\psi$ (m)",
         )
@@ -1675,7 +1719,7 @@ def DA_plot_time_dynamic(
             prep_DA["ens_min_isENS_time"]["min(ENS)"],
             prep_DA["ens_max_isENS_time"]["max(ENS)"],
             alpha=0.2,
-            color="blue",
+            color=colors_minmax,
             label="minmax DA",
         )
         # lgd= ax.fill_between(prep_DA['ens_max_isENS_time'][keytime],
