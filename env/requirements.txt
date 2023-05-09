@@ -9,6 +9,7 @@ rich
 pandas
 natsort
 shapely
+imageio
 
 # Optionnal packages
 # resipy

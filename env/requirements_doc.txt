@@ -29,6 +29,7 @@ matplotlib
 pyvista
 vtk
 myst_nb
+jupytext
 
 
 # pypi building requirements
