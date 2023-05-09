@@ -1,0 +1,40 @@
+name: Test and Coverage
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: pyCATHY
+      TESTDIR: tmp-test-dir-with-unique-name
+      PYTEST_ARGS: --cov-config=.coveragerc --cov-report=term-missing --cov=$(PROJECT) --doctest-modules -v --pyargs
+      STYLE_CHECK_FILES: setup.py $(PROJECT) examples
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install -r env/requirements.txt
+          pip install -r env/requirements_tests.txt
+          pip install .
+
+      - name: Test and coverage
+        run: |
+          mkdir -p $TESTDIR
+          cd $TESTDIR
+          MPLBACKEND='agg' pytest $PYTEST_ARGS $PROJECT
+          cp .coverage* ..
+          rm -rvf $TESTDIR
+      
+      - name: Generate coverage report
+        run: |
+          pip install coverage
+          coverage xml
