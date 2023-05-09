@@ -8,13 +8,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - name: Clean gh-pages branch
-	  run: |
-	    git checkout gh-pages
-	    git rm -rf .
-	    git clean -fxd
-	    git commit -m "Clean gh-pages branch" --allow-empty
-	    git push origin gh-pages
+      - name: clean ghpages branch
+        run: |
+          git checkout gh-pages
+          git rm -rf .
+          git clean -fxd
+          git commit -m "Clean gh-pages branch" --allow-empty
+          git push origin gh-pages
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_book_theme
