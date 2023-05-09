@@ -2874,6 +2874,7 @@ class CATHY:
 
 
     def _check_outside_DEM(self,raster2check):
+        
         if hasattr(self,'DEM') is False:
             DEM_mat, DEM_header = in_CT.read_dem(
                                         os.path.join(self.workdir, self.project_name, "prepro/dem"),
@@ -2888,7 +2889,8 @@ class CATHY:
         # np.shape(self.DEM)
 
         exclude_out_ind = 0
-        if len(raster2check[self.DEM<0]):
+        if np.min(self.DEM)<0:
+        # if len(raster2check[self.DEM<0]):
             exclude_out_ind = 1
             
         return exclude_out_ind
@@ -3930,14 +3932,14 @@ class CATHY:
                 # print(all_names[i])
                 # print(i)
                 for i in range(len(all_names)):
-                    # try:
+                    try:
                         df = pd.read_pickle(f)
                         backup_list.append(df)
                         # backup_list.append(pickle.load(f))
                         names.append(all_names[i])
                         # i += 1
-                    # except:
-                        # break
+                    except:
+                        pass
         f.close()
         dict_backup = {}
         for i, n in enumerate(names):

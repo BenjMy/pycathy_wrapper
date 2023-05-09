@@ -152,9 +152,10 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
         in_nodes_mod=in_nodes_mod,
     )
 
+    
     # print(len(data_OUT))
     scalar_new = scalar + "_nearIntrp2Resipymsh"
-    # print(mesh_Resipy)
+    print('Add new attribute to mesh')
     # get_array(mesh, name, preference='cell'
 
     if "time" in kwargs:
@@ -215,6 +216,9 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
         DESCRIPTION.
     """
 
+    # import time
+    # t0 = time.time()
+
     in_nodes_mod = np.array(meshIN.points)
     if "in_nodes_mod" in kwargs:
         in_nodes_mod = kwargs["in_nodes_mod"]
@@ -225,17 +229,22 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
 
     rd = max(np.diff(meshIN.points[:, 0])) / 1
     meshOUT_interp = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
+    # print (time.time() - t0, "seconds process time")
 
     # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
 
+    # print('Point to cell data')
     result = meshOUT_interp.point_data_to_cell_data()
     out_data = result[scalar]
+    # print (time.time() - t0, "seconds process time")
 
     warm_0 = ""
     if len(np.where(out_data == 0)) > 0:
         warm_0 = "interpolation created 0 values - replacing them by min value of input CATHY predicted ER mesh"
 
+    # print('Replace now')
     out_data = np.where(out_data == 0, 1e-3, out_data)
+    # print (time.time() - t0, "seconds process time")
 
     return out_data, warm_0
 
@@ -417,7 +426,7 @@ def find_nearest_node(node_coord, meshIN_nodes_coords, threshold=1e-1, **kwargs)
 
 
 def add_attribute_2mesh(
-    data, mesh, name="ER_pred", overwrite=True, saveMesh=True, **kwargs
+    data, mesh, name="ER_pred", overwrite=True, saveMesh=False, **kwargs
 ):
     """
     add a new mesh attribute to a vtk file

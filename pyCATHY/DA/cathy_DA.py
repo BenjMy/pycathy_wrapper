@@ -1066,7 +1066,7 @@ class DA(CATHY):
                     "DA_Ensemble/cathy_" + str(ens_i + 1),
                 )
                 pathexe_list.append(path_exe)
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
                 result = pool.map(subprocess_run_multi, pathexe_list)
                 if verbose == True:
                     self.console.print(result)
@@ -1378,7 +1378,7 @@ class DA(CATHY):
                     "DA_Ensemble/cathy_" + str(ens_i + 1),
                 )
                 pathexe_list.append(path_exe)
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
                 result = pool.map(subprocess_run_multi, pathexe_list)
 
                 if self.verbose:
@@ -2570,7 +2570,7 @@ class DA(CATHY):
                 if parallel:
                     Hx_ens_ERT = self._map_ERT_parallel(
                         path_fwd_CATHY_list,
-                        savefig=True,
+                        savefig=False,
                         DA_cnb=self.count_DA_cycle,
                     )
                     if len(Hx_ens) > 0:
@@ -3040,17 +3040,18 @@ class DA(CATHY):
             self.Archie_parms["porosity"],
             ERT_meta_dict,
             DA_cnb=DA_cnb,
-            savefig=True,
+            savefig=False,
             noise_level=ERT_meta_dict["noise_level"],  # kwargs
             dict_ERT=key_time[1]["ERT"],  #  kwargs
         )
 
         # // run using ensemble subfolders path as a list
         # -----------------------------------------------------------------
-        with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
             results_mapping = pool.map(ERTmapping_args, path_fwd_CATHY_list)
             # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
+        print('Build analysis dataframe')
         for ens_i in range(len(path_fwd_CATHY_list)):
             df_Archie = results_mapping[ens_i][1]
             df_Archie["OL"] = np.zeros(len(df_Archie))
@@ -3095,7 +3096,7 @@ class DA(CATHY):
             )
             #
             # -----------------------------------------------------------------
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
                 results_mapping_time_i = pool.map(ERTmapping_args, path_fwd_CATHY_list)
                 # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
@@ -3135,7 +3136,7 @@ class DA(CATHY):
         // run using ensemble subfolders path as a list
         """
 
-        savefig = True
+        savefig = False
         if "savefig" in kwargs:
             savefig = kwargs["savefig"]
         ENS_times = []
