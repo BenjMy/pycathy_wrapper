@@ -89,8 +89,12 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     #                     )
 
     data_OUT, warm_0 = trace_mesh(
-        mesh_CATHY, mesh_OUT, scalar=scalar, threshold=1e-1, in_nodes_mod=in_nodes_mod_m
-    )
+                                    mesh_CATHY, 
+                                    mesh_OUT, 
+                                    scalar=scalar, 
+                                    threshold=1e-1, 
+                                    in_nodes_mod=in_nodes_mod_m
+                                    )
 
     if len(warm_0) > 0:
         print(warm_0)
@@ -108,15 +112,20 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
 
     if show:
 
-        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=False)
-        p.add_mesh(mesh_new_attr, scalars=scalar_new)
+        # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
+        p = pv.Plotter(notebook=False)
+        p.add_mesh(mesh_new_attr, scalars=scalar_new, show_edges=True)
+        p.show_grid()
         _ = p.add_bounding_box(line_width=5, color="black")
-        cpos = p.show(True)
+        p.view_xy()
+        # cpos = p.show()
 
-        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
-        p.add_mesh(mesh_CATHY, scalars=scalar)
+        # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
+        # p = pv.Plotter(notebook=False)
+        p.add_mesh(mesh_CATHY, scalars=scalar,show_edges=True)
+        p.show_grid()
         _ = p.add_bounding_box(line_width=5, color="black")
-        cpos = p.show(True)
+        cpos = p.show()
 
     return mesh_new_attr, scalar_new
 

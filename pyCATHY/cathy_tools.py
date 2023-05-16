@@ -1775,11 +1775,13 @@ class CATHY:
         else:
             # atmbc are homoegenous
             # -----------------------------------------------------------------
-            if HSPATM == 0:
+            if HSPATM == 1:
                 if len(VALUE) == 2:  # take the difference between Precipitation and EvapoTranspiration
                     v_atmbc = VALUE[0] - abs(VALUE[1])
                 else: # Assume it is already the net 
                     v_atmbc = VALUE
+                    print('Assuming it is already the net')
+
             else:
                 print('spatial v_atmbc must be provided as net between Precipitation and EvapoTranspiration')
 
@@ -3928,9 +3930,6 @@ class CATHY:
         # df = pd.read_pickle(pickle_off)
 
         with open(filename, "rb") as f:
-            # while True:
-                # print(all_names[i])
-                # print(i)
                 for i in range(len(all_names)):
                     try:
                         df = pd.read_pickle(f)

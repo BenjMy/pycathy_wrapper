@@ -164,26 +164,29 @@ def dictObs_2pd(dict_obs):
     return df_obs
 
 
-def resynchronise_times(data_measure, atmbc_df):
-    """old key is elapsed time in second from the first observation,
+def resynchronise_times(data_measure, atmbc_df, time_offset):
+    """resynchronise dict as old key is elapsed time in second from the first observation,
     while new key is from the first atmbc time
     """
     data_measure_sync = dict(data_measure)
     try:
+        new_keys = []
         for d in range(len(data_measure_sync.keys())):
-            # print(d)
             items_dict = list(data_measure_sync.items())
-            # print(items_dict)
-            # list(items_dict[d][1].keys())
+            # new_key = (
+            #     atmbc_df["diff"]
+            #     .dt.total_seconds()
+            #     .unique()[d]
+            # )
+
+            old_key = list(data_measure_sync.keys())[d]
+            new_key = list(data_measure_sync.keys())[d] - time_offset  
+
             for sensor in list(items_dict[d][1].keys()):
-                new_key = (
-                    atmbc_df[atmbc_df["sensor_name"] == sensor]["diff"]
-                    .dt.total_seconds()
-                    .to_numpy()[d]
-                )
-                old_key = list(data_measure_sync.keys())[d]
                 data_measure_sync[old_key][sensor]["assimilation_times"] = new_key
-                data_measure_sync[new_key] = data_measure_sync.pop(old_key)
+            new_keys.append(new_key)
+        data_measure_sync = dict(zip(new_keys, data_measure_sync.values()))
+
     except:
         print("datetime first atmbc point")
         print(atmbc_df["datetime"][0])
@@ -273,7 +276,7 @@ def Archie_pert_rules(
         parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
 
     parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-    return parm_per_array
+    return parm_sampling, parm_per_array
 
 
 def VG_pert_rules(
@@ -459,7 +462,7 @@ def perturbate_parm(
     # Contrainsted perturbation (bounded)
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
-        parm_per_array = Archie_pert_rules(
+        parm_sampling, parm_per_array = Archie_pert_rules(
             parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
         )
     elif "porosity" in type_parm:
@@ -699,6 +702,7 @@ class DA(CATHY):
             dict_parm_pert,
             list_parm2update,
         )
+        # len(ENS_times)
         # initiate mapping petro
         # -------------------------------------------------------------------
         self._mapping_petro_init()
@@ -783,7 +787,7 @@ class DA(CATHY):
                 # ValueError: operands could not be broadcast together with shapes (612,) (1836,)
 
                 # data2test , obs2evaltest = self._get_data2assimilate(list_assimilated_obs)
-                # # len(data2test)
+                # len(data2test)
 
                 # x = np.linspace(prediction.min(),
                 #                 prediction.max(),
@@ -861,7 +865,7 @@ class DA(CATHY):
                     prediction_valid,
                     t_obs=self.count_DA_cycle,
                 )
-
+                #%%
                 # the counter is incremented here
                 # ----------------------------------------------------------------
                 self.count_DA_cycle = self.count_DA_cycle + 1
@@ -887,7 +891,7 @@ class DA(CATHY):
                     ":confused: No observation for this time - run hydrological model only"
                 )
                 print(
-                    "!!!!!!!!! shoetcutttt here ensemble are anot validated!!!!!!!!!! S"
+                    "!shortcut here ensemble are not validated!"
                 )
                 (
                     ensemble_psi_valid,
@@ -902,19 +906,19 @@ class DA(CATHY):
             self.count_atmbc_cycle = self.count_atmbc_cycle + 1
 
             self.console.rule(
-                ":round_pushpin: end of time step (s)"
+                ":round_pushpin: end of time step (s) "
                 + str(int(t_atmbc))
                 + "/"
                 + str(int(all_atmbc_times[-1]))
-                + ":round_pushpin:",
+                + " :round_pushpin:",
                 style="yellow",
             )
             self.console.rule(
-                ":round_pushpin: end of atmbc update #"
+                ":round_pushpin: end of atmbc update # "
                 + str(self.count_atmbc_cycle)
                 + "/"
                 + str(len(all_atmbc_times) - 1)
-                + ":round_pushpin:",
+                + " :round_pushpin:",
                 style="yellow",
             )
 
@@ -959,11 +963,11 @@ class DA(CATHY):
                 )
                 pass
             self.console.rule(
-                ":red_circle: end of DA update"
+                ":red_circle: end of DA update "
                 + str(self.count_DA_cycle)
                 + "/"
                 + str(len(ENS_times))
-                + ":red_circle:",
+                + " :red_circle:",
                 style="yellow",
             )
             self.console.rule(
@@ -1202,8 +1206,15 @@ class DA(CATHY):
         # select ONLY data to assimilate
         # ---------------------------------------------------------------------
         data, _ = self._get_data2assimilate(list_assimilated_obs)
-        print("data size: " + str(len(data)))
-
+        self.console.print(
+            r""":
+                               - Data size: {}
+                                 --> Observations --> {}
+                           """.format(
+                str(len(data)), list_assimilated_obs
+            )
+        )
+                        
         # data_measure_df = dictObs_2pd(self.dict_obs)
 
         # check size of data_cov
@@ -1407,7 +1418,7 @@ class DA(CATHY):
                 )
                 p = subprocess.run([callexe], text=True, capture_output=True)
 
-                if verbose:
+                if self.verbose:
                     self.console.print(p.stdout)
                     self.console.print(p.stderr)
 
@@ -2187,7 +2198,6 @@ class DA(CATHY):
             # -------------------------------------------------------------
             self.df_performance = pd.DataFrame()
             self.RMSE_avg_stacked = []
-            self.RMSE_sensor_stacked = []
 
             # NAs default
             # -------------------------------------------------------------
@@ -2253,14 +2263,22 @@ class DA(CATHY):
             # ---------------------------------------------------------
 
             self.RMSE_avg_stacked.append(all_Obs_RMSE_avg_ti)
-            self.RMSE_sensor_stacked.append(RMSE_sensor_ti)
+            
+            if 'ObsType' in self.df_performance:
+                if name_sensor in self.df_performance['ObsType'].unique():
+                    bool_sensor = self.df_performance['ObsType']==name_sensor
+                    RMSE_sensor_stacked = (self.df_performance[bool_sensor]["RMSE" + name_sensor].sum() 
+                                       + RMSE_sensor_ti
+                                       )
+                else:
+                    RMSE_sensor_stacked = RMSE_sensor_ti
 
             # if hasattr(self, 'RMSE') is False:
             if t_obs == 0:
                 NMRMSE_sensor_ti = RMSE_sensor_ti
                 NMRMSE_avg_ti = all_Obs_RMSE_avg_ti
             else:
-                NMRMSE_sensor_ti = (1 / (t_obs + 1)) * np.sum(self.RMSE_sensor_stacked)
+                NMRMSE_sensor_ti = (1 / (t_obs + 1)) * RMSE_sensor_stacked
                 NMRMSE_avg_ti = (1 / (t_obs + 1)) * np.sum(self.RMSE_avg_stacked)
 
             # root names for the collumns name
@@ -2418,15 +2436,18 @@ class DA(CATHY):
             DESCRIPTION. The default is 'all'.
         parallel : Bool, optional
             DESCRIPTION. The default is False.
-        **kwargts : TYPE
+        **kwargs : TYPE
             DESCRIPTION.
 
         Returns
         -------
-        Hx : np.array
+        Hx_ens : np.array (size: nb of observations x nb of ensembles)
             Ensemble of the simulated (predicted) observations.
         """
-
+        # parallel = True
+        # list_assimilated_obs = ['ERT']
+        # list_assimilated_obs = ['swc','tensio']
+        # list_assimilated_obs = ['swc','tensio','ERT']
         if parallel:
             path_fwd_CATHY_list = []  # list of ensemble path of cathy output
             for ens_nb in self.ens_valid:  # loop over ensemble files
@@ -2526,14 +2547,13 @@ class DA(CATHY):
                         Hx_stacked = np.hstack(Hx_stacked)
 
             if len(Hx_stacked) > 2:
-                np.hstack(Hx_stacked)
+                Hx_stacked = np.hstack(Hx_stacked)
             Hx_ens.append(Hx_stacked)
-
             write2shell_map = False
 
-        if len(Hx_ens) > 2:
-            Hx_ens = np.hstack(Hx_ens)
-
+        
+        Hx_ens = np.array(Hx_ens).T
+            
         # special case of ERT // during sequential assimilation
         # ---------------------------------------------------------------------
         for i, obs_key in enumerate(obskey2map):
@@ -2725,7 +2745,7 @@ class DA(CATHY):
         self.update_ENS_files(
             self.dict_parm_pert,
             list_parm2update,
-            cycle_nb=self.count_atmbc_cycle,
+            cycle_nb=self.count_DA_cycle,
             analysis=analysis,
         )
 
@@ -2786,6 +2806,7 @@ class DA(CATHY):
                 TIMPRTi=[0, diff_time],
                 TMAX=diff_time,
                 filename=os.path.join(os.getcwd(), "input/parm"),
+                IPRT1=2,
                 backup=True,
             )
             self.console.print(
@@ -2996,11 +3017,11 @@ class DA(CATHY):
         # search key value to identify time and method
         # --------------------------------------------
         tuple_list_obs = list(self.dict_obs.items())
-        key_value = tuple_list_obs[self.count_DA_cycle]
-
+        key_time = tuple_list_obs[self.count_DA_cycle]
+        
         # Load ERT metadata information form obs dict
         # -------------------------------------------
-        ERT_meta_dict = self._parse_ERT_metadata(key_value)
+        ERT_meta_dict = self._parse_ERT_metadata(key_time)
 
         Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(
             self.project_name,
@@ -3012,6 +3033,8 @@ class DA(CATHY):
             DA_cnb=self.count_DA_cycle,  # kwargs
             Ens_nbi=ens_nb,  # kwargs
             savefig=savefig,  # kwargs
+            noise_level=ERT_meta_dict["noise_level"],  # kwargs
+            dict_ERT=key_time[1]["ERT"],  #  kwargs
         )
         df_Archie["OL"] = np.ones(len(df_Archie["time"])) * False
         self._add_2_ensemble_Archie(df_Archie)

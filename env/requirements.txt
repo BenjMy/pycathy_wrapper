@@ -10,6 +10,7 @@ pandas
 natsort
 shapely
 imageio
+nltk
 
 # Optionnal packages
 # resipy

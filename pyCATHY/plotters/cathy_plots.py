@@ -58,11 +58,11 @@ mpl.rcParams["grid.linewidth"] = 0.25
 plt.rcParams["font.size"] = 12
 plt.rcParams["axes.linewidth"] = 0.75
 
-nice_fonts = {
-    # "font.family": "serif",
-    "font.serif": "Times New Roman",
-}
-matplotlib.rcParams.update(nice_fonts)
+# nice_fonts = {
+#     # "font.family": "serif",
+#     "font.serif": "Times New Roman",
+# }
+# matplotlib.rcParams.update(nice_fonts)
 
 
 #%% ---------------------------------------------------------------------------
@@ -972,7 +972,7 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
     nb_of_zones = len(np.unique(veg_map))
     cmap = mpl.colors.ListedColormap(plt.cm.tab10.colors[:nb_of_zones])
     if "cmap" in kwargs:
-        cmap = kwargs["cmap"]
+        cmap = kwargs.pop("cmap")
 
     if ax is None:  
         fig, ax = plt.subplots()
@@ -1310,13 +1310,14 @@ def show_DA_process_ens(
 
 def DA_RMS(df_performance, sensorName, **kwargs):
     """Plot result of Data Assimilation: RMS evolution over the time"""
+    
     if "ax" in kwargs:
         ax = kwargs["ax"]
-    else:
-        if "start_date" in kwargs:
-            fig, ax = plt.subplots(3, 1, sharex=True)
-        else:
-            fig, ax = plt.subplots(2, 1)
+    # else:
+    #     if "start_date" in kwargs:
+    #         fig, ax = plt.subplots(3, 1, sharex=True)
+    #     else:
+    #         fig, ax = plt.subplots(2, 1)
     keytime = "time"
     xlabel = "assimilation #"
     start_date = None
@@ -1324,6 +1325,8 @@ def DA_RMS(df_performance, sensorName, **kwargs):
         start_date = kwargs["start_date"]
         keytime = "time_date"
         xlabel = "date"
+        
+    
 
     atmbc_times = None
     if "atmbc_times" in kwargs:
@@ -1340,11 +1343,14 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     df_perf_plot.OL = df_perf_plot.OL.astype("str")
     df_perf_plot.dropna(inplace=True)
 
+    # len(dates)
+    # len(df_perf_plot["time"])
+    # len(atmbc_times)
+    
     if start_date is not None:
         dates = change_x2date(atmbc_times, start_date)
         df_perf_plot["time_date"] = df_perf_plot["time"].replace(
-            list(df_perf_plot["time"].unique()), dates
-        )
+            list(df_perf_plot["time"].unique()), dates)
     p0 = df_perf_plot.pivot(index=keytime, columns="OL", values="RMSE" + sensorName)
     p1 = df_perf_plot.pivot(index=keytime, columns="OL", values="NMRMSE" + sensorName)
 
@@ -1586,7 +1592,22 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     True,
                 )
             else:
-
+                # number of nodes = np.sum(isENS['time']==1)/24
+                
+                # np.sum((isENS['time']==1) & (isENS['Ensemble_nb']==0))
+                # np.sum(isENS['Ensemble_nb']==0)
+               
+                
+                # nnode = np.sum((isENS['time']==1) & (isENS['Ensemble_nb']==0))
+                # isENS.insert(
+                #     2,
+                #     "idnode",
+                #     np.tile(np.arange(nnode),
+                #         int(max(isENS["time"])),
+                #     ),
+                #     True,
+                # )
+                
                 isENS.insert(
                     2,
                     "idnode",
@@ -1666,7 +1687,7 @@ def DA_plot_time_dynamic(
         ax = fig.add_subplot()
 
     alpha = 0.5
-    colors_minmax = 'bleu'
+    colors_minmax = 'blue'
     if "colors_minmax" in kwargs:
         colors_minmax = kwargs["colors_minmax"]
         
