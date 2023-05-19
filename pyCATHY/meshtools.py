@@ -473,6 +473,7 @@ def add_attribute_2mesh(
 
     meshname = name + ".vtk"
 
+    saveMesh = True
     if saveMesh:
         path = os.getcwd()
         if "path" in kwargs:

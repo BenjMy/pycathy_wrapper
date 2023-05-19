@@ -229,6 +229,7 @@ def SW_2_ERa_DA(
     }
     df_ERT_predicted = pd.DataFrame(data=d)
 
+    # savefig = True
     if savefig:
 
         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True

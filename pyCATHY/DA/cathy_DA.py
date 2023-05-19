@@ -350,6 +350,7 @@ def atmbc_pert_rules(
 
     key = "time_variable_perturbation"
     var_per_2add[type_parm][key] = parm_per_array_time_variable
+    
     return var_per_2add
 
 
@@ -1211,7 +1212,7 @@ class DA(CATHY):
                                - Data size: {}
                                  --> Observations --> {}
                            """.format(
-                str(len(data)), list_assimilated_obs
+                str(np.shape(data)), list_assimilated_obs
             )
         )
                         
@@ -2444,6 +2445,7 @@ class DA(CATHY):
         Hx_ens : np.array (size: nb of observations x nb of ensembles)
             Ensemble of the simulated (predicted) observations.
         """
+        #%%
         # parallel = True
         # list_assimilated_obs = ['ERT']
         # list_assimilated_obs = ['swc','tensio']
@@ -2546,14 +2548,21 @@ class DA(CATHY):
                             Hx_stacked.append(Hx_ERT["resist"])
                         Hx_stacked = np.hstack(Hx_stacked)
 
-            if len(Hx_stacked) > 2:
-                Hx_stacked = np.hstack(Hx_stacked)
-            Hx_ens.append(Hx_stacked)
+            if len(Hx_stacked) > 0:
+                Hx_ens.append(Hx_stacked)
+                # Hx_stacked = np.hstack(Hx_stacked)
+
             write2shell_map = False
 
+        if len(Hx_ens)>0:
+            Hx_ens = np.hstack(Hx_ens)
         
-        Hx_ens = np.array(Hx_ens).T
-            
+        # Hx_ens = []  # matrice of predicted observation for each ensemble realisation
+
+        print('test')
+        print(Hx_ens)
+        print(np.shape(Hx_ens))
+
         # special case of ERT // during sequential assimilation
         # ---------------------------------------------------------------------
         for i, obs_key in enumerate(obskey2map):
@@ -2593,12 +2602,18 @@ class DA(CATHY):
                         savefig=False,
                         DA_cnb=self.count_DA_cycle,
                     )
+                    print(Hx_ens)
                     if len(Hx_ens) > 0:
                         Hx_ens = np.vstack([Hx_ens, Hx_ens_ERT])
                         # np.shape(Hx_ens)
                     else:
+                        print('here')
                         Hx_ens = Hx_ens_ERT
+                        
+        print(obskey2map)
+        print(np.shape(Hx_ens))
 
+#%%
         return Hx_ens  # meas_size * ens_size
 
     def _add_2_ensemble_Archie(self, df_Archie_2add):

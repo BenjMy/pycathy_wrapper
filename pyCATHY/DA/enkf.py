@@ -122,9 +122,10 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     if Sakov:
         COV = data_cov.transpose()
     else:
-        COV = (1.0 / float(ens_size - 1)) * np.dot(
-            obs_pert, obs_pert.transpose()
-        ) + data_cov.transpose()
+        COV = ( (1.0 / float(ens_size - 1)) *
+               np.dot(obs_pert, obs_pert.transpose()) 
+               + data_cov.transpose()
+              )
         # COV = data_cov.transpose()
 
     # print(np.shape(COV))

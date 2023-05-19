@@ -1060,7 +1060,11 @@ class CATHY:
                 np.savetxt(f, DEM, fmt="%1.4e")
                 # np.shape(DEM)
 
-            self.update_cathyH(ROWMAX=self.hapin["M"], COLMAX=self.hapin["N"])
+            self.update_cathyH(
+                                ROWMAX=self.hapin["M"], 
+                                COLMAX=self.hapin["N"],
+                                MAXSTR=self.hapin['nstr']
+                                )
 
         self.update_dem_parameters(**kwargs)
 
@@ -1838,7 +1842,8 @@ class CATHY:
 
         atmbcfile.close()
 
-        self.update_parm(TIMPRTi=list(time), NPRT=len(time), TMAX=max(time))
+        self.update_parm(TIMPRTi=[time[0],time[-1]], NPRT=2, TMAX=max(time))
+        # self.update_parm(TIMPRTi=time, NPRT=len(time), TMAX=max(time))
 
         # don't need to update if sequential DA as the cathy.exe is already created
         # ---------------------------------------------------------------------
@@ -3095,8 +3100,8 @@ class CATHY:
 
         # Step 4: Fill the dataframe with flag for outer nodes
         # -------------------------------------------------------------------
-        
-        print('Fill the dataframe with flag for outer nodes')
+        len(noflow_mask.transpose(2,0,1).flatten())
+        # print('Fill the dataframe with flag for outer nodes')
         self.mesh_bound_cond_df["noflow_bound"] = noflow_mask.transpose(2,0,1).flatten()
         self.mesh_bound_cond_df["top"] = top_mask.flatten()
         self.mesh_bound_cond_df["bot"] = bot_mask.flatten()

@@ -1483,8 +1483,10 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                 time_delta_change = datetime.timedelta(seconds=1)
                 dates.values[0] = dates[0] + time_delta_change
             dates = dates[: len(list(DA["time"].unique()))]
-        DA["time_date"] = DA["time"].replace(list(DA["time"].unique()), dates)
+        # DA["time_date"] = DA["time"].replace(list(DA["time"].unique()), dates)
         # DA['time_date'].dt.strftime('%Y-%m-%d %H:%M:%S')
+        unique_times = DA["time"].unique()
+        DA["time_date"] = DA["time"].map(dict(zip(unique_times, dates)))
 
     isOL = DA.loc[DA["OL"] == True]
     isENS = DA.loc[DA["OL"] == False]
