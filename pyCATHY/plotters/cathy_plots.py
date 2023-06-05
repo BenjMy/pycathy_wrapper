@@ -572,6 +572,9 @@ def show_vtk(
         cpos = ax.show(screenshot= os.path.join(path, filename + unit + ".png"))
         print("figure saved" + os.path.join(path, filename + unit + ".png"))
         ax.close()
+    else:
+        ax.show_axes()
+        ax.show()
 
     pass
 
