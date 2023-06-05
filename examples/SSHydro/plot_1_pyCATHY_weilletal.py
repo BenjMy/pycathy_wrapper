@@ -23,7 +23,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 # In[13]:
 
 
-path2prj = "weil_exemple"  # add your local path here
+path2prj = "weill_exemple"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj)
 
 simu.run_processor(IPRT1=3, verbose=True)

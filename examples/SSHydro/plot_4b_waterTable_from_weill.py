@@ -122,21 +122,21 @@ simu.show(prop="cumflowvol")
 
 #%% 3d visualiation of the pressure head for the time step 1
 # To select another time step change the value in the function argument
-cplt.show_vtk(
-    unit="pressure",
-    timeStep=1,
-    notebook=False,
-    path='./' + path2prj + "/my_cathy_prj/vtk/",
-)
+# cplt.show_vtk(
+#     unit="pressure",
+#     timeStep=1,
+#     notebook=False,
+#     path='./' + path2prj + "/my_cathy_prj/vtk/",
+# )
 
-#%%  3d visualiation of the water saturation for the time step 1
-cplt.show_vtk(
-    unit="saturation",
-    timeStep=1,
-    notebook=False,
-    path='./' + path2prj + "/my_cathy_prj/vtk/",
-)
+# #%%  3d visualiation of the water saturation for the time step 1
+# cplt.show_vtk(
+#     unit="saturation",
+#     timeStep=1,
+#     notebook=False,
+#     path='./' + path2prj + "/my_cathy_prj/vtk/",
+# )
 
 
 #%%
-simu.show_input(prop="root_map")
+# simu.show_input(prop="root_map")
