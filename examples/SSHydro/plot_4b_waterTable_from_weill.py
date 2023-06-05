@@ -125,7 +125,7 @@ simu.show(prop="cumflowvol")
 cplt.show_vtk(
     unit="pressure",
     timeStep=1,
-    notebook=False,
+    notebook=True,
     path=simu.workdir + "/my_cathy_prj/vtk/",
 )
 
@@ -133,7 +133,7 @@ cplt.show_vtk(
 cplt.show_vtk(
     unit="saturation",
     timeStep=1,
-    notebook=False,
+    notebook=True,
     path=simu.workdir + "/my_cathy_prj/vtk/",
 )
 
