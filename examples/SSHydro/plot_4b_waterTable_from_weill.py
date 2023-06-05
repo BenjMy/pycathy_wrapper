@@ -126,7 +126,7 @@ cplt.show_vtk(
     unit="pressure",
     timeStep=1,
     notebook=False,
-    path="./my_cathy_prj/vtk/",
+    path='./' + path2prj + "/my_cathy_prj/vtk/",
 )
 
 #%%  3d visualiation of the water saturation for the time step 1
@@ -134,7 +134,7 @@ cplt.show_vtk(
     unit="saturation",
     timeStep=1,
     notebook=False,
-    path="./my_cathy_prj/vtk/",
+    path='./' + path2prj + "/my_cathy_prj/vtk/",
 )
 
 
