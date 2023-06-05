@@ -34,4 +34,4 @@ simu.run_processor(IPRT1=2,
                    verbose=True
                    )
 
-cplt.show_vtk(unit="pressure", timeStep=1, notebook=False, path="./my_cathy_prj/vtk/")
+cplt.show_vtk(unit="pressure", timeStep=1, notebook=True, path="./my_cathy_prj/vtk/")
