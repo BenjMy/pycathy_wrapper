@@ -18,52 +18,10 @@ Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
 
 .. only:: html
 
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_saptial_atmbc_from_weil_thumb.png
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weill_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Update with distributed atmospheric bc</div>
-    </div>
-
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weil.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
-
-.. only:: html
-
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4_pyCATHY_outputs_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Output plots</div>
-    </div>
-
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
-
-.. only:: html
-
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+  :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py`
 
 .. raw:: html
 
@@ -73,7 +31,7 @@ Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py`
 
 .. raw:: html
 

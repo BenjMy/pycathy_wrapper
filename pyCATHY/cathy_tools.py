@@ -1023,6 +1023,8 @@ class CATHY:
 
         self.update_hapin(Lines, hapin, tmp_lnb, tmp_param_value)
 
+
+        self.update_dem_parameters(**kwargs)
         # dtm_13.val
         # If we start with a DEM file ("dtm_13.val") for an already delineated
         # catchment (i.e., a "catchment" DEM file instead of a "full" DEM file), then
@@ -1063,7 +1065,7 @@ class CATHY:
             self.update_cathyH(
                                 ROWMAX=self.hapin["M"], 
                                 COLMAX=self.hapin["N"],
-                                MAXSTR=self.hapin['nstr']
+                                MAXSTR=self.dem_parameters['nstr']
                                 )
 
         self.update_dem_parameters(**kwargs)

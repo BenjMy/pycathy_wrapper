@@ -18,10 +18,10 @@ Examples using ``pyCATHY.meshtools.get_layer_depths``
 
 .. only:: html
 
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weil_thumb.png
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weill_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+  :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py`
 
 .. raw:: html
 
@@ -31,7 +31,7 @@ Examples using ``pyCATHY.meshtools.get_layer_depths``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weil.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py`
 
 .. raw:: html
 
