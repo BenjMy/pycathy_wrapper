@@ -125,21 +125,18 @@ simu.show(prop="cumflowvol")
 cplt.show_vtk(
     unit="pressure",
     timeStep=1,
-    notebook=True,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
+    notebook=False,
+    path="./my_cathy_prj/vtk/",
 )
 
 #%%  3d visualiation of the water saturation for the time step 1
 cplt.show_vtk(
     unit="saturation",
     timeStep=1,
-    notebook=True,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
+    notebook=False,
+    path="./my_cathy_prj/vtk/",
 )
 
 
 #%%
 simu.show_input(prop="root_map")
-
-
-

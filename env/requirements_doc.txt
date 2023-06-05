@@ -2,7 +2,7 @@ numpy
 GitPython 
 soiltexture
 SALib
-pyvistaqt
+#pyvistaqt
 itkwidgets
 rosetta-soil
 rich
