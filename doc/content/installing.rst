@@ -9,8 +9,8 @@ Installing
 .. hint:: On all platforms, we recommend to install pyCATHY via the conda package manager contained in the Anaconda distribution. For details on how to install Anaconda, we refer to: (https://docs.anaconda.com/anaconda/install/). 
 
 
-Quick use
----------
+Set up the environment
+----------------------
 
 To avoid conflicts with other packages, we recommend to install pyCATHY in a separate environment. Here we call this environment pyCATHY, but you can give it any name. Note that this environment has to be created only once.
 
@@ -18,8 +18,6 @@ Open a terminal (Linux & Mac) or the Anaconda Prompt (Windows) and type::
 
 	conda create --name pyCATHY python=3.10
 	conda activate pyCATHY
-	pip install pyCATHY
-
 
 Usage with Spyder or JupyterLab::
 
@@ -29,16 +27,20 @@ Or alternatively, the web-based IDE JupyterLab (https://jupyterlab.readthedocs.i
 
 	conda install -c conda-forge jupyterlab
 
+	
+Install pyCATHY
+---------------
 
-Staying up-to-date
-------------------
+Pin to the latest released pip version::
 
-Install using setup.py::
+    pip install pyCATHY
+	
+Staying up-to-date using setup.py::
 
     git clone https://github.com/BenjMy/pycathy_wrapper
     cd pycathy_wrapper
     python setup.py develop|install
-    import pyCATHY
+
 
 
 Dependencies
@@ -57,10 +59,16 @@ Dependencies
 		
 
 
-
 How to run tests
 ----------------
 
-Download one of the exemple and run python *.py script
+Start jupyterlab, select and exemple and run it. 
+
+OR 
+
+Download one of the exemple and **run in the terminal**:
+
+    conda activate pyCATHY
+    python myexemple.py
 
 

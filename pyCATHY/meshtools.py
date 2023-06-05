@@ -473,7 +473,7 @@ def add_attribute_2mesh(
 
     meshname = name + ".vtk"
 
-    saveMesh = True
+    # saveMesh = True
     if saveMesh:
         path = os.getcwd()
         if "path" in kwargs:
@@ -790,8 +790,8 @@ def _subplot_cellsMarkerpts(mesh_pv_attributes, xyz_layers0, xyzlayers1):
 
 def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name):
 
-    # pl = pv.Plotter(off_screen=(True))
-    pl = pv.Plotter()
+    pl = pv.Plotter(off_screen=(True))
+    # pl = pv.Plotter()
     pl.add_mesh(mesh_pv_attributes, show_edges=True, opacity=0.4)
     pl.show_grid()
 
@@ -800,7 +800,11 @@ def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name):
         point_size=10,
         scalars=xyz_layers[:, -1],
     )
-    pl.show(screenshot=os.path.join(workdir, project_name, "layersMarkers.png"))
+    pl.show(screenshot=os.path.join(workdir, 
+                                    project_name, 
+                                    "layersMarkers.png")
+            )
+    # pl.show()
 
 
 def _build_xyz_marker_mat_squareDEM(
@@ -1023,9 +1027,12 @@ def add_markers2mesh(
         zone3d_bot = []
         for li in range(dem_parameters["nstr"]):
             top, bot = get_layer_depth(dem_parameters, li)
-            zone3d_top.append(zones3d_layered[li] * top)
-            zone3d_bot.append(zones3d_layered[li] * bot)
-
+            zone3d_top.append(np.ones(np.shape(zones3d_layered[li]))*top)
+            zone3d_bot.append(np.ones(np.shape(zones3d_layered[li]))*bot)
+            # zone3d_top.append(zones3d_layered[li] * top)
+            # zone3d_bot.append(zones3d_layered[li] * bot)
+            
+            
         zone3d_top = np.array(zone3d_top)
         zone3d_bot = np.array(zone3d_bot)
 

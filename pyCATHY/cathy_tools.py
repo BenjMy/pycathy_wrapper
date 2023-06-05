@@ -1343,12 +1343,15 @@ class CATHY:
 
 
         if len(self.parm) == 0:
+            #%%
             dict_parm = in_CT.read_parm(os.path.join(self.workdir, 
                                                      self.project_name, 
                                                      "input",
                                                      "parm"
                                                      )
                                         )
+            #%%
+
             self.parm = dict_parm
             
             if '(TIMPRT(I)I=1NPRT)' in self.parm:
@@ -1702,7 +1705,7 @@ class CATHY:
 
     def update_atmbc(
         self,
-        HSPATM=0,
+        HSPATM=1,
         IETO=0,
         time=None,
         VALUE=[None, None],
@@ -1851,18 +1854,18 @@ class CATHY:
             self.update_cathyH(MAXPRT=len(time))
 
         if show:
-            # if HSPATM !=0:
-            #     print('impossible to plot for non homogeneous atmbc')
+            if HSPATM ==0:
+                print('impossible to plot for non homogeneous atmbc')
             #     # sys.exit()
-            # else:
+            else:
             # x_units = "sec"
             # for key, value in kwargs.items():
             #     if key == "x_units":
             #         x_units = value
-            if len(netValue) > 0:
-                plt_CT.show_atmbc(time, v_atmbc, **kwargs)
-            else:
-                plt_CT.show_atmbc(time, VALUE, **kwargs)
+                if len(netValue) > 0:
+                    plt_CT.show_atmbc(time, v_atmbc, **kwargs)
+                else:
+                    plt_CT.show_atmbc(time, VALUE, **kwargs)
         pass
 
     def update_nansfdirbc(
@@ -1955,8 +1958,10 @@ class CATHY:
             # if len(time)>25:
             #     print('Nb of times is too big to handle bc condition in the df')
             #     time = 0
-            self.update_mesh_boundary_cond(mesh_bc_df)
-
+            # self.update_mesh_boundary_cond(mesh_bc_df)
+            self.assign_mesh_bc_df("nansfdirbc", time, 
+                                   no_flow=no_flow
+                                   )
         # apply BC
         # --------------------------------------------------------------------
         # if no_flow:  # Dirichlet  == 0
@@ -2470,15 +2475,15 @@ class CATHY:
                 to_nodes=False,
             )
 
-            # mt.add_markers2mesh(
-            #                         zone3d,
-            #                         self.mesh_pv_attributes,
-            #                         self.dem_parameters,
-            #                         self.workdir,
-            #                         self.project_name,
-            #                         self.hapin,
-            #                         to_nodes=True
-            #                     )
+            mt.add_markers2mesh(
+                                    zone3d,
+                                    self.mesh_pv_attributes,
+                                    self.dem_parameters,
+                                    self.workdir,
+                                    self.project_name,
+                                    self.hapin,
+                                    to_nodes=True
+                                )
 
             for spp in SPP_map:
                 self.map_dem_prop_2mesh(spp, SPP_map[spp], to_nodes=False)
@@ -3358,16 +3363,18 @@ class CATHY:
         Parameters
         ----------
         prop_name : str
-            DESCRIPTION.
+            property name i.e. ic, POROS, ... .
         prop_map : list
-            DESCRIPTION.
+            Values of the property. 
+            The list length should be equal to the mesh node markers 
+            unique value length
         to_nodes : bool, optional
-            DESCRIPTION. The default is False.
+            Map to the mesh nodes. The default is False.
 
         Returns
         -------
-        TYPE
-            DESCRIPTION.
+        pv.Mesh
+            Updated pyvista mesh with new property.
         """
         if to_nodes:
             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers"]))

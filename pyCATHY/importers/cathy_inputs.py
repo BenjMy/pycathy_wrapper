@@ -217,7 +217,7 @@ def read_parm(filename, **kwargs):
     ii = 0
     for lname in lines_s_names:
         # print(lname)
-        if lname == "(TIMPRT(I),I=1,NPRT)" or lname == "(TIMPRT(I).I=1.NPRT)": 
+        if lname in ["(TIMPRT(I),I=1,NPRT)","(TIMPRT(I)I=1NPRT)","(TIMPRT(I).I=1.NPRT)"]: 
             lines_s_num_TIMPRT = []
             for k in range(dict_parm['NPRT']):
                 lines_s_num_TIMPRT.append(lines_s_num[ii+k])
