@@ -2500,6 +2500,7 @@ class DA(CATHY):
                     # case 1: pressure head assimilation (Hx_PH)
                     # -------------------------------------------------------------
                     Hx_PH = state[0][obs2map[i]["mesh_nodes"]]
+                    print(i,obs_key,Hx_PH,state[0][obs2map[i]["mesh_nodes"]],[obs2map[i]["mesh_nodes"]])
                     Hx_stacked.append(Hx_PH)
 
                 if "swc" in obs_key:
@@ -2509,16 +2510,25 @@ class DA(CATHY):
                     Hx_stacked.append(Hx_SW)
                     # note: the value of the porosity can be unique or not depending on the soil physical properties defined
 
-                if "scale" in obs_key:
-                    # Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]
-                    # Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)
-                    # Atmpot-r (11) : Potential atmospheric forcing rate [L/T]
-                    # Atmpot-d (12) : Potential atmospheric forcing depth [L]
+                if 'ET' in obs_key:
                     # Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
                     # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
                     # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
                     # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
+                    print("Not yet implemented")
 
+                if "stemflow" in obs_key:
+                    # Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
+                    # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
+                    # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
+                    # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
+                    print("Not yet implemented")
+
+                if "scale" in obs_key:
+                    # Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
+                    # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
+                    # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
+                    # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
                     print("Not yet implemented")
 
                     df_dtcoupling = self.read_outputs(
@@ -2552,14 +2562,18 @@ class DA(CATHY):
                 Hx_ens.append(Hx_stacked)
                 # Hx_stacked = np.hstack(Hx_stacked)
 
-            write2shell_map = False
+            # write2shell_map = False
 
-        if len(Hx_ens)>0:
+
+        if np.shape(Hx_ens)!=(len(self.ens_valid),len(obskey2map)):
             Hx_ens = np.hstack(Hx_ens)
+        else:
+            Hx_ens = np.array(Hx_ens).T
+           
         
         # Hx_ens = []  # matrice of predicted observation for each ensemble realisation
 
-        print('test')
+        # print('test')
         print(Hx_ens)
         print(np.shape(Hx_ens))
 
@@ -2610,8 +2624,8 @@ class DA(CATHY):
                         print('here')
                         Hx_ens = Hx_ens_ERT
                         
-        print(obskey2map)
-        print(np.shape(Hx_ens))
+        # print(obskey2map)
+        # print(np.shape(Hx_ens))
 
 #%%
         return Hx_ens  # meas_size * ens_size

@@ -15,10 +15,11 @@ from datetime import datetime, timedelta
 #############    Unit conversion and label ####################################
 ## ---------------------------------------------------------------------------
 
+def MPa2m(mpa):
+    return mpa * 101.99773339984
 
 def kPa2m(kpa):
     return kpa * 0.101971621
-
 
 def kPa2cm(kpa):
     return kpa * 0.101971621 * 1e2

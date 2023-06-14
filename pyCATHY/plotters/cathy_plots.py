@@ -69,16 +69,22 @@ plt.rcParams["axes.linewidth"] = 0.75
 # -----------------Plot OUTPUTS CATHY -----------------------------------------
 # -----------------------------------------------------------------------------
 
-def create_gridded_mask(x,y):
+def create_gridded_mask(x,y,**kwargs):
     
+    buffer = False
+    if 'buffer' in kwargs:
+        buffer = kwargs['buffer']
+        
     # points = MultiPoint(np.column_stack((x, y)))
     points = np.column_stack((x, y))
     multi_point = MultiPoint(points)
     boundary = Polygon(points)
 
-    interval = int(x[1]- x[0])*4
     # interval =100
-    boundary = multi_point.buffer(interval/2).buffer(-interval/2)
+    
+    if buffer:
+        interval = int(x[1]- x[0])*4
+        boundary = multi_point.buffer(interval/2).buffer(-interval/2)
 
     # boundary_coords
     # Extract the boundary coordinates and create a boolean mask for the region inside the boundary
@@ -116,35 +122,41 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     if 'ti' in kwargs:
         ti = kwargs['ti']
     
-    interpolation = True
-    if interpolation is False:
-        cmap = ax.scatter(XYZsurface[:,0], XYZsurface[:,1], c=WT[ti])
+    scatter=False
+    if 'scatter' in kwargs:
+        scatter = kwargs['scatter']
+        
+    if scatter:
+        valid_kwargs = ['vmin', 'vmax']
+        relevant_kwargs = {key: value for key, value in kwargs.items() if key in valid_kwargs}
+        cmap = ax.scatter(XYZsurface[:,0], XYZsurface[:,1], c=WT[ti],
+                          **relevant_kwargs)
         ax.grid()
-        cbar = plt.colorbar(cmap)
-        cbar.set_label('GWD (m)')
+        # cbar = plt.colorbar(cmap,ax=ax)
+        # cbar.set_label('GWD (m)')
 
-    # Generate some random scattered points
-    x = XYZsurface[:,0]
-    y = XYZsurface[:,1]
-    
-    cmap = 'viridis'
-    if type(ti) is list:
-        z = WT[ti[1]]-WT[ti[0]]
-        cmap = 'bwr'
     else:
-        z = WT[ti]
+        x = XYZsurface[:,0]
+        y = XYZsurface[:,1]
+        
+        cmap = 'viridis'
+        if type(ti) is list:
+            z = WT[ti[1]]-WT[ti[0]]
+            cmap = 'bwr'
+        else:
+            z = WT[ti]
+        
+        
+        xi, yi, mask = create_gridded_mask(x,y)
+        xx, yy = xi.flatten(), yi.flatten()
     
+        zi = griddata((x, y), z, (xx, yy), method='nearest')
     
-    xi, yi, mask = create_gridded_mask(x,y)
-    xx, yy = xi.flatten(), yi.flatten()
-
-    zi = griddata((x, y), z, (xx, yy), method='nearest')
-
-    # Apply the mask to the gridded data
-    zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
-
-    # Plot the masked data
-    mapc = ax.contourf(xi, yi, zi_masked, cmap=cmap)
+        # Apply the mask to the gridded data
+        zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
+    
+        # Plot the masked data
+        cmap = ax.contourf(xi, yi, zi_masked, cmap=cmap)
     
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
@@ -152,14 +164,14 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     ax.grid(True, linestyle='-.')
     
     if colorbar:
-        cbar = plt.colorbar(mapc,ax=ax)
+        cbar = plt.colorbar(cmap,ax=ax)
         
         if type(ti) is list:
             cbar.set_label(r'$\Delta$ GWD (m)')
         else:
             cbar.set_label('GWD (m)')
         
-    return mapc
+    return cmap
 
     
     
@@ -174,6 +186,11 @@ def show_spatialET(df_fort777,**kwargs):
     if 'ti' in kwargs:
         ti = kwargs['ti']
 
+    scatter=False
+    if 'scatter' in kwargs:
+        scatter = kwargs['scatter']
+        
+        
     df_fort777_indexes = df_fort777.set_index('time_sec').index.unique().to_numpy()
 
     df_fort777_select_t = df_fort777.set_index('time_sec').loc[df_fort777_indexes[ti]]
@@ -193,26 +210,28 @@ def show_spatialET(df_fort777,**kwargs):
     else:
         ax = kwargs["ax"]
         
-    df_fort777.columns
+    # df_fort777.columns
     # ax.imshow(df_fort777['ACT. ETRA'])
 
-    # cmap = ax.scatter(x=df_fort777_select_t['X'], 
-    #             y=df_fort777_select_t['Y'], 
-    #             c=df_fort777_select_t['ACT. ETRA']
-    #             )
-    # Create a grid of points and evaluate a function on the grid
-
-    xi, yi, mask = create_gridded_mask(x,y)
-    xx, yy = xi.flatten(), yi.flatten()
-
-    zi = griddata((x, y), z, (xx, yy), method='nearest')
-
-    # Apply the mask to the gridded data
-    zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
-
-    # Plot the masked data
-    cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
+    if scatter:
+        cmap = ax.scatter(x=df_fort777_select_t['X'], 
+                    y=df_fort777_select_t['Y'], 
+                    c=df_fort777_select_t['ACT. ETRA']
+                    )
+    else:
+        # Create a grid of points and evaluate a function on the grid
     
+        xi, yi, mask = create_gridded_mask(x,y,**kwargs)
+        xx, yy = xi.flatten(), yi.flatten()
+    
+        zi = griddata((x, y), z, (xx, yy), method='cubic')
+    
+        # Apply the mask to the gridded data
+        zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
+    
+        # Plot the masked data
+        cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
+        
     ax.set_title('Actual evapotranspiration')
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
@@ -870,7 +889,7 @@ def show_soil(soil_map, ax=None, **kwargs):
     # plt.show(block=False)
     # plt.close()
 
-    pass
+    return cf
 
 
 def show_raster(

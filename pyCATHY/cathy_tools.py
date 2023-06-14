@@ -1611,6 +1611,10 @@ class CATHY:
         WTPOSITION : float, optional
             For the case INDP=3, specifies the initial water table height relative to
             the base of the 3‐d grid. The default is 0.
+            
+            
+        kwargs : 
+            - pressure_head_ini (int): uniform value of pressure head to assign (only if INDP=0)
 
         Returns
         -------
@@ -1669,7 +1673,11 @@ class CATHY:
                 icfile.write(str(INDP) + "\t" + str(IPOND) + "\t" + "INDP \n")
                 if "pressure_head_ini" in kwargs:
                     np.savetxt(icfile, [kwargs["pressure_head_ini"]], fmt="%1.3e")
+                    
+                    # try:
                     self.map_prop2mesh({"ic": kwargs["pressure_head_ini"]})
+                    # except:
+                    #     print('Impossible to map pressure head to mesh')
 
                 else:
                     raise ValueError("Missing initial pressure value")
@@ -1687,8 +1695,20 @@ class CATHY:
                 )
                 np.savetxt(icfile, pressure_head_ini, fmt="%1.3e")
                 self.map_prop2mesh({"ic": kwargs["pressure_head_ini"]})
+                
+            elif INDP==2:
+                icfile.write(
+                    str(INDP)
+                    + "\t"
+                    + str(IPOND)
+                    + "\t"
+                    + "INDP"
+                    + "\t"
+                    + "IPOND"
+                    + "\n"
+                )
 
-            elif INDP in [2, 3]:
+            elif INDP in [3, 4]:
                 icfile.write(
                     str(INDP)
                     + "\t"
@@ -1749,7 +1769,7 @@ class CATHY:
             blank or =9999 if unit IIN6 input is to be ignored; otherwise atmospheric BC's are
             homogeneous in space.
         IETO : int, optional
-            - =0 for linear interpolation of the atmospheric boundary condition inputs between different
+            - =0 for linear interpolation of the atmospheric boundary condition inputs between different different ATMTIM
             - otherwise the inputs are assigned as a piecewise constant function (ietograph).
             The default is 0.
         time : list
@@ -2269,7 +2289,7 @@ class CATHY:
             Feddes Parameters. The default is [].
             [PCANA PCREF PCWLT ZROOT PZ OMGC]
             - 'PCANA': float, anaerobiosis point --> h2 (≈ -0.5m)
-            - 'PCREF': float, field capacity --> h3 (≈ 4-m)
+            - 'PCREF': float, field capacity --> h3 (≈ -4m)
             - 'PCWLT': float, wilting point --> h4 (≈ -150m)
             - 'ZROOT': float, root depth
             - 'PZ': float, pz is an empirical parameter
@@ -2487,8 +2507,8 @@ class CATHY:
                                     to_nodes=True
                                 )
 
-            for spp in SPP_map:
-                self.map_dem_prop_2mesh(spp, SPP_map[spp], to_nodes=False)
+            # for spp in SPP_map:
+            #     self.map_dem_prop_2mesh(spp, SPP_map[spp], to_nodes=False)
 
         pass
 
@@ -2875,10 +2895,16 @@ class CATHY:
         # exclude_veg = 0
         # if np.sum(self.DEM<0)>0:
         exclude_veg = self._check_outside_DEM(indice_veg)
+        
+
                                     
         # self.dem
         self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
         
+        if exclude_veg>0:
+            print('excluding outside DEM')
+            print('MAXVEG='+ str(self.MAXVEG))
+
         self.update_cathyH(MAXVEG=self.MAXVEG)
 
         if show:
@@ -3619,9 +3645,10 @@ class CATHY:
             else:
                 soil_map_prop[zone_mat[0] == 1] = df[0][yprop].xs((str(layer_nb), '0'))
 
-            plt_CT.show_soil(soil_map_prop, ax=ax,
+            cmap = plt_CT.show_soil(soil_map_prop, ax=ax,
                              **kwargs)
-
+            return cmap
+        
             # in 3 dimensions
             # --------------
             # SPP = df[0].to_dict()

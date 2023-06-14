@@ -5,11 +5,14 @@ Meshing tools
 """
 
 import os
+# from scipy.spatial.distance import cdist
+# from scipy.spatial import KDTree
 
 import numpy as np
 import pyvista as pv
 
 from pyCATHY.plotters import cathy_plots as cplt
+from scipy.spatial import KDTree
 
 try:
     import pygimli as pg
@@ -870,8 +873,8 @@ def _build_xyz_marker_mat_squareDEM(
 
     xyz_nodes = np.c_[xn, yn, np.hstack(dem.T)]
 
-    meshpts = mesh_pv_attributes.points
-    cellpts = mesh_pv_attributes.cell_centers().points
+    # meshpts = mesh_pv_attributes.points
+    # cellpts = mesh_pv_attributes.cell_centers().points
 
     xyz_layers_nodes = []
     for i, li in enumerate(layeri_top[:-1]):
@@ -925,6 +928,8 @@ def _find_nearest_point2DEM(
 ):
 
     if to_nodes:
+        # print('to_nodes')
+
         # loop over mesh cell centers and find nearest point to dem
         # ----------------------------------------------------------------
         node_markers = []
@@ -945,22 +950,42 @@ def _find_nearest_point2DEM(
         #                              binary=False)
 
     else:
+        # print('to_cells')
+
         # loop over mesh cell centers and find nearest point to dem
         # ----------------------------------------------------------------
-        cell_markers = []
-        for nmesh in mesh_pv_attributes.cell_centers().points:
-            # euclidean distance
-            d = (
-                (xyz_layers_cells[:, 0] - nmesh[0]) ** 2
-                + (xyz_layers_cells[:, 1] - nmesh[1]) ** 2
-                + (abs(xyz_layers_cells[:, 2]) - abs(nmesh[2])) ** 2
-            ) ** 0.5
-            cell_markers.append(xyz_layers_cells[np.argmin(d), 3])
-            # dbackup_cell.append(min(d))
+        # cell_markers = []
+        # for nmesh in mesh_pv_attributes.cell_centers().points:
+        #     # print(str(nmesh) + '/' + str(len(mesh_pv_attributes.cell_centers().points)))
+        #     # euclidean distance
+        #     d = (
+        #         (xyz_layers_cells[:, 0] - nmesh[0]) ** 2
+        #         + (xyz_layers_cells[:, 1] - nmesh[1]) ** 2
+        #         + (abs(xyz_layers_cells[:, 2]) - abs(nmesh[2])) ** 2
+        #     ) ** 0.5
+        #     cell_markers.append(xyz_layers_cells[np.argmin(d), 3])
+        #     # dbackup_cell.append(min(d))
 
         # add data to the mesh
         # ----------------------------------------------------------------
+        # mesh_pv_attributes["cell_markers"] = cell_markers
+
+
+        # Get the mesh cell centers
+        cell_centers = mesh_pv_attributes.cell_centers().points
+
+        # Create a KDTree from xyz_layers_cells
+        tree = KDTree(xyz_layers_cells[:, :3])
+
+        # Find the nearest neighbors for each cell center
+        distances, indices = tree.query(cell_centers, k=1)
+
+        # Get the cell_markers values based on the nearest neighbors
+        cell_markers = xyz_layers_cells[indices, 3]
+
+        # Add the data to the mesh
         mesh_pv_attributes["cell_markers"] = cell_markers
+
 
     mesh_pv_attributes.save(
         os.path.join(
@@ -1053,10 +1078,12 @@ def add_markers2mesh(
         # xyz_layers  = np.c_[grid_coords_stk_rep[:,:-1],zones3d_col_stk]
         xyz_layers = np.c_[grid_coords_stk_rep[:, :-2], dem_mat_stk, zones3d_col_stk]
 
+        print('_plot_cellsMarkerpts')
         # Plot to check position of points VS mesh
         # ------------------------------------------------------------------
         _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name)
 
+        print('_find_nearest_point2DEM')
         # Assign marker to mesh and overwrite it
         # ------------------------------------------------------------------
         _find_nearest_point2DEM(
