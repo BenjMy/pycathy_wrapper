@@ -47,7 +47,7 @@ Dependencies
 ------------
 - NumPy, SciPy, and Matplotlib beyond default python packages
 
-- Fortran and the algebra libraries blas and lapack.
+- Fortran and the algebra libraries BLAS and LAPACK.
 For example, on Fedora::
 
     sudo dnf install gcc-gfortran
