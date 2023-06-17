@@ -47,13 +47,12 @@ Dependencies
 ------------
 - NumPy, SciPy, and Matplotlib beyond default python packages
 
-- Fortran and the algebra libraries blas and lapack. For example,
+- Fortran and the algebra libraries blas and lapack.
+For example, on Fedora::
 
-  - on Fedora
-    .. code-block:: bash
-          sudo dnf install gcc-gfortran
-          sudo dnf install blas-dev
-          sudo dnf install lapack-dev
+    sudo dnf install gcc-gfortran
+    sudo dnf install blas-dev
+    sudo dnf install lapack-dev
 
 
 .. warning:: pyCATHY for Data Assimilation relies on others libraries 
