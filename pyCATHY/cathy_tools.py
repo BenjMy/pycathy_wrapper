@@ -1193,6 +1193,9 @@ class CATHY:
         #         if (key +'_list') in self.dem_parameters.keys() is False:
         #             dem_parameters_tmp[key +'_list'] = value
 
+
+        if 'zratio' in kwargs:
+            self.dem_parameters['nstr'] = len(kwargs['zratio'])
         # self.dem_parameters = self.dem_parameters | dem_parameters_tmp
         # write file
         header_fmt = [1, 1, 1, 1, 3, 3, 1]

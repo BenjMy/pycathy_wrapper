@@ -13,3 +13,5 @@ natsort
 ipywidgets
 smmap
 shapely
+imageio
+nltk

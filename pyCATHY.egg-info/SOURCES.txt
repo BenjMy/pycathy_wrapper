@@ -32,6 +32,7 @@ pyCATHY/importers/cathy_outputs.py
 pyCATHY/importers/cathy_plant.py
 pyCATHY/importers/sensors_measures.py
 pyCATHY/plotters/__init__.py
+pyCATHY/plotters/cathyDA_plots.py
 pyCATHY/plotters/cathy_plots.py
 pyCATHY/tests/__init__.py
 pyCATHY/tests/test_DA_ERT_Tensio_SWC.py

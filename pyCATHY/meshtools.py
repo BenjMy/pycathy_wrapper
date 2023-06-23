@@ -1040,24 +1040,24 @@ def add_markers2mesh(
     
     
     # print(hapin['xllcorner'])
-    print(hapin['xllcorner'],hapin['yllcorner'])
+    # print(hapin['xllcorner'],hapin['yllcorner'])
     
-    print('x[0],y[0]')
-    print(x[0],y[0])
-    print(x[1],y[1])
+    # print('x[0],y[0]')
+    # print(x[0],y[0])
+    # print(x[1],y[1])
 
-    print('*'*20)
-    print('initial dem shape')
-    print(np.shape(dem))
-    print(dem[0][0])
+    # print('*'*20)
+    # print('initial dem shape')
+    # print(np.shape(dem))
+    # print(dem[0][0])
 
     
     dem_flip = np.flipud(dem)
     # dem_flip = dem
-    print('*'*20)
-    print('flip dem shape')
-    print(np.shape(dem_flip))
-    print(dem_flip[0][0])
+    # print('*'*20)
+    # print('flip dem shape')
+    # print(np.shape(dem_flip))
+    # print(dem_flip[0][0])
     
     
     # Get layer top and bottom
@@ -1078,26 +1078,26 @@ def add_markers2mesh(
     else:
         dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
         
-    print('*'*20)
-    print('dem_mat3d_layers shape')
-    print(np.shape(dem_mat3d_layers))
-    print(dem_mat3d_layers[0][0])
+    # print('*'*20)
+    # print('dem_mat3d_layers shape')
+    # print(np.shape(dem_mat3d_layers))
+    # print(dem_mat3d_layers[0][0])
     
         
-    print('*'*20)
-    print('zone3d_top shape')
-    print(np.shape(zone3d_top))
-    print(zone3d_top[0][0])
+    # print('*'*20)
+    # print('zone3d_top shape')
+    # print(np.shape(zone3d_top))
+    # print(zone3d_top[0][0])
     
     
     
-    print('*'*20)
-    print('x shape')
-    print(np.shape(x))
+    # print('*'*20)
+    # print('x shape')
+    # print(np.shape(x))
     
-    print('*'*20)
-    print('y shape')
-    print(np.shape(y))
+    # print('*'*20)
+    # print('y shape')
+    # print(np.shape(y))
     
 
     # Create a regular mesh from the DEM x and y coordinates and elevation
@@ -1105,13 +1105,13 @@ def add_markers2mesh(
     xgrid, ygrid = np.meshgrid(x, y)
     
     
-    print('*'*20)
-    print('xgrid shape')
-    print(np.shape(xgrid))
+    # print('*'*20)
+    # print('xgrid shape')
+    # print(np.shape(xgrid))
     
-    print('*'*20)
-    print('ygrid shape')
-    print(np.shape(ygrid))
+    # print('*'*20)
+    # print('ygrid shape')
+    # print(np.shape(ygrid))
     
     # print('je suis la')
     grid_coords_dem = np.array(
@@ -1122,30 +1122,30 @@ def add_markers2mesh(
     ).T
     
     # print(grid_coords_dem)
-    print('*'*20)
-    print('grid_coords_dem shape')
-    print(np.shape(grid_coords_dem))
+    # print('*'*20)
+    # print('grid_coords_dem shape')
+    # print(np.shape(grid_coords_dem))
     
   
-    fig, ax = plt.subplots()
-    ax = plt.axes(projection="3d")
+    # fig, ax = plt.subplots()
+    # ax = plt.axes(projection="3d")
 
-    cmap=ax.scatter(grid_coords_dem[:,0],
-                    grid_coords_dem[:,1],
-                    np.ravel(zone3d_top[0]),
-                    c='k')
+    # cmap=ax.scatter(grid_coords_dem[:,0],
+    #                 grid_coords_dem[:,1],
+    #                 np.ravel(zone3d_top[0]),
+    #                 c='k')
     
-    # ax.scatter(grid3d['mesh3d_nodes'][:,0],
-    #             grid3d['mesh3d_nodes'][:,1],
-    #             grid3d['mesh3d_nodes'][:,2], 
-    #             s=2, 
-    #             cmap = 'coolwarm')
-    ax.set_xlabel('Northing (m)')
-    ax.set_ylabel('Easting (m)')
+    # # ax.scatter(grid3d['mesh3d_nodes'][:,0],
+    # #             grid3d['mesh3d_nodes'][:,1],
+    # #             grid3d['mesh3d_nodes'][:,2], 
+    # #             s=2, 
+    # #             cmap = 'coolwarm')
+    # ax.set_xlabel('Northing (m)')
+    # ax.set_ylabel('Easting (m)')
 
 
-    plt.title('grid_coords_dem l0')
-    plt.colorbar(cmap,ax=ax)
+    # plt.title('grid_coords_dem l0')
+    # plt.colorbar(cmap,ax=ax)
     
     
     # Reduce all to 1D
@@ -1160,16 +1160,16 @@ def add_markers2mesh(
     xyz_layers = np.c_[grid_coords_stk_rep, dem_mat_stk, zones3d_col_stk]
 
 
-    fig, ax = plt.subplots()
-    cmap=ax.scatter(xyz_layers[:,0],
-                    xyz_layers[:,1],
-                    c=xyz_layers[:,2]
-                    )
-    plt.colorbar(cmap,ax=ax)
-    plt.title('xyz_layers')
+    # fig, ax = plt.subplots()
+    # cmap=ax.scatter(xyz_layers[:,0],
+    #                 xyz_layers[:,1],
+    #                 c=xyz_layers[:,2]
+    #                 )
+    # plt.colorbar(cmap,ax=ax)
+    # plt.title('xyz_layers')
 
 
-    print('_plot_cellsMarkerpts')
+    # print('_plot_cellsMarkerpts')
     # Plot to check position of points VS mesh
     # ------------------------------------------------------------------
     _plot_cellsMarkerpts(mesh_pv_attributes, 
@@ -1178,7 +1178,7 @@ def add_markers2mesh(
                           project_name)
 
     #%%
-    print('_find_nearest_point2DEM')
+    # print('_find_nearest_point2DEM')
     # Assign marker to mesh and overwrite it
     # ------------------------------------------------------------------
     _find_nearest_point2DEM(
