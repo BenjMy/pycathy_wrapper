@@ -4,7 +4,7 @@ Getting Started
 ===============
     
 
-.. image:: img/Francesca_instructions.png
+.. image:: ../img/Francesca_instructions.png
   :width: 400
   :alt: Getting started
   
