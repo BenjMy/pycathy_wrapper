@@ -4,6 +4,7 @@ Getting Started
 ===============
     
 Three steps are required to implement a working CATHY model of a specific case study (see fig. below), namely **pre-processing**, **processing**, and **post-processing**, and the following steps are necessary to create the flow model:
+
 1. Create the input files for the pre-processor hap
 2. Run the pre-processor hap
 3. Create the input files for the processor CATHY
