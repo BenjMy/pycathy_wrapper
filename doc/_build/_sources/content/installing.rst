@@ -45,7 +45,41 @@ Staying up-to-date using setup.py::
 
 Dependencies
 ------------
-- numpy, scipy, and matplotlib beyond default python packages
+- NumPy, SciPy, and Matplotlib beyond default python packages
+
+- Fortran and the algebra libraries BLAS and LAPACK.
+
+.. tab-set::
+
+    .. tab-item:: Linux
+
+        .. code:: bash
+
+           sudo apt-get update
+           sudo apt-get install gfortran
+           sudo apt-get install blas-dev lapack-dev
+
+    .. tab-item:: Fedora
+
+        .. code:: bash
+
+            sudo dnf install gcc-gfortran
+	    sudo dnf install blas-dev
+	    sudo dnf install lapack-dev
+
+    .. tab-item:: Windows
+
+        We recommand to install a **virtual machine**:
+
+        .. code:: bash
+
+            install WSL from Microsoft Store app (search WSL)
+	    install linux from Microsoft Store app (search ubuntu lts)
+	    turn Windows features on or off:
+	      - enable Windows subsystem for Linux
+	      - enable Virtual machine platform
+	     restart PC 
+
 
 .. warning:: pyCATHY for Data Assimilation relies on others libraries 
 

@@ -6,12 +6,10 @@
 
 Computation times
 =================
-**15:57.385** total execution time for **content_SSHydro** files:
+**07:37.601** total execution time for **content_SSHydro** files:
 
 +---------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``plot_1_pyCATHY_weilletal.py``)                 | 08:08.783 | 0.0 MB |
-+---------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py` (``plot_4b_waterTable_from_weill.py``)       | 07:48.602 | 0.0 MB |
+| :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``plot_1_pyCATHY_weilletal.py``)                 | 07:37.601 | 0.0 MB |
 +---------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``plot_2_pyCATHY_inputs.py``)                       | 00:00.000 | 0.0 MB |
 +---------------------------------------------------------------------------------------------------------------+-----------+--------+
@@ -26,4 +24,6 @@ Computation times
 | :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weill.py` (``plot_3c_saptial_atmbc_from_weill.py``) | 00:00.000 | 0.0 MB |
 +---------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``plot_4_pyCATHY_outputs.py``)                     | 00:00.000 | 0.0 MB |
++---------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py` (``plot_4b_waterTable_from_weill.py``)       | 00:00.000 | 0.0 MB |
 +---------------------------------------------------------------------------------------------------------------+-----------+--------+

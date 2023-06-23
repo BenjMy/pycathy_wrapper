@@ -148,6 +148,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../content/overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/installing.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/gettingstarted.html">Getting Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
 <ul class="nav bd-sidenav">
@@ -349,11 +350,14 @@ document.write(`
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="c1"># from scipy.spatial.distance import cdist</span>
+<span class="c1"># from scipy.spatial import KDTree</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
 
 <span class="kn">from</span> <span class="nn">pyCATHY.plotters</span> <span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">cplt</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">KDTree</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pygimli</span> <span class="k">as</span> <span class="nn">pg</span>
@@ -944,27 +948,27 @@ document.write(`
     <span class="c1"># ---------------------------------------------------------------</span>
     <span class="n">zones3d</span> <span class="o">=</span> <span class="p">[</span><span class="n">zone</span><span class="p">]</span> <span class="o">*</span> <span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">]</span>
 
-    <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-        <span class="nb">int</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="mi">2</span><span class="p">,</span>
-        <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">sharey</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-        <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">axs</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">]):</span>
-        <span class="n">layeri_top</span><span class="p">,</span> <span class="n">layeri_bottom</span> <span class="o">=</span> <span class="n">get_layer_depth</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">,</span> <span class="n">li</span><span class="p">)</span>
-        <span class="n">layer_str</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">layeri_top</span><span class="si">:</span><span class="s2">.2E</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">layeri_bottom</span><span class="si">:</span><span class="s2">.2E</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
-        <span class="p">)</span>
+    <span class="c1"># fig, axs = plt.subplots(</span>
+    <span class="c1">#     int(dem_parameters[&quot;nstr&quot;] / 2) + 1,</span>
+    <span class="c1">#     2,</span>
+    <span class="c1">#     sharex=True,</span>
+    <span class="c1">#     sharey=(True),</span>
+    <span class="c1">#     constrained_layout=False,</span>
+    <span class="c1"># )</span>
+    <span class="c1"># plt.tight_layout()</span>
+    <span class="c1"># axs = axs.ravel()</span>
+    <span class="c1"># for li in range(dem_parameters[&quot;nstr&quot;]):</span>
+    <span class="c1">#     layeri_top, layeri_bottom = get_layer_depth(dem_parameters, li)</span>
+    <span class="c1">#     layer_str = (</span>
+    <span class="c1">#         &quot;[&quot; + str(f&quot;{layeri_top:.2E}&quot;) + &quot;-&quot; + str(f&quot;{layeri_bottom:.2E}&quot;) + &quot;]&quot;</span>
+    <span class="c1">#     )</span>
 
-        <span class="n">pmesh</span> <span class="o">=</span> <span class="n">cplt</span><span class="o">.</span><span class="n">show_raster</span><span class="p">(</span>
-            <span class="n">zones3d</span><span class="p">[</span><span class="n">li</span><span class="p">],</span> <span class="n">prop</span><span class="o">=</span><span class="n">layer_str</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;jet&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">li</span><span class="p">],</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">)</span>
+    <span class="c1">#     pmesh = cplt.show_raster(</span>
+    <span class="c1">#         zones3d[li], prop=layer_str, cmap=&quot;jet&quot;, ax=axs[li], vmin=0, vmax=1</span>
+    <span class="c1">#     )</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pmesh</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[:],</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;jet&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="c1"># plt.colorbar(pmesh, ax=axs[:], location=&quot;right&quot;, shrink=0.6, cmap=&quot;jet&quot;)</span>
+    <span class="c1"># plt.tight_layout()</span>
 
     <span class="k">return</span> <span class="n">zones3d</span>
 
@@ -1134,8 +1138,8 @@ document.write(`
 
 <span class="k">def</span> <span class="nf">_plot_cellsMarkerpts</span><span class="p">(</span><span class="n">mesh_pv_attributes</span><span class="p">,</span> <span class="n">xyz_layers</span><span class="p">,</span> <span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">):</span>
 
-    <span class="n">pl</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">off_screen</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span>
-    <span class="c1"># pl = pv.Plotter()</span>
+    <span class="c1"># pl = pv.Plotter(off_screen=(True))</span>
+    <span class="n">pl</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
     <span class="n">pl</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">mesh_pv_attributes</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
     <span class="n">pl</span><span class="o">.</span><span class="n">show_grid</span><span class="p">()</span>
 
@@ -1144,11 +1148,11 @@ document.write(`
         <span class="n">point_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">scalars</span><span class="o">=</span><span class="n">xyz_layers</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">screenshot</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> 
-                                    <span class="n">project_name</span><span class="p">,</span> 
-                                    <span class="s2">&quot;layersMarkers.png&quot;</span><span class="p">)</span>
-            <span class="p">)</span>
-    <span class="c1"># pl.show()</span>
+    <span class="c1"># pl.show(screenshot=os.path.join(workdir, </span>
+    <span class="c1">#                                 project_name, </span>
+    <span class="c1">#                                 &quot;layersMarkers.png&quot;)</span>
+    <span class="c1">#         )</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 
 <span class="k">def</span> <span class="nf">_build_xyz_marker_mat_squareDEM</span><span class="p">(</span>
@@ -1160,6 +1164,7 @@ document.write(`
     <span class="n">project_name</span><span class="p">,</span>
     <span class="n">to_nodes</span><span class="p">,</span>
 <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; DEPRECATED FOR _find_nearest_point2DEM&#39;&#39;&#39;</span>
 
     <span class="c1"># top, bot = get_layer_depth(dem_parameters,li)</span>
 
@@ -1181,9 +1186,7 @@ document.write(`
 
     <span class="c1"># get dem coordinates</span>
     <span class="c1"># ----------------------------------------------------------------</span>
-    <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dem</span> <span class="o">=</span> <span class="n">cplt</span><span class="o">.</span><span class="n">get_dem_coords</span><span class="p">(</span>
-        <span class="n">workdir</span><span class="o">=</span><span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span> <span class="n">hapin</span><span class="o">=</span><span class="n">hapin</span>
-    <span class="p">)</span>
+    <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">cplt</span><span class="o">.</span><span class="n">get_dem_coords</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">hapin</span><span class="o">=</span><span class="n">hapin</span><span class="p">)</span>
 
     <span class="c1"># build dem coordinates of the size of the DEM</span>
     <span class="c1"># ----------------------------------------------------------------</span>
@@ -1214,8 +1217,8 @@ document.write(`
 
     <span class="n">xyz_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xn</span><span class="p">,</span> <span class="n">yn</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">dem</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
 
-    <span class="n">meshpts</span> <span class="o">=</span> <span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">points</span>
-    <span class="n">cellpts</span> <span class="o">=</span> <span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">cell_centers</span><span class="p">()</span><span class="o">.</span><span class="n">points</span>
+    <span class="c1"># meshpts = mesh_pv_attributes.points</span>
+    <span class="c1"># cellpts = mesh_pv_attributes.cell_centers().points</span>
 
     <span class="n">xyz_layers_nodes</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">li</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layeri_top</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
@@ -1245,7 +1248,9 @@ document.write(`
 
     <span class="n">xyz_layers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">xyz_layers</span><span class="p">)</span>
     <span class="n">xyz_layers_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">xyz_layers_nodes</span><span class="p">)</span>
-    <span class="n">xyz_layers_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">xyz_layers_cells_top</span><span class="p">,</span> <span class="n">xyz_layers_cells_cent</span><span class="p">])</span>
+    <span class="n">xyz_layers_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">xyz_layers_cells_top</span><span class="p">,</span> 
+                                       <span class="n">xyz_layers_cells_cent</span><span class="p">]</span>
+                                 <span class="p">)</span>
 
     <span class="n">_plot_cellsMarkerpts</span><span class="p">(</span><span class="n">mesh_pv_attributes</span><span class="p">,</span> <span class="n">xyz_layers</span><span class="p">,</span> <span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
 
@@ -1269,6 +1274,8 @@ document.write(`
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="n">to_nodes</span><span class="p">:</span>
+        <span class="c1"># print(&#39;to_nodes&#39;)</span>
+
         <span class="c1"># loop over mesh cell centers and find nearest point to dem</span>
         <span class="c1"># ----------------------------------------------------------------</span>
         <span class="n">node_markers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1277,34 +1284,58 @@ document.write(`
             <span class="n">d</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="p">(</span><span class="n">xyz_layers_nodes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">nmesh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
                 <span class="o">+</span> <span class="p">(</span><span class="n">xyz_layers_nodes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">nmesh</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="o">+</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">xyz_layers_nodes</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nmesh</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-            <span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">xyz_layers_nodes</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nmesh</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span><span class="o">**</span> <span class="mf">0.5</span>
             <span class="n">node_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xyz_layers_nodes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="mi">3</span><span class="p">])</span>
             <span class="c1"># dbackup_nodes.append(min(d))</span>
         <span class="c1"># add data to the mesh</span>
         <span class="c1"># ----------------------------------------------------------------</span>
-        <span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">&quot;node_markers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_markers</span>
+        <span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">&quot;node_markers_old&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_markers</span>
 
         <span class="c1"># simu.mesh_pv_attributes.save(&#39;mesh_with_markers.vtk&#39;,</span>
         <span class="c1">#                              binary=False)</span>
 
     <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># print(&#39;to_cells&#39;)</span>
+
         <span class="c1"># loop over mesh cell centers and find nearest point to dem</span>
         <span class="c1"># ----------------------------------------------------------------</span>
-        <span class="n">cell_markers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">nmesh</span> <span class="ow">in</span> <span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">cell_centers</span><span class="p">()</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
-            <span class="c1"># euclidean distance</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">xyz_layers_cells</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">nmesh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="o">+</span> <span class="p">(</span><span class="n">xyz_layers_cells</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">nmesh</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="o">+</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">xyz_layers_cells</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nmesh</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span>
-            <span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-            <span class="n">cell_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xyz_layers_cells</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="mi">3</span><span class="p">])</span>
-            <span class="c1"># dbackup_cell.append(min(d))</span>
+        <span class="c1"># cell_markers = []</span>
+        <span class="c1"># for nmesh in mesh_pv_attributes.cell_centers().points:</span>
+        <span class="c1">#     # print(str(nmesh) + &#39;/&#39; + str(len(mesh_pv_attributes.cell_centers().points)))</span>
+        <span class="c1">#     # euclidean distance</span>
+        <span class="c1">#     d = (</span>
+        <span class="c1">#         (xyz_layers_cells[:, 0] - nmesh[0]) ** 2</span>
+        <span class="c1">#         + (xyz_layers_cells[:, 1] - nmesh[1]) ** 2</span>
+        <span class="c1">#         + (abs(xyz_layers_cells[:, 2]) - abs(nmesh[2])) ** 2</span>
+        <span class="c1">#     ) ** 0.5</span>
+        <span class="c1">#     cell_markers.append(xyz_layers_cells[np.argmin(d), 3])</span>
+        <span class="c1">#     # dbackup_cell.append(min(d))</span>
 
         <span class="c1"># add data to the mesh</span>
         <span class="c1"># ----------------------------------------------------------------</span>
+        <span class="c1"># mesh_pv_attributes[&quot;cell_markers&quot;] = cell_markers</span>
+
+
+        <span class="c1"># Get the mesh cell centers</span>
+        <span class="n">cell_centers</span> <span class="o">=</span> <span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">cell_centers</span><span class="p">()</span><span class="o">.</span><span class="n">points</span>
+
+        <span class="c1"># Create a KDTree from xyz_layers_cells</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">xyz_layers_cells</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="c1"># Find the nearest neighbors for each cell center</span>
+        <span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">cell_centers</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Get the cell_markers values based on the nearest neighbors</span>
+        <span class="n">cell_markers</span> <span class="o">=</span> <span class="n">xyz_layers_cells</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+        <span class="c1"># Add the data to the mesh</span>
         <span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">&quot;cell_markers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_markers</span>
+        
+        <span class="n">nodepv</span> <span class="o">=</span> <span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">cell_data_to_point_data</span><span class="p">()</span>
+        <span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s1">&#39;node_markers_new&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodepv</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s1">&#39;cell_markers&#39;</span><span class="p">]</span>
+
+        <span class="c1"># mesh_pv_attributes.point_data.set_scalars(nodepv, &#39;node_markers&#39;)</span>
 
     <span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -1322,6 +1353,7 @@ document.write(`
 
 <span class="k">def</span> <span class="nf">add_markers2mesh</span><span class="p">(</span>
     <span class="n">zones3d_layered</span><span class="p">,</span>
+    <span class="n">dem</span><span class="p">,</span>
     <span class="n">mesh_pv_attributes</span><span class="p">,</span>
     <span class="n">dem_parameters</span><span class="p">,</span>
     <span class="n">workdir</span><span class="p">,</span>
@@ -1330,87 +1362,182 @@ document.write(`
     <span class="n">to_nodes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dem</span> <span class="o">=</span> <span class="n">cplt</span><span class="o">.</span><span class="n">get_dem_coords</span><span class="p">(</span>
-        <span class="n">workdir</span><span class="o">=</span><span class="n">workdir</span><span class="p">,</span>
-        <span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span>
-        <span class="n">hapin</span><span class="o">=</span><span class="n">hapin</span><span class="p">,</span>
-        <span class="n">tranposeDEM</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># # if len(x) == len(y):</span>
+
+    <span class="c1"># #     _build_xyz_marker_mat_squareDEM(</span>
+    <span class="c1"># #         zones3d_layered,</span>
+    <span class="c1"># #         mesh_pv_attributes,</span>
+    <span class="c1"># #         hapin,</span>
+    <span class="c1"># #         dem_parameters,</span>
+    <span class="c1"># #         workdir,</span>
+    <span class="c1"># #         project_name,</span>
+    <span class="c1"># #         to_nodes,</span>
+    <span class="c1"># #     )</span>
+
+
+    <span class="c1"># Reduce all to 1D</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># dem_3d_layers_array = np.ravel(dem_mat3d_layers)</span>
+    <span class="c1"># grid_coords_layers_array = np.vstack([grid3d[&#39;mesh3d_nodes&#39;]] * dem_parameters[&quot;nstr&quot;])    </span>
+    <span class="n">zones3d_layers_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">)</span>
+    
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cplt</span><span class="o">.</span><span class="n">get_dem_coords</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span><span class="n">hapin</span><span class="o">=</span><span class="n">hapin</span><span class="p">)</span>
+    
+    
+    <span class="c1"># print(hapin[&#39;xllcorner&#39;])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hapin</span><span class="p">[</span><span class="s1">&#39;xllcorner&#39;</span><span class="p">],</span><span class="n">hapin</span><span class="p">[</span><span class="s1">&#39;yllcorner&#39;</span><span class="p">])</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x[0],y[0]&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;initial dem shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dem</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dem</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    
+    <span class="n">dem_flip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">dem</span><span class="p">)</span>
+    <span class="c1"># dem_flip = dem</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;flip dem shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dem_flip</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dem_flip</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    
+    
+    <span class="c1"># Get layer top and bottom</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">zone3d_top</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">zone3d_bot</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">]):</span>
+        <span class="n">top</span><span class="p">,</span> <span class="n">bot</span> <span class="o">=</span> <span class="n">get_layer_depth</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">,</span> <span class="n">li</span><span class="p">)</span>
+        <span class="n">zone3d_top</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">[</span><span class="n">li</span><span class="p">]))</span><span class="o">*</span><span class="n">top</span><span class="p">)</span>
+        <span class="n">zone3d_bot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">[</span><span class="n">li</span><span class="p">]))</span><span class="o">*</span><span class="n">bot</span><span class="p">)</span>
+        
+    <span class="n">zone3d_top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zone3d_top</span><span class="p">)</span>
+    <span class="n">zone3d_bot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zone3d_bot</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">to_nodes</span><span class="p">:</span>
+        <span class="n">dem_mat3d_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">dem_flip</span> <span class="o">-</span> <span class="n">zz</span> <span class="k">for</span> <span class="n">zz</span> <span class="ow">in</span> <span class="n">zone3d_top</span><span class="o">-</span><span class="p">(</span><span class="n">zone3d_top</span><span class="o">-</span><span class="n">zone3d_bot</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dem_mat3d_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">dem_flip</span> <span class="o">-</span> <span class="n">zz</span> <span class="k">for</span> <span class="n">zz</span> <span class="ow">in</span> <span class="n">zone3d_top</span><span class="o">-</span><span class="p">(</span><span class="n">zone3d_top</span><span class="o">-</span><span class="n">zone3d_bot</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dem_mat3d_layers shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dem_mat3d_layers</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dem_mat3d_layers</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    
+        
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;zone3d_top shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">zone3d_top</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">zone3d_top</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    
+    
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;y shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    
+
+    <span class="c1"># Create a regular mesh from the DEM x and y coordinates and elevation</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xgrid shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">xgrid</span><span class="p">))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ygrid shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">ygrid</span><span class="p">))</span>
+    
+    <span class="c1"># print(&#39;je suis la&#39;)</span>
+    <span class="n">grid_coords_dem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">xgrid</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">ygrid</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    
+    <span class="c1"># print(grid_coords_dem)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;grid_coords_dem shape&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">grid_coords_dem</span><span class="p">))</span>
+    
+  
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+
+    <span class="n">cmap</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">grid_coords_dem</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">grid_coords_dem</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">zone3d_top</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># ax.scatter(grid3d[&#39;mesh3d_nodes&#39;][:,0],</span>
+    <span class="c1">#             grid3d[&#39;mesh3d_nodes&#39;][:,1],</span>
+    <span class="c1">#             grid3d[&#39;mesh3d_nodes&#39;][:,2], </span>
+    <span class="c1">#             s=2, </span>
+    <span class="c1">#             cmap = &#39;coolwarm&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Northing (m)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Easting (m)&#39;</span><span class="p">)</span>
+
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;grid_coords_dem l0&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    
+    
+    <span class="c1"># Reduce all to 1D</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">dem_mat_stk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">dem_mat3d_layers</span><span class="p">)</span>
+
+    <span class="n">grid_coords_stk_rep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">grid_coords_dem</span><span class="p">]</span> <span class="o">*</span> <span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">]))</span>
+    
+
+    <span class="n">zones3d_col_stk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">)</span>
+    <span class="c1"># xyz_layers  = np.c_[grid_coords_stk_rep[:,:-1],zones3d_col_stk]</span>
+    <span class="n">xyz_layers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">grid_coords_stk_rep</span><span class="p">,</span> <span class="n">dem_mat_stk</span><span class="p">,</span> <span class="n">zones3d_col_stk</span><span class="p">]</span>
+
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xyz_layers</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">xyz_layers</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">c</span><span class="o">=</span><span class="n">xyz_layers</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;xyz_layers&#39;</span><span class="p">)</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;_plot_cellsMarkerpts&#39;</span><span class="p">)</span>
+    <span class="c1"># Plot to check position of points VS mesh</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">_plot_cellsMarkerpts</span><span class="p">(</span><span class="n">mesh_pv_attributes</span><span class="p">,</span> 
+                          <span class="n">xyz_layers</span><span class="p">,</span> 
+                          <span class="n">workdir</span><span class="p">,</span> 
+                          <span class="n">project_name</span><span class="p">)</span>
+
+    <span class="c1">#%%</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;_find_nearest_point2DEM&#39;</span><span class="p">)</span>
+    <span class="c1"># Assign marker to mesh and overwrite it</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">_find_nearest_point2DEM</span><span class="p">(</span>
+        <span class="n">to_nodes</span><span class="p">,</span>
+        <span class="n">mesh_pv_attributes</span><span class="p">,</span>
+        <span class="n">workdir</span><span class="p">,</span>
+        <span class="n">project_name</span><span class="p">,</span>
+        <span class="n">xyz_layers</span><span class="p">,</span>
+        <span class="n">xyz_layers</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
 
-        <span class="n">_build_xyz_marker_mat_squareDEM</span><span class="p">(</span>
-            <span class="n">zones3d_layered</span><span class="p">,</span>
-            <span class="n">mesh_pv_attributes</span><span class="p">,</span>
-            <span class="n">hapin</span><span class="p">,</span>
-            <span class="n">dem_parameters</span><span class="p">,</span>
-            <span class="n">workdir</span><span class="p">,</span>
-            <span class="n">project_name</span><span class="p">,</span>
-            <span class="n">to_nodes</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-
-        <span class="c1"># Create a regular mesh from the DEM x and y coordinates and elevation</span>
-        <span class="c1"># ------------------------------------------------------------------</span>
-        <span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">XY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">dem_flip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">dem</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
-        <span class="n">grid_coords_dem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">xgrid</span><span class="p">),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">ygrid</span><span class="p">),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">dem_flip</span><span class="p">),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">dem_flip</span><span class="p">))),</span>
-            <span class="p">]</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="c1"># Get layer top and bottom</span>
-        <span class="c1"># ------------------------------------------------------------------</span>
-        <span class="n">zone3d_top</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">zone3d_bot</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">]):</span>
-            <span class="n">top</span><span class="p">,</span> <span class="n">bot</span> <span class="o">=</span> <span class="n">get_layer_depth</span><span class="p">(</span><span class="n">dem_parameters</span><span class="p">,</span> <span class="n">li</span><span class="p">)</span>
-            <span class="n">zone3d_top</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">[</span><span class="n">li</span><span class="p">]))</span><span class="o">*</span><span class="n">top</span><span class="p">)</span>
-            <span class="n">zone3d_bot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">[</span><span class="n">li</span><span class="p">]))</span><span class="o">*</span><span class="n">bot</span><span class="p">)</span>
-            <span class="c1"># zone3d_top.append(zones3d_layered[li] * top)</span>
-            <span class="c1"># zone3d_bot.append(zones3d_layered[li] * bot)</span>
-            
-            
-        <span class="n">zone3d_top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zone3d_top</span><span class="p">)</span>
-        <span class="n">zone3d_bot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zone3d_bot</span><span class="p">)</span>
-
-        <span class="n">dem_mat3d_layers</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">dem_flip</span> <span class="o">-</span> <span class="n">zz</span> <span class="k">for</span> <span class="n">zz</span> <span class="ow">in</span> <span class="n">zone3d_top</span>
-        <span class="p">]</span>  <span class="c1"># -(zone3d_top-zone3d_bot)/2</span>
-        <span class="c1"># dem_mat3d_layers = [dem_flip - zz for zz in (zone3d_top-zone3d_bot)/2] #-(zone3d_top-zone3d_bot)/2</span>
-
-        <span class="c1"># Reduce all to 1D</span>
-        <span class="c1"># ------------------------------------------------------------------</span>
-        <span class="n">dem_mat_stk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">dem_mat3d_layers</span><span class="p">)</span>
-
-        <span class="n">grid_coords_stk_rep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">grid_coords_dem</span><span class="p">]</span> <span class="o">*</span> <span class="n">dem_parameters</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">])</span>
-        <span class="p">)</span>
-
-        <span class="n">zones3d_col_stk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">zones3d_layered</span><span class="p">)</span>
-        <span class="c1"># xyz_layers  = np.c_[grid_coords_stk_rep[:,:-1],zones3d_col_stk]</span>
-        <span class="n">xyz_layers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">grid_coords_stk_rep</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">dem_mat_stk</span><span class="p">,</span> <span class="n">zones3d_col_stk</span><span class="p">]</span>
-
-        <span class="c1"># Plot to check position of points VS mesh</span>
-        <span class="c1"># ------------------------------------------------------------------</span>
-        <span class="n">_plot_cellsMarkerpts</span><span class="p">(</span><span class="n">mesh_pv_attributes</span><span class="p">,</span> <span class="n">xyz_layers</span><span class="p">,</span> <span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
-
-        <span class="c1"># Assign marker to mesh and overwrite it</span>
-        <span class="c1"># ------------------------------------------------------------------</span>
-        <span class="n">_find_nearest_point2DEM</span><span class="p">(</span>
-            <span class="n">to_nodes</span><span class="p">,</span>
-            <span class="n">mesh_pv_attributes</span><span class="p">,</span>
-            <span class="n">workdir</span><span class="p">,</span>
-            <span class="n">project_name</span><span class="p">,</span>
-            <span class="n">xyz_layers</span><span class="p">,</span>
-            <span class="n">xyz_layers</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="c1"># mesh_pv_attributes[&#39;nodes_m&#39;] = mesh_pv_attributes.cell_data_to_point_data()</span>
+    <span class="c1"># mesh_pv_attributes.plot(scalars=&#39;nodes_m&#39;)</span>
 </pre></div>
 
                 </article>
@@ -1461,7 +1588,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 05, 2023.
+  Last updated on Jun 23, 2023.
   <br/>
 </p>
   </div>

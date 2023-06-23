@@ -3,15 +3,22 @@
 Change log
 ==========
 
-Version 0.0.2
+Version 0.1.2
 -------------
+*NOT yet released*
 
-In progress
 
+Documentation:
 
-.. add zenodo DOI
+* New instruction to install Fortran and the algebra libraries BLAS and LAPACK on Fedora (see `#PR19 <https://github.com/BenjMy/pycathy_wrapper/pull/19>`__)
+* New instruction to install a virtual machine for Windows
 
-Version 0.0.1
+This release contains contributions from:
+
+* Luca Peruzzo (@Peruz)
+* Francesca Zanetti 
+
+Version 0.1.1
 -------------
 
 *Released on: Oct 13, 2021*
@@ -30,4 +37,7 @@ Docs:
 
 - None
 
+This release contains contributions from:
+
+* Benjamin Mary (@BenjMy)
 

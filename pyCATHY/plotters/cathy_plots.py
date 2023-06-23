@@ -1074,60 +1074,58 @@ def dem_plot_2d_top(parameter, label="", **kwargs):
     return fig, ax
 
 
-def get_dem_coords(
-    dem_mat=[], str_hd_dem="", hapin={}, workdir=None, project_name=None, **kwargs
-):
+def get_dem_coords(dem_mat=[], hapin={}):
 
-    if len(dem_mat) == 0:
-        # Read the Header
-        dem_mat, str_hd_dem = in_CT.read_dem(
-            os.path.join(workdir, project_name, "prepro/dem"),
-            os.path.join(workdir, project_name, "prepro/dtm_13.val"),
-        )
+    # if len(dem_mat) == 0:
+    # # Read the Header
+    #     dem_mat, str_hd_dem = in_CT.read_dem(
+    #         os.path.join(workdir, project_name, "prepro/dem"),
+    #         os.path.join(workdir, project_name, "prepro/dtm_13.val"),
+    #     )
 
     # transpose because values in dtm_13 files from where the DEM raster is extracted are transposed ...
-    dem_mat = dem_mat.T
+    # dem_mat = dem_mat.T
 
-    x = np.zeros(dem_mat.shape[0]) + hapin["xllcorner"]
-    y = np.zeros(dem_mat.shape[1]) + hapin["yllcorner"]
-
-    for a in range(0, dem_mat.shape[0]):
-        x[a] = float(str_hd_dem["west"]) + hapin["delta_x"] * (a + 1)
+    # print(dem_mat)
+    
+    x = np.zeros(dem_mat.shape[1]) # + hapin["xllcorner"]
+    y = np.zeros(dem_mat.shape[0]) # + hapin["yllcorner"]
+    
+    # print(x)
+    # print(str_hd_dem)
 
     for a in range(0, dem_mat.shape[1]):
-        y[a] = float(str_hd_dem["south"]) + hapin["delta_y"] * (a + 1)
+        x[a] = float(hapin["xllcorner"]) + hapin["delta_x"] * (a + 1) - hapin["delta_x"]/2
 
-    return x, y, np.flipud(dem_mat)
+    for a in range(0, dem_mat.shape[0]):
+        y[a] = float(hapin["yllcorner"]) + hapin["delta_y"] * (a + 1) - hapin["delta_y"]/2
+
+    return x, y # np.flipud(dem_mat)
 
 
 def show_dem(
     dem_mat=[],
-    str_hd_dem="",
     hapin={},
     ax=None,
-    workdir=None,
-    project_name=None,
     **kwargs,
 ):
     """
     Creates a 3D representation from a Grass DEM file
     """
     # np.shape(dem_mat)
-    x, y, dem_mat = get_dem_coords(
-        dem_mat, str_hd_dem, hapin, workdir, project_name, **kwargs
-    )
+    x, y = get_dem_coords(dem_mat, hapin)
 
     if ax is None:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
 
-    X, Y = np.meshgrid(y, x)
+    X, Y = np.meshgrid(x, y)
     surf = ax.plot_surface(X, Y, dem_mat, cmap="viridis", **kwargs)
     # surf = ax.plot_surface(Y,X, dem_mat, cmap="viridis",**kwargs)
     cbar = plt.colorbar(
         surf, shrink=0.25, orientation="horizontal", label="Elevation (m)"
     )
-    ax.set(xlabel="Easting (m)", ylabel="Northing (m)", zlabel="Elevation (m)")
+    ax.set(xlabel="Northing (m)", ylabel="Easting (m)", zlabel="Elevation (m)")
     # plt.show(block=False)
     # plt.close()
 

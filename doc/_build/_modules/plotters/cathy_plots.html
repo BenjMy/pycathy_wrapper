@@ -148,6 +148,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../content/overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/installing.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gettingstarted.html">Getting Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
 <ul class="nav bd-sidenav">
@@ -413,16 +414,22 @@ document.write(`
 <span class="c1"># -----------------Plot OUTPUTS CATHY -----------------------------------------</span>
 <span class="c1"># -----------------------------------------------------------------------------</span>
 
-<span class="k">def</span> <span class="nf">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     
+    <span class="n">buffer</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="s1">&#39;buffer&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;buffer&#39;</span><span class="p">]</span>
+        
     <span class="c1"># points = MultiPoint(np.column_stack((x, y)))</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
     <span class="n">multi_point</span> <span class="o">=</span> <span class="n">MultiPoint</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
     <span class="n">boundary</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 
-    <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
     <span class="c1"># interval =100</span>
-    <span class="n">boundary</span> <span class="o">=</span> <span class="n">multi_point</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">interval</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="n">interval</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">4</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="n">multi_point</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">interval</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="n">interval</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># boundary_coords</span>
     <span class="c1"># Extract the boundary coordinates and create a boolean mask for the region inside the boundary</span>
@@ -460,35 +467,41 @@ document.write(`
     <span class="k">if</span> <span class="s1">&#39;ti&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">ti</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ti&#39;</span><span class="p">]</span>
     
-    <span class="n">interpolation</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">if</span> <span class="n">interpolation</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="n">cmap</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">])</span>
+    <span class="n">scatter</span><span class="o">=</span><span class="kc">False</span>
+    <span class="k">if</span> <span class="s1">&#39;scatter&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scatter&#39;</span><span class="p">]</span>
+        
+    <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
+        <span class="n">valid_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax&#39;</span><span class="p">]</span>
+        <span class="n">relevant_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valid_kwargs</span><span class="p">}</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">],</span>
+                          <span class="o">**</span><span class="n">relevant_kwargs</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cmap</span><span class="p">)</span>
-        <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;GWD (m)&#39;</span><span class="p">)</span>
+        <span class="c1"># cbar = plt.colorbar(cmap,ax=ax)</span>
+        <span class="c1"># cbar.set_label(&#39;GWD (m)&#39;)</span>
 
-    <span class="c1"># Generate some random scattered points</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
-    
-    <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">-</span><span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;bwr&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">XYZsurface</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">-</span><span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;bwr&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">WT</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span>
+        
+        
+        <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">yi</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
     
-    <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
-    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">yi</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-
-    <span class="n">zi</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
-
-    <span class="c1"># Apply the mask to the gridded data</span>
-    <span class="n">zi_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="o">~</span><span class="n">mask</span><span class="p">,</span> <span class="n">zi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-
-    <span class="c1"># Plot the masked data</span>
-    <span class="n">mapc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi_masked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+        <span class="c1"># Apply the mask to the gridded data</span>
+        <span class="n">zi_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="o">~</span><span class="n">mask</span><span class="p">,</span> <span class="n">zi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    
+        <span class="c1"># Plot the masked data</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi_masked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
     
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x (m)&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y (m)&#39;</span><span class="p">)</span>
@@ -496,14 +509,14 @@ document.write(`
     <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">colorbar</span><span class="p">:</span>
-        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">mapc</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
             <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\Delta$ GWD (m)&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;GWD (m)&#39;</span><span class="p">)</span>
         
-    <span class="k">return</span> <span class="n">mapc</span>
+    <span class="k">return</span> <span class="n">cmap</span>
 
     
     
@@ -518,6 +531,11 @@ document.write(`
     <span class="k">if</span> <span class="s1">&#39;ti&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">ti</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ti&#39;</span><span class="p">]</span>
 
+    <span class="n">scatter</span><span class="o">=</span><span class="kc">False</span>
+    <span class="k">if</span> <span class="s1">&#39;scatter&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;scatter&#39;</span><span class="p">]</span>
+        
+        
     <span class="n">df_fort777_indexes</span> <span class="o">=</span> <span class="n">df_fort777</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;time_sec&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
     <span class="n">df_fort777_select_t</span> <span class="o">=</span> <span class="n">df_fort777</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;time_sec&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_fort777_indexes</span><span class="p">[</span><span class="n">ti</span><span class="p">]]</span>
@@ -537,26 +555,28 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ax&quot;</span><span class="p">]</span>
         
-    <span class="n">df_fort777</span><span class="o">.</span><span class="n">columns</span>
+    <span class="c1"># df_fort777.columns</span>
     <span class="c1"># ax.imshow(df_fort777[&#39;ACT. ETRA&#39;])</span>
 
-    <span class="c1"># cmap = ax.scatter(x=df_fort777_select_t[&#39;X&#39;], </span>
-    <span class="c1">#             y=df_fort777_select_t[&#39;Y&#39;], </span>
-    <span class="c1">#             c=df_fort777_select_t[&#39;ACT. ETRA&#39;]</span>
-    <span class="c1">#             )</span>
-    <span class="c1"># Create a grid of points and evaluate a function on the grid</span>
-
-    <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
-    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">yi</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-
-    <span class="n">zi</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
-
-    <span class="c1"># Apply the mask to the gridded data</span>
-    <span class="n">zi_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="o">~</span><span class="n">mask</span><span class="p">,</span> <span class="n">zi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-
-    <span class="c1"># Plot the masked data</span>
-    <span class="n">cmap</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi_masked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df_fort777_select_t</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">],</span> 
+                    <span class="n">y</span><span class="o">=</span><span class="n">df_fort777_select_t</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span> 
+                    <span class="n">c</span><span class="o">=</span><span class="n">df_fort777_select_t</span><span class="p">[</span><span class="s1">&#39;ACT. ETRA&#39;</span><span class="p">]</span>
+                    <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Create a grid of points and evaluate a function on the grid</span>
     
+        <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">create_gridded_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">yi</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># Apply the mask to the gridded data</span>
+        <span class="n">zi_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="o">~</span><span class="n">mask</span><span class="p">,</span> <span class="n">zi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    
+        <span class="c1"># Plot the masked data</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi_masked</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+        
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Actual evapotranspiration&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x (m)&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y (m)&#39;</span><span class="p">)</span>
@@ -1214,7 +1234,7 @@ document.write(`
     <span class="c1"># plt.show(block=False)</span>
     <span class="c1"># plt.close()</span>
 
-    <span class="k">pass</span></div>
+    <span class="k">return</span> <span class="n">cf</span></div>
 
 
 <div class="viewcode-block" id="show_raster"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_raster.html#plotters.cathy_plots.show_raster">[docs]</a><span class="k">def</span> <span class="nf">show_raster</span><span class="p">(</span>
@@ -1399,60 +1419,58 @@ document.write(`
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
 
-<div class="viewcode-block" id="get_dem_coords"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.get_dem_coords.html#plotters.cathy_plots.get_dem_coords">[docs]</a><span class="k">def</span> <span class="nf">get_dem_coords</span><span class="p">(</span>
-    <span class="n">dem_mat</span><span class="o">=</span><span class="p">[],</span> <span class="n">str_hd_dem</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">hapin</span><span class="o">=</span><span class="p">{},</span> <span class="n">workdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">):</span>
+<div class="viewcode-block" id="get_dem_coords"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.get_dem_coords.html#plotters.cathy_plots.get_dem_coords">[docs]</a><span class="k">def</span> <span class="nf">get_dem_coords</span><span class="p">(</span><span class="n">dem_mat</span><span class="o">=</span><span class="p">[],</span> <span class="n">hapin</span><span class="o">=</span><span class="p">{}):</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dem_mat</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># Read the Header</span>
-        <span class="n">dem_mat</span><span class="p">,</span> <span class="n">str_hd_dem</span> <span class="o">=</span> <span class="n">in_CT</span><span class="o">.</span><span class="n">read_dem</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;prepro/dem&quot;</span><span class="p">),</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="s2">&quot;prepro/dtm_13.val&quot;</span><span class="p">),</span>
-        <span class="p">)</span>
+    <span class="c1"># if len(dem_mat) == 0:</span>
+    <span class="c1"># # Read the Header</span>
+    <span class="c1">#     dem_mat, str_hd_dem = in_CT.read_dem(</span>
+    <span class="c1">#         os.path.join(workdir, project_name, &quot;prepro/dem&quot;),</span>
+    <span class="c1">#         os.path.join(workdir, project_name, &quot;prepro/dtm_13.val&quot;),</span>
+    <span class="c1">#     )</span>
 
     <span class="c1"># transpose because values in dtm_13 files from where the DEM raster is extracted are transposed ...</span>
-    <span class="n">dem_mat</span> <span class="o">=</span> <span class="n">dem_mat</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># dem_mat = dem_mat.T</span>
 
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;xllcorner&quot;</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;yllcorner&quot;</span><span class="p">]</span>
-
-    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="n">x</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">str_hd_dem</span><span class="p">[</span><span class="s2">&quot;west&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># print(dem_mat)</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># + hapin[&quot;xllcorner&quot;]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># + hapin[&quot;yllcorner&quot;]</span>
+    
+    <span class="c1"># print(x)</span>
+    <span class="c1"># print(str_hd_dem)</span>
 
     <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">y</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">str_hd_dem</span><span class="p">[</span><span class="s2">&quot;south&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_y&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;xllcorner&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_x&quot;</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
 
-    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">dem_mat</span><span class="p">)</span></div>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dem_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">y</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;yllcorner&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_y&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_y&quot;</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="c1"># np.flipud(dem_mat)</span></div>
 
 
 <div class="viewcode-block" id="show_dem"><a class="viewcode-back" href="../../content/api/generated/plotters.cathy_plots.show_dem.html#plotters.cathy_plots.show_dem">[docs]</a><span class="k">def</span> <span class="nf">show_dem</span><span class="p">(</span>
     <span class="n">dem_mat</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">str_hd_dem</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">hapin</span><span class="o">=</span><span class="p">{},</span>
     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">workdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">project_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a 3D representation from a Grass DEM file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># np.shape(dem_mat)</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dem_mat</span> <span class="o">=</span> <span class="n">get_dem_coords</span><span class="p">(</span>
-        <span class="n">dem_mat</span><span class="p">,</span> <span class="n">str_hd_dem</span><span class="p">,</span> <span class="n">hapin</span><span class="p">,</span> <span class="n">workdir</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">get_dem_coords</span><span class="p">(</span><span class="n">dem_mat</span><span class="p">,</span> <span class="n">hapin</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 
-    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">surf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dem_mat</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="c1"># surf = ax.plot_surface(Y,X, dem_mat, cmap=&quot;viridis&quot;,**kwargs)</span>
     <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
         <span class="n">surf</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Elevation (m)&quot;</span>
     <span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Easting (m)&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Northing (m)&quot;</span><span class="p">,</span> <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;Elevation (m)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Northing (m)&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Easting (m)&quot;</span><span class="p">,</span> <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;Elevation (m)&quot;</span><span class="p">)</span>
     <span class="c1"># plt.show(block=False)</span>
     <span class="c1"># plt.close()</span>
 
@@ -2197,7 +2215,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 05, 2023.
+  Last updated on Jun 23, 2023.
   <br/>
 </p>
   </div>

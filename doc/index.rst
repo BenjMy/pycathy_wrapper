@@ -89,6 +89,7 @@
    content/overview
    content/installing
    content/citing
+   content/gettingstarted
 
 
 .. toctree::

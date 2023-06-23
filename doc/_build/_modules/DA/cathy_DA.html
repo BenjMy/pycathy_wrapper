@@ -148,6 +148,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../content/overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/installing.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gettingstarted.html">Getting Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
 <ul class="nav bd-sidenav">
@@ -2844,6 +2845,7 @@ document.write(`
                     <span class="c1"># case 1: pressure head assimilation (Hx_PH)</span>
                     <span class="c1"># -------------------------------------------------------------</span>
                     <span class="n">Hx_PH</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">obs2map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;mesh_nodes&quot;</span><span class="p">]]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">obs_key</span><span class="p">,</span><span class="n">Hx_PH</span><span class="p">,</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">obs2map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;mesh_nodes&quot;</span><span class="p">]],[</span><span class="n">obs2map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;mesh_nodes&quot;</span><span class="p">]])</span>
                     <span class="n">Hx_stacked</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hx_PH</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="s2">&quot;swc&quot;</span> <span class="ow">in</span> <span class="n">obs_key</span><span class="p">:</span>
@@ -2853,16 +2855,25 @@ document.write(`
                     <span class="n">Hx_stacked</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hx_SW</span><span class="p">)</span>
                     <span class="c1"># note: the value of the porosity can be unique or not depending on the soil physical properties defined</span>
 
-                <span class="k">if</span> <span class="s2">&quot;scale&quot;</span> <span class="ow">in</span> <span class="n">obs_key</span><span class="p">:</span>
-                    <span class="c1"># Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]</span>
-                    <span class="c1"># Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)</span>
-                    <span class="c1"># Atmpot-r (11) : Potential atmospheric forcing rate [L/T]</span>
-                    <span class="c1"># Atmpot-d (12) : Potential atmospheric forcing depth [L]</span>
+                <span class="k">if</span> <span class="s1">&#39;ET&#39;</span> <span class="ow">in</span> <span class="n">obs_key</span><span class="p">:</span>
                     <span class="c1"># Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]</span>
                     <span class="c1"># Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]</span>
                     <span class="c1"># Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]</span>
                     <span class="c1"># Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not yet implemented&quot;</span><span class="p">)</span>
 
+                <span class="k">if</span> <span class="s2">&quot;stemflow&quot;</span> <span class="ow">in</span> <span class="n">obs_key</span><span class="p">:</span>
+                    <span class="c1"># Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]</span>
+                    <span class="c1"># Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]</span>
+                    <span class="c1"># Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]</span>
+                    <span class="c1"># Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not yet implemented&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="s2">&quot;scale&quot;</span> <span class="ow">in</span> <span class="n">obs_key</span><span class="p">:</span>
+                    <span class="c1"># Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]</span>
+                    <span class="c1"># Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]</span>
+                    <span class="c1"># Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]</span>
+                    <span class="c1"># Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not yet implemented&quot;</span><span class="p">)</span>
 
                     <span class="n">df_dtcoupling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_outputs</span><span class="p">(</span>
@@ -2896,14 +2907,18 @@ document.write(`
                 <span class="n">Hx_ens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hx_stacked</span><span class="p">)</span>
                 <span class="c1"># Hx_stacked = np.hstack(Hx_stacked)</span>
 
-            <span class="n">write2shell_map</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># write2shell_map = False</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">)</span><span class="o">!=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ens_valid</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">obskey2map</span><span class="p">)):</span>
             <span class="n">Hx_ens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Hx_ens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+           
         
         <span class="c1"># Hx_ens = []  # matrice of predicted observation for each ensemble realisation</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+        <span class="c1"># print(&#39;test&#39;)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">))</span>
 
@@ -2954,8 +2969,8 @@ document.write(`
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;here&#39;</span><span class="p">)</span>
                         <span class="n">Hx_ens</span> <span class="o">=</span> <span class="n">Hx_ens_ERT</span>
                         
-        <span class="nb">print</span><span class="p">(</span><span class="n">obskey2map</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Hx_ens</span><span class="p">))</span>
+        <span class="c1"># print(obskey2map)</span>
+        <span class="c1"># print(np.shape(Hx_ens))</span>
 
 <span class="c1">#%%</span>
         <span class="k">return</span> <span class="n">Hx_ens</span>  <span class="c1"># meas_size * ens_size</span>
@@ -3657,7 +3672,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 05, 2023.
+  Last updated on Jun 23, 2023.
   <br/>
 </p>
   </div>

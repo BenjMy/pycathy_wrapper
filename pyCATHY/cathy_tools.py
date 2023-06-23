@@ -1034,6 +1034,8 @@ class CATHY:
 
         if DEM is not None:
             self.DEM = DEM
+            
+            # np.shape(self.DEM)
 
             self.hapin["N"] = np.shape(DEM)[1]
             self.hapin["M"] = np.shape(DEM)[0]
@@ -1071,11 +1073,7 @@ class CATHY:
         self.update_dem_parameters(**kwargs)
 
         if show == True:
-            plt_CT.show_dem(
-                workdir=self.workdir,
-                project_name=self.project_name,
-                hapin=self.hapin,
-            )
+            plt_CT.show_dem(DEM,self.hapin)
 
         pass
 
@@ -1314,6 +1312,7 @@ class CATHY:
             zonefile.write("west:     " + str(self.hapin["xllcorner"]) + "\n")
             zonefile.write("rows:     " + str(self.hapin["M"]) + "\n")
             zonefile.write("cols:     " + str(self.hapin["N"]) + "\n")
+                        
             if len(zone) == 0:
                 zone = np.c_[np.ones([self.hapin["M"], self.hapin["N"]])]
                 np.savetxt(zonefile, zone, fmt="%i")
@@ -1963,18 +1962,18 @@ class CATHY:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
                 time = [0]
-            self.init_boundary_conditions(
-                                            "nansfdirbc",
-                                            time,
-                                            NDIR=NDIR,
-                                            NDIRC=NDIRC,
-                                            pressure_head=pressure_head,
-                                            no_flow=no_flow,
-                                        )
-            self.assign_mesh_bc_df("nansfdirbc", time, 
-                                   pressure_head=pressure_head,
-                                   no_flow=no_flow
-                                   )
+            # self.init_boundary_conditions(
+            #                                 "nansfdirbc",
+            #                                 time,
+            #                                 NDIR=NDIR,
+            #                                 NDIRC=NDIRC,
+            #                                 pressure_head=pressure_head,
+            #                                 no_flow=no_flow,
+            #                             )
+            # self.assign_mesh_bc_df("nansfdirbc", time, 
+            #                        pressure_head=pressure_head,
+            #                        no_flow=no_flow
+            #                        )
 
         else:         
             # if len(time)>25:
@@ -2137,10 +2136,10 @@ class CATHY:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
                 time = [0]
-            self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
-            self.assign_mesh_bc_df("nansfneubc", time, 
-                                   no_flow=no_flow
-                                   )
+            # self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
+            # self.assign_mesh_bc_df("nansfneubc", time, 
+            #                        no_flow=no_flow
+            #                        )
         else:
             # if len(time)>25:
             #     print('Nb of times is too big to handle bc condition in the df')
@@ -2212,10 +2211,10 @@ class CATHY:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
                 time = [0]
-            self.init_boundary_conditions("sfbc", time)
-            self.assign_mesh_bc_df('sfbc', time, 
-                                   no_flow=no_flow
-                                   )
+            # self.init_boundary_conditions("sfbc", time)
+            # self.assign_mesh_bc_df('sfbc', time, 
+            #                        no_flow=no_flow
+            #                        )
         else:
             # if len(time)>25:
             #     print('Nb of times is too big to handle bc condition in the df')
@@ -2398,6 +2397,13 @@ class CATHY:
             soil_heteregeneous_in_z = False
             soil_heteregeneous_in_xy = False
             print("homogeneous soil")
+            
+            # check size of soil properties map versus nb of zones/ nb of layers
+            # --------------------------------------------------------------------
+            if isinstance(SPP_map["PERMX"], float):
+                if self.dem_parameters["nzone"] != 1:
+                    raise ValueError("Wrong number of zones")
+        
         else:
             xyvar = np.array(
                 [sum(np.unique(zone3d[l])) for l in range(np.shape(zone3d)[0])]
@@ -2409,11 +2415,7 @@ class CATHY:
                 soil_heteregeneous_in_z = True
                 print("z soil heterogeneity detected")
 
-        # check size of soil properties map versus nb of zones/ nb of layers
-        # --------------------------------------------------------------------
-        if isinstance(SPP_map["PERMX"], float):
-            if self.dem_parameters["nzone"] != 1:
-                raise ValueError("Wrong number of zones")
+
         # else:
         # if self.dem_parameters["nzone"]>1:
         #     if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
@@ -2486,26 +2488,30 @@ class CATHY:
 
         # map SPP to the mesh
         # --------------------------------------------------------------------
+        
+        dem, dem_header = self.read_inputs('dem')
+
         if len(zone3d) > 0:
             mt.add_markers2mesh(
-                zone3d,
-                self.mesh_pv_attributes,
-                self.dem_parameters,
-                self.workdir,
-                self.project_name,
-                self.hapin,
-                to_nodes=False,
-            )
+                                zone3d,
+                                dem,
+                                self.mesh_pv_attributes,
+                                self.dem_parameters,
+                                self.workdir,
+                                self.project_name,
+                                self.hapin,
+                                to_nodes=False,
+                            )
 
-            mt.add_markers2mesh(
-                                    zone3d,
-                                    self.mesh_pv_attributes,
-                                    self.dem_parameters,
-                                    self.workdir,
-                                    self.project_name,
-                                    self.hapin,
-                                    to_nodes=True
-                                )
+            # mt.add_markers2mesh(
+            #                         zone3d,
+            #                         self.mesh_pv_attributes,
+            #                         self.dem_parameters,
+            #                         self.workdir,
+            #                         self.project_name,
+            #                         self.hapin,
+            #                         to_nodes=True
+            #                     )
 
             # for spp in SPP_map:
             #     self.map_dem_prop_2mesh(spp, SPP_map[spp], to_nodes=False)
@@ -2631,9 +2637,9 @@ class CATHY:
 
             else:
                 zones3d_def = np.arange(1, self.hapin["M"] * self.hapin["N"] + 1)
-                zones3d_def = np.reshape(
-                    zones3d_def, [self.hapin["M"], self.hapin["N"]]
-                )
+                print(np.shape(zones3d_def))
+                zones3d_def = np.reshape(zones3d_def, [self.hapin["M"], self.hapin["N"]])
+                print(np.shape(zones3d_def))
                 self.update_zone(zones3d_def)
                 # loop over strates
                 # -----------------------------------------------------------------
@@ -2834,17 +2840,14 @@ class CATHY:
 
         Parameters
         ----------
-        indice_veg : TYPE, optional
+        indice_veg : raster, optional
             DESCRIPTION. The default is 1.
-        show : TYPE, optional
-            DESCRIPTION. The default is False.
-        **kwargs : TYPE
-            DESCRIPTION.
-
+        show : bool, optional
+            Plot the vegetation raster. The default is False.
         Returns
         -------
-        indice_veg : TYPE
-            DESCRIPTION.
+        indice_veg : raster
+            New vegetation distribution raster.
 
         """
         
@@ -2856,10 +2859,6 @@ class CATHY:
                                                                              "root_map"
                                                                              )
                                                             )
-                                        
-        
-        # if isinstance(indice_veg, int):
-        #     indice_veg = float(indice_veg)
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
 
@@ -2886,24 +2885,22 @@ class CATHY:
 
         rootmapfile.close()
 
-        # self.update_cathyH(MAXVEG=len(np.unique(indice_veg)))
         self.veg_map = indice_veg
         
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
-        
-        # exclude_veg = 0
-        # if np.sum(self.DEM<0)>0:
-        exclude_veg = self._check_outside_DEM(indice_veg)
-        
+        #---------------------------------------------------------------------------------
+        if len(np.unique(indice_veg))>1:
+            exclude_veg = self._check_outside_DEM(indice_veg)
+            self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
+            
+            if exclude_veg>0:
+                print('excluding outside DEM')
+                print('MAXVEG='+ str(self.MAXVEG))
+            
+        else:
+            self.MAXVEG = len(np.unique(indice_veg))
 
-                                    
-        # self.dem
-        self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
-        
-        if exclude_veg>0:
-            print('excluding outside DEM')
-            print('MAXVEG='+ str(self.MAXVEG))
 
         self.update_cathyH(MAXVEG=self.MAXVEG)
 
@@ -3095,10 +3092,11 @@ class CATHY:
         grid_x, grid_y = np.meshgrid(x, y)
         X, Y, Z = np.meshgrid(x, np.flipud(y), np.flipud(z))
         
-        xdem, ydem, _ = plt_CT.get_dem_coords(hapin=self.hapin,
-                                              workdir=self.workdir,
-                                              project_name=self.project_name,
-                                              )
+        
+        # dem_mat, header_dem = simu.read_inputs('dem')
+        xdem, ydem  = plt_CT.get_dem_coords(
+                                            hapin=self.hapin,
+                                            )
         
         grid_xdem, grid_ydem = np.meshgrid(xdem, ydem)
 
@@ -3338,8 +3336,6 @@ class CATHY:
         self.run_preprocessor(verbose=verbose)
         self.run_processor(IPRT1=3, verbose=verbose)
         
-        
-
         self.create_mesh_vtkris3d_vtk2(verbose)
         # self.create_mesh_vtkris3d_vtk9()
         self.mesh_pv_attributes = pv.read(
@@ -3405,10 +3401,10 @@ class CATHY:
             Updated pyvista mesh with new property.
         """
         if to_nodes:
-            prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers"]))
+            prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_new"]))
             for m in range(len(prop_map)):
                 prop_mesh_nodes[
-                    self.mesh_pv_attributes["node_markers"] == m + 1
+                    self.mesh_pv_attributes["node_markers_new"] == m + 1
                 ] = prop_map[m]
             self.mesh_pv_attributes[prop_name] = prop_mesh_nodes
 
@@ -3610,7 +3606,7 @@ class CATHY:
             if hasattr(self, "hapin") is False:
                 self.update_prepo_inputs()
             hapin = self.hapin
-            plt_CT.show_dem(df[0], df[1], hapin, ax=ax, **kwargs)
+            plt_CT.show_dem(df[0], hapin, ax=ax, **kwargs)
         elif prop == "zone":
             plt_CT.show_zone(df[0], ax=ax)
         elif prop == "soil":
