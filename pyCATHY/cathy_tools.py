@@ -1067,7 +1067,11 @@ class CATHY:
             self.update_cathyH(
                                 ROWMAX=self.hapin["M"], 
                                 COLMAX=self.hapin["N"],
-                                MAXSTR=self.dem_parameters['nstr']
+                                MAXSTR=self.dem_parameters['nstr'],
+                                DEMRES=min([self.hapin["delta_x"],
+                                            self.hapin["delta_y"]
+                                            ]
+                                           )
                                 )
 
         self.update_dem_parameters(**kwargs)
