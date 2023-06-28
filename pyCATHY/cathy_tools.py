@@ -2508,6 +2508,7 @@ class CATHY:
                                 self.project_name,
                                 self.hapin,
                                 to_nodes=False,
+                                show=show,
                             )
 
             # mt.add_markers2mesh(
@@ -2559,7 +2560,7 @@ class CATHY:
             FP_map = {
                 # Feddes parameters default values
                 "PCANA": [0.0],
-                "    ": [-4.0],
+                "PCREF": [-4.0],
                 "PCWLT": [-150],
                 "ZROOT": [0.1],
                 "PZ": [1.0],

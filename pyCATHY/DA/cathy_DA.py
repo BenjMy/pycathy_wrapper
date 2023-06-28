@@ -46,6 +46,7 @@ Class managing Data Assimilation process i.e.:
 
 
 """
+import glob
 
 import multiprocessing
 import os
@@ -828,11 +829,11 @@ class DA(CATHY):
                     analysis,
                     analysis_param,
                 ) = self._DA_analysis(
-                    prediction,
-                    DA_type,
-                    list_parm2update,
-                    list_assimilated_obs,
-                    ens_valid=self.ens_valid,
+                                    prediction,
+                                    DA_type,
+                                    list_parm2update,
+                                    list_assimilated_obs,
+                                    ens_valid=self.ens_valid,
                 )
 
                 # DA mark_invalid_ensemble
@@ -844,12 +845,12 @@ class DA(CATHY):
                     analysis_valid,
                     analysis_param_valid,
                 ) = self._mark_invalid_ensemble(
-                    self.ens_valid,
-                    prediction,
-                    ensemble_psi,
-                    ensemble_sw,
-                    analysis,
-                    analysis_param,
+                                                self.ens_valid,
+                                                prediction,
+                                                ensemble_psi,
+                                                ensemble_sw,
+                                                analysis,
+                                                analysis_param,
                 )
 
                 #%%
@@ -861,11 +862,11 @@ class DA(CATHY):
                     ":face_with_monocle: [b]check analysis performance[/b]"
                 )
                 self._performance_assessement(
-                    list_assimilated_obs,
-                    data,
-                    prediction_valid,
-                    t_obs=self.count_DA_cycle,
-                )
+                                                list_assimilated_obs,
+                                                data,
+                                                prediction_valid,
+                                                t_obs=self.count_DA_cycle,
+                                            )
                 #%%
                 # the counter is incremented here
                 # ----------------------------------------------------------------
@@ -884,8 +885,10 @@ class DA(CATHY):
                 check_ensemble(ensemble_psi_valid, ensemble_sw_valid)
 
                 self.update_pert_parm_dict(
-                    update_key, list_parm2update, analysis_param_valid
-                )
+                                                update_key,
+                                                list_parm2update, 
+                                                analysis_param_valid
+                                                )
 
             else:
                 self.console.print(
@@ -947,6 +950,10 @@ class DA(CATHY):
             # test = self.Archie
 
             self.backup_simu()
+            
+            print('ANNNNALYIS')
+            print('analysis_valid')
+            print(analysis_valid)
 
             # overwrite input files ensemble (perturbated variables)
             # ---------------------------------------------------------------------
@@ -956,7 +963,9 @@ class DA(CATHY):
             ):  # -1 cause all_atmbc_times include TMAX
                 # len(all_atmbc_times)
                 self._update_input_ensemble(
-                    all_atmbc_times, list_parm2update, analysis=analysis_valid
+                                                all_atmbc_times, 
+                                                list_parm2update, 
+                                                analysis=analysis_valid
                 )
             else:
                 self.console.rule(
@@ -964,24 +973,23 @@ class DA(CATHY):
                 )
                 pass
             self.console.rule(
-                ":red_circle: end of DA update "
-                + str(self.count_DA_cycle)
-                + "/"
-                + str(len(ENS_times))
-                + " :red_circle:",
-                style="yellow",
-            )
+                                ":red_circle: end of DA update "
+                                + str(self.count_DA_cycle)
+                                + "/"
+                                + str(len(ENS_times))
+                                + " :red_circle:",
+                                style="yellow",
+                            )
             self.console.rule(
-                ":dart: % of valid ensemble: "
-                + str((len(self.ens_valid) * 100) / (self.NENS))
-                + ":dart:",
-                style="yellow",
-            )
+                                ":dart: % of valid ensemble: "
+                                + str((len(self.ens_valid) * 100) / (self.NENS))
+                                + ":dart:",
+                                style="yellow",
+                            )
             plt.close("all")
 
         # clean all vtk file produced
         # --------------------------
-        import glob
 
         directory = "./"
         pathname = directory + "/**/*converted*.vtk"
@@ -1195,7 +1203,10 @@ class DA(CATHY):
 
         # find the method to map for this time step
         # --------------------------------------------------------
+        #%%
         obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
+        
+        #%%
 
         # prepare states
         # ---------------------------------------------------------------------
@@ -1260,15 +1271,15 @@ class DA(CATHY):
         # ---------------------------------------------------------------------
 
         result_analysis = run_analysis(
-            DA_type,
-            data,
-            data_cov,
-            param_valid,
-            list_update_parm,
-            [ensemble_psi_valid, ensemble_sw_valid],
-            prediction_valid,
-            alpha=self.damping,
-        )
+                                        DA_type,
+                                        data,
+                                        data_cov,
+                                        param_valid,
+                                        list_update_parm,
+                                        [ensemble_psi_valid, ensemble_sw_valid],
+                                        prediction_valid,
+                                        alpha=self.damping,
+                                    )
 
         # plot ensemble covariance matrices and changes (only for ENKF)
         # ---------------------------------------------------------------------
@@ -1894,7 +1905,7 @@ class DA(CATHY):
                         IPOND=0,
                         pressure_head_ini=analysis[:, ens_nb],
                         filename=os.path.join(os.getcwd(), "input/ic"),
-                        backup=False,
+                        backup=True,
                         shellprint_update=shellprint_update,
                     )
             else:
@@ -2230,9 +2241,7 @@ class DA(CATHY):
         _, obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
 
         start_line_obs = 0
-        for s, name_sensor in enumerate(
-            obs2eval_key
-        ):  # case where there is other observations than ERT
+        for s, name_sensor in enumerate(obs2eval_key):  # case where there is other observations than ERT
             obs2eval, _ = self._get_data2assimilate([name_sensor], match=True)
 
             # number of observation at a given time
@@ -2369,17 +2378,23 @@ class DA(CATHY):
                 data2add = extract_data(sensor, time_ass, data)
                 data.append(data2add)
             else:
-                for l in list_assimilated_obs:
-                    if match:
-                        if l == sensor:
-                            # obskey2map.append(sensor)
-                            data2add = extract_data(sensor, time_ass, data)
-                            data.append(data2add)
-                    else:
-                        if l in sensor:
-                            # obskey2map.append(sensor)
-                            data2add = extract_data(sensor, time_ass, data)
-                            data.append(data2add)
+                if match:
+                    if sensor in list_assimilated_obs:
+                        data2add = extract_data(sensor, time_ass, data)
+                        data.append(data2add)
+                else:
+                    str_sensor_rootname = re.sub(r'\d', '', sensor)
+                    if str_sensor_rootname in list_assimilated_obs:
+                        # if match:
+                            # if updated_string == sensor:
+                                # obskey2map.append(sensor)
+                        data2add = extract_data(sensor, time_ass, data)
+                        data.append(data2add)
+                        # else:
+                        #     if updated_string in sensor:
+                        #         # obskey2map.append(sensor)
+                        #         data2add = extract_data(sensor, time_ass, data)
+                        #         data.append(data2add)
 
         return np.hstack(data), obskey2map
 
@@ -2395,10 +2410,10 @@ class DA(CATHY):
                 obskey2map.append(sensor)
                 obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
             else:
-                for l in list_assimilated_obs:
-                    if l in sensor:
-                        obskey2map.append(sensor)
-                        obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
+                str_sensor_rootname = re.sub(r'\d', '', sensor)
+                if str_sensor_rootname in list_assimilated_obs:
+                    obskey2map.append(sensor)
+                    obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
         return obskey2map, obs2map
 
     def map_states2Observations(
@@ -2486,9 +2501,16 @@ class DA(CATHY):
 
             # find data to map with dictionnary of observations
             # --------------------------------------------
+            print('*'*23)
+            print(list_assimilated_obs)
+
             obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
             state = [df_psi[-1], df_sw[-1]]
 
+            print('-'*23)
+            print(obskey2map)
+            
+            
             Hx_stacked = []  # stacked predicted observation
             # Loop over observations to map
             # ---------------------------------------------------------------------
@@ -2506,6 +2528,8 @@ class DA(CATHY):
                 if "swc" in obs_key:
                     # case 2: sw assimilation (Hx_SW)
                     # --------------------------------------------------------------------
+                    print('transform sat to SWC with porosity=' + str(porosity))
+                    print('note: the value of the porosity can be unique or not depending on the soil physical properties defined')
                     Hx_SW = state[1][obs2map[i]["mesh_nodes"]] * porosity
                     Hx_stacked.append(Hx_SW)
                     # note: the value of the porosity can be unique or not depending on the soil physical properties defined
@@ -2564,12 +2588,17 @@ class DA(CATHY):
 
             # write2shell_map = False
 
-
-        if np.shape(Hx_ens)!=(len(self.ens_valid),len(obskey2map)):
-            Hx_ens = np.hstack(Hx_ens)
+        if isinstance(Hx_ens, float):
+            pass
         else:
-            Hx_ens = np.array(Hx_ens).T
-           
+            print('Hx_ens')
+            print(Hx_ens)
+            if len(Hx_ens)>0:
+                if np.shape(Hx_ens)!=(len(self.ens_valid),len(obskey2map)):
+                    Hx_ens = np.hstack(Hx_ens)
+                else:
+                    Hx_ens = np.array(Hx_ens).T
+               
         
         # Hx_ens = []  # matrice of predicted observation for each ensemble realisation
 

@@ -184,11 +184,11 @@ def show_spatialET(df_fort777,**kwargs):
 
     ti = 0
     if 'ti' in kwargs:
-        ti = kwargs['ti']
+        ti = kwargs.pop('ti')
 
     scatter=False
     if 'scatter' in kwargs:
-        scatter = kwargs['scatter']
+        scatter = kwargs.pop('scatter')
         
         
     df_fort777_indexes = df_fort777.set_index('time_sec').index.unique().to_numpy()
@@ -208,15 +208,17 @@ def show_spatialET(df_fort777,**kwargs):
     if "ax" not in kwargs:
         fig, ax = plt.subplots()
     else:
-        ax = kwargs["ax"]
+        ax = kwargs.pop("ax")
         
     # df_fort777.columns
     # ax.imshow(df_fort777['ACT. ETRA'])
 
     if scatter:
+        
         cmap = ax.scatter(x=df_fort777_select_t['X'], 
                     y=df_fort777_select_t['Y'], 
-                    c=df_fort777_select_t['ACT. ETRA']
+                    c=df_fort777_select_t['ACT. ETRA'],
+                    **kwargs
                     )
     else:
         # Create a grid of points and evaluate a function on the grid

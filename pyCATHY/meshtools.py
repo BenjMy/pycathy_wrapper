@@ -1015,6 +1015,7 @@ def add_markers2mesh(
     project_name,
     hapin,
     to_nodes=False,
+    show=False,
 ):
 
     # # if len(x) == len(y):
@@ -1172,10 +1173,12 @@ def add_markers2mesh(
     # print('_plot_cellsMarkerpts')
     # Plot to check position of points VS mesh
     # ------------------------------------------------------------------
-    _plot_cellsMarkerpts(mesh_pv_attributes, 
-                          xyz_layers, 
-                          workdir, 
-                          project_name)
+    
+    if show:
+        _plot_cellsMarkerpts(mesh_pv_attributes, 
+                              xyz_layers, 
+                              workdir, 
+                              project_name)
 
     #%%
     # print('_find_nearest_point2DEM')
