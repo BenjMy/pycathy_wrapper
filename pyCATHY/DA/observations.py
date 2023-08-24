@@ -107,8 +107,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
         tA = kwargs["tA"]
     datetime = None
     if "datetime" in kwargs:
-        datetime = kwargs["datetime"]
-
+        datetime = kwargs["datetime"]    
     # discharge type read
     # ---------------------------------------------------------------------
     if data_type == "discharge":
@@ -155,11 +154,22 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
             df = obs_2_add
             filename = None
 
-        units = "$kPa$"
-        # convert in m
-        # -------------------
-
-        df = utils_CT.kPa2m(df)
+        units = 'm'
+        if "units" in kwargs:
+            if kwargs['units'] == "$kPa$":
+                # convert in m
+                # -------------------
+                df = utils_CT.kPa2m(df)
+            
+        obs_cov_type = None
+        
+        
+    # Actual ET type read
+    # ---------------------------------------------------------------------
+    elif data_type == "ETact":
+        df = obs_2_add
+        filename = None
+        units = 'm'
         obs_cov_type = None
 
     # ERT type read

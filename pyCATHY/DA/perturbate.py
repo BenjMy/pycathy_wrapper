@@ -540,7 +540,7 @@ def perturbate(simu_DA, scenario, NENS):
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
-                "units": "$m.s^{-1}$",  # units
+                "units": "$m$",  # units
                 "sampling_type": scenario_sampling,
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],

@@ -803,6 +803,8 @@ def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name):
         point_size=10,
         scalars=xyz_layers[:, -1],
     )
+    pl.set_scale(zscale=5)
+
     # pl.show(screenshot=os.path.join(workdir, 
     #                                 project_name, 
     #                                 "layersMarkers.png")
@@ -986,10 +988,16 @@ def _find_nearest_point2DEM(
 
         # Add the data to the mesh
         mesh_pv_attributes["cell_markers"] = cell_markers
-        
         nodepv = mesh_pv_attributes.cell_data_to_point_data()
-        mesh_pv_attributes['node_markers_new'] = nodepv.point_data['cell_markers']
+        noderounded = [np.ceil(npv) for npv in nodepv.point_data['cell_markers']]
+        # np.unique(noderounded)
+        mesh_pv_attributes['node_markers_new'] = noderounded
 
+        # mesh_pv_attributes['node_markers_new2'] = nodepv.point_data['cell_markers']
+
+        # len(noderounded)
+        
+        # np.unique(mesh_pv_attributes.point_data['node_markers_new'])
         # mesh_pv_attributes.point_data.set_scalars(nodepv, 'node_markers')
 
     mesh_pv_attributes.save(
@@ -1001,6 +1009,8 @@ def _find_nearest_point2DEM(
         ),
         binary=False,
     )
+
+
 
     # plt.plot(dbackup_cell)
     # plt.plot(dbackup_nodes)
@@ -1014,6 +1024,7 @@ def add_markers2mesh(
     workdir,
     project_name,
     hapin,
+    grid3d,
     to_nodes=False,
     show=False,
 ):
@@ -1052,9 +1063,10 @@ def add_markers2mesh(
     # print(np.shape(dem))
     # print(dem[0][0])
 
-    
-    dem_flip = np.flipud(dem)
-    # dem_flip = dem
+    # dem_flip = np.flipud(dem)
+
+    # dem_flip = np.flipud(np.fliplr(dem))
+    dem_flip = dem
     # print('*'*20)
     # print('flip dem shape')
     # print(np.shape(dem_flip))
@@ -1089,8 +1101,6 @@ def add_markers2mesh(
     # print('zone3d_top shape')
     # print(np.shape(zone3d_top))
     # print(zone3d_top[0][0])
-    
-    
     
     # print('*'*20)
     # print('x shape')
@@ -1134,13 +1144,13 @@ def add_markers2mesh(
     # cmap=ax.scatter(grid_coords_dem[:,0],
     #                 grid_coords_dem[:,1],
     #                 np.ravel(zone3d_top[0]),
-    #                 c='k')
+    #                 c=np.ravel(zone3d_top[0]))
     
-    # # ax.scatter(grid3d['mesh3d_nodes'][:,0],
-    # #             grid3d['mesh3d_nodes'][:,1],
-    # #             grid3d['mesh3d_nodes'][:,2], 
-    # #             s=2, 
-    # #             cmap = 'coolwarm')
+    # ax.scatter(grid3d['mesh3d_nodes'][:,0],
+    #             grid3d['mesh3d_nodes'][:,1],
+    #             grid3d['mesh3d_nodes'][:,2], 
+    #             s=2, 
+    #             cmap = 'coolwarm')
     # ax.set_xlabel('Northing (m)')
     # ax.set_ylabel('Easting (m)')
 
@@ -1152,6 +1162,7 @@ def add_markers2mesh(
     # Reduce all to 1D
     # ------------------------------------------------------------------
     dem_mat_stk = np.ravel(dem_mat3d_layers)
+    # dem_mat_stk = np.fliplr(dem_mat_stk)
 
     grid_coords_stk_rep = np.vstack(np.array([grid_coords_dem] * dem_parameters["nstr"]))
     

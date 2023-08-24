@@ -37,66 +37,93 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
     tstep_idx = []
     # loop over lines
     len(lines)
-    for i, ll in enumerate(lines):
-        if i > 0:
-            # test_char = re.search('[a-zA-Z]', ll)
-            # if test_char is not None:
-            if "TIME".casefold() in ll.casefold():
-                tstep_idx.append(i)
-                splt = ll.split()
-                t.append(float(splt[0]))
-
-            # two cases (according to file formatting):
-            # numerical values + flag of value
-            # -----------------------------------------------------------------
-            # 1/ value (numeric) + 'VALUE'
-            elif "VALUE".casefold() in ll.casefold() or "ATMINP".casefold() in ll.casefold():
-                value.append(float(ll.split()[0]))
-
-            elif "\n" in ll:               
-                if len(ll.split())>0:
-                    if  (i % 2) == 0:
-                        value.append(float(ll.split()[0]))
-                    else:
-                        t.append(float(ll.split()[0]))
-                else:
-                    pass
-                    # take care of the additionnal empty lines (retour chariot)
-                    # in the end of the file
-                    # pass
-
-            else:
-                # only numerical values
-                # 2/ value (numeric)
-                # -----------------------------------------------------------------
-                value.append(float(ll.split()[0]))
-
-    if len(value) != len(t):
-        raise ValueError(
-            "Number of values does not match number of times (check flags TIME, VALUE)"
-        )
-
+    
     if HSPATM != 0:  # homogeneous on all surf mesh nodes
-        d_atmbc = []
-        d_atmbc = np.vstack([t, value])
-        cols_atmbc = ["time", "value"]
-        df_atmbc = pd.DataFrame(d_atmbc.T, columns=cols_atmbc)
 
-    else:
-        d_atmbc = []
-        for i in range(len(t)):
-            d_atmbc.append(
-                np.column_stack(
-                    (
-                        t[i] * np.ones(int(grid["nnod3"])),
-                        value[i] * np.ones(int(grid["nnod3"])),
-                        grid["nodes_idxyz"],
-                    )
-                )
+        for i, ll in enumerate(lines):
+            if i > 0:
+                # test_char = re.search('[a-zA-Z]', ll)
+                # if test_char is not None:
+                if "TIME".casefold() in ll.casefold():
+                    tstep_idx.append(i)
+                    splt = ll.split()
+                    t.append(float(splt[0]))
+    
+                # two cases (according to file formatting):
+                # numerical values + flag of value
+                # -----------------------------------------------------------------
+                # 1/ value (numeric) + 'VALUE'
+                elif "VALUE".casefold() in ll.casefold() or "ATMINP".casefold() in ll.casefold():
+                    value.append(float(ll.split()[0]))
+    
+                elif "\n" in ll:               
+                    if len(ll.split())>0:
+                        if  (i % 2) == 0:
+                            value.append(float(ll.split()[0]))
+                        else:
+                            t.append(float(ll.split()[0]))
+                    else:
+                        pass
+                        # take care of the additionnal empty lines (retour chariot)
+                        # in the end of the file
+                        # pass
+                else:
+                    # only numerical values
+                    # 2/ value (numeric)
+                    # -----------------------------------------------------------------
+                    value.append(float(ll.split()[0]))
+    
+        if len(value) != len(t):
+            raise ValueError(
+                "Number of values does not match number of times (check flags TIME, VALUE)"
             )
-        d_atmbc = np.vstack(d_atmbc)
-        cols_atmbc = ["time", "value", "nodeidx", "x", "y", "z"]
-        df_atmbc = pd.DataFrame(d_atmbc, columns=cols_atmbc)
+    
+            d_atmbc = []
+            d_atmbc = np.vstack([t, value])
+            cols_atmbc = ["time", "value"]
+            df_atmbc = pd.DataFrame(d_atmbc.T, columns=cols_atmbc)
+
+    else:  # heterogeneous on all surf mesh nodes
+        
+        for i, ll in enumerate(lines):
+            if i > 0:
+                # test_char = re.search('[a-zA-Z]', ll)
+                # if test_char is not None:
+                if "TIME".casefold() in ll.casefold():
+                    tstep_idx.append(i)
+                    splt = ll.split()
+                    t.append(float(splt[0]))
+                    
+                    
+        # Example numerical data
+        # data_list = [1.0, 10, 15, 20, 1.5, 5, 8, 12, ...]  # Replace with your actual data
+        # n = int(grid["nnod"])  # Number of values for each time
+        
+        # Create a list of dictionaries with 'time' and 'values'
+        data_dicts = []
+        for i, j in enumerate(range(1, len(lines), int(grid["nnod"])+1)):
+            values = lines[j+1:j+int(grid["nnod"])+1]
+            for value in values:
+                data_dicts.append({'time': t[i], 'value': float(value.split()[0])})
+        
+        # Create a DataFrame from the list of dictionaries
+        df_atmbc = pd.DataFrame(data_dicts)
+
+
+        # d_atmbc = []
+        # for ti in range(len(t)):
+        #     d_atmbc.append(
+        #         np.column_stack(
+        #             (
+        #                 t[ti] * np.ones(int(grid["nnod3"])),
+        #                 value[ti] * np.ones(int(grid["nnod3"])),
+        #                 grid["mesh3d_nodes"],
+        #             )
+        #         )
+        #     )
+        # d_atmbc = np.vstack(d_atmbc)
+        # cols_atmbc = ["time", "value", "nodeidx", "x", "y", "z"]
+        # df_atmbc = pd.DataFrame(d_atmbc, columns=cols_atmbc)
 
     if show == True:
         pltCT.show_atmbc(t, value, IETO=IETO)

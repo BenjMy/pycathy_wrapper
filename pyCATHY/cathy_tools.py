@@ -1968,7 +1968,7 @@ class CATHY:
         if not hasattr(self, "mesh_bound_cond_df"):
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
-                time = [0]
+                # time = [0]
             # self.init_boundary_conditions(
             #                                 "nansfdirbc",
             #                                 time,
@@ -2142,7 +2142,7 @@ class CATHY:
         if hasattr(self, "mesh_bound_cond_df") is False:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
-                time = [0]
+                # time = [0]
             # self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
             # self.assign_mesh_bc_df("nansfneubc", time, 
             #                        no_flow=no_flow
@@ -2217,7 +2217,7 @@ class CATHY:
         if hasattr(self, "mesh_bound_cond_df") is False:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
-                time = [0]
+                # time = [0]
             # self.init_boundary_conditions("sfbc", time)
             # self.assign_mesh_bc_df('sfbc', time, 
             #                        no_flow=no_flow
@@ -2507,6 +2507,7 @@ class CATHY:
                                 self.workdir,
                                 self.project_name,
                                 self.hapin,
+                                self.grid3d,
                                 to_nodes=False,
                                 show=show,
                             )
@@ -3751,9 +3752,19 @@ class CATHY:
 
         """
         if filename == "atmbc":
-            df, _, _ = in_CT.read_atmbc(
-                os.path.join(self.workdir, self.project_name, "input", filename)
+            
+            if len(self.grid3d) == 0:
+                # self.run_processor(IPRT1=3, DAFLAG=0)
+                self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
+                                                              self.project_name, 
+                                                              'output', 'grid3d')
+                                                 )
+            df, HSPATM, IETO, = in_CT.read_atmbc(
+                os.path.join(self.workdir, self.project_name, "input", filename),
+                grid=self.grid3d
             )
+            self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "time": df['time'].unique(), "VALUE": df['value']}
+
             return df
         elif filename == "dem":
             df = in_CT.read_dem(
@@ -3886,11 +3897,17 @@ class CATHY:
         closest = []
         for i, nc in enumerate(node_coords):
             # euclidean distance
-            d = (
-                (grid3d["mesh3d_nodes"][:, 0] - nc[0]) ** 2
-                + (grid3d["mesh3d_nodes"][:, 1] - nc[1]) ** 2
-                + (abs(grid3d["mesh3d_nodes"][:, 2]) - abs(nc[2])) ** 2
-            ) ** 0.5
+            if len(nc)==3:
+                d = (
+                    (grid3d["mesh3d_nodes"][:, 0] - nc[0]) ** 2
+                    + (grid3d["mesh3d_nodes"][:, 1] - nc[1]) ** 2
+                    + (abs(grid3d["mesh3d_nodes"][:, 2]) - abs(nc[2])) ** 2
+                ) ** 0.5
+            else:
+                d = (
+                    (grid3d["mesh3d_nodes"][:, 0] - nc[0]) ** 2
+                    + (grid3d["mesh3d_nodes"][:, 1] - nc[1]) ** 2
+                ) ** 0.5
             closest_idx.append(np.argmin(d))
             closest.append(grid3d["mesh3d_nodes"][closest_idx[i],:])
             threshold = 5e-1

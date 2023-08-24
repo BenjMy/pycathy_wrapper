@@ -49,6 +49,7 @@ from pyCATHY.cathy_utils import (
 )
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
+import geopandas as gpd
 
 # mpl.style.use('default')
 mpl.rcParams["grid.color"] = "k"
@@ -178,9 +179,6 @@ def plot_WTD(XYZsurface,WT,**kwargs):
         
     
 def show_spatialET(df_fort777,**kwargs):
-    
-    # df_fort777 = out_CT.read_fort777(os.path.join(simu.workdir,simu.project_name,'fort.777'),
-    #                                   )
 
     ti = 0
     if 'ti' in kwargs:
@@ -189,40 +187,55 @@ def show_spatialET(df_fort777,**kwargs):
     scatter=False
     if 'scatter' in kwargs:
         scatter = kwargs.pop('scatter')
-        
+    
+    mask = None
+    if 'mask_gpd' in kwargs:
+        mask = kwargs.pop('mask_gpd')
         
     df_fort777_indexes = df_fort777.set_index('time_sec').index.unique().to_numpy()
-
     df_fort777_select_t = df_fort777.set_index('time_sec').loc[df_fort777_indexes[ti]]
-    # df_fort777 = df_fort777.loc[9327600]
 
-
-    # Generate some random scattered points
-    x = df_fort777_select_t['X'].values
-    y = df_fort777_select_t['Y'].values
-    z = df_fort777_select_t['ACT. ETRA'].values
-    
-    
-    # #%%
-    
     if "ax" not in kwargs:
         fig, ax = plt.subplots()
     else:
         ax = kwargs.pop("ax")
         
-    # df_fort777.columns
-    # ax.imshow(df_fort777['ACT. ETRA'])
 
     if scatter:
         
-        cmap = ax.scatter(x=df_fort777_select_t['X'], 
-                    y=df_fort777_select_t['Y'], 
-                    c=df_fort777_select_t['ACT. ETRA'],
-                    **kwargs
-                    )
+        if mask is not None:
+            
+            polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
+            filtered_data = []
+            for i in range(len(df_fort777_select_t)):
+                point = gpd.points_from_xy([df_fort777_select_t['X'].iloc[i]],
+                                           [df_fort777_select_t['Y'].iloc[i]])[0]
+                if polygon.contains(point):
+                    filtered_data.append([df_fort777_select_t['X'].iloc[i],
+                                          df_fort777_select_t['Y'].iloc[i],
+                                          df_fort777_select_t['ACT. ETRA'].iloc[i]])
+            filtered_data = np.vstack(filtered_data)
+            
+            cmap = ax.scatter(x=filtered_data[:,0], 
+                        y=filtered_data[:,1], 
+                        c=filtered_data[:,2],
+                        **kwargs
+                        )
+            
+        else:
+        
+            cmap = ax.scatter(x=df_fort777_select_t['X'], 
+                        y=df_fort777_select_t['Y'], 
+                        c=df_fort777_select_t['ACT. ETRA'],
+                        **kwargs
+                        )
     else:
+        
+        x = df_fort777_select_t['X'].values
+        y = df_fort777_select_t['Y'].values
+        z = df_fort777_select_t['ACT. ETRA'].values
+
         # Create a grid of points and evaluate a function on the grid
-    
         xi, yi, mask = create_gridded_mask(x,y,**kwargs)
         xx, yy = xi.flatten(), yi.flatten()
     
@@ -237,7 +250,7 @@ def show_spatialET(df_fort777,**kwargs):
     ax.set_title('Actual evapotranspiration')
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
-    ax.axis('equal')
+    # ax.axis('equal')
     ax.grid(True, linestyle='-.')
     cbar = plt.colorbar(cmap,ax=ax)
     cbar.set_label('actual ET (mm/s)')
@@ -1087,6 +1100,7 @@ def get_dem_coords(dem_mat=[], hapin={}):
 
     # transpose because values in dtm_13 files from where the DEM raster is extracted are transposed ...
     # dem_mat = dem_mat.T
+    # dem_mat = np.flipud(dem_mat)
 
     # print(dem_mat)
     
@@ -1102,7 +1116,7 @@ def get_dem_coords(dem_mat=[], hapin={}):
     for a in range(0, dem_mat.shape[0]):
         y[a] = float(hapin["yllcorner"]) + hapin["delta_y"] * (a + 1) - hapin["delta_y"]/2
 
-    return x, y # np.flipud(dem_mat)
+    return x, np.flipud(y) # np.flipud(dem_mat)
 
 
 def show_dem(
@@ -1127,7 +1141,9 @@ def show_dem(
     cbar = plt.colorbar(
         surf, shrink=0.25, orientation="horizontal", label="Elevation (m)"
     )
-    ax.set(xlabel="Northing (m)", ylabel="Easting (m)", zlabel="Elevation (m)")
+    ax.set(xlabel="Easting (m)", 
+           ylabel="Northing (m)", 
+           zlabel="Elevation (m)")
     # plt.show(block=False)
     # plt.close()
 

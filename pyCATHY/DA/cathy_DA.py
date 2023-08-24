@@ -704,7 +704,7 @@ class DA(CATHY):
             dict_parm_pert,
             list_parm2update,
         )
-        # len(ENS_times)
+
         # initiate mapping petro
         # -------------------------------------------------------------------
         self._mapping_petro_init()
@@ -713,7 +713,7 @@ class DA(CATHY):
         # -------------------------------------------------------------------
         self.update_ENS_files(
             dict_parm_pert,
-            list_parm2update="all",  # list_update_parm
+            list_parm2update="all",  
             cycle_nb=self.count_DA_cycle,
         )
         all_atmbc_times = self.atmbc["time"]
@@ -739,10 +739,7 @@ class DA(CATHY):
         # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
 
-        for (
-            t_atmbc
-        ) in all_atmbc_times:  # atmbc times include assimilation observation times
-            # print(t_atmbc)
+        for t_atmbc in all_atmbc_times:  # atmbc times MUST include assimilation observation times
 
             self._run_ensemble_hydrological_model(parallel, callexe)
             os.chdir(os.path.join(self.workdir))
@@ -771,8 +768,6 @@ class DA(CATHY):
             # --------------------------------------------------------
             if t_atmbc in ENS_times:
 
-                # print('t=' + str(t_atmbc))
-
                 #%%
                 # map states to observation = apply H operator to state variable
                 # ----------------------------------------------------------------
@@ -781,35 +776,6 @@ class DA(CATHY):
                     default_state="psi",
                     parallel=parallel,
                 )
-
-                #%%
-
-                # print(len(prediction))
-                # print(np.shape(prediction))
-                # ValueError: operands could not be broadcast together with shapes (612,) (1836,)
-
-                # data2test , obs2evaltest = self._get_data2assimilate(list_assimilated_obs)
-                # len(data2test)
-
-                # x = np.linspace(prediction.min(),
-                #                 prediction.max(),
-                #                 100)
-                # y = x
-                # fig, ax = plt.subplots(2,1)
-                # for ii in range(np.shape(prediction)[1]):
-                #     ax[0].scatter(prediction[:,ii],data2test)
-                #     ax[0].plot(x, y, '-r', label='y=x')
-                # ax[0].set_title('nb of ens' + str(np.shape(prediction)[1]))
-
-                # ax[1].plot(data2test)
-                # plt.savefig('test' + str(DA_cnb))
-
-                # plt.plot(data2test)
-                # plt.plot(prediction[:,ii])
-                # ax.scatter(prediction[:,ii],data2test)
-                # ax.set_aspect('equal')
-
-                # fig.tight_layout()
 
                 #%%
                 # DA analysis
@@ -854,7 +820,6 @@ class DA(CATHY):
                 )
 
                 #%%
-
                 # check analysis quality
                 # ----------------------------------------------------------------
 
@@ -903,8 +868,6 @@ class DA(CATHY):
                     ens_size,
                     sim_size,
                 ) = self._read_state_ensemble()
-                # analysis_valid = np.empty(ensemble_psi_valid.shape)
-                # analysis_valid[:] = np.NaN
                 analysis_valid = ensemble_psi_valid
 
             self.count_atmbc_cycle = self.count_atmbc_cycle + 1
@@ -936,7 +899,6 @@ class DA(CATHY):
 
             # export summary results of DA
             # ----------------------------------------------------------------
-
             meta_DA = {
                 "listAssimilatedObs": list_assimilated_obs,
                 "listUpdatedparm": list_parm2update,
@@ -946,18 +908,11 @@ class DA(CATHY):
             }
 
             self.backup_results_DA(meta_DA)
-
-            # test = self.Archie
-
             self.backup_simu()
             
-            print('ANNNNALYIS')
-            print('analysis_valid')
-            print(analysis_valid)
 
             # overwrite input files ensemble (perturbated variables)
             # ---------------------------------------------------------------------
-
             if (
                 self.count_atmbc_cycle < len(all_atmbc_times) - 1
             ):  # -1 cause all_atmbc_times include TMAX
@@ -990,7 +945,6 @@ class DA(CATHY):
 
         # clean all vtk file produced
         # --------------------------
-
         directory = "./"
         pathname = directory + "/**/*converted*.vtk"
         files = glob.glob(pathname, recursive=True)
@@ -1002,9 +956,7 @@ class DA(CATHY):
             directory = "./"
             pathname = directory + "/**/*.vtk"
             files = glob.glob(pathname, recursive=True)
-
             [os.remove(f) for f in files]
-
         pass
 
     def _run_hydro_DA_openLoop(
@@ -1931,9 +1883,14 @@ class DA(CATHY):
         # loop over dict of perturbated variable
         # ----------------------------------------------------------------------
         FeddesParam_mat_ens = []  # matrice of ensemble for Feddes parameters
-        Archie_parms_mat_ens = []  # matrice of ensemble for Archie parameters
+        
         VG_parms_mat_ens = []  # matrice of ensemble for VG parameters
+        VG_p_possible_names = ["n_VG", "thetar_VG", "alpha_VG", "VGPSATCELL_VG"]
+        VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
+        
         PERMX_het_ens = []  # matrice of ensemble for hydraulic conductivity parameters
+        
+        Archie_parms_mat_ens = []  # matrice of ensemble for Archie parameters
         Archie_p_names = [
             "porosity",
             "rFluid_Archie",
@@ -1942,8 +1899,6 @@ class DA(CATHY):
             "n_Archie",
             "pert_sigma_Archie",
         ]
-        VG_p_possible_names = ["n_VG", "thetar_VG", "alpha_VG", "VGPSATCELL_VG"]
-        VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
 
         for parm_i, key in enumerate(
             list_parm2update
@@ -2006,7 +1961,6 @@ class DA(CATHY):
 
                     SPP_map.update(SPP_map_ensi[ens_nb])
 
-                    # print(PERMX_het_ens[:,ens_nb])
                     if np.isnan(PERMX_het_ens[:, ens_nb]).any() == False:
                         self.update_soil(
                             SPP_map=SPP_map,
@@ -2501,14 +2455,14 @@ class DA(CATHY):
 
             # find data to map with dictionnary of observations
             # --------------------------------------------
-            print('*'*23)
-            print(list_assimilated_obs)
+            # print('*'*23)
+            # print(list_assimilated_obs)
 
             obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
             state = [df_psi[-1], df_sw[-1]]
 
-            print('-'*23)
-            print(obskey2map)
+            # print('-'*23)
+            # print(obskey2map)
             
             
             Hx_stacked = []  # stacked predicted observation
@@ -2539,7 +2493,20 @@ class DA(CATHY):
                     # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
                     # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
                     # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
-                    print("Not yet implemented")
+                    
+                    df_fort777 = out_CT.read_fort777(os.path.join(self.workdir,
+                                                                  self.project_name,
+                                                                  'fort.777'),
+                                                      )
+                    df_fort777 = df_fort777.set_index('time_sec')
+                    # len(df_fort777.index.unique())
+                    # print("Not yet implemented")
+                    
+                    # self.count_DA_cycle = 0
+                    # self.count_atmbc_cycle = 0
+                    t_ET = df_fort777.index.unique()
+                    Hx_ET = df_fort777.loc[t_ET[1]].iloc[obs2map[i]["mesh_nodes"]]['ACT. ETRA']
+                    Hx_stacked.append(Hx_ET)
 
                 if "stemflow" in obs_key:
                     # Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
@@ -2824,10 +2791,10 @@ class DA(CATHY):
 
         if len(self.grid3d) == 0:
             self.run_processor(IPRT1=3, DAFLAG=0)
-            self.grid3d = in_CT.read_grid3d(
-                os.path.join(self.workdir, self.project_name)
-            )
-
+            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
+                                                          self.project_name, 
+                                                          'output', 'grid3d')
+                                             )
         # read full simulation atmbc and filter time window
         # ----------------------------------------------------------------------
         df_atmbc, HSPATM, IETO = in_CT.read_atmbc(
@@ -2837,10 +2804,16 @@ class DA(CATHY):
 
         if self.count_atmbc_cycle is not None:
             try:
-                time_window_atmbc = [
-                    df_atmbc.iloc[self.count_atmbc_cycle]["time"],
-                    df_atmbc.iloc[self.count_atmbc_cycle + 1]["time"],
-                ]
+                if HSPATM!=0:
+                    time_window_atmbc = [
+                        df_atmbc.iloc[self.count_atmbc_cycle]["time"],
+                        df_atmbc.iloc[self.count_atmbc_cycle + 1]["time"],
+                    ]
+                else:
+                    time_window_atmbc = [
+                        df_atmbc.time.unique()[self.count_atmbc_cycle],
+                        df_atmbc.time.unique()[self.count_atmbc_cycle+1]    
+                        ]
             except:
                 pass
         else:
@@ -2878,7 +2851,7 @@ class DA(CATHY):
             if len(VALUE) > 0:
                 self.update_atmbc(
                     HSPATM=1,
-                    IETO=0,
+                    IETO=1,
                     time=[0, diff_time],
                     netValue=list(VALUE),
                     filename=os.path.join(os.getcwd(), "input/atmbc"),
