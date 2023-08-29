@@ -38,7 +38,6 @@ def get_sw_ens_i(path_fwd_CATHY, **kwargs):
 
 
 def get_Archie_ens_i(ArchieParms, Ens_nb):
-    #     This should be moved to DA Class
     """Return Archie parameter for a given ensemble (if ensemble exist)"""
     ArchieParms2parse = {}
     if len(ArchieParms["rFluid_Archie"]) > 1:
@@ -197,20 +196,30 @@ def SW_2_ERa_DA(
 
     # fwd ERT data
     # ------------------------------------------------------------------------
+    print('fwd ER data')
     if "pygimli" in ERT_meta_dict["data_format"]:
         # USING PYGIMLI
+        
+        print(ERT_meta_dict["sequenceERT"])
+        print(len(ERT_meta_dict["sequenceERT"]))
         ERT_predicted = simuERT.create_ERT_survey_pg(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
-            sequence=ERT_meta_dict["seq"],
+            sequence=ERT_meta_dict["sequenceERT"],
             mesh=ERT_meta_dict["forward_mesh_vtk_file"],
             res0=res0,
             **kwargs
         )
+        print(ERT_predicted)
+        # print(ERT_predicted['Data'])
+        # print(len(ERT_predicted['Data']))
+
+        # print(len(ERT_predicted['data']))
+
     elif "resipy" in ERT_meta_dict["data_format"]:
 
         ERT_predicted = simuERT.create_ERT_survey_Resipy(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
-            sequence=ERT_meta_dict["seq"],
+            sequence=ERT_meta_dict["sequenceERT"],
             mesh=ERT_meta_dict["forward_mesh_vtk_file"],
             res0=res0,
             **kwargs
@@ -229,8 +238,11 @@ def SW_2_ERa_DA(
     }
     df_ERT_predicted = pd.DataFrame(data=d)
 
-    # savefig = True
+
+    savefig = True
     if savefig:
+        print('backup figures')
+
 
         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True
         plotter.subplot(0, 0)
@@ -279,6 +291,7 @@ def SW_2_ERa_DA(
         )
 
         plotter.close()
+    print('end of ER prediction')
 
     return df_ERT_predicted, df_Archie
 
@@ -355,9 +368,9 @@ def Archie_rho_DA(
                 console.print(
                     """
                                 Archie perturbation for fwd model \n
-                                Archie parameters: {} \n
-                                \u03C3 Archie: {}  \n
-                                Nb of zones: {}
+                                Archie rFluid: {} \n
+                                Archie pert_sigma: {}  \n
+                                Nb of zones (need to check this): {}
                                 """.format(
                         rFluid_Archie, pert_sigma_Archie, len(rFluid_Archie)
                     ),

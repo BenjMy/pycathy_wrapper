@@ -191,6 +191,11 @@ def show_spatialET(df_fort777,**kwargs):
     mask = None
     if 'mask_gpd' in kwargs:
         mask = kwargs.pop('mask_gpd')
+      
+    
+    colorbar = True
+    if 'colorbar' in kwargs:
+        colorbar = kwargs.pop('colorbar')
         
     df_fort777_indexes = df_fort777.set_index('time_sec').index.unique().to_numpy()
     df_fort777_select_t = df_fort777.set_index('time_sec').loc[df_fort777_indexes[ti]]
@@ -252,8 +257,10 @@ def show_spatialET(df_fort777,**kwargs):
     ax.set_ylabel('y (m)')
     # ax.axis('equal')
     ax.grid(True, linestyle='-.')
-    cbar = plt.colorbar(cmap,ax=ax)
-    cbar.set_label('actual ET (mm/s)')
+    
+    if colorbar:
+        cbar = plt.colorbar(cmap,ax=ax)
+        cbar.set_label('actual ET (mm/s)')
     
     return cmap
 

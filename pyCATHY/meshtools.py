@@ -62,45 +62,46 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     if type(ERT_meta_dict["forward_mesh_vtk_file"]) is str:
         mesh_OUT = pv.read(ERT_meta_dict["forward_mesh_vtk_file"])
 
+
     # flip y and z axis as CATHY and pg have different convention for axis
     # ------------------------------------------------------------------------
     in_nodes_mod = np.array(mesh_CATHY.points)
     in_nodes_mod_pg = np.array(mesh_OUT.points)
-
-    idx = np.array([0, 2, 1])  # reorder xyz to xzy
-    in_nodes_mod_m = in_nodes_mod[:, idx]
-    # in_nodes_mod_m = in_nodes_mod[:, idx]
-    in_nodes_mod_m[:, 2] = -np.flipud(in_nodes_mod_m[:, 2])
-    in_nodes_mod_m[:, 1] = -np.flipud(in_nodes_mod_m[:, 1])
-
-    # for i, axesi in enumerate(['x','y','z']):
-    #     print('check {} consistency between the 2 meshes'.format(axesi))
-    #     print(max(in_nodes_mod_m[:,i]),max(in_nodes_mod_pg[:,i]))
-    #     print(min(in_nodes_mod_m[:,i]),min(in_nodes_mod_pg[:,i]))
-
-    if "mesh_nodes_modif" in ERT_meta_dict.keys():
-        in_nodes_mod_m = ERT_meta_dict["mesh_nodes_modif"]
+        
+    if 'no_modif' in ERT_meta_dict.keys():
+        print('no mesh transformation before interpolation')
+    else:
+        idx = np.array([0, 2, 1])  # reorder xyz to xzy
+        in_nodes_mod_m = in_nodes_mod[:, idx]
+        in_nodes_mod_m[:, 2] = -np.flipud(in_nodes_mod_m[:, 2])
+        in_nodes_mod_m[:, 1] = -np.flipud(in_nodes_mod_m[:, 1])
 
     path = os.getcwd()
     if "path" in kwargs:
         path = kwargs["path"]
-
-    # mesh_OUT, meshOUT = trace_mesh(mesh_CATHY,mesh_OUT,
-    #                     scalar=scalar,
-    #                     threshold=1e-1,
-    #                     in_nodes_mod=in_nodes_mod_m
-    #                     )
-
-    data_OUT, warm_0 = trace_mesh(
-                                    mesh_CATHY, 
-                                    mesh_OUT, 
-                                    scalar=scalar, 
-                                    threshold=1e-1, 
-                                    in_nodes_mod=in_nodes_mod_m
-                                    )
-
+        
+    if 'no_modif' in ERT_meta_dict.keys():
+        data_OUT, warm_0 = trace_mesh(
+                                        mesh_CATHY, 
+                                        mesh_OUT, 
+                                        scalar=scalar, 
+                                        threshold=1e-1, 
+                                        )
+    else:
+        in_nodes_mod_m = ERT_meta_dict["mesh_nodes_modif"]
+        data_OUT, warm_0 = trace_mesh(
+                                        mesh_CATHY, 
+                                        mesh_OUT, 
+                                        scalar=scalar, 
+                                        threshold=1e-1, 
+                                        in_nodes_mod=in_nodes_mod_m
+                                        )
+        
+        
     if len(warm_0) > 0:
         print(warm_0)
+
+    print('add new attribute to pg mesh')
 
     scalar_new = scalar + "_nearIntrp2_pg_msh"
     if "time" in kwargs:
@@ -113,6 +114,9 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
             data_OUT, mesh_OUT, scalar_new, overwrite=True, path=path
         )
 
+    print('end of CATHY_2_pg')
+
+    # show = True
     if show:
 
         # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
@@ -252,10 +256,12 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
 
     warm_0 = ""
     if len(np.where(out_data == 0)) > 0:
-        warm_0 = "interpolation created 0 values - replacing them by min value of input CATHY predicted ER mesh"
+        warm_0 = "interpolation created 0 values - replacing them by min value  1e-3 of input CATHY predicted ER mesh"
 
     # print('Replace now')
-    out_data = np.where(out_data == 0, 1e-3, out_data)
+    # out_data = np.where(out_data == 0, 1e-3, out_data)
+    out_data = np.where(out_data == 0, np.mean(out_data), out_data)
+
     # print (time.time() - t0, "seconds process time")
 
     return out_data, warm_0
@@ -476,7 +482,7 @@ def add_attribute_2mesh(
 
     meshname = name + ".vtk"
 
-    # saveMesh = True
+    saveMesh = True
     if saveMesh:
         path = os.getcwd()
         if "path" in kwargs:

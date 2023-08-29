@@ -41,6 +41,12 @@ def read_ERT(filename, data_format, **kwargs):
 
         if '.csv' in filename:
             df_ERT_new = pd.read_csv(filename, sep=",", header="infer")
+            
+            if 'rhoa' not in df_ERT_new.columns:
+                df_ERT_new['rhoa'] = df_ERT_new['K']*df_ERT_new['resist']
+                
+            # df_ERT_new['Rho']
+            # df_ERT_new['resist']
 
         else:
             df_ERT = pg.load(filename)

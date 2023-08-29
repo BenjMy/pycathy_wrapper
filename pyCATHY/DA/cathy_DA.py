@@ -328,12 +328,15 @@ def atmbc_pert_rules(
 ):
 
     parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+    # parm_sampling = sampling_dist(sampling_type, mean, 1e-6, ensemble_size)
     parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
     var_per_2add[type_parm] = parm
     Tau = parm["time_decorrelation_len"]
     wk0 = parm_per_array
-    atmbc_times = parm["data2assimilate"]["TIME"]
-    atmbc_values = parm["data2assimilate"]["VALUE"]
+    atmbc_times = parm["data2perturbate"]["time"]
+    atmbc_values = parm["data2perturbate"]["VALUE"]
+    # print(per_type)
+    # print(atmbc_values)
 
     parm_per_array_time_variable = []
     for i, t in enumerate(atmbc_times):
@@ -343,16 +346,20 @@ def atmbc_pert_rules(
         else:
             qk_0 = parm_per_array_time_variable[i - 1]
             parm["nominal"] = atmbc_values[i]
+            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
             wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-
+            # plt.plot(wk)
             deltaT = abs(atmbc_times[i] - atmbc_times[i - 1])
             qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
+            # plt.plot(qk_i)
             parm_per_array_time_variable.append(qk_i)
 
+    # print(parm["nominal"])
+    # print(parm_per_array_time_variable)
     key = "time_variable_perturbation"
     var_per_2add[type_parm][key] = parm_per_array_time_variable
     
-    return var_per_2add
+    return parm_sampling, parm_per_array, var_per_2add
 
 
 def Johnson1970(self):
@@ -446,6 +453,11 @@ def perturbate_parm(
 
     """
 
+    savefig = False
+    if kwargs["savefig"]:
+       savefig = kwargs["savefig"]
+    
+    
     var_per_2add = {}
 
     # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
@@ -502,8 +514,21 @@ def perturbate_parm(
     # Time dependant perturbation
     # --------------------------------------------------------------------
     elif "atmbc" in type_parm:
-        var_per_2add = atmbc_pert_rules()
-
+    # elif any("atmbc" in item for item in type_parm):
+        parm_sampling, parm_per_array, var_per_2add = atmbc_pert_rules(    
+                                                                        var_per_2add,
+                                                                        parm,
+                                                                        type_parm,
+                                                                        ensemble_size,
+                                                                        mean,
+                                                                        sd,
+                                                                        per_type,
+                                                                        sampling_type,
+                                                                        **kwargs
+                                                                        )
+        savefig = False
+            
+            
     # For all other types of perturbation
     # --------------------------------------------------------------------
     else:
@@ -529,7 +554,7 @@ def perturbate_parm(
     # ----------------------------------
     var_per = var_per | var_per_2add
 
-    if kwargs["savefig"]:
+    if savefig is not False:
         plt_CT.plot_hist_perturbated_parm(
             parm, var_per, type_parm, parm_per_array, **kwargs
         )
@@ -682,7 +707,9 @@ class DA(CATHY):
 
         """
 
-        self.run_processor(DAFLAG=1, **kwargs)
+        # self.run_processor(DAFLAG=1, **kwargs) # to create the processor exe
+        self.run_processor(DAFLAG=1, **kwargs) # to create the processor exe
+        # self.recompileSrc()
         callexe = "./" + self.processor_name
 
         self.damping = 1
@@ -731,7 +758,8 @@ class DA(CATHY):
         # -------------------------------------------------------------------
         self._update_input_ensemble(
             list(self.atmbc["time"]),
-            list_parm2update="all",
+            # list_parm2update="all",
+            list_parm2update=list_parm2update,         
         )
 
         # -----------------------------------
@@ -1921,9 +1949,43 @@ class DA(CATHY):
 
                 # atmbc update
                 # --------------------------------------------------------------
-                if key == "atmbc":
-                    print("hietograph perturbated not yet implemented")
-                    self.update_atmbc(verbose=self.verbose)
+                # if key == "atmbc":
+                # if non-homogeneous atmbc, take only the first node perturbated parameters
+                # tp avoid looping over all the perturbated atmbc nodes as the update is done
+                # only once over the stacked perturbated atmbc parameters 
+                if key_root[0].casefold() in "atmbc".casefold():
+                    
+                    if key.casefold() in "atmbc0".casefold():
+    
+                        # self.atmbc
+                        # print("hietograph perturbated not yet implemented")
+                        
+                        tper_stacked = []
+                        for kk in dict_parm_pert:
+                            if 'atmbc' in kk:
+                                tper_stacked.append(dict_parm_pert[kk]['time_variable_perturbation'])
+                        tper_stacked = np.array(tper_stacked)
+                        
+                        VALUE = tper_stacked[:,:,ens_nb]
+                        times = dict_parm_pert[key]['data2perturbate']['time']
+                        # np.shape(VALUE)
+                        # self.HSPATM
+                        # self.read_inputs('atmbc')
+                        # self.atmbc['IETO']
+                        
+                        # self.selec_atmbc_window(self.NENS, ENS_times)
+                            
+                        self.update_atmbc(
+                                            HSPATM=self.atmbc['HSPATM'],
+                                            IETO=self.atmbc['IETO'],
+                                            time=times,
+                                            netValue=VALUE.T,
+                                            filename=os.path.join(os.getcwd(), "input/atmbc"),
+                                            verbose=self.verbose,
+                                        )
+                        
+                    else:
+                        pass
 
                 # ic update (i.e. water table position update)
                 # --------------------------------------------------------------
@@ -2494,8 +2556,7 @@ class DA(CATHY):
                     # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
                     # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
                     
-                    df_fort777 = out_CT.read_fort777(os.path.join(self.workdir,
-                                                                  self.project_name,
+                    df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
                                                                   'fort.777'),
                                                       )
                     df_fort777 = df_fort777.set_index('time_sec')
@@ -2505,7 +2566,7 @@ class DA(CATHY):
                     # self.count_DA_cycle = 0
                     # self.count_atmbc_cycle = 0
                     t_ET = df_fort777.index.unique()
-                    Hx_ET = df_fort777.loc[t_ET[1]].iloc[obs2map[i]["mesh_nodes"]]['ACT. ETRA']
+                    Hx_ET = df_fort777.loc[t_ET[-1]].iloc[obs2map[i]["mesh_nodes"]]['ACT. ETRA']
                     Hx_stacked.append(Hx_ET)
 
                 if "stemflow" in obs_key:
@@ -2594,9 +2655,9 @@ class DA(CATHY):
                     self.console.print(
                         r"""
                                     Archie perturbation for DA analysis
-                                    Archie parameters: {}
-                                    \u03C3 Archie: {}
-                                    Nb of zones: {}
+                                    Archie rFluid: {}
+                                    Pert. Sigma Archie: {}
+                                    Nb of zones (?): {}
                                     """.format(
                             self.Archie_parms["rFluid_Archie"],
                             self.Archie_parms["pert_sigma_Archie"],
@@ -2766,6 +2827,8 @@ class DA(CATHY):
         # ---------------------------------------------------------------------
         self.selec_atmbc_window(self.NENS, ENS_times)
 
+        # remove all atmbc from the update
+        # newlist_parm2update = [ll for ll in list_parm2update if 'atmbc' not in ll]
         # ---------------------------------------------------------------------
         self.update_ENS_files(
             self.dict_parm_pert,
@@ -2840,24 +2903,25 @@ class DA(CATHY):
                 IPRT1=2,
                 backup=True,
             )
-            self.console.print(
-                ":warning: [b]Making the assumption that atmbc are homogeneous![/b]"
-            )
+            # self.console.print(
+            #     ":warning: [b]Making the assumption that atmbc are homogeneous![/b]"
+            # )
             VALUE = []
             for t in df_atmbc_window["time"].unique():
                 # VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'].mean())
                 VALUE.append(df_atmbc_window[df_atmbc_window["time"] == t]["value"].values)
-            VALUE = np.hstack(VALUE)
-            if len(VALUE) > 0:
-                self.update_atmbc(
-                    HSPATM=1,
-                    IETO=1,
-                    time=[0, diff_time],
-                    netValue=list(VALUE),
-                    filename=os.path.join(os.getcwd(), "input/atmbc"),
-                )
-            else:
-                pass
+            # VALUE = np.hstack(VALUE)
+            # if len(VALUE) > 0:
+            self.update_atmbc(
+                HSPATM=HSPATM,
+                IETO=IETO,
+                time=[0, diff_time],
+                netValue=VALUE,
+                filename=os.path.join(os.getcwd(), "input/atmbc"),
+            )
+            # else:
+            #     pass
+        # self.project_name
 
         pass
 
@@ -3028,11 +3092,20 @@ class DA(CATHY):
         ERT_meta_dict["forward_mesh_vtk_file"] = key_value[1]["ERT"][
             "forward_mesh_vtk_file"
         ]
-        ERT_meta_dict["pathERT"] = os.path.split(key_value[1]["ERT"]["filename"])[0]
-        ERT_meta_dict["seq"] = key_value[1]["ERT"]["sequenceERT"]
-        ERT_meta_dict["electrodes"] = key_value[1]["ERT"]["elecs"]
-        ERT_meta_dict["noise_level"] = key_value[1]["ERT"]["data_err"]
-        ERT_meta_dict["data_format"] = key_value[1]["ERT"]["data_format"]
+        
+        for kk in key_value[1]["ERT"].keys():
+            if 'filename' in kk:
+                ERT_meta_dict["pathERT"] = os.path.split(key_value[1]["ERT"]["filename"])[0]
+            else:
+                ERT_meta_dict[kk]= key_value[1]["ERT"][kk]
+
+        # ERT_meta_dict["pathERT"] = os.path.split(key_value[1]["ERT"]["filename"])[0]
+        # ERT_meta_dict["seq"] = key_value[1]["ERT"]["sequenceERT"]
+        # ERT_meta_dict["electrodes"] = key_value[1]["ERT"]["elecs"]
+        # ERT_meta_dict["noise_level"] = key_value[1]["ERT"]["data_err"]
+        # ERT_meta_dict["data_format"] = key_value[1]["ERT"]["data_format"]
+        # ERT_meta_dict["meta"] = key_value[1]["ERT"]["meta"]
+
         return ERT_meta_dict
 
     def _map_ERT(self, state, path_fwd_CATHY, ens_nb, **kwargs):
@@ -3064,7 +3137,7 @@ class DA(CATHY):
             DA_cnb=self.count_DA_cycle,  # kwargs
             Ens_nbi=ens_nb,  # kwargs
             savefig=savefig,  # kwargs
-            noise_level=ERT_meta_dict["noise_level"],  # kwargs
+            noise_level=ERT_meta_dict["data_err"],  # kwargs
             dict_ERT=key_time[1]["ERT"],  #  kwargs
         )
         df_Archie["OL"] = np.ones(len(df_Archie["time"])) * False
@@ -3095,7 +3168,7 @@ class DA(CATHY):
             ERT_meta_dict,
             DA_cnb=DA_cnb,
             savefig=False,
-            noise_level=ERT_meta_dict["noise_level"],  # kwargs
+            noise_level=ERT_meta_dict["data_err"],  # kwargs
             dict_ERT=key_time[1]["ERT"],  #  kwargs
         )
 
@@ -3145,7 +3218,7 @@ class DA(CATHY):
                 ERT_meta_dict,
                 time_ass=t,
                 savefig=True,
-                noise_level=ERT_meta_dict["noise_level"],
+                noise_level=ERT_meta_dict["data_err"],
                 dict_ERT=key_time[1]["ERT"],
             )
             #

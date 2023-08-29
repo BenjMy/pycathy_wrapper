@@ -388,7 +388,7 @@ def read_sw(filename, **kwargs):
             idx.append(i)
             splt = ll.split()
             step_i.append(splt[0])
-            time_i.append(splt[1])
+            time_i.append(float(splt[1]))
     idx.append(i + 1)
 
     sw_sub = []

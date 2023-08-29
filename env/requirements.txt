@@ -29,7 +29,7 @@ pyvista
 vtk
 myst_nb
 myst-parser #https://myst-parser.readthedocs.io/en/latest/intro.html
-
+geopandas
 
 # pypi building requirements
 # twine

@@ -94,13 +94,26 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
 
     data_pert = (data - observation.T).T
 
+
+    # print(data)
+    # print(observation)
+    
+    
     if np.max(abs(data_pert)) > 1e3:
-        raise ValueError("predictions are too far from observations")
+        # raise ValueError("predictions are too far from observations")
+        print('!predictions are too far from observations!')
+        # self.console.print(
+        #     ":warning: [b]Making the assumption that atmbc are homogeneous![/b]"
+        # )
     # S = ensemble measurement perturbation from ensemble measurement mean.
     # S is (MeasSize)x(ens_size)
     meas_avg = (1.0 / float(ens_size)) * np.tile(
         observation.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
     ).transpose()
+    
+    
+
+
     obs_pert = observation - meas_avg
 
     if obs_pert.mean() == 0:

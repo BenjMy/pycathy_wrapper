@@ -36,7 +36,6 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
     value = []
     tstep_idx = []
     # loop over lines
-    len(lines)
     
     if HSPATM != 0:  # homogeneous on all surf mesh nodes
 
@@ -78,10 +77,10 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
                 "Number of values does not match number of times (check flags TIME, VALUE)"
             )
     
-            d_atmbc = []
-            d_atmbc = np.vstack([t, value])
-            cols_atmbc = ["time", "value"]
-            df_atmbc = pd.DataFrame(d_atmbc.T, columns=cols_atmbc)
+        d_atmbc = []
+        d_atmbc = np.vstack([t, value])
+        cols_atmbc = ["time", "value"]
+        df_atmbc = pd.DataFrame(d_atmbc.T, columns=cols_atmbc)
 
     else:  # heterogeneous on all surf mesh nodes
         
@@ -433,7 +432,8 @@ def read_soil(soilfile, dem_parm, MAXVEG):
 
     if len(soil) != len(name_str):
         raise ValueError(
-            "Inconsistent number of zones/layers with respect to the number of soil lines"
+            "Inconsistent number of zones/layers with respect to the number of soil lines: " +
+            str(len(soil)) + '/' + str(len(name_str))
         )
     df_soil = pd.DataFrame(soil, [name_str, name_zone], soil_header)
     df_soil.index.set_names("str", level=0, inplace=True)

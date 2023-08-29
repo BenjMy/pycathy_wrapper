@@ -48,6 +48,8 @@ def create_ERT_survey_pg(pathERT, sequence, mesh, **kwargs):
 
     if "shm" in sequence:
         scheme = pg.load(sequence)
+    elif "data" in sequence:
+        scheme = pg.load(sequence)
     elif "txt" in sequence:
         shm = pd.read_csv(sequence, delimiter=" ", header=None)
         shm = shm.to_numpy()

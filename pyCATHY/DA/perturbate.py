@@ -4,6 +4,7 @@
     Prepare for DA class
 """
 
+import pandas as pd
 
 def check_distribution(parm2check):
     if parm2check["type_parm"] == "porosity":
@@ -64,32 +65,49 @@ def perturbate(simu_DA, scenario, NENS):
         }
         list_pert.append(ic)
 
+    # if "atmbcETp" in scenario["per_name"]:  
+    # any("atmbc" in item for item in ['ic', 'atmbcETp'])
+    
+    
     if "atmbc" in scenario["per_name"]:
         index = scenario["per_name"].index("atmbc")
 
         atmbc_nom = scenario["per_nom"]  # 1e-4
         atmbc_mean = scenario["per_mean"]  # sampling mean
         atmbc_sd = scenario["per_sigma"]  # 1.53
+        
 
-        atmbc = {
-            "nominal": atmbc_nom,  # nominal value 45
-            "units": "$mm.h^{-1}$",
-            "type_parm": "atmbc",
-            "nominal": atmbc_nom,  # nominal value
-            "mean": atmbc_nom,
-            "sd": atmbc_sd,
-            "atmbc_units": "atmospheric forcing $mm.h^{-1}$",  # units
-            "sampling_type": "lognormal",
-            "ensemble_size": NENS,  # size of the ensemble
-            "per_type": "multiplicative",
-            "time_variable": True,
-            # 'data2assimilate': kwargs['data'],
-            "data2assimilate": simu_DA.atmbc,
-            "time_decorrelation_len": 277200 * 10,
-            "savefig": "atmbc.png",
-        }
+        df = simu_DA.atmbc['atmbc_df']
+        # Get unique 'time' values
+        unique_times = df['time'].unique()
 
-        list_pert.append(atmbc)
+        # type_parm
+        # extract value of each node of the mesh for all the atmbc times
+        for value_idx in range(len(df) // len(unique_times)):
+            # print(value_idx)
+            values = []
+            for time in unique_times:
+                # print(time)
+                value = df.loc[df['time'] == time, 'value'].iloc[value_idx]
+                values.append(value)
+            # print(values)
+            atmbc = {
+                "type_parm": "atmbc" + str(value_idx),
+                "nominal": atmbc_nom[index], 
+                "units": "$mm.h^{-1}$",
+                "mean": atmbc_nom[index],
+                "sd": atmbc_sd[index],
+                "atmbc_units": "atmospheric forcing $mm.h^{-1}$",
+                "sampling_type": 'normal',
+                "ensemble_size": NENS,
+                "per_type": scenario["per_type"][index],
+                "time_variable": True,
+                "data2perturbate": {'time': simu_DA.atmbc['time'], 'VALUE': values},
+                "time_decorrelation_len": scenario["time_decorrelation_len"][index],
+                "savefig": "atmbc.png"
+            }
+            
+            list_pert.append(atmbc)
 
     #%% Petro-Pedophysical parameters
     # ------------------------------------------------------------------------

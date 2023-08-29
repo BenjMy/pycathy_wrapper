@@ -30,6 +30,7 @@ pyvista
 vtk>=9
 myst_nb
 jupytext
+geopandas
 
 
 # pypi building requirements

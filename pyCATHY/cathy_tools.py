@@ -2388,13 +2388,17 @@ class CATHY:
         # set default parameters if SPP and/or FP args are not existing yet
         # --------------------------------------------------------------------
         if len(self.soil) == 0:
-            self.set_SOIL_defaults()
+            try:
+                self.read_inputs('soil',MAXVEG=self.MAXVEG)
+            except:
+                self.set_SOIL_defaults()
 
         if len(SPP_map) == 0:
             SPP_map = self.set_SOIL_defaults(SPP_map_default=True)
 
         if (not hasattr(self, "soil_FP")) and (len(FP_map) == 0):
             FP_map = self.set_SOIL_defaults(FP_map_default=True)
+            
         elif len(FP_map) == 0:
             FP_map = self.soil_FP["FP_map"]
 
@@ -2421,18 +2425,6 @@ class CATHY:
             if (sum(zone3d[0] != zone3d) > 0).any():
                 soil_heteregeneous_in_z = True
                 print("z soil heterogeneity detected")
-
-
-        # else:
-        # if self.dem_parameters["nzone"]>1:
-        #     if len(SPP_map['PERMX'])!=self.dem_parameters["nzone"]:
-        #         raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-        #                          + ' while nzone is ' + str(self.dem_parameters["nzone"]))
-        # else: # case where soil properties are homogeneous in x and y direction (only z prop varies)
-        #     if soil_heteregeneous_in_z:
-        #         if len(SPP_map['PERMX'])!=self.dem_parameters["nstr"]:
-        #             raise ValueError("Wrong number of zones: PERMX size is " + str(len(SPP['PERMX']))
-        #                              + ' while nlayers is ' + str(self.dem_parameters["nstr"]))
 
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
@@ -2563,7 +2555,7 @@ class CATHY:
                 "PCANA": [0.0],
                 "PCREF": [-4.0],
                 "PCWLT": [-150],
-                "ZROOT": [0.1],
+                "ZROOT": [1.0],
                 "PZ": [1.0],
                 "OMGC": [1.0],
             }
@@ -2771,10 +2763,10 @@ class CATHY:
 
         Parameters
         ----------
-        SoilPhysProp : TYPE
-            DESCRIPTION.
-        FeddesParam : TYPE
-            DESCRIPTION.
+        SoilPhysProp : Soil physical properties
+            Dictionnatry of Soil physical properties.
+        FeddesParam : Feddes Parameters
+            Dictionnatry of Feddes Parameters
         """
 
         # backup file during DA scheme cycle
@@ -2795,8 +2787,8 @@ class CATHY:
                 self.workdir, self.project_name, self.input_dirname, "soil"
             )
 
-        if "path" in kwargs:
-            soil_filepath = os.path.join(kwargs["path"], "soil")
+        if "filename" in kwargs:
+            soil_filepath = os.path.join(kwargs["filename"]) #, "soil")
 
         if backup:
             if self.count_DA_cycle is not None:
@@ -3763,7 +3755,12 @@ class CATHY:
                 os.path.join(self.workdir, self.project_name, "input", filename),
                 grid=self.grid3d
             )
-            self.atmbc = {"HSPATM": HSPATM, "IETO": IETO, "time": df['time'].unique(), "VALUE": df['value']}
+            self.atmbc = {"HSPATM": HSPATM, 
+                          "IETO": IETO, 
+                          "time": df['time'].unique(), 
+                          "VALUE": df['value'],
+                          "atmbc_df": df
+                          }
 
             return df
         elif filename == "dem":
