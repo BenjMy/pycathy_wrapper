@@ -144,7 +144,26 @@ def run_analysis(
             data, data_cov, param, ensembleX[id_state], prediction, **kwargs
         )
         return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, analysis, analysis_param]
-    elif DA_type == "pf":
+    if DA_type == "enkf_analysis_inflation_multiparm":
+        [
+            A,
+            Amean,
+            dA,
+            dD,
+            MeasAvg,
+            S,
+            COV,
+            B,
+            dAS,
+            analysis,
+            analysis_param,
+        ] = enkf.enkf_analysis_inflation_multiparm(
+            data, data_cov, param, ensembleX[id_state], prediction, **kwargs
+        )
+        return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, analysis, analysis_param]
+
+    
+    if DA_type == "pf":
         print("not yet implemented")
 
         [Analysis, AnalysisParam] = pf.pf_analysis(
@@ -332,25 +351,38 @@ def atmbc_pert_rules(
     parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
     var_per_2add[type_parm] = parm
     Tau = parm["time_decorrelation_len"]
-    wk0 = parm_per_array
+    qk_0 = parm_per_array
     atmbc_times = parm["data2perturbate"]["time"]
     atmbc_values = parm["data2perturbate"]["VALUE"]
     # print(per_type)
     # print(atmbc_values)
 
+    # # Create a histogram plot for perturbed sand conductivities
+    # plt.figure(figsize=(10, 5))
+    # # plt.hist(parm_sampling, bins=20, alpha=0.5, color='blue', label='Atmbc ENS')
+    # plt.hist(parm_per_array, bins=20, alpha=0.5, color='red', label='* Atmbc ENS')
+    # plt.xlabel('Perturbed atmbc')
+    # plt.ylabel('Frequency')
+    # # plt.title('Perturbed Saturated Hydraulic Conductivities')
+    # plt.legend(loc='upper right')
+    # plt.grid(True)
+    
+    
     parm_per_array_time_variable = []
     for i, t in enumerate(atmbc_times):
         if i == 0:
-            qk_0 = wk0
+            # qk_0 = wk0
             parm_per_array_time_variable.append(qk_0)
         else:
             qk_0 = parm_per_array_time_variable[i - 1]
             parm["nominal"] = atmbc_values[i]
             # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-            wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            wk = sampling_dist(sampling_type, mean, sd, ensemble_size)
             # plt.plot(wk)
             deltaT = abs(atmbc_times[i] - atmbc_times[i - 1])
-            qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
+            # qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
+            qk_i = wk
             # plt.plot(qk_i)
             parm_per_array_time_variable.append(qk_i)
 
@@ -390,7 +422,7 @@ def Evensen2003(qk_0, wk, deltaT, Tau):
             "Time decorrelation length is too small; should be at least>=" + str(deltaT)
         )
     gamma = 1 - deltaT / Tau
-    qki = gamma * qk_0 + np.sqrt(1 - gamma * gamma) * wk
+    qki = gamma * qk_0 + np.sqrt(1 - (gamma * gamma)) * wk
 
     return qki
 
@@ -743,7 +775,7 @@ class DA(CATHY):
             list_parm2update="all",  
             cycle_nb=self.count_DA_cycle,
         )
-        all_atmbc_times = self.atmbc["time"]
+        all_atmbc_times = np.copy(self.atmbc["time"])
 
         # Open loop
         # -------------------------------------------------------------------
@@ -919,12 +951,14 @@ class DA(CATHY):
 
             # create dataframe _DA_var_pert_df holding the results of the DA update
             # ---------------------------------------------------------------------
+            # self.DA_df
             self._DA_df(
                 state=[ensemble_psi_valid, ensemble_sw_valid],
                 state_analysis=analysis_valid,
                 rejected_ens=rejected_ens,
             )
-
+            # self.df_DA
+            
             # export summary results of DA
             # ----------------------------------------------------------------
             meta_DA = {
@@ -979,7 +1013,7 @@ class DA(CATHY):
 
         [os.remove(f) for f in files]
 
-        hard_remove = True
+        hard_remove = False
         if hard_remove:
             directory = "./"
             pathname = directory + "/**/*.vtk"
@@ -1608,6 +1642,10 @@ class DA(CATHY):
                 # ckeck if new value of Zroot is feasible
                 # ------------------------------------------------------------
                 elif "Zroot".casefold() in pp[1].casefold():
+                    print('*'*26)
+                    print(self.dict_parm_pert[pp[1]][update_key])
+                    print(abs(min(self.grid3d["mesh3d_nodes"][:, -1])))
+
                     id_nonvalid.append(
                         list(
                             np.where(
@@ -1791,6 +1829,10 @@ class DA(CATHY):
 
         # check that porosity is a list
         # -------------------------------------
+        
+        # if hasattr(self, 'soil_SPP') is False:
+        #     self.read_inputs('soil')
+            
         porosity = self.soil_SPP["SPP"][:, 4][0]
         if not isinstance(porosity, list):
             porosity = [porosity]
@@ -1908,16 +1950,16 @@ class DA(CATHY):
                         )
             shellprint_update = False
 
-        # loop over dict of perturbated variable
-        # ----------------------------------------------------------------------
+        # Initialise matrice of ensemble
+        # ------------------------------
         FeddesParam_mat_ens = []  # matrice of ensemble for Feddes parameters
-        
         VG_parms_mat_ens = []  # matrice of ensemble for VG parameters
         VG_p_possible_names = ["n_VG", "thetar_VG", "alpha_VG", "VGPSATCELL_VG"]
         VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
-        
         PERMX_het_ens = []  # matrice of ensemble for hydraulic conductivity parameters
-        
+       
+        # Archie
+        # -------
         Archie_parms_mat_ens = []  # matrice of ensemble for Archie parameters
         Archie_p_names = [
             "porosity",
@@ -1927,7 +1969,14 @@ class DA(CATHY):
             "n_Archie",
             "pert_sigma_Archie",
         ]
+        # Soil 3d if existing
+        # -------------------
+        zone3d = []
+        if hasattr(self, 'zone3d'):
+            zone3d = self.zone3d
 
+        # loop over dict of perturbated variable
+        # ----------------------------------------------------------------------
         for parm_i, key in enumerate(
             list_parm2update
         ):  # loop over perturbated variables dict
@@ -1987,7 +2036,23 @@ class DA(CATHY):
                     else:
                         pass
 
+
                 # ic update (i.e. water table position update)
+                # --------------------------------------------------------------
+                elif key.casefold() in "WTPOSITION".casefold():
+                    if kwargs["cycle_nb"] == 0:
+                        self.update_ic(
+                            INDP=4,
+                            IPOND=0,
+                            WTPOSITION= dict_parm_pert[key]["ini_perturbation"][
+                                ens_nb
+                            ],
+                            filename=os.path.join(os.getcwd(), "input/ic"),
+                            backup=False,
+                            shellprint_update=shellprint_update,
+                        )
+                        
+                # ic update (i.e. initial pressure head update)
                 # --------------------------------------------------------------
                 elif key.casefold() in "ic".casefold():
                     if kwargs["cycle_nb"] == 0:
@@ -2027,6 +2092,7 @@ class DA(CATHY):
                         self.update_soil(
                             SPP_map=SPP_map,
                             FP_map=self.soil_FP["FP_map"],
+                            # zone3d=self.zone3d,
                             verbose=self.verbose,
                             filename=os.path.join(os.getcwd(), "input/soil"),
                             shellprint_update=shellprint_update,
@@ -2069,12 +2135,9 @@ class DA(CATHY):
                                 if k in parm_incr
                             ]
                             if len(match) > 0:
-                                # print(match)
-                                # print(k)
                                 idVG = VG_p_possible_names_positions_in_soil_table[
                                     VG_p_possible_names.index(k)
                                 ]
-                                # print(idVG)
                                 VG_parms_mat_ens[:, idVG] = dict_parm_pert[match[0]][
                                     update_key
                                 ]
@@ -2105,6 +2168,7 @@ class DA(CATHY):
                     self.update_soil(
                         SPP_map=VG_parms_ensi[ens_nb],
                         FP_map=self.soil_FP["FP_map"],
+                        # zone3d=self.zone3d,
                         verbose=self.verbose,
                         filename=os.path.join(os.getcwd(), "input/soil"),
                         shellprint_update=shellprint_update,
@@ -2143,9 +2207,11 @@ class DA(CATHY):
                         ):
                             fed[f] = list(FeddesParam_mat_ens[es, :, i])
                         FeddesParam_map_ensi.append(fed)
+                    
                     self.update_soil(
                         FP_map=FeddesParam_map_ensi[ens_nb],
                         SPP_map=SPP_map,
+                        zone3d=zone3d,
                         verbose=self.verbose,
                         filename=os.path.join(os.getcwd(), "input/soil"),
                         shellprint_update=shellprint_update,
@@ -2559,13 +2625,9 @@ class DA(CATHY):
                     df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
                                                                   'fort.777'),
                                                       )
-                    df_fort777 = df_fort777.set_index('time_sec')
-                    # len(df_fort777.index.unique())
-                    # print("Not yet implemented")
-                    
-                    # self.count_DA_cycle = 0
-                    # self.count_atmbc_cycle = 0
+                    df_fort777 = df_fort777.set_index('time_sec')                    
                     t_ET = df_fort777.index.unique()
+                    # print('here I''m taking the wrong time no? ' + str(t_ET[-1]))
                     Hx_ET = df_fort777.loc[t_ET[-1]].iloc[obs2map[i]["mesh_nodes"]]['ACT. ETRA']
                     Hx_stacked.append(Hx_ET)
 
@@ -2619,8 +2681,8 @@ class DA(CATHY):
         if isinstance(Hx_ens, float):
             pass
         else:
-            print('Hx_ens')
-            print(Hx_ens)
+            # print('Hx_ens')
+            # print(Hx_ens)
             if len(Hx_ens)>0:
                 if np.shape(Hx_ens)!=(len(self.ens_valid),len(obskey2map)):
                     Hx_ens = np.hstack(Hx_ens)
@@ -2629,11 +2691,6 @@ class DA(CATHY):
                
         
         # Hx_ens = []  # matrice of predicted observation for each ensemble realisation
-
-        # print('test')
-        print(Hx_ens)
-        print(np.shape(Hx_ens))
-
         # special case of ERT // during sequential assimilation
         # ---------------------------------------------------------------------
         for i, obs_key in enumerate(obskey2map):
@@ -2673,12 +2730,12 @@ class DA(CATHY):
                         savefig=False,
                         DA_cnb=self.count_DA_cycle,
                     )
-                    print(Hx_ens)
+                    # print(Hx_ens)
                     if len(Hx_ens) > 0:
                         Hx_ens = np.vstack([Hx_ens, Hx_ens_ERT])
                         # np.shape(Hx_ens)
                     else:
-                        print('here')
+                        # print('here')
                         Hx_ens = Hx_ens_ERT
                         
         # print(obskey2map)
@@ -2706,12 +2763,7 @@ class DA(CATHY):
             self.Archie = pd.DataFrame(
                 columns=["time", "ens_nb", "sw", "ER_converted", "OL"]
             )
-
-        # print(self.Archie['time'].max())
-        # print(self.Archie['ens_nb'].max())
         self.Archie = pd.concat([self.Archie, df_Archie_2add])
-        # print(self.Archie['time'].max())
-        # print(self.Archie['ens_nb'].max())
 
     def _add_2_ensemble_Hx(self, Hx, Hx_2add):
         """
@@ -2827,8 +2879,6 @@ class DA(CATHY):
         # ---------------------------------------------------------------------
         self.selec_atmbc_window(self.NENS, ENS_times)
 
-        # remove all atmbc from the update
-        # newlist_parm2update = [ll for ll in list_parm2update if 'atmbc' not in ll]
         # ---------------------------------------------------------------------
         self.update_ENS_files(
             self.dict_parm_pert,
@@ -2842,14 +2892,14 @@ class DA(CATHY):
     def selec_atmbc_window(self, NENS, ENS_times):
         """
         Select the time window of the hietograph
-        == time between two assimilation observation
+        == time between two assimilation observations
 
         Parameters
         ----------
-        NENS : TYPE
-            DESCRIPTION.
-        ENS_times : TYPE
-            DESCRIPTION.
+        NENS : list
+            # of valid ensemble.
+        ENS_times : list
+            Assimilation times (in sec).
         """
 
         if len(self.grid3d) == 0:
@@ -2864,9 +2914,33 @@ class DA(CATHY):
             os.path.join(self.workdir, self.project_name, "input", "atmbc"),
             grid=self.grid3d,
         )
+        
+        # Lopp over ensemble
+        # ------------------
+        for ens_nb in range(self.NENS):
+            
+            cwd = os.path.join(self.workdir,
+                               self.project_name,
+                               "./DA_Ensemble/cathy_" + str(ens_nb + 1)
+                               )
+            
+            # df_atmbc, HSPATM, IETO = in_CT.read_atmbc(
+            #     os.path.join(cwd,"input", "atmbc"),
+            #     grid=self.grid3d,
+            # )
 
-        if self.count_atmbc_cycle is not None:
-            try:
+            # Case where atmbc are perturbated
+            # -------------------------------
+            if 'atmbc0' in self.dict_parm_pert.keys(): # case where atmbc are homogeneous
+                if HSPATM!=0:
+                    VALUE = np.array(self.dict_parm_pert['atmbc0']['time_variable_perturbation'])[:,ens_nb]
+                    times = self.dict_parm_pert['atmbc0']['data2perturbate']['time']
+                    df_atmbc = pd.DataFrame(np.c_[times,VALUE],
+                                            columns=['time','value']
+                                            )
+                    
+            if self.count_atmbc_cycle is not None:
+                # try:
                 if HSPATM!=0:
                     time_window_atmbc = [
                         df_atmbc.iloc[self.count_atmbc_cycle]["time"],
@@ -2877,51 +2951,34 @@ class DA(CATHY):
                         df_atmbc.time.unique()[self.count_atmbc_cycle],
                         df_atmbc.time.unique()[self.count_atmbc_cycle+1]    
                         ]
-            except:
-                pass
-        else:
-            time_window_atmbc = [ENS_times[0], ENS_times[1]]
+            else:
+                time_window_atmbc = [ENS_times[0], ENS_times[1]]
+    
+            df_atmbc_window = df_atmbc[
+                (df_atmbc["time"] >= time_window_atmbc[0])
+                & (df_atmbc["time"] <= time_window_atmbc[1])
+            ]
 
-        df_atmbc_window = df_atmbc[
-            (df_atmbc["time"] >= time_window_atmbc[0])
-            & (df_atmbc["time"] <= time_window_atmbc[1])
-        ]
-
-        for ens_nb in range(NENS):
-            os.chdir(
-                os.path.join(
-                    self.workdir,
-                    self.project_name,
-                    "./DA_Ensemble/cathy_" + str(ens_nb + 1),
-                )
-            )
             diff_time = time_window_atmbc[1] - time_window_atmbc[0]
             self.update_parm(
                 TIMPRTi=[0, diff_time],
                 TMAX=diff_time,
-                filename=os.path.join(os.getcwd(), "input/parm"),
+                filename=os.path.join(cwd, "input/parm"),
                 IPRT1=2,
                 backup=True,
             )
-            # self.console.print(
-            #     ":warning: [b]Making the assumption that atmbc are homogeneous![/b]"
-            # )
+
             VALUE = []
             for t in df_atmbc_window["time"].unique():
-                # VALUE.append(df_atmbc_window[df_atmbc_window['time']==t]['value'].mean())
                 VALUE.append(df_atmbc_window[df_atmbc_window["time"] == t]["value"].values)
-            # VALUE = np.hstack(VALUE)
-            # if len(VALUE) > 0:
+
             self.update_atmbc(
                 HSPATM=HSPATM,
                 IETO=IETO,
                 time=[0, diff_time],
                 netValue=VALUE,
-                filename=os.path.join(os.getcwd(), "input/atmbc"),
+                filename=os.path.join(cwd, "input/atmbc"),
             )
-            # else:
-            #     pass
-        # self.project_name
 
         pass
 

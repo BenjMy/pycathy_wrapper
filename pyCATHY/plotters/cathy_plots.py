@@ -452,6 +452,11 @@ def show_vtk(
     my_colormap = "viridis"
     if path is None:
         path = os.getcwd()
+    
+    legend = True
+    if 'legend' in kwargs:
+        legend = kwargs.pop('legend')
+        
     # Parse physical attribute + cmap from unit
     # -------------------------------------------------------------------------
     if filename is None:
@@ -577,10 +582,12 @@ def show_vtk(
         if "clim" in kwargs:
             ax.update_scalar_bar_range([kwargs["clim"][0], kwargs["clim"][1]])
         # add time stamp as legend
-        legend_entries = []
-        time_delta = transform2_time_delta(mesh["TIME"], "s")
-        legend_entries.append(["Time=" + str(time_delta[0]), "w"])
-        _ = ax.add_legend(legend_entries)
+        
+        if legend:
+            legend_entries = []
+            time_delta = transform2_time_delta(mesh["TIME"], "s")
+            legend_entries.append(["Time=" + str(time_delta[0]), "w"])
+            _ = ax.add_legend(legend_entries)
         _ = ax.show_bounds(minor_ticks=True, font_size=1)
 
         # add scatter points to the plot
@@ -613,9 +620,9 @@ def show_vtk(
         cpos = ax.show(screenshot= os.path.join(path, filename + unit + ".png"))
         print("figure saved" + os.path.join(path, filename + unit + ".png"))
         ax.close()
-    else:
-        ax.show_axes()
-        ax.show()
+    # else:
+    #     ax.show_axes()
+    #     ax.show()
 
     pass
 
@@ -1749,6 +1756,7 @@ def DA_plot_time_dynamic(
     if "sw" in state:
         ylabel = "water saturation (-)"
 
+    # prep_DA['isENS']['time_date']
     # Plot
     # --------------------------------------------------------------------------
 

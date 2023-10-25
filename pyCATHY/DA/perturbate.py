@@ -48,6 +48,37 @@ def perturbate(simu_DA, scenario, NENS):
 
     #%% Initial and boundary conditions parameters
     # ------------------------------------------------------------------------
+    
+    if "WTPOSITION" in scenario["per_name"]:
+
+        index = scenario["per_name"].index("WTPOSITION")
+
+        clip_min = 0
+        clip_max = None
+        
+        clip_min, clip_max = check4bounds(
+            scenario,
+            index,
+            clip_min,
+            clip_max,
+        )
+            
+        WTPOSITION = {
+            "type_parm": "WTPOSITION",
+            "nominal": scenario["per_nom"][index],  # nominal value
+            "mean": scenario["per_mean"][index],
+            "sd": scenario["per_sigma"][index],
+            "units": "Water table position $(m)$",  # units
+            "sampling_type": "normal",
+            "ensemble_size": NENS,  # size of the ensemble
+            "per_type": scenario["per_type"][index],
+            "savefig": "WTPOSITION.png",
+            "clip_min": clip_min,
+            "clip_max": clip_max,
+        }
+        list_pert.append(WTPOSITION)
+        
+        
     if "ic" in scenario["per_name"]:
 
         index = scenario["per_name"].index("ic")
@@ -491,31 +522,42 @@ def perturbate(simu_DA, scenario, NENS):
     if "PCREF" in scenario["per_name"]:
         index = scenario["per_name"].index("PCREF")
 
-
+        scenario_nom = scenario["per_nom"][index]
+        scenario_mean = scenario["per_mean"][index]
+        scenario_sd = scenario["per_sigma"][index]
+        
         clip_min = -30
         clip_max = -1
 
-        for nz in range(len(simu_DA.soil["PCREF"])):
+        df_SPP, df_FP = simu_DA.read_inputs('soil')
+
+        for nz in range(len(df_FP.index.unique())):
 
             clip_min, clip_max = check4bounds(
                 scenario,
                 index,
                 clip_min,
                 clip_max,
-                het_size=len(simu_DA.soil["ZROOT"]),
+                het_size=len(df_FP.index.unique()),
                 het_nb=nz,
             )
         
+        
+            if len(df_FP.index.unique()) > 1:
+                scenario_nom = scenario["per_nom"][index][nz]
+                scenario_mean = scenario["per_mean"][index][nz]
+                scenario_sd = scenario["per_sigma"][index][nz]
+
             PCREF = {
                 "type_parm": "PCREF" + str(nz),
-                "nominal": scenario["per_nom"][index],  # nominal value
-                "mean": scenario["per_mean"][index],
-                "sd": scenario["per_sigma"][index],
+                "nominal": scenario_nom,  # nominal value
+                "mean": scenario_mean,
+                "sd": scenario_sd,
                 "units": "$m$",  # units
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "PCREF.png",
+                "savefig": "PCREF" + str(nz) + ".png",
                 "surf_zones_param": nz,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
@@ -536,19 +578,21 @@ def perturbate(simu_DA, scenario, NENS):
 
         clip_min = 0
         clip_max = None
-
-        for nz in range(len(simu_DA.soil["ZROOT"])):
+        
+        df_SPP, df_FP = simu_DA.read_inputs('soil')
+        
+        for nz in range(len(df_FP.index.unique())):
 
             clip_min, clip_max = check4bounds(
                 scenario,
                 index,
                 clip_min,
                 clip_max,
-                het_size=len(simu_DA.soil["ZROOT"]),
+                het_size=len(df_FP.index.unique()),
                 het_nb=nz,
             )
 
-            if len(simu_DA.soil["ZROOT"]) > 1:
+            if len(df_FP.index.unique()) > 1:
                 scenario_nom = scenario["per_nom"][index][nz]
                 scenario_mean = scenario["per_mean"][index][nz]
                 scenario_sd = scenario["per_sigma"][index][nz]

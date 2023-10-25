@@ -238,13 +238,15 @@ def past_authors(selec=0):
 
     data = [weil, busato, botto_clay, botto_sand]
     VGP_predict_CATHY = {}
+    VGP_predict_CATHY["PERMX"] = data[selec][0]
+    VGP_predict_CATHY["PERMY"] = data[selec][0]
+    VGP_predict_CATHY["PERMZ"] = data[selec][0]
+    VGP_predict_CATHY["ELSTOR"] = data[selec][3]
     VGP_predict_CATHY["POROS"] = data[selec][4]
     VGP_predict_CATHY["VGNCELL"] = data[selec][5]
     VGP_predict_CATHY["VGRMCCELL"] = data[selec][6]
     VGP_predict_CATHY["VGPSATCELL"] = data[selec][7]
-    VGP_predict_CATHY["PERMX"] = data[selec][0]
-    VGP_predict_CATHY["PERMY"] = data[selec][0]
-    VGP_predict_CATHY["PERMZ"] = data[selec][0]
+
 
     return VGP_predict_CATHY
 
