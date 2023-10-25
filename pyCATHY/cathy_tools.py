@@ -505,7 +505,7 @@ class CATHY:
         # if len(kwargs)>0:
         self.update_parm(**kwargs)
         self.update_cathyH(**kwargs)
-
+        # self.cathyH
         if recompile:
             # recompile
             # --------------------------------------------------------------------
@@ -1858,10 +1858,11 @@ class CATHY:
                         print(t, v)
                     atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
                     # atmbcfile.close()
-    
                     if isinstance(v, float) | isinstance(v, int):
                         atmbcfile.write("{:.3e}".format(v) + "\t" + "VALUE" + "\n")
-                        # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
+                    else:
+                        atmbcfile.write("{:.3e}".format(float(v)) + "\t" + "VALUE" + "\n")
+                    # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
                         
             # atmbc are heteregeneous
             # -----------------------------------------------------------------
@@ -2388,10 +2389,15 @@ class CATHY:
         # set default parameters if SPP and/or FP args are not existing yet
         # --------------------------------------------------------------------
         if len(self.soil) == 0:
+            self.set_SOIL_defaults()
             try:
-                self.read_inputs('soil',MAXVEG=self.MAXVEG)
+                # self.update_veg_map()
+                df = self.read_inputs('soil', MAXVEG=self.MAXVEG)
+                # SPP_map = df[0].reset_index(drop=True).to_dict(orient='list')
+                if len(FP_map)==0:
+                    FP_map = df[1].reset_index(drop=True).to_dict(orient='list')
             except:
-                self.set_SOIL_defaults()
+                pass
 
         if len(SPP_map) == 0:
             SPP_map = self.set_SOIL_defaults(SPP_map_default=True)
@@ -2405,8 +2411,6 @@ class CATHY:
         # check size of the heteregeneity
         # -----------------------------------
         if len(zone3d) == 0:
-            soil_heteregeneous_in_z = False
-            soil_heteregeneous_in_xy = False
             print("homogeneous soil")
             
             # check size of soil properties map versus nb of zones/ nb of layers
@@ -2416,14 +2420,13 @@ class CATHY:
                     raise ValueError("Wrong number of zones")
         
         else:
+            self.zone3d=zone3d
             xyvar = np.array(
                 [sum(np.unique(zone3d[l])) for l in range(np.shape(zone3d)[0])]
             )
             if sum(xyvar > 1) > 1:
-                soil_heteregeneous_in_xy = True
                 print("xy soil heterogeneity detected")
             if (sum(zone3d[0] != zone3d) > 0).any():
-                soil_heteregeneous_in_z = True
                 print("z soil heterogeneity detected")
 
         # read function arguments kwargs and udpate soil and parm files
@@ -2466,7 +2469,7 @@ class CATHY:
         else:
             SoilPhysProp = self._prepare_SPP_tb(SPP_map, zone3d)
             self.soil_SPP["SPP"] = SoilPhysProp  # matrice with respect to zones
-
+            
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
         FeddesParam = self._prepare_SOIL_vegetation_tb(FP_map)
@@ -2638,9 +2641,7 @@ class CATHY:
 
             else:
                 zones3d_def = np.arange(1, self.hapin["M"] * self.hapin["N"] + 1)
-                print(np.shape(zones3d_def))
                 zones3d_def = np.reshape(zones3d_def, [self.hapin["M"], self.hapin["N"]])
-                print(np.shape(zones3d_def))
                 self.update_zone(zones3d_def)
                 # loop over strates
                 # -----------------------------------------------------------------
@@ -2708,7 +2709,8 @@ class CATHY:
         """
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
-
+        
+        self.veg_map
         # Check if root_map file exist and is updated
         # -------------------------------------------
         if hasattr(self, "veg_map") is False:
@@ -2720,6 +2722,7 @@ class CATHY:
                     + "but vegetation map is not defined"
                 )
 
+        
         # Check vegetation heterogeneity dimension
         # ----------------------------------------
         if self.cathyH["MAXVEG"] != len(FP_map[list(FP_map)[0]]):
@@ -2732,7 +2735,7 @@ class CATHY:
 
         # check number of vegetation
         # --------------------------------------------------------------------
-        if self.cathyH["MAXVEG"] > 1:
+        if self.cathyH["MAXVEG"] > 1:   
             FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
             for iveg in range(
                 self.cathyH["MAXVEG"]
@@ -2860,6 +2863,8 @@ class CATHY:
                                                                              "root_map"
                                                                              )
                                                             )
+        self.veg_map = indice_veg
+
         if hasattr(self, "hapin") is False:
             self.update_prepo_inputs()
 
@@ -2886,8 +2891,6 @@ class CATHY:
 
         rootmapfile.close()
 
-        self.veg_map = indice_veg
-        
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
         #---------------------------------------------------------------------------------
@@ -3796,12 +3799,6 @@ class CATHY:
                 os.path.join(self.workdir, self.project_name, "prepro/zone")
             )
             return df
-        elif filename == "zone":
-            df = in_CT.read_zone(
-                os.path.join(self.workdir, self.project_name, "prepro/zone")
-            )
-            return df
-
         elif ("dtm_" in filename) | ("lakes_map" in filename):
             raster_mat, header_raster = in_CT.read_raster(
                 os.path.join(self.workdir, self.project_name, "prepro/" + filename)

@@ -184,17 +184,6 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
         if "data_format" in kwargs['meta']:
             data_format = kwargs['meta']["data_format"]
             dict_obs_2add.update(data_format=data_format)
-
-        # optionnal argument to set the rules how to interpolate CATHY mesh on pygimli mesh 
-        # if "mesh_nodes_modif" in kwargs['meta']:
-        #     mesh_nodes_modif = kwargs['meta']["mesh_nodes_modif"]
-        #     dict_obs_2add.update(mesh_nodes_modif=mesh_nodes_modif)
-            
-        # if "no_modif" in kwargs['meta']:
-        #     no_modif = kwargs['meta']["no_modif"]
-        #     dict_obs_2add.update(no_modif=no_modif)
-        #     print('!!!!no modif')
-        #     print(dict_obs_2add)
             
         elecs = []
         if "elecs" in kwargs:

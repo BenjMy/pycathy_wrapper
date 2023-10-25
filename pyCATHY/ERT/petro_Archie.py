@@ -200,8 +200,8 @@ def SW_2_ERa_DA(
     if "pygimli" in ERT_meta_dict["data_format"]:
         # USING PYGIMLI
         
-        print(ERT_meta_dict["sequenceERT"])
-        print(len(ERT_meta_dict["sequenceERT"]))
+        # print(ERT_meta_dict["sequenceERT"])
+        # print(len(ERT_meta_dict["sequenceERT"]))
         ERT_predicted = simuERT.create_ERT_survey_pg(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
             sequence=ERT_meta_dict["sequenceERT"],
@@ -209,7 +209,7 @@ def SW_2_ERa_DA(
             res0=res0,
             **kwargs
         )
-        print(ERT_predicted)
+        # print(ERT_predicted)
         # print(ERT_predicted['Data'])
         # print(len(ERT_predicted['Data']))
 
@@ -239,7 +239,7 @@ def SW_2_ERa_DA(
     df_ERT_predicted = pd.DataFrame(data=d)
 
 
-    savefig = True
+    savefig = False
     if savefig:
         print('backup figures')
 
