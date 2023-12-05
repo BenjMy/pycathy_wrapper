@@ -8,6 +8,7 @@ import pandas as pd
 
 try:
     import pygimli as pg
+    from pygimli.physics import ert
 except ImportError:
     pg = None
 
@@ -50,20 +51,27 @@ def read_ERT(filename, data_format, **kwargs):
 
         else:
             df_ERT = pg.load(filename)
+            if np.sum(df_ERT['rhoa'])==0:
+                if np.sum(df_ERT['k'])==0:
+                    df_ERT['k'] = ert.createGeometricFactors(df_ERT, 
+                                                            numerical=True
+                                                                 )
+                    df_ERT['rhoa'] = df_ERT['k']*df_ERT['r']
+
             df_ERT_new = pd.DataFrame(
                 [
                     df_ERT["a"],
                     df_ERT["b"],
-                    df_ERT["k"],
                     df_ERT["m"],
                     df_ERT["n"],
+                    df_ERT["k"],
                     df_ERT["r"],
                     df_ERT["rhoa"],
-                    df_ERT["valid"],
+                    # df_ERT["valid"],
                 ]
             )
             df_ERT_new = df_ERT_new.T
-            df_ERT_new.columns = ["a", "b", "k", "m", "n", "r", "rhoa", "valid"]
+            df_ERT_new.columns = ["a", "b", "m", "n", "k", "r", "rhoa"] #, "valid"]
             dict_ERT["elecs"] = np.array(df_ERT.sensorPositions())
 
     elif "custum" in data_format:

@@ -42,9 +42,13 @@ def create_ERT_survey_pg(pathERT, sequence, mesh, **kwargs):
         try:
             mesh3d = pg.load(pre + ".bms", verbose=verbose)
         except:
-            raise ValueError(
-                "Cannot read " + mesh + ": valid extensions are .msh and .bms"
-            )
+            try:
+                mesh3d = pg.load(pre + ".vtk", verbose=verbose)
+            except:
+                raise ValueError(
+                    "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
+                )
+
 
     if "shm" in sequence:
         scheme = pg.load(sequence)

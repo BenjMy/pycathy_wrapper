@@ -239,7 +239,7 @@ def SW_2_ERa_DA(
     df_ERT_predicted = pd.DataFrame(data=d)
 
 
-    savefig = False
+    savefig = True
     if savefig:
         print('backup figures')
 
@@ -251,16 +251,17 @@ def SW_2_ERa_DA(
         )
         mesh_CATHY_df.set_active_scalars("saturation_df")
         my_colormap = "Blues"
-        _ = plotter.add_mesh(mesh_CATHY_df, show_edges=True, cmap=my_colormap)
+        _ = plotter.add_mesh(mesh_CATHY_df, cmap=my_colormap,
+                             show_edges=False,)
 
-        plotter.update_scalar_bar_range([0, 1])  # max saturation is 1
+        # plotter.update_scalar_bar_range([0, 1])  # max saturation is 1
         plotter.show_grid()
 
         plotter.subplot(1, 0)
         mesh_CATHY_new_attr.set_active_scalars(active_attr)
         _ = plotter.add_mesh(
             mesh_CATHY_new_attr,
-            show_edges=True,
+            show_edges=False,
             clim=[
                 min(mesh_CATHY_new_attr[active_attr]),
                 max(mesh_CATHY_new_attr[active_attr]),
@@ -272,11 +273,11 @@ def SW_2_ERa_DA(
         mesh_geophy_new_attr.set_active_scalars(scalar_new)
         _ = plotter.add_mesh(
             mesh_geophy_new_attr,
-            show_edges=True,
-            clim=[
-                min(mesh_CATHY_new_attr[active_attr]),
-                max(mesh_CATHY_new_attr[active_attr]),
-            ],
+            show_edges=False,
+            # clim=[
+            #     min(mesh_CATHY_new_attr[active_attr]),
+            #     max(mesh_CATHY_new_attr[active_attr]),
+            # ],
         )
 
         if "pygimli" in ERT_meta_dict["data_format"]:
@@ -361,6 +362,7 @@ def Archie_rho_DA(
                         len(sigma[ti, :]),
                     )
                 sigma[ti, :] = sigma[ti, :] + noise
+                
             if i == 0:
                 console.rule(
                     ":octopus: Parameter perturbation :octopus:", style="green"
@@ -378,6 +380,8 @@ def Archie_rho_DA(
                 )
                 console.rule("", style="green")
         except:
+            if i == 0:
+                print('See eq. 4.4 thesis Isabelle p.95')
             for meas_nb in range(len(sigma)):  # Loop over mesh nodes
                 # See eq. 4.4 thesis Isabelle p.95
                 # ------------------------------------
@@ -386,4 +390,5 @@ def Archie_rho_DA(
                 )  # See eq. 4.4 thesis Isabelle p.95
                 sigma[meas_nb] = sigma[meas_nb] + noise
 
+    print(np.max(1 / sigma))
     return 1 / sigma

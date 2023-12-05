@@ -92,6 +92,8 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     data_pert = (data - observation.T).T
    
     if np.max(abs(data_pert)) > 1e3:
+        print(f'data mean: {np.mean(data)}, min: {np.min(data)}, max{np.max(data)}')
+        print(f'data obs: {np.mean(observation)}, min: {np.min(observation)}, max{np.max(observation)}')
         print('!predictions are too far from observations!')
 
     # Calculate S = ensemble observations perturbation from ensemble observation mean.

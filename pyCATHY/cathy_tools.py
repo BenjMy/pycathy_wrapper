@@ -623,6 +623,7 @@ class CATHY:
                         "Inconsistent shapes between vegetation map and DEM - need to update veg first"
                     )
         except:
+            self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
             pass
 
     #%%
@@ -1168,7 +1169,7 @@ class CATHY:
         for keykwargs, value in kwargs.items():
             if keykwargs == "zratio":
                 key = "zratio(i),i=1,nstr"
-                if sum(value) != 1:
+                if sum(value) != float(1):
                     self.console.rule(
                         ":warning: warning messages above :warning:", style="yellow"
                     )
@@ -1453,15 +1454,14 @@ class CATHY:
         if min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])) <= 0:
             raise ValueError("Vtk time steps should be monotonically increasing")
 
-        if self.parm["DELTAT"] > min(
-            np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])
-        ) or self.parm["DELTAT"] > 1e-2 * min(
-            np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])
+        if self.parm["DTMIN"] > min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])
+        # ) or self.parm["DELTAT"] > 1e-1 * min(
+        #     np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])
         ):
             warnings_parm.append(
-                "Adjusting DELTAT with respect to time of interests requested" + "\n"
+                "Adjusting DTMIN with respect to time of interests requested" + "\n"
             )
-            self.parm["DELTAT"] = min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])) / 1e2
+            self.parm["DTMIN"] = min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])) / 1e2
 
         if self.parm["DELTAT"] < self.parm["DTMIN"]:
             warnings_parm.append(
@@ -1471,7 +1471,7 @@ class CATHY:
 
         if self.parm["DELTAT"] >= self.parm["DTMAX"]:
             warnings_parm.append("Adjusting DTMAX == 2*DELTAT" + "\n")
-            self.parm["DTMAX"] = 2 * self.parm["DELTAT"]
+            self.parm["DTMAX"] = 1e2 * self.parm["DELTAT"]
 
         if self.parm["TMAX"] < max(self.parm["(TIMPRT(I),I=1,NPRT)"]):
             warnings_parm.append(
@@ -2657,7 +2657,7 @@ class CATHY:
                             LayeriZonei[izone, i] = SPP[spp][flag_zone - 1]
                     SoilPhysProp.append(LayeriZonei)
             SoilPhysProp = np.vstack(SoilPhysProp)
-            np.shape(SoilPhysProp)
+            # np.shape(SoilPhysProp)
 
         # case if there is only one zone in the mesh
         # -------------------------------------------------------------
@@ -3408,8 +3408,8 @@ class CATHY:
             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_new"]))
             for m in range(len(prop_map)):
                 prop_mesh_nodes[
-                    self.mesh_pv_attributes["node_markers_new"] == m + 1
-                ] = prop_map[m]
+                                self.mesh_pv_attributes["node_markers_new"] == m + 1
+                                ] = prop_map[m]
             self.mesh_pv_attributes[prop_name] = prop_mesh_nodes
 
             self.mesh_pv_attributes.save(

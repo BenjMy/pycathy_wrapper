@@ -174,48 +174,48 @@ def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
         DESCRIPTION.
 
     """
+    from rosetta import rosetta, SoilData
 
-    # data = [[20,20,60]] # Sand, silt, and clay
+    # data = [[20,20,60,1.45]] # Sand, silt, and clay
     soildata = SoilData.from_array(data)
     mean, stdev, codes = rosetta(3, soildata)  # rosetta version 3
 
-    VGP_predict_names = {
+    VGP_predict_names = [
         "theta_r",
         "theta_s",
         "log10(alpha)",
         "log10(n)",
         "log10(ksat)",
-    }
-
+    ]
     VGP_predict = {}
     for i, VGP in enumerate(VGP_predict_names):
+        # print(i,VGP,mean[:, i])
         VGP_predict[VGP] = abs(float(mean[:, i]))
         VGP_predict[VGP + "_stdev"] = float(stdev[:, i])
 
         # array  |
         # column | parameter
         # -----------------
-        #    0   | theta_r, residual water content
-        #    1   | theta_s, saturated water content
+        #    0   | theta_r, residual water content (cm3/cm3)
+        #    1   | theta_s, saturated water content (cm3/cm3)
         #    2   | log10(alpha), van Genuchten 'alpha' parameter (1/cm)
         #    3   | log10(npar), van Genuchten 'n' parameter
         #    4   | log10(Ksat), saturated hydraulic conductivity (cm/day)
 
     VGP_predict_CATHY = {}
-    VGP_predict_CATHY["POROS"] = VGP_predict["theta_r"]
-    VGP_predict_CATHY["VGNCELL"] = 10 ** VGP_predict["log10(n)"]
+    VGP_predict_CATHY["POROS"] = 1- VGP_predict["theta_s"]
+    VGP_predict_CATHY["VGNCELL"] =  10 ** VGP_predict["log10(n)"]
     VGP_predict_CATHY["VGRMCCELL"] = VGP_predict["theta_r"]
-    VGP_predict_CATHY["VGPSATCELL"] = (
-        1 / (10 ** VGP_predict["log10(alpha)"])
-    ) * 1e-3  #  1/alpha
-    VGP_predict_CATHY["PERMX"] = 10 ** (VGP_predict["log10(ksat)"] * (1e-3 / 86400))
-    VGP_predict_CATHY["PERMY"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-3 / 86400)
-    VGP_predict_CATHY["PERMZ"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-3 / 86400)
+    VGP_predict_CATHY["VGPSATCELL"] = VGP_predict["theta_s"] #(1 / (10 ** VGP_predict["log10(alpha)"])) # * 1e-3  #  1/alpha
+    VGP_predict_CATHY["PERMX"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-2 / 86400)
+    VGP_predict_CATHY["PERMY"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-2 / 86400)
+    VGP_predict_CATHY["PERMZ"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-2 / 86400)
+    VGP_predict_CATHY["ELSTOR"] = 1e-5
 
-    import numpy as np
+    # import numpy as np
 
-    np.exp(1.169) * (1e-3 / 86400)
-    np.exp(2.808) * (1e-3 / 86400)
+    # np.exp(1.169) * (1e-3 / 86400)
+    # np.exp(2.808) * (1e-3 / 86400)
 
     return VGP_predict_CATHY
 

@@ -67,36 +67,38 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     # flip y and z axis as CATHY and pg have different convention for axis
     # ------------------------------------------------------------------------
     in_nodes_mod = np.array(mesh_CATHY.points)
-    in_nodes_mod_pg = np.array(mesh_OUT.points)
-        
-    if 'no_modif' in ERT_meta_dict.keys():
-        print('no mesh transformation before interpolation')
+    # in_nodes_mod_pg = np.array(mesh_OUT.points)
+    
+    # mesh_nodes_modif = None
+    if 'mesh_nodes_modif' in ERT_meta_dict:
+        in_nodes_mod_m = ERT_meta_dict['mesh_nodes_modif']
+        print(in_nodes_mod_m)
     else:
-        idx = np.array([0, 2, 1])  # reorder xyz to xzy
-        in_nodes_mod_m = in_nodes_mod[:, idx]
-        in_nodes_mod_m[:, 2] = -np.flipud(in_nodes_mod_m[:, 2])
-        in_nodes_mod_m[:, 1] = -np.flipud(in_nodes_mod_m[:, 1])
+    # mesh_nodes_modif is None:
+        print('no mesh transformation before interpolation')
+        in_nodes_mod_m = in_nodes_mod[:, :]
+        # in_nodes_mod_m = in_nodes_mod[:, :]
 
     path = os.getcwd()
     if "path" in kwargs:
         path = kwargs["path"]
         
-    if 'no_modif' in ERT_meta_dict.keys():
-        data_OUT, warm_0 = trace_mesh(
-                                        mesh_CATHY, 
-                                        mesh_OUT, 
-                                        scalar=scalar, 
-                                        threshold=1e-1, 
-                                        )
-    else:
+    # if 'no_modif' in ERT_meta_dict.keys():
+    #     data_OUT, warm_0 = trace_mesh(
+    #                                     mesh_CATHY, 
+    #                                     mesh_OUT, 
+    #                                     scalar=scalar, 
+    #                                     threshold=1e-1, 
+    #                                     )
+    # else:
         # in_nodes_mod_m = ERT_meta_dict["mesh_nodes_modif"]
-        data_OUT, warm_0 = trace_mesh(
-                                        mesh_CATHY, 
-                                        mesh_OUT, 
-                                        scalar=scalar, 
-                                        threshold=1e-1, 
-                                        in_nodes_mod=in_nodes_mod_m
-                                        )
+    data_OUT, warm_0 = trace_mesh(
+                                    mesh_CATHY, 
+                                    mesh_OUT, 
+                                    scalar=scalar, 
+                                    threshold=1e-1, 
+                                    in_nodes_mod=in_nodes_mod_m
+                                    )
         
         
     if len(warm_0) > 0:
@@ -236,9 +238,9 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     # import time
     # t0 = time.time()
 
-    in_nodes_mod = np.array(meshIN.points)
-    if "in_nodes_mod" in kwargs:
-        in_nodes_mod = kwargs["in_nodes_mod"]
+    # in_nodes_mod = np.array(meshIN.points)
+    # if "in_nodes_mod" in kwargs:
+    in_nodes_mod = kwargs["in_nodes_mod"]
     meshIN.set_active_scalars(scalar)
     meshIN.points = in_nodes_mod
 
@@ -255,13 +257,15 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     out_data = result[scalar]
     # print (time.time() - t0, "seconds process time")
 
-    warm_0 = ""
-    if len(np.where(out_data == 0)) > 0:
-        warm_0 = "interpolation created 0 values - replacing them by min value  1e-3 of input CATHY predicted ER mesh"
-
     # print('Replace now')
     # out_data = np.where(out_data == 0, 1e-3, out_data)
-    out_data = np.where(out_data == 0, np.mean(out_data), out_data)
+    out_data = np.where(out_data == 0, np.min(out_data), out_data)
+
+    warm_0 = ""
+    if len(np.where(out_data == 0)) > 0:
+        warm_0 = f"interpolation created 0 values - replacing them by mean value {np.mean(out_data)} of input CATHY predicted ER mesh"
+        warm_0 = f"min {np.min(out_data)}, max {np.min(out_data)}, median {np.median(out_data)} "
+
 
     # print (time.time() - t0, "seconds process time")
 
@@ -483,7 +487,7 @@ def add_attribute_2mesh(
 
     meshname = name + ".vtk"
 
-    saveMesh = False
+    saveMesh = True
     if saveMesh:
         path = os.getcwd()
         if "path" in kwargs:
@@ -520,6 +524,7 @@ def trace_mesh_pg(meshIN, meshOUT, method="spline", **kwargs):
 
 def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
 
+    ltop, lbot = get_layer_depths(dem_parameters)
     zone3d_layers_top, zone3d_layer_bot = get_zone3d_layer_depths(zone, dem_parameters)
 
     dem_mat3d_layers_top = [DEM - zz for zz in zone3d_layers_top]
@@ -528,16 +533,22 @@ def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
     zone3d_topflag = []
     for li in range(dem_parameters["nstr"]):
         zone3d_topflag_li = np.ones(np.shape(dem_mat3d_layers_top[0]))
-
+    
         bool_top_lli = []
         for ll in layers.keys():
-            layers_adj_top = DEM - layers[ll][0]
-            layers_adj_bot = DEM - layers[ll][1]
+            layers_adj_top = DEM - abs(layers[ll][0])
+            layers_adj_bot = DEM - abs(layers[ll][1])
+            
             # differences between top of the layer i of the mesh and top of the desired layer
+            # -------------------------------------------------------------------------------
             diff_top = dem_mat3d_layers_top[li] - layers_adj_top
-            cond1 = diff_top <= 0
+            cond1 = diff_top <= 1e-2
+            # -------------------------------------------------------------------------------
             diff_bot = dem_mat3d_layers_bot[li] - layers_adj_bot
-            cond2 = diff_bot >= 0
+            cond2 = diff_bot <= 1e-2
+            # print('lmeshi'+str(li),
+                  # ll,layers[ll],np.mean(diff_top),np.mean(diff_bot),cond1[0][0],cond2[0][0])
+    
             # if li<dem_parameters["nstr"]-1:
             #     cond2 = abs(diff)<= abs(dem_mat3d_layers_top[li+1] - dem_mat3d_layers_top[li])
             # else:
@@ -551,6 +562,22 @@ def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
 
 
 def get_zone3d_layer_depths(zone_raster, dem_parameters):
+    '''
+    Return a 3d matrice with dimension [Number of layers, X cells, Y cells]
+
+    Parameters
+    ----------
+    zone_raster : TYPE
+        DESCRIPTION.
+    dem_parameters : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    '''
 
     zone3d_top = []
     zone3d_bot = []

@@ -50,6 +50,8 @@ from pyCATHY.cathy_utils import (
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 import geopandas as gpd
+import rioxarray as rio
+
 
 # mpl.style.use('default')
 mpl.rcParams["grid.color"] = "k"
@@ -180,6 +182,11 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     
 def show_spatialET(df_fort777,**kwargs):
 
+    
+    crs = None
+    if 'crs' in kwargs:
+        crs = kwargs.pop('crs')
+
     ti = 0
     if 'ti' in kwargs:
         ti = kwargs.pop('ti')
@@ -206,51 +213,80 @@ def show_spatialET(df_fort777,**kwargs):
         ax = kwargs.pop("ax")
         
 
-    if scatter:
+    # if scatter:
         
-        if mask is not None:
-            
-            polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
-            filtered_data = []
-            for i in range(len(df_fort777_select_t)):
-                point = gpd.points_from_xy([df_fort777_select_t['X'].iloc[i]],
-                                           [df_fort777_select_t['Y'].iloc[i]])[0]
-                if polygon.contains(point):
-                    filtered_data.append([df_fort777_select_t['X'].iloc[i],
-                                          df_fort777_select_t['Y'].iloc[i],
-                                          df_fort777_select_t['ACT. ETRA'].iloc[i]])
-            filtered_data = np.vstack(filtered_data)
-            
-            cmap = ax.scatter(x=filtered_data[:,0], 
-                        y=filtered_data[:,1], 
-                        c=filtered_data[:,2],
-                        **kwargs
-                        )
-            
-        else:
+    if mask is not None:
         
-            cmap = ax.scatter(x=df_fort777_select_t['X'], 
-                        y=df_fort777_select_t['Y'], 
-                        c=df_fort777_select_t['ACT. ETRA'],
-                        **kwargs
-                        )
+        polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
+        filtered_data = []
+        for i in range(len(df_fort777_select_t)):
+            point = gpd.points_from_xy([df_fort777_select_t['X'].iloc[i]],
+                                       [df_fort777_select_t['Y'].iloc[i]])[0]
+            if polygon.contains(point):
+                filtered_data.append([df_fort777_select_t['X'].iloc[i],
+                                      df_fort777_select_t['Y'].iloc[i],
+                                      df_fort777_select_t['ACT. ETRA'].iloc[i]])
+                
+        mask.crs
+        filtered_data = np.vstack(filtered_data)
+        df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
+        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')
+        df_fort777_select_t_xr.rio.write_crs(mask.crs, inplace=True)
+        df_fort777_select_t_xr_clipped = df_fort777_select_t_xr.rio.clip(mask.geometry)
+        df_fort777_select_t_xr_clipped = df_fort777_select_t_xr_clipped.transpose('Y', 'X')
+        data_array = df_fort777_select_t_xr_clipped['ACT. ETRA'].values
+        
+        df_fort777_select_t_xr_clipped.rio.bounds()
+        
+        # Plot using plt.imshow
+        cmap = ax.imshow(data_array, 
+                         cmap='viridis', 
+                         origin='lower', 
+                         extent=[min(filtered_data[:,0]),max(filtered_data[:,0]),
+                                 min(filtered_data[:,1]),max(filtered_data[:,1])]
+                  )
+
     else:
         
-        x = df_fort777_select_t['X'].values
-        y = df_fort777_select_t['Y'].values
-        z = df_fort777_select_t['ACT. ETRA'].values
+        
+        df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
+        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')
+        
+        if crs is not None:
+            df_fort777_select_t_xr.rio.write_crs(crs, inplace=True)
+        df_fort777_select_t_xr = df_fort777_select_t_xr.transpose('Y', 'X')
+        data_array = df_fort777_select_t_xr['ACT. ETRA'].values
+        
+        # Plot using plt.imshow
+        cmap = ax.imshow(data_array, 
+                         cmap='viridis', 
+                         origin='lower', 
+                         extent=[min(df_fort777_select_t['X']),max(df_fort777_select_t['X']),
+                                 min(df_fort777_select_t['Y']),max(df_fort777_select_t['Y'])]
+                  )
+    
+    #         cmap = ax.scatter(x=df_fort777_select_t['X'], 
+    #                     y=df_fort777_select_t['Y'], 
+    #                     c=df_fort777_select_t['ACT. ETRA'],
+    #                     **kwargs
+    #                     )
+    # else:
+        
+        # x = df_fort777_select_t['X'].values
+        # y = df_fort777_select_t['Y'].values
+        # z = df_fort777_select_t['ACT. ETRA'].values
 
-        # Create a grid of points and evaluate a function on the grid
-        xi, yi, mask = create_gridded_mask(x,y,**kwargs)
-        xx, yy = xi.flatten(), yi.flatten()
+        # # Create a grid of points and evaluate a function on the grid
+        # xi, yi, mask = create_gridded_mask(x,y,**kwargs)
+        # xx, yy = xi.flatten(), yi.flatten()
     
-        zi = griddata((x, y), z, (xx, yy), method='cubic')
+        # zi = griddata((x, y), z, (xx, yy), method='cubic')
     
-        # Apply the mask to the gridded data
-        zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
+        # # Apply the mask to the gridded data
+        # zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
     
-        # Plot the masked data
-        cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
+        # # Plot the masked data
+        # cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
         
     ax.set_title('Actual evapotranspiration')
     ax.set_xlabel('x (m)')
@@ -707,6 +743,7 @@ def show_vtk_TL(
         plotter.update_scalar_bar_range([kwargs["clim"][0], kwargs["clim"][1]])
 
     legend_entry = "Time= " + str(mesh["TIME"])
+    print(legend_entry)
     if x_units is not None:
         xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
         legend_entry = "Time=" + str(t_lgd) + xlabel
@@ -744,7 +781,7 @@ def show_vtk_TL(
         gif_original = os.path.join(path + unit + ".gif")
         gif_speed_down = os.path.join(path + unit + "_slow.gif")
         gif = imageio.mimread(gif_original)
-        imageio.mimsave(gif_speed_down, gif, fps=0.8)
+        imageio.mimsave(gif_speed_down, gif, duration=1800)
         print("gif saved" + os.path.join(path, gif_original))
 
     return
@@ -1671,6 +1708,10 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     ),
                     True,
                 )
+                
+            check_nan = isENS['sw_bef_update_'].isnull().values.any()
+            
+
 
             select_isENS = isENS[isENS["idnode"].isin(nodes_of_interest)]
             select_isENS = select_isENS.set_index([keytime, "idnode"])
@@ -1789,7 +1830,9 @@ def DA_plot_time_dynamic(
             xlabel="(assimilation) time - (h)",
             ylabel="pressure head $\psi$ (m)",
         )
-
+        
+        print(prep_DA["ens_max_isENS_time"])
+        
         lgd = ax.fill_between(
             prep_DA["ens_max_isENS_time"][keytime],
             prep_DA["ens_min_isENS_time"]["min(ENS)"],

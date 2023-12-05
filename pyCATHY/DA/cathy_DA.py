@@ -69,6 +69,7 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.importers import sensors_measures as in_meas
 from pyCATHY.plotters import cathy_plots as plt_CT
+import pyCATHY.meshtools as mt
 
 # from update_ic
 
@@ -738,10 +739,9 @@ class DA(CATHY):
 
 
         """
-
-        # self.run_processor(DAFLAG=1, **kwargs) # to create the processor exe
-        self.run_processor(DAFLAG=1, **kwargs) # to create the processor exe
-        # self.recompileSrc()
+        self.run_processor(DAFLAG=1,
+                           runProcess=False,
+                           **kwargs) # to create the processor exe
         callexe = "./" + self.processor_name
 
         self.damping = 1
@@ -775,6 +775,7 @@ class DA(CATHY):
             list_parm2update="all",  
             cycle_nb=self.count_DA_cycle,
         )
+
         all_atmbc_times = np.copy(self.atmbc["time"])
 
         # Open loop
@@ -817,12 +818,10 @@ class DA(CATHY):
             id_valid = ~np.array(rejected_ens)
             self.ens_valid = list(np.arange(0, self.NENS)[id_valid])
 
-            # define subloop here
+            #!! define subloop here to optimize the inflation!!
             # if 'optimize_inflation' in DA_type:
             # threshold_convergence = 10
             # while self.df_performance < threshold_convergence:
-
-            # self.atmbc['time']
 
             # check if there is an observation at the given atmbc time
             # --------------------------------------------------------
@@ -903,9 +902,9 @@ class DA(CATHY):
                     if np.any(ensemble_psi_valid > 0):
                         # raise ValueError('positive pressure heads observed')
                         print("!!!!!!positive pressure heads observed!!!!!")
-                        psi_2replace = np.where(ensemble_psi_valid >= 0)
-                        ensemble_psi_valid_new = ensemble_psi_valid
-                        ensemble_psi_valid_new[psi_2replace] = -1e-3
+                        # psi_2replace = np.where(ensemble_psi_valid >= 0)
+                        # ensemble_psi_valid_new = ensemble_psi_valid
+                        # ensemble_psi_valid_new[psi_2replace] = -1e-3
 
                 check_ensemble(ensemble_psi_valid, ensemble_sw_valid)
 
@@ -919,9 +918,7 @@ class DA(CATHY):
                 self.console.print(
                     ":confused: No observation for this time - run hydrological model only"
                 )
-                print(
-                    "!shortcut here ensemble are not validated!"
-                )
+  
                 (
                     ensemble_psi_valid,
                     ensemble_sw_valid,
@@ -929,6 +926,12 @@ class DA(CATHY):
                     sim_size,
                 ) = self._read_state_ensemble()
                 analysis_valid = ensemble_psi_valid
+                print("!shortcut here ensemble are not validated!")
+                print(f'''max, min, mean sw: 
+                      {np.max(ensemble_sw_valid)}, 
+                      {np.min(ensemble_sw_valid)}, 
+                      {np.mean(ensemble_sw_valid)}
+                      ''')
 
             self.count_atmbc_cycle = self.count_atmbc_cycle + 1
 
@@ -1831,7 +1834,7 @@ class DA(CATHY):
         # -------------------------------------
         
         # if hasattr(self, 'soil_SPP') is False:
-        #     self.read_inputs('soil')
+            # self.read_inputs('soil')
             
         porosity = self.soil_SPP["SPP"][:, 4][0]
         if not isinstance(porosity, list):
@@ -1868,6 +1871,69 @@ class DA(CATHY):
 
         pass
 
+
+    def _read_dict_pert_update_ens_SPP(self,
+                                       dict_parm_pert,
+                                       SPPkey_het_ens,
+                                       key_root,
+                                       key,
+                                       update_key,
+                                       ens_nb,
+                                       shellprint_update
+                                       ):
+        '''
+        Read dictionnary of perturbated parameters and parse it progressively to 
+        SPPkey_het_ens to build a matrice and update soil
+        '''
+        
+        # SPP_map = self.soil_SPP["SPP_map"]
+        df_SPP, _ = in_CT.read_soil(os.path.join(os.getcwd(), "input/soil"),
+                               self.dem_parameters,self.cathyH["MAXVEG"])
+        # df_SPP.groupby('str').mean().sort_index(inplace=True)  
+        # df_SPP.xs('0',level=1).to_dict()
+        SPP_map =  df_SPP.xs('0',level=1).to_dict(orient='list')
+
+        print('SPP ensemble update per zones is not yet implemented')
+        # print(SPP_map)
+        # print(SPP_test)
+            
+        if len(SPPkey_het_ens) == 0:
+            if key_root[0].casefold() in 'ks':
+                SPPkey_het_ens = np.ones([len(SPP_map["PERMX"]), self.NENS])
+            elif key_root[0].casefold() in 'porosity':
+                SPPkey_het_ens = np.ones([len(SPP_map["POROS"]), self.NENS])
+            SPPkey_het_ens[:] = np.nan
+        
+        # fill with parameter dictionnary containing all the values for each update
+        SPPkey_het_ens[int(key_root[1]), ens_nb] = dict_parm_pert[key][update_key][ens_nb]
+
+        SPP_map_ensi = []
+        for es in range(self.NENS):
+            spd = dict()
+            if key_root[0].casefold() in 'ks':
+                spd["PERMX"] = list(SPPkey_het_ens[:, ens_nb])
+                spd["PERMY"] = list(SPPkey_het_ens[:, ens_nb])
+                spd["PERMZ"] = list(SPPkey_het_ens[:, ens_nb])
+            elif key_root[0].casefold() in 'porosity':
+                spd["POROS"] = list(SPPkey_het_ens[:, ens_nb])
+
+            SPP_map_ensi.append(spd)
+
+        # update SPP map
+        SPP_map.update(SPP_map_ensi[ens_nb])
+        # print(SPPkey_het_ens[:, ens_nb])
+
+        if np.isnan(SPPkey_het_ens[:, ens_nb]).any() == False:
+            self.update_soil(
+                SPP_map=SPP_map,
+                FP_map=self.soil_FP["FP_map"],
+                zone3d=self.zone3d,
+                verbose=self.verbose,
+                filename=os.path.join(os.getcwd(), "input/soil"),
+                shellprint_update=shellprint_update,
+            )
+        return SPPkey_het_ens
+                            
     def update_ENS_files(self, dict_parm_pert, list_parm2update, **kwargs):
         """
         Update by overwriting ensemble files (usually after analysis step or initially to build the ensemble)
@@ -1956,8 +2022,11 @@ class DA(CATHY):
         VG_parms_mat_ens = []  # matrice of ensemble for VG parameters
         VG_p_possible_names = ["n_VG", "thetar_VG", "alpha_VG", "VGPSATCELL_VG"]
         VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
-        PERMX_het_ens = []  # matrice of ensemble for hydraulic conductivity parameters
        
+        # SPP_possible_names = ["porosity", "ks"]
+        ks_het_ens = []  # matrice of ensemble for heterogeneous SPP parameters
+        POROS_het_ens = []  # matrice of ensemble for heterogeneous SPP parameters
+        
         # Archie
         # -------
         Archie_parms_mat_ens = []  # matrice of ensemble for Archie parameters
@@ -1980,6 +2049,8 @@ class DA(CATHY):
         for parm_i, key in enumerate(
             list_parm2update
         ):  # loop over perturbated variables dict
+        
+
             key_root = re.split("(\d+)", key)
             if len(key_root) == 1:
                 key_root.append("0")
@@ -2005,25 +2076,13 @@ class DA(CATHY):
                 if key_root[0].casefold() in "atmbc".casefold():
                     
                     if key.casefold() in "atmbc0".casefold():
-    
-                        # self.atmbc
-                        # print("hietograph perturbated not yet implemented")
-                        
                         tper_stacked = []
                         for kk in dict_parm_pert:
                             if 'atmbc' in kk:
                                 tper_stacked.append(dict_parm_pert[kk]['time_variable_perturbation'])
                         tper_stacked = np.array(tper_stacked)
-                        
                         VALUE = tper_stacked[:,:,ens_nb]
-                        times = dict_parm_pert[key]['data2perturbate']['time']
-                        # np.shape(VALUE)
-                        # self.HSPATM
-                        # self.read_inputs('atmbc')
-                        # self.atmbc['IETO']
-                        
-                        # self.selec_atmbc_window(self.NENS, ENS_times)
-                            
+                        times = dict_parm_pert[key]['data2perturbate']['time']                           
                         self.update_atmbc(
                                             HSPATM=self.atmbc['HSPATM'],
                                             IETO=self.atmbc['IETO'],
@@ -2068,38 +2127,33 @@ class DA(CATHY):
                         )
                 # kss update
                 # --------------------------------------------------------------
-                elif key_root[0].casefold() in "ks".casefold():
-                    if len(PERMX_het_ens) == 0:
-                        SPP_map = self.soil_SPP["SPP_map"]
-                        PERMX_het_ens = np.ones([len(SPP_map["PERMX"]), self.NENS])
-                        PERMX_het_ens[:] = np.nan
+                elif key_root[0].casefold() in 'ks':                   
+                    ks_het_ens = self._read_dict_pert_update_ens_SPP(
+                                                       dict_parm_pert,
+                                                       ks_het_ens,
+                                                       key_root,
+                                                       key,
+                                                       update_key,
+                                                       ens_nb,
+                                                       shellprint_update
+                                                       )
+                    
+                    
+                elif key_root[0].casefold() in 'porosity':
+                    POROS_het_ens = self._read_dict_pert_update_ens_SPP(
+                                                       dict_parm_pert,
+                                                       POROS_het_ens,
+                                                       key_root,
+                                                       key,
+                                                       update_key,
+                                                       ens_nb,
+                                                       shellprint_update
+                                                       )
 
-                    PERMX_het_ens[int(key_root[1]), ens_nb] = dict_parm_pert[key][
-                        update_key
-                    ][ens_nb]
-
-                    SPP_map_ensi = []
-                    for es in range(self.NENS):
-                        spd = dict()
-                        spd["PERMX"] = list(PERMX_het_ens[:, ens_nb])
-                        spd["PERMY"] = list(PERMX_het_ens[:, ens_nb])
-                        spd["PERMZ"] = list(PERMX_het_ens[:, ens_nb])
-                        SPP_map_ensi.append(spd)
-
-                    SPP_map.update(SPP_map_ensi[ens_nb])
-
-                    if np.isnan(PERMX_het_ens[:, ens_nb]).any() == False:
-                        self.update_soil(
-                            SPP_map=SPP_map,
-                            FP_map=self.soil_FP["FP_map"],
-                            # zone3d=self.zone3d,
-                            verbose=self.verbose,
-                            filename=os.path.join(os.getcwd(), "input/soil"),
-                            shellprint_update=shellprint_update,
-                        )
                 # VG parameters update
                 # --------------------------------------------------------------
                 elif key_root[0] in VG_p_possible_names:
+                    
 
                     # equivalence_CATHY = {
                     #                      'thetar_VG':'VGRMCCELL',
@@ -2579,7 +2633,12 @@ class DA(CATHY):
 
             # infer soil parameters properties
             # ---------------------------------
-            porosity = self.soil_SPP["SPP"][:, 4][0]
+            # porosity = self.soil_SPP["SPP"][:, 4][0]
+            SPP_ensi, _ = in_CT.read_soil(os.path.join(path_fwd_CATHY, self.input_dirname,'soil'),
+                                   self.dem_parameters,self.cathyH["MAXVEG"])
+            # SPP_ensi.POROS
+            # SPP_ensi.POROS.min()
+            # SPP_ensi.POROS.max()
 
             # find data to map with dictionnary of observations
             # --------------------------------------------
@@ -2610,9 +2669,27 @@ class DA(CATHY):
                 if "swc" in obs_key:
                     # case 2: sw assimilation (Hx_SW)
                     # --------------------------------------------------------------------
-                    print('transform sat to SWC with porosity=' + str(porosity))
-                    print('note: the value of the porosity can be unique or not depending on the soil physical properties defined')
-                    Hx_SW = state[1][obs2map[i]["mesh_nodes"]] * porosity
+                    
+                    # find porosity assoicated to mesh node position
+                    # ----------------------------------------------
+                    obs2map[i]["mesh_nodes"]
+                    xyz_swc = self.grid3d['mesh3d_nodes'][obs2map[i]["mesh_nodes"][0]]
+                    
+                    ltop, lbot = mt.get_layer_depths(self.dem_parameters)
+                    idlayer_swc = np.where(abs(xyz_swc[2])>ltop)[0]
+                    porosity_swc = SPP_ensi.xs((str(idlayer_swc[0]),'0'))['POROS']
+                    self.console.print(f"Transform sat to SWC with porosity=' {str(porosity_swc)}")
+                    self.console.rule(
+                        ":warning: warning messages above :warning:", style="yellow"
+                    )
+                    self.console.print(
+                        r"""Current implementation does not support different porosity zones!""",
+                        style="yellow",
+                    )
+                    # print('Transform sat to SWC with porosity=' + str(porosity_swc))
+                    # print('note: the value of the porosity can be unique or not depending on the soil physical properties defined')
+                    # print('Current implementation does not support different porosity zones!')
+                    Hx_SW = state[1][obs2map[i]["mesh_nodes"]] * porosity_swc
                     Hx_stacked.append(Hx_SW)
                     # note: the value of the porosity can be unique or not depending on the soil physical properties defined
 
@@ -2621,7 +2698,8 @@ class DA(CATHY):
                     # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
                     # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
                     # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
-                    
+                    self.console.print(f"Read actual ET on a given node")
+
                     df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
                                                                   'fort.777'),
                                                       )
@@ -2796,7 +2874,6 @@ class DA(CATHY):
         sw = np.zeros([M_rows, N_col]) * 1e99
         for j in range(self.NENS):
             # for j in range(len(ens_valid)):
-
             try:
                 df_psi = out_CT.read_psi(
                     os.path.join(
@@ -2940,17 +3017,16 @@ class DA(CATHY):
                                             )
                     
             if self.count_atmbc_cycle is not None:
-                # try:
-                if HSPATM!=0:
-                    time_window_atmbc = [
-                        df_atmbc.iloc[self.count_atmbc_cycle]["time"],
-                        df_atmbc.iloc[self.count_atmbc_cycle + 1]["time"],
-                    ]
-                else:
+                if HSPATM==0:
                     time_window_atmbc = [
                         df_atmbc.time.unique()[self.count_atmbc_cycle],
                         df_atmbc.time.unique()[self.count_atmbc_cycle+1]    
                         ]
+                else:
+                    time_window_atmbc = [
+                        df_atmbc.iloc[self.count_atmbc_cycle]["time"],
+                        df_atmbc.iloc[self.count_atmbc_cycle + 1]["time"],
+                    ]
             else:
                 time_window_atmbc = [ENS_times[0], ENS_times[1]]
     
