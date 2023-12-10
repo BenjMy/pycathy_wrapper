@@ -799,7 +799,7 @@ class DA(CATHY):
         # Run hydrological model sequentially
         # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
-
+        
         for t_atmbc in all_atmbc_times:  # atmbc times MUST include assimilation observation times
 
             self._run_ensemble_hydrological_model(parallel, callexe)
@@ -925,12 +925,33 @@ class DA(CATHY):
                     ens_size,
                     sim_size,
                 ) = self._read_state_ensemble()
+                
+                print("!shortcut here ensemble are not validated!")
+
                 analysis_valid = ensemble_psi_valid
+                
+                # DA mark_invalid_ensemble
+                # ----------------------------------------------------------------
+                # (
+                #     prediction_valid,
+                #     ensemble_psi_valid,
+                #     ensemble_sw_valid,
+                #     analysis_valid,
+                #     analysis_param_valid,
+                # ) = self._mark_invalid_ensemble(
+                #                                 self.ens_valid,
+                #                                 prediction,
+                #                                 ensemble_psi,
+                #                                 ensemble_sw,
+                #                                 analysis,
+                #                                 analysis_param,
+                # )
+                    
                 print("!shortcut here ensemble are not validated!")
                 print(f'''max, min, mean sw: 
-                      {np.max(ensemble_sw_valid)}, 
-                      {np.min(ensemble_sw_valid)}, 
-                      {np.mean(ensemble_sw_valid)}
+                      {np.max(analysis_valid)}, 
+                      {np.min(analysis_valid)}, 
+                      {np.mean(analysis_valid)}
                       ''')
 
             self.count_atmbc_cycle = self.count_atmbc_cycle + 1
@@ -1185,11 +1206,7 @@ class DA(CATHY):
         ens_valid=[],
     ):
         """
-        THIS SHOULD BE MOVED TO DA CLASS
-
         Analysis ensemble using DA
-        print(list_assimilated_obs)
-
 
         1. map state variable 2 Observations
 
@@ -1254,7 +1271,7 @@ class DA(CATHY):
         #         raise ValueError('need to compute data covariance')
         # else:
         if np.shape(self.stacked_data_cov[self.count_DA_cycle])[0] != len(data):
-            raise ValueError("need to compute data covariance")
+            raise ValueError("Wrong stacked_data_cov shape -- need to (re)compute data covariance")
         # if np.shape(np.shape(data_measure_df['data_cov'].iloc[self.count_DA_cycle])[0]) != len(data):
         #     raise ValueError('need to compute data covariance')
 

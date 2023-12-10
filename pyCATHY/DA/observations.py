@@ -187,17 +187,26 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
             
         elecs = []
         if "elecs" in kwargs:
-            elecs = kwargs["elecs"]
+            elecs = kwargs.pop('elecs')
 
         df, dict_ERT = in_meas.read_ERT(obs_2_add, data_format)
         filename = obs_2_add
+        dict_obs_2add.update(sequenceERT=filename)
 
         units = "$\Omega$"
 
         if "elecs" in dict_ERT.keys():
             elecs = dict_ERT["elecs"]
+            
+        if obs_cov_type == "reciprocal_err":
+           data_err =  df['rec_err'].values
 
+        fwdNoiseLevel = 5
+        if "fwdNoiseLevel" in kwargs:
+            fwdNoiseLevel = kwargs.pop('fwdNoiseLevel')
+            
         dict_obs_2add.update(elecs=elecs)
+        dict_obs_2add.update(fwdNoiseLevel=fwdNoiseLevel)
 
     # no file specified (raise error)
     # ---------------------------------------------------------------------
@@ -497,7 +506,8 @@ def init_obs_cov_matrice(dict_obs, obs_cov_type):
 
     if obs_cov_type == "reciprocal_err":
         # print(dict_obs)
-        data_cov = np.diag(1 / abs(dict_obs["data"]["recipError"].to_numpy()))
+        # data_cov = np.diag(1 / abs(dict_obs["data"]["rec_err"].to_numpy()))
+        data_cov = np.diag(abs(dict_obs["data"]["rec_err"].to_numpy()))
     elif obs_cov_type == "data_err":
         # resipy format
         try:

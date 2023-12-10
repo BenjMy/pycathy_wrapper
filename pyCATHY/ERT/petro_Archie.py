@@ -242,8 +242,6 @@ def SW_2_ERa_DA(
     savefig = True
     if savefig:
         print('backup figures')
-
-
         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True
         plotter.subplot(0, 0)
         mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(
@@ -251,8 +249,14 @@ def SW_2_ERa_DA(
         )
         mesh_CATHY_df.set_active_scalars("saturation_df")
         my_colormap = "Blues"
-        _ = plotter.add_mesh(mesh_CATHY_df, cmap=my_colormap,
-                             show_edges=False,)
+        _ = plotter.add_mesh(mesh_CATHY_df,
+                             cmap=my_colormap,
+                             show_edges=False,
+                             clim=[
+                                 0.3,
+                                 0.7,
+                             ],
+                             )
 
         # plotter.update_scalar_bar_range([0, 1])  # max saturation is 1
         plotter.show_grid()
@@ -280,10 +284,10 @@ def SW_2_ERa_DA(
             # ],
         )
 
-        if "pygimli" in ERT_meta_dict["data_format"]:
-            plotter.view_xy()
-        else:
-            plotter.view_xz()
+        # if "pygimli" in ERT_meta_dict["data_format"]:
+        #     plotter.view_xy()
+        # else:
+        #     plotter.view_xz()
 
         plotter.show_grid()
         plotname = "suplot_ER" + str(DA_cnb)

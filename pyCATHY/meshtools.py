@@ -72,7 +72,7 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     # mesh_nodes_modif = None
     if 'mesh_nodes_modif' in ERT_meta_dict:
         in_nodes_mod_m = ERT_meta_dict['mesh_nodes_modif']
-        print(in_nodes_mod_m)
+        # print(in_nodes_mod_m)
     else:
     # mesh_nodes_modif is None:
         print('no mesh transformation before interpolation')
@@ -259,11 +259,11 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
 
     # print('Replace now')
     # out_data = np.where(out_data == 0, 1e-3, out_data)
-    out_data = np.where(out_data == 0, np.min(out_data), out_data)
+    out_data = np.where(out_data == 0, np.min(out_data)+1e-3, out_data)
 
     warm_0 = ""
     if len(np.where(out_data == 0)) > 0:
-        warm_0 = f"interpolation created 0 values - replacing them by mean value {np.mean(out_data)} of input CATHY predicted ER mesh"
+        warm_0 = f"interpolation created 0 values - replacing them by min value {np.min(out_data)+1e-3} of input CATHY predicted ER mesh"
         warm_0 = f"min {np.min(out_data)}, max {np.min(out_data)}, median {np.median(out_data)} "
 
 

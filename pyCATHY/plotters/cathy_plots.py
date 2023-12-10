@@ -1831,7 +1831,8 @@ def DA_plot_time_dynamic(
             ylabel="pressure head $\psi$ (m)",
         )
         
-        print(prep_DA["ens_max_isENS_time"])
+
+
         
         lgd = ax.fill_between(
             prep_DA["ens_max_isENS_time"][keytime],

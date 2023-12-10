@@ -53,25 +53,24 @@ def read_ERT(filename, data_format, **kwargs):
             df_ERT = pg.load(filename)
             if np.sum(df_ERT['rhoa'])==0:
                 if np.sum(df_ERT['k'])==0:
-                    df_ERT['k'] = ert.createGeometricFactors(df_ERT, 
-                                                            numerical=True
-                                                                 )
+                    # df_ERT['k'] = ert.createGeometricFactors(df_ERT, 
+                    #                                          numerical=True
+                    #                                              )
+                    df_ERT['k'] = ert.createGeometricFactors(df_ERT)
                     df_ERT['rhoa'] = df_ERT['k']*df_ERT['r']
+                    # np.min(df_ERT['rhoa'])
+                    # pg.show(df_ERT)
+                    
+            header = ["a", "b", "m", "n", "k", "r", "rhoa",
+                      'err', 'rec_err','valid']
+            dict_ERT_new = {}
+            for hh in header:
+                try:
+                    dict_ERT_new[hh] = df_ERT[hh]
+                except:
+                    pass
 
-            df_ERT_new = pd.DataFrame(
-                [
-                    df_ERT["a"],
-                    df_ERT["b"],
-                    df_ERT["m"],
-                    df_ERT["n"],
-                    df_ERT["k"],
-                    df_ERT["r"],
-                    df_ERT["rhoa"],
-                    # df_ERT["valid"],
-                ]
-            )
-            df_ERT_new = df_ERT_new.T
-            df_ERT_new.columns = ["a", "b", "m", "n", "k", "r", "rhoa"] #, "valid"]
+            df_ERT_new = pd.DataFrame(dict_ERT_new)
             dict_ERT["elecs"] = np.array(df_ERT.sensorPositions())
 
     elif "custum" in data_format:

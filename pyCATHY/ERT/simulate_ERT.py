@@ -30,10 +30,10 @@ def create_ERT_survey_pg(pathERT, sequence, mesh, **kwargs):
     if "verbose" in kwargs:
         verbose = kwargs["verbose"]
 
-    noise_level = 5
-    if "noise_level" in kwargs:
-        noise_level = kwargs["noise_level"]
-
+    fwdNoiseLevel = 5
+    if "fwdNoiseLevel" in kwargs:
+        fwdNoiseLevel = kwargs["fwdNoiseLevel"]
+    print(f"fwd ERT Noise Level: {fwdNoiseLevel}")
     pre, ext = os.path.splitext(mesh)
 
     try:
@@ -88,7 +88,7 @@ def create_ERT_survey_pg(pathERT, sequence, mesh, **kwargs):
         scheme=scheme,
         calcOnly=False,
         verbose=verbose,
-        noiseLevel=noise_level,
+        noiseLevel=fwdNoiseLevel,
     )
 
     try:
