@@ -4,7 +4,6 @@ README.md
 pyproject.toml
 setup.cfg
 setup.py
-doc/conf.py
 pyCATHY/__init__.py
 pyCATHY/cathy_tools.py
 pyCATHY/cathy_utils.py

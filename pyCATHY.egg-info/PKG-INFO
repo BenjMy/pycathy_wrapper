@@ -24,6 +24,23 @@ Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
 License-File: AUTHORS.md
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scipy
+Requires-Dist: pyvista
+Requires-Dist: SALib
+Requires-Dist: GitPython
+Requires-Dist: soiltexture
+Requires-Dist: pyvistaqt
+Requires-Dist: itkwidgets
+Requires-Dist: rosetta
+Requires-Dist: rich
+Requires-Dist: natsort
+Requires-Dist: ipywidgets
+Requires-Dist: smmap
+Requires-Dist: shapely
+Requires-Dist: imageio
+Requires-Dist: nltk
 
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://benjmy.github.io/pycathy_wrapper/)
 [![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)

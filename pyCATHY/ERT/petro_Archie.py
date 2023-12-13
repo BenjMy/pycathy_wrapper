@@ -148,6 +148,8 @@ def SW_2_ERa_DA(
         pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
     )
 
+    # build df Archie df
+    
     df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
     df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
     df_Archie["ens_nbi"] = Ens_nbi * np.ones(len(ER_converted_ti))
@@ -156,6 +158,8 @@ def SW_2_ERa_DA(
     df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
         len(ER_converted_ti)
     )
+
+    print(df_Archie["ER_converted"].describe())
 
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
@@ -285,7 +289,7 @@ def SW_2_ERa_DA(
         )
 
         # if "pygimli" in ERT_meta_dict["data_format"]:
-        #     plotter.view_xy()
+        plotter.view_xy()
         # else:
         #     plotter.view_xz()
 
@@ -394,5 +398,6 @@ def Archie_rho_DA(
                 )  # See eq. 4.4 thesis Isabelle p.95
                 sigma[meas_nb] = sigma[meas_nb] + noise
 
+    print('max res after Archie')
     print(np.max(1 / sigma))
     return 1 / sigma

@@ -77,6 +77,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from functools import partial
 
+REMOVE_CPU = 10
 
 def run_analysis(
     DA_type,
@@ -1117,7 +1118,7 @@ class DA(CATHY):
                     "DA_Ensemble/cathy_" + str(ens_i + 1),
                 )
                 pathexe_list.append(path_exe)
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
                 result = pool.map(subprocess_run_multi, pathexe_list)
                 if verbose == True:
                     self.console.print(result)
@@ -1435,7 +1436,7 @@ class DA(CATHY):
                     "DA_Ensemble/cathy_" + str(ens_i + 1),
                 )
                 pathexe_list.append(path_exe)
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
                 result = pool.map(subprocess_run_multi, pathexe_list)
 
                 if self.verbose:
@@ -3324,7 +3325,7 @@ class DA(CATHY):
 
         # // run using ensemble subfolders path as a list
         # -----------------------------------------------------------------
-        with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
+        with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
             results_mapping = pool.map(ERTmapping_args, path_fwd_CATHY_list)
             # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
@@ -3373,7 +3374,7 @@ class DA(CATHY):
             )
             #
             # -----------------------------------------------------------------
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-2) as pool:
+            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
                 results_mapping_time_i = pool.map(ERTmapping_args, path_fwd_CATHY_list)
                 # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
