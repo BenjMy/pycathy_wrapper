@@ -159,7 +159,8 @@ def SW_2_ERa_DA(
         len(ER_converted_ti)
     )
 
-    # print(df_Archie["ER_converted"].describe())
+    print(df_Archie["ER_converted"].describe())
+
 
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
@@ -291,8 +292,8 @@ def SW_2_ERa_DA(
         )
 
         # if "pygimli" in ERT_meta_dict["data_format"]:
-        # plotter.view_xy()
-        plotter.view_xz()
+        plotter.view_xy()
+
         # else:
         #     plotter.view_xz()
 
