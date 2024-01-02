@@ -1856,7 +1856,7 @@ class CATHY:
                 for t, v in zip(time, v_atmbc):
                     if verbose:
                         print(t, v)
-                    atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
+                    atmbcfile.write("{:.0f}".format(t) + "\t" + "time" + "\n")
                     # atmbcfile.close()
                     if isinstance(v, float) | isinstance(v, int):
                         atmbcfile.write("{:.3e}".format(v) + "\t" + "VALUE" + "\n")
@@ -1868,9 +1868,9 @@ class CATHY:
             # -----------------------------------------------------------------
             else:
                 for t, v in zip(time, v_atmbc):
-                    atmbcfile.write("{:.3e}".format(t) + "\t" + "time" + "\n")
+                    atmbcfile.write("{:.0f}".format(t) + "\t" + "time" + "\n")
                     # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
-                    np.savetxt(atmbcfile, v, fmt="%.3e")
+                    np.savetxt(atmbcfile, v, fmt="%.f")
 
         atmbcfile.close()
 
@@ -2021,7 +2021,7 @@ class CATHY:
                     time = self.atmbc["time"]
                 for tt in time:
                     # nansfdirbcfile.write(str(tt) + "\t" + "time" + "\n")
-                    nansfdirbcfile.write("{:.3e}".format(tt) + "\t" + "time" + "\n")
+                    nansfdirbcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
 
                     nansfdirbcfile.write(
                         str(NDIR)
@@ -2038,7 +2038,7 @@ class CATHY:
                     time = self.atmbc["time"]
                 for tt in time:
                     # nansfdirbcfile.write(str(tt) + "\t" + "time" + "\n")
-                    nansfdirbcfile.write("{:.3e}".format(tt) + "\t" + "time" + "\n")
+                    nansfdirbcfile.write("{:.d}".format(tt) + "\t" + "time" + "\n")
 
                     nansfdirbcfile.write(
                         str(NDIR)
@@ -2179,7 +2179,7 @@ class CATHY:
             if len(time) == 0:
                 time = self.atmbc["time"]
             for tt in time:
-                nansfneubcfile.write("{:.3e}".format(tt) + "\t" + "time" + "\n")
+                nansfneubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
                 nansfneubcfile.write(
                     str(ZERO) + "\t" + str(NQ) + "\t" + "ZERO" + "\t" + "NQ" + "\n"
                 )
@@ -2253,7 +2253,7 @@ class CATHY:
             if len(time) == 0:
                 time = self.atmbc["time"]
             for tt in time:
-                sfbcfile.write("{:.3e}".format(tt) + "\n")
+                sfbcfile.write("{:.0f}".format(tt) + "\n")
                 sfbcfile.write("0" + "\n")
 
         sfbcfile.close()
@@ -3966,11 +3966,14 @@ class CATHY:
                 pickle.dump(self.Archie, f)
         f.close()
 
-    def load_pickle_backup(self, filename=""):
+    def load_pickle_backup(self,idsimu,filename=""):
         if len(filename) == 0:
             filename = os.path.join(
                 self.workdir, self.project_name, self.project_name + "_df.pkl"
             )
+            # filename = os.path.join(
+            #     self.workdir, self.project_name, str(idsimu) + "_df.pkl"
+            # )
         backup_list = []
         all_names = [
             "meta_DA",

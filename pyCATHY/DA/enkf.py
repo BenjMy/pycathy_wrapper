@@ -49,6 +49,9 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0]
     meas_size = data.shape[0]
+    
+    # print(f'shape ensemble: {np.shape(ensemble)}')
+    # print(f'ens_size: {ens_size}')
 
     # First combine the ensemble and param arrays (augmented state matrice)
     # -------------------------------------------------------------------------

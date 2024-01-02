@@ -147,7 +147,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
 
     # tensiometer type read
     # ---------------------------------------------------------------------
-    elif data_type == "tensio":
+    elif "tensio" in data_type:
         if isinstance(obs_2_add, str):
             df = in_meas.read_tensiometers(obs_2_add)
         else:

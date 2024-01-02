@@ -1709,9 +1709,10 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     True,
                 )
                 
-            check_nan = isENS['sw_bef_update_'].isnull().values.any()
-            
+            # check_nan = isENS['sw_bef_update_'].isnull().values.any()
+            check_notrejected = isENS['rejected']==0
 
+            isENS = isENS[check_notrejected]
 
             select_isENS = isENS[isENS["idnode"].isin(nodes_of_interest)]
             select_isENS = select_isENS.set_index([keytime, "idnode"])

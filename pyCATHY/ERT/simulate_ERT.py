@@ -5,6 +5,7 @@
 import os
 import sys
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -24,7 +25,10 @@ except ImportError:
     resipy = None
 
 
-def create_ERT_survey_pg(pathERT, sequence, mesh, **kwargs):
+def create_ERT_survey_pg(pathERT, sequence, mesh,
+                         DAcnb,
+                         pathfig,
+                         **kwargs):
 
     verbose = False
     if "verbose" in kwargs:
@@ -96,6 +100,26 @@ def create_ERT_survey_pg(pathERT, sequence, mesh, **kwargs):
             os.dup2(oldstdout_fno, 1)
     except:
         pass
+
+    pg.info('Filtered rhoa (min/max)', min(het['rhoa']), max(het['rhoa']))
+
+    # # You can save the data for further use
+    # het.save(os.path.join(pathfig, 
+    #                           'ertsimu' + str(DAcnb) + '.dat'
+    #                           )
+    #           )
+    
+    # matplotlib.use('agg')  # Use the 'agg' backend
+    # fig, ax = plt.subplots()
+    # ert.show(het,ax=ax)
+    # fig.savefig(os.path.join(pathfig, 
+    #                          'ertsimu' + str(DAcnb) + '.png'
+    #                          )
+    #             )
+    
+    # ert.show(het)
+
+
 
     # # Reset the standard output
     # sys.stdout = sys.__stdout__
