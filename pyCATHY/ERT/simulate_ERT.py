@@ -26,8 +26,8 @@ except ImportError:
 
 
 def create_ERT_survey_pg(pathERT, sequence, mesh,
-                         DAcnb,
-                         pathfig,
+                         # DAcnb,
+                         # pathfig,
                          **kwargs):
 
     verbose = False
