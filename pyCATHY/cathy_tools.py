@@ -1869,8 +1869,7 @@ class CATHY:
             else:
                 for t, v in zip(time, v_atmbc):
                     atmbcfile.write("{:.0f}".format(t) + "\t" + "time" + "\n")
-                    # atmbcfile.write(str(v) + "\t" + "VALUE" + "\n")
-                    np.savetxt(atmbcfile, v, fmt="%.f")
+                    np.savetxt(atmbcfile, v, fmt="%.3e")
 
         atmbcfile.close()
 

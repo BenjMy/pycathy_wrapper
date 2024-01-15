@@ -2527,6 +2527,7 @@ class DA(CATHY):
         # -----------------------------------------------------------------
         items_dict = list(self.dict_obs.items())
         for sensor in items_dict[time_ass][1].keys():
+            # print(sensor)
             if "all" in list_assimilated_obs:
                 # obskey2map.append(sensor)
                 data2add = extract_data(sensor, time_ass, data)
