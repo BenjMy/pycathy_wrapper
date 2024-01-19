@@ -40,10 +40,20 @@ def check4bounds(scenario, index, clip_min, clip_max, het_size=1, het_nb=None):
     return clip_min, clip_max
 
 
-def perturbate(simu_DA, scenario, NENS):
+def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
     """Write a list of dictionaries, each containing all the informations on how to
-    perturbate the parameters based on the scenario to consider"""
+    perturbate the parameters based on the scenario to consider
+    
+    
+    pertControl = 'Layer'        
+    Perturbation per zone is not yet implemented -  Assuming that the 
+    dictionnary of perturbated parameters is build per layers i.e. 
+    ks0= layer 0, ks1=layer 1, etc...
+   
+    """
 
+    nzones = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(0).unique())
+    nlayers = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(1).unique())
     list_pert = []
 
     #%% Initial and boundary conditions parameters
@@ -152,11 +162,11 @@ def perturbate(simu_DA, scenario, NENS):
         clip_min = 0
         clip_max = 1
 
-        for nz in range(len(simu_DA.soil_SPP["SPP_map"]["PERMX"])):
-            if len(simu_DA.soil_SPP["SPP_map"]["PERMX"]) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+        for nstri in range(nlayers):
+            if nlayers > 1:
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -164,11 +174,11 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(simu_DA.soil_SPP["SPP_map"]["PERMX"]),
-                het_nb=nz,
+                het_nb=nstri,
             )
 
             thetar_VG = {
-                "type_parm": "thetar_VG" + str(nz),
+                "type_parm": "thetar_VG" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -176,8 +186,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "thetar_VG" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "thetar_VG" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -190,14 +200,14 @@ def perturbate(simu_DA, scenario, NENS):
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
 
-        for nz in range(len(simu_DA.soil_SPP["SPP_map"]["PERMX"])):
-            if len(simu_DA.soil_SPP["SPP_map"]["PERMX"]) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+        for nstri in range(nlayers):
+            if nlayers > 1:
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             alpha_VG = {
-                "type_parm": "alpha_VG" + str(nz),
+                "type_parm": "alpha_VG" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -205,8 +215,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "alpha_VG" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "alpha_VG" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
             }
             list_pert.append(alpha_VG)
 
@@ -220,14 +230,14 @@ def perturbate(simu_DA, scenario, NENS):
         # clip_min = 0
         # clip_max = 1
 
-        for nz in range(len(simu_DA.soil_SPP["SPP_map"]["PERMX"])):
-            if len(simu_DA.soil_SPP["SPP_map"]["PERMX"]) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+        for nstri in range(nlayers):
+            if nlayers > 1:
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             VGPSATCELL_VG = {
-                "type_parm": "VGPSATCELL_VG" + str(nz),
+                "type_parm": "VGPSATCELL_VG" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -235,8 +245,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "VGPSATCELL_VG" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "VGPSATCELL_VG" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
             }
             list_pert.append(VGPSATCELL_VG)
 
@@ -247,14 +257,14 @@ def perturbate(simu_DA, scenario, NENS):
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
 
-        for nz in range(len(simu_DA.soil_SPP["SPP_map"]["PERMX"])):
-            if len(simu_DA.soil_SPP["SPP_map"]["PERMX"]) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+        for nstri in range(nlayers):
+            if nlayers > 1:
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             n_VG = {
-                "type_parm": "n_VG" + str(nz),
+                "type_parm": "n_VG" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -262,22 +272,22 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "n_VG" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "n_VG" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
             }
             list_pert.append(n_VG)
 
     if "VGP" in scenario["per_name"]:
-        # - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
-        # - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
-        # - 'PERMZ' (NSTR, NZONE): saturated hydraulic conductivity - zz
-        # - 'ELSTOR' (NSTR, NZONE): specific storage
-        # - 'POROS'  (NSTR, NZONE): porosity (moisture content at saturation) = \thetaS
+        # - 'PERMX' (NSTR, nstriONE): saturated hydraulic conductivity - xx
+        # - 'PERMY' (NSTR, nstriONE): saturated hydraulic conductivity - yy
+        # - 'PERMZ' (NSTR, nstriONE): saturated hydraulic conductivity - zz
+        # - 'ELSTOR' (NSTR, nstriONE): specific storage
+        # - 'POROS'  (NSTR, nstriONE): porosity (moisture content at saturation) = \thetaS
 
         # retention curves parameters VGN, VGRMC, and VGPSAT
-        # - 'VGNCELL' (NSTR, NZONE): van Genuchten curve exponent  = n
-        # - 'VGRMCCELL' (NSTR, NZONE): residual moisture content = \thetaR
-        # - 'VGPSATCELL' (NSTR, NZONE): van Genuchten curve exponent -->
+        # - 'VGNCELL' (NSTR, nstriONE): van Genuchten curve exponent  = n
+        # - 'VGRMCCELL' (NSTR, nstriONE): residual moisture content = \thetaR
+        # - 'VGPSATCELL' (NSTR, nstriONE): van Genuchten curve exponent -->
         #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
         # ['ks','ss','phi','thetar','alpha','n'])
         # ['PERMX','ELSTOR','POROS','VGRMCCELL','VGPSATCELL','VGNCELL'])
@@ -347,14 +357,15 @@ def perturbate(simu_DA, scenario, NENS):
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
 
-        for nz in range(len(simu_DA.soil_SPP["SPP_map"]["PERMX"])):
-            if len(simu_DA.soil_SPP["SPP_map"]["PERMX"]) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+        for nstri in range(nlayers):
+            # if len(simu_DA.soil_SPP["SPP_map"]["PERMX"].unique()) > 1:
+            if nlayers > 1:
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             ks = {
-                "type_parm": "ks" + str(nz),
+                "type_parm": "ks" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -362,8 +373,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "lognormal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "ks" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "ks" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
             }
             list_pert.append(ks)
 
@@ -377,8 +388,7 @@ def perturbate(simu_DA, scenario, NENS):
         clip_min = 0.2  # minimum soil porosity
         clip_max = 0.7  # maximum soil porosity
 
-        for nz in range(len(simu_DA.soil_SPP["SPP_map"]["POROS"])):
-            print("zone nb:" + str(nz))
+        for nstri in range(nlayers):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -386,16 +396,17 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(simu_DA.soil_SPP["SPP_map"]["POROS"]),
-                het_nb=nz,
+                het_nb=nstri,
             )
 
-            if len(simu_DA.soil_SPP["SPP_map"]["POROS"]) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+            # if len(simu_DA.soil_SPP["SPP_map"]["POROS"].unique()) > 1:
+            if nlayers > 1:
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             porosity = {
-                "type_parm": "porosity" + str(nz),
+                "type_parm": "porosity" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -403,8 +414,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "porosity" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "porosity" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -423,7 +434,7 @@ def perturbate(simu_DA, scenario, NENS):
         clip_min = -180
         clip_max = None
             
-        for nz in range(len(simu_DA.soil["PCWLT"])):
+        for nstri in range(len(simu_DA.soil["PCWLT"])):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -431,11 +442,11 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(simu_DA.soil["PCWLT"]),
-                het_nb=nz,
+                het_nb=nstri,
             )
             
             PCWLT = {
-                "type_parm": "PCWLT" + str(nz),
+                "type_parm": "PCWLT" + str(nstri),
                 "nominal": scenario["per_nom"][index],  # nominal value
                 "mean": scenario["per_mean"][index],
                 "sd": scenario["per_sigma"][index],
@@ -444,7 +455,7 @@ def perturbate(simu_DA, scenario, NENS):
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
                 "savefig": "PCWLT.png",
-                "surf_zones_param": nz,
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -457,7 +468,7 @@ def perturbate(simu_DA, scenario, NENS):
         clip_min = 0
         clip_max = 1
             
-        for nz in range(len(simu_DA.soil["OMGC"])):
+        for nstri in range(len(simu_DA.soil["OMGC"])):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -465,11 +476,11 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(simu_DA.soil["OMGC"]),
-                het_nb=nz,
+                het_nb=nstri,
             )
             
             OMGC = {
-                "type_parm": "OMGC" + str(nz),
+                "type_parm": "OMGC" + str(nstri),
                 "nominal": scenario["per_nom"][index],  # nominal value
                 "mean": scenario["per_mean"][index],
                 "sd": scenario["per_sigma"][index],
@@ -478,7 +489,7 @@ def perturbate(simu_DA, scenario, NENS):
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
                 "savefig": "OMGC.png",
-                "surf_zones_param": nz,
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -492,7 +503,7 @@ def perturbate(simu_DA, scenario, NENS):
         clip_min = 0
         clip_max = None
             
-        for nz in range(len(simu_DA.soil["PZ"])):
+        for nstri in range(len(simu_DA.soil["PZ"])):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -500,11 +511,11 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(simu_DA.soil["PZ"]),
-                het_nb=nz,
+                het_nb=nstri,
             )
             
             PZ = {
-                "type_parm": "PZ" + str(nz),
+                "type_parm": "PZ" + str(nstri),
                 "nominal": scenario["per_nom"][index],  # nominal value
                 "mean": scenario["per_mean"][index],
                 "sd": scenario["per_sigma"][index],
@@ -513,7 +524,7 @@ def perturbate(simu_DA, scenario, NENS):
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
                 "savefig": "PZ.png",
-                "surf_zones_param": nz,
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -531,7 +542,7 @@ def perturbate(simu_DA, scenario, NENS):
 
         df_SPP, df_FP = simu_DA.read_inputs('soil')
 
-        for nz in range(len(df_FP.index.unique())):
+        for nstri in range(len(df_FP.index.unique())):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -539,17 +550,17 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(df_FP.index.unique()),
-                het_nb=nz,
+                het_nb=nstri,
             )
         
         
             if len(df_FP.index.unique()) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             PCREF = {
-                "type_parm": "PCREF" + str(nz),
+                "type_parm": "PCREF" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -557,8 +568,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": "normal",
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "PCREF" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "PCREF" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -581,7 +592,7 @@ def perturbate(simu_DA, scenario, NENS):
         
         df_SPP, df_FP = simu_DA.read_inputs('soil')
         
-        for nz in range(len(df_FP.index.unique())):
+        for nstri in range(len(df_FP.index.unique())):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -589,16 +600,16 @@ def perturbate(simu_DA, scenario, NENS):
                 clip_min,
                 clip_max,
                 het_size=len(df_FP.index.unique()),
-                het_nb=nz,
+                het_nb=nstri,
             )
 
             if len(df_FP.index.unique()) > 1:
-                scenario_nom = scenario["per_nom"][index][nz]
-                scenario_mean = scenario["per_mean"][index][nz]
-                scenario_sd = scenario["per_sigma"][index][nz]
+                scenario_nom = scenario["per_nom"][index][nstri]
+                scenario_mean = scenario["per_mean"][index][nstri]
+                scenario_sd = scenario["per_sigma"][index][nstri]
 
             ZROOT = {
-                "type_parm": "ZROOT" + str(nz),
+                "type_parm": "ZROOT" + str(nstri),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -606,8 +617,8 @@ def perturbate(simu_DA, scenario, NENS):
                 "sampling_type": scenario_sampling,
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "ZROOT" + str(nz) + ".png",
-                "surf_zones_param": nz,
+                "savefig": "ZROOT" + str(nstri) + ".png",
+                "surf_zones_param": nstri,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }

@@ -908,7 +908,7 @@ def show_soil(soil_map, ax=None, **kwargs):
     nb_of_zones = len(np.unique(soil_map))
     cmap = mpl.colors.ListedColormap(plt.cm.tab10.colors[:nb_of_zones])
     if "cmap" in kwargs:
-        cmap = kwargs["cmap"]
+        cmap = kwargs.pop("cmap")
 
     if ax is None:
         fig, ax = plt.subplots()
@@ -923,12 +923,18 @@ def show_soil(soil_map, ax=None, **kwargs):
         cmap=cmap,
         **kwargs,
     )
-    cf.set_clim(min(soil_map.flatten()), max(soil_map.flatten()))
+    
+    if "clim" in kwargs:
+        clim = kwargs["clim"]
+    else:
+        clim = [min(soil_map.flatten()), max(soil_map.flatten())]
+
+    cf.set_clim(clim[0], clim[1])
 
     cax = plt.colorbar(
         cf,
         ticks=np.linspace(
-            min(soil_map.flatten()), max(soil_map.flatten()), nb_of_zones
+            clim[0], clim[1], nb_of_zones
         ),
         ax=ax,
         label=yprop,
@@ -939,9 +945,9 @@ def show_soil(soil_map, ax=None, **kwargs):
         
     cax.ax.set_yticklabels(
         [
-            "{:.2e}".format(x)
+            "{:.1e}".format(x)
             for x in np.linspace(
-                min(soil_map.flatten()), max(soil_map.flatten()), nb_of_zones
+                clim[0], clim[1], nb_of_zones
             )
         ]
     )

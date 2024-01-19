@@ -71,8 +71,6 @@ from pyCATHY.importers import sensors_measures as in_meas
 from pyCATHY.plotters import cathy_plots as plt_CT
 import pyCATHY.meshtools as mt
 
-# from update_ic
-
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from functools import partial
@@ -1261,30 +1259,19 @@ class DA(CATHY):
                 str(np.shape(data)), list_assimilated_obs
             )
         )
-                        
-        # data_measure_df = dictObs_2pd(self.dict_obs)
 
         # check size of data_cov
         # ---------------------------------------------------------------------
-        # if len(self.stacked_data_cov)/len(self.dict_obs.items()) != len(data):
-        # if 'ERT' in sensors:
-        #     if np.shape(self.stacked_data_cov[self.count_DA_cycle])[0] != len(data[0]):
-        #         raise ValueError('need to compute data covariance')
-        # else:
         if np.shape(self.stacked_data_cov[self.count_DA_cycle])[0] != len(data):
             raise ValueError("Wrong stacked_data_cov shape -- need to (re)compute data covariance")
-        # if np.shape(np.shape(data_measure_df['data_cov'].iloc[self.count_DA_cycle])[0]) != len(data):
-        #     raise ValueError('need to compute data covariance')
 
         data_cov = self.stacked_data_cov[self.count_DA_cycle]
-        # data_cov = data_measure_df['data_cov'].iloc[self.count_DA_cycle]
 
         # # filter non-valid ensemble before Analysis
         # # ---------------------------------------------------------------------
         prediction_valid = prediction
         ensemble_psi_valid = ensemble_psi[:, ens_valid]
         ensemble_sw_valid = ensemble_sw[:, ens_valid]
-        # print('prediction valid size: ' + str(len(prediction_valid[:,0])))
 
         # prepare parameters
         # ---------------------------------------------------------------------
@@ -1295,16 +1282,12 @@ class DA(CATHY):
         param = self.transform_parameters(list_update_parm, update_key)
         print("parm size: " + str(len(param)))
 
-        # if update_key == 'ini_perturbation':
-        #     param = self.spatialize_parameters(list_update_parm,param)
-
         param_valid = []
         if len(param) > 0:
             param_valid = param[:, ens_valid]
 
         # run Analysis
         # ---------------------------------------------------------------------
-
         result_analysis = run_analysis(
                                         DA_type,
                                         data,
@@ -1892,7 +1875,7 @@ class DA(CATHY):
 
     def _read_dict_pert_update_ens_SPP(self,
                                        dict_parm_pert,
-                                       SPPkey_het_ens,
+                                       df_SPP_2fill,
                                        key_root,
                                        key,
                                        update_key,
@@ -1900,57 +1883,68 @@ class DA(CATHY):
                                        shellprint_update
                                        ):
         '''
-        Read dictionnary of perturbated parameters and parse it progressively to 
-        SPPkey_het_ens to build a matrice and update soil
-        '''
+        Use dictionnary of perturbated parameters and parse it progressively to 
+        df_SPP_2fill to build a matrice and update soil
+        '''        
+        # initiate SPP_2_fill if not existing
+        # -----------------------------------------------------------
         
-        # SPP_map = self.soil_SPP["SPP_map"]
-        df_SPP, _ = in_CT.read_soil(os.path.join(os.getcwd(), "input/soil"),
-                               self.dem_parameters,self.cathyH["MAXVEG"])
-        # df_SPP.groupby('str').mean().sort_index(inplace=True)  
-        # df_SPP.xs('0',level=1).to_dict()
-        SPP_map =  df_SPP.xs('0',level=1).to_dict(orient='list')
-
-        print('SPP ensemble update per zones is not yet implemented')
-        # print(SPP_map)
-        # print(SPP_test)
+        if len(df_SPP_2fill) == 0:
             
-        if len(SPPkey_het_ens) == 0:
-            if key_root[0].casefold() in 'ks':
-                SPPkey_het_ens = np.ones([len(SPP_map["PERMX"]), self.NENS])
-            elif key_root[0].casefold() in 'porosity':
-                SPPkey_het_ens = np.ones([len(SPP_map["POROS"]), self.NENS])
-            SPPkey_het_ens[:] = np.nan
+            for i in range(self.NENS):
+
+                df_SPP, _ = in_CT.read_soil(os.path.join(
+                                                        self.workdir,
+                                                        self.project_name,
+                                                        'DA_Ensemble/cathy_'+ str(i+1),
+                                                        'input/soil'
+                                                        ),
+                                            self.dem_parameters,
+                                            self.cathyH["MAXVEG"]
+                                            )           
+                # df_SPP_2fill = [df_SPP.copy() for _ in range(self.NENS)]
+                df_SPP_2fill.append(df_SPP.copy())
+                
+                if key_root[0].casefold() == 'ks':
+                    df_SPP_2fill[i]['PERMX'] = np.nan
+                    df_SPP_2fill[i]['PERMY'] = np.nan
+                    df_SPP_2fill[i]['PERMZ'] = np.nan
+                if key_root[0].casefold() == 'porosity':
+                    df_SPP_2fill[i]['POROS'] = np.nan
+
+            print('SPP ensemble update per zones is not yet implemented')
+
+            print('''
+                  Assuming that the dictionnary of perturbated parameters 
+                  is build per layers i.e. ks0= layer 0, ks1=layer 1, etc...
+                  '''
+                  )
+                
+        # df_SPP_2fill[ens_nb].index = df_SPP_2fill[ens_nb].index.set_levels(df_SPP_2fill[ens_nb].index.levels[1].astype(int), 
+        #                                                     level=1)
         
-        # fill with parameter dictionnary containing all the values for each update
-        SPPkey_het_ens[int(key_root[1]), ens_nb] = dict_parm_pert[key][update_key][ens_nb]
+        if key_root[0].casefold() == 'ks':
+            df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'PERMX'] = dict_parm_pert[key][update_key][ens_nb]
+            df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'PERMY'] = dict_parm_pert[key][update_key][ens_nb]
+            df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'PERMZ'] = dict_parm_pert[key][update_key][ens_nb]
+        elif key_root[0].casefold() in 'porosity':
+            df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'POROS'] = dict_parm_pert[key][update_key][ens_nb]
+            
+        #%% check if contains nan (if not update soil file)
+        contains_nan = df_SPP_2fill[ens_nb].isna().any().any()
 
-        SPP_map_ensi = []
-        for es in range(self.NENS):
-            spd = dict()
-            if key_root[0].casefold() in 'ks':
-                spd["PERMX"] = list(SPPkey_het_ens[:, ens_nb])
-                spd["PERMY"] = list(SPPkey_het_ens[:, ens_nb])
-                spd["PERMZ"] = list(SPPkey_het_ens[:, ens_nb])
-            elif key_root[0].casefold() in 'porosity':
-                spd["POROS"] = list(SPPkey_het_ens[:, ens_nb])
-
-            SPP_map_ensi.append(spd)
-
-        # update SPP map
-        SPP_map.update(SPP_map_ensi[ens_nb])
-        # print(SPPkey_het_ens[:, ens_nb])
-
-        if np.isnan(SPPkey_het_ens[:, ens_nb]).any() == False:
+        if contains_nan==False:
             self.update_soil(
-                SPP_map=SPP_map,
+                SPP_map=df_SPP_2fill[ens_nb],
                 FP_map=self.soil_FP["FP_map"],
                 zone3d=self.zone3d,
                 verbose=self.verbose,
                 filename=os.path.join(os.getcwd(), "input/soil"),
                 shellprint_update=shellprint_update,
+                backup=True,
             )
-        return SPPkey_het_ens
+
+        return df_SPP_2fill
                             
     def update_ENS_files(self, dict_parm_pert, list_parm2update, **kwargs):
         """
@@ -2067,7 +2061,8 @@ class DA(CATHY):
         for parm_i, key in enumerate(
             list_parm2update
         ):  # loop over perturbated variables dict
-        
+            # print('update parm' + key)
+
 
             key_root = re.split("(\d+)", key)
             if len(key_root) == 1:
@@ -2076,6 +2071,7 @@ class DA(CATHY):
             shellprint_update = True
             # ------------------------------------------------------------------
             for ens_nb in range(self.NENS):
+                # print('update ensemble' + str(ens_nb))
                 # change directory according to ensmble file nb
                 os.chdir(
                     os.path.join(
@@ -2244,6 +2240,7 @@ class DA(CATHY):
                         verbose=self.verbose,
                         filename=os.path.join(os.getcwd(), "input/soil"),
                         shellprint_update=shellprint_update,
+                        backup=True,
                     )
 
                 # FeddesParam update
@@ -2287,6 +2284,7 @@ class DA(CATHY):
                         verbose=self.verbose,
                         filename=os.path.join(os.getcwd(), "input/soil"),
                         shellprint_update=shellprint_update,
+                        backup=True,
                     )
                 # Archie_p update
                 # --------------------------------------------------------------
@@ -2504,8 +2502,6 @@ class DA(CATHY):
             data2add = []
             if "ERT" in sensor:
                 if "pygimli" in items_dict[time_ass][1][sensor]["data_format"]:
-                    # if 'pygimli' in obs2map[time_ass]['data_format']:
-                    # if 'pygimli' in self.dict_obs[time_ass]['ERT']['data_format']:
                     data2add.append(
                         np.array(items_dict[time_ass][1][sensor]["data"]["rhoa"])
                     )
@@ -2527,9 +2523,7 @@ class DA(CATHY):
         # -----------------------------------------------------------------
         items_dict = list(self.dict_obs.items())
         for sensor in items_dict[time_ass][1].keys():
-            # print(sensor)
             if "all" in list_assimilated_obs:
-                # obskey2map.append(sensor)
                 data2add = extract_data(sensor, time_ass, data)
                 data.append(data2add)
             else:
@@ -2540,16 +2534,8 @@ class DA(CATHY):
                 else:
                     str_sensor_rootname = re.sub(r'\d', '', sensor)
                     if str_sensor_rootname in list_assimilated_obs:
-                        # if match:
-                            # if updated_string == sensor:
-                                # obskey2map.append(sensor)
                         data2add = extract_data(sensor, time_ass, data)
                         data.append(data2add)
-                        # else:
-                        #     if updated_string in sensor:
-                        #         # obskey2map.append(sensor)
-                        #         data2add = extract_data(sensor, time_ass, data)
-                        #         data.append(data2add)
 
         return np.hstack(data), obskey2map
 
@@ -2596,8 +2582,6 @@ class DA(CATHY):
         .. note::
 
             - For ERT data each ERT mesh node is an observation
-
-        THIS SHOULD BE MOVED TO DA CLASS
 
         Parameters
         ----------
@@ -2653,8 +2637,12 @@ class DA(CATHY):
             # infer soil parameters properties
             # ---------------------------------
             # porosity = self.soil_SPP["SPP"][:, 4][0]
-            SPP_ensi, _ = in_CT.read_soil(os.path.join(path_fwd_CATHY, self.input_dirname,'soil'),
-                                   self.dem_parameters,self.cathyH["MAXVEG"])
+            SPP_ensi, _ = in_CT.read_soil(os.path.join(path_fwd_CATHY, 
+                                                       self.input_dirname,'soil'
+                                                       ),
+                                          self.dem_parameters,
+                                          self.cathyH["MAXVEG"]
+                                          )
             # SPP_ensi.POROS
             # SPP_ensi.POROS.min()
             # SPP_ensi.POROS.max()
@@ -2689,20 +2677,23 @@ class DA(CATHY):
                     # case 2: sw assimilation (Hx_SW)
                     # --------------------------------------------------------------------
                     
-                    # find porosity assoicated to mesh node position
+                    # find porosity associated to mesh node position
                     # ----------------------------------------------
                     obs2map[i]["mesh_nodes"]
                     xyz_swc = self.grid3d['mesh3d_nodes'][obs2map[i]["mesh_nodes"][0]]
                     
                     ltop, lbot = mt.get_layer_depths(self.dem_parameters)
                     idlayer_swc = np.where(abs(xyz_swc[2])>ltop)[0]
-                    porosity_swc = SPP_ensi.xs((str(idlayer_swc[0]),'0'))['POROS']
+                    porosity_swc = SPP_ensi.xs((1,idlayer_swc[0]),
+                                               level=('zone', 'layer'))['POROS'].values
                     self.console.print(f"Transform sat to SWC with porosity=' {str(porosity_swc)}")
                     self.console.rule(
                         ":warning: warning messages above :warning:", style="yellow"
                     )
                     self.console.print(
-                        r"""Current implementation does not support different porosity zones!""",
+                        r"""Current implementation does not support different porosity zones! 
+                            Only layers porosity is considered - Taking zone 1 as default
+                        """,
                         style="yellow",
                     )
                     # print('Transform sat to SWC with porosity=' + str(porosity_swc))

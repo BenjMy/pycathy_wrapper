@@ -361,6 +361,7 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     PERMX_z2_str3 PERMY_z2_str3  PERMZ_z2_str3  ELSTOR_z2_str3 POROS_z2_str3 VGNCELL_z2_str3 VGRMCCELL__z2_str3  VGPSATCELL__z2_str3
 
 
+    Zone indexing starts from 1 while layers indexing starts from 0!
     Parameters
     ----------
     soilfile : str
@@ -413,7 +414,7 @@ def read_soil(soilfile, dem_parm, MAXVEG):
                         skiprows=nb_of_header_lines, 
                         max_rows=count - nb_of_header_lines - 1
     )
-    
+    np.shape(soil)
     FP_soil_mat = []
     for fp in FP_soil:
         FP_soil_mat.append([float(fpi) for fpi in fp if len(fpi)>0])
@@ -423,21 +424,26 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     df_FP.columns = FP_header
     df_FP.index.name = 'Veg. Indice'
     
-    name_str = []
-    name_zone = []
-    for dz in range(int(dem_parm["nzone"])):
-        for ds in range(int(dem_parm["nstr"])):
-            name_str.append(str(ds))
-            name_zone.append(str(dz))
+    layer_id = []
+    zone_id = []
+    for ds in range(int(dem_parm["nstr"])):
+        for dz in range(int(dem_parm["nzone"])):
+            layer_id.append(ds)
+            zone_id.append(dz+1) # zone numbers starts from 1
 
-    if len(soil) != len(name_str):
+    if len(soil) != len(layer_id):
         raise ValueError(
             "Inconsistent number of zones/layers with respect to the number of soil lines: " +
-            str(len(soil)) + '/' + str(len(name_str))
+            str(len(soil)) + '/' + str(len(layer_id))
         )
-    df_soil = pd.DataFrame(soil, [name_str, name_zone], soil_header)
-    df_soil.index.set_names("str", level=0, inplace=True)
-    df_soil.index.set_names("zone", level=1, inplace=True)
+        
+    # name_str = np.sort(name_str)
+    df_soil = pd.DataFrame(soil, [zone_id,
+                                  layer_id], 
+                            soil_header)
+    # df_soil.xs(1)
+    df_soil.index.set_names("zone", level=0, inplace=True)
+    df_soil.index.set_names("layer", level=1, inplace=True)
 
     return df_soil,df_FP
 

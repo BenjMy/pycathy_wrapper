@@ -2316,9 +2316,26 @@ class CATHY:
         FP : Dict, optional
             Dictionnary containing the SPP properies per zones (root map, indice of vegetation)
 
+        SPP : np.array, optional
+            Array of size (nb of layers*nb of zones)*8 (8: Physical properties)
 
-
-        SPP : DataFrame, optional
+        SPP_map : Dict or Pd.DataFrame, optional
+            Dictionnary containing the SPP properies per zones
+            
+            
+            Example for 2 zones:
+                {
+                    'PERMX': [0.000188, 9.4e-05],
+                    'PERMY': [0.000188, 0.000188],
+                    'PERMZ': [0.000188, 0.000188],
+                    'ELSTOR': [1e-05, 1e-05],
+                    'POROS': [0.55, 0.55],
+                    'VGNCELL': [1.46, 1.46],
+                    'VGRMCCELL': [0.15, 0.15],
+                    'VGPSATCELL': [0.03125, 0.03125]
+                 }
+                
+            
             Soil Physical Properties. The default is [].
             - 'PERMX' (NSTR, NZONE): saturated hydraulic conductivity - xx
             - 'PERMY' (NSTR, NZONE): saturated hydraulic conductivity - yy
@@ -2341,22 +2358,7 @@ class CATHY:
                 2   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
                 3   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
                 4   0     0.000188  0.000188  0.000188  ...     1.46       0.15     0.03125
-
-
-        SPP_map : Dict, optional
-            Dictionnary containing the SPP properies per zones
-            Example for 2 zones:
-                {
-                    'PERMX': [0.000188, 9.4e-05],
-                    'PERMY': [0.000188, 0.000188],
-                    'PERMZ': [0.000188, 0.000188],
-                    'ELSTOR': [1e-05, 1e-05],
-                    'POROS': [0.55, 0.55],
-                    'VGNCELL': [1.46, 1.46],
-                    'VGRMCCELL': [0.15, 0.15],
-                    'VGPSATCELL': [0.03125, 0.03125]
-                 }
-
+                    
 
         ..note::
 
@@ -2385,14 +2387,15 @@ class CATHY:
         else:
             self.console.print(":arrows_counterclockwise: [b]Update soil[/b]")
 
+        
         # set default parameters if SPP and/or FP args are not existing yet
         # --------------------------------------------------------------------
         if len(self.soil) == 0:
             self.set_SOIL_defaults()
             try:
-                # self.update_veg_map()
-                df = self.read_inputs('soil', MAXVEG=self.MAXVEG)
-                # SPP_map = df[0].reset_index(drop=True).to_dict(orient='list')
+                df = self.read_inputs('soil', 
+                                      MAXVEG=self.MAXVEG
+                                      )
                 if len(FP_map)==0:
                     FP_map = df[1].reset_index(drop=True).to_dict(orient='list')
             except:
@@ -2420,13 +2423,14 @@ class CATHY:
         
         else:
             self.zone3d=zone3d
-            xyvar = np.array(
-                [sum(np.unique(zone3d[l])) for l in range(np.shape(zone3d)[0])]
-            )
-            if sum(xyvar > 1) > 1:
-                print("xy soil heterogeneity detected")
-            if (sum(zone3d[0] != zone3d) > 0).any():
-                print("z soil heterogeneity detected")
+            # xyvar = np.array(
+            #     [sum(np.unique(zone3d[l])) for l in range(np.shape(zone3d)[0])]
+            # )
+            # if sum(xyvar > 1) > 1:
+            #     print("xy soil heterogeneity detected")
+            # if (sum(zone3d[0] != zone3d) > 0).any():
+            #     print("z soil heterogeneity detected")
+            self.dem_parameters['nzone'] = np.size(zone3d[0])
 
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
@@ -2444,15 +2448,42 @@ class CATHY:
         if isinstance(SPP_map["PERMX"], float):
             for k in SPP_map:
                 SPP_map[k] = [SPP_map[k]]
+        
+        if isinstance(SPP_map, dict):
+            SPP_map_dict = SPP_map
+            if hasattr(self, 'zone3d'):
+                num_rows, num_cols = np.shape(self.zone3d)[0], np.shape(self.zone3d)[1] * np.shape(self.zone3d)[2]
+                df_SPP_map = self.init_soil_df(num_cols, num_rows)
+        
+                for i, layersi_zones in enumerate(self.zone3d):
+                    layersi_zones = np.hstack(layersi_zones)
+                    unique_zones = np.unique(layersi_zones)
+                    layersi_zones_prop = np.zeros(np.shape(layersi_zones))
+                    for c in SPP_map_dict.keys():
+                        for zi in unique_zones:
+                            layersi_zones_prop[layersi_zones == zi] = SPP_map_dict[c][int(zi-1)]
+        
+                        df_SPP_map.loc[(slice(None), i + 1), c] = layersi_zones_prop
+            else:
+                nzones, nstr = self.dem_parameters["nzone"], self.dem_parameters["nstr"]
+                df_SPP_map = self.init_soil_df(nzones, nstr)
+        
+                for key, values in SPP_map.items():
+                    df_SPP_map[key] = values
+        
+            SPP_map = df_SPP_map
 
-        for z in range(len(SPP_map["VGRMCCELL"])):  # loop over zones
-            if SPP_map["VGRMCCELL"][z] >= SPP_map["POROS"][z]:
-                raise ValueError(
-                    "residual water content is"
-                    + str(SPP_map["VGRMCCELL"][z])
-                    + "> porosity "
-                    + str(SPP_map["POROS"][z])
-                )
+        if (SPP_map["VGRMCCELL"] >= SPP_map["POROS"]).any():
+            self.console.rule(
+                ":warning: residual water content is > porosity :warning:", style="yellow"
+            )
+        # if (SPP_map["VGRMCCELL"] >= SPP_map["POROS"]).all():
+        #     raise ValueError(
+        #         "ALL residual water content are"
+        #         + str(SPP_map["VGRMCCELL"])
+        #         + "> porosity "
+        #         + str(SPP_map["POROS"])
+        #     )
 
         # create prepro inputs if not existing (containing info about the DEM)
         # --------------------------------------------------------------------
@@ -2466,8 +2497,8 @@ class CATHY:
         if len(SPP) > 0:
             self.soil_SPP["SPP"] = SPP  # matrice with respect to zones
         else:
-            SoilPhysProp = self._prepare_SPP_tb(SPP_map, zone3d)
-            self.soil_SPP["SPP"] = SoilPhysProp  # matrice with respect to zones
+            SoilPhysProp = SPP_map.values
+            self.soil_SPP["SPP"] = SoilPhysProp  # matrice with respect to zones/layers
             
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
@@ -2485,7 +2516,11 @@ class CATHY:
 
         # write soil file
         # --------------------------------------------------------------------
-        self._write_SOIL_file(self.soil_SPP["SPP"], FeddesParam, **kwargs)
+        # print('write soil')
+        self._write_SOIL_file(self.soil_SPP["SPP"], 
+                              FeddesParam, 
+                              **kwargs
+                              )
 
         # map SPP to the mesh
         # --------------------------------------------------------------------
@@ -2520,7 +2555,35 @@ class CATHY:
             #     self.map_dem_prop_2mesh(spp, SPP_map[spp], to_nodes=False)
 
         pass
-
+    
+    def _get_soil_SPP_columnsNames(self):
+        
+        # Define the column names
+        columns = ['PERMX', 'PERMY', 'PERMZ','ELSTOR',
+                   'POROS',
+                   'VGNCELL', 'VGRMCCELL', 'VGPSATCELL'
+                   ]
+        return columns
+        
+        
+    def init_soil_df(self, nzones, nstr):
+        
+        columns = self._get_soil_SPP_columnsNames()
+        
+        # Generate the lists of integers for zones and strings
+        zones = list(range(nzones))
+        strings = [ni + 1 for ni in range(nstr)]
+        
+        # Create multi-level index
+        multi_index = pd.MultiIndex.from_product([zones, strings], 
+                                                 names=['zone', 'str']
+                                                 )
+        # Create an empty DataFrame with multi-level index and specified columns
+        SPP_map = pd.DataFrame(index=multi_index, columns=columns)
+        
+        return SPP_map
+            
+            
     def set_SOIL_defaults(self, FP_map_default=False, SPP_map_default=False):
 
         self.soil = {
@@ -2578,17 +2641,15 @@ class CATHY:
             VGRMCCELL = 0.15
             VGPSATCELL = 0.03125
 
-            SPP_map = {
-                "PERMX": PERMX,
-                "PERMY": PERMY,
-                "PERMZ": PERMZ,
-                "ELSTOR": ELSTOR,
-                "POROS": POROS,
-                "VGNCELL": VGNCELL,
-                "VGRMCCELL": VGRMCCELL,
-                "VGPSATCELL": VGPSATCELL,
-            }
-
+            # Replace these values with your actual number of zones and strings
+            nzones = self.dem_parameters["nzone"]
+            nstr = self.dem_parameters["nstr"]
+                    
+            SPP_map = self.init_soil_df(nzones,nstr)
+            
+            for c in SPP_map.columns:
+                SPP_map[c] = eval(c)
+                
             return SPP_map
 
         pass
@@ -2607,8 +2668,6 @@ class CATHY:
         np.array describing the SoilPhysProp with rows corresponding to the layer.
 
         """
-
-        # SPP = {'PERMX': [[2e-07], [1e-07], [5e-08]], 'PERMY': [[2e-07], [1e-07], [5e-08]], 'PERMZ': [[2e-07], [1e-07], [5e-08]], 'ELSTOR': [1e-05], 'POROS': [0.55], 'VGNCELL': [1.914], 'VGRMCCELL': [0.1296], 'VGPSATCELL': [1.24]}
 
         # check number of zones
         if self.dem_parameters["nzone"] > 1 or len(zone3d) > 0:
@@ -2648,9 +2707,7 @@ class CATHY:
                     #  loop over zones (defined in the zone file)
                     # --------------------------------------------------------------
                     LayeriZonei = np.zeros([self.dem_parameters["nzone"], 8])
-
                     for izone in range(self.hapin["N"] * self.hapin["M"]):
-
                         for i, spp in enumerate(SPP):
                             flag_zone = int(np.ravel(zone3d[istr])[izone])
                             LayeriZonei[izone, i] = SPP[spp][flag_zone - 1]
@@ -2673,7 +2730,6 @@ class CATHY:
             else:
                 izoneSoil_per_layer = []
                 for stri in range(self.dem_parameters["nstr"]):
-                    print(stri)
                     izoneSoil = []
                     for spp in SPP:
                         izoneSoil.append(SPP[spp][stri])
@@ -2766,7 +2822,7 @@ class CATHY:
         Parameters
         ----------
         SoilPhysProp : Soil physical properties
-            Dictionnatry of Soil physical properties.
+            Numpy array of Soil physical properties.
         FeddesParam : Feddes Parameters
             Dictionnatry of Feddes Parameters
         """
@@ -2777,6 +2833,7 @@ class CATHY:
         if "backup" in kwargs:
             backup = kwargs["backup"]
 
+            
         # number of side header for each row
         header_fmt_soil = [1, 2, 2, 6, 1, 5, 1, 2, 3]
 
@@ -2791,11 +2848,19 @@ class CATHY:
 
         if "filename" in kwargs:
             soil_filepath = os.path.join(kwargs["filename"]) #, "soil")
+            
+            
+        # print('v'*13)
+        # print(backup)
+        # print('backup soil')
+        # print(self.count_DA_cycle)
+        # print(soil_filepath)
 
         if backup:
             if self.count_DA_cycle is not None:
                 dst_dir = soil_filepath + str(self.count_DA_cycle)
                 shutil.copy(soil_filepath, dst_dir)
+                # print('backup soil ' + dst_dir)
 
         with open(os.path.join(soil_filepath), "w+") as soilfile:
 
@@ -3620,7 +3685,7 @@ class CATHY:
                 os.path.join(self.workdir, self.project_name, "prepro/zone")
             )
 
-            layer_nb = 1
+            layer_nb = 0
             if "layer_nb" in kwargs:
                 layer_nb = kwargs["layer_nb"]
 
@@ -3638,11 +3703,13 @@ class CATHY:
 
             if NZONES-1>1:
                 for z in range(NZONES-1):
-                    soil_map_prop[zone_mat[0] == z-1] = df[0][yprop].xs(
-                                                                (str(layer_nb), str(int(z)))
+                    soil_map_prop[zone_mat[0] == z+1] = df[0][yprop].xs(
+                                                                (z+1,layer_nb)
                                                                 )
             else:
-                soil_map_prop[zone_mat[0] == 1] = df[0][yprop].xs((str(layer_nb), '0'))
+                soil_map_prop[zone_mat[0] == 1] = df[0][yprop].xs((1, 
+                                                                   layer_nb)
+                                                                  )
 
             cmap = plt_CT.show_soil(soil_map_prop, ax=ax,
                              **kwargs)

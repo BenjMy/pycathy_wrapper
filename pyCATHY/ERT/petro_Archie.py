@@ -207,6 +207,10 @@ def SW_2_ERa_DA(
         
         # print(ERT_meta_dict["sequenceERT"])
         # print(len(ERT_meta_dict["sequenceERT"]))
+        
+        # print(ERT_meta_dict)
+        # print(ERT_meta_dict["sequenceERT"])
+        
         ERT_predicted = simuERT.create_ERT_survey_pg(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
             sequence=ERT_meta_dict["sequenceERT"],

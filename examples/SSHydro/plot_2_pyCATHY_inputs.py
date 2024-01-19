@@ -118,20 +118,23 @@ simu.show_input(prop="zone")
 
 #%% update soil: add properties for zone 2
 # we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
-
-# what if dimension of the heteregeneity is 3d?
+# or a panda dataframe
 
 SPP_map_1zone = simu.soil_SPP["SPP_map"]  # read existing mapping
-SPP_map_2zones = {}
-for k in SPP_map_1zone:
-    if k == "PERMX":
-        PERMX_zone2 = SPP_map_1zone["PERMX"][0] / 2
-        SPP_map_2zones[k] = [SPP_map_1zone[k][0], PERMX_zone2]
-    else:
-        SPP_map_2zones[k] = [SPP_map_1zone[k][0], SPP_map_1zone[k][0]]
 
+PERMX_zones = [SPP_map_1zone["PERMX"][0], 
+         SPP_map_1zone["PERMX"][0]/2]
 
-simu.update_soil(SPP_map=SPP_map_2zones)
+SPP_map_zone2 = simu.init_soil_df(2, len(SPP_map_1zone))
+
+for c in SPP_map_1zone:
+    SPP_map_zone2.loc[[0],c]=SPP_map_1zone[c].values
+    SPP_map_zone2.loc[[1],c]=SPP_map_1zone[c].values
+
+for i, pi in enumerate(PERMX_zones):
+    SPP_map_zone2.loc[[i],'PERMX']=PERMX_zones[i].values
+
+simu.update_soil(SPP_map=SPP_map_zone2)
 
 #%%
 simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)

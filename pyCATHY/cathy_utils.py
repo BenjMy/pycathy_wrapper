@@ -21,6 +21,9 @@ def MPa2m(mpa):
 def kPa2m(kpa):
     return kpa * 0.101971621
 
+def m2kPa(m):
+    return m/0.101971621
+
 def kPa2cm(kpa):
     return kpa * 0.101971621 * 1e2
 
