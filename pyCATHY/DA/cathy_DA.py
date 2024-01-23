@@ -58,22 +58,21 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
 from rich.progress import track
 
-from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
-from pyCATHY.DA import enkf, pf
-from pyCATHY.ERT import petro_Archie as Archie
+from pyCATHY.DA import enkf, pf, mapper
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
-from pyCATHY.importers import sensors_measures as in_meas
+# from pyCATHY.importers import sensors_measures as in_meas
+# import pyCATHY.meshtools as mt
 from pyCATHY.plotters import cathy_plots as plt_CT
-import pyCATHY.meshtools as mt
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", 
+                        category=DeprecationWarning
+                        )
 
-from functools import partial
+# from functools import partial
 
 REMOVE_CPU = 1
 
@@ -216,394 +215,14 @@ def resynchronise_times(data_measure, atmbc_df, time_offset):
     return data_measure_sync
 
 
-# SAMPLING distribution
-# ----------------------
-
-
-def sampling_dist_trunc(myclip_a, myclip_b, ensemble_size, **kwargs):
-    # https://stackoverflow.com/questions/18441779/how-to-specify-upper-and-lower-limits-when-using-numpy-random-normal
-    X = stats.truncnorm(
-        (myclip_a - kwargs["loc"]) / kwargs["scale"],
-        (myclip_b - kwargs["loc"]) / kwargs["scale"],
-        loc=kwargs["loc"],
-        scale=kwargs["scale"],
-    )
-    return X.rvs(ensemble_size)
-
-
-def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
-    # sampling
-    np.random.seed(1)
-    if sampling_type == "lognormal":
-        parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
-    elif sampling_type == "normal":
-        # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
-        parm_sampling = np.random.normal(mean, scale=sd, size=ensemble_size)
-    elif sampling_type == "uniform":
-        minmax_uni = kwargs["minmax_uni"]
-        parm_sampling = np.random.uniform(minmax_uni[0], minmax_uni[1], ensemble_size)
-    return parm_sampling
-
-
-# PERTUBATE distribution
-# ----------------------
-
-
-def perturbate_dist(parm, per_type, parm_sampling, ensemble_size):
-    # pertubate
-    parm_mat = np.ones(ensemble_size) * parm["nominal"]
-    if per_type == None:
-        parm_per_array = parm_sampling
-    if per_type == "multiplicative":
-        parm_per_array = parm_mat * parm_sampling
-    elif per_type == "additive":
-        parm_per_array = parm_mat + parm_sampling
-    return parm_per_array
-
-
-def Carsel_Parrish_VGN_pert():
-    cholesky_diag_mat = np.diag(3)
-    pass
-
-
-def Archie_pert_rules(
-    parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
-):
-    # a : TYPE, optional
-    #     Tortuosity factor. The default is [1.0].
-    # m : TYPE, optional
-    #     Cementation exponent. The default is [2.0]. (usually in the range 1.3 -- 2.5 for sandstones)
-    # n : TYPE, optional
-    #     Saturation exponent. The default is [2.0].
-
-    if "rFluid" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=0, myclip_b=np.inf, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    elif "a" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=0, myclip_b=2.5, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    elif "m" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=1.3, myclip_b=2.5, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    elif "n" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=2.5, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    else:
-        parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
-
-    parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-    return parm_sampling, parm_per_array
-
-
-def VG_pert_rules(
-    var_per_2add,
-    parm,
-    type_parm,
-    ensemble_size,
-    mean,
-    sd,
-    per_type,
-    sampling_type,
-    **kwargs,
-):
-    print(
-        "The parameters of the van Genuchten retention curves α,"
-        + "n, and θ r are perturbed taking into account their mutual cor-"
-        + "relation according to Carsel and Parrish (1988)"
-    )
-
-    if "Carsel_Parrish_VGN_pert" in kwargs:
-        utils.Carsel_Parrish_1988(soilTexture=None)
-        Carsel_Parrish_VGN_pert()
-    else:
-        if "clip_min" in var_per_2add[type_parm].keys():
-            parm_sampling = sampling_dist_trunc(
-                myclip_a=var_per_2add[type_parm]["clip_min"],
-                myclip_b=var_per_2add[type_parm]["clip_max"],
-                ensemble_size=ensemble_size,
-                loc=mean,
-                scale=sd,
-            )
-        else:
-            parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-    return parm_per_array
-
-
-def atmbc_pert_rules(
-    var_per_2add,
-    parm,
-    type_parm,
-    ensemble_size,
-    mean,
-    sd,
-    per_type,
-    sampling_type,
-    **kwargs,
-):
-
-    parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
-    # parm_sampling = sampling_dist(sampling_type, mean, 1e-6, ensemble_size)
-    parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-    var_per_2add[type_parm] = parm
-    Tau = parm["time_decorrelation_len"]
-    qk_0 = parm_per_array
-    atmbc_times = parm["data2perturbate"]["time"]
-    atmbc_values = parm["data2perturbate"]["VALUE"]
-    # print(per_type)
-    # print(atmbc_values)
-
-    # # Create a histogram plot for perturbed sand conductivities
-    # plt.figure(figsize=(10, 5))
-    # # plt.hist(parm_sampling, bins=20, alpha=0.5, color='blue', label='Atmbc ENS')
-    # plt.hist(parm_per_array, bins=20, alpha=0.5, color='red', label='* Atmbc ENS')
-    # plt.xlabel('Perturbed atmbc')
-    # plt.ylabel('Frequency')
-    # # plt.title('Perturbed Saturated Hydraulic Conductivities')
-    # plt.legend(loc='upper right')
-    # plt.grid(True)
-    
-    
-    parm_per_array_time_variable = []
-    for i, t in enumerate(atmbc_times):
-        if i == 0:
-            # qk_0 = wk0
-            parm_per_array_time_variable.append(qk_0)
-        else:
-            qk_0 = parm_per_array_time_variable[i - 1]
-            parm["nominal"] = atmbc_values[i]
-            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-            wk = sampling_dist(sampling_type, mean, sd, ensemble_size)
-            # plt.plot(wk)
-            deltaT = abs(atmbc_times[i] - atmbc_times[i - 1])
-            # qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
-            qk_i = wk
-            # plt.plot(qk_i)
-            parm_per_array_time_variable.append(qk_i)
-
-    # print(parm["nominal"])
-    # print(parm_per_array_time_variable)
-    key = "time_variable_perturbation"
-    var_per_2add[type_parm][key] = parm_per_array_time_variable
-    
-    return parm_sampling, parm_per_array, var_per_2add
-
-
-def Johnson1970(self):
-    print("not yet implemented - see Botto 2018")
-
-
-def Evensen2003(qk_0, wk, deltaT, Tau):
-    """
-    Ensemble Generation of time-variable atmospheric forcing rates.
-    Parameters
-    ----------
-    wk : np.array([])
-        is a sequence of white noise drawn from the standard normal distribution.
-    deltaT : float
-        assimilation interval in sec
-    Tau : np.array([])
-        the specified time decorrelation length
-    time : int
-        assimilation time index
-
-    Returns
-    -------
-    qki : Ensemble of time-variable atmospheric forcing rates at time i
-
-    """
-    if Tau < deltaT:
-        raise ValueError(
-            "Time decorrelation length is too small; should be at least>=" + str(deltaT)
-        )
-    gamma = 1 - deltaT / Tau
-    qki = gamma * qk_0 + np.sqrt(1 - (gamma * gamma)) * wk
-
-    return qki
-
-
-def build_dict_attributes_pert(
-    var_per_2add, type_parm, parm_per_array, parm_sampling, **kwargs
-):
-
-    key = "ini_perturbation"
-    var_per_2add[type_parm][key] = parm_per_array
-    key = "sampling"
-    var_per_2add[type_parm][key] = parm_sampling
-    # Parameter tranformation
-    # --------------------------------------------------------------------
-    if "transf_type" in kwargs:
-        var_per_2add[type_parm]["transf_type"] = kwargs["transf_type"]
-        if "transf_bounds" in kwargs:
-            var_per_2add[type_parm]["transf_bounds"] = kwargs["transf_bounds"]
-    else:
-        var_per_2add[type_parm]["transf_type"] = None
-    # Parameter spatial extension
-    # --------------------------------------------------------------------
-    if "surf_zones_param" in kwargs:
-        nb_surf_zones = kwargs["surf_zones_param"]
-        # parm_per_array = np.tile(parm_per_array,nb_surf_zones)
-        var_per_2add[type_parm]["surf_zones_param"] = kwargs["surf_zones_param"]
-    return var_per_2add
-
-
-def perturbate_parm(
-    var_per,
-    parm,
-    type_parm,
-    mean=[],
-    sd=[],
-    per_type=None,
-    sampling_type="lognormal",
-    ensemble_size=128,
-    seed=True,
-    **kwargs,
-):
-    """
-    Perturbate parameter for ensemble generation
-
-    Possible variable to perturbate:
-        - initial conditions
-        - hyetograph atmbc
-        - van Genuchten retention curves parameters
-        - Feddes parameters
-
-    Perturbation:
-        - parameters with constrainsts (truncated distribution)
-        - parameters time dependant
-        - other types of parameters
-
-    Returns
-    -------
-    var_per : dict
-        Perturbated variable dictionnary
-
-    """
-
-    savefig = False
-    if kwargs["savefig"]:
-       savefig = kwargs["savefig"]
-    
-    
-    var_per_2add = {}
-
-    # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
-    # -------------------------------------------------------------------------
-    var_per_2add[type_parm] = parm
-
-    key = "sampling_type"
-    var_per_2add[type_parm][key] = sampling_type
-    key = "sampling_mean"
-    var_per_2add[type_parm][key] = mean
-    key = "sampling_sd"
-    var_per_2add[type_parm][key] = sd
-    key = "per_type"
-    var_per_2add[type_parm][key] = per_type
-
-    # Contrainsted perturbation (bounded)
-    # --------------------------------------------------------------------
-    if "Archie" in type_parm:
-        parm_sampling, parm_per_array = Archie_pert_rules(
-            parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
-        )
-    elif "porosity" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=0, myclip_b=1, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-
-    elif "zroot".casefold() in type_parm.casefold():
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=var_per_2add[type_parm]["clip_min"],
-            myclip_b=var_per_2add[type_parm]["clip_max"],
-            ensemble_size=ensemble_size,
-            loc=mean,
-            scale=sd,
-        )
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-
-    # check if parameters in part of van Genuchten retention curves
-    # ----------------------------------------------------------------------
-    # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
-    elif "VG" in type_parm:  # van Genuchten retention curves
-        parm_per_array = VG_pert_rules(
-            var_per_2add,
-            parm,
-            type_parm,
-            ensemble_size,
-            mean,
-            sd,
-            per_type,
-            sampling_type,
-            **kwargs,
-        )
-
-    # Time dependant perturbation
-    # --------------------------------------------------------------------
-    elif "atmbc" in type_parm:
-    # elif any("atmbc" in item for item in type_parm):
-        parm_sampling, parm_per_array, var_per_2add = atmbc_pert_rules(    
-                                                                        var_per_2add,
-                                                                        parm,
-                                                                        type_parm,
-                                                                        ensemble_size,
-                                                                        mean,
-                                                                        sd,
-                                                                        per_type,
-                                                                        sampling_type,
-                                                                        **kwargs
-                                                                        )
-        savefig = False
-            
-            
-    # For all other types of perturbation
-    # --------------------------------------------------------------------
-    else:
-        if "clip_min" in var_per_2add[type_parm].keys():
-            parm_sampling = sampling_dist_trunc(
-                myclip_a=var_per_2add[type_parm]["clip_min"],
-                myclip_b=var_per_2add[type_parm]["clip_max"],
-                ensemble_size=ensemble_size,
-                loc=mean,
-                scale=sd,
-            )
-        else:
-            parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-
-    # build dictionnary of perturbated variable
-    # --------------------------------------------------------------------
-    var_per_2add = build_dict_attributes_pert(
-        var_per_2add, type_parm, parm_per_array, parm_sampling, **kwargs
-    )
-
-    # Add to var perturbated stacked dict
-    # ----------------------------------
-    var_per = var_per | var_per_2add
-
-    if savefig is not False:
-        plt_CT.plot_hist_perturbated_parm(
-            parm, var_per, type_parm, parm_per_array, **kwargs
-        )
-
-    return var_per
-
-
 #%%
 # DA class
 # ---------
-
 
 class DA(CATHY):
 
     # def __init__(self,**kwargs):
     #     self.damping = 1
-
     # -------------------------------------------------------------------#
     # %% DATA ASSIMILATION FCTS
 
@@ -691,16 +310,16 @@ class DA(CATHY):
         return ENS_times, newlist_parm2update, update_key
 
     def run_DA_sequential(
-        self,
-        parallel,
-        DA_type,
-        dict_obs,
-        list_parm2update,
-        dict_parm_pert,
-        list_assimilated_obs,
-        open_loop_run,
-        **kwargs,
-    ):
+                            self,
+                            parallel,
+                            DA_type,
+                            dict_obs,
+                            list_parm2update,
+                            dict_parm_pert,
+                            list_assimilated_obs,
+                            open_loop_run,
+                            **kwargs,
+                        ):
 
         """
 
@@ -790,7 +409,6 @@ class DA(CATHY):
         # -------------------------------------------------------------------
         self._update_input_ensemble(
             list(self.atmbc["time"]),
-            # list_parm2update="all",
             list_parm2update=list_parm2update,         
         )
 
@@ -798,7 +416,6 @@ class DA(CATHY):
         # Run hydrological model sequentially
         # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
-        
         for t_atmbc in all_atmbc_times:  # atmbc times MUST include assimilation observation times
 
             self._run_ensemble_hydrological_model(parallel, callexe)
@@ -830,10 +447,10 @@ class DA(CATHY):
                 # map states to observation = apply H operator to state variable
                 # ----------------------------------------------------------------
                 prediction = self.map_states2Observations(
-                    list_assimilated_obs,
-                    default_state="psi",
-                    parallel=parallel,
-                )
+                                                            list_assimilated_obs,
+                                                            default_state="psi",
+                                                            parallel=parallel,
+                                                        )
 
                 #%%
                 # DA analysis
@@ -884,6 +501,7 @@ class DA(CATHY):
                 self.console.print(
                     ":face_with_monocle: [b]check analysis performance[/b]"
                 )
+                
                 self._performance_assessement(
                                                 list_assimilated_obs,
                                                 data,
@@ -899,11 +517,7 @@ class DA(CATHY):
                 # ----------------------------------------------------------------
                 def check_ensemble(ensemble_psi_valid, ensemble_sw_valid):
                     if np.any(ensemble_psi_valid > 0):
-                        # raise ValueError('positive pressure heads observed')
-                        print("!!!!!!positive pressure heads observed!!!!!")
-                        # psi_2replace = np.where(ensemble_psi_valid >= 0)
-                        # ensemble_psi_valid_new = ensemble_psi_valid
-                        # ensemble_psi_valid_new[psi_2replace] = -1e-3
+                        print("!positive pressure heads observed!")
 
                 check_ensemble(ensemble_psi_valid, ensemble_sw_valid)
 
@@ -1357,7 +971,6 @@ class DA(CATHY):
         self.transform_parameters(
             list_update_parm, param=np.hstack(analysis_param), back=True
         )
-
         # if self.dict_parm_pert[pp[1]]['transf_type'] == 'log':
         #     print('back log transformation')
         #     analysis_param = np.exp(analysis_param)
@@ -1680,8 +1293,6 @@ class DA(CATHY):
         )
         return id_valid
 
-        pass
-
     def spatialize_parameters(self, list_update_parm, parm):
         """
         Extend the number of parameters according to the number of zones
@@ -1756,18 +1367,30 @@ class DA(CATHY):
         prediction_OL = []
         if parallel:
             if "ERT" in list_assimilated_obs:
-                prediction_OL_ERT = self._map_ERT_parallel(
-                    path_fwd_CATHY_list,
-                    savefig=True,
-                    DA_cnb=self.count_DA_cycle,
-                    ENS_times=ENS_times,
-                )
+                prediction_OL_ERT = mapper._map_ERT_parallel(
+                    
+                                                            self.dict_obs,
+                                                            self.count_DA_cycle,
+                                                            self.project_name,
+                                                            self.Archie_parms,
+                                                            path_fwd_CATHY_list,
+                                                            list_assimilated_obs="all",
+                                                            default_state="psi",
+                                                            verbose=False,
+                                                            savefig=True,
+                                                            DA_cnb=self.count_DA_cycle,
+                                                            ENS_times=self.ENS_times,
+                                                            
+                                                            # path_fwd_CATHY_list,
+                                                            # savefig=True,
+                                                            # DA_cnb=self.count_DA_cycle,
+                                                            # ENS_times=ENS_times,
+                                                        )
                 # prediction_OL_ERT is meas_size * ens_size * ENS_times size
                 # np.shape(prediction_OL_ERT)
             else:
                 write2shell_map = True
                 for t in range(len(ENS_times)):
-                    # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
                     prediction_stacked = self.map_states2Observations(
                         list_assimilated_obs,
                         ENS_times=ENS_times,
@@ -1780,7 +1403,6 @@ class DA(CATHY):
 
         else:
             for t in range(len(ENS_times)):
-                # for t in track(range(len(ENS_times)), description="OL Mapping observations to predicted obs..."):
                 prediction_stacked = self.map_states2Observations(
                     list_assimilated_obs,
                     ENS_times=ENS_times,
@@ -1888,7 +1510,6 @@ class DA(CATHY):
         '''        
         # initiate SPP_2_fill if not existing
         # -----------------------------------------------------------
-        
         if len(df_SPP_2fill) == 0:
             
             for i in range(self.NENS):
@@ -1918,11 +1539,7 @@ class DA(CATHY):
                   Assuming that the dictionnary of perturbated parameters 
                   is build per layers i.e. ks0= layer 0, ks1=layer 1, etc...
                   '''
-                  )
-                
-        # df_SPP_2fill[ens_nb].index = df_SPP_2fill[ens_nb].index.set_levels(df_SPP_2fill[ens_nb].index.levels[1].astype(int), 
-        #                                                     level=1)
-        
+                  )        
         if key_root[0].casefold() == 'ks':
             df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'PERMX'] = dict_parm_pert[key][update_key][ens_nb]
             df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'PERMY'] = dict_parm_pert[key][update_key][ens_nb]
@@ -2329,155 +1946,7 @@ class DA(CATHY):
 
         pass
 
-    def _performance_assessement(
-        self, list_assimilated_obs, data, prediction, t_obs, **kwargs
-    ):
-        """
-        THIS SHOULD BE MOVED TO DA CLASS
-        (Normalized) root mean square errors (NRMSEs)
-        RMSE is compute separately for each observation assimilated
 
-
-        ----------
-        list_assimilated_obs : TYPE
-            DESCRIPTION.
-        Data : TYPE
-            Refers to the measured data.
-        Observation : TYPE
-            Refers to the simulated data.
-
-        Returns
-        -------
-        TYPE
-            DESCRIPTION.
-
-        """
-
-        OL_bool = False
-        if "openLoop" in kwargs:
-            OL_bool = True
-
-        if hasattr(self, "df_performance") is False:
-            # initiate if simulation just started
-            # -------------------------------------------------------------
-            self.df_performance = pd.DataFrame()
-            self.RMSE_avg_stacked = []
-
-            # NAs default
-            # -------------------------------------------------------------
-            # RMSE_avg = np.nan # root mean square error (RMSE)
-            # NMRMSE = np.nan # time-averaged normalized root mror: unexpected indent
-
-        # average differences over the number of ensemble
-        # ALL OBSERVATIONS
-        # ------------------------------
-
-        all_Obs_diff_mat = np.zeros(np.shape(prediction))
-        for i in range(len(data)):
-            for j in range(np.shape(prediction)[1]):  # Loop over ensemble collumns
-                all_Obs_diff_mat[i, j] = abs(data[i] - prediction[i, j])
-                # all_Obs_diff_mat[:,j] = abs(data[i]-prediction[i,j])
-
-        all_Obs_diff_avg = np.nansum(all_Obs_diff_mat, axis=1) * (1 / len(prediction))
-
-        # average differences over all the observations
-        all_Obs_RMSE_avg_ti = np.sum(all_Obs_diff_avg, axis=0) * (1 / len(data))
-
-        # # compute metrics for each observation variable
-        # # ------------------------------------------
-        # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
-        # -----------------------------------------------------------------
-        obs2eval_key = []  # data type 2 eval
-        obs2eval = []  # data dict 2 eval
-
-        _, obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
-
-        start_line_obs = 0
-        for s, name_sensor in enumerate(obs2eval_key):  # case where there is other observations than ERT
-            obs2eval, _ = self._get_data2assimilate([name_sensor], match=True)
-
-            # number of observation at a given time
-            # for ERT number of observation = is the number of grid cells
-            n_obs = len(obs2eval)
-            prediction2eval = prediction[start_line_obs : start_line_obs + n_obs]
-            obs2eval_diff_mat = np.zeros(np.shape(prediction2eval))
-
-            for i in range(len(obs2eval)):
-                for j in range(
-                    np.shape(prediction2eval)[1]
-                ):  # Loop over ensemble collumns
-                    obs2eval_diff_mat[i, j] = abs(obs2eval[i] - prediction2eval[i, j])
-
-            obs2eval_diff_avg = np.nansum(obs2eval_diff_mat, axis=1) * (
-                1 / len(prediction2eval)
-            )
-
-            start_line_obs = start_line_obs + n_obs
-
-            if "ERT" in name_sensor:
-                RMSE_sensor_ti = np.sum(obs2eval_diff_avg, axis=0) * (1 / len(data))
-                # Plot here scatter Transfer resistance scatter plot between the observed and simulated data
-                # plt.scatter(obs2eval[i],prediction2eval[i,j])
-            else:
-                RMSE_sensor_ti = obs2eval_diff_avg
-
-            # compute normalised RMSE
-            # ---------------------------------------------------------
-
-            self.RMSE_avg_stacked.append(all_Obs_RMSE_avg_ti)
-            
-            if 'ObsType' in self.df_performance:
-                if name_sensor in self.df_performance['ObsType'].unique():
-                    bool_sensor = self.df_performance['ObsType']==name_sensor
-                    RMSE_sensor_stacked = (self.df_performance[bool_sensor]["RMSE" + name_sensor].sum() 
-                                       + RMSE_sensor_ti
-                                       )
-                else:
-                    RMSE_sensor_stacked = RMSE_sensor_ti
-
-            # if hasattr(self, 'RMSE') is False:
-            if t_obs == 0:
-                NMRMSE_sensor_ti = RMSE_sensor_ti
-                NMRMSE_avg_ti = all_Obs_RMSE_avg_ti
-            else:
-                NMRMSE_sensor_ti = (1 / (t_obs + 1)) * RMSE_sensor_stacked
-                NMRMSE_avg_ti = (1 / (t_obs + 1)) * np.sum(self.RMSE_avg_stacked)
-
-            # root names for the collumns name
-            # -------------------------------------------------------------
-            cols_root = [
-                "time",
-                "ObsType",
-                "RMSE" + name_sensor,
-                "RMSE_avg",
-                "NMRMSE" + name_sensor,
-                "NMRMSE_avg",
-                "OL",
-            ]
-
-            # root data
-            # -------------------------------------------------------------
-            data_df_root = [
-                [t_obs],
-                [name_sensor],
-                [RMSE_sensor_ti],
-                [all_Obs_RMSE_avg_ti],
-                [NMRMSE_sensor_ti],
-                [NMRMSE_avg_ti],
-                [OL_bool],
-            ]
-
-            df_performance_ti = pd.DataFrame(
-                np.array(data_df_root, dtype=object).T, columns=cols_root
-            )
-
-            # concatenate with main RMSE dataframe
-            # -------------------------------------------------------------
-            self.df_performance = pd.concat(
-                [self.df_performance, df_performance_ti], axis=0, ignore_index=True
-            )
-
-        return self.df_performance
 
     def _get_data2assimilate(self, list_assimilated_obs, time_ass=None, match=False):
         """
@@ -2558,8 +2027,12 @@ class DA(CATHY):
         return obskey2map, obs2map
 
     def map_states2Observations(
-        self, list_assimilated_obs="all", parallel=False, default_state="psi", **kwargs
-    ):
+                                    self, 
+                                    list_assimilated_obs="all", 
+                                    parallel=False, 
+                                    default_state="psi", 
+                                    **kwargs
+                                ):
         """
         Translate (map) the state values (pressure head or saturation) to observations (or predicted) values
 
@@ -2600,10 +2073,6 @@ class DA(CATHY):
             Ensemble of the simulated (predicted) observations.
         """
         #%%
-        # parallel = True
-        # list_assimilated_obs = ['ERT']
-        # list_assimilated_obs = ['swc','tensio']
-        # list_assimilated_obs = ['swc','tensio','ERT']
         if parallel:
             path_fwd_CATHY_list = []  # list of ensemble path of cathy output
             for ens_nb in self.ens_valid:  # loop over ensemble files
@@ -2643,21 +2112,10 @@ class DA(CATHY):
                                           self.dem_parameters,
                                           self.cathyH["MAXVEG"]
                                           )
-            # SPP_ensi.POROS
-            # SPP_ensi.POROS.min()
-            # SPP_ensi.POROS.max()
-
             # find data to map with dictionnary of observations
             # --------------------------------------------
-            # print('*'*23)
-            # print(list_assimilated_obs)
-
             obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-            state = [df_psi[-1], df_sw[-1]]
-
-            # print('-'*23)
-            # print(obskey2map)
-            
+            state = [df_psi[-1], df_sw[-1]]            
             
             Hx_stacked = []  # stacked predicted observation
             # Loop over observations to map
@@ -2667,56 +2125,29 @@ class DA(CATHY):
                 # print('obs_key nb:' + obs_key)
 
                 if "tensio" in obs_key:
-                    # case 1: pressure head assimilation (Hx_PH)
-                    # -------------------------------------------------------------
-                    Hx_PH = state[0][obs2map[i]["mesh_nodes"]]
-                    print(i,obs_key,Hx_PH,state[0][obs2map[i]["mesh_nodes"]],[obs2map[i]["mesh_nodes"]])
+                    obs2map_node = obs2map[i]["mesh_nodes"]
+                    Hx_PH = mapper.tensio_mapper(state,obs2map_node)
                     Hx_stacked.append(Hx_PH)
 
                 if "swc" in obs_key:
                     # case 2: sw assimilation (Hx_SW)
                     # --------------------------------------------------------------------
-                    
-                    # find porosity associated to mesh node position
-                    # ----------------------------------------------
-                    obs2map[i]["mesh_nodes"]
-                    xyz_swc = self.grid3d['mesh3d_nodes'][obs2map[i]["mesh_nodes"][0]]
-                    
-                    ltop, lbot = mt.get_layer_depths(self.dem_parameters)
-                    idlayer_swc = np.where(abs(xyz_swc[2])>ltop)[0]
-                    porosity_swc = SPP_ensi.xs((1,idlayer_swc[0]),
-                                               level=('zone', 'layer'))['POROS'].values
-                    self.console.print(f"Transform sat to SWC with porosity=' {str(porosity_swc)}")
-                    self.console.rule(
-                        ":warning: warning messages above :warning:", style="yellow"
-                    )
-                    self.console.print(
-                        r"""Current implementation does not support different porosity zones! 
-                            Only layers porosity is considered - Taking zone 1 as default
-                        """,
-                        style="yellow",
-                    )
-                    # print('Transform sat to SWC with porosity=' + str(porosity_swc))
-                    # print('note: the value of the porosity can be unique or not depending on the soil physical properties defined')
-                    # print('Current implementation does not support different porosity zones!')
-                    Hx_SW = state[1][obs2map[i]["mesh_nodes"]] * porosity_swc
+                    obs2map_node = obs2map[i]["mesh_nodes"]
+                    Hx_SW = mapper.swc_mapper(state,
+                                              obs2map_node,
+                                              self.grid3d['mesh3d_nodes'],
+                                              self.dem_parameters,
+                                              SPP_ensi,
+                                              self.console
+                                              )
                     Hx_stacked.append(Hx_SW)
-                    # note: the value of the porosity can be unique or not depending on the soil physical properties defined
+
 
                 if 'ET' in obs_key:
-                    # Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]
-                    # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
-                    # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
-                    # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
-                    self.console.print(f"Read actual ET on a given node")
-
-                    df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
-                                                                  'fort.777'),
-                                                      )
-                    df_fort777 = df_fort777.set_index('time_sec')                    
-                    t_ET = df_fort777.index.unique()
-                    # print('here I''m taking the wrong time no? ' + str(t_ET[-1]))
-                    Hx_ET = df_fort777.loc[t_ET[-1]].iloc[obs2map[i]["mesh_nodes"]]['ACT. ETRA']
+                    Hx_ET = mapper.ET_mapper(obs2map_node, 
+                                             self.console,
+                                             path_fwd_CATHY,
+                                             )
                     Hx_stacked.append(Hx_ET)
 
                 if "stemflow" in obs_key:
@@ -2738,8 +2169,8 @@ class DA(CATHY):
                         path=os.path.join(path_fwd_CATHY, self.output_dirname),
                     )
 
-                    Hx_scale = state[1][obs2map[i]["mesh_nodes"]] * porosity
-                    Hx_stacked.append(Hx_scale)
+                    # Hx_scale = state[1][obs2map[i]["mesh_nodes"]] * porosity
+                    # Hx_stacked.append(Hx_scale)
 
                 if "discharge" in obs_key:
                     # case 3: discharge
@@ -2753,7 +2184,14 @@ class DA(CATHY):
 
                 if "ERT" in obs_key:
                     if parallel == False:
-                        Hx_ERT = self._map_ERT(state, path_fwd_CATHY, ens_nb, **kwargs)
+                        Hx_ERT, df_Archie = mapper._map_ERT(
+                                                            state, 
+                                                            path_fwd_CATHY, 
+                                                            ens_nb, 
+                                                            **kwargs
+                                                            )
+                        self._add_2_ensemble_Archie(df_Archie)
+
                         if "pygimli" in obs2map[i]["data_format"]:
                             Hx_stacked.append(Hx_ERT["rhoa"])
                         else:
@@ -2762,15 +2200,10 @@ class DA(CATHY):
 
             if len(Hx_stacked) > 0:
                 Hx_ens.append(Hx_stacked)
-                # Hx_stacked = np.hstack(Hx_stacked)
-
-            # write2shell_map = False
 
         if isinstance(Hx_ens, float):
             pass
         else:
-            # print('Hx_ens')
-            # print(Hx_ens)
             if len(Hx_ens)>0:
                 if np.shape(Hx_ens)!=(len(self.ens_valid),len(obskey2map)):
                     Hx_ens = np.hstack(Hx_ens)
@@ -2813,23 +2246,25 @@ class DA(CATHY):
                     self.console.rule("", style="green")
 
                 if parallel:
-                    Hx_ens_ERT = self._map_ERT_parallel(
-                        path_fwd_CATHY_list,
-                        savefig=False,
-                        DA_cnb=self.count_DA_cycle,
-                    )
-                    # print(Hx_ens)
+                    Hx_ens_ERT, df_Archie = mapper._map_ERT_parallel(
+                                                                    self.dict_obs,
+                                                                    self.count_DA_cycle,
+                                                                    self.project_name,
+                                                                    self.Archie_parms,
+                                                                    path_fwd_CATHY_list,
+                                                                    list_assimilated_obs="all",
+                                                                    default_state="psi",
+                                                                    DA_cnb=self.count_DA_cycle,
+                                                                    savefig=False,
+                                                                    verbose=False,
+                                                                    )
+                            
+                    
                     if len(Hx_ens) > 0:
                         Hx_ens = np.vstack([Hx_ens, Hx_ens_ERT])
-                        # np.shape(Hx_ens)
                     else:
-                        # print('here')
                         Hx_ens = Hx_ens_ERT
                         
-        # print(obskey2map)
-        # print(np.shape(Hx_ens))
-
-#%%
         return Hx_ens  # meas_size * ens_size
 
     def _add_2_ensemble_Archie(self, df_Archie_2add):
@@ -2853,17 +2288,7 @@ class DA(CATHY):
             )
         self.Archie = pd.concat([self.Archie, df_Archie_2add])
 
-    def _add_2_ensemble_Hx(self, Hx, Hx_2add):
-        """
-        Store in an array predicted value for all ensembles and all assimilation times
-        """
-        try:
-            Hx.append(Hx_2add)
-        except:
-            Hx = list(Hx)
-            Hx.append(Hx_2add)
 
-        return Hx
 
     def _read_state_ensemble(self):
         # read grid to infer dimension of the ensemble X
@@ -2968,11 +2393,11 @@ class DA(CATHY):
 
         # ---------------------------------------------------------------------
         self.update_ENS_files(
-            self.dict_parm_pert,
-            list_parm2update,
-            cycle_nb=self.count_DA_cycle,
-            analysis=analysis,
-        )
+                                self.dict_parm_pert,
+                                list_parm2update,
+                                cycle_nb=self.count_DA_cycle,
+                                analysis=analysis,
+                            )
 
         pass
 
@@ -3010,12 +2435,6 @@ class DA(CATHY):
                                self.project_name,
                                "./DA_Ensemble/cathy_" + str(ens_nb + 1)
                                )
-            
-            # df_atmbc, HSPATM, IETO = in_CT.read_atmbc(
-            #     os.path.join(cwd,"input", "atmbc"),
-            #     grid=self.grid3d,
-            # )
-
             # Case where atmbc are perturbated
             # -------------------------------
             if 'atmbc0' in self.dict_parm_pert.keys(): # case where atmbc are homogeneous
@@ -3227,223 +2646,6 @@ class DA(CATHY):
             if not os.path.exists(path_nudn_i):
                 shutil.copytree(path_origin, path_nudn_i)
 
-    def _parse_ERT_metadata(self, key_value):
-        """
-        Extract ERT metadata information form obs dict
-        """
-        ERT_meta_dict = {}
-        ERT_meta_dict["forward_mesh_vtk_file"] = key_value[1]["ERT"][
-            "forward_mesh_vtk_file"
-        ]
-        
-        for kk in key_value[1]["ERT"].keys():
-            if 'filename' in kk:
-                ERT_meta_dict["pathERT"] = os.path.split(key_value[1]["ERT"]["filename"])[0]
-            else:
-                ERT_meta_dict[kk]= key_value[1]["ERT"][kk]
-
-        # ERT_meta_dict["pathERT"] = os.path.split(key_value[1]["ERT"]["filename"])[0]
-        # ERT_meta_dict["seq"] = key_value[1]["ERT"]["sequenceERT"]
-        # ERT_meta_dict["electrodes"] = key_value[1]["ERT"]["elecs"]
-        # ERT_meta_dict["noise_level"] = key_value[1]["ERT"]["data_err"]
-        # ERT_meta_dict["data_format"] = key_value[1]["ERT"]["data_format"]
-        # ERT_meta_dict["meta"] = key_value[1]["ERT"]["meta"]
-
-        return ERT_meta_dict
-
-    def _map_ERT(self, state, path_fwd_CATHY, ens_nb, **kwargs):
-        """
-        Mapping of state variable to observation (predicted)
-        ERT using pedophysical transformation H
-        """
-
-        savefig = False
-        if "savefig" in kwargs:
-            savefig = kwargs["savefig"]
-
-        # search key value to identify time and method
-        # --------------------------------------------
-        tuple_list_obs = list(self.dict_obs.items())
-        key_time = tuple_list_obs[self.count_DA_cycle]
-        
-        # Load ERT metadata information form obs dict
-        # -------------------------------------------
-        ERT_meta_dict = self._parse_ERT_metadata(key_time)
-
-        Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(
-            self.project_name,
-            self.Archie_parms,
-            self.Archie_parms["porosity"],
-            ERT_meta_dict,
-            path_fwd_CATHY,
-            df_sw=state[1],  # kwargs
-            DA_cnb=self.count_DA_cycle,  # kwargs
-            Ens_nbi=ens_nb,  # kwargs
-            savefig=savefig,  # kwargs
-            noise_level=ERT_meta_dict["data_err"],  # kwargs
-            dict_ERT=key_time[1]["ERT"],  #  kwargs
-        )
-        df_Archie["OL"] = np.ones(len(df_Archie["time"])) * False
-        self._add_2_ensemble_Archie(df_Archie)
-
-        return Hx_ERT
-
-    def _map_ERT_parallel_DA(
-        self,
-        ENS_times,
-        ERT_meta_dict,
-        key_time,
-        path_fwd_CATHY_list,
-        DA_cnb,
-    ):
-        """
-        Parallel mapping of ERT data using pedophysical transformation H
-        """
-        Hx_ERT_ens = []
-
-        # freeze fixed arguments of Archie.SW_2_ERa_DA
-        # -----------------------------------------------------------------
-        ERTmapping_args = partial(
-            Archie.SW_2_ERa_DA,
-            self.project_name,
-            self.Archie_parms,
-            self.Archie_parms["porosity"],
-            ERT_meta_dict,
-            DA_cnb=DA_cnb,
-            savefig=False,
-            noise_level=ERT_meta_dict["data_err"],  # kwargs
-            dict_ERT=key_time[1]["ERT"],  #  kwargs
-        )
-
-        # // run using ensemble subfolders path as a list
-        # -----------------------------------------------------------------
-        with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
-            results_mapping = pool.map(ERTmapping_args, path_fwd_CATHY_list)
-            # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-
-        print('Build analysis dataframe')
-        for ens_i in range(len(path_fwd_CATHY_list)):
-            df_Archie = results_mapping[ens_i][1]
-            df_Archie["OL"] = np.zeros(len(df_Archie))
-            self._add_2_ensemble_Archie(df_Archie)
-            Hx_ERT_ens_i = results_mapping[ens_i][0]
-
-            if "pygimli" in self.dict_obs[key_time[0]]["ERT"]["data_format"]:
-                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["rhoa"])
-            else:
-                Hx_ERT_ens = self._add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["resist"])
-
-        return Hx_ERT_ens
-
-    def _map_ERT_parallel_OL(
-        self,
-        ENS_times,
-        ERT_meta_dict,
-        key_time,
-        path_fwd_CATHY_list,
-    ):
-        """
-        Parallel mapping of ERT data using pedophysical transformation H
-        case of the open Loop = nested loop with ensemble time
-        """
-
-        Hx_ERT_ens = []
-        for t in range(len(ENS_times)):
-            print("t_openLoop mapping:" + str(t))
-
-            # freeze fixed arguments of Archie.SW_2_ERa
-            # -----------------------------------------------------------------
-            ERTmapping_args = partial(
-                Archie.SW_2_ERa_DA,
-                self.project_name,
-                self.Archie_parms,
-                self.Archie_parms["porosity"],
-                ERT_meta_dict,
-                time_ass=t,
-                savefig=True,
-                noise_level=ERT_meta_dict["data_err"],
-                dict_ERT=key_time[1]["ERT"],
-            )
-            #
-            # -----------------------------------------------------------------
-            with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
-                results_mapping_time_i = pool.map(ERTmapping_args, path_fwd_CATHY_list)
-                # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-
-            for ens_i in range(len(path_fwd_CATHY_list)):
-                Hx_ERT_time_i = results_mapping_time_i[ens_i][0]
-
-                # print(np.shape(results_mapping_time_i))
-                df_Archie = results_mapping_time_i[ens_i][1]
-
-                # print(df_Archie)
-                df_Archie["OL"] = np.ones(len(df_Archie))
-                self._add_2_ensemble_Archie(df_Archie)
-
-                if "pygimli" in ERT_meta_dict["data_format"]:
-                    Hx_ERT_ens = self._add_2_ensemble_Hx(
-                        Hx_ERT_ens, Hx_ERT_time_i["rhoa"]
-                    )
-                else:
-                    Hx_ERT_ens = self._add_2_ensemble_Hx(
-                        Hx_ERT_ens, Hx_ERT_time_i["resist"]
-                    )
-
-        # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
-        #                                         len(Hx_ERT_ens[0]),
-        #                                         len(ENS_times)])  # (EnSize * data size * times)
-        return Hx_ERT_ens
-
-    def _map_ERT_parallel(
-        self,
-        path_fwd_CATHY_list,
-        list_assimilated_obs="all",
-        default_state="psi",
-        verbose=False,
-        **kwargs,
-    ):
-        """Mapping of state variable to observation (predicted) ERT using pedophysical transformation H,
-        // run using ensemble subfolders path as a list
-        """
-
-        savefig = False
-        if "savefig" in kwargs:
-            savefig = kwargs["savefig"]
-        ENS_times = []
-        if "ENS_times" in kwargs:
-            ENS_times = kwargs["ENS_times"]
-        DA_cnb = []
-        if "DA_cnb" in kwargs:
-            DA_cnb = kwargs["DA_cnb"]
-
-        # search key value to identify time and method
-        tuple_list_obs = list(self.dict_obs.items())
-        key_time = tuple_list_obs[self.count_DA_cycle]
-        # Load ERT metadata information form obs dict
-        # -------------------------------------------
-        ERT_meta_dict = self._parse_ERT_metadata(key_time)
-
-        if len(ENS_times) > 0:  # case of the open Loop = nested loop with ensemble time
-            Hx_ERT_ens = self._map_ERT_parallel_OL(
-                ENS_times,
-                ERT_meta_dict,
-                key_time,
-                path_fwd_CATHY_list,
-            )
-        else:
-            Hx_ERT_ens = self._map_ERT_parallel_DA(
-                ENS_times,
-                ERT_meta_dict,
-                key_time,
-                path_fwd_CATHY_list,
-                DA_cnb,
-            )
-
-        prediction_ERT = np.vstack(Hx_ERT_ens).T  # (EnSize)
-
-        # self.dict_obs
-
-        return prediction_ERT
 
     def set_Archie_parm(
         self,
@@ -3458,7 +2660,7 @@ class DA(CATHY):
         Dict of Archie parameters. Each type of soil is describe within a list
         Note that if pert_sigma is not None a normal noise is
         added during the translation of Saturation Water to ER
-
+    
         Parameters
         ----------
         rFluid : TYPE, optional
@@ -3472,14 +2674,14 @@ class DA(CATHY):
             Saturation exponent. The default is [2.0].
         pert_sigma_Archie : TYPE, optional
             Gaussian noise to add. The default is None.
-
+    
         ..note:
             Field procedure to obtain tce he covariance structure of the model
             estimates is described in Tso et al () - 10.1029/2019WR024964
             "Fit a straight line for log 10 (S) and log 10 (ρ S ) using the least-squares criterion.
             The fitting routine returns the covariance structure of the model estimates, which can be used to de-
             termine the 68% confidence interval (1 standard deviation) of the model estimates.""
-
+    
         """
         if len(porosity) == 0:
             porosity = self.soil_SPP["SPP"][:, 4][0]
@@ -3493,5 +2695,158 @@ class DA(CATHY):
             "n_Archie": n_Archie,
             "pert_sigma_Archie": pert_sigma_Archie,
         }
-
-        pass
+        
+    def _performance_assessement(
+                                self, 
+                                list_assimilated_obs, 
+                                data, 
+                                prediction, 
+                                t_obs, 
+                                **kwargs
+                                ):
+        """
+        (Normalized) root mean square errors (NRMSEs)
+        RMSE is compute separately for each observation assimilated
+    
+    
+        ----------
+        list_assimilated_obs : TYPE
+            DESCRIPTION.
+        Data : TYPE
+            Refers to the measured data.
+        Observation : TYPE
+            Refers to the simulated data.
+    
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+    
+        """
+    
+        OL_bool = False
+        if "openLoop" in kwargs:
+            OL_bool = True
+    
+        if hasattr(self, "df_performance") is False:
+            # initiate if simulation just started
+            # -------------------------------------------------------------
+            self.df_performance = pd.DataFrame()
+            self.RMSE_avg_stacked = []
+    
+            # NAs default
+            # -------------------------------------------------------------
+            # RMSE_avg = np.nan # root mean square error (RMSE)
+            # NMRMSE = np.nan # time-averaged normalized root mror: unexpected indent
+    
+        # average differences over the number of ensemble
+        # ALL OBSERVATIONS
+        # ------------------------------
+    
+        all_Obs_diff_mat = np.zeros(np.shape(prediction))
+        for i in range(len(data)):
+            for j in range(np.shape(prediction)[1]):  # Loop over ensemble collumns
+                all_Obs_diff_mat[i, j] = abs(data[i] - prediction[i, j])
+                # all_Obs_diff_mat[:,j] = abs(data[i]-prediction[i,j])
+    
+        all_Obs_diff_avg = np.nansum(all_Obs_diff_mat, axis=1) * (1 / len(prediction))
+    
+        # average differences over all the observations
+        all_Obs_RMSE_avg_ti = np.sum(all_Obs_diff_avg, axis=0) * (1 / len(data))
+    
+        # # compute metrics for each observation variable
+        # # ------------------------------------------
+        # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
+        # -----------------------------------------------------------------
+        obs2eval_key = []  # data type 2 eval
+        obs2eval = []  # data dict 2 eval
+    
+        _, obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
+    
+        start_line_obs = 0
+        for s, name_sensor in enumerate(obs2eval_key):  # case where there is other observations than ERT
+            obs2eval, _ = self._get_data2assimilate([name_sensor], match=True)
+    
+            # number of observation at a given time
+            # for ERT number of observation = is the number of grid cells
+            n_obs = len(obs2eval)
+            prediction2eval = prediction[start_line_obs : start_line_obs + n_obs]
+            obs2eval_diff_mat = np.zeros(np.shape(prediction2eval))
+    
+            for i in range(len(obs2eval)):
+                for j in range(
+                    np.shape(prediction2eval)[1]
+                ):  # Loop over ensemble collumns
+                    obs2eval_diff_mat[i, j] = abs(obs2eval[i] - prediction2eval[i, j])
+    
+            obs2eval_diff_avg = np.nansum(obs2eval_diff_mat, axis=1) * (
+                1 / len(prediction2eval)
+            )
+    
+            start_line_obs = start_line_obs + n_obs
+    
+            if "ERT" in name_sensor:
+                RMSE_sensor_ti = np.sum(obs2eval_diff_avg, axis=0) * (1 / len(data))
+                # Plot here scatter Transfer resistance scatter plot between the observed and simulated data
+                # plt.scatter(obs2eval[i],prediction2eval[i,j])
+            else:
+                RMSE_sensor_ti = obs2eval_diff_avg
+    
+            # compute normalised RMSE
+            # ---------------------------------------------------------
+    
+            self.RMSE_avg_stacked.append(all_Obs_RMSE_avg_ti)
+            
+            if 'ObsType' in self.df_performance:
+                if name_sensor in self.df_performance['ObsType'].unique():
+                    bool_sensor = self.df_performance['ObsType']==name_sensor
+                    RMSE_sensor_stacked = (self.df_performance[bool_sensor]["RMSE" + name_sensor].sum() 
+                                       + RMSE_sensor_ti
+                                       )
+                else:
+                    RMSE_sensor_stacked = RMSE_sensor_ti
+    
+            # if hasattr(self, 'RMSE') is False:
+            if t_obs == 0:
+                NMRMSE_sensor_ti = RMSE_sensor_ti
+                NMRMSE_avg_ti = all_Obs_RMSE_avg_ti
+            else:
+                NMRMSE_sensor_ti = (1 / (t_obs + 1)) * RMSE_sensor_stacked
+                NMRMSE_avg_ti = (1 / (t_obs + 1)) * np.sum(self.RMSE_avg_stacked)
+    
+            # root names for the collumns name
+            # -------------------------------------------------------------
+            cols_root = [
+                "time",
+                "ObsType",
+                "RMSE" + name_sensor,
+                "RMSE_avg",
+                "NMRMSE" + name_sensor,
+                "NMRMSE_avg",
+                "OL",
+            ]
+    
+            # root data
+            # -------------------------------------------------------------
+            data_df_root = [
+                [t_obs],
+                [name_sensor],
+                [RMSE_sensor_ti],
+                [all_Obs_RMSE_avg_ti],
+                [NMRMSE_sensor_ti],
+                [NMRMSE_avg_ti],
+                [OL_bool],
+            ]
+    
+            df_performance_ti = pd.DataFrame(
+                np.array(data_df_root, dtype=object).T, columns=cols_root
+            )
+    
+            # concatenate with main RMSE dataframe
+            # -------------------------------------------------------------
+            self.df_performance = pd.concat(
+                [self.df_performance, df_performance_ti], axis=0, ignore_index=True
+            )
+    
+        return self.df_performance
+    

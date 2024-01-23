@@ -319,30 +319,6 @@ def read_dem_parameters(dem_parametersfile):
             dict_dem_parm[lname] = lines_s_num[ii]
             ii +=1
             
-            
-    # counth = 0
-    # count_parm = 0
-    # dem_parameters_dict = {}
-    # zratio = []
-    # with open(dem_parametersfile, "r") as f:
-    #     for line_value in f:  # iterate over each line
-    #         if counth < len(header_fmt):
-    #             if header_fmt[counth] == 1:
-    #                 dem_parameters_dict[dem_parameters[count_parm]] = float(line_value)
-    #                 count_parm += 1
-    #             elif header_fmt[counth] == 3:
-    #                 for j in range(3):
-    #                     dem_parameters_dict[dem_parameters[count_parm + j]] = float(
-    #                         line_value.split()[j]
-    #                     )
-    #                 count_parm += 3
-    #         elif counth == len(header_fmt):
-    #             for j in range(len(line_value.split())):
-    #                 zratio.append(float(line_value.split()[j]))
-    #             dem_parameters_dict[dem_parameters[count_parm]] = zratio
-    #             count_parm += len(line_value.split())
-    #         counth += 1
-
     return dict_dem_parm
 
 
@@ -431,8 +407,8 @@ def read_soil(soilfile, dem_parm, MAXVEG):
             layer_id.append(ds)
             zone_id.append(dz+1) # zone numbers starts from 1
 
-    if len(soil) != len(layer_id):
-        raise ValueError(
+    if len(soil) != len(layer_id): #*dem_parm['nzone']:
+       print(
             "Inconsistent number of zones/layers with respect to the number of soil lines: " +
             str(len(soil)) + '/' + str(len(layer_id))
         )

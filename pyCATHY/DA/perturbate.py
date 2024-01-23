@@ -5,7 +5,12 @@
 """
 
 import pandas as pd
+import numpy as np
+import scipy.stats as stats
+from pyCATHY import cathy_utils as utils_CT
+from pyCATHY.plotters import cathy_plots as plt_CT
 
+#%%
 def check_distribution(parm2check):
     if parm2check["type_parm"] == "porosity":
         if parm2check["per_nom"] < 0:
@@ -626,3 +631,386 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
             # nb_surf_nodes = 110
 
     return list_pert
+
+
+#%%
+
+
+# SAMPLING distribution
+# ----------------------
+
+def sampling_dist_trunc(myclip_a, myclip_b, ensemble_size, **kwargs):
+    # https://stackoverflow.com/questions/18441779/how-to-specify-upper-and-lower-limits-when-using-numpy-random-normal
+    X = stats.truncnorm(
+        (myclip_a - kwargs["loc"]) / kwargs["scale"],
+        (myclip_b - kwargs["loc"]) / kwargs["scale"],
+        loc=kwargs["loc"],
+        scale=kwargs["scale"],
+    )
+    return X.rvs(ensemble_size)
+
+
+def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
+    # sampling
+    np.random.seed(1)
+    if sampling_type == "lognormal":
+        parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
+    elif sampling_type == "normal":
+        # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
+        parm_sampling = np.random.normal(mean, scale=sd, size=ensemble_size)
+    elif sampling_type == "uniform":
+        minmax_uni = kwargs["minmax_uni"]
+        parm_sampling = np.random.uniform(minmax_uni[0], minmax_uni[1], ensemble_size)
+    return parm_sampling
+
+
+# PERTUBATE distribution
+# ----------------------
+
+
+def perturbate_dist(parm, per_type, parm_sampling, ensemble_size):
+    # pertubate
+    parm_mat = np.ones(ensemble_size) * parm["nominal"]
+    if per_type == None:
+        parm_per_array = parm_sampling
+    if per_type == "multiplicative":
+        parm_per_array = parm_mat * parm_sampling
+    elif per_type == "additive":
+        parm_per_array = parm_mat + parm_sampling
+    return parm_per_array
+
+
+def Carsel_Parrish_VGN_pert():
+    cholesky_diag_mat = np.diag(3)
+    pass
+
+
+def Archie_pert_rules(
+    parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
+):
+    # a : TYPE, optional
+    #     Tortuosity factor. The default is [1.0].
+    # m : TYPE, optional
+    #     Cementation exponent. The default is [2.0]. (usually in the range 1.3 -- 2.5 for sandstones)
+    # n : TYPE, optional
+    #     Saturation exponent. The default is [2.0].
+
+    if "rFluid" in type_parm:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=0, myclip_b=np.inf, ensemble_size=ensemble_size, loc=mean, scale=sd
+        )
+    elif "a" in type_parm:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=0, myclip_b=2.5, ensemble_size=ensemble_size, loc=mean, scale=sd
+        )
+    elif "m" in type_parm:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=1.3, myclip_b=2.5, ensemble_size=ensemble_size, loc=mean, scale=sd
+        )
+    elif "n" in type_parm:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=2.5, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
+        )
+    else:
+        parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+
+    parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+    return parm_sampling, parm_per_array
+
+
+def VG_pert_rules(
+    var_per_2add,
+    parm,
+    type_parm,
+    ensemble_size,
+    mean,
+    sd,
+    per_type,
+    sampling_type,
+    **kwargs,
+):
+    print(
+        "The parameters of the van Genuchten retention curves α,"
+        + "n, and θ r are perturbed taking into account their mutual cor-"
+        + "relation according to Carsel and Parrish (1988)"
+    )
+
+    if "Carsel_Parrish_VGN_pert" in kwargs:
+        utils.Carsel_Parrish_1988(soilTexture=None)
+        Carsel_Parrish_VGN_pert()
+    else:
+        if "clip_min" in var_per_2add[type_parm].keys():
+            parm_sampling = sampling_dist_trunc(
+                myclip_a=var_per_2add[type_parm]["clip_min"],
+                myclip_b=var_per_2add[type_parm]["clip_max"],
+                ensemble_size=ensemble_size,
+                loc=mean,
+                scale=sd,
+            )
+        else:
+            parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+    return parm_per_array
+
+
+def atmbc_pert_rules(
+    var_per_2add,
+    parm,
+    type_parm,
+    ensemble_size,
+    mean,
+    sd,
+    per_type,
+    sampling_type,
+    **kwargs,
+):
+
+    parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+    # parm_sampling = sampling_dist(sampling_type, mean, 1e-6, ensemble_size)
+    parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+    var_per_2add[type_parm] = parm
+    Tau = parm["time_decorrelation_len"]
+    qk_0 = parm_per_array
+    atmbc_times = parm["data2perturbate"]["time"]
+    atmbc_values = parm["data2perturbate"]["VALUE"]
+    # print(per_type)
+    # print(atmbc_values)
+
+    # # Create a histogram plot for perturbed sand conductivities
+    # plt.figure(figsize=(10, 5))
+    # # plt.hist(parm_sampling, bins=20, alpha=0.5, color='blue', label='Atmbc ENS')
+    # plt.hist(parm_per_array, bins=20, alpha=0.5, color='red', label='* Atmbc ENS')
+    # plt.xlabel('Perturbed atmbc')
+    # plt.ylabel('Frequency')
+    # # plt.title('Perturbed Saturated Hydraulic Conductivities')
+    # plt.legend(loc='upper right')
+    # plt.grid(True)
+    
+    
+    parm_per_array_time_variable = []
+    for i, t in enumerate(atmbc_times):
+        if i == 0:
+            # qk_0 = wk0
+            parm_per_array_time_variable.append(qk_0)
+        else:
+            qk_0 = parm_per_array_time_variable[i - 1]
+            parm["nominal"] = atmbc_values[i]
+            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            wk = sampling_dist(sampling_type, mean, sd, ensemble_size)
+            # plt.plot(wk)
+            deltaT = abs(atmbc_times[i] - atmbc_times[i - 1])
+            # qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
+            qk_i = wk
+            # plt.plot(qk_i)
+            parm_per_array_time_variable.append(qk_i)
+
+    # print(parm["nominal"])
+    # print(parm_per_array_time_variable)
+    key = "time_variable_perturbation"
+    var_per_2add[type_parm][key] = parm_per_array_time_variable
+    
+    return parm_sampling, parm_per_array, var_per_2add
+
+
+def Johnson1970(self):
+    print("not yet implemented - see Botto 2018")
+
+
+def Evensen2003(qk_0, wk, deltaT, Tau):
+    """
+    Ensemble Generation of time-variable atmospheric forcing rates.
+    Parameters
+    ----------
+    wk : np.array([])
+        is a sequence of white noise drawn from the standard normal distribution.
+    deltaT : float
+        assimilation interval in sec
+    Tau : np.array([])
+        the specified time decorrelation length
+    time : int
+        assimilation time index
+
+    Returns
+    -------
+    qki : Ensemble of time-variable atmospheric forcing rates at time i
+
+    """
+    if Tau < deltaT:
+        raise ValueError(
+            "Time decorrelation length is too small; should be at least>=" + str(deltaT)
+        )
+    gamma = 1 - deltaT / Tau
+    qki = gamma * qk_0 + np.sqrt(1 - (gamma * gamma)) * wk
+
+    return qki
+
+
+def build_dict_attributes_pert(
+    var_per_2add, type_parm, parm_per_array, parm_sampling, **kwargs
+):
+
+    key = "ini_perturbation"
+    var_per_2add[type_parm][key] = parm_per_array
+    key = "sampling"
+    var_per_2add[type_parm][key] = parm_sampling
+    # Parameter tranformation
+    # --------------------------------------------------------------------
+    if "transf_type" in kwargs:
+        var_per_2add[type_parm]["transf_type"] = kwargs["transf_type"]
+        if "transf_bounds" in kwargs:
+            var_per_2add[type_parm]["transf_bounds"] = kwargs["transf_bounds"]
+    else:
+        var_per_2add[type_parm]["transf_type"] = None
+    # Parameter spatial extension
+    # --------------------------------------------------------------------
+    if "surf_zones_param" in kwargs:
+        nb_surf_zones = kwargs["surf_zones_param"]
+        # parm_per_array = np.tile(parm_per_array,nb_surf_zones)
+        var_per_2add[type_parm]["surf_zones_param"] = kwargs["surf_zones_param"]
+    return var_per_2add
+
+
+def perturbate_parm(
+    var_per,
+    parm,
+    type_parm,
+    mean=[],
+    sd=[],
+    per_type=None,
+    sampling_type="lognormal",
+    ensemble_size=128,
+    seed=True,
+    **kwargs,
+):
+    """
+    Perturbate parameter for ensemble generation
+
+    Possible variable to perturbate:
+        - initial conditions
+        - hyetograph atmbc
+        - van Genuchten retention curves parameters
+        - Feddes parameters
+
+    Perturbation:
+        - parameters with constrainsts (truncated distribution)
+        - parameters time dependant
+        - other types of parameters
+
+    Returns
+    -------
+    var_per : dict
+        Perturbated variable dictionnary
+
+    """
+
+    savefig = False
+    if kwargs["savefig"]:
+       savefig = kwargs["savefig"]
+    
+    
+    var_per_2add = {}
+
+    # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
+    # -------------------------------------------------------------------------
+    var_per_2add[type_parm] = parm
+
+    key = "sampling_type"
+    var_per_2add[type_parm][key] = sampling_type
+    key = "sampling_mean"
+    var_per_2add[type_parm][key] = mean
+    key = "sampling_sd"
+    var_per_2add[type_parm][key] = sd
+    key = "per_type"
+    var_per_2add[type_parm][key] = per_type
+
+    # Contrainsted perturbation (bounded)
+    # --------------------------------------------------------------------
+    if "Archie" in type_parm:
+        parm_sampling, parm_per_array = Archie_pert_rules(
+            parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
+        )
+    elif "porosity" in type_parm:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=0, myclip_b=1, ensemble_size=ensemble_size, loc=mean, scale=sd
+        )
+        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+
+    elif "zroot".casefold() in type_parm.casefold():
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=var_per_2add[type_parm]["clip_min"],
+            myclip_b=var_per_2add[type_parm]["clip_max"],
+            ensemble_size=ensemble_size,
+            loc=mean,
+            scale=sd,
+        )
+        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+
+    # check if parameters in part of van Genuchten retention curves
+    # ----------------------------------------------------------------------
+    # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
+    elif "VG" in type_parm:  # van Genuchten retention curves
+        parm_per_array = VG_pert_rules(
+            var_per_2add,
+            parm,
+            type_parm,
+            ensemble_size,
+            mean,
+            sd,
+            per_type,
+            sampling_type,
+            **kwargs,
+        )
+
+    # Time dependant perturbation
+    # --------------------------------------------------------------------
+    elif "atmbc" in type_parm:
+    # elif any("atmbc" in item for item in type_parm):
+        parm_sampling, parm_per_array, var_per_2add = atmbc_pert_rules(    
+                                                                        var_per_2add,
+                                                                        parm,
+                                                                        type_parm,
+                                                                        ensemble_size,
+                                                                        mean,
+                                                                        sd,
+                                                                        per_type,
+                                                                        sampling_type,
+                                                                        **kwargs
+                                                                        )
+        savefig = False
+            
+            
+    # For all other types of perturbation
+    # --------------------------------------------------------------------
+    else:
+        if "clip_min" in var_per_2add[type_parm].keys():
+            parm_sampling = sampling_dist_trunc(
+                myclip_a=var_per_2add[type_parm]["clip_min"],
+                myclip_b=var_per_2add[type_parm]["clip_max"],
+                ensemble_size=ensemble_size,
+                loc=mean,
+                scale=sd,
+            )
+        else:
+            parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+
+    # build dictionnary of perturbated variable
+    # --------------------------------------------------------------------
+    var_per_2add = build_dict_attributes_pert(
+        var_per_2add, type_parm, parm_per_array, parm_sampling, **kwargs
+    )
+
+    # Add to var perturbated stacked dict
+    # ----------------------------------
+    var_per = var_per | var_per_2add
+
+    if savefig is not False:
+        plt_CT.plot_hist_perturbated_parm(
+            parm, var_per, type_parm, parm_per_array, **kwargs
+        )
+
+    return var_per
+
+
+

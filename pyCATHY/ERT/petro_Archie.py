@@ -54,18 +54,14 @@ def get_Archie_ens_i(ArchieParms, Ens_nb):
         ArchieParms2parse = ArchieParms
     return ArchieParms2parse
 
-
-# def SW_2_ERa_DA(project_name,
-#                  ArchieParms,
-#                  porosity,
-#                  pathERT, meshERT, elecs, sequenceERT,
-#                  path_fwd_CATHY,
-#                  **kwargs):
-
-
 def SW_2_ERa_DA(
-    project_name, ArchieParms, porosity, ERT_meta_dict, path_fwd_CATHY, **kwargs
-):
+                project_name, 
+                ArchieParms, 
+                porosity, 
+                ERT_meta_dict, 
+                path_fwd_CATHY, 
+                **kwargs
+                ):
 
     """
     Data Assimilation
@@ -139,18 +135,18 @@ def SW_2_ERa_DA(
     # Convert to SW to ER values
     # --------------------------------------------------------------------
     ER_converted_ti = Archie_rho_DA(
-        rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
-        sat=[df_sw],
-        porosity=ArchieParms2parse["porosity"],
-        a_Archie=ArchieParms2parse["a_Archie"],
-        m_Archie=ArchieParms2parse["m_Archie"],
-        n_Archie=ArchieParms2parse["n_Archie"],
-        pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
-    )
+                                    rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
+                                    sat=[df_sw],
+                                    porosity=ArchieParms2parse["porosity"],
+                                    a_Archie=ArchieParms2parse["a_Archie"],
+                                    m_Archie=ArchieParms2parse["m_Archie"],
+                                    n_Archie=ArchieParms2parse["n_Archie"],
+                                    pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
+                                )
 
     # build df Archie df
-    
     df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
+    
     df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
     df_Archie["ens_nbi"] = Ens_nbi * np.ones(len(ER_converted_ti))
     df_Archie["sw"] = df_sw
@@ -158,10 +154,7 @@ def SW_2_ERa_DA(
     df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
         len(ER_converted_ti)
     )
-
     print(df_Archie["ER_converted"].describe())
-
-
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(
@@ -202,15 +195,7 @@ def SW_2_ERa_DA(
     # fwd ERT data
     # ------------------------------------------------------------------------
     print('fwd ER data')
-    if "pygimli" in ERT_meta_dict["data_format"]:
-        # USING PYGIMLI
-        
-        # print(ERT_meta_dict["sequenceERT"])
-        # print(len(ERT_meta_dict["sequenceERT"]))
-        
-        # print(ERT_meta_dict)
-        # print(ERT_meta_dict["sequenceERT"])
-        
+    if "pygimli" in ERT_meta_dict["data_format"]:       
         ERT_predicted = simuERT.create_ERT_survey_pg(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
             sequence=ERT_meta_dict["sequenceERT"],
@@ -220,12 +205,6 @@ def SW_2_ERa_DA(
             pathfig=path_CATHY,
             **kwargs
         )
-        # print(ERT_predicted)
-        # print(ERT_predicted['Data'])
-        # print(len(ERT_predicted['Data']))
-
-        # print(len(ERT_predicted['data']))
-
     elif "resipy" in ERT_meta_dict["data_format"]:
 
         ERT_predicted = simuERT.create_ERT_survey_Resipy(
@@ -235,7 +214,6 @@ def SW_2_ERa_DA(
             res0=res0,
             **kwargs
         )
-
     # ERT_predicted to dict
     # ------------------------
     d = {
@@ -263,12 +241,11 @@ def SW_2_ERa_DA(
         _ = plotter.add_mesh(mesh_CATHY_df,
                              cmap=my_colormap,
                              show_edges=False,
-                             clim=[
-                                 0.3,
-                                 0.7,
-                             ],
+                             # clim=[
+                             #     0.3,
+                             #     0.7,
+                             # ],
                              )
-
         # plotter.update_scalar_bar_range([0, 1])  # max saturation is 1
         plotter.show_grid()
 

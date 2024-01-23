@@ -1121,50 +1121,7 @@ class CATHY:
 
         if 'zratio(i).i=1.nstr' in self.dem_parameters:
             self.dem_parameters['zratio(i),i=1,nstr'] = self.dem_parameters.pop('zratio(i).i=1.nstr')
-
-
-        # set default parameters
-        # --------------------------------------------------------------------
-        # if hasattr(self, "dem_parameters") == False:
-        #     self.console.print(
-        #         ":pensive_face: [b]cannot find existing dem paramters[/b]"
-        #     )
-
-        #     # layers default
-        #     ltmp = [
-        #         0.002,
-        #         0.004,
-        #         0.006,
-        #         0.008,
-        #         0.01,
-        #         0.01,
-        #         0.02,
-        #         0.02,
-        #         0.05,
-        #         0.05,
-        #         0.1,
-        #         0.1,
-        #         0.2,
-        #         0.2,
-        #         0.22,
-        #     ]
-
-        #     self.dem_parameters = {
-        #         "delta_x": self.hapin[
-        #             "delta_x"
-        #         ],  # Cell dimensions for the resolution of the DEM
-        #         "delta_y": self.hapin["delta_y"],
-        #         "factor": 1.0e0,  # Multiplicative factor for DEM values (e.g. to change the units of the elevation)
-        #         "dostep": 1,  # Step adopted in coarsening the mesh
-        #         "nzone": 1,  # The number of material types in the porous medium
-        #         "nstr": 15,  # The number of vertical layers
-        #         "n1": 25,  # The maximum number of element connections to a node
-        #         "ivert": 0,  #
-        #         "isp": 1,
-        #         "base": 3.0,
-        #         "zratio(i),i=1,nstr": ltmp,
-        #     }
-
+            
         # create dictionnary from kwargs
         for keykwargs, value in kwargs.items():
             if keykwargs == "zratio":
@@ -2431,6 +2388,8 @@ class CATHY:
             # if (sum(zone3d[0] != zone3d) > 0).any():
             #     print("z soil heterogeneity detected")
             self.dem_parameters['nzone'] = np.size(zone3d[0])
+            self.update_dem_parameters()
+            self.update_cathyH(MAXZON=self.dem_parameters['nzone'])
 
         # read function arguments kwargs and udpate soil and parm files
         # --------------------------------------------------------------------
@@ -3847,6 +3806,9 @@ class CATHY:
             dem_parm = in_CT.read_dem_parameters(
                 os.path.join(self.workdir, self.project_name, "input", "dem_parameters")
             )
+            # self.dem_parameters
+            # self.update_dem_parameters()
+            
 
             if 'MAXVEG' in kwargs:
                 MAXVEG = kwargs['MAXVEG']
