@@ -230,31 +230,7 @@ class CATHY:
                         os.path.join(self.workdir, self.project_name, "tmp_src/src"),
                         os.path.join(self.workdir, self.project_name, "src"),
                     )
-
-                    self.console.print(
-                        ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
-                    )
-                    shutil.move(
-                        os.path.join(
-                            self.workdir,
-                            self.project_name,
-                            "tmp_src/runs/weilletal/prepro",
-                        ),
-                        os.path.join(self.workdir, self.project_name, "prepro"),
-                    )
-                    # os.remove(os.path.join(
-                    #      self.workdir, self.project_name, "prepro") + '/dem' )
-
-                    self.console.print(":inbox_tray: [b]Fetch cathy inputfiles[/b]")
-                    shutil.move(
-                        os.path.join(
-                            self.workdir,
-                            self.project_name,
-                            "tmp_src/runs/weilletal/input",
-                        ),
-                        os.path.join(self.workdir, self.project_name, "input"),
-                    )
-
+                    
                     pathsrc = os.path.join(
                         self.workdir, self.project_name, "tmp_src/runs/weilletal/"
                     )
@@ -267,30 +243,56 @@ class CATHY:
                         file
                     ) in (
                         onlyfiles
-                    ):  # You could shorten this to one line, but it runs on a bit.
+                    ):  
                         shutil.move(
                             os.path.join(pathsrc, file),
                             os.path.join(self.workdir, self.project_name, file),
                         )
-
-                    self.create_output(output_dirname="output")
-
-                    shutil.rmtree(
-                        os.path.join(self.workdir, self.project_name, "tmp_src")
-                    )
-                    os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
-
+                        
                 except:
                     print("no internet connection to fetch the files")
                     sys.exit()
                     pass
-
+                
             if version == "G. Manoli":
                 print("fetch cathy G. Manoli src files")
                 path_manoli = "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
                 shutil.copytree(
                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
                 )
+
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
+            self.console.print(
+                ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
+            )
+            shutil.move(
+                os.path.join(
+                    self.workdir,
+                    self.project_name,
+                    "tmp_src/runs/weilletal/prepro",
+                ),
+                os.path.join(self.workdir, self.project_name, "prepro"),
+            )
+            # os.remove(os.path.join(
+            #      self.workdir, self.project_name, "prepro") + '/dem' )
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
+            self.console.print(":inbox_tray: [b]Fetch cathy inputfiles[/b]")
+            shutil.move(
+                os.path.join(
+                    self.workdir,
+                    self.project_name,
+                    "tmp_src/runs/weilletal/input",
+                ),
+                os.path.join(self.workdir, self.project_name, "input"),
+            )
+
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, "output")):
+                self.create_output(output_dirname="output")
+
+                shutil.rmtree(
+                    os.path.join(self.workdir, self.project_name, "tmp_src")
+                )
+                os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
 
         # clear output files if required
         # ---------------------------------------------------------------------
@@ -380,6 +382,21 @@ class CATHY:
             idoutlet = np.where(self.DEM == min(np.unique(self.DEM)))
             self.DEM[idoutlet[0], idoutlet[1]] = max(np.unique(self.DEM))
 
+        if hasattr(self, 'DEM') is False:
+            
+            DEM_mat, DEM_header = in_CT.read_dem(
+                                        os.path.join(self.workdir, self.project_name, "prepro/dem"),
+                                        os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+                                    )
+            self.DEM = DEM_mat
+        
+        # if hasattr(self, 'hapin') is False:
+
+            # self.update_cathyH(
+            #                     ROWMAX=self.hapin['N'],
+            #                     COLMAX=self.hapin['M']
+            #                     )
+            
         # if np.shape(self.DEM)[1]==self.hapin['N']:
         #     self.console.rule(''':warning: !transposing DEM dimension!
         #                           This should be avoided in a future version
@@ -388,10 +405,7 @@ class CATHY:
         #     self.update_prepo_inputs(N=self.hapin['M'],
         #                               M=self.hapin['N'])
 
-        #     self.update_cathyH(
-        #                         ROWMAX=self.hapin['N'],
-        #                         COLMAX=self.hapin['M']
-        #                         )
+
         # self.update_zone()
         os.chdir(self.workdir)
 
@@ -418,8 +432,6 @@ class CATHY:
         
         # # Get the path to gfortran from the output of the where command
         # gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
-        
-
 
         # clean all files previously compiled
         for file in glob.glob("*.o"):
@@ -612,7 +624,7 @@ class CATHY:
 
     def check_DEM_versus_inputs(self):
         """
-        Chech shape consistency between attributes and DEM
+        Check shape consistency between attributes and DEM
 
         """
 
@@ -683,6 +695,12 @@ class CATHY:
             self.update_parm()
 
         DEMRES = 1
+        
+        # self.hapin["N"] = 500
+        # self.hapin["M"] = 500
+        # self.MAXVEG = 2
+        # self.dem_parameters["nzone"] = 5
+        # print(self.dem_parameters["nstr"])
         
         if len(self.cathyH) == 0:
 
@@ -2927,7 +2945,7 @@ class CATHY:
 
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
-        #---------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------
         if len(np.unique(indice_veg))>1:
             exclude_veg = self._check_outside_DEM(indice_veg)
             self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
@@ -2959,9 +2977,6 @@ class CATHY:
             self.DEM = DEM_mat
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
-        
-        # np.shape(raster2check)
-        # np.shape(self.DEM)
 
         exclude_out_ind = 0
         if np.min(self.DEM)<0:
