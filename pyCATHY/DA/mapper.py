@@ -9,13 +9,14 @@ import multiprocessing
 from functools import partial
 REMOVE_CPU = 1
 from pyCATHY.cathy_tools import CATHY
+import pandas as pd
 
 #%%
 
 def tensio_mapper(state,obs2map_node):
     # case: pressure head assimilation (Hx_PH)
     # -------------------------------------------------------------
-    Hx_PH = state[0][obs2map_node]
+    Hx_PH = state[0][obs2map_node[0]]
     return Hx_PH
 
 
@@ -23,7 +24,7 @@ def swc_mapper(state,obs2map_node,grid3d,dem_parameters,
                SPP_ensi,console): 
     # find porosity associated to mesh node position
     # ----------------------------------------------
-    xyz_swc = grid3d[obs2map_node]
+    xyz_swc = grid3d[obs2map_node[0]]
     
     ltop, lbot = mt.get_layer_depths(dem_parameters)
     idlayer_swc = np.where(abs(xyz_swc[2])>ltop)[0]
@@ -155,18 +156,46 @@ def _map_ERT_parallel_DA(
                                    path_fwd_CATHY_list
                                    )
 
+    Archie_df = []
     for ens_i in range(len(path_fwd_CATHY_list)):
-        df_Archie = results_mapping[ens_i][1]
-        df_Archie["OL"] = np.zeros(len(df_Archie))
+        df_Archie2add = results_mapping[ens_i][1]
+        df_Archie2add["OL"] = np.zeros(len(df_Archie2add))
         Hx_ERT_ens_i = results_mapping[ens_i][0]
+        
+        Archie_df = _add_2_ensemble_Archie(Archie_df,df_Archie2add)
 
         if "pygimli" in dict_obs[key_time[0]]["ERT"]["data_format"]:
             Hx_ERT_ens = _add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["rhoa"])
         else:
             Hx_ERT_ens = _add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["resist"])
 
-    return Hx_ERT_ens, df_Archie
+    return Hx_ERT_ens, Archie_df
 
+
+
+def _add_2_ensemble_Archie(Archie_df,df_Archie_2add):
+    """
+    Store in a dataframe Archie relationship for all ensembles and all assimilation times
+
+    Parameters
+    ----------
+    df_Archie_2add : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    if len(Archie_df) == 0:
+        Archie_df = pd.DataFrame(
+            columns=["time", "ens_nb", "sw", "ER_converted", "OL"]
+        )
+    Archie_df = pd.concat([Archie_df, df_Archie_2add])
+    
+    return Archie_df
+    
 def _map_ERT_parallel_OL(
                             project_name,
                             Archie_parms,

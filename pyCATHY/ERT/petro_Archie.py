@@ -154,7 +154,7 @@ def SW_2_ERa_DA(
     df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
         len(ER_converted_ti)
     )
-    print(df_Archie["ER_converted"].describe())
+    # print(df_Archie["ER_converted"].describe())
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(
@@ -191,6 +191,7 @@ def SW_2_ERa_DA(
         raise ValueError("Mesh format not recognized")
 
     res0 = mesh_geophy_new_attr.get_array(scalar_new)
+    # print(np.min(res0))
 
     # fwd ERT data
     # ------------------------------------------------------------------------
@@ -260,6 +261,7 @@ def SW_2_ERa_DA(
             ],
         )
         plotter.show_grid()
+        plotter.view_xz()
 
         plotter.subplot(2, 0)
         mesh_geophy_new_attr.set_active_scalars(scalar_new)
@@ -274,6 +276,7 @@ def SW_2_ERa_DA(
 
         # if "pygimli" in ERT_meta_dict["data_format"]:
         plotter.view_xy()
+        # plotter.view_xz()
 
         # else:
         #     plotter.view_xz()
@@ -333,9 +336,7 @@ def Archie_rho_DA(
 
     # Loop over soil type
     # -----------------------------------------------
-    for i in range(
-        len(rFluid_Archie)
-    ):  # loop over Archie heterogeneity i.e. soil zones
+    for i in range(len(rFluid_Archie)):  # loop over Archie heterogeneity i.e. soil zones
         # print('!!! shortcut sat[:] is not valid for heteregeneous soil!')
         rho = (
             rFluid_Archie[i]
@@ -344,7 +345,7 @@ def Archie_rho_DA(
             * sat[i] ** (-n_Archie[i])
         )
         sigma = 1 / rho
-
+        # sat[0]
         try:
             # test = np.shape(sigma)[0]>2
             for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times

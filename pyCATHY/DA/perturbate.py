@@ -406,9 +406,10 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
 
             # if len(simu_DA.soil_SPP["SPP_map"]["POROS"].unique()) > 1:
             if nlayers > 1:
-                scenario_nom = scenario["per_nom"][index][nstri]
-                scenario_mean = scenario["per_mean"][index][nstri]
-                scenario_sd = scenario["per_sigma"][index][nstri]
+                if type(scenario["per_nom"][index]) is list:
+                    scenario_nom = scenario["per_nom"][index][nstri]
+                    scenario_mean = scenario["per_mean"][index][nstri]
+                    scenario_sd = scenario["per_sigma"][index][nstri]
 
             porosity = {
                 "type_parm": "porosity" + str(nstri),

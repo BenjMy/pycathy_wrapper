@@ -1240,6 +1240,12 @@ class CATHY:
             np.savetxt(demfile, DEM, fmt="%1.4e")
             # np.shape(DEM)
         demfile.close()
+        
+        with open(
+            os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+"
+        ) as f:
+            np.savetxt(f, DEM, fmt="%1.4e")
+                
         self.DEM = DEM
 
     def update_zone(self, zone=[]):
@@ -2428,7 +2434,12 @@ class CATHY:
                 df_SPP_map = self.init_soil_df(nzones, nstr)
         
                 for key, values in SPP_map.items():
-                    df_SPP_map[key] = values
+                    if len(values) == 1:
+                        values_all_layers = values*nstr
+                        self.console.rule(
+                            ":warning: Assuming that soil is homogeneous with depth :warning:", style="yellow"
+                        )
+                    df_SPP_map[key] = values_all_layers
         
             SPP_map = df_SPP_map
 
@@ -3923,7 +3934,8 @@ class CATHY:
                 d = (
                     (grid3d["mesh3d_nodes"][:, 0] - nc[0]) ** 2
                     + (grid3d["mesh3d_nodes"][:, 1] - nc[1]) ** 2
-                    + (abs(grid3d["mesh3d_nodes"][:, 2]) - abs(nc[2])) ** 2
+                    # + (abs(grid3d["mesh3d_nodes"][:, 2]) - abs(nc[2])) ** 2
+                    + (grid3d["mesh3d_nodes"][:, 2] - nc[2]) ** 2
                 ) ** 0.5
             else:
                 d = (
@@ -3969,6 +3981,7 @@ class CATHY:
         f.close()
         pass
 
+                
     def backup_results_DA(self, meta_DA=[]):
         """
         Save minimal dataframes of the simulation for result visualisation within python

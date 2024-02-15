@@ -20,7 +20,9 @@ pyCATHY/DA/__init__.py
 pyCATHY/DA/cathy_DA.py
 pyCATHY/DA/deprecated_run_DA.py
 pyCATHY/DA/enkf.py
+pyCATHY/DA/mapper.py
 pyCATHY/DA/observations.py
+pyCATHY/DA/performance.py
 pyCATHY/DA/perturbate.py
 pyCATHY/DA/pf.py
 pyCATHY/ERT/__init__.py

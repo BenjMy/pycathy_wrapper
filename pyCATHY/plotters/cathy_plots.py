@@ -199,7 +199,11 @@ def show_spatialET(df_fort777,**kwargs):
     if 'mask_gpd' in kwargs:
         mask = kwargs.pop('mask_gpd')
       
-    
+    clim = None
+    if 'clim' in kwargs:
+        clim = kwargs.pop('clim')
+
+        
     colorbar = True
     if 'colorbar' in kwargs:
         colorbar = kwargs.pop('colorbar')
@@ -211,7 +215,7 @@ def show_spatialET(df_fort777,**kwargs):
         fig, ax = plt.subplots()
     else:
         ax = kwargs.pop("ax")
-        
+    
 
     # if scatter:
         
@@ -243,7 +247,8 @@ def show_spatialET(df_fort777,**kwargs):
                          cmap='viridis', 
                          origin='lower', 
                          extent=[min(filtered_data[:,0]),max(filtered_data[:,0]),
-                                 min(filtered_data[:,1]),max(filtered_data[:,1])]
+                                 min(filtered_data[:,1]),max(filtered_data[:,1])],
+                         clim = clim,
                   )
 
     else:
@@ -262,7 +267,8 @@ def show_spatialET(df_fort777,**kwargs):
                          cmap='viridis', 
                          origin='lower', 
                          extent=[min(df_fort777_select_t['X']),max(df_fort777_select_t['X']),
-                                 min(df_fort777_select_t['Y']),max(df_fort777_select_t['Y'])]
+                                 min(df_fort777_select_t['Y']),max(df_fort777_select_t['Y'])],
+                         clim = clim,
                   )
     
     #         cmap = ax.scatter(x=df_fort777_select_t['X'], 
@@ -288,7 +294,12 @@ def show_spatialET(df_fort777,**kwargs):
         # # Plot the masked data
         # cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
         
-    ax.set_title('Actual evapotranspiration')
+    title = 'ETa'
+    if 'title' in kwargs:
+        title = kwargs['title']
+        
+    ax.set_title(title)
+
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
     # ax.axis('equal')
@@ -1838,7 +1849,17 @@ def DA_plot_time_dynamic(
             ylabel="pressure head $\psi$ (m)",
         )
         
-
+        
+        # import matplotlib.dates as mdates
+        
+        # lgd = ax.fill_between(
+        #     mdates.date2num(prep_DA["ens_max_isENS_time"][keytime]),
+        #     prep_DA["ens_min_isENS_time"]["min(ENS)"],
+        #     prep_DA["ens_max_isENS_time"]["max(ENS)"],
+        #     alpha=0.2,
+        #     color=colors_minmax,
+        #     label="minmax DA",
+        # )
 
         
         lgd = ax.fill_between(

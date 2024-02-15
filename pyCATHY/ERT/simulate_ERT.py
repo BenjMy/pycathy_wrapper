@@ -100,33 +100,7 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
             os.dup2(oldstdout_fno, 1)
     except:
         pass
-
     pg.info('Filtered rhoa (min/max)', min(het['rhoa']), max(het['rhoa']))
-
-    # # You can save the data for further use
-    # het.save(os.path.join(pathfig, 
-    #                           'ertsimu' + str(DAcnb) + '.dat'
-    #                           )
-    #           )
-    
-    # matplotlib.use('agg')  # Use the 'agg' backend
-    # fig, ax = plt.subplots()
-    # ert.show(het,ax=ax)
-    # fig.savefig(os.path.join(pathfig, 
-    #                          'ertsimu' + str(DAcnb) + '.png'
-    #                          )
-    #             )
-    
-    # ert.show(het)
-
-
-
-    # # Reset the standard output
-    # sys.stdout = sys.__stdout__
-
-    # # Discard the captured output
-    # captured_output.close()
-
     return het
 
 

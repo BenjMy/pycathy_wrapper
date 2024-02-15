@@ -111,55 +111,39 @@ def run_analysis(
     id_state = 0
     if default_state == "sw":
         id_state = 1
+        
+        
+    if DA_type == "enkf_Evensen2009":
+        Analysis = enkf.enkf_analysis(data, 
+                               data_cov, 
+                               param, 
+                               ensembleX[id_state], 
+                               prediction,
+                               )
+        return Analysis
+    
     if DA_type == "enkf_Evensen2009_Sakov":
-        [
-            A,
-            Amean,
-            dA,
-            dD,
-            MeasAvg,
-            S,
-            COV,
-            B,
-            dAS,
-            analysis,
-            analysis_param,
-        ] = enkf.enkf_analysis(data, data_cov, param, ensembleX[id_state], prediction)
-        return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, analysis, analysis_param]
+        Analysis = enkf.enkf_analysis(data, 
+                               data_cov, 
+                               param, 
+                               ensembleX[id_state], 
+                               prediction,
+                               Sakov=True,
+                               )
+        return Analysis
+    
     if DA_type == "enkf_analysis_inflation":
-        [
-            A,
-            Amean,
-            dA,
-            dD,
-            MeasAvg,
-            S,
-            COV,
-            B,
-            dAS,
-            analysis,
-            analysis_param,
-        ] = enkf.enkf_analysis_inflation(
+        Analysis = enkf.enkf_analysis_inflation(
             data, data_cov, param, ensembleX[id_state], prediction, **kwargs
         )
-        return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, analysis, analysis_param]
+        return Analysis
+    
+    
     if DA_type == "enkf_analysis_inflation_multiparm":
-        [
-            A,
-            Amean,
-            dA,
-            dD,
-            MeasAvg,
-            S,
-            COV,
-            B,
-            dAS,
-            analysis,
-            analysis_param,
-        ] = enkf.enkf_analysis_inflation_multiparm(
+        Analysis = enkf.enkf_analysis_inflation_multiparm(
             data, data_cov, param, ensembleX[id_state], prediction, **kwargs
-        )
-        return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, analysis, analysis_param]
+            )
+        return Analysis
 
     
     if DA_type == "pf":
@@ -605,7 +589,9 @@ class DA(CATHY):
                 # '':,
                 # '':,
             }
-
+              
+                
+            self.backup_fort777()
             self.backup_results_DA(meta_DA)
             self.backup_simu()
             
@@ -658,6 +644,24 @@ class DA(CATHY):
             [os.remove(f) for f in files]
         pass
 
+
+    # backup ET map file at each DA iteration
+    def backup_fort777(self):
+       
+        for ensi in range(self.NENS):
+            dst_dir = os.path.join(
+                                    self.workdir,
+                                    self.project_name,
+                                    'DA_Ensemble/cathy_'+ str(ensi+1),
+                                    'DAnb' + str(self.count_DA_cycle) + 'fort.777' 
+                                    )
+    
+            shutil.copy(os.path.join(self.workdir,
+                                     self.project_name,
+                                     'DA_Ensemble/cathy_'+ str(ensi+1),
+                                     'fort.777'),
+                        dst_dir)
+        
     def _run_hydro_DA_openLoop(
         self, time_of_interest, nodes_of_interest, simu_time_max, ens_nb
     ):
@@ -912,7 +916,59 @@ class DA(CATHY):
                                         prediction_valid,
                                         alpha=self.damping,
                                     )
+        
+        fig, ax = plt.subplots()
+        # for i in range(len(prediction_valid.T)):
+        ax.scatter(data,prediction_valid[:,0])
+        
 
+        ax.set_xlabel('Observations')
+        ax.set_ylabel('Predictions')
+        ax.set_xlim([min(data),max(data)])
+        ax.set_ylim([min(data),max(data)])
+        ax.set_aspect('equal')
+        fig.savefig('test_ERT_11line.png')
+
+
+        # fig, ax = plt.subplots()
+        # # for i in range(len(prediction_valid.T)):
+        # ax.plot(data)
+        
+        # fig, ax = plt.subplots()
+        # for i in range(len(prediction_valid.T)):
+        #     ax.plot(prediction_valid[:,i])
+        
+        
+        # ax.set_xlabel('Observations')
+        # ax.set_ylabel('Predictions')
+        # ax.set_xlim([0,300])
+        # ax.set_ylim([0,300])
+        # ax.set_aspect('equal')
+        # fig.savefig('test_ERT_11line.png')
+        
+        
+        # minsw_pred = self.Archie.sw.min()
+        # maxsw_pred = self.Archie.sw.max()
+        # self.Archie_parms
+
+        # rhomax = (
+        #     self.Archie_parms['rFluid_Archie'][0] # rfluid
+        #     * (self.Archie_parms['a_Archie'][0])
+        #     * self.Archie_parms['porosity'][0] ** (-self.Archie_parms['m_Archie'][0])
+        #     * minsw_pred  ** (-self.Archie_parms['n_Archie'][0])
+        # )
+        # rhomin = (
+        #     self.Archie_parms['rFluid_Archie'][0] # rfluid
+        #     * (self.Archie_parms['a_Archie'][0])
+        #     * self.Archie_parms['porosity'][0] ** (-self.Archie_parms['m_Archie'][0])
+        #     * maxsw_pred  ** (-self.Archie_parms['n_Archie'][0])
+        # )
+        
+        
+        # print(min(data),max(data))
+        # print(rhomin,rhomax)
+        # print(np.min(prediction_valid),np.max(prediction_valid))
+        
         # plot ensemble covariance matrices and changes (only for ENKF)
         # ---------------------------------------------------------------------
         if len(result_analysis) > 2:
@@ -1380,14 +1436,7 @@ class DA(CATHY):
                                                             savefig=True,
                                                             DA_cnb=self.count_DA_cycle,
                                                             ENS_times=self.ENS_times,
-                                                            
-                                                            # path_fwd_CATHY_list,
-                                                            # savefig=True,
-                                                            # DA_cnb=self.count_DA_cycle,
-                                                            # ENS_times=ENS_times,
                                                         )
-                # prediction_OL_ERT is meas_size * ens_size * ENS_times size
-                # np.shape(prediction_OL_ERT)
             else:
                 write2shell_map = True
                 for t in range(len(ENS_times)):
@@ -1771,16 +1820,43 @@ class DA(CATHY):
                     
                     
                 elif key_root[0].casefold() in 'porosity':
-                    POROS_het_ens = self._read_dict_pert_update_ens_SPP(
-                                                       dict_parm_pert,
-                                                       POROS_het_ens,
-                                                       key_root,
-                                                       key,
-                                                       update_key,
-                                                       ens_nb,
-                                                       shellprint_update
-                                                       )
+                    
+                    if hasattr(self, 'zone3d'):
+                        POROS_het_ens = self._read_dict_pert_update_ens_SPP(
+                                                           dict_parm_pert,
+                                                           POROS_het_ens,
+                                                           key_root,
+                                                           key,
+                                                           update_key,
+                                                           ens_nb,
+                                                           shellprint_update
+                                                           )
 
+                    else:
+                        df_SPP, _ = in_CT.read_soil(os.path.join(
+                                                                self.workdir,
+                                                                self.project_name,
+                                                                'DA_Ensemble/cathy_'+ str(ens_nb+1),
+                                                                'input/soil'
+                                                                ),
+                                                    self.dem_parameters,
+                                                    self.cathyH["MAXVEG"]
+                                                    )    
+                        
+                        df_SPP_2fill = df_SPP.copy()
+                        df_SPP_2fill['POROS'] = dict_parm_pert[key][update_key][ens_nb]
+                        df_SPP_2fill['POROS']
+                        
+                        self.update_soil(
+                            SPP_map=df_SPP_2fill,
+                            FP_map=self.soil_FP["FP_map"],
+                            verbose=self.verbose,
+                            filename=os.path.join(os.getcwd(), "input/soil"),
+                            shellprint_update=shellprint_update,
+                            backup=True,
+                        )
+                        
+                    
                 # VG parameters update
                 # --------------------------------------------------------------
                 elif key_root[0] in VG_p_possible_names:
@@ -2144,6 +2220,7 @@ class DA(CATHY):
 
 
                 if 'ET' in obs_key:
+                    obs2map_node = obs2map[i]["mesh_nodes"]
                     Hx_ET = mapper.ET_mapper(obs2map_node, 
                                              self.console,
                                              path_fwd_CATHY,
@@ -2210,8 +2287,8 @@ class DA(CATHY):
                 else:
                     Hx_ens = np.array(Hx_ens).T
                
-        
-        # Hx_ens = []  # matrice of predicted observation for each ensemble realisation
+        #%%
+        # ---------------------------------------------------------------------
         # special case of ERT // during sequential assimilation
         # ---------------------------------------------------------------------
         for i, obs_key in enumerate(obskey2map):
@@ -2258,7 +2335,7 @@ class DA(CATHY):
                                                                     savefig=False,
                                                                     verbose=False,
                                                                     )
-                            
+                    self.Archie = df_Archie
                     
                     if len(Hx_ens) > 0:
                         Hx_ens = np.vstack([Hx_ens, Hx_ens_ERT])
@@ -2266,29 +2343,6 @@ class DA(CATHY):
                         Hx_ens = Hx_ens_ERT
                         
         return Hx_ens  # meas_size * ens_size
-
-    def _add_2_ensemble_Archie(self, df_Archie_2add):
-        """
-        Store in a dataframe Archie relationship for all ensembles and all assimilation times
-
-        Parameters
-        ----------
-        df_Archie_2add : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
-        """
-
-        if hasattr(self, "Archie") == False:
-            self.Archie = pd.DataFrame(
-                columns=["time", "ens_nb", "sw", "ER_converted", "OL"]
-            )
-        self.Archie = pd.concat([self.Archie, df_Archie_2add])
-
-
 
     def _read_state_ensemble(self):
         # read grid to infer dimension of the ensemble X

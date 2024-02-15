@@ -40,10 +40,17 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
 
     # get kwargs optionnal arguments
     # --------------------------------
-    localize = False
-    if "localize" in kwargs:
-        localize = True
+    # localize = False
+    # if "localize" in kwargs:
+    #     localize = True
 
+    # print(kwargs)
+
+    Sakov = False
+    if 'Sakov' in kwargs:
+        Sakov = kwargs.pop('Sakov')
+    print('Sakov' + str(Sakov))
+    
     # Collect data sizes.
     # - -------------------------------
     ens_size = ensemble.shape[1]
@@ -93,7 +100,8 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
             print(observation)
             print("observation is a list? should be a numpy array")
     data_pert = (data - observation.T).T
-   
+    # data_pert = (data - observation).T
+
     if np.max(abs(data_pert)) > 1e3:
         print(f'data mean: {np.mean(data)}, min: {np.min(data)}, max{np.max(data)}')
         print(f'data obs: {np.mean(observation)}, min: {np.min(observation)}, max{np.max(observation)}')
@@ -118,15 +126,20 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
 
     # Set up observations covariance matrix
     # -------------------------------------------------------------------------
-    Sakov = False
+    
+    # data_cov = np.zeros((2411, 2411))
+    # Fill the diagonal with the value 1e2 (100)
+    # np.fill_diagonal(data_cov, 1e2)
+
     if Sakov:
         COV = data_cov.transpose()
     else:
         COV = ( (1.0 / float(ens_size - 1)) *
-               np.dot(obs_pert, obs_pert.transpose()) 
+                np.dot(obs_pert, obs_pert.transpose()) 
                + data_cov.transpose()
               )
-
+        np.shape(np.dot(obs_pert, obs_pert.transpose()) )
+        np.shape(data_cov)
     # Compute inv(COV)*dD
     # -------------------------------------------------------------------------
     # Should be (MeasSize)x(ens_size)
@@ -160,6 +173,37 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
         analysis,
         analysis_param,
     ]
+
+
+# def enkf_analysis_Sakov(data, data_cov, param, ensemble, observation,Sakov=True):
+    
+#     [
+#        augm_state,
+#        augm_state_mean,
+#        augm_state_pert,
+#        data_pert,
+#        obs_avg,
+#        obs_pert,
+#        COV,
+#        inv_data_pert,
+#        pert,
+#        analysis,
+#        analysis_param,
+#    ] = enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs)
+    
+#     return [
+#         augm_state,
+#         augm_state_mean,
+#         augm_state_pert,
+#         data_pert,
+#         obs_avg,
+#         obs_pert,
+#         COV,
+#         inv_data_pert,
+#         pert,
+#         analysis,
+#         analysis_param,
+#     ]
 
 
 def enkf_analysis_inflation(data, data_cov, param, ensemble, observation, **kwargs):
