@@ -3,21 +3,10 @@
 
 import numpy as np
 import pandas as pd
-
-# def read_grid3d(project_name, **kwargs):
-    
+   
     
 def read_grid3d(grid3dfile, **kwargs):
-
-    # print("reading grid3d")
-    # grid3d_file = open(grid3dfile, "r")
-
-    # Lines = grid3d_file.readlines()
-    # try:
     nnod, nnod3, nel = np.loadtxt(grid3dfile, max_rows=1)
-
-    # grid3d_file.close()
-
     grid3d_file = open(grid3dfile, "r")
     mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(nel))
     grid3d_file.close()
@@ -29,30 +18,14 @@ def read_grid3d(grid3dfile, **kwargs):
         max_rows=1 + int(nel) + int(nnod3) - 1,
     )
     grid3d_file.close()
-
-    # xyz_file = open(os.path.join(project_name, "output/xyz"), "r")
-    # nodes_idxyz = np.loadtxt(xyz_file, skiprows=1)
-    # xyz_file.close()
-
-    # self.xmesh = mesh_tetra[:,0]
-    # self.ymesh = mesh_tetra[:,1]
-    # self.zmesh = mesh_tetra[:,2]
-    # return mesh3d_nodes
-
     grid = {
         "nnod": nnod,  # number of surface nodes
         "nnod3": nnod3,  # number of volume nodes
         "nel": nel,
         "mesh3d_nodes": mesh3d_nodes,
         "mesh_tetra": mesh_tetra,
-        # "nodes_idxyz": nodes_idxyz,
     }
-
     return grid
-
-    # except:
-    #     pass
-
 
 
 def read_fort777(filename, **kwargs):
@@ -537,3 +510,86 @@ def read_mbeconv(filename):
     # plt.ylabel('Relative mass balance error (%)')
 
     return df_mbeconv
+
+
+def read_netris(filename, **kwargs):
+
+    net_ris_file = open(filename, "r")
+    lines = net_ris_file.readlines()
+    net_ris_file.close()
+    
+    netris = []
+    for i, ll in enumerate(lines[6:]):
+        
+        if "INDCELL_WITH_LAKES" in ll:
+            break
+        lmat = []
+        splt = ll.split()
+        lmat.append([float(k) for k in splt])
+        netris.append(lmat)
+    
+    netris = np.vstack(netris)
+    return netris
+
+
+def read_cq(filename, **kwargs):
+    """
+    Reads cell discharge data from a file.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the file to read the data from.
+
+    Returns
+    -------
+    np.ndarray
+        A 2D NumPy array containing the cell discharge data.
+    """
+
+    # Open the file
+    with open(filename, "r") as cq_file:
+        lines = cq_file.readlines()
+    
+    # Initialize lists to store indices, step numbers, and times
+    idx = []
+    step_i = []
+    time_i = []
+
+    # Loop over lines of the file to identify steps
+    for i, line in enumerate(lines):
+        if "TIME" in line:
+            idx.append(i)
+            splt = line.split()
+            step_i.append(splt[0])
+            time_i.append(float(splt[1]))
+
+    # Initialize a NumPy array to store data
+    cq_sub = np.ones([len(idx), 5]) * -99
+
+    # Create a list to store data lines
+    lmat = []
+
+    # Loop over lines of the file to extract data
+    for line in lines:
+        splt = line.split()
+        try:
+            # Convert data to float and round to 4 decimal places
+            # lmat.append([np.round(float(k), 4) for k in splt])
+            lmat.append([float(k) for k in splt])
+        except ValueError:
+            # Skip lines that cannot be converted to float
+            pass
+    
+    # Convert the list of lists to a NumPy array
+    lmat = np.vstack(lmat)
+
+    # Reshape the data array
+    d_cq_t = np.reshape(lmat, [len(idx), np.diff(idx)[0] - 2, 5])
+
+    # Extract cell discharge data
+    cell_discharge = d_cq_t[:, :, 4]
+    cell_discharge = cell_discharge.T
+    cell_discharge = cell_discharge[:, :-1]
+    
+    return cell_discharge

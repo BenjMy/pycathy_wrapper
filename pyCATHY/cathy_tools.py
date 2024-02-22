@@ -230,31 +230,7 @@ class CATHY:
                         os.path.join(self.workdir, self.project_name, "tmp_src/src"),
                         os.path.join(self.workdir, self.project_name, "src"),
                     )
-
-                    self.console.print(
-                        ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
-                    )
-                    shutil.move(
-                        os.path.join(
-                            self.workdir,
-                            self.project_name,
-                            "tmp_src/runs/weilletal/prepro",
-                        ),
-                        os.path.join(self.workdir, self.project_name, "prepro"),
-                    )
-                    # os.remove(os.path.join(
-                    #      self.workdir, self.project_name, "prepro") + '/dem' )
-
-                    self.console.print(":inbox_tray: [b]Fetch cathy inputfiles[/b]")
-                    shutil.move(
-                        os.path.join(
-                            self.workdir,
-                            self.project_name,
-                            "tmp_src/runs/weilletal/input",
-                        ),
-                        os.path.join(self.workdir, self.project_name, "input"),
-                    )
-
+                    
                     pathsrc = os.path.join(
                         self.workdir, self.project_name, "tmp_src/runs/weilletal/"
                     )
@@ -267,30 +243,56 @@ class CATHY:
                         file
                     ) in (
                         onlyfiles
-                    ):  # You could shorten this to one line, but it runs on a bit.
+                    ):  
                         shutil.move(
                             os.path.join(pathsrc, file),
                             os.path.join(self.workdir, self.project_name, file),
                         )
-
-                    self.create_output(output_dirname="output")
-
-                    shutil.rmtree(
-                        os.path.join(self.workdir, self.project_name, "tmp_src")
-                    )
-                    os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
-
+                        
                 except:
                     print("no internet connection to fetch the files")
                     sys.exit()
                     pass
-
+                
             if version == "G. Manoli":
                 print("fetch cathy G. Manoli src files")
                 path_manoli = "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
                 shutil.copytree(
                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
                 )
+
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
+            self.console.print(
+                ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
+            )
+            shutil.move(
+                os.path.join(
+                    self.workdir,
+                    self.project_name,
+                    "tmp_src/runs/weilletal/prepro",
+                ),
+                os.path.join(self.workdir, self.project_name, "prepro"),
+            )
+            # os.remove(os.path.join(
+            #      self.workdir, self.project_name, "prepro") + '/dem' )
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
+            self.console.print(":inbox_tray: [b]Fetch cathy inputfiles[/b]")
+            shutil.move(
+                os.path.join(
+                    self.workdir,
+                    self.project_name,
+                    "tmp_src/runs/weilletal/input",
+                ),
+                os.path.join(self.workdir, self.project_name, "input"),
+            )
+
+        if not os.path.exists(os.path.join(self.workdir, self.project_name, "output")):
+                self.create_output(output_dirname="output")
+
+                shutil.rmtree(
+                    os.path.join(self.workdir, self.project_name, "tmp_src")
+                )
+                os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
 
         # clear output files if required
         # ---------------------------------------------------------------------
@@ -380,6 +382,21 @@ class CATHY:
             idoutlet = np.where(self.DEM == min(np.unique(self.DEM)))
             self.DEM[idoutlet[0], idoutlet[1]] = max(np.unique(self.DEM))
 
+        if hasattr(self, 'DEM') is False:
+            
+            DEM_mat, DEM_header = in_CT.read_dem(
+                                        os.path.join(self.workdir, self.project_name, "prepro/dem"),
+                                        os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+                                    )
+            self.DEM = DEM_mat
+        
+        # if hasattr(self, 'hapin') is False:
+
+            # self.update_cathyH(
+            #                     ROWMAX=self.hapin['N'],
+            #                     COLMAX=self.hapin['M']
+            #                     )
+            
         # if np.shape(self.DEM)[1]==self.hapin['N']:
         #     self.console.rule(''':warning: !transposing DEM dimension!
         #                           This should be avoided in a future version
@@ -388,10 +405,7 @@ class CATHY:
         #     self.update_prepo_inputs(N=self.hapin['M'],
         #                               M=self.hapin['N'])
 
-        #     self.update_cathyH(
-        #                         ROWMAX=self.hapin['N'],
-        #                         COLMAX=self.hapin['M']
-        #                         )
+
         # self.update_zone()
         os.chdir(self.workdir)
 
@@ -418,8 +432,6 @@ class CATHY:
         
         # # Get the path to gfortran from the output of the where command
         # gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
-        
-
 
         # clean all files previously compiled
         for file in glob.glob("*.o"):
@@ -460,6 +472,10 @@ class CATHY:
                 bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             output, error = process.communicate()
+            
+        print(error)
+
+
         try:
             shutil.move(
                 os.path.join(
@@ -500,11 +516,10 @@ class CATHY:
         # --------------------------------------------------------------------
         # VERY VERY IMPORTANT NEVER COMMENT !
 
-        self.check_DEM_versus_inputs()
-        
+        self.check_DEM_versus_inputs() # to uncomment
         # if len(kwargs)>0:
-        self.update_parm(**kwargs)
-        self.update_cathyH(**kwargs)
+        self.update_parm(**kwargs) # to uncomment
+        self.update_cathyH(**kwargs) ### to uncomment
         # self.cathyH
         if recompile:
             # recompile
@@ -612,7 +627,7 @@ class CATHY:
 
     def check_DEM_versus_inputs(self):
         """
-        Chech shape consistency between attributes and DEM
+        Check shape consistency between attributes and DEM
 
         """
 
@@ -683,12 +698,23 @@ class CATHY:
             self.update_parm()
 
         DEMRES = 1
+        # ROWMAX = max([self.hapin["N"],self.hapin["M"]])
+        # COLMAX = max([self.hapin["N"],self.hapin["M"]])
+        
+        # ROWMAX = self.hapin["N"]
+        # COLMAX = self.hapin["M"]
+                
+        ROWMAX = self.hapin["M"]
+        COLMAX = self.hapin["N"]
+        
         
         if len(self.cathyH) == 0:
 
             self.cathyH = {
-                "ROWMAX": self.hapin["N"],  # maximum NROW, with NROW = number of rows in the DEM
-                "COLMAX": self.hapin["M"],  # maximum NCOL, with NCOL = number of columns in the DEM
+                # "ROWMAX": self.hapin["N"],  # maximum NROW, with NROW = number of rows in the DEM
+                # "COLMAX": self.hapin["M"],  # maximum NCOL, with NCOL = number of columns in the DEM
+                "ROWMAX": ROWMAX,  # maximum NROW, with NROW = number of rows in the DEM
+                "COLMAX": COLMAX,  # maximum NCOL, with NCOL = number of columns in the DEM
                 # 'COARSE': ,
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
@@ -708,7 +734,7 @@ class CATHY:
                 "MAXZON": self.dem_parameters["nzone"],  # maximum NZONE, with NZONE = number of material types in the porous medium
                 "MAXTRM": self.hapin["N"]*self.hapin["M"]*self.dem_parameters["nstr"]*30,
                 "MAXIT": 30,
-                "NRMAX": self.parm["NR"],
+                "NRMAX": self.parm["NR"]+1,
                 # maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
                 "MAXPRT": self.parm["NPRT"],
                 # maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
@@ -728,10 +754,8 @@ class CATHY:
             }
 
 
-        # self.cathyH['ROWMAX']=247
-        # self.cathyH['COLMAX']=221
-        # self.CATHYH['MAXCEL']=ROWMAX*COLMAX
-        # self.CATHYH['ROWMAX']=
+        # self.cathyH['ROWMAX']=ROWMAX
+        # self.cathyH['COLMAX']=COLMAX
         
         # create dictionnary from kwargs
         for kk, value in kwargs.items():
@@ -740,14 +764,25 @@ class CATHY:
                 # if verbose:
                 #     self.console.print(f"modified: {kk} | value: {value}")
 
+
+        # self.cathyH['COLMAX'] = 130
+        # self.cathyH['ROWMAX'] = 246
+        
         self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"])
         self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
-        self.cathyH['NTRMAX'] =  int(2* (int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"]))/ (DEMRES * DEMRES))
+        self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
         self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30
         # self.cathyH['NRMAX'] = 1
+        
+        
 
-
-      
+        self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*3
+        # self.cathyH['MAXTRM'] = 1599000
+        # MAXTRM=1599000
+        
+        
+        
+        
         # cathyH_laC = {
         #     # "ROWMAX": 247,  # maximum NROW, with NROW = number of rows in the DEM
         #     # "COLMAX": 221,  # maximum NCOL, with NCOL = number of columns in the DEM
@@ -759,13 +794,8 @@ class CATHY:
         #     "MAXTRM": 2364075,
         #     "NRMAX": 1,
         # }
-        
-        
         # for k in cathyH_laC:
         #     self.cathyH[k] = cathyH_laC[k]
-
-            
-            
             
         
         # ---------------------------------------------------------------------
@@ -798,7 +828,9 @@ class CATHY:
             CATHYH_file.write(
                 "      PARAMETER (NP2MAX=1,MAXSTR={})\n".format(self.cathyH["MAXSTR"])
             )
-            CATHYH_file.write("      PARAMETER (NFACEMAX=74000)\n".format())
+            CATHYH_file.write(
+                # "      PARAMETER (NFACEMAX={})\n".format(self.cathyH['NFACEMAX']))
+                "      PARAMETER (NFACEMAX={})\n".format(self.cathyH['NFACEMAX']))
             CATHYH_file.write(
                 "      PARAMETER (NMAX=NODMAX*(MAXSTR + 1),NTEMAX=3*NTRMAX*MAXSTR)\n".format()
             )
@@ -2927,7 +2959,7 @@ class CATHY:
 
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
-        #---------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------
         if len(np.unique(indice_veg))>1:
             exclude_veg = self._check_outside_DEM(indice_veg)
             self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
@@ -2940,7 +2972,7 @@ class CATHY:
             self.MAXVEG = len(np.unique(indice_veg))
 
 
-        self.update_cathyH(MAXVEG=self.MAXVEG)
+        self.update_cathyH(MAXVEG=self.MAXVEG) # to uncomment
 
         if show:
             ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
@@ -2959,9 +2991,6 @@ class CATHY:
             self.DEM = DEM_mat
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
-        
-        # np.shape(raster2check)
-        # np.shape(self.DEM)
 
         exclude_out_ind = 0
         if np.min(self.DEM)<0:
