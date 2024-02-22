@@ -31,7 +31,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 .. GENERATED FROM PYTHON SOURCE LINES 14-19
 
-.. code-block:: default
+.. code-block:: Python
 
 
     # map_prop_veg ?
@@ -47,7 +47,7 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 .. GENERATED FROM PYTHON SOURCE LINES 20-26
 
-.. code-block:: default
+.. code-block:: Python
 
 
     import numpy as np
@@ -62,13 +62,16 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-32
+.. GENERATED FROM PYTHON SOURCE LINES 27-35
 
-.. code-block:: default
+.. code-block:: Python
 
 
-    path2prj = "weil_exemple_inputs_plot"  # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj)
+    path2prj = "../SSHydro/" 
+    simu = cathy_tools.CATHY(dirName=path2prj, 
+                             prj_name="weil_exemple_inputs_plot"
+                             )
+
     # simu.run_preprocessor()
 
 
@@ -80,17 +83,22 @@ This example shows how to use pyCATHY object to plot inputs of the hydrological 
  .. code-block:: none
 
     🏁 Initiate CATHY object
+    😟 src files not found
+    working directory is:/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/
+    📥 Fetch cathy src files
+    📥 Fetch cathy prepro src files
+    📥 Fetch cathy inputfiles
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-34
+.. GENERATED FROM PYTHON SOURCE LINES 36-37
 
 simu.show_input(prop="dem")
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-44
+.. GENERATED FROM PYTHON SOURCE LINES 39-47
 
-.. code-block:: default
+.. code-block:: Python
 
 
     # show time atmbc
@@ -107,13 +115,13 @@ simu.show_input(prop="dem")
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-49
+.. GENERATED FROM PYTHON SOURCE LINES 51-52
 
 Add a new zone
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-58
+.. GENERATED FROM PYTHON SOURCE LINES 52-61
 
-.. code-block:: default
+.. code-block:: Python
 
 
 
@@ -139,26 +147,31 @@ Add a new zone
 
     🔄 Update hap.in file
     🔄 update dem_parameters file 
-    ─────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ────────────────────────────────────────────────────────────────────────────────────────
+    🔄 update dem_parameters file 
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
                                 The parm dictionnary is empty
                                 Falling back to defaults to update CATHYH
                                 This can have consequences !!
                             
-    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 update parm file 
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ['Adjusting TMAX with respect to time of interests requested\n']
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 update zone file 
     🔄 update dem_parameters file 
     🔄 update parm file 
     🔄 Update soil
+    Inconsistent number of zones/layers with respect to the number of soil lines: 20/15
     homogeneous soil
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-64
+.. GENERATED FROM PYTHON SOURCE LINES 62-67
 
-.. code-block:: default
+.. code-block:: Python
 
     veg_map = simu.veg_map
     veg_map[2:6, 5:14] = 2
@@ -177,13 +190,13 @@ Add a new zone
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-66
+.. GENERATED FROM PYTHON SOURCE LINES 68-69
 
 Feddes is a dictionnary with 6 entries, and for each a list
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-78
+.. GENERATED FROM PYTHON SOURCE LINES 69-81
 
-.. code-block:: default
+.. code-block:: Python
 
 
     FP_map_1zone = simu.soil_FP["FP_map"]  # read existing mapping
@@ -204,9 +217,9 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-88
+.. GENERATED FROM PYTHON SOURCE LINES 82-91
 
-.. code-block:: default
+.. code-block:: Python
 
     simu.update_soil(FP_map=FP_map_2zones, show=True)
 
@@ -245,12 +258,13 @@ Feddes is a dictionnary with 6 entries, and for each a list
     🔄 Update soil
     homogeneous soil
 
+    <matplotlib.collections.QuadMesh object at 0x7f7cf11f67a0>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-92
+.. GENERATED FROM PYTHON SOURCE LINES 92-95
 
-.. code-block:: default
+.. code-block:: Python
 
 
     simu.update_prepo_inputs()
@@ -265,18 +279,19 @@ Feddes is a dictionnary with 6 entries, and for each a list
 
     🔄 Update hap.in file
     🔄 update dem_parameters file 
+    🔄 update dem_parameters file 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-95
+.. GENERATED FROM PYTHON SOURCE LINES 96-98
 
 This will automatically create a new vtk mesh containing the zone flags
 error --> number of tretra in grid3d < n of tretra in the mesh (mission one element)
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-97
+.. GENERATED FROM PYTHON SOURCE LINES 98-100
 
-.. code-block:: default
+.. code-block:: Python
 
     simu.update_zone()
 
@@ -295,9 +310,9 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-102
+.. GENERATED FROM PYTHON SOURCE LINES 101-105
 
-.. code-block:: default
+.. code-block:: Python
 
 
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=1)
@@ -324,16 +339,22 @@ error --> number of tretra in grid3d < n of tretra in the mesh (mission one elem
          :class: sphx-glr-multi-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <matplotlib.collections.QuadMesh object at 0x7f7cf10583d0>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-104
+.. GENERATED FROM PYTHON SOURCE LINES 106-107
 
 Show layer number 10
 
-.. GENERATED FROM PYTHON SOURCE LINES 104-107
+.. GENERATED FROM PYTHON SOURCE LINES 107-110
 
-.. code-block:: default
+.. code-block:: Python
 
 
     simu.show_input(prop="soil", yprop="VGNCELL", layer_nb=10)
@@ -347,12 +368,18 @@ Show layer number 10
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <matplotlib.collections.QuadMesh object at 0x7f7cf0f3c7c0>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-112
+.. GENERATED FROM PYTHON SOURCE LINES 111-115
 
-.. code-block:: default
+.. code-block:: Python
 
     simu.update_soil()
     df_soil, _ = simu.read_inputs("soil")
@@ -372,9 +399,9 @@ Show layer number 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-119
+.. GENERATED FROM PYTHON SOURCE LINES 116-122
 
-.. code-block:: default
+.. code-block:: Python
 
     zones = simu.zone
     simu.update_prepo_inputs()
@@ -392,6 +419,7 @@ Show layer number 10
 
     🔄 Update hap.in file
     🔄 update dem_parameters file 
+    🔄 update dem_parameters file 
     🔄 update zone file 
     🔄 update dem_parameters file 
     🔄 update parm file 
@@ -399,28 +427,31 @@ Show layer number 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-121
+.. GENERATED FROM PYTHON SOURCE LINES 123-125
 
 we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
+or a panda dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-136
+.. GENERATED FROM PYTHON SOURCE LINES 125-142
 
-.. code-block:: default
+.. code-block:: Python
 
-
-    # what if dimension of the heteregeneity is 3d?
 
     SPP_map_1zone = simu.soil_SPP["SPP_map"]  # read existing mapping
-    SPP_map_2zones = {}
-    for k in SPP_map_1zone:
-        if k == "PERMX":
-            PERMX_zone2 = SPP_map_1zone["PERMX"][0] / 2
-            SPP_map_2zones[k] = [SPP_map_1zone[k][0], PERMX_zone2]
-        else:
-            SPP_map_2zones[k] = [SPP_map_1zone[k][0], SPP_map_1zone[k][0]]
 
+    PERMX_zones = [SPP_map_1zone["PERMX"][0], 
+             SPP_map_1zone["PERMX"][0]/2]
 
-    simu.update_soil(SPP_map=SPP_map_2zones)
+    SPP_map_zone2 = simu.init_soil_df(2, len(SPP_map_1zone))
+
+    for c in SPP_map_1zone:
+        SPP_map_zone2.loc[[0],c]=SPP_map_1zone[c].values
+        SPP_map_zone2.loc[[1],c]=SPP_map_1zone[c].values
+
+    for i, pi in enumerate(PERMX_zones):
+        SPP_map_zone2.loc[[i],'PERMX']=PERMX_zones[i].values
+
+    simu.update_soil(SPP_map=SPP_map_zone2)
 
 
 
@@ -436,9 +467,9 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-139
+.. GENERATED FROM PYTHON SOURCE LINES 143-145
 
-.. code-block:: default
+.. code-block:: Python
 
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
 
@@ -451,12 +482,18 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <matplotlib.collections.QuadMesh object at 0x7f7cf0e65fc0>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 140-141
+.. GENERATED FROM PYTHON SOURCE LINES 146-147
 
-.. code-block:: default
+.. code-block:: Python
 
     simu.show_input(prop="soil", yprop="PERMX", layer_nb=12)
 
@@ -468,13 +505,19 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <matplotlib.collections.QuadMesh object at 0x7f7cf0f06530>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.533 seconds)
+   **Total running time of the script:** (0 minutes 3.100 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_2_pyCATHY_inputs.py:
@@ -483,16 +526,13 @@ we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 
   .. container:: sphx-glr-footer sphx-glr-footer-example
 
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
+      :download:`Download Jupyter notebook: plot_2_pyCATHY_inputs.ipynb <plot_2_pyCATHY_inputs.ipynb>`
 
     .. container:: sphx-glr-download sphx-glr-download-python
 
       :download:`Download Python source code: plot_2_pyCATHY_inputs.py <plot_2_pyCATHY_inputs.py>`
-
-    .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-      :download:`Download Jupyter notebook: plot_2_pyCATHY_inputs.ipynb <plot_2_pyCATHY_inputs.ipynb>`
 
 
 .. only:: html

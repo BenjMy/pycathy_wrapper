@@ -15,3 +15,5 @@ smmap
 shapely
 imageio
 nltk
+geopandas
+rioxarray

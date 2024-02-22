@@ -20,30 +20,7 @@ Refs:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model p...">
-
-.. only:: html
-
-  .. image:: /content/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Sensitivity analysis</div>
     </div>
-
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /content/DA/plot_Weilletal_sensitivityAnalysis
 
 
 
