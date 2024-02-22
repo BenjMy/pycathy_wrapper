@@ -25,8 +25,11 @@ from pyCATHY.plotters import cathy_plots as cplt
 
 #%% add CATHY object
 
-path2prj = "weil_exemple_inputs_plot"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj)
+path2prj = "../SSHydro/" 
+simu = cathy_tools.CATHY(dirName=path2prj, 
+                         prj_name="weil_exemple_inputs_plot"
+                         )
+
 # simu.run_preprocessor()
 
 #%%
