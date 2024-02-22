@@ -1204,6 +1204,8 @@ def show_dem(
         ax = fig.add_subplot(projection="3d")
 
     X, Y = np.meshgrid(x, y)
+    
+    dem_mat[dem_mat==-9999] = np.nan
     surf = ax.plot_surface(X, Y, dem_mat, cmap="viridis", **kwargs)
     # surf = ax.plot_surface(Y,X, dem_mat, cmap="viridis",**kwargs)
     cbar = plt.colorbar(

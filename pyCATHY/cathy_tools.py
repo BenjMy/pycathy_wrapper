@@ -472,6 +472,10 @@ class CATHY:
                 bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             output, error = process.communicate()
+            
+        print(error)
+
+
         try:
             shutil.move(
                 os.path.join(
@@ -513,7 +517,6 @@ class CATHY:
         # VERY VERY IMPORTANT NEVER COMMENT !
 
         self.check_DEM_versus_inputs() # to uncomment
-        
         # if len(kwargs)>0:
         self.update_parm(**kwargs) # to uncomment
         self.update_cathyH(**kwargs) ### to uncomment
@@ -695,16 +698,15 @@ class CATHY:
             self.update_parm()
 
         DEMRES = 1
+        # ROWMAX = max([self.hapin["N"],self.hapin["M"]])
+        # COLMAX = max([self.hapin["N"],self.hapin["M"]])
         
-        # self.hapin["N"] = 500
-        # self.hapin["M"] = 500
-        # self.MAXVEG = 2
-        # self.dem_parameters["nzone"] = 5
-        # print(self.dem_parameters["nstr"])
+        # ROWMAX = self.hapin["N"]
+        # COLMAX = self.hapin["M"]
+                
+        ROWMAX = self.hapin["M"]
+        COLMAX = self.hapin["N"]
         
-        ROWMAX = max([self.hapin["N"],self.hapin["M"]])
-        COLMAX = max([self.hapin["N"],self.hapin["M"]])
-        # NFACEMAX = 74000
         
         if len(self.cathyH) == 0:
 
@@ -752,10 +754,8 @@ class CATHY:
             }
 
 
-        self.cathyH['ROWMAX']=ROWMAX
-        self.cathyH['COLMAX']=COLMAX
-        # self.CATHYH['MAXCEL']=ROWMAX*COLMAX
-        # self.CATHYH['ROWMAX']=
+        # self.cathyH['ROWMAX']=ROWMAX
+        # self.cathyH['COLMAX']=COLMAX
         
         # create dictionnary from kwargs
         for kk, value in kwargs.items():
@@ -764,14 +764,25 @@ class CATHY:
                 # if verbose:
                 #     self.console.print(f"modified: {kk} | value: {value}")
 
+
+        # self.cathyH['COLMAX'] = 130
+        # self.cathyH['ROWMAX'] = 246
+        
         self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"])
         self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
-        self.cathyH['NTRMAX'] =  int(2* (int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"]))/ (DEMRES * DEMRES))
+        self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
         self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30
         # self.cathyH['NRMAX'] = 1
+        
+        
 
-
-      
+        self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*3
+        # self.cathyH['MAXTRM'] = 1599000
+        # MAXTRM=1599000
+        
+        
+        
+        
         # cathyH_laC = {
         #     # "ROWMAX": 247,  # maximum NROW, with NROW = number of rows in the DEM
         #     # "COLMAX": 221,  # maximum NCOL, with NCOL = number of columns in the DEM
@@ -783,13 +794,8 @@ class CATHY:
         #     "MAXTRM": 2364075,
         #     "NRMAX": 1,
         # }
-        
-        
         # for k in cathyH_laC:
         #     self.cathyH[k] = cathyH_laC[k]
-
-            
-            
             
         
         # ---------------------------------------------------------------------
@@ -823,7 +829,8 @@ class CATHY:
                 "      PARAMETER (NP2MAX=1,MAXSTR={})\n".format(self.cathyH["MAXSTR"])
             )
             CATHYH_file.write(
-                "      PARAMETER (NFACEMAX={})\n".format(self.cathyH["MAXSTR"]*self.cathyH["NODMAX"]))
+                # "      PARAMETER (NFACEMAX={})\n".format(self.cathyH['NFACEMAX']))
+                "      PARAMETER (NFACEMAX={})\n".format(self.cathyH['NFACEMAX']))
             CATHYH_file.write(
                 "      PARAMETER (NMAX=NODMAX*(MAXSTR + 1),NTEMAX=3*NTRMAX*MAXSTR)\n".format()
             )
