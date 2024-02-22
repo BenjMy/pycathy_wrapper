@@ -69,5 +69,8 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
+mesh2plot.plot(show_edges=True, 
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True)
 
