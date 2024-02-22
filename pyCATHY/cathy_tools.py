@@ -512,11 +512,11 @@ class CATHY:
         # --------------------------------------------------------------------
         # VERY VERY IMPORTANT NEVER COMMENT !
 
-        self.check_DEM_versus_inputs()
+        self.check_DEM_versus_inputs() # to uncomment
         
         # if len(kwargs)>0:
-        self.update_parm(**kwargs)
-        self.update_cathyH(**kwargs)
+        self.update_parm(**kwargs) # to uncomment
+        self.update_cathyH(**kwargs) ### to uncomment
         # self.cathyH
         if recompile:
             # recompile
@@ -702,11 +702,17 @@ class CATHY:
         # self.dem_parameters["nzone"] = 5
         # print(self.dem_parameters["nstr"])
         
+        ROWMAX = max([self.hapin["N"],self.hapin["M"]])
+        COLMAX = max([self.hapin["N"],self.hapin["M"]])
+        # NFACEMAX = 74000
+        
         if len(self.cathyH) == 0:
 
             self.cathyH = {
-                "ROWMAX": self.hapin["N"],  # maximum NROW, with NROW = number of rows in the DEM
-                "COLMAX": self.hapin["M"],  # maximum NCOL, with NCOL = number of columns in the DEM
+                # "ROWMAX": self.hapin["N"],  # maximum NROW, with NROW = number of rows in the DEM
+                # "COLMAX": self.hapin["M"],  # maximum NCOL, with NCOL = number of columns in the DEM
+                "ROWMAX": ROWMAX,  # maximum NROW, with NROW = number of rows in the DEM
+                "COLMAX": COLMAX,  # maximum NCOL, with NCOL = number of columns in the DEM
                 # 'COARSE': ,
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
@@ -726,7 +732,7 @@ class CATHY:
                 "MAXZON": self.dem_parameters["nzone"],  # maximum NZONE, with NZONE = number of material types in the porous medium
                 "MAXTRM": self.hapin["N"]*self.hapin["M"]*self.dem_parameters["nstr"]*30,
                 "MAXIT": 30,
-                "NRMAX": self.parm["NR"],
+                "NRMAX": self.parm["NR"]+1,
                 # maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
                 "MAXPRT": self.parm["NPRT"],
                 # maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
@@ -746,8 +752,8 @@ class CATHY:
             }
 
 
-        # self.cathyH['ROWMAX']=247
-        # self.cathyH['COLMAX']=221
+        self.cathyH['ROWMAX']=ROWMAX
+        self.cathyH['COLMAX']=COLMAX
         # self.CATHYH['MAXCEL']=ROWMAX*COLMAX
         # self.CATHYH['ROWMAX']=
         
@@ -816,7 +822,8 @@ class CATHY:
             CATHYH_file.write(
                 "      PARAMETER (NP2MAX=1,MAXSTR={})\n".format(self.cathyH["MAXSTR"])
             )
-            CATHYH_file.write("      PARAMETER (NFACEMAX=74000)\n".format())
+            CATHYH_file.write(
+                "      PARAMETER (NFACEMAX={})\n".format(self.cathyH["MAXSTR"]*self.cathyH["NODMAX"]))
             CATHYH_file.write(
                 "      PARAMETER (NMAX=NODMAX*(MAXSTR + 1),NTEMAX=3*NTRMAX*MAXSTR)\n".format()
             )
@@ -2958,7 +2965,7 @@ class CATHY:
             self.MAXVEG = len(np.unique(indice_veg))
 
 
-        self.update_cathyH(MAXVEG=self.MAXVEG)
+        self.update_cathyH(MAXVEG=self.MAXVEG) # to uncomment
 
         if show:
             ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
