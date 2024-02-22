@@ -85,7 +85,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (3 minutes 7.887 seconds)
+   **Total running time of the script:** (3 minutes 7.548 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_1_pyCATHY_weilletal.py:

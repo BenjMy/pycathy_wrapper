@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.334** total execution time for 1 file **from all galleries**:
+**07:50.627** total execution time for 9 files **from all galleries**:
 
 .. container::
 
@@ -32,6 +32,30 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_content_SSHydro_plot_3c_saptial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_saptial_atmbc_from_weill.py``)
+     - 03:23.057
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``../examples/SSHydro/plot_1_pyCATHY_weilletal.py``)
+     - 03:07.548
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weill.py` (``../examples/SSHydro/plot_3_meshing_from_weill.py``)
+     - 00:50.349
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3c_bc_from_weill.py` (``../examples/SSHydro/plot_3c_bc_from_weill.py``)
+     - 00:09.152
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weill.py` (``../examples/SSHydro/plot_3b_soil3d_from_weill.py``)
+     - 00:08.230
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_Camporese.py` (``../examples/SSHydro/plot_3_meshing_from_Camporese.py``)
+     - 00:07.074
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``../examples/SSHydro/plot_4_pyCATHY_outputs.py``)
+     - 00:05.206
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py` (``../examples/SSHydro/plot_4b_waterTable_from_weill.py``)
+     - 00:00.011
+     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``../examples/SSHydro/plot_2_pyCATHY_inputs.py``)
-     - 00:01.334
+     - 00:00.000
      - 0.0
