@@ -31,7 +31,7 @@ vtk>=9
 myst_nb
 jupytext
 geopandas
-
+linkify-it-py
 
 # pypi building requirements
 #twine
