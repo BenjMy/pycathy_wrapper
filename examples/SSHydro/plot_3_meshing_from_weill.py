@@ -73,7 +73,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 
 #%% Change mesh resolution
@@ -101,8 +105,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 
 
@@ -128,8 +135,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 
 
@@ -139,8 +149,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 
 
@@ -164,8 +177,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 #%% Flip y axis
 
 dem_crop_flipy = np.flipud(dem_crop)
@@ -187,8 +203,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 #%% Change number of layers and maximum depth
 
@@ -219,8 +238,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 #%% Change number of layers (log)
 
@@ -249,8 +271,11 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 import pyvista as pv
 
 mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
+mesh2plot.plot(show_edges=True,
+               show_axes=True, 
+               show_bounds=True,
+               notebook=True,
+               )
 
 #%% Run  hydrological model
 
