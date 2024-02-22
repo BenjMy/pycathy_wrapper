@@ -76,6 +76,19 @@ Scenario with Water Table:
 
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_bc_from_weill.py:47: DeprecationWarning: 
+    Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
+    (to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
+    but was not found to be installed on your system.
+    If this would cause problems for you,
+    please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
+        
+      import pandas as pd
+
 
 
 
@@ -83,12 +96,14 @@ Scenario with Water Table:
 
 ------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-61
+.. GENERATED FROM PYTHON SOURCE LINES 57-63
 
 .. code-block:: Python
 
     path2prj = "../SSHydro/"  # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj, prj_name="bc_from_weill", clear_src=True)
+    simu = cathy_tools.CATHY(dirName=path2prj, 
+                             prj_name="bc_from_weill"
+                             )
 
     rootpath = os.path.join(simu.workdir + simu.project_name)
 
@@ -100,21 +115,15 @@ Scenario with Water Table:
  .. code-block:: none
 
     🏁 Initiate CATHY object
-    clear src files
-    😟 src files not found
-    working directory is:/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/
-    📥 Fetch cathy src files
-    📥 Fetch cathy prepro src files
-    📥 Fetch cathy inputfiles
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-63
+.. GENERATED FROM PYTHON SOURCE LINES 64-65
 
 the dimension of the mesh is squared (20,20)
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-101
+.. GENERATED FROM PYTHON SOURCE LINES 65-103
 
 .. code-block:: Python
 
@@ -167,17 +176,14 @@ the dimension of the mesh is squared (20,20)
     🔄 Update hap.in file
     🔄 update dem_parameters file 
     🔄 Update dtm_13 file
-    ───────────────────────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ───────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────
 
                                 The parm dictionnary is empty
                                 Falling back to defaults to update CATHYH
                                 This can have consequences !!
                             
-    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 update parm file 
-    ───────────────────────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-    ['Adjusting TMAX with respect to time of interests requested\n']
-    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 update dem_parameters file 
     🍳 gfortran compilation
     👟 Run preprocessor
@@ -482,8 +488,8 @@ the dimension of the mesh is squared (20,20)
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     🔄 update parm file 
-    🛠  Recompile src files [4s]
-    🍳 gfortran compilation [8s]
+    🛠  Recompile src files [3s]
+    🍳 gfortran compilation [6s]
     b''
     👟 Run processor
     b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
@@ -492,7 +498,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-137
+.. GENERATED FROM PYTHON SOURCE LINES 104-139
 
 .. code-block:: Python
 
@@ -550,7 +556,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 138-170
+.. GENERATED FROM PYTHON SOURCE LINES 140-172
 
 .. code-block:: Python
 
@@ -593,7 +599,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-210
+.. GENERATED FROM PYTHON SOURCE LINES 173-212
 
 .. code-block:: Python
 
@@ -643,7 +649,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 211-223
+.. GENERATED FROM PYTHON SOURCE LINES 213-225
 
 .. code-block:: Python
 
@@ -673,11 +679,11 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 224-225
+.. GENERATED FROM PYTHON SOURCE LINES 226-227
 
 Dirichlet Boundary conditions (or specified pressure) at time t
 
-.. GENERATED FROM PYTHON SOURCE LINES 225-242
+.. GENERATED FROM PYTHON SOURCE LINES 227-244
 
 .. code-block:: Python
 
@@ -705,7 +711,7 @@ Dirichlet Boundary conditions (or specified pressure) at time t
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 243-255
+.. GENERATED FROM PYTHON SOURCE LINES 245-257
 
 .. code-block:: Python
 
@@ -728,14 +734,14 @@ Dirichlet Boundary conditions (or specified pressure) at time t
 .. code-block:: pytb
 
     Traceback (most recent call last):
-      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_bc_from_weill.py", line 250, in <module>
+      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_bc_from_weill.py", line 252, in <module>
         meshbc = simu.mesh_bound_cond_df
     AttributeError: 'CATHY' object has no attribute 'mesh_bound_cond_df'
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 256-261
+.. GENERATED FROM PYTHON SOURCE LINES 258-263
 
 Neumann boundary conditions (or specifed flux) at time t
 try:
@@ -743,7 +749,7 @@ try:
 except:
     pass
 
-.. GENERATED FROM PYTHON SOURCE LINES 261-269
+.. GENERATED FROM PYTHON SOURCE LINES 263-271
 
 .. code-block:: Python
 
@@ -756,13 +762,13 @@ except:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 270-271
+.. GENERATED FROM PYTHON SOURCE LINES 272-273
 
 .. code-block:: Python
 
     simu.update_sfbc(no_flow=True)
 
-.. GENERATED FROM PYTHON SOURCE LINES 272-276
+.. GENERATED FROM PYTHON SOURCE LINES 274-278
 
 .. code-block:: Python
 
@@ -771,7 +777,7 @@ except:
     simu.show_bc()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 277-282
+.. GENERATED FROM PYTHON SOURCE LINES 279-284
 
 .. code-block:: Python
 
@@ -781,12 +787,12 @@ except:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 283-285
+.. GENERATED FROM PYTHON SOURCE LINES 285-287
 
 saturated domain cause the outlet discharge to quickly reach its peak, 
 followed by a slow recession due to decreasing gradients as exfiltration proceeds.
 
-.. GENERATED FROM PYTHON SOURCE LINES 285-302
+.. GENERATED FROM PYTHON SOURCE LINES 287-304
 
 .. code-block:: Python
 
@@ -808,7 +814,7 @@ followed by a slow recession due to decreasing gradients as exfiltration proceed
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 303-310
+.. GENERATED FROM PYTHON SOURCE LINES 305-312
 
 .. code-block:: Python
 
@@ -820,7 +826,7 @@ followed by a slow recession due to decreasing gradients as exfiltration proceed
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 311-317
+.. GENERATED FROM PYTHON SOURCE LINES 313-319
 
 .. code-block:: Python
 
@@ -834,7 +840,7 @@ followed by a slow recession due to decreasing gradients as exfiltration proceed
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.152 seconds)
+   **Total running time of the script:** (0 minutes 8.529 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3c_bc_from_weill.py:

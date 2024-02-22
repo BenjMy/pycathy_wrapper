@@ -33,7 +33,8 @@ from pyCATHY.plotters import cathy_plots as cplt
 #%% Init CATHY model
 # ------------------------
 path2prj = "../SSHydro/"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj, prj_name="soil3d_from_weill", clear_src=False)
+simu = cathy_tools.CATHY(dirName=path2prj, prj_name="soil3d_from_weill"
+                         )
 
 rootpath = os.path.join(simu.workdir + simu.project_name)
 #%% Fetch and show initial DEM

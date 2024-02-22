@@ -54,6 +54,19 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
 
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3_meshing_from_weill.py:25: DeprecationWarning: 
+    Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
+    (to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
+    but was not found to be installed on your system.
+    If this would cause problems for you,
+    please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
+        
+      import pandas as pd
+
 
 
 
@@ -61,12 +74,14 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
 
 ------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-40
+.. GENERATED FROM PYTHON SOURCE LINES 35-42
 
 .. code-block:: Python
 
     path2prj = "../SSHydro/"  # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj, prj_name="meshing_from_weill", clear_src=True)
+    simu = cathy_tools.CATHY(dirName=path2prj, 
+                             prj_name="meshing_from_weill"
+                             )
 
     rootpath = os.path.join(simu.workdir + simu.project_name)
 
@@ -79,21 +94,15 @@ This example shows how to use pyCATHY object to mesh from a DEM and run the hydr
  .. code-block:: none
 
     🏁 Initiate CATHY object
-    clear src files
-    😟 src files not found
-    working directory is:/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/
-    📥 Fetch cathy src files
-    📥 Fetch cathy prepro src files
-    📥 Fetch cathy inputfiles
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-46
+.. GENERATED FROM PYTHON SOURCE LINES 47-48
 
 the dimension of the mesh is squared (20,20)
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-71
+.. GENERATED FROM PYTHON SOURCE LINES 48-73
 
 .. code-block:: Python
 
@@ -168,9 +177,6 @@ the dimension of the mesh is squared (20,20)
                             
     ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 update parm file 
-    ───────────────────────────────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-    ['Adjusting TMAX with respect to time of interests requested\n']
-    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 update dem_parameters file 
     🍳 gfortran compilation
     👟 Run preprocessor
@@ -180,7 +186,7 @@ the dimension of the mesh is squared (20,20)
      searching the dtm_13.val input file...
      assigned nodata value =  -9999.0000000000000     
 
-     number of processed cells =         400
+     number of processed cells =         200
 
      ...wbb completed
 
@@ -202,7 +208,7 @@ the dimension of the mesh is squared (20,20)
      ...completed
 
      smean...
-     mean (min,max) facet slope =  0.052056253 ( 0.020000000, 0.053851648)
+     mean (min,max) facet slope =  0.050445386 ( 0.020000000, 0.053851648)
      ...completed
 
      dsf...
@@ -239,10 +245,10 @@ the dimension of the mesh is squared (20,20)
 
      dem file
 
-     min value = 0.335000E+00
+     min value = 0.585000E+00
      max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.667500E+00
+     number of cells =   200
+     mean value = 0.792500E+00
 
      writing the output file...
 
@@ -252,7 +258,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     0
-     number of cells =   400
+     number of cells =   200
      mean value =     0.000000
 
      writing the output file...
@@ -263,7 +269,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     1
      max value =     1
-     number of cells =   400
+     number of cells =   200
      mean value =     1.000000
 
      writing the output file...
@@ -274,8 +280,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.515524E+00
      max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.607575E+00
+     number of cells =   200
+     mean value = 0.651177E+00
 
      writing the output file...
 
@@ -285,8 +291,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.484476E+00
-     number of cells =   400
-     mean value = 0.392425E+00
+     number of cells =   200
+     mean value = 0.348823E+00
 
      writing the output file...
 
@@ -296,8 +302,8 @@ the dimension of the mesh is squared (20,20)
 
      min value =     4
      max value =     8
-     number of cells =   400
-     mean value =     4.200000
+     number of cells =   200
+     mean value =     4.400000
 
      writing the output file...
 
@@ -307,8 +313,8 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     9
-     number of cells =   400
-     mean value =     6.792500
+     number of cells =   200
+     mean value =     6.885000
 
      writing the output file...
 
@@ -317,9 +323,9 @@ the dimension of the mesh is squared (20,20)
      A_inflow file
 
      min value = 0.000000000000E+00
-     max value = 0.997499787031E+02
-     number of cells =   400
-     mean value = 0.388447785378E+01
+     max value = 0.497499945034E+02
+     number of cells =   200
+     mean value = 0.305322909355E+01
 
      writing the output file...
 
@@ -329,8 +335,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.200000E-01
      max value = 0.500000E-01
-     number of cells =   400
-     mean value = 0.485000E-01
+     number of cells =   200
+     mean value = 0.470000E-01
 
      writing the output file...
 
@@ -340,8 +346,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.494975E-01
-     number of cells =   400
-     mean value = 0.400930E-01
+     number of cells =   200
+     mean value = 0.356382E-01
 
      writing the output file...
 
@@ -351,7 +357,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.500000E+00
      max value = 0.500000E+00
-     number of cells =   400
+     number of cells =   200
      mean value = 0.500000E+00
 
      writing the output file...
@@ -362,8 +368,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.707107E+00
-     number of cells =   400
-     mean value = 0.572757E+00
+     number of cells =   200
+     mean value = 0.509117E+00
 
      writing the output file...
 
@@ -373,7 +379,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.240040E+02
      max value = 0.240040E+02
-     number of cells =   400
+     number of cells =   200
      mean value = 0.240040E+02
 
      writing the output file...
@@ -384,8 +390,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.240040E+02
-     number of cells =   400
-     mean value = 0.194432E+02
+     number of cells =   200
+     mean value = 0.172829E+02
 
      writing the output file...
 
@@ -395,7 +401,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.100000E+01
      max value = 0.100000E+01
-     number of cells =   400
+     number of cells =   200
      mean value = 0.100000E+01
 
      writing the output file...
@@ -406,8 +412,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.810000E+00
+     number of cells =   200
+     mean value = 0.720000E+00
 
      writing the output file...
 
@@ -417,7 +423,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.000000E+00
-     number of cells =   400
+     number of cells =   200
      mean value = 0.000000E+00
 
      writing the output file...
@@ -428,7 +434,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.000000E+00
-     number of cells =   400
+     number of cells =   200
      mean value = 0.000000E+00
 
      writing the output file...
@@ -439,7 +445,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     0
-     number of cells =   400
+     number of cells =   200
      mean value =     0.000000
 
      writing the output file...
@@ -450,7 +456,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     0
-     number of cells =   400
+     number of cells =   200
      mean value =     0.000000
 
      writing the output file...
@@ -461,7 +467,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.100000E+01
      max value = 0.100000E+01
-     number of cells =   400
+     number of cells =   200
      mean value = 0.100000E+01
 
      writing the output file...
@@ -475,17 +481,17 @@ the dimension of the mesh is squared (20,20)
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     🔄 update parm file 
-    🛠  Recompile src files [4s]
-    🍳 gfortran compilation [8s]
+    🛠  Recompile src files [3s]
+    🍳 gfortran compilation [6s]
     b''
     👟 Run processor
-    b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
+    b''
     b''
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-83
+.. GENERATED FROM PYTHON SOURCE LINES 74-85
 
 .. code-block:: Python
 
@@ -519,12 +525,12 @@ the dimension of the mesh is squared (20,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC195F76590>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77C135F520>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-89
+.. GENERATED FROM PYTHON SOURCE LINES 86-91
 
 .. code-block:: Python
 
@@ -549,7 +555,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-94
+.. GENERATED FROM PYTHON SOURCE LINES 92-96
 
 .. code-block:: Python
 
@@ -570,7 +576,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-103
+.. GENERATED FROM PYTHON SOURCE LINES 97-105
 
 .. code-block:: Python
 
@@ -606,7 +612,7 @@ the dimension of the mesh is squared (20,20)
      searching the dtm_13.val input file...
      assigned nodata value =  -9999.0000000000000     
 
-     number of processed cells =         400
+     number of processed cells =         200
 
      ...wbb completed
 
@@ -628,7 +634,7 @@ the dimension of the mesh is squared (20,20)
      ...completed
 
      smean...
-     mean (min,max) facet slope =  0.052056253 ( 0.020000000, 0.053851648)
+     mean (min,max) facet slope =  0.050445386 ( 0.020000000, 0.053851648)
      ...completed
 
      dsf...
@@ -665,10 +671,10 @@ the dimension of the mesh is squared (20,20)
 
      dem file
 
-     min value = 0.335000E+00
+     min value = 0.585000E+00
      max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.667500E+00
+     number of cells =   200
+     mean value = 0.792500E+00
 
      writing the output file...
 
@@ -678,7 +684,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     0
-     number of cells =   400
+     number of cells =   200
      mean value =     0.000000
 
      writing the output file...
@@ -689,7 +695,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     1
      max value =     1
-     number of cells =   400
+     number of cells =   200
      mean value =     1.000000
 
      writing the output file...
@@ -700,8 +706,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.515524E+00
      max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.607575E+00
+     number of cells =   200
+     mean value = 0.651177E+00
 
      writing the output file...
 
@@ -711,8 +717,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.484476E+00
-     number of cells =   400
-     mean value = 0.392425E+00
+     number of cells =   200
+     mean value = 0.348823E+00
 
      writing the output file...
 
@@ -722,8 +728,8 @@ the dimension of the mesh is squared (20,20)
 
      min value =     4
      max value =     8
-     number of cells =   400
-     mean value =     4.200000
+     number of cells =   200
+     mean value =     4.400000
 
      writing the output file...
 
@@ -733,8 +739,8 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     9
-     number of cells =   400
-     mean value =     6.792500
+     number of cells =   200
+     mean value =     6.885000
 
      writing the output file...
 
@@ -743,9 +749,9 @@ the dimension of the mesh is squared (20,20)
      A_inflow file
 
      min value = 0.000000000000E+00
-     max value = 0.997499787031E+02
-     number of cells =   400
-     mean value = 0.388447785378E+01
+     max value = 0.497499945034E+02
+     number of cells =   200
+     mean value = 0.305322909355E+01
 
      writing the output file...
 
@@ -755,8 +761,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.200000E-01
      max value = 0.500000E-01
-     number of cells =   400
-     mean value = 0.485000E-01
+     number of cells =   200
+     mean value = 0.470000E-01
 
      writing the output file...
 
@@ -766,8 +772,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.494975E-01
-     number of cells =   400
-     mean value = 0.400930E-01
+     number of cells =   200
+     mean value = 0.356382E-01
 
      writing the output file...
 
@@ -777,7 +783,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.500000E+00
      max value = 0.500000E+00
-     number of cells =   400
+     number of cells =   200
      mean value = 0.500000E+00
 
      writing the output file...
@@ -788,8 +794,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.707107E+00
-     number of cells =   400
-     mean value = 0.572757E+00
+     number of cells =   200
+     mean value = 0.509117E+00
 
      writing the output file...
 
@@ -799,7 +805,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.240040E+02
      max value = 0.240040E+02
-     number of cells =   400
+     number of cells =   200
      mean value = 0.240040E+02
 
      writing the output file...
@@ -810,8 +816,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.240040E+02
-     number of cells =   400
-     mean value = 0.194432E+02
+     number of cells =   200
+     mean value = 0.172829E+02
 
      writing the output file...
 
@@ -821,7 +827,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.100000E+01
      max value = 0.100000E+01
-     number of cells =   400
+     number of cells =   200
      mean value = 0.100000E+01
 
      writing the output file...
@@ -832,8 +838,8 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.810000E+00
+     number of cells =   200
+     mean value = 0.720000E+00
 
      writing the output file...
 
@@ -843,7 +849,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.000000E+00
-     number of cells =   400
+     number of cells =   200
      mean value = 0.000000E+00
 
      writing the output file...
@@ -854,7 +860,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.000000E+00
      max value = 0.000000E+00
-     number of cells =   400
+     number of cells =   200
      mean value = 0.000000E+00
 
      writing the output file...
@@ -865,7 +871,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     0
-     number of cells =   400
+     number of cells =   200
      mean value =     0.000000
 
      writing the output file...
@@ -876,7 +882,7 @@ the dimension of the mesh is squared (20,20)
 
      min value =     0
      max value =     0
-     number of cells =   400
+     number of cells =   200
      mean value =     0.000000
 
      writing the output file...
@@ -887,7 +893,7 @@ the dimension of the mesh is squared (20,20)
 
      min value = 0.100000E+01
      max value = 0.100000E+01
-     number of cells =   400
+     number of cells =   200
      mean value = 0.100000E+01
 
      writing the output file...
@@ -901,17 +907,17 @@ the dimension of the mesh is squared (20,20)
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     🔄 update parm file 
-    🛠  Recompile src files [11s]
-    🍳 gfortran compilation [15s]
+    🛠  Recompile src files [10s]
+    🍳 gfortran compilation [13s]
     b''
     👟 Run processor
-    b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
+    b''
     b''
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 104-116
+.. GENERATED FROM PYTHON SOURCE LINES 106-118
 
 .. code-block:: Python
 
@@ -946,16 +952,16 @@ the dimension of the mesh is squared (20,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC195F76080>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77BF036110>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-118
+.. GENERATED FROM PYTHON SOURCE LINES 119-120
 
 the new dimension of the mesh is rectangle (10,20)
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-133
+.. GENERATED FROM PYTHON SOURCE LINES 120-135
 
 .. code-block:: Python
 
@@ -1298,17 +1304,17 @@ the new dimension of the mesh is rectangle (10,20)
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     🔄 update parm file 
-    🛠  Recompile src files [19s]
-    🍳 gfortran compilation [22s]
+    🛠  Recompile src files [17s]
+    🍳 gfortran compilation [20s]
     b''
     👟 Run processor
-    b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
+    b''
     b''
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-147
+.. GENERATED FROM PYTHON SOURCE LINES 136-149
 
 .. code-block:: Python
 
@@ -1344,12 +1350,12 @@ the new dimension of the mesh is rectangle (10,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC1970E7010>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77BF004BB0>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-160
+.. GENERATED FROM PYTHON SOURCE LINES 150-162
 
 .. code-block:: Python
 
@@ -1384,12 +1390,12 @@ the new dimension of the mesh is rectangle (10,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC19706FB80>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77B6758670>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 161-175
+.. GENERATED FROM PYTHON SOURCE LINES 163-177
 
 .. code-block:: Python
 
@@ -1430,15 +1436,15 @@ the new dimension of the mesh is rectangle (10,20)
     🍳 gfortran compilation
     👟 Run preprocessor
     🔄 update parm file 
-    🛠  Recompile src files [26s]
-    🍳 gfortran compilation [29s]
+    🛠  Recompile src files [24s]
+    🍳 gfortran compilation [27s]
     b''
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 176-185
+.. GENERATED FROM PYTHON SOURCE LINES 178-187
 
 .. code-block:: Python
 
@@ -1470,12 +1476,12 @@ the new dimension of the mesh is rectangle (10,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC19706FAC0>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77C135EB00>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 186-201
+.. GENERATED FROM PYTHON SOURCE LINES 188-203
 
 .. code-block:: Python
 
@@ -1517,15 +1523,15 @@ the new dimension of the mesh is rectangle (10,20)
     🍳 gfortran compilation
     👟 Run preprocessor
     🔄 update parm file 
-    🛠  Recompile src files [33s]
-    🍳 gfortran compilation [36s]
+    🛠  Recompile src files [31s]
+    🍳 gfortran compilation [34s]
     b''
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 202-212
+.. GENERATED FROM PYTHON SOURCE LINES 204-214
 
 .. code-block:: Python
 
@@ -1558,12 +1564,12 @@ the new dimension of the mesh is rectangle (10,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC1961DFEE0>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77B5BAB040>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 213-236
+.. GENERATED FROM PYTHON SOURCE LINES 215-238
 
 .. code-block:: Python
 
@@ -1616,15 +1622,15 @@ the new dimension of the mesh is rectangle (10,20)
     🍳 gfortran compilation
     👟 Run preprocessor
     🔄 update parm file 
-    🛠  Recompile src files [39s]
-    🍳 gfortran compilation [43s]
+    🛠  Recompile src files [38s]
+    🍳 gfortran compilation [41s]
     b''
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 237-247
+.. GENERATED FROM PYTHON SOURCE LINES 239-249
 
 .. code-block:: Python
 
@@ -1657,12 +1663,12 @@ the new dimension of the mesh is rectangle (10,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC196171900>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77B5CDCE50>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 248-269
+.. GENERATED FROM PYTHON SOURCE LINES 250-271
 
 .. code-block:: Python
 
@@ -2003,8 +2009,8 @@ the new dimension of the mesh is rectangle (10,20)
     Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
 
     🔄 update parm file 
-    🛠  Recompile src files [46s]
-    🍳 gfortran compilation [50s]
+    🛠  Recompile src files [44s]
+    🍳 gfortran compilation [48s]
     b''
     👟 Run processor
     b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
@@ -2013,7 +2019,7 @@ the new dimension of the mesh is rectangle (10,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 270-280
+.. GENERATED FROM PYTHON SOURCE LINES 272-282
 
 .. code-block:: Python
 
@@ -2046,12 +2052,12 @@ the new dimension of the mesh is rectangle (10,20)
 
     Falling back to a static output.
       warnings.warn(
-    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7FC196256EF0>
+    <PIL.Image.Image image mode=RGB size=1024x768 at 0x7F77B5D019F0>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 281-283
+.. GENERATED FROM PYTHON SOURCE LINES 283-285
 
 .. code-block:: Python
 
@@ -2067,7 +2073,7 @@ the new dimension of the mesh is rectangle (10,20)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 50.349 seconds)
+   **Total running time of the script:** (0 minutes 48.929 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3_meshing_from_weill.py:

@@ -18,16 +18,42 @@
 .. _sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py:
 
 
-Output plots
-=============
+SyntaxError
+===========
 
-Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
-Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
-https://doi.org/10.1016/j.advwatres.2010.10.001.
+Example script with invalid Python syntax
 
-This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological model.
+.. GENERATED FROM PYTHON SOURCE LINES 1-16
 
-*Estimated time to run the notebook = 5min*
+.. code-block:: Python
+
+    """
+    Output plots
+    =============
+
+    Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
+    Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+    https://doi.org/10.1016/j.advwatres.2010.10.001.
+
+    This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological model.
+
+    *Estimated time to run the notebook = 5min*
+
+    """
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    '\nOutput plots\n=============\n\nWeill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». \nAdvances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), \nhttps://doi.org/10.1016/j.advwatres.2010.10.001.\n\nThis example shows how to use pyCATHY object to plot the most common ouputs of the hydrological model.\n\n*Estimated time to run the notebook = 5min*\n\n'
+
+
 
 .. GENERATED FROM PYTHON SOURCE LINES 17-19
 
@@ -55,14 +81,20 @@ We also import `cathy_plots` to render the results
 
 if you add True to verbose, the processor log will be printed in the window shell
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-33
+.. GENERATED FROM PYTHON SOURCE LINES 27-39
 
 .. code-block:: Python
 
     path2prj = "weil_exemple_outputs_plot"  # add your local path here
     simu = cathy_tools.CATHY(dirName=path2prj)
+
+    simu.run_preprocessor()
+
     simu.run_processor(IPRT1=3,verbose=True)
-    simu.run_processor(IPRT1=2,verbose=True)
+    simu.run_processor(IPRT1=2,
+                       # IPRT1=2, 
+                       TRAFLAG=0
+                       DTMIN=1e-3)
 
 
 
@@ -72,50 +104,47 @@ if you add True to verbose, the processor log will be printed in the window shel
 .. code-block:: pytb
 
     Traceback (most recent call last):
-      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_4_pyCATHY_outputs.py", line 30, in <module>
-        simu.run_processor(IPRT1=2,verbose=True)
-      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 519, in run_processor
-        self.check_DEM_versus_inputs() # to uncomment
-      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 641, in check_DEM_versus_inputs
-        self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
-    AttributeError: 'CATHY' object has no attribute 'DEM'
+      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_4_pyCATHY_outputs.py", line 9
+        This example shows how to use pyCATHY object to plot the most common ouputs of the hydrological model.
+                               
+    SyntaxError: invalid syntax. Perhaps you forgot a comma?
 
 
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 34-36
-
-.. code-block:: Python
-
-    simu.show(prop="hgsfdet")
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 37-39
-
-.. code-block:: Python
-
-    simu.show(prop="dtcoupling", yprop="Atmpot-d")
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 40-42
 
 .. code-block:: Python
 
-    simu.show(prop="hgraph")
+    simu.show(prop="hgsfdet")
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 43-45
 
 .. code-block:: Python
 
+    simu.show(prop="dtcoupling", yprop="Atmpot-d")
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 46-48
+
+.. code-block:: Python
+
+    simu.show(prop="hgraph")
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 49-51
+
+.. code-block:: Python
+
     simu.show(prop="cumflowvol")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-47
+.. GENERATED FROM PYTHON SOURCE LINES 52-53
 
 To select another time step change the value in the function argument
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-54
+.. GENERATED FROM PYTHON SOURCE LINES 53-60
 
 .. code-block:: Python
 
@@ -127,7 +156,7 @@ To select another time step change the value in the function argument
     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-61
+.. GENERATED FROM PYTHON SOURCE LINES 61-67
 
 cplt.show_vtk(
     unit="saturation",
@@ -139,7 +168,7 @@ cplt.show_vtk(
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.206 seconds)
+   **Total running time of the script:** (0 minutes 0.001 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_4_pyCATHY_outputs.py:

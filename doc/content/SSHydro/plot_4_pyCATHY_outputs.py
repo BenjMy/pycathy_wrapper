@@ -26,8 +26,14 @@ from pyCATHY.plotters import cathy_plots as cplt
 # if you add True to verbose, the processor log will be printed in the window shell
 path2prj = "weil_exemple_outputs_plot"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj)
+
+simu.run_preprocessor()
+
 simu.run_processor(IPRT1=3,verbose=True)
-simu.run_processor(IPRT1=2,verbose=True)
+simu.run_processor(IPRT1=2,
+                   # IPRT1=2, 
+                   TRAFLAG=0
+                   DTMIN=1e-3)
 
 
 #%% plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t

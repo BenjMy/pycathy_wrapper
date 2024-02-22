@@ -18,69 +18,6 @@ Examples using ``pyCATHY.importers.read_dem``
 
 .. only:: html
 
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3_meshing_from_Camporese_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_Camporese.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Meshing from a Digital Elevation Model (DEM)</div>
-    </div>
-
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_Camporese.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
-
-.. only:: html
-
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3_meshing_from_weill_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weill.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Meshing from a Digital Elevation Model (DEM)</div>
-    </div>
-
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weill.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
-
-.. only:: html
-
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3b_soil3d_from_weill_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weill.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Soil 3d from a Digital Elevation Model (DEM)</div>
-    </div>
-
-
-.. only:: not html
-
- * :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weill.py`
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
-
-.. only:: html
-
   .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_bc_from_weill_thumb.png
     :alt:
 

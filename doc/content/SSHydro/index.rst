@@ -133,7 +133,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Example script with invalid Python syntax ">
 
 .. only:: html
 
@@ -144,7 +144,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Output plots</div>
+      <div class="sphx-glr-thumbnail-title">SyntaxError</div>
     </div>
 
 
@@ -182,59 +182,6 @@ Surface subsurface hydrological model
    /content/SSHydro/plot_3c_saptial_atmbc_from_weill
    /content/SSHydro/plot_4_pyCATHY_outputs
    /content/SSHydro/plot_4b_waterTable_from_weill
-
-
- NCELL =       400 (20 * 20)
- NTRI    =     800 (2 * 400)
- NNOD    =     441 (21 * 21)
- NSTR    =      15
- NT      =   36000 (3 * 800 * 15)
- N       =    7056 (441 * 16)
- NFACE   =   74000
- NTERM   =   52111
-
-
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbnails">
-
-
-.. raw:: html
-
-    </div>
-
-
- NCELL =       400 (20 * 20)
- NTRI    =     800 (2 * 400)
- NNOD    =     441 (21 * 21)
- NSTR    =      15
- NT      =   36000 (3 * 800 * 15)
- N       =    7056 (441 * 16)
- NFACE   =   74000
- NTERM   =   52111
-
-
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbnails">
-
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-   :includehidden:
-
-
-   /content/SSHydro/bc_from_weill/index.rst
-   /content/SSHydro/meshing_from_weill/index.rst
 
 
 

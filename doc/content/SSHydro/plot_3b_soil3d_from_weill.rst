@@ -61,12 +61,13 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
 
 ------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-39
+.. GENERATED FROM PYTHON SOURCE LINES 35-40
 
 .. code-block:: Python
 
     path2prj = "../SSHydro/"  # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj, prj_name="soil3d_from_weill", clear_src=False)
+    simu = cathy_tools.CATHY(dirName=path2prj, prj_name="soil3d_from_weill"
+                             )
 
     rootpath = os.path.join(simu.workdir + simu.project_name)
 
@@ -82,11 +83,11 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-41
+.. GENERATED FROM PYTHON SOURCE LINES 41-42
 
 the dimension of the mesh is squared (20,20)
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-79
+.. GENERATED FROM PYTHON SOURCE LINES 42-80
 
 .. code-block:: Python
 
@@ -476,7 +477,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-85
+.. GENERATED FROM PYTHON SOURCE LINES 81-86
 
 .. code-block:: Python
 
@@ -500,7 +501,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-101
+.. GENERATED FROM PYTHON SOURCE LINES 87-102
 
 .. code-block:: Python
 
@@ -526,7 +527,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-110
+.. GENERATED FROM PYTHON SOURCE LINES 103-111
 
 .. code-block:: Python
 
@@ -563,7 +564,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-116
+.. GENERATED FROM PYTHON SOURCE LINES 112-117
 
 .. code-block:: Python
 
@@ -587,7 +588,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-130
+.. GENERATED FROM PYTHON SOURCE LINES 118-131
 
 .. code-block:: Python
 
@@ -611,7 +612,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-139
+.. GENERATED FROM PYTHON SOURCE LINES 132-140
 
 .. code-block:: Python
 
@@ -647,7 +648,7 @@ the dimension of the mesh is squared (20,20)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 140-142
+.. GENERATED FROM PYTHON SOURCE LINES 141-143
 
 .. code-block:: Python
 
@@ -663,7 +664,7 @@ the dimension of the mesh is squared (20,20)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 8.230 seconds)
+   **Total running time of the script:** (0 minutes 8.380 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3b_soil3d_from_weill.py:

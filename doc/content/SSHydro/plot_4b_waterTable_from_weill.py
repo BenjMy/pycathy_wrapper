@@ -25,21 +25,13 @@ import pyCATHY.meshtools as mt
 
 #%% run processor
 # if you add True to verbose, the processor log will be printed in the window shell
-path2prj = "weill_exemple_outputs_WaterTable_plot"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj)
 
-
-
-# ```{note}
-# Here is a note
-# ```
-
+path2prj = "../SSHydro/"  # add your local path here
+simu = cathy_tools.CATHY(dirName=path2prj, 
+                         prj_name="weill_exemple_outputs_WaterTable_plot"
+                         )
 #%%
-
-# simu.update_parm(NUMVP=3, NODVP=[337,338,339,440,441,442], 
-#                   NR=3, ID_NR=[337,338,339,440,441,442],
-#                   # NUM_QOUT=3, ID_QOUT=[440,441,442]
-#                  )
+simu.run_preprocessor()
 
 #%%
 
