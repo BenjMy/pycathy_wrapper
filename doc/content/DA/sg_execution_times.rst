@@ -1,12 +1,12 @@
 
 :orphan:
 
-.. _sphx_glr_sg_execution_times:
+.. _sphx_glr_content_DA_sg_execution_times:
 
 
 Computation times
 =================
-**00:01.255** total execution time for 1 file **from all galleries**:
+**00:00.000** total execution time for 0 files **from content/DA**:
 
 .. container::
 
@@ -32,6 +32,6 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``../examples/SSHydro/plot_2_pyCATHY_inputs.py``)
-     - 00:01.255
-     - 0.0
+   * - N/A
+     - N/A
+     - N/A

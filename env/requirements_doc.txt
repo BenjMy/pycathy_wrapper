@@ -28,7 +28,7 @@ sphinxcontrib-bibtex
 matplotlib
 pyvista
 vtk>=9
-myst_nb
+#myst_nb
 jupytext
 geopandas
 linkify-it-py

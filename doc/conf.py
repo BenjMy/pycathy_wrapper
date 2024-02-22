@@ -70,30 +70,30 @@ extensions = [
     "sphinx_copybutton",
     "jupyter_sphinx",
     "pyvista.ext.plot_directive",
-    "myst_nb",
+    #"myst_nb",
     #"myst_parser",
     'sphinxcontrib.bibtex',
     'sphinx_thebe',
     ]
 
 
-myst_enable_extensions = [
-    "dollarmath",
-    "amsmath",
-    "deflist",
-    "fieldlist",
-    "html_admonition",
-    "html_image",
-    "colon_fence",
-    "smartquotes",
-    "replacements",
-    "linkify",
-    "strikethrough",
-    "substitution",
-    "tasklist",
-    "attrs_inline",
-    "attrs_block",
-]
+# myst_enable_extensions = [
+#     "dollarmath",
+#     "amsmath",
+#     "deflist",
+#     "fieldlist",
+#     "html_admonition",
+#     "html_image",
+#     "colon_fence",
+#     "smartquotes",
+#     "replacements",
+#     "linkify",
+#     "strikethrough",
+#     "substitution",
+#     "tasklist",
+#     "attrs_inline",
+#     "attrs_block",
+# ]
 
 
 
