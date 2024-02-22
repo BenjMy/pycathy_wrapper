@@ -70,7 +70,7 @@ extensions = [
     "sphinx_copybutton",
     "jupyter_sphinx",
     "pyvista.ext.plot_directive",
-    #"myst_nb",
+    "myst_nb",
     #"myst_parser",
     'sphinxcontrib.bibtex',
     'sphinx_thebe',

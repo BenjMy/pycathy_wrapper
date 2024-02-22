@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.255** total execution time for 1 file **from all galleries**:
+**00:01.334** total execution time for 1 file **from all galleries**:
 
 .. container::
 
@@ -33,5 +33,5 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``../examples/SSHydro/plot_2_pyCATHY_inputs.py``)
-     - 00:01.255
+     - 00:01.334
      - 0.0
