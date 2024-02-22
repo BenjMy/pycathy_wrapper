@@ -22,3 +22,4 @@ dependencies:
   - pyvista
   - vtk
   - myst_nb
+  - linkify-it-py
