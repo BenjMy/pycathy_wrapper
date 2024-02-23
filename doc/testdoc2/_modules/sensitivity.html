@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sensitivity &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/sensitivity';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Feb 23, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/gettingstarted.html">Getting Started</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/SSHydro/index.html">Surface subsurface hydrological model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/DA/index.html">Data Assimilation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/FromLiterature/LaCecilia2023.html">D. La Cecicilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/FromLiterature/Zanetti_WRR_2024.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../content/api/api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/cathy_tools.html">cathy_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/importers.cathy_outputs.html">importers.cathy_outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/importers.cathy_inputs.html">importers.cathy_inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/DA.cathy_DA.html">DA.cathy_DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/ERT.petro_Archie.html">ERT.petro_Archie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/plotters.cathy_plots.html">plotters.cathy_plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../content/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/sensitivity.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for sensitivity</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Dependency to the SAlib python package</span>
+<span class="sd">Iwanaga, T., Usher, W., &amp; Herman, J. (2022). Toward SALib 2.0: Advancing the accessibility and interpretability of global sensitivity analyses. Socio-Environmental Systems Modelling, 4, 18155. doi:10.18174/sesmo.18155</span>
+<span class="sd">Herman, J. and Usher, W. (2017) SALib: An open-source Python library for sensitivity analysis. Journal of Open Source Software, 2(9). doi:10.21105/joss.00097</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">SALib.analyze</span> <span class="kn">import</span> <span class="n">morris</span> <span class="k">as</span> <span class="n">ma</span>
+<span class="kn">from</span> <span class="nn">SALib.plotting</span> <span class="kn">import</span> <span class="n">morris</span> <span class="k">as</span> <span class="n">mp</span>
+<span class="kn">from</span> <span class="nn">SALib.sample</span> <span class="kn">import</span> <span class="n">morris</span> <span class="k">as</span> <span class="n">ms</span>
+
+
+<div class="viewcode-block" id="define_Morris">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.define_Morris.html#sensitivity.define_Morris">[docs]</a>
+<span class="k">def</span> <span class="nf">define_Morris</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    morris_problem = {</span>
+<span class="sd">    # There are six variables</span>
+<span class="sd">    &#39;num_vars&#39;: 2,</span>
+<span class="sd">    # These are their names</span>
+<span class="sd">    &#39;names&#39;: [&#39;PERMX&#39;, &#39;POROS&#39;</span>
+<span class="sd">              ],</span>
+<span class="sd">    # Plausible ranges over which we&#39;ll move the variables</span>
+<span class="sd">    &#39;bounds&#39;: [[1e-5, 1e-3], # Ks</span>
+<span class="sd">                [0.4, 0.6], # porosity</span>
+<span class="sd">              ],</span>
+<span class="sd">    # I don&#39;t want to group any of these variables together</span>
+<span class="sd">    &#39;groups&#39;: None</span>
+<span class="sd">    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">morris_problem</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">morris_problem</span></div>
+
+
+
+<div class="viewcode-block" id="samples_generation">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.samples_generation.html#sensitivity.samples_generation">[docs]</a>
+<span class="k">def</span> <span class="nf">samples_generation</span><span class="p">(</span><span class="n">number_of_trajectories</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">num_levels</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">morris_problem</span><span class="p">,</span> <span class="n">number_of_trajectories</span><span class="p">,</span> <span class="n">num_levels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+
+
+<div class="viewcode-block" id="df_Morris">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.df_Morris.html#sensitivity.df_Morris">[docs]</a>
+<span class="k">def</span> <span class="nf">df_Morris</span><span class="p">(</span><span class="n">morris_problem</span><span class="p">,</span> <span class="n">ref_parms</span><span class="p">):</span>
+    <span class="n">df_samples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">morris_problem</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">])</span>
+    <span class="n">df_samples</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sample&quot;</span>
+
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">morris_problem</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]:</span>
+        <span class="n">df_samples</span><span class="p">[</span><span class="s2">&quot;dev_&quot;</span> <span class="o">+</span> <span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e2</span> <span class="o">*</span> <span class="p">(</span><span class="n">df_samples</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">-</span> <span class="n">ref_parms</span><span class="p">[</span><span class="n">p</span><span class="p">])</span> <span class="o">/</span> <span class="n">SPP</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+    <span class="k">return</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_prepare_CATHY_folders</span><span class="p">(</span><span class="n">prj_name</span><span class="p">):</span>
+    <span class="n">pathexe_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)):</span>
+        <span class="n">path_exe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prj_name</span> <span class="o">+</span> <span class="s2">&quot;_sensitivity&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">pathexe_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_exe</span><span class="p">)</span>
+        <span class="c1"># print(os.path.join(prj_name,prj_name + &#39;_sensitivity/sample&#39; + str(ii+1)))</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prj_name</span> <span class="o">+</span> <span class="s2">&quot;_sensitivity&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span>
+                <span class="n">prj_name</span><span class="p">,</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prj_name</span> <span class="o">+</span> <span class="s2">&quot;_sensitivity&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pathexe_list</span>
+
+
+<span class="k">def</span> <span class="nf">_update_CATHY_inputs</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+    <span class="n">PERMX</span> <span class="o">=</span> <span class="n">PERMY</span> <span class="o">=</span> <span class="n">PERMZ</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">POROS</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">SoilPhysProp</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;PERMX&quot;</span><span class="p">:</span> <span class="n">PERMX</span><span class="p">,</span>
+        <span class="s2">&quot;PERMY&quot;</span><span class="p">:</span> <span class="n">PERMY</span><span class="p">,</span>
+        <span class="s2">&quot;PERMZ&quot;</span><span class="p">:</span> <span class="n">PERMZ</span><span class="p">,</span>
+        <span class="s2">&quot;ELSTOR&quot;</span><span class="p">:</span> <span class="n">SPP</span><span class="p">[</span><span class="s2">&quot;ELSTOR&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;POROS&quot;</span><span class="p">:</span> <span class="n">POROS</span><span class="p">,</span>
+        <span class="s2">&quot;VGNCELL&quot;</span><span class="p">:</span> <span class="n">SPP</span><span class="p">[</span><span class="s2">&quot;VGNCELL&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;VGRMCCELL&quot;</span><span class="p">:</span> <span class="n">SPP</span><span class="p">[</span><span class="s2">&quot;VGRMCCELL&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;VGPSATCELL&quot;</span><span class="p">:</span> <span class="n">SPP</span><span class="p">[</span><span class="s2">&quot;VGPSATCELL&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">simu</span><span class="o">.</span><span class="n">update_soil</span><span class="p">(</span><span class="n">SPP</span><span class="o">=</span><span class="n">SoilPhysProp</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">pathexe_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/input/&quot;</span><span class="p">)</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="run_sensitivity_analysis">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.run_sensitivity_analysis.html#sensitivity.run_sensitivity_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">run_sensitivity_analysis</span><span class="p">(</span><span class="n">prj_name</span><span class="p">):</span>
+
+    <span class="n">pathexe_list</span> <span class="o">=</span> <span class="n">_prepare_CATHY_folders</span><span class="p">(</span><span class="n">prj_name</span><span class="p">)</span>
+    <span class="n">_update_CATHY_inputs</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">subprocess_run_multi</span><span class="p">,</span> <span class="n">pathexe_list</span><span class="p">)</span>
+
+    <span class="n">simu_ensemble</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">obs_data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)):</span>
+        <span class="n">dpsi</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">read_outputs</span><span class="p">(</span><span class="s2">&quot;psi&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">pathexe_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/output/&quot;</span><span class="p">)</span>
+        <span class="n">dsw</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">read_outputs</span><span class="p">(</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">pathexe_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/output/&quot;</span><span class="p">)</span>
+        <span class="n">simu_ensemble</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">dsw</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">simu_ensemble</span></div>
+
+
+
+<div class="viewcode-block" id="analysis_Morris">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.analysis_Morris.html#sensitivity.analysis_Morris">[docs]</a>
+<span class="k">def</span> <span class="nf">analysis_Morris</span><span class="p">(</span><span class="n">morris_problem</span><span class="p">,</span> <span class="n">obs_data</span><span class="p">,</span> <span class="n">simu_ensemble</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="mf">0.025</span><span class="p">):</span>
+
+    <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)):</span>
+        <span class="n">rmse</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">err_weighted_rmse</span><span class="p">(</span>
+            <span class="n">simu_ensemble</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span> <span class="n">obs_data</span><span class="p">,</span> <span class="n">err</span> <span class="o">*</span> <span class="n">obs_data</span>
+        <span class="p">)</span>  <span class="c1"># assume 2.5% noise in the data</span>
+
+    <span class="n">Si</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">morris_problem</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">rmse</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Si</span></div>
+
+
+
+<div class="viewcode-block" id="print_Morris_out">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.print_Morris_out.html#sensitivity.print_Morris_out">[docs]</a>
+<span class="k">def</span> <span class="nf">print_Morris_out</span><span class="p">(</span><span class="n">morris_problem</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{:20s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;mean(EE)&quot;</span><span class="p">,</span> <span class="s2">&quot;mean(|EE|)&quot;</span><span class="p">,</span> <span class="s2">&quot;std(EE)&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">morris_problem</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">&quot;mu_star&quot;</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:20s}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">mean</span><span class="p">))</span>
+
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="err_weighted_rmse">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.err_weighted_rmse.html#sensitivity.err_weighted_rmse">[docs]</a>
+<span class="k">def</span> <span class="nf">err_weighted_rmse</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">noise</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">sim</span> <span class="o">-</span> <span class="n">obs</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>  <span class="c1"># weighted data misfit</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="plot_Morris">
+<a class="viewcode-back" href="../content/api/generated/sensitivity.plot_Morris.html#sensitivity.plot_Morris">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_Morris</span><span class="p">():</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Si</span><span class="p">[</span><span class="s2">&quot;mu_star&quot;</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">])</span>
+    <span class="c1"># ax.plot(Si[&#39;mu_star&#39;],2*Si[&#39;sigma&#39;]/np.sqrt(number_of_trajectories),&#39;--&#39;,alpha=0.5)</span>
+    <span class="c1"># ax.plot(np.array([0,Si[&#39;mu_star&#39;][0]]),2*np.array([0,Si[&#39;sigma&#39;][0]/np.sqrt(number_of_trajectories)]),&#39;--&#39;,alpha=0.5)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of Elementary effects&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;mean(|EE|)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;std($EE$)&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">txt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Si</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">Si</span><span class="p">[</span><span class="s2">&quot;mu_star&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]))</span>
+
+    <span class="k">pass</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Feb 23, 2024.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

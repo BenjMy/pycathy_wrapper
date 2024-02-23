@@ -77,7 +77,7 @@ extensions = [
     ]
 
 
-# myst_enable_extensions = [
+myst_enable_extensions = [
 #     "dollarmath",
 #     "amsmath",
 #     "deflist",
@@ -87,13 +87,15 @@ extensions = [
 #     "colon_fence",
 #     "smartquotes",
 #     "replacements",
-#     "linkify",
+     "linkify",
 #     "strikethrough",
 #     "substitution",
 #     "tasklist",
 #     "attrs_inline",
 #     "attrs_block",
-# ]
+]
+
+myst_heading_anchors = 3
 
 
 
@@ -138,7 +140,7 @@ plot_formats = ["png"]
 # Sphinx project configuration
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "**.ipynb_checkpoints"]
-source_suffix = ['.rst', '.md', '.ipynb']
+source_suffix = ['.rst', '.md'] #, '.ipynb']
 # The encoding of source files
 source_encoding = "utf-8"
 master_doc = "index"
