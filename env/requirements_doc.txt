@@ -33,6 +33,7 @@ jupytext
 geopandas
 linkify-it-py
 trame
+trame_vtk
 
 # pypi building requirements
 #twine
