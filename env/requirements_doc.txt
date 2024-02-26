@@ -32,6 +32,7 @@ myst_nb
 jupytext
 geopandas
 linkify-it-py
+trame
 
 # pypi building requirements
 #twine
