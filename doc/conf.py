@@ -24,6 +24,18 @@ import pyvista
 from sphinx_gallery.sorting import FileNameSortKey
 
 
+import pyvista
+from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
+
+# necessary when building the sphinx gallery
+pyvista.BUILDING_GALLERY = True
+pyvista.OFF_SCREEN = True
+
+# Optional - set parameters like theme or window size
+pyvista.set_plot_theme('document')
+pyvista.global_theme.window_size = np.array([1024, 768]) * 2
+
+
 #sys.path.append('.')
 #from remove_kernel_metadata import removeK
 #removeK()
@@ -69,9 +81,10 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "jupyter_sphinx",
-    "pyvista.ext.plot_directive",
+    #"pyvista.ext.plot_directive",
     "myst_nb",
     #"myst_parser",
+    "pyvista.ext.viewer_directive",
     'sphinxcontrib.bibtex',
     'sphinx_thebe',
     ]
@@ -173,7 +186,7 @@ sphinx_gallery_conf = {
     # Insert links to documentation of objects in the examples
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
-    "image_scrapers": ("pyvista", "matplotlib"),
+    "image_scrapers": (DynamicScraper(), ..., ),
     #    'pypandoc': True,
 }
 
@@ -181,13 +194,6 @@ sphinx_gallery_conf = {
 # Pyvista configurations
 # -----------------------------------------------------------------------------
 # necessary when building the sphinx gallery
-pyvista.BUILDING_GALLERY = True
-pyvista.OFF_SCREEN = True
-
-# Optional - set parameters like theme or window size
-pyvista.set_plot_theme("document")
-pyvista.global_theme.window_size = (1024 * 2, 768 * 2)
-
 
 
 
