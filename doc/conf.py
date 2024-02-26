@@ -23,6 +23,7 @@ import datetime
 
 import pyvista
 from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
+from sphinx_gallery.sorting import FileNameSortKey
 
 # Manage errors
 pyvista.set_error_output_file("errors.txt")
