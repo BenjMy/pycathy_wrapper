@@ -20,16 +20,21 @@ sys.path.insert(0, os.path.abspath('../pyCATHY/'))
 import numpy as np
 
 import datetime
-import pyvista
-from sphinx_gallery.sorting import FileNameSortKey
-
 
 import pyvista
 from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 
+# Manage errors
+pyvista.set_error_output_file("errors.txt")
+# Ensure that offscreen rendering is used for docs generation
+pyvista.OFF_SCREEN = True  # Not necessary - simply an insurance policy
+# Preferred plotting style for documentation
+pyvista.set_plot_theme("document")
+
+
 # necessary when building the sphinx gallery
 pyvista.BUILDING_GALLERY = True
-pyvista.OFF_SCREEN = True
+os.environ["PYVISTA_BUILDING_GALLERY"] = "true"
 
 # Optional - set parameters like theme or window size
 pyvista.set_plot_theme('document')
@@ -81,7 +86,7 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "jupyter_sphinx",
-    #"pyvista.ext.plot_directive",
+    "pyvista.ext.plot_directive",
     "myst_nb",
     #"myst_parser",
     "pyvista.ext.viewer_directive",
@@ -186,7 +191,8 @@ sphinx_gallery_conf = {
     # Insert links to documentation of objects in the examples
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
-    "image_scrapers": (DynamicScraper(), ..., ),
+    "image_scrapers": (DynamicScraper(), "matplotlib"),
+
     #    'pypandoc': True,
 }
 
