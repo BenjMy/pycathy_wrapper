@@ -192,7 +192,10 @@ sphinx_gallery_conf = {
     # Insert links to documentation of objects in the examples
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
-    "image_scrapers": ('pyvista', ..., ),
+    "image_scrapers": (
+        "pyvista",
+        "matplotlib",
+    ),
 
     #    'pypandoc': True,
 }
