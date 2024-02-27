@@ -18,20 +18,20 @@ Examples using ``pyCATHY.CATHY.run_preprocessor``
 
 .. only:: html
 
-  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_4b_waterTable_from_weill_thumb.png
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_1_pyCATHY_weilletal_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py`
+  :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Plot Water Table</div>
+      <div class="sphx-glr-thumbnail-title">Weil et al example</div>
     </div>
 
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py`
+ * :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py`
 
 .. raw:: html
 
