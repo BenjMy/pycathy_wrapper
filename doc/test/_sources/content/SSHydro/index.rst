@@ -25,7 +25,24 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Weil et al example</div>
+      <div class="sphx-glr-thumbnail-title">Weill et al example</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Su...">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_2_pyCATHY_inputs_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Input plots</div>
     </div>
 
 
@@ -38,6 +55,7 @@ Surface subsurface hydrological model
    :hidden:
 
    /content/SSHydro/plot_1_pyCATHY_weilletal
+   /content/SSHydro/plot_2_pyCATHY_inputs
 
 
 

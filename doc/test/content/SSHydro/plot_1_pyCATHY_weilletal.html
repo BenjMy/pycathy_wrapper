@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Weil et al example &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+    <title>Weill et al example &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css?v=572af1d6" />
     <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -63,11 +63,11 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/SSHydro/plot_1_pyCATHY_weilletal';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Data Assimilation" href="../DA/index.html" />
+    <link rel="next" title="Input plots" href="plot_2_pyCATHY_inputs.html" />
     <link rel="prev" title="Surface subsurface hydrological model" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Feb 26, 2024"/>
+    <meta name="docbuild:last-update" content="Feb 27, 2024"/>
   </head>
   
   
@@ -176,7 +176,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Surface subsurface hydrological model</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Weil et al example</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_2_pyCATHY_inputs.html">Input plots</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../DA/index.html">Data Assimilation</a></li>
@@ -457,7 +458,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Weil et al example</h1>
+    <h1>Weill et al example</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -471,8 +472,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="weil-et-al-example">
-<h1>Weil et al example<a class="headerlink" href="#weil-et-al-example" title="Link to this heading">#</a></h1>
+  <section id="weill-et-al-example">
+<h1>Weill et al example<a class="headerlink" href="#weill-et-al-example" title="Link to this heading">#</a></h1>
 <p>Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».
 Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. <a class="reference external" href="http://DOI.org">DOI.org</a> (Crossref),
 <a class="reference external" href="https://doi.org/10.1016/j.advwatres.2010.10.001">https://doi.org/10.1016/j.advwatres.2010.10.001</a>.</p>
@@ -497,12 +498,16 @@ Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. <a class=
 <span class="c1"># simu.grid3d</span>
 <span class="c1"># len(simu.grid3d[&quot;mesh_tetra&quot;])</span>
 <span class="n">simu</span><span class="o">.</span><span class="n">run_processor</span><span class="p">(</span><span class="n">IPRT1</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+                   <span class="n">DTMIN</span><span class="o">=</span><span class="mf">1e2</span><span class="p">,</span>
                    <span class="n">TRAFLAG</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
                    <span class="p">)</span>
 
-<span class="n">cplt</span><span class="o">.</span><span class="n">show_vtk</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> <span class="n">timeStep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">notebook</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-              <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./weill_exemple/vtk/&quot;</span><span class="p">)</span>
+<span class="n">cplt</span><span class="o">.</span><span class="n">show_vtk</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> 
+              <span class="n">timeStep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+              <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./weill_exemple/vtk/&quot;</span>
+              <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -817,6 +822,12 @@ Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. <a class=
 </pre>
 </div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🔄 <span style="font-weight: bold">update parm file </span>
 </pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #808000; text-decoration-color: #808000">─────────────────────────────────────────── </span>⚠ warning messages above ⚠<span style="color: #808000; text-decoration-color: #808000"> ────────────────────────────────────────────</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #808000; text-decoration-color: #808000; font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'adjusting 2*DTMIN == DELTAT: 100.0\n'</span><span style="color: #808000; text-decoration-color: #808000; font-weight: bold">]</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #808000; text-decoration-color: #808000">───────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+</pre>
 </div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🔄 <span style="font-weight: bold">Update hap.in file</span>
 </pre>
 </div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🔄 <span style="font-weight: bold">update dem_parameters file </span>
@@ -838,11 +849,15 @@ Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. <a class=
 <span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="c1"># simu.grid3d</span>
 <span class="g g-Whitespace">     </span><span class="mi">15</span> <span class="c1"># len(simu.grid3d[&quot;mesh_tetra&quot;])</span>
 <span class="ne">---&gt; </span><span class="mi">16</span> <span class="n">simu</span><span class="o">.</span><span class="n">run_processor</span><span class="p">(</span><span class="n">IPRT1</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
-<span class="g g-Whitespace">     </span><span class="mi">17</span>                    <span class="n">TRAFLAG</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span>                    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span>                    <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="n">cplt</span><span class="o">.</span><span class="n">show_vtk</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> <span class="n">timeStep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">notebook</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span>               <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./weill_exemple/vtk/&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span>                    <span class="n">DTMIN</span><span class="o">=</span><span class="mf">1e2</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span>                    <span class="n">TRAFLAG</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span>                    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span>                    <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="n">cplt</span><span class="o">.</span><span class="n">show_vtk</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> 
+<span class="g g-Whitespace">     </span><span class="mi">23</span>               <span class="n">timeStep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+<span class="g g-Whitespace">     </span><span class="mi">24</span>               <span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">25</span>               <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./weill_exemple/vtk/&quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">26</span>               <span class="p">)</span>
 
 <span class="nn">File ~/miniconda3/envs/pyCATHY_doc/lib/python3.10/site-packages/pyCATHY-0.1.1-py3.10.egg/pyCATHY/cathy_tools.py:566,</span> in <span class="ni">CATHY.run_processor</span><span class="nt">(self, recompile, runProcess, verbose, **kwargs)</span>
 <span class="g g-Whitespace">    </span><span class="mi">564</span> <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
@@ -939,11 +954,11 @@ Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. <a class=
       </div>
     </a>
     <a class="right-next"
-       href="../DA/index.html"
+       href="plot_2_pyCATHY_inputs.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Data Assimilation</p>
+        <p class="prev-next-title">Input plots</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -984,7 +999,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Feb 26, 2024.
+  Last updated on Feb 27, 2024.
   <br/>
 </p>
   </div>

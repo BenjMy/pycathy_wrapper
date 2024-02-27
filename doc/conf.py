@@ -22,7 +22,7 @@ import numpy as np
 import datetime
 
 import pyvista
-from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
+#from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 from sphinx_gallery.sorting import FileNameSortKey
 
 # Manage errors

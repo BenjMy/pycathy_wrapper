@@ -32,6 +32,6 @@ Here is a preview of the cell contents:
 -------------------
 ['# In[2]:', '', 'from pyCATHY import cathy_tools', 'from pyCATHY.plotters import cathy_plots as cplt', '']
 ...
-['                   verbose=True', '                   )', '', 'cplt.show_vtk(unit="pressure", timeStep=1, notebook=False,', '              path="./weill_exemple/vtk/")']
+['cplt.show_vtk(unit="pressure", ', '              timeStep=1, ', '              notebook=True,', '              path="./weill_exemple/vtk/"', '              )']
 -------------------
 

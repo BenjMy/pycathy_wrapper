@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:11.131** total execution time for 1 file **from content/SSHydro**:
+**03:11.827** total execution time for 2 files **from content/SSHydro**:
 
 .. container::
 
@@ -33,5 +33,8 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``plot_1_pyCATHY_weilletal.py``)
-     - 03:11.131
+     - 03:11.019
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``plot_2_pyCATHY_inputs.py``)
+     - 00:00.809
      - 0.0
