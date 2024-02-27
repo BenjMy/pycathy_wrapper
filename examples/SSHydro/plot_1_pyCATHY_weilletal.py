@@ -1,5 +1,5 @@
 """
-Weil et al example
+Weill et al example
 ==================
 
 Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
@@ -31,6 +31,7 @@ simu.run_preprocessor(verbose=True)
 # simu.grid3d
 # len(simu.grid3d["mesh_tetra"])
 simu.run_processor(IPRT1=2, 
+		   DTMIN=1e2,
                    TRAFLAG=0,
                    verbose=True
                    )
