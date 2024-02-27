@@ -87,10 +87,10 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "jupyter_sphinx",
-    "pyvista.ext.plot_directive",
+    #"pyvista.ext.plot_directive",
     "myst_nb",
     #"myst_parser",
-    "pyvista.ext.viewer_directive",
+    #"pyvista.ext.viewer_directive",
     'sphinxcontrib.bibtex',
     'sphinx_thebe',
     ]
@@ -192,7 +192,7 @@ sphinx_gallery_conf = {
     # Insert links to documentation of objects in the examples
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
-    "image_scrapers": (DynamicScraper(), "matplotlib"),
+    "image_scrapers": ('pyvista', ..., ),
 
     #    'pypandoc': True,
 }
