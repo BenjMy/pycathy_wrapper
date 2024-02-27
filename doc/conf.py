@@ -25,23 +25,6 @@ import pyvista
 #from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 from sphinx_gallery.sorting import FileNameSortKey
 
-# Manage errors
-pyvista.set_error_output_file("errors.txt")
-# Ensure that offscreen rendering is used for docs generation
-pyvista.OFF_SCREEN = True  # Not necessary - simply an insurance policy
-# Preferred plotting style for documentation
-pyvista.set_plot_theme("document")
-
-
-# necessary when building the sphinx gallery
-pyvista.BUILDING_GALLERY = True
-os.environ["PYVISTA_BUILDING_GALLERY"] = "true"
-
-# Optional - set parameters like theme or window size
-pyvista.set_plot_theme('document')
-pyvista.global_theme.window_size = np.array([1024, 768]) * 2
-
-
 #sys.path.append('.')
 #from remove_kernel_metadata import removeK
 #removeK()
@@ -204,6 +187,12 @@ sphinx_gallery_conf = {
 # Pyvista configurations
 # -----------------------------------------------------------------------------
 # necessary when building the sphinx gallery
+pyvista.BUILDING_GALLERY = True
+pyvista.OFF_SCREEN = True
+
+# Optional - set parameters like theme or window size
+pyvista.set_plot_theme("document")
+pyvista.global_theme.window_size = (1024 * 2, 768 * 2)
 
 
 

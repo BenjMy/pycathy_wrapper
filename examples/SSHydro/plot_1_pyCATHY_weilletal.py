@@ -33,9 +33,10 @@ simu.run_preprocessor(verbose=True)
 simu.run_processor(IPRT1=2, 
                    DTMIN=1e2,
                    TRAFLAG=0,
-                   verbose=True
+                   verbose=False
                    )
 
+#%%
 cplt.show_vtk(unit="pressure", 
               timeStep=1, 
               notebook=True,
