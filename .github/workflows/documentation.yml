@@ -28,6 +28,14 @@ jobs:
       # Build the documentation
       - name: Sphinx build
         run: |
+          # Install xvfb and run some commands to allow pyvista to run on
+          # a headless system.
+          sudo apt-get install xvfb
+          export DISPLAY=:99.0
+          export PYVISTA_OFF_SCREEN=true
+          export PYVISTA_USE_IPYVTK=true
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
           rm -rf doc/_build/
           sphinx-build doc doc/_build
 
