@@ -24,10 +24,21 @@ from pyCATHY.plotters import cathy_plots as cplt
 
 path2prj = "../SSHydro/"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj, 
-			prj_name="weill_exemple"
+			prj_name="weill_exemple2"
 			)
 
-simu.run_preprocessor(verbose=True)
+
+#%%
+
+
+# simu.run_preprocessor(verbose=True)
+# simu.run_processor(IPRT1=3,verbose=True)
+
+# simu.read_inputs('atmbc')
+# simu.update_parm(TIMPRTi=[1800,7200])
+# simu.parm
+
+
 # simu.grid3d
 # len(simu.grid3d["mesh_tetra"])
 simu.run_processor(IPRT1=2, 
