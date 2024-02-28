@@ -27,9 +27,12 @@ from pyCATHY.plotters import cathy_plots as cplt
 path2prj = "weil_exemple_outputs_plot"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj)
 simu.run_preprocessor()
-simu.run_processor(IPRT1=2,
+simu.run_processor(IPRT1=2, 
+                    DTMIN=1e-2,
+                    DTMAX=1e2,
+                    DELTAT=5,
                    TRAFLAG=0,
-                   verbose=True
+                   verbose=False
                    )
 
 

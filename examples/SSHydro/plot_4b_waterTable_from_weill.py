@@ -48,9 +48,13 @@ simu.update_parm(VTKF=2)
 
 simu.run_preprocessor()
 
-simu.run_processor(TRAFLAG=0,
-                   IPRT1=2,
-                   verbose=False)
+simu.run_processor(IPRT1=2, 
+                    DTMIN=1e-2,
+                    DTMAX=1e2,
+                    DELTAT=5,
+                   TRAFLAG=0,
+                   verbose=False
+                   )
 
 
 #%%

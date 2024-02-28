@@ -59,9 +59,12 @@ simu.update_atmbc(
                   )
 
 #%%
-simu.run_processor(IPRT1=2,
+simu.run_processor(IPRT1=2, 
+                    DTMIN=1e-2,
+                    DTMAX=1e2,
+                    DELTAT=5,
                    TRAFLAG=0,
-                   verbose=True
+                   verbose=False
                    )
 
 # cplt.show_spatial_atmbc()
