@@ -24,7 +24,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 
 path2prj = "../SSHydro/"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj, 
-			prj_name="weill_exemple3"
+			prj_name="weill_exemple"
 			)
 
 
@@ -53,5 +53,5 @@ simu.run_processor(IPRT1=2,
 cplt.show_vtk(unit="pressure", 
               timeStep=1, 
               notebook=False,
-              path="./weill_exemple/vtk/"
+              path=simu.workdir + "/weill_exemple/vtk/",
               )
