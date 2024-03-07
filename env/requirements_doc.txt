@@ -31,7 +31,6 @@ linkify-it-py
 trame
 trame_vtk
 
-
 pyvista[jupyter,trame]>=0.43.1
 pydata-sphinx-theme
 pypandoc

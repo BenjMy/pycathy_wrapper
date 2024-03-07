@@ -73,12 +73,18 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "jupyter_sphinx",
-    #"pyvista.ext.plot_directive",
+    "pyvista.ext.plot_directive",
     "myst_nb",
     #"myst_parser",
-    #"pyvista.ext.viewer_directive",
-    'sphinxcontrib.bibtex',
-    'sphinx_thebe',
+    "pyvista.ext.viewer_directive",
+    "sphinxcontrib.bibtex",
+    "sphinx_thebe",
+    
+    "first_notebook_cell": (
+        "%matplotlib inline\n"
+        "from pyvista import set_plot_theme\n"
+        "set_plot_theme('document')\n"
+    ),
     ]
 
 
