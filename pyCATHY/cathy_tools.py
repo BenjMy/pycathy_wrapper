@@ -563,23 +563,28 @@ class CATHY:
             # ----------------------------------------------------------------
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                p = subprocess.run(
-                    [callexe],
-                    stdout=subprocess.DEVNULL, 
-                    stderr=subprocess.DEVNULL,
+                # p = subprocess.run(
+                #     [callexe],
+                #     stdout=subprocess.DEVNULL, 
+                #     stderr=subprocess.DEVNULL,
                     # text=True,
                     # capture_output=True,
                     # stdout=subprocess.PIPE,
                     # stderr=subprocess.PIPE,
-                )
+                # )
                 # p = subprocess.Popen([callexe], 
                 #                         stdout=subprocess.PIPE, 
                 #                         stderr=subprocess.PIPE
                 #                         )
 
+                warnings.simplefilter("ignore")
+                p = subprocess.Popen([callexe], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                
             if verbose:
-                print(p.stdout)
-                print(p.stderr)
+                stdout, stderr = p.communicate()  # This will block until the process finishes
+                # print(p.stdout)
+                # print(p.stderr)
             os.chdir(os.path.join(self.workdir))
             
                         
