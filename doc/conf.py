@@ -30,6 +30,9 @@ from sphinx_gallery.sorting import FileNameSortKey
 #removeK()
 
 
+# necessary when building the sphinx gallery
+pyvista.BUILDING_GALLERY = True
+os.environ["PYVISTA_BUILDING_GALLERY"] = "true"
 
 
 # Project information
