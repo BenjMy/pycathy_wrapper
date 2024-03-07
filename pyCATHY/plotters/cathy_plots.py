@@ -16,7 +16,6 @@ import os
 import pyvista as pv
 
 pv.set_plot_theme("document")
-pv.set_jupyter_backend('trame')
 
 import datetime
 import math

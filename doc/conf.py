@@ -79,11 +79,6 @@ extensions = [
     "pyvista.ext.viewer_directive",
     "sphinxcontrib.bibtex",
     "sphinx_thebe",
-    "first_notebook_cell": (
-        "%matplotlib inline\n"
-        "from pyvista import set_plot_theme\n"
-        "set_plot_theme('document')\n"
-    ),
     ]
 
 
@@ -184,8 +179,13 @@ sphinx_gallery_conf = {
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
     "image_scrapers": (DynamicScraper(), "matplotlib"),
-
-
+    "first_notebook_cell": (
+        "%matplotlib inline\n"
+        "from pyvista import set_plot_theme\n"
+        "set_plot_theme('document')\n"
+        "import pyvista as pv\n"
+        "pv.set_jupyter_backend('trame')\n"
+    ),
     #    'pypandoc': True,
 }
 
