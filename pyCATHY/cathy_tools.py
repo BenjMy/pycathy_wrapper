@@ -563,13 +563,18 @@ class CATHY:
             # ----------------------------------------------------------------
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                p = subprocess.run(
-                    [callexe],
-                    # text=True,
-                    # capture_output=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
+                # p = subprocess.run(
+                #     [callexe],
+                #     # text=True,
+                #     # capture_output=True,
+                #     stdout=subprocess.PIPE,
+                #     stderr=subprocess.PIPE,
+                # )
+                p = subprocess.Popen([callexe], 
+                                        stdout=subprocess.PIPE, 
+                                        stderr=subprocess.PIPE
+                                        )
+
             if verbose:
                 print(p.stdout)
                 print(p.stderr)
