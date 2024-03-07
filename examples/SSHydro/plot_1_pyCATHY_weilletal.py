@@ -35,8 +35,10 @@ simu.run_preprocessor(verbose=False)
 # simu.run_processor(IPRT1=3,verbose=True)
 
 # simu.read_inputs('atmbc')
-# simu.update_parm(TIMPRTi=[1800,7200])
-# simu.parm
+simu.update_parm(TIMPRTi=[1800,7200])
+
+# simu.atmbc
+simu.parm
 
 
 # simu.grid3d
