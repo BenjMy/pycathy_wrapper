@@ -44,6 +44,5 @@ sphinxcontrib-asciinema
 sphinxcontrib-websupport
 typed-ast
 
-
 # pypi building requirements
 #twine

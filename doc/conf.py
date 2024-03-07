@@ -79,7 +79,6 @@ extensions = [
     "pyvista.ext.viewer_directive",
     "sphinxcontrib.bibtex",
     "sphinx_thebe",
-    
     "first_notebook_cell": (
         "%matplotlib inline\n"
         "from pyvista import set_plot_theme\n"

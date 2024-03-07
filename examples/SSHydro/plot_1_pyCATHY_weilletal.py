@@ -24,7 +24,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 
 path2prj = "../SSHydro/"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj, 
-			prj_name="weill_exemple2"
+			prj_name="weill_exemple"
 			)
 
 
