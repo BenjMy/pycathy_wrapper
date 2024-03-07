@@ -565,6 +565,8 @@ class CATHY:
                 warnings.simplefilter("ignore")
                 p = subprocess.run(
                     [callexe],
+                    stdout=subprocess.DEVNULL, 
+                    stderr=subprocess.DEVNULL,
                     # text=True,
                     # capture_output=True,
                     # stdout=subprocess.PIPE,
