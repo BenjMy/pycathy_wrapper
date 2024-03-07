@@ -48,7 +48,7 @@ simu.run_processor(IPRT1=2,
                     DTMAX=1e2,
                     DELTAT=5,
                    TRAFLAG=0,
-                   verbose=True
+                   verbose=False
                    )
 
 #%%
