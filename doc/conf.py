@@ -140,7 +140,7 @@ plot_formats = ["png"]
 # Sphinx project configuration
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "**.ipynb_checkpoints"]
-source_suffix = ['.rst', '.md'] #, '.ipynb']
+source_suffix = ['.rst', '.md', '.ipynb']
 # The encoding of source files
 source_encoding = "utf-8"
 master_doc = "index"
@@ -157,9 +157,10 @@ sphinx_gallery_conf = {
     "examples_dirs": ["../examples/SSHydro","../examples/DA"],
     # path where to save gallery generated examples
     #"gallery_dirs": "gallery",
-    "gallery_dirs": ["content/SSHydro", "content/DA"],
-    #"filename_pattern": r".ipynb",
-    "filename_pattern": 'py'|'ipynb'},
+    "gallery_dirs": ["content/SSHydro/", "content/DA"],
+    #"filename_pattern": "example_.+.ipynb",
+    #"filename_pattern": {'py'|'ipynb'}, 
+    "example_extensions": {'.ipynb'},
     #"dont_preprocess": [],
     # Remove the "Download all examples" button from the top level gallery
     "download_all_examples": False,
