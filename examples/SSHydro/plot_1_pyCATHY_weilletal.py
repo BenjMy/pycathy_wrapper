@@ -19,6 +19,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 from pyCATHY import cathy_tools
 from pyCATHY.plotters import cathy_plots as cplt
+import pyvista as pv
 
 # In[13]:
 
@@ -52,18 +53,24 @@ simu.run_processor(IPRT1=2,
                    )
 
 #%%
+
+pl = pv.Plotter(notebook=False)
 cplt.show_vtk(unit="pressure", 
               timeStep=1, 
-              notebook=False,
               path=simu.workdir + "/weill_exemple/vtk/",
+              ax=pl,
               )
+pl.show()
 
 
 #%%
+pl = pv.Plotter(notebook=True)
 cplt.show_vtk(unit="pressure", 
               timeStep=1, 
-              notebook=True,
               path=simu.workdir + "/weill_exemple/vtk/",
+              ax=pl,
               )
+pl.show()
+
 
 

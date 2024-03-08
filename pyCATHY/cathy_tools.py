@@ -582,7 +582,9 @@ class CATHY:
                 
                 # Execute the command without displaying the shell
                 os.system(f"{callexe} {output_redirection}")
-                
+                # result = os.popen(f"{callexe} {output_redirection}").read()
+
+
                 
                 # p = subprocess.run(
                 #     [callexe],
@@ -611,8 +613,8 @@ class CATHY:
             # print('verbose='+ str(verbose))
             if verbose:
                 # stdout, stderr = p.communicate()  # This will block until the process finishes
-                print(output_redirection)
-                # print(p.stdout)
+                # print(result)
+                print(p.stdout)
                 # print(p.stderr)
             os.chdir(os.path.join(self.workdir))
             
