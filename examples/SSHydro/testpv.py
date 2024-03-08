@@ -14,13 +14,12 @@ out = sphere.plot()
 
 import pyvista as pv
 pv.set_jupyter_backend('client')
-
 pv.Cone().plot()
-
+pl.show()
 
 import pyvista as pv
 pv.set_jupyter_backend('trame')
 
 pl = pv.Plotter()
 pl.add_mesh(pv.Cone())
-pl.show(jupyter_backend='client')
+pl.show()
