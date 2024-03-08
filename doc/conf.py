@@ -158,7 +158,7 @@ sphinx_gallery_conf = {
     # path where to save gallery generated examples
     #"gallery_dirs": "gallery",
     "gallery_dirs": ["content/SSHydro", "content/DA"],
-    "filename_pattern": r".py",
+    "filename_pattern": r".ipynb",
     #"filename_pattern": 'py'|'ipynb'},
     #"dont_preprocess": [],
     # Remove the "Download all examples" button from the top level gallery
