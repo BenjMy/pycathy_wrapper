@@ -22,7 +22,7 @@ import numpy as np
 import datetime
 
 import pyvista
-from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
+#from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 from sphinx_gallery.sorting import FileNameSortKey
 
 
@@ -202,8 +202,8 @@ sphinx_gallery_conf = {
     # Insert links to documentation of objects in the examples
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
-    "image_scrapers": (DynamicScraper(), "matplotlib"),
-    #"image_scrapers": ("pyvista", "matplotlib"),
+    #"image_scrapers": (DynamicScraper(), "matplotlib"),
+    "image_scrapers": ("pyvista", "matplotlib"),
     'pypandoc': True,
     "first_notebook_cell": "%matplotlib inline\n"
     "from pyvista import set_plot_theme\n"
