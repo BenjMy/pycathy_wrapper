@@ -568,6 +568,7 @@ class CATHY:
                     [callexe],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
+                    timeout=50000,
                 )
                 
                 # p = subprocess.run(
