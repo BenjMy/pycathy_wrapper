@@ -564,11 +564,11 @@ class CATHY:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 
-                # p = subprocess.run(
-                #     [callexe],
-                #     stdout=subprocess.PIPE,
-                #     stderr=subprocess.PIPE,
-                # )
+                p = subprocess.run(
+                    [callexe],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
                 
                 # process = subprocess.Popen(
                 #     [callexe], stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -578,10 +578,10 @@ class CATHY:
                 # output, error = process.communicate()
                 
                 # Redirecting output to /dev/null or NUL
-                output_redirection = "> /dev/null 2>&1" if os.name != 'nt' else "> NUL 2>&1"
+                # output_redirection = "> /dev/null 2>&1" if os.name != 'nt' else "> NUL 2>&1"
                 
-                # Execute the command without displaying the shell
-                os.system(f"{callexe} {output_redirection}")
+                # # Execute the command without displaying the shell
+                # os.system(f"{callexe} {output_redirection}")
                 # result = os.popen(f"{callexe} {output_redirection}").read()
 
 
