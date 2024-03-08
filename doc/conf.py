@@ -22,17 +22,12 @@ import numpy as np
 import datetime
 
 import pyvista
-from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
+#from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 from sphinx_gallery.sorting import FileNameSortKey
 
 #sys.path.append('.')
 #from remove_kernel_metadata import removeK
 #removeK()
-
-
-# necessary when building the sphinx gallery
-pyvista.BUILDING_GALLERY = True
-os.environ["PYVISTA_BUILDING_GALLERY"] = "true"
 
 
 # Project information
@@ -76,7 +71,7 @@ extensions = [
     "pyvista.ext.plot_directive",
     "myst_nb",
     #"myst_parser",
-    "pyvista.ext.viewer_directive",
+    #"pyvista.ext.viewer_directive",
     "sphinxcontrib.bibtex",
     "sphinx_thebe",
     ]
@@ -178,7 +173,8 @@ sphinx_gallery_conf = {
     # Insert links to documentation of objects in the examples
     "reference_url": {"pyCATHY": None},
     # Add pyvista to the image scrapers
-    "image_scrapers": (DynamicScraper(), "matplotlib"),
+    #"image_scrapers": (DynamicScraper(), "matplotlib"),
+    "image_scrapers": ("pyvista", "matplotlib"),
     #    'pypandoc': True,
 }
 
