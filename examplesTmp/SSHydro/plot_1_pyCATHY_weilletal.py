@@ -19,12 +19,13 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 from pyCATHY import cathy_tools
 from pyCATHY.plotters import cathy_plots as cplt
+import pyvista as pv
 
 # In[13]:
 
 path2prj = "../SSHydro/"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj, 
-			prj_name="weill_exemple2"
+			prj_name="weill_exemple"
 			)
 
 
@@ -35,8 +36,10 @@ simu.run_preprocessor(verbose=False)
 # simu.run_processor(IPRT1=3,verbose=True)
 
 # simu.read_inputs('atmbc')
-# simu.update_parm(TIMPRTi=[1800,7200])
-# simu.parm
+simu.update_parm(TIMPRTi=[1800,7200])
+
+# simu.atmbc
+simu.parm
 
 
 # simu.grid3d
@@ -46,22 +49,28 @@ simu.run_processor(IPRT1=2,
                     DTMAX=1e2,
                     DELTAT=5,
                    TRAFLAG=0,
-                   verbose=True
+                   verbose=False
                    )
 
 #%%
+
+pl = pv.Plotter(notebook=False)
 cplt.show_vtk(unit="pressure", 
               timeStep=1, 
-              notebook=False,
               path=simu.workdir + "/weill_exemple/vtk/",
+              ax=pl,
               )
+pl.show()
 
 
 #%%
+pl = pv.Plotter(notebook=True)
 cplt.show_vtk(unit="pressure", 
               timeStep=1, 
-              notebook=True,
               path=simu.workdir + "/weill_exemple/vtk/",
+              ax=pl,
               )
+pl.show()
+
 
 
