@@ -10,6 +10,9 @@ import os
 
 import numpy as np
 import pyvista as pv
+pv.set_plot_theme("document")
+#pv.set_jupyter_backend('static')
+
 import pandas as pd
 
 from pyCATHY.plotters import cathy_plots as cplt
@@ -119,7 +122,7 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
 
     print('end of CATHY_2_pg')
 
-    show = False
+    # show = False
     if show:
 
         # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)

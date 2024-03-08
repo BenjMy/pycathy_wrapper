@@ -103,9 +103,8 @@
    :maxdepth: 3
    :caption: From the literature
    
-   content/FromLiterature/index.rst   
-   content/FromLiterature/LaCecilia2023.ipynb   
-   content/FromLiterature/Zanetti_WRR_2024.ipynb   
+   content/FromLiterature/LaCecilia2023_myst/LaCecilia2023_myst.rst   
+   content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.rst   
 
 .. toctree::
    :maxdepth: 5

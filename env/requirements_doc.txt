@@ -10,6 +10,7 @@ pandas
 natsort
 shapely
 
+pypandoc
 # Optionnal packages
 # resipy
 
@@ -17,8 +18,8 @@ shapely
 numpy
 numpydoc
 docutils
-sphinx
-sphinx-book-theme #==0.2.*
+
+#nbsphinx
 sphinx-thebe
 jupyter-sphinx #==0.3.*
 sphinxcontrib-bibtex
@@ -28,21 +29,34 @@ myst_nb
 jupytext
 geopandas
 linkify-it-py
-trame
-trame_vtk
 
-pyvista[jupyter,trame]>=0.43.1
-pydata-sphinx-theme
-pypandoc
-pytest-sphinx
-sphinx-autobuild
+#pydata-sphinx-theme
+#pypandoc
+#pytest-sphinx
+#sphinx-autobuild
 sphinx-copybutton
 sphinx-design
 sphinx-gallery
-sphinx-toolbox
-sphinxcontrib-asciinema
-sphinxcontrib-websupport
+#sphinx-toolbox
+#sphinxcontrib-asciinema
+#sphinxcontrib-websupport
 typed-ast
+
 
 # pypi building requirements
 #twine
+
+sphinx==4.5.*
+sphinx-book-theme==0.2.*
+sphinx-gallery==0.10.*
+sphinx-design==0.2.*
+sphinx-copybutton==0.5.*
+jupyter-sphinx==0.4.*
+ipykernel
+
+
+
+pyvista
+vtk>=9
+trame
+

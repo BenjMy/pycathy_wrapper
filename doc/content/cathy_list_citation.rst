@@ -2,7 +2,7 @@
 
 
 Who uses CATHY ?
-===============
+================
 
 .. csv-table:: CATHY citation
    :file: CATHY_refs_mod.csv

@@ -16,6 +16,8 @@ import os
 import pyvista as pv
 
 pv.set_plot_theme("document")
+pv.set_jupyter_backend('static')
+
 
 import datetime
 import math

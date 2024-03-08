@@ -25,6 +25,33 @@ import pyvista
 #from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 from sphinx_gallery.sorting import FileNameSortKey
 
+
+import pyvista
+
+# Manage errors
+pyvista.set_error_output_file("errors.txt")
+# Ensure that offscreen rendering is used for docs generation
+pyvista.OFF_SCREEN = True  # Not necessary - simply an insurance policy
+# Preferred plotting style for documentation
+pyvista.set_plot_theme("document")
+pyvista.global_theme.window_size = [1024, 768]
+pyvista.global_theme.font.size = 22
+pyvista.global_theme.font.label_size = 22
+pyvista.global_theme.font.title_size = 22
+pyvista.global_theme.return_cpos = False
+pyvista.set_jupyter_backend(None)
+
+# Save figures in specified directory
+pyvista.FIGURE_PATH = os.path.join(os.path.abspath("./images/"), "auto-generated/")
+if not os.path.exists(pyvista.FIGURE_PATH):
+    os.makedirs(pyvista.FIGURE_PATH)
+
+# necessary when building the sphinx gallery
+pyvista.BUILDING_GALLERY = True
+os.environ["PYVISTA_BUILDING_GALLERY"] = "true"
+
+
+
 #sys.path.append('.')
 #from remove_kernel_metadata import removeK
 #removeK()
@@ -69,8 +96,9 @@ extensions = [
     "sphinx_copybutton",
     "jupyter_sphinx",
     "pyvista.ext.plot_directive",
-    "myst_nb",
+    #"myst_nb",
     #"myst_parser",
+    #"nbsphinx",
     #"pyvista.ext.viewer_directive",
     "sphinxcontrib.bibtex",
     "sphinx_thebe",
@@ -140,7 +168,7 @@ plot_formats = ["png"]
 # Sphinx project configuration
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "**.ipynb_checkpoints"]
-source_suffix = ['.rst', '.md', '.ipynb']
+source_suffix = ['.rst', '.md'] #,'.ipynb']
 # The encoding of source files
 source_encoding = "utf-8"
 master_doc = "index"
@@ -157,10 +185,10 @@ sphinx_gallery_conf = {
     "examples_dirs": ["../examples/SSHydro","../examples/DA"],
     # path where to save gallery generated examples
     #"gallery_dirs": "gallery",
-    "gallery_dirs": ["content/SSHydro/", "content/DA"],
+    "gallery_dirs": ["content/SSHydro", "content/DA"],
     #"filename_pattern": "example_.+.ipynb",
     #"filename_pattern": {'py'|'ipynb'}, 
-    "example_extensions": {'.ipynb'},
+    "example_extensions": {'.py'},
     #"dont_preprocess": [],
     # Remove the "Download all examples" button from the top level gallery
     "download_all_examples": False,
@@ -176,7 +204,10 @@ sphinx_gallery_conf = {
     # Add pyvista to the image scrapers
     #"image_scrapers": (DynamicScraper(), "matplotlib"),
     "image_scrapers": ("pyvista", "matplotlib"),
-    #    'pypandoc': True,
+    'pypandoc': True,
+    "first_notebook_cell": "%matplotlib inline\n"
+    "from pyvista import set_plot_theme\n"
+    'set_plot_theme("document")\n',
 }
 
 
@@ -202,17 +233,17 @@ html_theme = "sphinx_book_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 
 # HTML output configuration
 # -----------------------------------------------------------------------------
 html_title = f'{project} <span class="project-release">{release}</span>'
-html_logo = "_static/sphx_glr_pyCATHY_weilletal_001.png"
-html_favicon = "_static/sphx_glr_pyCATHY_weilletal_thumb.png"
+#html_logo = "_static/sphx_glr_pyCATHY_weilletal_001.png"
+#html_favicon = "_static/sphx_glr_pyCATHY_weilletal_thumb.png"
 html_last_updated_fmt = "%b %d, %Y"
 html_copy_source = True
-html_static_path = ["_static"]
+#html_static_path = ["_static"]
 html_extra_path = []
 html_show_sourcelink = False
 html_show_sphinx = True
