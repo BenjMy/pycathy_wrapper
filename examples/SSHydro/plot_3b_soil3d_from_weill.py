@@ -74,7 +74,7 @@ simu.update_prepo_inputs(
 
 # simu.update_soil()
 simu.update_parm(TRAFLAG=0)
-simu.create_mesh_vtk(verbose=True)
+simu.create_mesh_vtk(verbose=False)
 
 #%% Define and map layers
 simu.update_zone()
@@ -138,4 +138,4 @@ simu.update_soil(
 
 #%% Run  hydrological model
 
-# simu.run_processor(IPRT1=2, TRAFLAG=0, verbose=True)
+# simu.run_processor(IPRT1=2, TRAFLAG=0, verbose=False)
