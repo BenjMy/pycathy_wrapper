@@ -564,18 +564,34 @@ class CATHY:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 
-                p = subprocess.run(
-                    [callexe],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    timeout=50000,
-                )
+                # p = subprocess.run(
+                #     [callexe],
+                #     stdout=subprocess.PIPE,
+                #     stderr=subprocess.PIPE,
+                # )
+                
+                # process = subprocess.Popen(
+                #     [callexe], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                # )
+                # # if verbose==True:
+                # #     output, error = process.communicate()
+                # output, error = process.communicate()
+                
+                # Redirecting output to /dev/null or NUL
+                output_redirection = "> /dev/null 2>&1" if os.name != 'nt' else "> NUL 2>&1"
+                
+                # Execute the command without displaying the shell
+                os.system(f"{callexe} {output_redirection}")
+                
                 
                 # p = subprocess.run(
                 #     [callexe],
                 #     stdout=subprocess.DEVNULL, 
                 #     stderr=subprocess.DEVNULL,
                 # )
+                
+                # p = subprocess.Popen([callexe], 
+                #                         )
                 
                 # p = subprocess.Popen([callexe], 
                 #                         stdout=subprocess.PIPE, 
@@ -592,9 +608,10 @@ class CATHY:
                 #     check=True
                 #     )
                 
-                
+            # print('verbose='+ str(verbose))
             if verbose:
-                stdout, stderr = p.communicate()  # This will block until the process finishes
+                # stdout, stderr = p.communicate()  # This will block until the process finishes
+                print(output_redirection)
                 # print(p.stdout)
                 # print(p.stderr)
             os.chdir(os.path.join(self.workdir))
