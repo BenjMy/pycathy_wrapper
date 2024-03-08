@@ -12,11 +12,6 @@ Camporese, M.
    composable and extensible. If you use this notebook cite the work as:
    > Zanetti, F., Botter, G., & Camporese, M. (2024). Stream network dynamics of non‐perennial rivers: Insights from integrated surface‐subsurface hydrological modeling of two virtual catchments. Water Resources Research, 60(2), e2023WR035631. https://doi.org/10.1029/2023WR035631
 
-:name only: Zanetti :name: body :*Nested syntax*: Both name and body may
-contain **nested syntax**. :Paragraphs: Since the field marker may be
-quite long, the second and subsequent lines of a paragraph do not have
-to line up with the first line.
-
 The notebooks describes: 1. **Preprocessing step**: - How to build a
 mesh for the two virtual catchments with different morphology -
 Exploring atmospheric boundary conditions **Atmbc parameters**
