@@ -6,6 +6,7 @@ Makefile
 examples_tmp
 known_issues
 pycathy.egg-info
+pyCATHY.egg-info
 meta.yaml
 tmp-test-dir-with-unique-name
 .pytest_cache

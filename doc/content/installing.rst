@@ -63,9 +63,10 @@ Dependencies
 
         .. code:: bash
 
+            sudo dnf upgrade --refresh
             sudo dnf install gcc-gfortran
-	    sudo dnf install blas-dev
-	    sudo dnf install lapack-dev
+            sudo dnf install blas-devel
+            sudo dnf install lapack-devel
 
     .. tab-item:: Windows
 
