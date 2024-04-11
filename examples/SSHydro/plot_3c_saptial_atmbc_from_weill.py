@@ -51,6 +51,8 @@ v_atmbc_mat = np.reshape(v_atmbc,[21,21])
 fig, ax = plt.subplots()
 ax.imshow(v_atmbc_mat)
 
+# np.shape([v_atmbc]*len(t_atmbc))
+
 simu.update_atmbc(
                     HSPATM=0,
                     IETO=0,

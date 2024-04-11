@@ -42,7 +42,8 @@ Staying up-to-date using setup.py::
     python setup.py develop|install
 
 
-
+.. hint::  pyCATHY already includes CATHY cores, and thus does not require a separate installation of CATHY before using pyCATHY
+ 
 Dependencies
 ------------
 - NumPy, SciPy, and Matplotlib beyond default python packages
@@ -64,8 +65,8 @@ Dependencies
         .. code:: bash
 
             sudo dnf install gcc-gfortran
-	    sudo dnf install blas-dev
-	    sudo dnf install lapack-dev
+	    sudo dnf install blas-devel
+	    sudo dnf install lapack-devel
 
     .. tab-item:: Windows
 
