@@ -782,7 +782,7 @@ def show_vtk_TL(
         plotter.add_text(legend_entry, name="time-label")
 
         plotter.render()
-        plotter.write_frame()
+        # plotter.write_frame(False)
         if unit == "saturation":
             plotter.update_scalar_bar_range([0, 1])
 

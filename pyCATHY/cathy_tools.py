@@ -220,11 +220,19 @@ class CATHY:
 
             if version == "1.0.0":
                 try:
+                    # Repo.clone_from(
+                    #    "https://bitbucket.org/cathy1_0/cathy.git",
+                    #    os.path.join(self.workdir, self.project_name, "tmp_src"),
+                    #    branch="master",
+                    #)
+                    
                     Repo.clone_from(
                         "https://bitbucket.org/cathy1_0/cathy.git",
                         os.path.join(self.workdir, self.project_name, "tmp_src"),
-                        branch="master",
+                        branch="main",
                     )
+                    
+                    
                     self.console.print(":inbox_tray: [b]Fetch cathy src files[/b]")
                     shutil.move(
                         os.path.join(self.workdir, self.project_name, "tmp_src/src"),
