@@ -738,22 +738,35 @@ def show_vtk_TL(
     else:
         print("physcial property not existing")
 
-    offscreen = False
+    offscreen = True
     if show == False:
         offscreen = True
     plotter = pv.Plotter(
         notebook=notebook,
         off_screen=offscreen,
     )
-    plotter.add_mesh(mesh, show_edges=True, cmap=my_colormap)
+    
+    # print('*'*10)
+    # print(unit)
+    
+    plotter.add_mesh(mesh, show_edges=True, 
+                      scalars=unit, 
+                     cmap=my_colormap,
+                     # opacity=0.3,
+                     )
 
     if savefig:
-        plotter.open_gif(os.path.join(path + unit + ".gif"))
+        plotter.open_gif(os.path.join(path + unit + ".gif")
+                         )
 
+
+    plotter.add_scalar_bar(title=unit)
     # options to colorbar
     # ---------------------------------------------------------------------
     if "clim" in kwargs:
-        plotter.update_scalar_bar_range([kwargs["clim"][0], kwargs["clim"][1]])
+        plotter.update_scalar_bar_range([kwargs["clim"][0], 
+                                         kwargs["clim"][1]]
+                                        )
 
     legend_entry = "Time= " + str(mesh["TIME"])
     print(legend_entry)
@@ -764,6 +777,7 @@ def show_vtk_TL(
     plotter.show_grid()
     cpos = plotter.show(auto_close=False)
     plotter.add_text(legend_entry, name="time-label")
+
 
     files = []
     for file in glob.glob(os.path.join(path, filename)):
@@ -778,6 +792,8 @@ def show_vtk_TL(
         if x_units is not None:
             xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
             legend_entry = "Time=" + str(t_lgd) + xlabel
+        
+        # print(array_new)
         plotter.update_scalars(array_new, render=True)
         plotter.add_text(legend_entry, name="time-label")
 
@@ -788,6 +804,8 @@ def show_vtk_TL(
 
             if "clim" in kwargs:
                 plotter.update_scalar_bar_range([kwargs["clim"][0], kwargs["clim"][1]])
+        plotter.write_frame()
+
     plotter.close()
 
     if savefig:

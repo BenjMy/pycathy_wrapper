@@ -44,13 +44,13 @@ simu.parm
 
 # simu.grid3d
 # len(simu.grid3d["mesh_tetra"])
-simu.run_processor(IPRT1=2, 
-                    DTMIN=1e-2,
-                    DTMAX=1e2,
-                    DELTAT=5,
-                   TRAFLAG=0,
-                   verbose=False
-                   )
+# simu.run_processor(IPRT1=2, 
+#                     DTMIN=1e-2,
+#                     DTMAX=1e2,
+#                     DELTAT=5,
+#                    TRAFLAG=0,
+#                    verbose=False
+#                    )
 
 #%%
 
@@ -71,6 +71,21 @@ cplt.show_vtk(unit="pressure",
               ax=pl,
               )
 pl.show()
+
+#%%
+
+plotter = pv.Plotter()
+cplt.show_vtk_TL(
+                unit="pressure",
+                notebook=False,
+                path=simu.workdir + "/weill_exemple/vtk/",
+                ax=plotter,
+                show=False,
+                x_units='days',
+                clim = [0.55,0.70],
+                savefig=True,
+            )
+
 
 
 

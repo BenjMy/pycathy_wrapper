@@ -227,7 +227,7 @@ class CATHY:
                     #)
                     
                     Repo.clone_from(
-                        "https://bitbucket.org/cathy1_0/cathy.git",
+                        "https://github.com/CATHY-Org/CATHY_src_org.git",
                         os.path.join(self.workdir, self.project_name, "tmp_src"),
                         branch="main",
                     )
