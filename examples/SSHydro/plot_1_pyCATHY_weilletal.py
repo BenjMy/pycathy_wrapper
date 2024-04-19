@@ -44,13 +44,13 @@ simu.parm
 
 # simu.grid3d
 # len(simu.grid3d["mesh_tetra"])
-# simu.run_processor(IPRT1=2, 
-#                     DTMIN=1e-2,
-#                     DTMAX=1e2,
-#                     DELTAT=5,
-#                    TRAFLAG=0,
-#                    verbose=False
-#                    )
+simu.run_processor(IPRT1=2, 
+                    DTMIN=1e-2,
+                    DTMAX=1e2,
+                    DELTAT=5,
+                    TRAFLAG=0,
+                    verbose=False
+                    )
 
 #%%
 
