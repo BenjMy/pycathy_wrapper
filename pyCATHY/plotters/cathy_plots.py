@@ -1595,10 +1595,16 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
         start_date = kwargs["start_date"]
         keytime = "time_date"
 
+    if "keytime" in kwargs:
+        keytime = kwargs['keytime']
+
     atmbc_times = None
     if "atmbc_times" in kwargs:
         atmbc_times = kwargs["atmbc_times"]
-
+        # unique_times = DA["time"].unique()
+        # DA["time_date"] = DA["time"].map(dict(zip(unique_times, 
+        #                                             atmbc_times))
+        #                                    )       
     if start_date is not None:
         dates = change_x2date(atmbc_times, start_date)
 
@@ -1634,10 +1640,15 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
     if "key2plot" in kwargs:
         key2plot = kwargs["key2plot"]
 
+
     prep_DA = {
         "isENS": isENS,
         "isOL": isOL,
     }
+    
+    
+    # print('kkeeeeeyyyyy')
+    # print(keytime)
     # isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
     # -----------------------------#
     if len(nodes_of_interest) > 0:
@@ -1815,6 +1826,12 @@ def DA_plot_time_dynamic(
     prep_DA = prepare_DA_plot_time_dynamic(
         DA, state=state, nodes_of_interest=nodes_of_interest, **kwargs
     )
+    # print(prep_DA["ens_mean_isENS_time"].columns)
+    # unique_times = prep_DA["ens_mean_isENS_time"]["time"].unique()
+
+        
+    # print(prep_DA["ens_mean_isENS_time"].head())
+
     if "ax" in kwargs:
         ax = kwargs["ax"]
     else:
@@ -1833,6 +1850,15 @@ def DA_plot_time_dynamic(
         keytime = "time_date"
         xlabel = "date"
 
+    if "keytime" in kwargs:
+        keytime = kwargs['keytime']
+        xlabel = "assimilation_times"
+        
+    # if 'keytime' in kwargs:
+    #     keytime = kwargs['keytime']
+    #     xlabel = "Time (s)"
+        
+        
     ylabel = r"pressure head $\psi$ (m)"
     if "sw" in state:
         ylabel = "water saturation (-)"
