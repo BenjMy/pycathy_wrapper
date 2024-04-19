@@ -33,7 +33,10 @@ from pyCATHY.plotters import cathy_plots as cplt
 #%% Init CATHY model
 # ------------------------
 path2prj = "../SSHydro/"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj, prj_name="soil3d_from_weill", clear_src=False)
+simu = cathy_tools.CATHY(dirName=path2prj, 
+                         prj_name="soil3d_from_weill", 
+                         clear_src=False
+                         )
 
 rootpath = os.path.join(simu.workdir + simu.project_name)
 #%% Fetch and show initial DEM
@@ -50,7 +53,7 @@ simu.show_input(prop="dem")
 maxdepth = 10
 # # linear z depth
 # # -------------------------------------------------------------
-zb = np.linspace(0, maxdepth, 10)
+zb = np.linspace(0, maxdepth, 15)
 nstr = len(zb)
 zr = list((np.ones(len(zb))) / (nstr))
 

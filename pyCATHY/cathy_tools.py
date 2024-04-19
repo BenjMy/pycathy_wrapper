@@ -2493,8 +2493,7 @@ class CATHY:
         if isinstance(SPP_map, dict):
             SPP_map_dict = SPP_map
             if hasattr(self, 'zone3d'):
-                num_rows, num_cols = np.shape(self.zone3d)[0], 
-                np.shape(self.zone3d)[1] * np.shape(self.zone3d)[2]
+                num_rows, num_cols = np.shape(self.zone3d)[0],(np.shape(self.zone3d)[1] * np.shape(self.zone3d)[2])
                 df_SPP_map = self.init_soil_df(num_cols, num_rows)
         
                 for i, layersi_zones in enumerate(self.zone3d):
