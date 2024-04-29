@@ -85,18 +85,11 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     path = os.getcwd()
     if "path" in kwargs:
         path = kwargs["path"]
-        
-    # if 'no_modif' in ERT_meta_dict.keys():
-    #     data_OUT, warm_0 = trace_mesh(
-    #                                     mesh_CATHY, 
-    #                                     mesh_OUT, 
-    #                                     scalar=scalar, 
-    #                                     threshold=1e-1, 
-    #                                     )
-    # else:
-        # in_nodes_mod_m = ERT_meta_dict["mesh_nodes_modif"]
+    
+    meshCATHY_tmp = mesh_CATHY.copy()
+    
     data_OUT, warm_0 = trace_mesh(
-                                    mesh_CATHY, 
+                                    meshCATHY_tmp, 
                                     mesh_OUT, 
                                     scalar=scalar, 
                                     threshold=1e-1, 
@@ -122,15 +115,15 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
 
     print('end of CATHY_2_pg')
 
-    # show = False
+    # show = True
     if show:
 
         # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
         p = pv.Plotter(notebook=False)
         p.add_mesh(mesh_new_attr, scalars=scalar_new, show_edges=True)
         p.show_grid()
-        _ = p.add_bounding_box(line_width=5, color="black")
-        p.view_xy()
+        # _ = p.add_bounding_box(line_width=5, color="black")
+        # p.view_xy()
         # cpos = p.show()
 
         # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
@@ -237,41 +230,36 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     out_data : TYPE
         DESCRIPTION.
     """
-
-    # import time
-    # t0 = time.time()
-
-    # in_nodes_mod = np.array(meshIN.points)
-    # if "in_nodes_mod" in kwargs:
     in_nodes_mod = kwargs["in_nodes_mod"]
     meshIN.set_active_scalars(scalar)
-    meshIN.points = in_nodes_mod
-
+    # meshIN.points = in_nodes_mod
+    meshOUT.points = in_nodes_mod
+    # len(in_nodes_mod)
+    
+    # print(meshIN.points)
+    
     # set_interpolation_radius()
-
     rd = max(np.diff(meshIN.points[:, 0])) / 1
-    meshOUT_interp = meshOUT.interpolate(meshIN, radius=rd, pass_point_data=True)
+    meshOUT_interp = meshOUT.interpolate(meshIN, 
+                                         radius=rd, 
+                                         pass_point_data=True
+                                         )
     # print (time.time() - t0, "seconds process time")
+    
+    # meshIN.plot()
+    # meshOUT_interp.plot()
 
     # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
-
-    # print('Point to cell data')
     result = meshOUT_interp.point_data_to_cell_data()
     out_data = result[scalar]
-    # print (time.time() - t0, "seconds process time")
 
-    # print('Replace now')
     # out_data = np.where(out_data == 0, 1e-3, out_data)
     out_data = np.where(out_data == 0, np.min(out_data)+1e-3, out_data)
 
     warm_0 = ""
-    if len(np.where(out_data == 0)) > 0:
+    if len(np.where(out_data == 1e-3)) > 0:
         warm_0 = f"interpolation created 0 values - replacing them by min value {np.min(out_data)+1e-3} of input CATHY predicted ER mesh"
         warm_0 = f"min {np.min(out_data)}, max {np.min(out_data)}, median {np.median(out_data)} "
-
-
-    # print (time.time() - t0, "seconds process time")
-
     return out_data, warm_0
 
 

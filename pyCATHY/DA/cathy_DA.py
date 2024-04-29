@@ -436,6 +436,7 @@ class DA(CATHY):
                                                             parallel=parallel,
                                                         )
 
+                # print(['Im done with mapping']*10)
                 #%%
                 # DA analysis
                 # ----------------------------------------------------------------
@@ -460,6 +461,7 @@ class DA(CATHY):
                                     list_assimilated_obs,
                                     ens_valid=self.ens_valid,
                 )
+                # print(['Im done with _DA_analysis']*10)
 
                 # DA mark_invalid_ensemble
                 # ----------------------------------------------------------------
@@ -477,6 +479,7 @@ class DA(CATHY):
                                                 analysis,
                                                 analysis_param,
                 )
+                # print(['Im done with _invalid_ensemble']*10)
 
                 #%%
                 # check analysis quality
@@ -492,6 +495,8 @@ class DA(CATHY):
                                                 prediction_valid,
                                                 t_obs=self.count_DA_cycle,
                                             )
+                # print(['Im done with _analysis performance']*10)
+
                 #%%
                 # the counter is incremented here
                 # ----------------------------------------------------------------
@@ -580,6 +585,9 @@ class DA(CATHY):
             )
             # self.df_DA
             
+            print(['Im done with dataframe _DA_var_pert_df']*10)
+
+
             # export summary results of DA
             # ----------------------------------------------------------------
             meta_DA = {
@@ -794,7 +802,7 @@ class DA(CATHY):
                 )
             for t in range(np.shape(df_psi)[0] - 2):
                 self._DA_df(
-                    state=[df_psi[t + shift, :], df_sw[t + shift, :]],
+                    state=[df_psi[t + shift, :], df_sw.iloc[t + shift, :]],
                     t_ass=t,
                     openLoop=True,
                     ens_nb=ens_i + 1,
@@ -2191,7 +2199,7 @@ class DA(CATHY):
             # find data to map with dictionnary of observations
             # --------------------------------------------
             obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-            state = [df_psi[-1], df_sw[-1]]            
+            state = [df_psi[-1], df_sw.iloc[-1].values]            
             
             Hx_stacked = []  # stacked predicted observation
             # Loop over observations to map
@@ -2385,7 +2393,7 @@ class DA(CATHY):
                         "output/sw",
                     )
                 )
-                sw[:, j] = df_sw[-1, :]
+                sw[:, j] = df_sw.iloc[-1, :]
             except:
                 pass
         # check if there is still zeros

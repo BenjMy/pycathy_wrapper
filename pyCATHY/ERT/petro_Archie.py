@@ -27,14 +27,14 @@ def get_sw_ens_i(path_fwd_CATHY, **kwargs):
         # -------------------------------------------------------------------
         if "time_ass" in kwargs:
             time_ass = kwargs["time_ass"]
-            df_sw = df_sw[time_ass, :]
+            df_sw = df_sw.iloc[time_ass, :]
             DA_cnb = time_ass
         # case of sequential assimilation
         # -------------------------------------------------------------------
         else:
-            df_sw = df_sw[-1, :]  # take the last time
+            df_sw =  df_sw.iloc[-1, :]  # take the last time
             # (in case the sw file contains intermediate times for plotting observations)
-    return df_sw
+    return df_sw.values
 
 
 def get_Archie_ens_i(ArchieParms, Ens_nb):
@@ -120,7 +120,9 @@ def SW_2_ERa_DA(
     # Get sw array for a given ensemble
     # ------------------------------------
     df_sw = get_sw_ens_i(path_fwd_CATHY, **kwargs)
-
+    # print('df_sww')
+    print('+'*20)
+    print(df_sw)
     # Read the input mesh using pyvista
     # ------------------------------------
     if DA_cnb is not None:
@@ -346,7 +348,7 @@ def Archie_rho_DA(
         )
         sigma = 1 / rho
         # sat[0]
-        try:
+        try: # CASE WITH DATA ASSIMILATION
             # test = np.shape(sigma)[0]>2
             for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
                 for meas_nb in range(np.shape(sigma)[1]):  # Loop over mesh nodes

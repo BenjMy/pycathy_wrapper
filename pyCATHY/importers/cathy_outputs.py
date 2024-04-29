@@ -376,8 +376,10 @@ def read_sw(filename, **kwargs):
         sw_sub, [len(idx) - 1, int(np.shape(sw_sub)[0] / (len(idx) - 1))]
     )
 
-    # cols_sw = ['NSTEP', 'DELTAT', 'time',  'NET SEEPFACE VOL', 'NET SEEPFACE FLX']
-    # df_sw_t = pd.DataFrame(d_sw_t, cols=cols_sw)
+    df_sw_t = pd.DataFrame(d_sw_t, time_i)
+    df_sw_t.index.names = ['Time']
+    df_sw_t = df_sw_t[~df_sw_t.index.duplicated(keep='first')]
+
 
     # if 'delta_t' in kwargs:
     #     d_sw_t['time'] = pd.to_timedelta(df_hgsfdeth['time'],unit='s')
@@ -386,7 +388,7 @@ def read_sw(filename, **kwargs):
     #                                                               ylabel='NET SEEPFACE VOL',
     #                                                               xlabel='time (s)')
 
-    return d_sw_t, time_i
+    return df_sw_t, time_i
 
 
 def read_psi(filename):
