@@ -490,6 +490,7 @@ def add_attribute_2mesh(
             mesh.save(path + meshname, binary=False)
         else:
             mesh.save(path + meshname, binary=False)
+        print(path + meshname)
 
         # if overwrite==True:
         #     mesh.save(full_path)

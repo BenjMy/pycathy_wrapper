@@ -258,7 +258,7 @@ class DA(CATHY):
         self.dict_obs = dict_obs  # self.dict_obs is already assigned (in read observatio! change it to self.obs
         self.dict_parm_pert = dict_parm_pert
         self.df_DA = pd.DataFrame()
-
+        self.df_Archie = pd.DataFrame()
         # Infer ensemble size NENS from perturbated parameter dictionnary
         # -------------------------------------------------------------------
         for name in self.dict_parm_pert:
@@ -570,7 +570,7 @@ class DA(CATHY):
                 ":round_pushpin: end of atmbc update # "
                 + str(self.count_atmbc_cycle)
                 + "/"
-                + str(len(all_atmbc_times) - 1)
+                + str(len(all_atmbc_times))
                 + " :round_pushpin:",
                 style="yellow",
             )
@@ -585,7 +585,7 @@ class DA(CATHY):
             )
             # self.df_DA
             
-            print(['Im done with dataframe _DA_var_pert_df']*10)
+            # print(['Im done with dataframe _DA_var_pert_df']*10)
 
 
             # export summary results of DA
@@ -2275,7 +2275,10 @@ class DA(CATHY):
                                                             ens_nb, 
                                                             **kwargs
                                                             )
-                        self._add_2_ensemble_Archie(df_Archie)
+                        df_Archie_new = mapper._add_2_ensemble_Archie(self.df_Archie,
+                                                                      df_Archie
+                                                                      )
+                        self.df_Archie = df_Archie_new
 
                         if "pygimli" in obs2map[i]["data_format"]:
                             Hx_stacked.append(Hx_ERT["rhoa"])
@@ -2343,7 +2346,11 @@ class DA(CATHY):
                                                                     savefig=False,
                                                                     verbose=False,
                                                                     )
-                    self.Archie = df_Archie
+                    df_Archie_new = mapper._add_2_ensemble_Archie(self.df_Archie,
+                                                                  df_Archie
+                                                                  )
+                    self.df_Archie = df_Archie_new                
+                    
                     
                     if len(Hx_ens) > 0:
                         Hx_ens = np.vstack([Hx_ens, Hx_ens_ERT])

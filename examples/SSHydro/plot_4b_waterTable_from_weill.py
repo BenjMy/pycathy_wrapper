@@ -68,7 +68,7 @@ time = 3
 
 water_table_bool = (d_sw == 1)
 
-sat_elevation = np.vstack([d_sw[time,:],xyz_df[['x','y','z']].to_numpy().T]).T
+sat_elevation = np.vstack([d_sw.iloc[time,:],xyz_df[['x','y','z']].to_numpy().T]).T
 sat_elevation_select = sat_elevation[water_table_bool[time,:]]
 
 def max_z_indices_for_duplicate_xy(xyz):

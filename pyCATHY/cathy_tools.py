@@ -4076,8 +4076,8 @@ class CATHY:
             pickle.dump(self.dict_obs, f)
             if hasattr(self, "df_performance"):
                 pickle.dump(self.df_performance, f)
-            if hasattr(self, "Archie"):
-                pickle.dump(self.Archie, f)
+            if hasattr(self, "df_Archie"):
+                pickle.dump(self.df_Archie, f)
         f.close()
 
     def load_pickle_backup(self,filename=""):
@@ -4095,7 +4095,7 @@ class CATHY:
             "df_DA",
             "dict_obs",
             "df_performance",
-            "Archie",
+            "df_Archie",
         ]
         names = []
         i = 0

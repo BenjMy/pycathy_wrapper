@@ -240,7 +240,7 @@ def _map_ERT_parallel_OL(
 
             # print(df_Archie)
             df_Archie["OL"] = np.ones(len(df_Archie))
-            self._add_2_ensemble_Archie(df_Archie)
+            _add_2_ensemble_Archie(df_Archie)
 
             if "pygimli" in ERT_meta_dict["data_format"]:
                 Hx_ERT_ens = _add_2_ensemble_Hx(

@@ -120,9 +120,7 @@ def SW_2_ERa_DA(
     # Get sw array for a given ensemble
     # ------------------------------------
     df_sw = get_sw_ens_i(path_fwd_CATHY, **kwargs)
-    # print('df_sww')
-    print('+'*20)
-    print(df_sw)
+
     # Read the input mesh using pyvista
     # ------------------------------------
     if DA_cnb is not None:
@@ -231,7 +229,7 @@ def SW_2_ERa_DA(
     df_ERT_predicted = pd.DataFrame(data=d)
 
 
-    savefig = True
+    # savefig = True
     if savefig:
         print('backup figures')
         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True
