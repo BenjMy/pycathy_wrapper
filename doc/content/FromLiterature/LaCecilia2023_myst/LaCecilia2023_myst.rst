@@ -1,4 +1,4 @@
-D. La Cecicilia and M. Camporese (2022)
+D. La Cecilia and M. Camporese (2022)
 =======================================
 
 This is a notebook to reproduce outputs from `La Cecilia and Camporese
