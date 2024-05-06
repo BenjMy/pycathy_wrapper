@@ -1,3 +1,10 @@
+# Know issues with pyCATHY installation
+
+- issue with current installation guidelines for -blas-and-lapack-packages
+https://askubuntu.com/questions/623578/installing-blas-and-lapack-packages
+
+
+
 # Known issues pyCATHY DA
 
 - ERT assimilate in non parallel model lead to wrong observation size (missing a stack somewhere)
@@ -5,11 +12,7 @@
 
 # Known issues pyCATHY
 
-
-
-- FP arg to update soil file is a dict or a pd? as for now a dict but we should be able to pass directly a pandas dataframe
-
-  - just pass df.to_dict(orient='list')
+- issue with ubuntu 22 --> 
 
   
 
