@@ -19,50 +19,72 @@ This example shows how to use pyCATHY object to plot the most common ouputs of t
 
 from pyCATHY import cathy_tools
 from pyCATHY.plotters import cathy_plots as cplt
-
-
+import pyvista as pv
+import os 
+import matplotlib.pyplot as plt
 
 #%% run processor
 # if you add True to verbose, the processor log will be printed in the window shell
-path2prj = "weil_exemple_outputs_plot"  # add your local path here
+path2prj = "weil_exemple_outputs_plot1"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj)
 simu.run_preprocessor()
 simu.run_processor(IPRT1=2, 
                     DTMIN=1e-2,
                     DTMAX=1e2,
                     DELTAT=5,
-                   TRAFLAG=0,
-                   verbose=False
-                   )
+                    TRAFLAG=0,
+                    verbose=False
+                    )
 
 
-#%% plot NET SEEPFACE VOL and NET SEEPFACE FLX over the time t
-simu.show(prop="hgsfdet")
 
-#%% plot Atmact-vf = f (time)
-simu.show(prop="dtcoupling", yprop="Atmpot-d")
+#%% read saturation file
 
-#%% Another interesting graph looking at the **streamflow = f(time)**
-simu.show(prop="hgraph")
+df_sw, _ = simu.read_outputs('sw')
+df_sw.head()
 
-#%% Plot the "Total flow volume" and the "nansfdir flow volume" = f(time)
-simu.show(prop="cumflowvol")
+#%% Search for nearest mesh points
 
-#%% 3d visualiation of the pressure head for the time step 1
-# To select another time step change the value in the function argument
-cplt.show_vtk(
-    unit="pressure",
-    timeStep=1,
-    notebook=False,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
-)
+node, node_pos = simu.find_nearest_node([5,5,-1])
+node2, node_pos2 = simu.find_nearest_node([5,5,1])
+print(node_pos[0])
 
-#%%  3d visualiation of the water saturation for the time step 1
-# cplt.show_vtk(
-#     unit="saturation",
-#     timeStep=1,
-#     notebook=False,
-#     path=simu.workdir + "/my_cathy_prj/vtk/",
-# )
+#%% plot node position on the mesh
+
+pl = pv.Plotter(notebook=False)
+cplt.show_vtk(unit="pressure", 
+              timeStep=1, 
+              path=os.path.join(simu.workdir,
+                                simu.project_name,
+                                'vtk'
+                                ),
+              style='wireframe',
+              opacity=0.1,
+              ax=pl,
+              )
+pl.add_points(node_pos[0],
+              color='red'
+              )
+pl.add_points(node_pos2[0],
+              color='red'
+              )
+pl.show()
+
+#%% plot the saturation with time at a given mesh point
+
+fig, ax = plt.subplots()
+df_sw[node].plot(ax=ax)
+df_sw[node2].plot(ax=ax)
+ax.set_xlabel('time (s)')
+ax.set_ylabel('saturation (-)')
 
 
+#%% read pressure head file
+
+df_psi = simu.read_outputs('psi')
+# df_psi.head()
+fig, ax = plt.subplots()
+ax.plot(df_sw.index, df_psi[1:,node[0]])
+ax.plot(df_sw.index, df_psi[1:,node2[0]])
+ax.set_xlabel('time (s)')
+ax.set_ylabel('pressure head (m)')
