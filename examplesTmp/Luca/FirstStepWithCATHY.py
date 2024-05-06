@@ -14,7 +14,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 path2prj = "."  # add your local path here
 simu = cathy_tools.CATHY(
     dirName=path2prj,
-    prj_name="my_first_project3"
+    prj_name="my_first_project4"
 )
 
 simu.run_preprocessor(verbose=True)
@@ -35,17 +35,24 @@ my_new_DEM[-1, -1] = 1 - 1e-3
 
 
 maxdepth = 4
-# zb = np.linspace(0, maxdepth, 10)   
+zb = np.linspace(0, maxdepth, 10)   
 
-# nstr = len(zb)
-# zr = list((np.ones(len(zb))) / (nstr))
-# len(zr)
-
-
-zb = np.geomspace(1e-1, maxdepth, num=20)
 nstr = len(zb)
-zr = [abs(zb[0] / maxdepth)]
-zr.extend(list(abs(np.diff(zb) / maxdepth)))
+zr = list((np.ones(len(zb))) / (nstr))
+len(zr)
+
+
+# zb = np.geomspace(1e-1, maxdepth, num=20)
+# nstr = len(zb)
+# # zr = [abs(zb[0] / maxdepth)]
+# # zr.extend(list(abs(np.diff(zb) / maxdepth)))
+# zr.extend(list(abs(np.diff(zb) / maxdepth)))
+
+zr = np.geomspace(0.1, 1, 15)
+print(zr)
+zr /= np.sum(zr)
+nstr = len(zr)
+np.sum(zr)
 
 
 simu.update_prepo_inputs(
@@ -55,7 +62,7 @@ simu.update_prepo_inputs(
     # xllcorner=0,
     # yllcorner=4e3,
     # nstr=nstr,
-    zratio=zr,
+    zratio=list(zr),
     base=max(zb),
 )
 
