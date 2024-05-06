@@ -77,6 +77,67 @@ import pyvista as pv
 mesh2plot = pv.read(meshfile)
 mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
+#%% Change number of layers and maximum depth
+
+maxdepth = 10
+
+# linear z depth
+# -------------------------------------------------------------
+zb = np.linspace(0, maxdepth, 3)
+nstr = len(zb) - 1
+zr = list((np.ones(len(zb))) / (nstr))
+
+
+simu.update_prepo_inputs(
+    DEM=dem_mat,
+    xllcorner=1e4,
+    yllcorner=4e3,
+    nstr=nstr,
+    zratio=zr,
+    base=max(zb),
+)
+fig = plt.figure()
+ax = plt.axes(projection="3d")
+simu.show_input(prop="dem", ax=ax)
+simu.create_mesh_vtk(verbose=False)
+#%% Plot mesh
+meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
+import pyvista as pv
+
+mesh2plot = pv.read(meshfile)
+mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
+
+
+#%% Change number of layers (log)
+
+# the fraction of total grid height that each layer is to occupy
+# log z depth
+# -------------------------------------------------------------
+zr = np.geomspace(0.1, 1, 15)
+print(zr)
+zr /= np.sum(zr)
+nstr = len(zr)
+np.sum(zr)
+
+simu.update_prepo_inputs(
+    DEM=dem_mat,
+    xllcorner=1e4,
+    yllcorner=4e3,
+    nstr=20,
+    zratio=zr,
+    base=max(zb),
+)
+
+simu.update_parm(TRAFLAG=0)
+simu.create_mesh_vtk(verbose=True)
+#%% Plot mesh
+meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
+import pyvista as pv
+
+mesh2plot = pv.read(meshfile)
+mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
+
+
 
 #%% Change mesh resolution
 
@@ -86,7 +147,7 @@ simu.update_prepo_inputs(
 
 #%%
 simu.update_dem_parameters(
-                            delta_x=10,
+                            delta_x=2,
                             )
 
 #%%
@@ -192,66 +253,6 @@ mesh2plot = pv.read(meshfile)
 mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
-#%% Change number of layers and maximum depth
-
-dem_crop_3layers = np.flipud(dem_crop)
-maxdepth = 10
-
-# linear z depth
-# -------------------------------------------------------------
-zb = np.linspace(0, maxdepth, 3)
-nstr = len(zb) - 1
-zr = list((np.ones(len(zb))) / (nstr))
-
-
-simu.update_prepo_inputs(
-    DEM=dem_crop,
-    xllcorner=1e4,
-    yllcorner=4e3,
-    nstr=nstr,
-    zratio=zr,
-    base=max(zb),
-)
-fig = plt.figure()
-ax = plt.axes(projection="3d")
-simu.show_input(prop="dem", ax=ax)
-simu.create_mesh_vtk(verbose=False)
-#%% Plot mesh
-meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
-import pyvista as pv
-
-mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
-
-
-#%% Change number of layers (log)
-
-# the fraction of total grid height that each layer is to occupy
-# log z depth
-# -------------------------------------------------------------
-zb = np.geomspace(1e-1, maxdepth, num=20)
-nstr = len(zb)
-zr = [abs(zb[0] / maxdepth)]
-zr.extend(list(abs(np.diff(zb) / maxdepth)))
-
-
-simu.update_prepo_inputs(
-    DEM=dem_crop,
-    xllcorner=1e4,
-    yllcorner=4e3,
-    nstr=20,
-    zratio=zr,
-    base=max(zb),
-)
-
-simu.update_parm(TRAFLAG=0)
-simu.create_mesh_vtk(verbose=True)
-#%% Plot mesh
-meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
-import pyvista as pv
-
-mesh2plot = pv.read(meshfile)
-mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
 
 #%% Run  hydrological model

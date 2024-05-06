@@ -1,4 +1,4 @@
- DELTA_X=   10.000000000000000      DELTA_Y=  0.50000000000000000     
+ DELTA_X=   2.0000000000000000      DELTA_Y=  0.50000000000000000     
  FACTOR=   1.0000000000000000     
  DOSTEP=           1
  NCELL_NO_LAKES=         200
@@ -233,30 +233,25 @@
      NTRI   (# OF TRIANGLES IN 2-D MESH)     =    400
      NZONE  (NUMERO ZONE (MATERIAL TYPES))   =      1
      NVEG   (NUMERO ZONE VEG (VEG TYPES))    =      1
-     NSTR   (NUMERO STRATI)                  =     20
+     NSTR   (NUMERO STRATI)                  =     15
      N1     (NUM. MAX CONTATTI NODALI)       =     25
 
      IVERT  (TYPE OF VERTICAL DISCRETIZATION)=      0
      ISP    (0 FLAT SURFACE, ELSE NOT FLAT)  =      1
      BASE   (THICKNESS OR BASE OF 3-D MESH)  =     1.00000E+01
-     LAYER   1     ZRATIO =   1.00000E-02
-     LAYER   2     ZRATIO =   2.74275E-03
-     LAYER   3     ZRATIO =   3.49502E-03
-     LAYER   4     ZRATIO =   4.45361E-03
-     LAYER   5     ZRATIO =   5.67513E-03
-     LAYER   6     ZRATIO =   7.23167E-03
-     LAYER   7     ZRATIO =   9.21514E-03
-     LAYER   8     ZRATIO =   1.17426E-02
-     LAYER   9     ZRATIO =   1.49633E-02
-     LAYER  10     ZRATIO =   1.90674E-02
-     LAYER  11     ZRATIO =   2.42971E-02
-     LAYER  12     ZRATIO =   3.09612E-02
-     LAYER  13     ZRATIO =   3.94531E-02
-     LAYER  14     ZRATIO =   5.02741E-02
-     LAYER  15     ZRATIO =   6.40630E-02
-     LAYER  16     ZRATIO =   8.16339E-02
-     LAYER  17     ZRATIO =   1.04024E-01
-     LAYER  18     ZRATIO =   1.32555E-01
-     LAYER  19     ZRATIO =   1.68912E-01
-     LAYER  20     ZRATIO =   2.15240E-01
+     LAYER   1     ZRATIO =   1.65715E-02
+     LAYER   2     ZRATIO =   1.95340E-02
+     LAYER   3     ZRATIO =   2.30261E-02
+     LAYER   4     ZRATIO =   2.71424E-02
+     LAYER   5     ZRATIO =   3.19946E-02
+     LAYER   6     ZRATIO =   3.77143E-02
+     LAYER   7     ZRATIO =   4.44564E-02
+     LAYER   8     ZRATIO =   5.24038E-02
+     LAYER   9     ZRATIO =   6.17720E-02
+     LAYER  10     ZRATIO =   7.28149E-02
+     LAYER  11     ZRATIO =   8.58319E-02
+     LAYER  12     ZRATIO =   1.01176E-01
+     LAYER  13     ZRATIO =   1.19263E-01
+     LAYER  14     ZRATIO =   1.40584E-01
+     LAYER  15     ZRATIO =   1.65715E-01
  numero serbatoi=           0
