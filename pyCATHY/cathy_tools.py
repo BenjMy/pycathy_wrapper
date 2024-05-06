@@ -1149,19 +1149,16 @@ class CATHY:
                 # np.shape(DEM)
 
             self.update_cathyH(
-                                ROWMAX=self.hapin["M"], 
-                                COLMAX=self.hapin["N"],
-                                MAXSTR=self.dem_parameters['nstr'],
-                                DEMRES=min([self.hapin["delta_x"],
-                                            self.hapin["delta_y"]
-                                            ]
-                                           )
-                                )
+                ROWMAX=self.hapin["M"],
+                COLMAX=self.hapin["N"],
+                MAXSTR=self.dem_parameters['nstr'],
+                DEMRES=min([self.hapin["delta_x"], self.hapin["delta_y"]])
+            )
 
         self.update_dem_parameters(**kwargs)
 
         if show == True:
-            plt_CT.show_dem(DEM,self.hapin)
+            plt_CT.show_dem(DEM, self.hapin)
 
         pass
 
@@ -1171,11 +1168,17 @@ class CATHY:
 
 
         ivert
-        =0 each layer will be parallel to the surface, including the base of the 3‐d grid. ZRATIO is applied to each vertical cross section.
-        =1 base of the 3‐d grid will be flat, and ZRATIO is applied to each vertical cross section
-        =2 base of the 3‐d grid will be flat, as will the NSTR‐1 horizontal cross sections above it. ZRATIO is applied only to the vertical cross section having the lowest elevation.
-        =3 for each cell of the dem a single depth value is read in file input IIN60 (basement). ZRATIO is applied to each vertical cross section.
-        =4 the first NSTR‐1 layers from the surface will be parallel to the surface and the base of the 3‐d grid will be flat. ZRATIO is applied only to the vertical cross section having the lowest elevation.
+        =0 each layer will be parallel to the surface, including the base of the 3‐d grid.
+            ZRATIO is applied to each vertical cross section.
+        =1 base of the 3‐d grid will be flat.
+            ZRATIO is applied to each vertical cross section.
+        =2 base of the 3‐d grid will be flat, as will the NSTR‐1 horizontal cross sections above it.
+            ZRATIO is applied only to the vertical cross section having the lowest elevation.
+        =3 for each cell of the dem a single depth value is read in file input IIN60 (basement).
+            ZRATIO is applied to each vertical cross section.
+
+        =4 the first NSTR‐1 layers from the surface will be parallel to the surface and the base of the 3‐d grid will be flat.
+            ZRATIO is applied only to the vertical cross section having the lowest elevation.
 
         isp
         =0 for flat surface layer (only one Z value is read in, and is replicated to all surface nodes);
@@ -1184,7 +1187,13 @@ class CATHY:
 
         base
         Value which defines the thickness or base of the 3‐d mesh.
-        For IVERT=0, BASE is subtracted from each surface elevation value, so that each vertical cross section will be of thickness BASE, and the base of the 3‐d mesh will be parallel to the surface. For IVERT=1 or 2, BASE is subtracted from the lowest surface elevation value, say ZMIN, so that each vertical cross section will be of thickness (Z ‐ ZMIN) + BASE, where Z is the surface elevation for that cross section. The base of the 3‐d mesh will thus be flat.
+        For IVERT=0, BASE is subtracted from each surface elevation value,
+            so that each vertical cross section will be of thickness BASE,
+            and the base of the 3‐d mesh will be parallel to the surface.
+        For IVERT=1 or 2, BASE is subtracted from the lowest surface elevation value,
+            say ZMIN, so that each vertical cross section will be of thickness (Z ‐ ZMIN) + BASE,
+            where Z is the surface elevation for that cross section.
+            The base of the 3‐d mesh will thus be flat.
 
         """
 
@@ -1193,18 +1202,20 @@ class CATHY:
         )
 
         if hasattr(self, "dem_parameters") == False:
-            dem_parameters_dict = in_CT.read_dem_parameters(os.path.join(self.workdir, 
-                                                   self.project_name, 
-                                                   "input", 
-                                                   "dem_parameters"
-                                                   )
-                                      )
-            
+            dem_parameters_dict = in_CT.read_dem_parameters(
+                os.path.join(
+                    self.workdir,
+                    self.project_name,
+                    "input",
+                    "dem_parameters",
+                )
+            )
+
             self.dem_parameters = dem_parameters_dict
 
         if 'zratio(i).i=1.nstr' in self.dem_parameters:
             self.dem_parameters['zratio(i),i=1,nstr'] = self.dem_parameters.pop('zratio(i).i=1.nstr')
-            
+
         # create dictionnary from kwargs
         for keykwargs, value in kwargs.items():
             if keykwargs == "zratio":
