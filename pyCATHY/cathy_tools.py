@@ -1220,6 +1220,7 @@ class CATHY:
         for keykwargs, value in kwargs.items():
             if keykwargs == "zratio":
                 key = "zratio(i),i=1,nstr"
+                value = list(value)
                 if sum(value) != float(1):
                     self.console.rule(
                         ":warning: warning messages above :warning:", style="yellow"
