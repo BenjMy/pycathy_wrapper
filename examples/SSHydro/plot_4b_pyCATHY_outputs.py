@@ -24,8 +24,14 @@ from pyCATHY.plotters import cathy_plots as cplt
 
 #%% run processor
 # if you add True to verbose, the processor log will be printed in the window shell
-path2prj = "weil_exemple_outputs_plot"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj)
+
+
+
+path2prj = "../SSHydro/"  # add your local path here
+simu = cathy_tools.CATHY(dirName=path2prj, 
+			prj_name="weil_exemple_outputs_plot"
+			)
+
 simu.run_preprocessor()
 simu.run_processor(IPRT1=2, 
                     DTMIN=1e-2,
@@ -54,7 +60,7 @@ cplt.show_vtk(
     unit="pressure",
     timeStep=1,
     notebook=False,
-    path=simu.workdir + "/my_cathy_prj/vtk/",
+    path=simu.workdir + "/weil_exemple_outputs_plot/vtk/",
 )
 
 #%%  3d visualiation of the water saturation for the time step 1
