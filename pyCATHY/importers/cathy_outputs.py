@@ -388,7 +388,7 @@ def read_sw(filename, **kwargs):
     #                                                               ylabel='NET SEEPFACE VOL',
     #                                                               xlabel='time (s)')
 
-    return df_sw_t, time_i
+    return df_sw_t, df_sw_t.index
 
 
 def read_psi(filename):
@@ -428,7 +428,12 @@ def read_psi(filename):
     d_psi_t = np.reshape(
         psi_sub, [len(idx) - 1, int(np.shape(psi_sub)[0] / (len(idx) - 1))]
     )
-    return d_psi_t
+    
+    df_psi_t = pd.DataFrame(d_psi_t, time_i)
+    df_psi_t.index.names = ['Time']
+    df_psi_t = df_psi_t[~df_psi_t.index.duplicated(keep='first')]
+
+    return df_psi_t
 
 
 def read_hgsfdet(filename):
