@@ -431,8 +431,8 @@ def read_psi(filename):
     
     # time_i = time_i.astype(float)  # Ensure the index is float
     df_psi_t = pd.DataFrame(d_psi_t, time_i)
+    df_psi_t.index = df_psi_t.index.astype(float)
     df_psi_t.index.names = ['Time']
-    df_psi_t.index.astype(float)
     df_psi_t = df_psi_t[~df_psi_t.index.duplicated(keep='first')]
 
     return df_psi_t
