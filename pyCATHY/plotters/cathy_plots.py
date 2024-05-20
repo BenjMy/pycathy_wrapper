@@ -710,10 +710,10 @@ def show_vtk_TL(
 
     x_units = None
     xlabel = "s"
-    for key, value in kwargs.items():
-        if key == "x_units":
-            x_units = value
-            print(x_units)
+    # for key, value in kwargs.items():
+    if "x_units" in kwargs:
+        x_units = kwargs.pop('x_units')
+        print(x_units)
 
     if path is None:
         path = os.getcwd()
@@ -749,10 +749,11 @@ def show_vtk_TL(
     # print('*'*10)
     # print(unit)
     
-    plotter.add_mesh(mesh, show_edges=True, 
+    plotter.add_mesh(mesh, 
                       scalars=unit, 
                      cmap=my_colormap,
                      # opacity=0.3,
+                     **kwargs,
                      )
 
     if savefig:

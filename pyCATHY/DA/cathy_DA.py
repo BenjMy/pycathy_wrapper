@@ -2199,7 +2199,7 @@ class DA(CATHY):
             # find data to map with dictionnary of observations
             # --------------------------------------------
             obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-            state = [df_psi[-1], df_sw.iloc[-1].values]            
+            state = [df_psi.iloc[-1], df_sw.iloc[-1].values]            
             
             Hx_stacked = []  # stacked predicted observation
             # Loop over observations to map

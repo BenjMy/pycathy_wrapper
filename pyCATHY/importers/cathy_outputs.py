@@ -429,8 +429,10 @@ def read_psi(filename):
         psi_sub, [len(idx) - 1, int(np.shape(psi_sub)[0] / (len(idx) - 1))]
     )
     
+    # time_i = time_i.astype(float)  # Ensure the index is float
     df_psi_t = pd.DataFrame(d_psi_t, time_i)
     df_psi_t.index.names = ['Time']
+    df_psi_t.index.astype(float)
     df_psi_t = df_psi_t[~df_psi_t.index.duplicated(keep='first')]
 
     return df_psi_t

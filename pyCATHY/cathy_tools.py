@@ -1437,7 +1437,7 @@ class CATHY:
             if kk == "TIMPRTi":
                 key = "(TIMPRT(I),I=1,NPRT)"
 
-                self.parm[key] = value
+                self.parm[key] = list(value)
 
             # points of interest NODVP
             # ----------------------------------------------------------------
@@ -2564,6 +2564,12 @@ class CATHY:
         self.soil_FP = {}
         self.soil_FP["FP"] = FeddesParam
         self.soil_FP["FP_map"] = FP_map  # mapping with respect to zones
+        
+        map_veg = np.zeros(np.shape(self.DEM))
+        for i, value in enumerate(FP_map['PCANA']):
+            map_veg[self.veg_map == i + 1] = i + 1
+        self.update_veg_map(map_veg)
+
 
         if show:
             update_map_veg = self.map_prop_veg(FP_map)
@@ -3651,13 +3657,13 @@ class CATHY:
         elif prop == "WTD": # water table depth
         
             xyz = self.read_outputs('xyz')
-            psi = self.read_outputs('psi')
+            df_psi = self.read_outputs('psi')
             grid3d = self.read_outputs('grid3d')
             nstr = self.dem_parameters['nstr']+1
             nnod = int(grid3d['nnod'])
-            NPRT = np.shape(psi)[0]
+            NPRT = np.shape(df_psi.values)[0]
             XYZsurface= xyz[['x','y','z']].iloc[0:nnod].to_numpy()    
-            WT, FLAG = self.infer_WTD_from_psi(psi,nnod,nstr,NPRT,xyz,XYZsurface)
+            WT, FLAG = self.infer_WTD_from_psi(df_psi.values,nnod,nstr,NPRT,xyz,XYZsurface)
             cmap = plt_CT.plot_WTD(XYZsurface,WT,**kwargs)
             return cmap
             
