@@ -2387,7 +2387,7 @@ class DA(CATHY):
                         "output/psi",
                     )
                 )
-                psi[:, j] = df_psi[-1, :]
+                psi[:, j] = df_psi.iloc[-1, :]
             except:
                 pass
 
