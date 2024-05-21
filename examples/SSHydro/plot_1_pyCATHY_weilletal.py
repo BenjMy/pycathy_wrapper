@@ -74,12 +74,10 @@ pl.show()
 
 #%%
 
-plotter = pv.Plotter()
 cplt.show_vtk_TL(
                 unit="pressure",
                 notebook=False,
                 path=simu.workdir + "/weill_exemple/vtk/",
-                ax=plotter,
                 show=False,
                 x_units='days',
                 clim = [0.55,0.70],
