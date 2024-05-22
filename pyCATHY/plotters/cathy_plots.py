@@ -546,7 +546,8 @@ def show_vtk(
         print('No colormap')
         print(my_colormap)
 
-            
+    if 'cmap' in kwargs:
+        my_colormap = kwargs.pop('cmap')
     
 
     show_edges = True
