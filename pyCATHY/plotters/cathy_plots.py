@@ -220,7 +220,8 @@ def show_spatialET(df_fort777,**kwargs):
     
 
     # if scatter:
-        
+    df_fort777_select_t = df_fort777_select_t.drop_duplicates()
+
     if mask is not None:
         
         polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
@@ -254,7 +255,6 @@ def show_spatialET(df_fort777,**kwargs):
                   )
 
     else:
-        
         
         df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
         df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')

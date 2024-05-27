@@ -2565,7 +2565,7 @@ class CATHY:
         self.soil_FP["FP"] = FeddesParam
         self.soil_FP["FP_map"] = FP_map  # mapping with respect to zones
         
-        map_veg = np.zeros(np.shape(self.DEM))
+        map_veg = np.ones(np.shape(self.veg_map))
         for i, value in enumerate(FP_map['PCANA']):
             map_veg[self.veg_map == i + 1] = i + 1
         self.update_veg_map(map_veg)

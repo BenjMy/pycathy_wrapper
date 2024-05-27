@@ -29,7 +29,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
     data_type : str
         key tring to identify what type of measure is to read.
     data_err : float
-        % of error for a given measurement dataset. The default is 0.05.
+        % of error for a given measurement dataset.
     show : Bool
         plot measure graph. The default is False.
 

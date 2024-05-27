@@ -399,6 +399,7 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     df_FP = pd.DataFrame(FP_soil_mat)
     df_FP.columns = FP_header
     df_FP.index.name = 'Veg. Indice'
+    df_FP.index =  df_FP.index + 1
     
     layer_id = []
     zone_id = []
@@ -410,7 +411,9 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     if len(soil) != len(layer_id): #*dem_parm['nzone']:
        print(
             "Inconsistent number of zones/layers with respect to the number of soil lines: " +
-            str(len(soil)) + '/' + str(len(layer_id))
+            str(len(soil)) + '/' + str(len(layer_id)) + 
+            "!Revise dem_parm file!"
+
         )
         
     # name_str = np.sort(name_str)
