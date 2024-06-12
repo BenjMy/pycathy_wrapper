@@ -74,6 +74,7 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     
     # mesh_nodes_modif = None
     if 'mesh_nodes_modif' in ERT_meta_dict:
+        print('mesh transformation before interpolation')
         in_nodes_mod_m = ERT_meta_dict['mesh_nodes_modif']
         # print(in_nodes_mod_m)
     else:
@@ -115,23 +116,23 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
 
     print('end of CATHY_2_pg')
 
-    # show = True
+    show = False
     if show:
-
-        # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
-        p = pv.Plotter(notebook=False)
-        p.add_mesh(mesh_new_attr, scalars=scalar_new, show_edges=True)
-        p.show_grid()
-        # _ = p.add_bounding_box(line_width=5, color="black")
-        # p.view_xy()
-        # cpos = p.show()
-
-        # p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
-        # p = pv.Plotter(notebook=False)
-        p.add_mesh(mesh_CATHY, scalars=scalar,show_edges=True)
-        p.show_grid()
+        
+        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], off_screen=True,) #notebook=True)
+        p.add_mesh(mesh_new_attr, scalars=scalar_new)
         _ = p.add_bounding_box(line_width=5, color="black")
-        cpos = p.show()
+        cpos = p.show(True)
+        p.save_graphic(
+            'test21.svg', title="", 
+            # raster=True, 
+            # painter=True
+        )
+
+        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], off_screen=True,) #notebook=True)
+        p.add_mesh(mesh_CATHY, scalars=scalar)
+        _ = p.add_bounding_box(line_width=5, color="black")
+        cpos = p.show(True)
 
     return mesh_new_attr, scalar_new
 
@@ -164,6 +165,7 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
         mesh_Resipy,
         scalar=scalar,
         threshold=1e-1,
+        # threshold=1e2,
         in_nodes_mod=in_nodes_mod,
     )
 
@@ -185,12 +187,17 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
 
     if show == True:
 
-        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
+        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], off_screen=True,) #notebook=True)
         p.add_mesh(mesh_new_attr, scalars=scalar_new)
         _ = p.add_bounding_box(line_width=5, color="black")
         cpos = p.show(True)
+        p.save_graphic(
+            'test21.svg', title="", 
+            raster=True, 
+            painter=True
+        )
 
-        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], notebook=True)
+        p = pv.Plotter(window_size=[1024 * 3, 768 * 2], off_screen=True,) #notebook=True)
         p.add_mesh(mesh_CATHY, scalars=scalar)
         _ = p.add_bounding_box(line_width=5, color="black")
         cpos = p.show(True)
@@ -204,10 +211,11 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
     #     _ = plotter.add_mesh(mesh_new_attr,show_edges=True)
     #     plotter.view_xz(negative=False)
     #     plotter.show_grid()
-    #     plotter.save_graphic(path_CATHY + 'ERT' + str(DA_cnb) + str('.ps'),
-    #                           title='ERT'+ str(DA_cnb),
-    #                           raster=True,
-    #                           painter=True)
+        p.save_graphic(
+            'test.svg', title="", 
+            raster=True, 
+            painter=True
+        )
 
     return mesh_new_attr, scalar_new
 
@@ -248,11 +256,13 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     
     # meshIN.plot()
     # meshOUT_interp.plot()
+    # print(meshIN.max(),meshOUT_interp[scalar].max())
+    # print(meshIN.min(),meshOUT_interp[scalar].min())
 
     # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
     result = meshOUT_interp.point_data_to_cell_data()
     out_data = result[scalar]
-
+    
     # out_data = np.where(out_data == 0, 1e-3, out_data)
     out_data = np.where(out_data == 0, np.min(out_data)+1e-3, out_data)
 
@@ -596,30 +606,22 @@ def get_layer_depths(dem_parameters):
 
 def get_layer_depth(dem_parameters, li):
 
-    dempar = dem_parameters["zratio(i),i=1,nstr"].split("\t")
-    dempar_ratio = [float(d) for d in dempar]
+    if type(dem_parameters["zratio(i),i=1,nstr"]) != list:
+        dempar = dem_parameters["zratio(i),i=1,nstr"].split("\t")
+        dempar_ratio = [float(d) for d in dempar]
+    else:
+        dempar_ratio = [float(d) for d in dem_parameters["zratio(i),i=1,nstr"]]
 
-    # layeri_top = np.round(dempar_ratio[li]*simu.dem_parameters["base"]/simu.dem_parameters['nstr'],2)
-    # layeri_top = dempar_ratio[li]*simu.dem_parameters["base"]/simu.dem_parameters['nstr']
     if li == 0:
         layeri_top = 0
     else:
-        # layeri_top = np.cumsum(dempar_ratio[0:li])[-1]*(simu.dem_parameters["base"]/(simu.dem_parameters['nstr']-1))
         layeri_top = np.cumsum(dempar_ratio[0:li])[-1] * (dem_parameters["base"])
-
-        # layeri_top = np.cumsum(dempar_ratio[0:li])[-1]
-
     if (li + 1) < len(dempar_ratio):
-        # layeri_bottom = np.round(dempar_ratio[li+1]*simu.dem_parameters["base"]/simu.dem_parameters['nstr'],2)
-        # layeri_bottom = layeri_top + dempar_ratio[li+1]*simu.dem_parameters["base"]/(simu.dem_parameters['nstr']-1)
-        # layeri_bottom = np.cumsum(dempar_ratio[0:li+1])[-1]*(simu.dem_parameters["base"]/(simu.dem_parameters['nstr']-1))
         layeri_bottom = np.cumsum(dempar_ratio[0 : li + 1])[-1] * (
             dem_parameters["base"]
         )
     else:
         layeri_bottom = dem_parameters["base"]
-
-    # print(layeri_top,layeri_bottom)
     return layeri_top, layeri_bottom
 
 

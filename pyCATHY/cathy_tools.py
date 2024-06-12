@@ -284,7 +284,7 @@ class CATHY:
             # os.remove(os.path.join(
             #      self.workdir, self.project_name, "prepro") + '/dem' )
         if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
-            self.console.print(":inbox_tray: [b]Fetch cathy inputfiles[/b]")
+            self.console.print(":inbox_tray: [b]Fetch cathy input files[/b]")
             shutil.move(
                 os.path.join(
                     self.workdir,
@@ -1198,7 +1198,7 @@ class CATHY:
         """
 
         self.console.print(
-            ":arrows_counterclockwise: [b]update dem_parameters file [/b]"
+            ":arrows_counterclockwise: [b]Update dem_parameters file [/b]"
         )
 
         if hasattr(self, "dem_parameters") == False:
@@ -1405,7 +1405,7 @@ class CATHY:
             - Updated CATHYH file (NPRT and NUMVP).
         """
 
-        self.console.print(":arrows_counterclockwise: [b]update parm file [/b]")
+        self.console.print(":arrows_counterclockwise: [b]Update parm file [/b]")
         warnings_parm = []
 
 

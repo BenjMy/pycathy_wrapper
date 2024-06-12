@@ -52,7 +52,18 @@ Dependencies
 
 .. tab-set::
 
-    .. tab-item:: Linux
+
+
+
+    .. tab-item:: Ubuntu 22
+
+        .. code:: bash
+
+           sudo apt-get update
+           sudo apt-get install gfortran
+           sudo apt install libopenblas-dev
+           
+    .. tab-item:: Ubuntu 20
 
         .. code:: bash
 

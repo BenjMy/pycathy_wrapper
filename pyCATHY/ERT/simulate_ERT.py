@@ -53,12 +53,13 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
                     "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
                 )
 
+    sequence_file_extension = os.path.splitext(sequence)[1]
 
-    if "shm" in sequence:
+    if "shm" in sequence_file_extension:
         scheme = pg.load(sequence)
-    elif "data" in sequence:
+    elif "dat" in sequence_file_extension:
         scheme = pg.load(sequence)
-    elif "txt" in sequence:
+    elif "txt" in sequence_file_extension:
         shm = pd.read_csv(sequence, delimiter=" ", header=None)
         shm = shm.to_numpy()
         shm_new = np.subtract(shm, 1)
@@ -94,6 +95,8 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
         verbose=verbose,
         noiseLevel=fwdNoiseLevel,
     )
+    # pg.show(mesh3d)
+    # pg.show(het)
 
     try:
         if not verbose:

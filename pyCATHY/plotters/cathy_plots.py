@@ -184,7 +184,15 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     
 def show_spatialET(df_fort777,**kwargs):
 
-    
+    unit = 'ms-1'
+    unit_str = '$ms^{-1}$'
+    if 'unit' in kwargs:
+        unit = kwargs.pop('unit')
+        
+    cmap = 'Blues'
+    if 'cmap' in kwargs:
+        cmap = kwargs.pop('cmap')
+            
     crs = None
     if 'crs' in kwargs:
         crs = kwargs.pop('crs')
@@ -221,6 +229,10 @@ def show_spatialET(df_fort777,**kwargs):
 
     # if scatter:
     df_fort777_select_t = df_fort777_select_t.drop_duplicates()
+    
+    if unit == 'mmday-1':
+        df_fort777_select_t['ACT. ETRA'] = df_fort777_select_t['ACT. ETRA']*1e3*86000
+        unit_str = '$mm.day^{-1}$'
 
     if mask is not None:
         
@@ -247,7 +259,7 @@ def show_spatialET(df_fort777,**kwargs):
         
         # Plot using plt.imshow
         cmap = ax.imshow(data_array, 
-                         cmap='viridis', 
+                         cmap=cmap, 
                          origin='lower', 
                          extent=[min(filtered_data[:,0]),max(filtered_data[:,0]),
                                  min(filtered_data[:,1]),max(filtered_data[:,1])],
@@ -266,36 +278,12 @@ def show_spatialET(df_fort777,**kwargs):
         
         # Plot using plt.imshow
         cmap = ax.imshow(data_array, 
-                         cmap='viridis', 
+                         cmap=cmap, 
                          origin='lower', 
                          extent=[min(df_fort777_select_t['X']),max(df_fort777_select_t['X']),
                                  min(df_fort777_select_t['Y']),max(df_fort777_select_t['Y'])],
                          clim = clim,
-                  )
-    
-    #         cmap = ax.scatter(x=df_fort777_select_t['X'], 
-    #                     y=df_fort777_select_t['Y'], 
-    #                     c=df_fort777_select_t['ACT. ETRA'],
-    #                     **kwargs
-    #                     )
-    # else:
-        
-        # x = df_fort777_select_t['X'].values
-        # y = df_fort777_select_t['Y'].values
-        # z = df_fort777_select_t['ACT. ETRA'].values
-
-        # # Create a grid of points and evaluate a function on the grid
-        # xi, yi, mask = create_gridded_mask(x,y,**kwargs)
-        # xx, yy = xi.flatten(), yi.flatten()
-    
-        # zi = griddata((x, y), z, (xx, yy), method='cubic')
-    
-        # # Apply the mask to the gridded data
-        # zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
-    
-        # # Plot the masked data
-        # cmap = ax.contourf(xi, yi, zi_masked, cmap='viridis')
-        
+                  )        
     title = 'ETa'
     if 'title' in kwargs:
         title = kwargs['title']
@@ -309,7 +297,7 @@ def show_spatialET(df_fort777,**kwargs):
     
     if colorbar:
         cbar = plt.colorbar(cmap,ax=ax)
-        cbar.set_label('actual ET (mm/s)')
+        cbar.set_label('ETa ' + unit_str)
     
     return cmap
 
@@ -1654,17 +1642,11 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
     # isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
     # -----------------------------#
     if len(nodes_of_interest) > 0:
-
         if len(isOL) > 0:
-
-            # nb_of_nodes = len(np.arange(int(len(isOL)/((max(isOL['time'])-1)*NENS))))
-            # test = len(isOL)/nb_of_nodes
-
             nb_of_times = len(np.unique(isOL["time"]))
             nb_of_ens = len(np.unique(isOL["Ensemble_nb"]))
             nb_of_nodes = len(isOL[isOL["time"] == 0]) / nb_of_ens
             test = len(isOL) / nb_of_nodes
-
             try:
                 int(test)
             except:
@@ -1678,13 +1660,6 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     np.tile(np.arange(nb_of_nodes), nb_of_times * nb_of_ens),
                     True,
                 )
-
-                # isOL.insert(2, "idnode", np.tile(np.arange(int(len(isOL)/(max(isOL['time']+1)*NENS))),
-                #                                   int(max(isOL['time']+1)*NENS)), True)
-                # len(isOL)/test
-                # len(isOL)/((len(isOL['time'].unique())1)*NENS)
-                # isOL.insert(2, "idnode", np.tile(np.arange(nb_of_nodes),
-                #                                   int((max(isOL['time'])-1)*NENS)), True)
                 select_isOL = isOL[isOL["idnode"].isin(nodes_of_interest)]
                 select_isOL = select_isOL.set_index([keytime, "idnode"])
                 select_isOL = select_isOL.reset_index()
@@ -1719,12 +1694,11 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                         "ens_min_isOL_time": ens_min_isOL_time,
                     }
                 )
-                # ens_mean_isOL_time['time_date']
-
         if len(isENS) > 0:
-
+            nb_of_times = len(np.unique(isENS["time"]))
+            nb_of_ens = len(np.unique(isENS["Ensemble_nb"]))
+            nb_of_nodes = len(isENS[isENS["time"] == isENS["time"][0]]) / nb_of_ens
             if len(isOL) > 0:
-
                 isENS.insert(
                     2,
                     "idnode",
@@ -1734,32 +1708,23 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     ),
                     True,
                 )
-            else:
-                # number of nodes = np.sum(isENS['time']==1)/24
-                
-                # np.sum((isENS['time']==1) & (isENS['Ensemble_nb']==0))
-                # np.sum(isENS['Ensemble_nb']==0)
-               
-                
-                # nnode = np.sum((isENS['time']==1) & (isENS['Ensemble_nb']==0))
+            else:               
                 # isENS.insert(
                 #     2,
                 #     "idnode",
-                #     np.tile(np.arange(nnode),
-                #         int(max(isENS["time"])),
+                #     np.tile(
+                #         np.arange(int(len(isENS) / (max(isENS["time"]) * (NENS + 1)))),
+                #         int(max(isENS["time"])) * (NENS + 1),
                 #     ),
                 #     True,
                 # )
-                
+        
                 isENS.insert(
-                    2,
-                    "idnode",
-                    np.tile(
-                        np.arange(int(len(isENS) / (max(isENS["time"]) * (NENS + 1)))),
-                        int(max(isENS["time"])) * (NENS + 1),
-                    ),
+                    2,"idnode",
+                    np.tile(np.arange(nb_of_nodes), nb_of_times*nb_of_ens),
                     True,
                 )
+                
                 
             # check_nan = isENS['sw_bef_update_'].isnull().values.any()
             check_notrejected = isENS['rejected']==0
@@ -1910,6 +1875,8 @@ def DA_plot_time_dynamic(
         #     color=colors_minmax,
         #     label="minmax DA",
         # )
+
+        # float_data = prep_DA["ens_max_isENS_time"][keytime].astype(float)
 
         
         lgd = ax.fill_between(

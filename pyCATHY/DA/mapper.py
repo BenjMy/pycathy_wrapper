@@ -16,7 +16,7 @@ import pandas as pd
 def tensio_mapper(state,obs2map_node):
     # case: pressure head assimilation (Hx_PH)
     # -------------------------------------------------------------
-    Hx_PH = state[0][obs2map_node[0]]
+    Hx_PH = state[0][obs2map_node]
     return Hx_PH
 
 
@@ -24,7 +24,7 @@ def swc_mapper(state,obs2map_node,grid3d,dem_parameters,
                SPP_ensi,console): 
     # find porosity associated to mesh node position
     # ----------------------------------------------
-    xyz_swc = grid3d[obs2map_node[0]]
+    xyz_swc = grid3d[obs2map_node]
     
     ltop, lbot = mt.get_layer_depths(dem_parameters)
     idlayer_swc = np.where(abs(xyz_swc[2])>ltop)[0]
@@ -103,7 +103,7 @@ def _map_ERT(state,
     # -------------------------------------------
     ERT_meta_dict = _parse_ERT_metadata(key_time)
 
-    Hx_ERT, df_Archie = Archie.SW_2_ERa_DA(
+    Hx_ERT, df_Archie, meshWithAttribute = Archie.SW_2_ERa_DA(
                                             project_name,
                                             Archie_parms,
                                             Archie_parms["porosity"],
@@ -118,7 +118,7 @@ def _map_ERT(state,
                                         )
     df_Archie["OL"] = np.ones(len(df_Archie["time"])) * False
 
-    return Hx_ERT, df_Archie
+    return Hx_ERT, df_Archie, meshWithAttribute
 
 def _map_ERT_parallel_DA(
                         dict_obs,
@@ -161,6 +161,8 @@ def _map_ERT_parallel_DA(
         df_Archie2add = results_mapping[ens_i][1]
         df_Archie2add["OL"] = np.zeros(len(df_Archie2add))
         Hx_ERT_ens_i = results_mapping[ens_i][0]
+        mesh2test = results_mapping[ens_i][2]
+
         
         Archie_df = _add_2_ensemble_Archie(Archie_df,df_Archie2add)
 
@@ -169,7 +171,7 @@ def _map_ERT_parallel_DA(
         else:
             Hx_ERT_ens = _add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["resist"])
 
-    return Hx_ERT_ens, Archie_df
+    return Hx_ERT_ens, Archie_df, mesh2test
 
 
 
@@ -301,7 +303,7 @@ def _map_ERT_parallel(
                                             path_fwd_CATHY_list,
                                         )
     else:
-        Hx_ERT_ens, df_Archie = _map_ERT_parallel_DA(
+        Hx_ERT_ens, df_Archie, mesh2test = _map_ERT_parallel_DA(
                                                     dict_obs,
                                                     ENS_times,
                                                     ERT_meta_dict,
@@ -313,7 +315,7 @@ def _map_ERT_parallel(
                                                 )
     prediction_ERT = np.vstack(Hx_ERT_ens).T
 
-    return prediction_ERT, df_Archie
+    return prediction_ERT, df_Archie, mesh2test
 
 
 

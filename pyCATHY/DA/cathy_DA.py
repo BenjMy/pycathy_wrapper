@@ -417,7 +417,7 @@ class DA(CATHY):
             )
             id_valid = ~np.array(rejected_ens)
             self.ens_valid = list(np.arange(0, self.NENS)[id_valid])
-
+            ensemble_psi_valid_bef_update = []
             #!! define subloop here to optimize the inflation!!
             # if 'optimize_inflation' in DA_type:
             # threshold_convergence = 10
@@ -448,6 +448,16 @@ class DA(CATHY):
                         DA_type, self.damping
                     )
                 )
+    
+    
+                (
+                    ensemble_psi_valid_bef_update,
+                    ensemble_sw_valid_bef_update,
+                    ens_size,
+                    sim_size,
+                ) = self._read_state_ensemble()
+                
+                
                 (
                     ensemble_psi,
                     ensemble_sw,
@@ -578,11 +588,22 @@ class DA(CATHY):
             # create dataframe _DA_var_pert_df holding the results of the DA update
             # ---------------------------------------------------------------------
             # self.DA_df
-            self._DA_df(
-                state=[ensemble_psi_valid, ensemble_sw_valid],
-                state_analysis=analysis_valid,
-                rejected_ens=rejected_ens,
-            )
+            
+            if len(ensemble_psi_valid_bef_update)==0:
+                (
+                    ensemble_psi_valid_bef_update,
+                    ensemble_sw_valid_bef_update,
+                    ens_size,
+                    sim_size,
+                ) = self._read_state_ensemble()
+            else:
+                self._DA_df(
+                    state=[ensemble_psi_valid_bef_update, 
+                           ensemble_sw_valid_bef_update
+                           ],
+                    state_analysis=analysis_valid,
+                    rejected_ens=rejected_ens,
+                )
             # self.df_DA
             
             # print(['Im done with dataframe _DA_var_pert_df']*10)
@@ -642,7 +663,10 @@ class DA(CATHY):
         pathname = directory + "/**/*converted*.vtk"
         files = glob.glob(pathname, recursive=True)
 
-        [os.remove(f) for f in files]
+
+        remov_convert = False
+        if remov_convert:
+            [os.remove(f) for f in files]
 
         hard_remove = False
         if hard_remove:
@@ -925,57 +949,32 @@ class DA(CATHY):
                                         alpha=self.damping,
                                     )
         
-        fig, ax = plt.subplots()
-        # for i in range(len(prediction_valid.T)):
-        ax.scatter(data,prediction_valid[:,0])
-        
+        _ , obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
 
-        ax.set_xlabel('Observations')
-        ax.set_ylabel('Predictions')
-        ax.set_xlim([min(data),max(data)])
-        ax.set_ylim([min(data),max(data)])
+        fig, ax = plt.subplots(figsize=(4,4))
+        # for i in range(len(prediction_valid.T)):
+        ax.scatter(data,np.mean(prediction_valid,axis=1),label='mean')
+        ax.scatter(data,np.median(prediction_valid,axis=1),label='median')
+        ax.scatter(data,np.min(prediction_valid,axis=1),color='k',alpha=0.1)
+        ax.scatter(data,np.max(prediction_valid,axis=1),color='k',alpha=0.1)
+        plt.legend()
+        # Add 1:1 line
+        lims = [min(min(data), min(np.mean(prediction_valid, axis=1))),
+                max(max(data), max(np.mean(prediction_valid, axis=1)))]
+        ax.plot(lims, lims, 'k--', alpha=0.75, zorder=0)
+        
+        ax.set_xlabel(f' {obs2eval_key[0]} Observations')
+        ax.set_ylabel(f' {obs2eval_key[0]} Predictions')
+        ax.set_xlim([min(data), max(data)])
+        ax.set_ylim([min(data), max(data)])
         ax.set_aspect('equal')
-        fig.savefig('test_ERT_11line.png')
 
-
-        # fig, ax = plt.subplots()
-        # # for i in range(len(prediction_valid.T)):
-        # ax.plot(data)
-        
-        # fig, ax = plt.subplots()
-        # for i in range(len(prediction_valid.T)):
-        #     ax.plot(prediction_valid[:,i])
-        
-        
-        # ax.set_xlabel('Observations')
-        # ax.set_ylabel('Predictions')
-        # ax.set_xlim([0,300])
-        # ax.set_ylim([0,300])
-        # ax.set_aspect('equal')
-        # fig.savefig('test_ERT_11line.png')
-        
-        
-        # minsw_pred = self.Archie.sw.min()
-        # maxsw_pred = self.Archie.sw.max()
-        # self.Archie_parms
-
-        # rhomax = (
-        #     self.Archie_parms['rFluid_Archie'][0] # rfluid
-        #     * (self.Archie_parms['a_Archie'][0])
-        #     * self.Archie_parms['porosity'][0] ** (-self.Archie_parms['m_Archie'][0])
-        #     * minsw_pred  ** (-self.Archie_parms['n_Archie'][0])
-        # )
-        # rhomin = (
-        #     self.Archie_parms['rFluid_Archie'][0] # rfluid
-        #     * (self.Archie_parms['a_Archie'][0])
-        #     * self.Archie_parms['porosity'][0] ** (-self.Archie_parms['m_Archie'][0])
-        #     * maxsw_pred  ** (-self.Archie_parms['n_Archie'][0])
-        # )
-        
-        
-        # print(min(data),max(data))
-        # print(rhomin,rhomax)
-        # print(np.min(prediction_valid),np.max(prediction_valid))
+        fig.savefig(os.path.join(self.workdir,
+                                 self.project_name,
+                                 'T' + str(self.count_DA_cycle) +
+                                 '_11line.png'
+                                 )
+                    )
         
         # plot ensemble covariance matrices and changes (only for ENKF)
         # ---------------------------------------------------------------------
@@ -2269,7 +2268,7 @@ class DA(CATHY):
 
                 if "ERT" in obs_key:
                     if parallel == False:
-                        Hx_ERT, df_Archie = mapper._map_ERT(
+                        Hx_ERT, df_Archie, mesh2test = mapper._map_ERT(
                                                             state, 
                                                             path_fwd_CATHY, 
                                                             ens_nb, 
@@ -2334,7 +2333,7 @@ class DA(CATHY):
                     self.console.rule("", style="green")
 
                 if parallel:
-                    Hx_ens_ERT, df_Archie = mapper._map_ERT_parallel(
+                    Hx_ens_ERT, df_Archie, mesh2test = mapper._map_ERT_parallel(
                                                                     self.dict_obs,
                                                                     self.count_DA_cycle,
                                                                     self.project_name,
@@ -2346,6 +2345,13 @@ class DA(CATHY):
                                                                     savefig=False,
                                                                     verbose=False,
                                                                     )
+                    
+                    # cell_array_names = mesh2test.array_names
+                    # mesh2test['ER_converted1'].min()
+                    # mesh2test['ER_converted1'].max()
+
+                    # mesh2test.set_active_scalars('ER_converted1')
+                    
                     df_Archie_new = mapper._add_2_ensemble_Archie(self.df_Archie,
                                                                   df_Archie
                                                                   )

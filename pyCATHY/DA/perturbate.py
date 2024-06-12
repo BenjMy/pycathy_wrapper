@@ -69,7 +69,7 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
         index = scenario["per_name"].index("WTPOSITION")
 
         clip_min = 0
-        clip_max = None
+        clip_max = simu_DA.dem_parameters['base']
         
         clip_min, clip_max = check4bounds(
             scenario,
@@ -909,7 +909,9 @@ def perturbate_parm(
     if kwargs["savefig"]:
        savefig = kwargs["savefig"]
     
-    
+    if per_type=='None':
+        per_type = None
+        
     var_per_2add = {}
 
     # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes

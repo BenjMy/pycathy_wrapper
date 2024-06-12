@@ -131,6 +131,16 @@ def SW_2_ERa_DA(
     # Choose archie parameter for a given realisation (from the ensemble)
     # --------------------------------------------------------------------
     ArchieParms2parse = get_Archie_ens_i(ArchieParms, Ens_nbi)
+    
+    # print('o'*15)
+    # print(DA_cnb)
+    # print(ArchieParms2parse)
+    # print(df_sw)
+    # print(len(df_sw))
+    # print(mesh_CATHY_ref)
+    # print(df_sw.min())
+    # print(df_sw.max())
+    # print('o'*15)
 
     # Convert to SW to ER values
     # --------------------------------------------------------------------
@@ -292,7 +302,7 @@ def SW_2_ERa_DA(
         plotter.close()
     print('end of ER prediction')
 
-    return df_ERT_predicted, df_Archie
+    return df_ERT_predicted, df_Archie, mesh_CATHY_new_attr
 
 
 def Archie_rho_DA(
