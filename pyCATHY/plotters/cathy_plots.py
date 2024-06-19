@@ -375,7 +375,11 @@ def show_dtcoupling(
     for i in np.arange(1, nstep):
         timeatm.append(timeatm[i - 1] + df_dtcoupling["Deltat"][i - 1])
     len(timeatm)
-    plt.step(timeatm, df_dtcoupling[yprop], color="green", where="post", label=yprop)
+    ax.step(timeatm, df_dtcoupling[yprop], 
+             color="green", where="post", 
+             label=yprop,
+             # ax=ax
+             )
     # plt.step(timeatm, df_dtcoupling[yprop[1]], color="blue", where="post", label=yprop[1])
 
     ax.set_xlabel("time (s)")
@@ -1422,7 +1426,24 @@ def show_DA_process_ens(
     if savefig == True:
         fig.savefig(savename + ".png", dpi=300)
     plt.close()
-
+    
+    
+    # fig, ax = plt.subplots()
+    # cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="jet")
+    # ax.set_title("Correction")
+    # ax.set_ylabel("$\psi$ params #")
+    # ax.set_xlabel("Members #")
+    # cbar = fig.colorbar(cax, location="bottom")
+    # ax.set_yticks([])
+    
+    # fig, ax = plt.subplots()
+    # cax = ax.matshow(DataCov, aspect="auto", cmap="gray_r")
+    # ax.set_title("cov(meas)")
+    # ax.set_ylabel("Meas")
+    # ax.set_xlabel("Meas")
+    # cbar = fig.colorbar(cax, location="bottom")
+    # ax.set_yticks([])
+    
     return fig, ax
 
 

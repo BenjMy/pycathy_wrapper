@@ -40,7 +40,7 @@ def read_fort777(filename, **kwargs):
     Returns
     -------
     xyz_df : pd.DataFrame()
-        Dataframe containing the coordinates X,Y and Z (elevation) of the mesh nodes.
+        Dataframe containing time_sec,SURFACE NODE,X,Y,ACT. ETRA.
 
     """
     fort777_file = open(filename, "r")
@@ -88,8 +88,11 @@ def read_fort777(filename, **kwargs):
     # ------------------------------------------------------------------------
     df_fort777 = pd.DataFrame(df_fort777_stack, columns=cols_fort777)
     df_fort777["time"] = pd.to_timedelta(df_fort777["time_sec"], unit="s")
+    df_fort777_multiindex = df_fort777.set_index(['time', 'X', 'Y'])
+    df_fort777_unique = df_fort777_multiindex[~df_fort777_multiindex.index.duplicated(keep='first')]
+    df_fort777_unique = df_fort777_unique.reset_index()
 
-    return df_fort777
+    return df_fort777_unique
     
     
 def read_xyz(filename, **kwargs):
@@ -316,7 +319,7 @@ def read_dtcoupling(filename):
         "Sdt-a",
         "Atmpot-vf",
         "Atmpot-v",
-        " Atmpot-r",
+        "Atmpot-r",
         "Atmpot-d",
         "Atmact-vf",
         "Atmact-v",
@@ -468,6 +471,28 @@ def read_hgsfdet(filename):
 
     return df_hgsfdet
 
+
+def read_hgatmsf(filename):
+    
+    hgatmsf_file = open(filename, "r")
+    hgatmsf = np.loadtxt(hgatmsf_file)
+    hgatmsf_file.close()
+
+    df_hgatmsf = pd.DataFrame(hgatmsf)
+
+    df_hgatmsf.columns = [
+     '#NSTP',      
+     'DELTAT',     
+     'TIME',   
+     'POT. FLUX',
+     'ACT. FLUX',
+     'OVL. FLUX', # The superficial flow, that is the difference between POT.FLUX and ACT.FLUX;
+     'RET. FLUX', # flusso che dal sotterraneo va al super ciale (return flux);  
+     'SEEP FLUX',   
+     'REC. FLUX',   
+     'REC.VOL.',
+    ]
+    return df_hgatmsf
 
 def read_mbeconv(filename):
     """

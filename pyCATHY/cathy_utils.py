@@ -75,20 +75,20 @@ def label_units(units, **kwargs):
     elif units == "QTRANIE":
         label = "Root‐zone water uptake"
     elif units == "Atmpot-vf":
-        label = "Potential atmospheric forcing (rain +ve / evap -ve) \n ($[L^{3}/T]$)"
+        label = "ETp (rain +ve / evap -ve) \n ($[L^{3}/T]$)"
     elif units == "Atmpot-v":
-        label = "Potential atmospheric forcing volume \n ($[L^{3}/T]$)"
-    elif units == "Atmpot-v":
-        label = "Potential atmospheric forcing rate \n ($[L/T]$)"
+        label = "ETp volume \n ($[L^{3}]$)"
+    elif units == "Atmpot-r":
+        label = "ETp rate \n ($[L/T]$)"
     elif units == "Atmpot-d":
-        label = "Potential atmospheric forcing depth \n ($[L]$)"
+        label = "ETp depth \n ($[L]$)"
     elif units == "Atmact-vf":
         label = "Actual infiltration (+ve) or exfiltration (-ve) \n at atmospheric BC nodes \n as a volumetric flux  \n ($[L^3/T]$)"
-    elif units == "Atmact-v ":
+    elif units == "Atmact-v":
         label = "Actual infiltration (+ve) or exfiltration (-ve) volume \n ($[L^3]$)"
     elif units == "Atmact-r":
         label = "Actual infiltration (+ve) or exfiltration (-ve) rate \n ($[L/T]$)"
-    elif units == "Atmact-d ":
+    elif units == "Atmact-d":
         label = "Actual infiltration (+ve) or exfiltration (-ve) depth \n ($[L]$)"
 
     return label
