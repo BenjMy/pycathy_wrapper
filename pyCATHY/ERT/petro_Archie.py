@@ -344,7 +344,7 @@ def Archie_rho_DA(
     verbose = True
     console = rich.console.Console(stderr=True, quiet=not verbose)
 
-    # Loop over soil type
+    # Loop over soil type (as many soil type than a_Archie list length)
     # -----------------------------------------------
     for i in range(len(rFluid_Archie)):  # loop over Archie heterogeneity i.e. soil zones
         # print('!!! shortcut sat[:] is not valid for heteregeneous soil!')
@@ -357,7 +357,6 @@ def Archie_rho_DA(
         sigma = 1 / rho
         # sat[0]
         try: # CASE WITH DATA ASSIMILATION
-            # test = np.shape(sigma)[0]>2
             for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
                 for meas_nb in range(np.shape(sigma)[1]):  # Loop over mesh nodes
                     # See eq. 4.4 thesis Isabelle p.95
@@ -369,7 +368,7 @@ def Archie_rho_DA(
                     )
                 sigma[ti, :] = sigma[ti, :] + noise
                 
-            if i == 0:
+            if i == 0: # to avoid displaying this for all the soil layers
                 console.rule(
                     ":octopus: Parameter perturbation :octopus:", style="green"
                 )
@@ -387,7 +386,7 @@ def Archie_rho_DA(
                 console.rule("", style="green")
         except:
             if i == 0:
-                print('See eq. 4.4 thesis Isabelle p.95')
+                print('Add noise to sigma - See eq. 4.4 thesis Isabelle p.95')
             for meas_nb in range(len(sigma)):  # Loop over mesh nodes
                 # See eq. 4.4 thesis Isabelle p.95
                 # ------------------------------------

@@ -83,7 +83,11 @@ simu.create_mesh_vtk(verbose=False)
 simu.update_zone()
 
 layers = {1: [0, 2], 2: [2, 6], 3: [6, 10]}
-zone3d_flag = mt.map_layers_2_DEM(layers, simu.DEM, simu.zone, simu.dem_parameters)
+zone3d_flag = mt.map_layers_2_DEM(layers, 
+                                  simu.DEM, 
+                                  simu.zone, 
+                                  simu.dem_parameters
+                                  )
 
 #%% Define a dictionnary of Soil Physical Properties
 

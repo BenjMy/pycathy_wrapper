@@ -76,12 +76,9 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     if 'mesh_nodes_modif' in ERT_meta_dict:
         print('mesh transformation before interpolation')
         in_nodes_mod_m = ERT_meta_dict['mesh_nodes_modif']
-        # print(in_nodes_mod_m)
     else:
-    # mesh_nodes_modif is None:
         print('no mesh transformation before interpolation')
         in_nodes_mod_m = in_nodes_mod[:, :]
-        # in_nodes_mod_m = in_nodes_mod[:, :]
 
     path = os.getcwd()
     if "path" in kwargs:
@@ -488,7 +485,7 @@ def add_attribute_2mesh(
 
     meshname = name + ".vtk"
 
-    saveMesh = True
+    # saveMesh = True
     if saveMesh:
         path = os.getcwd()
         if "path" in kwargs:

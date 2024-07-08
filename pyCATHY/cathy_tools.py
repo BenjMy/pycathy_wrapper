@@ -2472,6 +2472,8 @@ class CATHY:
         # -----------------------------------
         if len(zone3d) == 0:
             print("homogeneous soil")
+            # nstr = self.dem_parameters["nstr"]
+            # self.zone3d= [np.ones(np.shape(self.DEM))]*nstr
             
             # check size of soil properties map versus nb of zones/ nb of layers
             # --------------------------------------------------------------------
@@ -2481,7 +2483,7 @@ class CATHY:
         
         else:
             self.zone3d=zone3d
-            self.dem_parameters['nzone'] = np.size(zone3d[0])
+            self.dem_parameters['nzone'] = np.size(self.zone3d[0])
             self.update_dem_parameters()
             self.update_cathyH(MAXZON=self.dem_parameters['nzone'])
 
@@ -4101,7 +4103,9 @@ class CATHY:
     def load_pickle_backup(self,filename=""):
         if len(filename) == 0:
             filename = os.path.join(
-                self.workdir, self.project_name, self.project_name + "_df.pkl"
+                self.workdir, 
+                self.project_name, 
+                self.project_name + "_df.pkl"
             )
             # filename = os.path.join(
             #     self.workdir, self.project_name, str(idsimu) + "_df.pkl"

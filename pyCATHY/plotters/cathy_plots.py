@@ -651,20 +651,10 @@ def show_vtk(
             # -----------------------------------------------------------------
     if savefig is True:
         ax.view_xz()
-        # ax.save_graphic(
-        #     os.path.join(path, filename + unit + ".svg"),
-        #     title="",
-        #     raster=True,
-        #     painter=True,
-        # )
-
-        # print("figure saved" + os.path.join(path, filename + ".svg"))
         cpos = ax.show(screenshot= os.path.join(path, filename + unit + ".png"))
         print("figure saved" + os.path.join(path, filename + unit + ".png"))
         ax.close()
-    # else:
-    #     ax.show_axes()
-    #     ax.show()
+
 
     pass
 
@@ -1587,8 +1577,23 @@ def DA_plot_parm_dynamic_scatter(
     if "color" in kwargs:
         color = kwargs["color"]
     
-    boxplot = df.boxplot(color='grey',ax=ax)
-    boxplot.set_xticklabels(name, rotation=90)
+    if len(df.columns)>15:
+        # nii = [int(ni) for ni in np.arange(0,len(df.columns),6)]
+        name = [str(ni+1) for ni in list_assimilation_times]
+        df = df.iloc[:,list_assimilation_times]
+        
+    boxplot = df.boxplot(
+                         color=color,
+                         ax=ax,
+                         grid=False, 
+                         flierprops=dict(marker='o', 
+                                         color='black', 
+                                         markersize=5
+                                         )
+                         )
+    boxplot.set_xticklabels(name, 
+                            # rotation=90
+                            )
     
     ax.set_ylabel(parm)
     ax.set_xlabel("assimilation #")
@@ -1814,12 +1819,6 @@ def DA_plot_time_dynamic(
     prep_DA = prepare_DA_plot_time_dynamic(
         DA, state=state, nodes_of_interest=nodes_of_interest, **kwargs
     )
-    # print(prep_DA["ens_mean_isENS_time"].columns)
-    # unique_times = prep_DA["ens_mean_isENS_time"]["time"].unique()
-
-        
-    # print(prep_DA["ens_mean_isENS_time"].head())
-
     if "ax" in kwargs:
         ax = kwargs["ax"]
     else:
@@ -1827,7 +1826,7 @@ def DA_plot_time_dynamic(
         ax = fig.add_subplot()
 
     alpha = 0.5
-    colors_minmax = 'blue'
+    colors_minmax = 'darkblue'
     if "colors_minmax" in kwargs:
         colors_minmax = kwargs["colors_minmax"]
         

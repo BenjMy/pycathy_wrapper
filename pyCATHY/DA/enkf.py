@@ -56,40 +56,33 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0]
     meas_size = data.shape[0]
-    
-    # print(f'shape ensemble: {np.shape(ensemble)}')
-    # print(f'ens_size: {ens_size}')
 
     # First combine the ensemble and param arrays (augmented state matrice)
     # -------------------------------------------------------------------------
+    ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
+    ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+
     
-    # Calculate ensemble mean
-    ensemble_mean = (1.0 / float(ens_size)) * np.tile(ensemble.sum(1), 
-                                                      (ens_size, 1)).transpose()
-
-    # calculate parameter mean
     if len(param) > 0:
-        # Take the mean line by line i.e. each line is an independant parameter to update
-        param_mean = []
-        for l in range(len(param)):
-            param_mean.append(
-                (1.0 / float(ens_size))
-                * np.tile(param[l, :].sum(0), (ens_size, 1)).transpose()
-            )
-        param_mean = np.vstack(param_mean)
+        # Take the mean line by line i.e. each line is an independent parameter to update
+        param_mean = np.mean(param, axis=1, keepdims=True)
+        param_mean = np.tile(param_mean, (1, ens_size))
 
+    # Combine the state and parameter means to form the augmented state mean
     if len(param) > 0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
         augm_state = np.vstack([ensemble, param])
     else:
         augm_state_mean = ensemble_mean
         augm_state = ensemble
-
+        
     # Calculate ensemble perturbation from mean
     # -------------------------------------------------------------------------
     # augm_state_pert should be (sim_size+ParSize)x(ens_size)
     augm_state_pert = augm_state - augm_state_mean
+    augm_state_pert[sim_size:, :][0]
 
+    
     # Calculate data perturbation from ensemble measurements
     # -------------------------------------------------------------------------
     # data_pert should be (MeasSize)x(ens_size)
@@ -99,7 +92,18 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
         else:
             print(observation)
             print("observation is a list? should be a numpy array")
-    data_pert = (data - observation.T).T
+            
+    if  data.ndim>0:
+        # print(f"Number of dimensions >0:
+        # Case of dual analysis where data are within an ensemble
+        # OR case where data are perturbated (add noise and create an ensemble)
+        data_pert = (data.T - observation.T).T
+    else:
+        data_pert = (data - observation.T).T
+
+
+    # print(np.shape(data))
+    # print(np.shape(observation.T))
     # data_pert = (data - observation).T
 
     if np.max(abs(data_pert)) > 1e3:
@@ -148,7 +152,9 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # Adjust ensemble perturbations
     # -------------------------------------------------------------------------
     # Should be (sim_size+ParSize)x(MeasSize)
-    pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, obs_pert.T)
+    pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
+                                                obs_pert.T
+                                                )
 
     # Compute analysis
     # -------------------------------------------------------------------------
@@ -175,6 +181,20 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     ]
 
 
+def enkf_dual_analysis(data, data_cov, param, ensemble, observation, **kwargs):
+    
+    # 1st step update state but not parameters
+    # -----------------------------------------
+    first_step_analysis = enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs)
+    cov_data_first_step = first_step_analysis[6]   
+    
+    # 2nd step parameters, are updated by assimilating new states as observations
+    # -----------------------------------------
+    cov_data_second_step = np.diag([np.mean(np.diag(cov_data_first_step))] * len(first_step_analysis[9]))   
+    observation_2nd_step = ensemble
+    return  enkf_analysis(first_step_analysis[9], cov_data_second_step, 
+                          param, ensemble, observation_2nd_step, **kwargs)
+    
 # def enkf_analysis_Sakov(data, data_cov, param, ensemble, observation,Sakov=True):
     
 #     [

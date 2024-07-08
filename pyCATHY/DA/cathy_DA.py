@@ -134,24 +134,59 @@ def run_analysis(
     
     if DA_type == "enkf_analysis_inflation":
         Analysis = enkf.enkf_analysis_inflation(
-            data, data_cov, param, ensembleX[id_state], prediction, **kwargs
-        )
+                                                data, 
+                                                data_cov, 
+                                                param, 
+                                                ensembleX[id_state], 
+                                                prediction, 
+                                                **kwargs
+                                                )
         return Analysis
     
     
     if DA_type == "enkf_analysis_inflation_multiparm":
         Analysis = enkf.enkf_analysis_inflation_multiparm(
-            data, data_cov, param, ensembleX[id_state], prediction, **kwargs
-            )
+                                                        data, 
+                                                        data_cov, 
+                                                        param, 
+                                                        ensembleX[id_state], 
+                                                        prediction, 
+                                                        **kwargs
+                                                        )
         return Analysis
 
+
+    if DA_type == "enkf_dual_analysis":
+        Analysis = enkf.enkf_dual_analysis(data, 
+                                           data_cov, 
+                                           param, 
+                                           ensembleX[id_state], 
+                                           prediction,
+                                           Sakov=False,
+                                           )
+        return Analysis
+    
+    if DA_type == "enkf_dual_analysis_Sakov":
+        Analysis = enkf.enkf_dual_analysis(data, 
+                                           data_cov, 
+                                           param, 
+                                           ensembleX[id_state], 
+                                           prediction,
+                                           Sakov=True,
+                                           )
+        return Analysis
+    
     
     if DA_type == "pf":
         print("not yet implemented")
 
         [Analysis, AnalysisParam] = pf.pf_analysis(
-            data, data_cov, param, ensembleX[id_state], prediction
-        )
+                                                    data, 
+                                                    data_cov,
+                                                    param, 
+                                                    ensembleX[id_state], 
+                                                    prediction
+                                                    )
         return Analysis, AnalysisParam
 
 
@@ -259,6 +294,11 @@ class DA(CATHY):
         self.dict_parm_pert = dict_parm_pert
         self.df_DA = pd.DataFrame()
         self.df_Archie = pd.DataFrame()
+        
+        # backup all spatial ET iterations (self.backupfort777)
+        # ET file are large!
+        self.backupfort777 = False 
+        
         # Infer ensemble size NENS from perturbated parameter dictionnary
         # -------------------------------------------------------------------
         for name in self.dict_parm_pert:
@@ -618,9 +658,10 @@ class DA(CATHY):
                 # '':,
                 # '':,
             }
-              
-                
-            self.backup_fort777()
+             
+            # backup ET map for each iteration of ensemble numbers
+            if self.backupfort777: 
+                self.backup_fort777()
             self.backup_results_DA(meta_DA)
             self.backup_simu()
             
@@ -951,30 +992,30 @@ class DA(CATHY):
         
         _ , obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
 
-        fig, ax = plt.subplots(figsize=(4,4))
-        # for i in range(len(prediction_valid.T)):
-        ax.scatter(data,np.mean(prediction_valid,axis=1),label='mean')
-        ax.scatter(data,np.median(prediction_valid,axis=1),label='median')
-        ax.scatter(data,np.min(prediction_valid,axis=1),color='k',alpha=0.1)
-        ax.scatter(data,np.max(prediction_valid,axis=1),color='k',alpha=0.1)
-        plt.legend()
-        # Add 1:1 line
-        lims = [min(min(data), min(np.mean(prediction_valid, axis=1))),
-                max(max(data), max(np.mean(prediction_valid, axis=1)))]
-        ax.plot(lims, lims, 'k--', alpha=0.75, zorder=0)
+        # fig, ax = plt.subplots(figsize=(4,4))
+        # # for i in range(len(prediction_valid.T)):
+        # ax.scatter(data,np.mean(prediction_valid,axis=1),label='mean')
+        # ax.scatter(data,np.median(prediction_valid,axis=1),label='median')
+        # ax.scatter(data,np.min(prediction_valid,axis=1),color='k',alpha=0.1)
+        # ax.scatter(data,np.max(prediction_valid,axis=1),color='k',alpha=0.1)
+        # plt.legend()
+        # # Add 1:1 line
+        # lims = [min(min(data), min(np.mean(prediction_valid, axis=1))),
+        #         max(max(data), max(np.mean(prediction_valid, axis=1)))]
+        # ax.plot(lims, lims, 'k--', alpha=0.75, zorder=0)
         
-        ax.set_xlabel(f' {obs2eval_key[0]} Observations')
-        ax.set_ylabel(f' {obs2eval_key[0]} Predictions')
-        ax.set_xlim([min(data), max(data)])
-        ax.set_ylim([min(data), max(data)])
-        ax.set_aspect('equal')
+        # ax.set_xlabel(f' {obs2eval_key[0]} Observations')
+        # ax.set_ylabel(f' {obs2eval_key[0]} Predictions')
+        # ax.set_xlim([min(data), max(data)])
+        # ax.set_ylim([min(data), max(data)])
+        # ax.set_aspect('equal')
 
-        fig.savefig(os.path.join(self.workdir,
-                                 self.project_name,
-                                 'T' + str(self.count_DA_cycle) +
-                                 '_11line.png'
-                                 )
-                    )
+        # fig.savefig(os.path.join(self.workdir,
+        #                          self.project_name,
+        #                          'T' + str(self.count_DA_cycle) +
+        #                          '_11line.png'
+        #                          )
+        #             )
         
         # plot ensemble covariance matrices and changes (only for ENKF)
         # ---------------------------------------------------------------------
@@ -1605,7 +1646,11 @@ class DA(CATHY):
             
         #%% check if contains nan (if not update soil file)
         contains_nan = df_SPP_2fill[ens_nb].isna().any().any()
-
+        
+        if hasattr(self, 'zone3d') is False:
+            nstr = self.dem_parameters["nstr"]
+            self.zone3d= [np.ones(np.shape(self.DEM))]*nstr
+        
         if contains_nan==False:
             self.update_soil(
                 SPP_map=df_SPP_2fill[ens_nb],
