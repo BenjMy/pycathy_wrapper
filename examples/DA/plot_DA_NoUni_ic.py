@@ -1,21 +1,12 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""
+DA randomn ic/layers
+====================
 
-# ---
-# title: Working with pyCATHY and DA
-# subtitle: DA with non-uniform ic
-# license: CC-BY-4.0
-# github: https://github.com/BenjMy/ETH_pyCATHY/
-# subject: Tutorial
-# authors:
-#   - name: Benjamin Mary
-#     email: benjamin.mary@ica.csic.es
-#     corresponding: true
-#     orcid: 0000-0001-7199-2885
-#     affiliations:
-#       - ICA-CSIC
-# date: 2024/04/12
-# ---
+The notebook illustrate how to create an ensemble of model with varying initial conditions/soil layers
+
+*Estimated time to run the notebook = 2min*
+
+"""
 
 import os
 import numpy as np
@@ -27,6 +18,7 @@ from pyCATHY.plotters import cathy_plots as CTp
 
 
 #%% Define scenario where initial conditions are perturbated by layers
+# -----------------------
 nlay = 6
 scenario = {
             'per_name':['ic'],
@@ -94,6 +86,7 @@ for dp in list_pert:
 
 #%% Update ensemble and plot/save ic vtk
 # This in normally directly called when using run_DA_sequential()
+# -----------------------
 
 simuWithDA._create_subfolders_ensemble()
 simuWithDA.update_ENS_files(var_per_dict_stacked, 
@@ -102,6 +95,7 @@ simuWithDA.update_ENS_files(var_per_dict_stacked,
                             )
 
 #%% Plot results
+# -----------------------
 
 pl = pv.Plotter(shape=(1,2))
 for i, ensi in enumerate([1,3]):
