@@ -816,9 +816,8 @@ def _subplot_cellsMarkerpts(mesh_pv_attributes, xyz_layers0, xyzlayers1):
     pl.show()
 
 
-def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name):
+def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers):
 
-    # pl = pv.Plotter(off_screen=(True))
     pl = pv.Plotter()
     pl.add_mesh(mesh_pv_attributes, show_edges=True, opacity=0.4)
     pl.show_grid()
@@ -829,11 +828,6 @@ def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name):
         scalars=xyz_layers[:, -1],
     )
     pl.set_scale(zscale=5)
-
-    # pl.show(screenshot=os.path.join(workdir, 
-    #                                 project_name, 
-    #                                 "layersMarkers.png")
-    #         )
     pl.show()
 
 
@@ -939,8 +933,6 @@ def _build_xyz_marker_mat_squareDEM(
     _find_nearest_point2DEM(
         to_nodes,
         mesh_pv_attributes,
-        workdir,
-        project_name,
         xyz_layers_cells,
         xyz_layers_nodes,
     )
@@ -949,15 +941,12 @@ def _build_xyz_marker_mat_squareDEM(
 def _find_nearest_point2DEM(
     to_nodes,
     mesh_pv_attributes,
-    workdir,
-    project_name,
     xyz_layers_cells=[],
     xyz_layers_nodes=[],
+    saveMeshPath=None,
 ):
 
     if to_nodes:
-        # print('to_nodes')
-
         # loop over mesh cell centers and find nearest point to dem
         # ----------------------------------------------------------------
         node_markers = []
@@ -969,36 +958,10 @@ def _find_nearest_point2DEM(
                 + (xyz_layers_nodes[:, 2] - nmesh[2]) ** 2
             )** 0.5
             node_markers.append(xyz_layers_nodes[np.argmin(d), 3])
-            # dbackup_nodes.append(min(d))
         # add data to the mesh
         # ----------------------------------------------------------------
         mesh_pv_attributes["node_markers_old"] = node_markers
-
-        # simu.mesh_pv_attributes.save('mesh_with_markers.vtk',
-        #                              binary=False)
-
     else:
-        # print('to_cells')
-
-        # loop over mesh cell centers and find nearest point to dem
-        # ----------------------------------------------------------------
-        # cell_markers = []
-        # for nmesh in mesh_pv_attributes.cell_centers().points:
-        #     # print(str(nmesh) + '/' + str(len(mesh_pv_attributes.cell_centers().points)))
-        #     # euclidean distance
-        #     d = (
-        #         (xyz_layers_cells[:, 0] - nmesh[0]) ** 2
-        #         + (xyz_layers_cells[:, 1] - nmesh[1]) ** 2
-        #         + (abs(xyz_layers_cells[:, 2]) - abs(nmesh[2])) ** 2
-        #     ) ** 0.5
-        #     cell_markers.append(xyz_layers_cells[np.argmin(d), 3])
-        #     # dbackup_cell.append(min(d))
-
-        # add data to the mesh
-        # ----------------------------------------------------------------
-        # mesh_pv_attributes["cell_markers"] = cell_markers
-
-
         # Get the mesh cell centers
         cell_centers = mesh_pv_attributes.cell_centers().points
 
@@ -1015,30 +978,10 @@ def _find_nearest_point2DEM(
         mesh_pv_attributes["cell_markers"] = cell_markers
         nodepv = mesh_pv_attributes.cell_data_to_point_data()
         noderounded = [np.ceil(npv) for npv in nodepv.point_data['cell_markers']]
-        # np.unique(noderounded)
         mesh_pv_attributes['node_markers_new'] = noderounded
 
-        # mesh_pv_attributes['node_markers_new2'] = nodepv.point_data['cell_markers']
-
-        # len(noderounded)
-        
-        # np.unique(mesh_pv_attributes.point_data['node_markers_new'])
-        # mesh_pv_attributes.point_data.set_scalars(nodepv, 'node_markers')
-
-    mesh_pv_attributes.save(
-        os.path.join(
-            workdir,
-            project_name,
-            "vtk/",
-            project_name + ".vtk",
-        ),
-        binary=False,
-    )
-
-
-
-    # plt.plot(dbackup_cell)
-    # plt.plot(dbackup_nodes)
+    if saveMeshPath is not None:
+        mesh_pv_attributes.save(saveMeshPath,binary=False)
 
 
 def add_markers2mesh(
@@ -1046,57 +989,19 @@ def add_markers2mesh(
     dem,
     mesh_pv_attributes,
     dem_parameters,
-    workdir,
-    project_name,
     hapin,
     grid3d,
     to_nodes=False,
     show=False,
+    saveMeshPath=None,
 ):
-
-    # # if len(x) == len(y):
-
-    # #     _build_xyz_marker_mat_squareDEM(
-    # #         zones3d_layered,
-    # #         mesh_pv_attributes,
-    # #         hapin,
-    # #         dem_parameters,
-    # #         workdir,
-    # #         project_name,
-    # #         to_nodes,
-    # #     )
-
 
     # Reduce all to 1D
     # ------------------------------------------------------------------
-    # dem_3d_layers_array = np.ravel(dem_mat3d_layers)
-    # grid_coords_layers_array = np.vstack([grid3d['mesh3d_nodes']] * dem_parameters["nstr"])    
     zones3d_layers_array = np.ravel(zones3d_layered)
     
     x, y = cplt.get_dem_coords(dem,hapin=hapin)
-    
-    
-    # print(hapin['xllcorner'])
-    # print(hapin['xllcorner'],hapin['yllcorner'])
-    
-    # print('x[0],y[0]')
-    # print(x[0],y[0])
-    # print(x[1],y[1])
-
-    # print('*'*20)
-    # print('initial dem shape')
-    # print(np.shape(dem))
-    # print(dem[0][0])
-
-    # dem_flip = np.flipud(dem)
-
-    # dem_flip = np.flipud(np.fliplr(dem))
     dem_flip = dem
-    # print('*'*20)
-    # print('flip dem shape')
-    # print(np.shape(dem_flip))
-    # print(dem_flip[0][0])
-    
     
     # Get layer top and bottom
     # ------------------------------------------------------------------
@@ -1114,76 +1019,18 @@ def add_markers2mesh(
     if to_nodes:
         dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
     else:
-        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
-        
-    # print('*'*20)
-    # print('dem_mat3d_layers shape')
-    # print(np.shape(dem_mat3d_layers))
-    # print(dem_mat3d_layers[0][0])
-    
-        
-    # print('*'*20)
-    # print('zone3d_top shape')
-    # print(np.shape(zone3d_top))
-    # print(zone3d_top[0][0])
-    
-    # print('*'*20)
-    # print('x shape')
-    # print(np.shape(x))
-    
-    # print('*'*20)
-    # print('y shape')
-    # print(np.shape(y))
-    
+        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2] 
 
     # Create a regular mesh from the DEM x and y coordinates and elevation
     # ------------------------------------------------------------------
     xgrid, ygrid = np.meshgrid(x, y)
-    
-    
-    # print('*'*20)
-    # print('xgrid shape')
-    # print(np.shape(xgrid))
-    
-    # print('*'*20)
-    # print('ygrid shape')
-    # print(np.shape(ygrid))
-    
-    # print('je suis la')
     grid_coords_dem = np.array(
         [
             np.ravel(xgrid),
             np.ravel(ygrid),
         ]
     ).T
-    
-    # print(grid_coords_dem)
-    # print('*'*20)
-    # print('grid_coords_dem shape')
-    # print(np.shape(grid_coords_dem))
-    
-  
-    # fig, ax = plt.subplots()
-    # ax = plt.axes(projection="3d")
-
-    # cmap=ax.scatter(grid_coords_dem[:,0],
-    #                 grid_coords_dem[:,1],
-    #                 np.ravel(zone3d_top[0]),
-    #                 c=np.ravel(zone3d_top[0]))
-    
-    # ax.scatter(grid3d['mesh3d_nodes'][:,0],
-    #             grid3d['mesh3d_nodes'][:,1],
-    #             grid3d['mesh3d_nodes'][:,2], 
-    #             s=2, 
-    #             cmap = 'coolwarm')
-    # ax.set_xlabel('Northing (m)')
-    # ax.set_ylabel('Easting (m)')
-
-
-    # plt.title('grid_coords_dem l0')
-    # plt.colorbar(cmap,ax=ax)
-    
-    
+        
     # Reduce all to 1D
     # ------------------------------------------------------------------
     dem_mat_stk = np.ravel(dem_mat3d_layers)
@@ -1193,28 +1040,15 @@ def add_markers2mesh(
     
 
     zones3d_col_stk = np.ravel(zones3d_layered)
-    # xyz_layers  = np.c_[grid_coords_stk_rep[:,:-1],zones3d_col_stk]
     xyz_layers = np.c_[grid_coords_stk_rep, dem_mat_stk, zones3d_col_stk]
 
-
-    # fig, ax = plt.subplots()
-    # cmap=ax.scatter(xyz_layers[:,0],
-    #                 xyz_layers[:,1],
-    #                 c=xyz_layers[:,2]
-    #                 )
-    # plt.colorbar(cmap,ax=ax)
-    # plt.title('xyz_layers')
-
-
-    # print('_plot_cellsMarkerpts')
     # Plot to check position of points VS mesh
     # ------------------------------------------------------------------
     
     if show:
         _plot_cellsMarkerpts(mesh_pv_attributes, 
-                              xyz_layers, 
-                              workdir, 
-                              project_name)
+                             xyz_layers, 
+                             )
 
     #%%
     # print('_find_nearest_point2DEM')
@@ -1223,12 +1057,7 @@ def add_markers2mesh(
     _find_nearest_point2DEM(
         to_nodes,
         mesh_pv_attributes,
-        workdir,
-        project_name,
         xyz_layers,
         xyz_layers,
+        saveMeshPath
     )
-
-
-    # mesh_pv_attributes['nodes_m'] = mesh_pv_attributes.cell_data_to_point_data()
-    # mesh_pv_attributes.plot(scalars='nodes_m')

@@ -748,13 +748,7 @@ class CATHY:
             self.console.rule("", style="yellow")
             self.update_parm()
 
-        DEMRES = 1
-        # ROWMAX = max([self.hapin["N"],self.hapin["M"]])
-        # COLMAX = max([self.hapin["N"],self.hapin["M"]])
-        
-        # ROWMAX = self.hapin["N"]
-        # COLMAX = self.hapin["M"]
-                
+        DEMRES = 1                
         ROWMAX = self.hapin["M"]
         COLMAX = self.hapin["N"]
         
@@ -804,29 +798,14 @@ class CATHY:
                 # "MAXVEG": 1, #
             }
 
-
-        # self.cathyH['ROWMAX']=ROWMAX
-        # self.cathyH['COLMAX']=COLMAX
-        
-        # create dictionnary from kwargs
         for kk, value in kwargs.items():
             if kk in self.cathyH.keys():
                 self.cathyH[kk] = value
-                # if verbose:
-                #     self.console.print(f"modified: {kk} | value: {value}")
-
-
-        # self.cathyH['COLMAX'] = 130
-        # self.cathyH['ROWMAX'] = 246
         
         self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"])
         self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
         self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
-        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30
-        # self.cathyH['NRMAX'] = 1
-        
-        
-
+        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30      
         self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*3
         # self.cathyH['MAXTRM'] = 1599000
         # MAXTRM=1599000
@@ -2471,10 +2450,7 @@ class CATHY:
         # check size of the heteregeneity
         # -----------------------------------
         if len(zone3d) == 0:
-            print("homogeneous soil")
-            # nstr = self.dem_parameters["nstr"]
-            # self.zone3d= [np.ones(np.shape(self.DEM))]*nstr
-            
+            print("homogeneous soil")           
             # check size of soil properties map versus nb of zones/ nb of layers
             # --------------------------------------------------------------------
             if isinstance(SPP_map["PERMX"], float):
@@ -2594,25 +2570,30 @@ class CATHY:
         dem, dem_header = self.read_inputs('dem')
 
         if len(zone3d) > 0:
+            
+            savemeshpath = os.path.join(self.workdir, self.project_name,
+                                        'vtk',
+                                        self.project_name + '.vtk'
+                                        )
+            if 'saveMeshPath' in kwargs:
+                saveMeshPath = kwargs.pop('saveMeshPath')
+                
             mt.add_markers2mesh(
                                 zone3d,
                                 dem,
                                 self.mesh_pv_attributes,
                                 self.dem_parameters,
-                                self.workdir,
-                                self.project_name,
                                 self.hapin,
                                 self.grid3d,
                                 to_nodes=False,
                                 show=show,
+                                saveMeshPath=saveMeshPath,
                             )
 
             # mt.add_markers2mesh(
             #                         zone3d,
             #                         self.mesh_pv_attributes,
             #                         self.dem_parameters,
-            #                         self.workdir,
-            #                         self.project_name,
             #                         self.hapin,
             #                         to_nodes=True
             #                     )
@@ -3511,7 +3492,11 @@ class CATHY:
 
         pass
 
-    def map_dem_prop_2mesh(self, prop_name, prop_map, to_nodes=False):
+    def map_dem_prop_2mesh(self, prop_name, 
+                           prop_map, 
+                           zones_markers_3d=None,
+                           to_nodes=False,
+                           **kwargs):
         """
         Map DEM raster property to the CATHY mesh nodes/cells.
 
@@ -3531,36 +3516,60 @@ class CATHY:
         pv.Mesh
             Updated pyvista mesh with new property.
         """
+        
+        if hasattr(self, "mesh_pv_attributes") == False:
+            self.create_mesh_vtk()
+        
+        saveMeshPath = os.path.join(
+                                    self.workdir, 
+                                    self.project_name, 
+                                    "vtk/", 
+                                    self.project_name + ".vtk"
+                                    )
+        if 'saveMeshPath' in kwargs:
+            saveMeshPath = kwargs.pop('saveMeshPath')
+        # if 'node_markers_new' in self.mesh_pv_attributes == False:
+            
+        if zones_markers_3d is None:
+            zones_markers_3d = []
+            for l in range(self.dem_parameters['nstr']):
+                zones_markers_3d.append(np.ones([self.hapin["M"], self.hapin["N"]])*l)
+            
+            mt.add_markers2mesh(
+                                zones_markers_3d,
+                                self.DEM,
+                                self.mesh_pv_attributes,
+                                self.dem_parameters,
+                                self.hapin,
+                                self.grid3d,
+                                to_nodes=False,
+                                show=False,
+                                saveMeshPath = saveMeshPath
+                            )
+            
+        
         if to_nodes:
             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_new"]))
             for m in range(len(prop_map)):
                 prop_mesh_nodes[
-                                self.mesh_pv_attributes["node_markers_new"] == m + 1
+                                self.mesh_pv_attributes["node_markers_new"] == m
                                 ] = prop_map[m]
             self.mesh_pv_attributes[prop_name] = prop_mesh_nodes
-
-            self.mesh_pv_attributes.save(
-                os.path.join(
-                    self.workdir, self.project_name, "vtk/", self.project_name + ".vtk"
-                ),
-                binary=False,
-            )
+            self.mesh_pv_attributes.save(saveMeshPath,
+                                            binary=False,
+                                            )
             return prop_mesh_nodes
 
         else:
             prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers"]))
             for m in range(len(prop_map)):
                 prop_mesh_cells[
-                    self.mesh_pv_attributes["cell_markers"] == m + 1
+                    self.mesh_pv_attributes["cell_markers"] == m
                 ] = prop_map[m]
             self.mesh_pv_attributes[prop_name] = prop_mesh_cells
-
-            self.mesh_pv_attributes.save(
-                os.path.join(
-                    self.workdir, self.project_name, "vtk/", self.project_name + ".vtk"
-                ),
-                binary=False,
-            )
+            self.mesh_pv_attributes.save(saveMeshPath,
+                                            binary=False,
+                                            )
             self.mesh_pv_attributes.set_active_scalars(prop_name)
             prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data()
 

@@ -1745,7 +1745,7 @@ class DA(CATHY):
                             shellprint_update=shellprint_update,
                         )
             shellprint_update = False
-
+        
         # Initialise matrice of ensemble
         # ------------------------------
         FeddesParam_mat_ens = []  # matrice of ensemble for Feddes parameters
@@ -1830,7 +1830,7 @@ class DA(CATHY):
 
                 # ic update (i.e. water table position update)
                 # --------------------------------------------------------------
-                elif key.casefold() in "WTPOSITION".casefold():
+                elif key_root[0].casefold() in "WTPOSITION".casefold():
                     if kwargs["cycle_nb"] == 0:
                         self.update_ic(
                             INDP=4,
@@ -1845,18 +1845,39 @@ class DA(CATHY):
                         
                 # ic update (i.e. initial pressure head update)
                 # --------------------------------------------------------------
-                elif key.casefold() in "ic".casefold():
-                    if kwargs["cycle_nb"] == 0:
+                elif key_root[0].casefold() in "ic".casefold():
+                    match_ic_withLayers = re.search(r'ic\d+', key)
+                        
+                    if match_ic_withLayers:
+                        DApath = os.getcwd()
+                        saveMeshPath = os.path.join(DApath, "vtk", 
+                                                     self.project_name + '.vtk'
+                                                     ) 
+                        ic_values_by_layers = dict_parm_pert[key]['ini_ic_withLayers'][:,ens_nb]
+                        ic_nodes = self.map_dem_prop_2mesh('ic',
+                                                            ic_values_by_layers, 
+                                                            to_nodes=True,
+                                                            saveMeshPath=saveMeshPath,
+                                                            )
                         self.update_ic(
                             INDP=0,
                             IPOND=0,
-                            pressure_head_ini=dict_parm_pert[key]["ini_perturbation"][
-                                ens_nb
-                            ],
-                            filename=os.path.join(os.getcwd(), "input/ic"),
+                            pressure_head_ini=ic_nodes,
+                            filename=os.path.join(DApath, "input/ic"),
                             backup=False,
                             shellprint_update=shellprint_update,
                         )
+                    else:
+                        if kwargs["cycle_nb"] == 0:
+                            self.update_ic(
+                                INDP=0,
+                                IPOND=0,
+                                pressure_head_ini=dict_parm_pert[key]["ini_perturbation"][ens_nb],
+                                filename=os.path.join(os.getcwd(), "input/ic"),
+                                backup=False,
+                                shellprint_update=shellprint_update,
+                            )
+
                 # kss update
                 # --------------------------------------------------------------
                 elif key_root[0].casefold() in 'ks':                   

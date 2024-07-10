@@ -6,9 +6,10 @@
 
 import pandas as pd
 import numpy as np
-import scipy.stats as stats
+from scipy.stats import stats, qmc, norm
 from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
+import re 
 
 #%%
 def check_distribution(parm2check):
@@ -50,6 +51,11 @@ def create_dict_entry(
                          clip_min,clip_max,
                          NENS,
                       ):
+    
+    per_type = scenario["per_type"][index]
+    if type(nstri) == int: 
+        per_type = scenario["per_type"][index][nstri]
+        
     dict_parm_entry = {
         "type_parm": name + str(nstri),
         "nominal": scenario_nom,  # nominal value
@@ -58,7 +64,7 @@ def create_dict_entry(
         "units": "",  # units
         "sampling_type": "normal",
         "ensemble_size": NENS,  # size of the ensemble
-        "per_type": scenario["per_type"][index],
+        "per_type": per_type,
         "savefig": name + str(nstri) + ".png",
         "surf_zones_param": nstri,
         "clip_min": clip_min,
@@ -128,34 +134,32 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
         
         clip_min = None
         clip_max = None
-        
-        index = scenario["per_name"].index("ic")
-
-        ic = create_dict_entry(
-                    'ic',scenario,index,'', 
-                    scenario_nom, scenario_mean, scenario_sd, 
-                    clip_min,clip_max,
-                    NENS,
-                    )
-        # check_distribution(ic)
+        if type(scenario["per_nom"][index]) is list:                   
+            for nstri in range(nlayers):
                 
-        # ic = {
-        #     "type_parm": "ic",
-        #     "nominal": scenario["per_nom"][index],  # nominal value
-        #     "mean": scenario["per_mean"][index],
-        #     "sd": scenario["per_sigma"][index],
-        #     "units": "pressure head $(m)$",  # units
-        #     "sampling_type": "normal",
-        #     "ensemble_size": NENS,  # size of the ensemble
-        #     "per_type": scenario["per_type"][index],
-        #     "savefig": "ic.png",
-        # }
-        list_pert.append(ic)
+                if nlayers > 1:
+                    scenario_nom = scenario["per_nom"][index][nstri]
+                    scenario_mean = scenario["per_mean"][index][nstri]
+                    scenario_sd = scenario["per_sigma"][index][nstri]
+    
+                ic = create_dict_entry(
+                            'ic',scenario,index,nstri, 
+                            scenario_nom, scenario_mean, scenario_sd, 
+                            clip_min,clip_max,
+                            NENS,
+                            )
+                
+                list_pert.append(ic)
+        else: 
+            
+            ic = create_dict_entry(
+                        'ic',scenario,index,'', 
+                        scenario_nom, scenario_mean, scenario_sd, 
+                        clip_min,clip_max,
+                        NENS,
+                        )
+            list_pert.append(ic)
 
-    # if "atmbcETp" in scenario["per_name"]:  
-    # any("atmbc" in item for item in ['ic', 'atmbcETp'])
-    
-    
     if "atmbc" in scenario["per_name"]:
         index = scenario["per_name"].index("atmbc")
 
@@ -421,19 +425,6 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
                             clip_min,clip_max,
                             NENS,
                             )
-                
-                # ks = {
-                #     "type_parm": "ks" + str(nstri),
-                #     "nominal": scenario_nom,  # nominal value
-                #     "mean": scenario_mean,
-                #     "sd": scenario_sd,
-                #     "units": "$m.s^{-1}$",  # units
-                #     "sampling_type": "lognormal",
-                #     "ensemble_size": NENS,  # size of the ensemble
-                #     "per_type": scenario["per_type"][index],
-                #     "savefig": "ks" + str(nstri) + ".png",
-                #     "surf_zones_param": nstri,
-                # }
                 list_pert.append(ks)
         else:
                 ks = create_dict_entry(
@@ -500,24 +491,8 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
                             clip_min,clip_max,
                             NENS,
                             )
-                
-                # porosity = {
-                #     "type_parm": "porosity" + str(''),
-                #     "nominal": scenario_nom,  # nominal value
-                #     "mean": scenario_mean,
-                #     "sd": scenario_sd,
-                #     "units": "",  # units
-                #     "sampling_type": "normal",
-                #     "ensemble_size": NENS,  # size of the ensemble
-                #     "per_type": scenario["per_type"][index],
-                #     "savefig": "porosity" + str('') + ".png",
-                #     "surf_zones_param": '',
-                #     "clip_min": clip_min,
-                #     "clip_max": clip_max,
-                # }
-                
+               
                 check_distribution(porosity)
-                
                 list_pert.append(porosity)
 
     #%% Plant parameters
@@ -962,6 +937,31 @@ def build_dict_attributes_pert(
     return var_per_2add
 
 
+def perturbate_parm_by_layers(type_parm,
+                              ensemble_size,
+                              nlayers,
+                              mean=[],
+                              sd=[],
+                              ):
+            
+        # Define the number of layers and the size of the ensemble
+        # num_layers = 5
+
+        # Create a Sobol sampler
+        sobol_sampler = qmc.Sobol(d=ensemble_size)
+        
+        # Generate Sobol sequence samples
+        sobol_samples = sobol_sampler.random(n=nlayers)
+        
+        # Transform the Sobol sequence to follow a normal distribution
+        pressure_head_withLayers = np.zeros((ensemble_size, nlayers))
+        pressure_head_withLayers = norm.ppf(sobol_samples, 
+                                          loc=mean, 
+                                          scale=sd
+                                          )
+        return pressure_head_withLayers
+
+        
 def perturbate_parm(
     var_per,
     parm,
@@ -996,12 +996,18 @@ def perturbate_parm(
     """
 
     savefig = False
-    if kwargs["savefig"]:
+    if 'savefig' in kwargs:
        savefig = kwargs["savefig"]
     
     if per_type=='None':
         per_type = None
-        
+    
+
+    match_ic_withLayers = re.search(r'ic\d+', type_parm)
+    nlayers = None
+    if 'nlayers' in kwargs:
+        nlayers = kwargs['nlayers']
+
     var_per_2add = {}
 
     # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
@@ -1071,8 +1077,21 @@ def perturbate_parm(
                                                                         **kwargs
                                                                         )
         savefig = False
-            
-            
+
+    elif match_ic_withLayers:
+        pressure_head_withLayers = perturbate_parm_by_layers(type_parm,
+                                                              ensemble_size,
+                                                              nlayers,
+                                                              mean,
+                                                              sd,
+                                                              )
+        key_root = re.split("(\d+)", type_parm)
+
+        parm_sampling = pressure_head_withLayers[int(key_root[1])]
+        parm_per_array = pressure_head_withLayers[int(key_root[1])]
+        var_per_2add[type_parm]['ini_ic_withLayers'] = pressure_head_withLayers
+    
+    
     # For all other types of perturbation
     # --------------------------------------------------------------------
     else:

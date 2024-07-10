@@ -80,7 +80,7 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # -------------------------------------------------------------------------
     # augm_state_pert should be (sim_size+ParSize)x(ens_size)
     augm_state_pert = augm_state - augm_state_mean
-    augm_state_pert[sim_size:, :][0]
+    # augm_state_pert[sim_size:, :][0]
 
     
     # Calculate data perturbation from ensemble measurements
