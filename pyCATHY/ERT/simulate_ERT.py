@@ -73,10 +73,16 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
             "Sequence file format not recognized use .shm or .txt as a list of quadrupoles"
         )
 
+    print(kwargs)
+    print(mesh3d)
+    print(len(mesh3d.cells()))
+    
     res0 = 1
     if "res0" in kwargs:
         res0 = kwargs["res0"]
 
+    print(res0)
+    print(len(res0))
     if len(res0) != len(mesh3d.cells()):
         raise ValueError("wrong initial resistivity input")
 

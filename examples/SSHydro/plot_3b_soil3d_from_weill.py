@@ -108,10 +108,10 @@ SPP_map = {
 #%% Update the soil file
 
 simu.update_soil(
-    SPP_map=SPP_map,
-    zone3d=zone3d_flag,
-    show=True
-)
+                    SPP_map=SPP_map,
+                    zone3d=zone3d_flag,
+                    show=True
+                )
 
 
 #%%

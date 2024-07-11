@@ -1200,7 +1200,7 @@ class CATHY:
             if keykwargs == "zratio":
                 key = "zratio(i),i=1,nstr"
                 value = list(value)
-                if sum(value) != float(1):
+                if (abs(float(sum(value))-float(1)))>1e-3:
                     self.console.rule(
                         ":warning: warning messages above :warning:", style="yellow"
                     )
@@ -2571,7 +2571,7 @@ class CATHY:
 
         if len(zone3d) > 0:
             
-            savemeshpath = os.path.join(self.workdir, self.project_name,
+            saveMeshPath = os.path.join(self.workdir, self.project_name,
                                         'vtk',
                                         self.project_name + '.vtk'
                                         )
@@ -2599,7 +2599,7 @@ class CATHY:
             #                     )
 
             # for spp in SPP_map:
-            #     self.map_dem_prop_2mesh(spp, SPP_map[spp], to_nodes=False)
+            #     self.map_prop_2mesh_markers(spp, SPP_map[spp], to_nodes=False)
 
         pass
     
@@ -3492,13 +3492,19 @@ class CATHY:
 
         pass
 
-    def map_dem_prop_2mesh(self, prop_name, 
-                           prop_map, 
-                           zones_markers_3d=None,
-                           to_nodes=False,
-                           **kwargs):
+    def map_prop_2mesh_markers(self, 
+                               prop_name, 
+                               prop_map, 
+                               zones_markers_3d=None,
+                               to_nodes=False,
+                               **kwargs):
         """
-        Map DEM raster property to the CATHY mesh nodes/cells.
+        Map a physical property to the CATHY mesh nodes/cells.
+        The mapping length should be equal to the mesh node markers 
+        unique value length.
+        If no markers (i.e zones_markers_3d = None) are defined 
+        for the mesh nodes then each layers 
+        is associated with a unique marker
 
         Parameters
         ----------
@@ -3506,11 +3512,12 @@ class CATHY:
             property name i.e. ic, POROS, ... .
         prop_map : list
             Values of the property. 
-            The list length should be equal to the mesh node markers 
-            unique value length
         to_nodes : bool, optional
             Map to the mesh nodes. The default is False.
 
+
+
+        
         Returns
         -------
         pv.Mesh

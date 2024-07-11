@@ -335,13 +335,13 @@ class DA(CATHY):
 
     def run_DA_sequential(
                             self,
-                            parallel,
                             DA_type,
                             dict_obs,
                             list_parm2update,
                             dict_parm_pert,
                             list_assimilated_obs,
-                            open_loop_run,
+                            open_loop_run=False,
+                            parallel=True,
                             **kwargs,
                         ):
 
@@ -600,11 +600,11 @@ class DA(CATHY):
                 # )
                     
                 print("!shortcut here ensemble are not validated!")
-                print(f'''max, min, mean sw: 
-                      {np.max(analysis_valid)}, 
-                      {np.min(analysis_valid)}, 
-                      {np.mean(analysis_valid)}
-                      ''')
+                # print(f'''max, min, mean psi: 
+                #       {np.max(analysis_valid)}, 
+                #       {np.min(analysis_valid)}, 
+                #       {np.mean(analysis_valid)}
+                #       ''')
 
             self.count_atmbc_cycle = self.count_atmbc_cycle + 1
 
@@ -1854,11 +1854,11 @@ class DA(CATHY):
                                                      self.project_name + '.vtk'
                                                      ) 
                         ic_values_by_layers = dict_parm_pert[key]['ini_ic_withLayers'][:,ens_nb]
-                        ic_nodes = self.map_dem_prop_2mesh('ic',
-                                                            ic_values_by_layers, 
-                                                            to_nodes=True,
-                                                            saveMeshPath=saveMeshPath,
-                                                            )
+                        ic_nodes = self.map_prop_2mesh_markers('ic',
+                                                                ic_values_by_layers, 
+                                                                to_nodes=True,
+                                                                saveMeshPath=saveMeshPath,
+                                                                )
                         self.update_ic(
                             INDP=0,
                             IPOND=0,

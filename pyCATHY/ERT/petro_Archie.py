@@ -132,16 +132,6 @@ def SW_2_ERa_DA(
     # --------------------------------------------------------------------
     ArchieParms2parse = get_Archie_ens_i(ArchieParms, Ens_nbi)
     
-    # print('o'*15)
-    # print(DA_cnb)
-    # print(ArchieParms2parse)
-    # print(df_sw)
-    # print(len(df_sw))
-    # print(mesh_CATHY_ref)
-    # print(df_sw.min())
-    # print(df_sw.max())
-    # print('o'*15)
-
     # Convert to SW to ER values
     # --------------------------------------------------------------------
     ER_converted_ti = Archie_rho_DA(
