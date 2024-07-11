@@ -1,0 +1,35 @@
+gfortran -O -o wpar mpar.f90 wpar.f90
+gfortran -O -o wbb wbb_sr.f90 mpar.f90 mbbio.f90 wbb.f90
+gfortran -O -o cbb mpar.f90 mbbio.f90 cbb.f90
+gfortran -O -o rn mpar.f90 mbbio.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 rn.f90
+gfortran -O -o rrbb mpar.f90 mbbio.f90 rrbb.f90
+gfortran -O -o rbb mpar.f90 mbbio.f90 rbb.f90
+gfortran -O -o mrbb mrbb_sr.f90 mpar.f90 mbbio.f90 mrbb.f90 
+#gfortran -O -o ij2qflag mpar.f90 mbbio.f90 ij2qflag.f90
+#95 -O -o qflag2ij mpar.f90 qflag2ij.f90
+#95 -O -o odx mpar.f90 mbbio.f90 odx.f90
+gfortran -O -o bb2shp bb2shp_sr.f90 mpar.f90 mbbio.f90 shape.f90 dbase.f90 streamer.f90 bb2shp.f90
+#95 -O -o pt pt.f90
+gfortran -O -o cppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90
+
+
+#per avere il traceback quando si ha un messaggio di errore
+#gfortran -O -o bb2shp bb2shp.f90 mpar.f90 mbbio.f90 shape.f90 dbase.f90 -ftrace=full
+#
+##per inizializzare correttamente alcune vaiabili utilizzare l'opzione -fzero
+##in particolare nel modulo dbf la variabile db%del e nel modulo shape le variabili numParts, nPunti
+#gfortran -O -o -fzero bb2shp bb2shp.f90 mpar.f90 mbbio.f90 shape.f90 dbase.f90 -ftrace=full
+#
+#
+##per avere eseguibili indipendenti da cygwin e che quindi possono essere eseguiti in altri sistemi operativi
+#
+#gfortran -O -o wpar mpar.f90 wpar.f90 -mno-cygwin
+#gfortran -O -o wbb mpar.f90 mbbio.f90 wbb.f90 -mno-cygwin
+#gfortran -O -o cbb mpar.f90 mbbio.f90 cbb.f90 -mno-cygwin
+#gfortran -O -o rn mpar.f90 mbbio.f90 rn.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 -mno-cygwin
+#gfortran -O -o rrbb mpar.f90 mbbio.f90 rrbb.f90 -mno-cygwin
+#gfortran -O -o rbb mpar.f90 mbbio.f90 rbb.f90 -mno-cygwin
+#gfortran -O -o mrbb mpar.f90 mbbio.f90 mrbb.f90 -mno-cygwin
+#gfortran -O -o bb2shp bb2shp.f90 mpar.f90 mbbio.f90 shape.f90 dbase.f90 -mno-cygwin
+
+

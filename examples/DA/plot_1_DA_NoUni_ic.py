@@ -1,8 +1,8 @@
 """
-DA randomn ic/layers
-====================
+DA with Random Initial Conditions on Soil Layers
+============================================
 
-The notebook illustrate how to create an ensemble of model with varying initial conditions/soil layers
+This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.
 
 *Estimated time to run the notebook = 2min*
 
@@ -86,7 +86,6 @@ for dp in list_pert:
 
 #%% Update ensemble and plot/save ic vtk
 # This in normally directly called when using run_DA_sequential()
-# -----------------------
 
 simuWithDA._create_subfolders_ensemble()
 simuWithDA.update_ENS_files(var_per_dict_stacked, 
