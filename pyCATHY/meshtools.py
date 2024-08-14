@@ -249,17 +249,9 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
                                          radius=rd, 
                                          pass_point_data=True
                                          )
-    # print (time.time() - t0, "seconds process time")
-    
-    # meshIN.plot()
-    # meshOUT_interp.plot()
-    # print(meshIN.max(),meshOUT_interp[scalar].max())
-    # print(meshIN.min(),meshOUT_interp[scalar].min())
-
     # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
     result = meshOUT_interp.point_data_to_cell_data()
     out_data = result[scalar]
-    
     # out_data = np.where(out_data == 0, 1e-3, out_data)
     out_data = np.where(out_data == 0, np.min(out_data)+1e-3, out_data)
 
@@ -485,7 +477,7 @@ def add_attribute_2mesh(
 
     meshname = name + ".vtk"
 
-    # saveMesh = True
+    saveMesh = True
     if saveMesh:
         path = os.getcwd()
         if "path" in kwargs:

@@ -1860,7 +1860,7 @@ class DA(CATHY):
                                                                 saveMeshPath=saveMeshPath,
                                                                 )
                         self.update_ic(
-                            INDP=0,
+                            INDP=1,
                             IPOND=0,
                             pressure_head_ini=ic_nodes,
                             filename=os.path.join(DApath, "input/ic"),

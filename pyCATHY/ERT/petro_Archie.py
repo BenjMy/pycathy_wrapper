@@ -154,6 +154,11 @@ def SW_2_ERa_DA(
     df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
         len(ER_converted_ti)
     )
+    
+    # print('Correct bug mesh size')
+    # print('-'*12)
+    # print(f'len ER converted vector {len(df_Archie["ER_converted"])}')
+
     # print(df_Archie["ER_converted"].describe())
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
@@ -164,6 +169,10 @@ def SW_2_ERa_DA(
         overwrite=True,
         path=path_CATHY,
     )
+    # print('-'*12)
+    # print('fwd mesh CATHY')
+    # print(mesh_CATHY_new_attr)
+    # print('-'*12)
 
     if "pygimli" in ERT_meta_dict["data_format"]:
         # copy attribute to pg mesh
@@ -191,9 +200,36 @@ def SW_2_ERa_DA(
         raise ValueError("Mesh format not recognized")
 
     res0 = mesh_geophy_new_attr.get_array(scalar_new)
-    # print(np.min(res0))
-
-    # fwd ERT data
+    
+    
+    # print('-'*12)
+    # print('mesh_geophy_new_attr')
+    # print(mesh_geophy_new_attr)
+    # print('-'*12)
+    
+    # print(ERT_meta_dict["forward_mesh_vtk_file"])
+    # import pyvista
+    # mesh2test = pyvista.read(ERT_meta_dict["forward_mesh_vtk_file"])
+    
+    # print('fwd mesh ERT')
+    # print(mesh2test)
+    # print('-'*12)
+    
+    # print('-'*12)
+    # print(len(res0))
+    # print('-'*12)
+    # # print(sss)
+    # # fwd ERT data
+    
+    # import pygimli as pg
+    # print('-'*12)
+    # print(ERT_meta_dict["forward_mesh_vtk_file"])
+    # print(pg.load(ERT_meta_dict["forward_mesh_vtk_file"]))
+    # print('-'*12)
+    
+    # import sys 
+    # sys.exit()
+    
     # ------------------------------------------------------------------------
     print('fwd ER data')
     if "pygimli" in ERT_meta_dict["data_format"]:       

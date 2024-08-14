@@ -97,7 +97,8 @@ def label_units(units, **kwargs):
 def change_x2date(time_in_sec, start_date):
     """change x axis in sec to datetime"""
     
-    date0 = pd.to_datetime(start_date, format="%Y%m%d")
+    # date0 = pd.to_datetime(start_date, format="%Y%m%d")
+    date0 = pd.to_datetime(start_date)
     date_label = [date0]
     date_label_str = [date0.strftime("%Y-%m-%d %H:%M:%S")]
     for d in time_in_sec[1:]:

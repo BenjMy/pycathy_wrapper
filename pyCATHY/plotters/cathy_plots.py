@@ -1450,11 +1450,11 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     keytime = "time"
     xlabel = "assimilation #"
     start_date = None
-    if "start_date" in kwargs:
-        start_date = kwargs["start_date"]
+    keytime = "time"
+    xlabel = "assimilation #"
+    if kwargs.get("start_date") is not None:
         keytime = "time_date"
         xlabel = "date"
-        
     
 
     atmbc_times = None
@@ -1605,9 +1605,11 @@ def DA_plot_parm_dynamic_scatter(
 
 def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs):
     """Select data from DA_df dataframe"""
+   
     keytime = "time"
     start_date = None
-    if "start_date" in kwargs:
+    xlabel = "time (h)"
+    if kwargs.get("start_date") is not None:
         start_date = kwargs["start_date"]
         keytime = "time_date"
 
@@ -1617,10 +1619,7 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
     atmbc_times = None
     if "atmbc_times" in kwargs:
         atmbc_times = kwargs["atmbc_times"]
-        # unique_times = DA["time"].unique()
-        # DA["time_date"] = DA["time"].map(dict(zip(unique_times, 
-        #                                             atmbc_times))
-        #                                    )       
+    
     if start_date is not None:
         dates = change_x2date(atmbc_times, start_date)
 
@@ -1633,8 +1632,6 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                 time_delta_change = datetime.timedelta(seconds=1)
                 dates.values[0] = dates[0] + time_delta_change
             dates = dates[: len(list(DA["time"].unique()))]
-        # DA["time_date"] = DA["time"].replace(list(DA["time"].unique()), dates)
-        # DA['time_date'].dt.strftime('%Y-%m-%d %H:%M:%S')
         unique_times = DA["time"].unique()
         DA["time_date"] = DA["time"].map(dict(zip(unique_times, dates)))
 
@@ -1661,12 +1658,7 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
         "isENS": isENS,
         "isOL": isOL,
     }
-    
-    
-    # print('kkeeeeeyyyyy')
-    # print(keytime)
-    # isENS_time_Ens.xs((1, 1), level=('time', 'Ensemble_nb'), axis=0)
-    # -----------------------------#
+        # -----------------------------#
     if len(nodes_of_interest) > 0:
         if len(isOL) > 0:
             nb_of_times = len(np.unique(isOL["time"]))
@@ -1735,24 +1727,12 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     True,
                 )
             else:               
-                # isENS.insert(
-                #     2,
-                #     "idnode",
-                #     np.tile(
-                #         np.arange(int(len(isENS) / (max(isENS["time"]) * (NENS + 1)))),
-                #         int(max(isENS["time"])) * (NENS + 1),
-                #     ),
-                #     True,
-                # )
-        
                 isENS.insert(
                     2,"idnode",
                     np.tile(np.arange(nb_of_nodes), nb_of_times*nb_of_ens),
                     True,
                 )
                 
-                
-            # check_nan = isENS['sw_bef_update_'].isnull().values.any()
             check_notrejected = isENS['rejected']==0
 
             isENS = isENS[check_notrejected]
@@ -1816,9 +1796,22 @@ def DA_plot_time_dynamic(
     DA, state="psi", nodes_of_interest=[], savefig=False, **kwargs
 ):
     """Plot result of Data Assimilation: state estimation evolution over the time"""
+    
+    
+    keytime = "time"
+    xlabel = "time (h)"
+    if kwargs.get("start_date") is not None:
+        start_date = kwargs["start_date"]
+        xlabel = "date"
+        keytime = "time_date"
+
+
     prep_DA = prepare_DA_plot_time_dynamic(
-        DA, state=state, nodes_of_interest=nodes_of_interest, **kwargs
-    )
+                                            DA, 
+                                            state=state, 
+                                            nodes_of_interest=nodes_of_interest, 
+                                            **kwargs
+                                        )
     if "ax" in kwargs:
         ax = kwargs["ax"]
     else:
@@ -1830,28 +1823,17 @@ def DA_plot_time_dynamic(
     if "colors_minmax" in kwargs:
         colors_minmax = kwargs["colors_minmax"]
         
-        
-    keytime = "time"
-    xlabel = "time (h)"
-    if "start_date" in kwargs:
-        keytime = "time_date"
-        xlabel = "date"
 
     if "keytime" in kwargs:
         keytime = kwargs['keytime']
         xlabel = "assimilation_times"
-        
-    # if 'keytime' in kwargs:
-    #     keytime = kwargs['keytime']
-    #     xlabel = "Time (s)"
         
         
     ylabel = r"pressure head $\psi$ (m)"
     if "sw" in state:
         ylabel = "water saturation (-)"
 
-    # prep_DA['isENS']['time_date']
-    # Plot
+
     # --------------------------------------------------------------------------
 
     if len(prep_DA["isENS"]) > 0:
@@ -1885,20 +1867,6 @@ def DA_plot_time_dynamic(
         )
         
         
-        # import matplotlib.dates as mdates
-        
-        # lgd = ax.fill_between(
-        #     mdates.date2num(prep_DA["ens_max_isENS_time"][keytime]),
-        #     prep_DA["ens_min_isENS_time"]["min(ENS)"],
-        #     prep_DA["ens_max_isENS_time"]["max(ENS)"],
-        #     alpha=0.2,
-        #     color=colors_minmax,
-        #     label="minmax DA",
-        # )
-
-        # float_data = prep_DA["ens_max_isENS_time"][keytime].astype(float)
-
-        
         lgd = ax.fill_between(
             prep_DA["ens_max_isENS_time"][keytime],
             prep_DA["ens_min_isENS_time"]["min(ENS)"],
@@ -1907,14 +1875,7 @@ def DA_plot_time_dynamic(
             color=colors_minmax,
             label="minmax DA",
         )
-        # lgd= ax.fill_between(prep_DA['ens_max_isENS_time'][keytime],
-        #                 prep_DA['ens_min_isENS_time'][[keytime,'min(ENS)']],
-        #                 prep_DA['ens_max_isENS_time'][[keytime,'max(ENS)']],
-        #                 alpha=0.2,
-        #                 color='blue',
-        #                 label='minmax DA')
 
-    # if len(prep_DA['isOL'])>0:
     if "ens_mean_isOL_time" in prep_DA.keys():
         prep_DA["ens_mean_isOL_time"].pivot(
             index=keytime,

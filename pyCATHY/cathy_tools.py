@@ -1097,28 +1097,23 @@ class CATHY:
 
         if DEM is not None:
             self.DEM = DEM
-            
-            # np.shape(self.DEM)
-
             self.hapin["N"] = np.shape(DEM)[1]
             self.hapin["M"] = np.shape(DEM)[0]
 
-            self.update_hapin(Lines, hapin, tmp_lnb, tmp_param_value)
-
-            # check consistency with hapin
+            self.update_hapin(Lines,
+                              hapin, 
+                              tmp_lnb, 
+                              tmp_param_value
+                              )
 
             # check presence of the outlet
             if len(np.unique(DEM)) == 1:
                 print("Error: outlet not defined")
                 DEM[0, 0] = 0
-                # self.DEM = DEM_withOutlet
-
+                
             self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
-            # self.update_dem(DEM)
-            # self.update_zone()
-
-            # import matplotlib.pyplot as plt
-            # plt.imshow(np.flipud(DEM))
+            self.update_dem(DEM)
+            self.update_zone()
 
             with open(
                 os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+"
@@ -1289,6 +1284,35 @@ class CATHY:
 
         pass
 
+    def update_lakes_map(self, lakes_map=[]):
+        """
+        Update lakes_map file
+
+        Parameters
+        ----------
+        dem : np.array([]), optional
+            2d numpy array describing the zone for x and y direction.
+            The array dim must be equal to DEM dim.
+            The default is []."""
+
+        with open(
+            os.path.join(self.workdir, self.project_name, "prepro/lakes_map"), "w+"
+        ) as lakesfile:
+
+            lakesfile.write("north:     0" + "\n")
+            lakesfile.write("south:     " + str(self.hapin["yllcorner"]) + "\n")
+            lakesfile.write("east:     0" + "\n")
+            lakesfile.write("west:     " + str(self.hapin["xllcorner"]) + "\n")
+
+            lakesfile.write("rows:     " + str(self.hapin["N"]) + "\n")
+            lakesfile.write("cols:     " + str(self.hapin["M"]) + "\n")
+            np.savetxt(lakesfile, lakes_map, fmt="%i")
+            # np.shape(DEM)
+        lakesfile.close()
+        
+        pass
+                
+            
     def update_dem(self, DEM=[]):
         """
         Update zone file
@@ -1321,6 +1345,7 @@ class CATHY:
             np.savetxt(f, DEM, fmt="%1.4e")
                 
         self.DEM = DEM
+        pass
 
     def update_zone(self, zone=[]):
         """
@@ -3565,7 +3590,7 @@ class CATHY:
             self.mesh_pv_attributes.save(saveMeshPath,
                                             binary=False,
                                             )
-            return prop_mesh_nodes
+            return list(prop_mesh_nodes)
 
         else:
             prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers"]))
