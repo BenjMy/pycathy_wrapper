@@ -724,6 +724,10 @@ def show_vtk_TL(
     offscreen = True
     if show == False:
         offscreen = True
+        
+    if 'pl' in kwargs:
+        plotter= kwargs.pop('pl')
+        
     plotter = pv.Plotter(
         notebook=notebook,
         off_screen=offscreen,
@@ -1085,8 +1089,19 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
 
     if ax is None:  
         fig, ax = plt.subplots()
-    cf = ax.pcolormesh(veg_map, edgecolors="black", cmap=cmap,
-                       **kwargs)
+    # cf = ax.pcolormesh(
+    #                    veg_map, 
+    #                    edgecolors="black", 
+    #                    cmap=cmap,
+    #                    **kwargs
+    #                    )
+    
+    cf = ax.imshow(veg_map, 
+                        # edgecolors="black", 
+                        cmap=cmap,
+                        **kwargs
+                        )
+    
     # fig.colorbar(cf, ax=ax, label='indice of vegetation')
 
     cax = plt.colorbar(
@@ -1142,7 +1157,7 @@ def dem_plot_2d_top(parameter, label="", **kwargs):
             sharey=True,
         )
         for ax, p in zip(axs.reshape(-1), parameter.keys()):
-            cf = ax.pcolormesh(parameter[p])  # edgecolors="black"
+            cf = ax.imshow(parameter[p])  # edgecolors="black"
             fig.colorbar(cf, ax=ax, label=p, fraction=0.046, pad=0.04, shrink=0.8)
             ax.set_xlabel("x")
             ax.set_ylabel("y")
@@ -1152,7 +1167,8 @@ def dem_plot_2d_top(parameter, label="", **kwargs):
 
     else:
         fig, ax = plt.subplots()
-        cf = ax.pcolormesh(parameter, edgecolors="black")
+        cf = ax.imshow(parameter, edgecolors="black")
+        # cf = ax.pcolormesh(parameter, edgecolors="black")
         fig.colorbar(cf, ax=ax, label=label)
         ax.set_xlabel("x")
         ax.set_ylabel("y")
@@ -1235,8 +1251,6 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
     
     
     mesh_bound_cond_df_selec = mesh_bound_cond_df[mesh_bound_cond_df['time']==time]
-    
-    
     for bound_val in mesh_bound_cond_df_selec[BCtypName]:
         if bound_val == 0:
             mvalue.append(1)
@@ -1249,7 +1263,7 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
 
-    ax.scatter(
+    cmap = ax.scatter(
         mesh_bound_cond_df_selec["x"],
         mesh_bound_cond_df_selec["y"],
         mesh_bound_cond_df_selec["z"],
@@ -1262,7 +1276,7 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
     # ax.set_title(BCtypName)
     # plt.show(block=False)
     # return fig, ax
-    pass
+    return cmap
 
 
 #%% ---------------------------------------------------------------------------

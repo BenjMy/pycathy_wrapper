@@ -94,19 +94,34 @@ def label_units(units, **kwargs):
     return label
 
 
-def change_x2date(time_in_sec, start_date):
+def change_x2date(time_in_sec, start_date,
+                  formatIn="%Y%m%d",
+                  formatOut="%Y-%m-%d %H:%M:%S"
+                  ):
     """change x axis in sec to datetime"""
     
-    # date0 = pd.to_datetime(start_date, format="%Y%m%d")
-    date0 = pd.to_datetime(start_date)
-    date_label = [date0]
+    date0 = pd.to_datetime(start_date, format=formatIn)
+    # date0 = pd.to_datetime(start_date)
+    # date_label = [date0]
     date_label_str = [date0.strftime("%Y-%m-%d %H:%M:%S")]
+    dates = []
     for d in time_in_sec[1:]:
-        date_label.append(date0 + timedelta(seconds=int(d)))
+        # date_label.append(date0 + timedelta(seconds=int(d)))
         date_label_str.append(
             (date0 + timedelta(seconds=int(d))).strftime("%Y-%m-%d %H:%M:%S")
         )
+        # dates.append((date0 + timedelta(seconds=int(d))).strftime("%Y-%m-%d %H:%M:%S"), 
+        #              format=formatOut)
+
+
     dates = pd.to_datetime(date_label_str, format="%Y-%m-%d %H:%M:%S")
+    
+    
+    # date0 = pd.to_datetime(start_date)
+    # Vectorized operation to add seconds directly to the start date
+    # dates = date0 + pd.to_timedelta(time_in_sec, unit='s')
+
+
     return dates
 
 

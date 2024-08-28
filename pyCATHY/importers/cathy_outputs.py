@@ -391,6 +391,9 @@ def read_sw(filename, **kwargs):
     #                                                               ylabel='NET SEEPFACE VOL',
     #                                                               xlabel='time (s)')
 
+    # OPTIMISED NEW VERSION OF READER SW
+
+
     return df_sw_t, df_sw_t.index
 
 

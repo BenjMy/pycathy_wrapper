@@ -831,8 +831,11 @@ class CATHY:
         # ---------------------------------------------------------------------
         # write new cathy H
         with open(
-            os.path.join(self.workdir, self.project_name, "src", "CATHY.H"), "w+"
-        ) as CATHYH_file:
+            os.path.join(self.workdir, 
+                         self.project_name, 
+                         "src",
+                         "CATHY.H"
+                         ), "w+") as CATHYH_file:
             for i, l in enumerate(Lines0_109):
                 if i < 109:
                     CATHYH_file.write(l)
@@ -2110,10 +2113,7 @@ class CATHY:
                         + "\t"
                         + "NDIRC"
                         + "\n"
-                    )
-                    
-                    
-                
+                    )                   
                 raise ValueError(
                     "Non homogeneous Dirichlet Boundary conditions Not yet implemented"
                 )
@@ -2166,7 +2166,11 @@ class CATHY:
         pass
 
     def update_nansfneubc(
-        self, time=[], NQ=0, ZERO=0, fixed_pressure=False, no_flow=False
+        self, time=[], 
+        ZERO=0, NQ=0, CONTQ=[],
+        fixed_flux=None, 
+        no_flow=False,
+        **kwargs,
     ):
         """
         Neumann boundary conditions (or specifed flux) at time t
@@ -2189,6 +2193,15 @@ class CATHY:
 
         """
 
+
+        whereBC = None
+        val = fixed_flux
+        for k in kwargs:
+            # {'xmin_bound': 1.2e-07}
+            val = kwargs.get(k)
+            if type(k)==str:
+                whereBC = k
+                    
         # check that the mesh existNeuma
         # --------------------------------------------------------------------
         try:
@@ -2201,50 +2214,74 @@ class CATHY:
 
         # check that mesh_bound_cond_df exist
         # --------------------------------------------------------------------
-        if hasattr(self, "mesh_bound_cond_df") is False:
+        if hasattr(self, "mesh_bound_cond_df")==False:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
-                # time = [0]
-            # self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
-            # self.assign_mesh_bc_df("nansfneubc", time, 
-            #                        no_flow=no_flow
-            #                        )
+            else:
+                # self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
+                self.assign_mesh_bc_df("nansfneubc", 
+                                       time, 
+                                       no_flow=no_flow
+                                       )
         else:
-            # if len(time)>25:
-            #     print('Nb of times is too big to handle bc condition in the df')
-            #     time = 0
-            self.assign_mesh_bc_df("nansfneubc", time, 
-                                   no_flow=no_flow
-                                   )
-            # self.update_mesh_boundary_cond("nansfneubc", time, NQ=NQ, ZERO=ZERO)
-
-        # apply BC
-        # --------------------------------------------------------------------
-        if no_flow:  # Neumanm
-            # self.set_BC_laterals(time=time, BC_type='Neumanm', val=0)
-            print("shortcut set_BC_laterals mesh dataframe")
-
-        else:
-            raise ValueError(
-                "Non homogeneous Neumanm Boundary conditions Not yet implemented"
-            )
-
+            if no_flow:
+                self.assign_mesh_bc_df("nansfneubc", 
+                                       time, 
+                                       no_flow=no_flow
+                                       )
+            elif whereBC:
+                NQ = np.sum(self.mesh_bound_cond_df.set_index('time').loc[0,whereBC]==True)
+                CONTQ = list(np.where(self.mesh_bound_cond_df[whereBC]==True)[0])
+                nodes_id_CONTQ = list(self.mesh_bound_cond_df.loc[CONTQ,'id_node'].unique())
+                # len(nodes_id_CONTQ)
+            else:
+                raise ValueError('Not yet implemented')
+                
+            for tt in time:
+                self.update_mesh_boundary_cond(
+                                                tt,
+                                                BC_name='nansfneubc',
+                                                BC_val=val,
+                                                nodesId=CONTQ
+                                               )
+        self.update_cathyH(NQMAX=NQ)
         # read existing input nansfneubc file
         # --------------------------------------------------------------------
-        with open(
-            os.path.join(
-                self.workdir, self.project_name, self.input_dirname, "nansfneubc"
-            ),
-            "w+",
-        ) as nansfneubcfile:
-            if len(time) == 0:
-                time = self.atmbc["time"]
-            for tt in time:
-                nansfneubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
-                nansfneubcfile.write(
-                    str(ZERO) + "\t" + str(NQ) + "\t" + "ZERO" + "\t" + "NQ" + "\n"
-                )
-        nansfneubcfile.close()
+        with open(os.path.join(self.workdir, 
+                               self.project_name, 
+                               self.input_dirname, 
+                               "nansfneubc"
+                               ),
+                  "w+",
+                  ) as nansfneubcfile:
+            if no_flow:  # Neumanm
+                print("shortcut set_BC_laterals mesh dataframe")   
+                if len(time) == 0:
+                    time = self.atmbc["time"]
+                for tt in time:
+                    nansfneubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
+                    nansfneubcfile.write(
+                        str(ZERO) + "\t" + str(NQ) + "\t" + "ZERO" + "\t" + "NQ" + "\n"
+                    )
+            elif whereBC:
+                print("Non homogeneous Neumanm Boundary conditions requested")
+                for tt in self.mesh_bound_cond_df.time.unique():
+                    nansfneubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
+                    nansfneubcfile.write(
+                                        str(ZERO) + "\t" + str(NQ) + "\t" + "ZERO" + "\t" + "NQ" + "\n"
+                                        )
+                    # write node numbers where Neumann BC applied
+                    # --------------------------------------------
+                    np.savetxt(nansfneubcfile, nodes_id_CONTQ, fmt="%i")
+                    # write values of flow rate (m3/s) for each node numbers where Neumann BC applied
+                    # --------------------------------------------
+                    values_nansfneubc = self.mesh_bound_cond_df.set_index('time').loc[tt,'nansfneubc'].values
+                    values_nansfneubc = list(values_nansfneubc[~np.isnan(values_nansfneubc)])
+                    np.savetxt(nansfneubcfile, values_nansfneubc, fmt="%.3e")
+                    
+                    
+        nansfneubcfile.close()    
+
 
         pass
 
@@ -2869,7 +2906,7 @@ class CATHY:
             ):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
                 for sfp in FP_map:
-                    izoneVeg_tmp.append(FP_map[sfp][iveg])
+                    izoneVeg_tmp.append(FP_map[sfp][iveg+1])
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
@@ -3021,9 +3058,9 @@ class CATHY:
                 indice_veg = (
                                 np.c_[np.ones([int(self.hapin["M"]), int(self.hapin["N"])])]*indice_veg
                              )
-                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
+                np.savetxt(rootmapfile, indice_veg, fmt="%i")
             else:
-                np.savetxt(rootmapfile, indice_veg, fmt="%1.2e")
+                np.savetxt(rootmapfile, indice_veg, fmt="%i")
 
         rootmapfile.close()
 
@@ -3191,124 +3228,92 @@ class CATHY:
         None.
 
         """
-        
-
-        
-        
-        # Step 1: Extract mesh coordinates and build a dataframe
-        # ---------------------------------------------------------------------
-        
-        grid3d = np.c_[np.arange(0,len(grid3d)),grid3d]
-        
-        
-        self.mesh_bound_cond_df = pd.DataFrame(grid3d)
+        mesh_bound_np = np.c_[np.arange(0,len(grid3d)),grid3d]
+        self.mesh_bound_cond_df = pd.DataFrame(mesh_bound_np)
         self.mesh_bound_cond_df = self.mesh_bound_cond_df.rename(
-            columns={
-                0: "id_node",
-                1: "x",
-                2: "y",
-                3: "z",
-            }
-        )
-
-        self.mesh_bound_cond_df["id_node"] = self.mesh_bound_cond_df["id_node"].astype(
-            int
-        )
-        
+                                                                    columns={
+                                                                        0: "id_node",
+                                                                        1: "x",
+                                                                        2: "y",
+                                                                        3: "z",
+                                                                    }
+                                                                )
+        self.mesh_bound_cond_df["id_node"] = self.mesh_bound_cond_df["id_node"].astype(int)
         self.mesh_bound_cond_df["time"] = 0
-        coords = self.mesh_bound_cond_df[['x','y','z']].to_numpy()
-        len(coords)
+      
+        top_id = np.arange(0, self.grid3d['nnod'], 1)
+        top_mask = np.zeros(len(self.grid3d['mesh3d_nodes']), dtype=bool)
+        top_mask[top_id.astype(int)] = True
 
-        # Step 2: build a mask of the size of the mesh 
-        # -------------------------------------------------------------------
-        x = np.unique(coords[:,0])
-        y = np.unique(coords[:,1])
-        layers_top, layers_bottom = mt.get_layer_depths(self.dem_parameters)
-        layers_top.append(layers_bottom[-1])
-        z = layers_top
-        grid_x, grid_y = np.meshgrid(x, y)
-        X, Y, Z = np.meshgrid(x, np.flipud(y), np.flipud(z))
+        bot_id = np.arange(self.grid3d['nnod3']-self.grid3d['nnod'], 
+                           self.grid3d['nnod3'],
+                           1
+                           )
+        bot_mask = np.zeros(len(self.grid3d['mesh3d_nodes']), dtype=bool)
+        bot_mask[bot_id.astype(int)] = True
         
+        x_threshold = self.grid3d['mesh3d_nodes'][:,0].min()
+        xmin_side_mask =  self.mesh_bound_cond_df['x'] <= x_threshold
         
-        # dem_mat, header_dem = simu.read_inputs('dem')
-        xdem, ydem  = plt_CT.get_dem_coords(
-                                            hapin=self.hapin,
-                                            )
+        x_threshold = self.grid3d['mesh3d_nodes'][:,0].max()
+        xmax_side_mask =  self.mesh_bound_cond_df['x'] >= x_threshold
         
-        grid_xdem, grid_ydem = np.meshgrid(xdem, ydem)
+        y_threshold = self.grid3d['mesh3d_nodes'][:,1].min()
+        ymin_side_mask =  self.mesh_bound_cond_df['y'] <= y_threshold
+        
+        y_threshold = self.grid3d['mesh3d_nodes'][:,1].max()
+        ymax_side_mask =  self.mesh_bound_cond_df['y'] >= y_threshold
+        
+        all_sides_mask = np.c_[xmin_side_mask,
+                                xmax_side_mask,
+                                ymin_side_mask,
+                                ymax_side_mask,
+                                ]
+        all_sides_mask = np.any(all_sides_mask, axis=1)
 
-        # Step 3: interpolate DEM (defined on mesh cell center) on mesh nodes
-        # -------------------------------------------------------------------
-        
-        rbf3 = Rbf(grid_xdem.flatten(), grid_ydem.flatten(),
-                   self.DEM.flatten(), function="multiquadric", smooth=5)
-        grid_dem = rbf3(grid_x, grid_y)
-        np.shape(grid_dem)
-        
-        Ztopo = np.zeros(np.shape(Z))
-        for i in range(np.shape(Z)[2]):
-            Ztopo[:,:,i]=(Z[:,:,i]+grid_dem)
-
-        outer_nodes, outer_mask = self.get_outer_nodes(X, Y, Z)      
-        # maskFalse = np.zeros(np.shape(outer_mask), dtype=bool)
-    
-        z_min, z_max = np.min(Z), np.max(Z)
-        x_min, x_max = np.min(X), np.max(X)
-        y_min, y_max = np.min(Y), np.max(Y)
-        noflow_mask = np.logical_or.reduce((X == x_min, X == x_max, Y == y_min, Y == y_max, Z == z_min))
-        
-        top_mask = np.logical_or.reduce((Z == z_max))
-        top_mask = (outer_mask & top_mask).transpose(2,0,1)
-
-        bot_mask = np.logical_or.reduce((Z == z_min))
-        bot_mask = (outer_mask & bot_mask).transpose(2,0,1)
-        
-        all_bounds_mask = outer_mask.transpose(2,0,1)
+      
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection='3d')
+       
+        # # Scatter plot in 3D
+        # sc = ax.scatter(self.grid3d['mesh3d_nodes'][:, 0],
+        #                 self.grid3d['mesh3d_nodes'][:, 1],
+        #                 self.grid3d['mesh3d_nodes'][:, 2],
+        #                 # c=self.grid3d['mesh3d_nodes'][:, 2],  # Coloring by z-axis values
+        #                 c='k',  # Coloring by z-axis values
+        #                 # cmap='viridis'
+        #                 )  # Optional: Change color map
+        # # Scatter plot in 3D
+        # sc = ax.scatter(self.grid3d['mesh3d_nodes'][all_sides_mask, 0],
+        #                 self.grid3d['mesh3d_nodes'][all_sides_mask, 1],
+        #                 self.grid3d['mesh3d_nodes'][all_sides_mask, 2],
+        #                 # c=self.grid3d['mesh3d_nodes'][left_side_mask, 2],  # Coloring by z-axis values
+        #                 c='r',  # Coloring by z-axis values
+        #                 # cmap='viridis'
+        #                 )  # Optional: Change color map
+            
 
 
         # Step 4: Fill the dataframe with flag for outer nodes
         # -------------------------------------------------------------------
-        len(noflow_mask.transpose(2,0,1).flatten())
         # print('Fill the dataframe with flag for outer nodes')
-        self.mesh_bound_cond_df["noflow_bound"] = noflow_mask.transpose(2,0,1).flatten()
-        self.mesh_bound_cond_df["top"] = top_mask.flatten()
-        self.mesh_bound_cond_df["bot"] = bot_mask.flatten()
-        self.mesh_bound_cond_df["all_bounds"] = all_bounds_mask.flatten()
+        self.mesh_bound_cond_df["noflow_bound"] = np.ones(len(self.grid3d['mesh3d_nodes']))*True
+        self.mesh_bound_cond_df["top_bound"] = top_mask
+        self.mesh_bound_cond_df["bot_bound"] = bot_mask
+        self.mesh_bound_cond_df["xmin_bound"] = xmin_side_mask
+        self.mesh_bound_cond_df["ymin_bound"] = ymin_side_mask
+        self.mesh_bound_cond_df["xmax_bound"] = xmax_side_mask
+        self.mesh_bound_cond_df["ymax_bound"] = ymax_side_mask
+        self.mesh_bound_cond_df["all_sides"] = all_sides_mask
                
         # Step 4: Replicate df for all given times
-        # -------------------------------------------------------------------
-        # times = [2, 3, 4]
-        # if len(times)>1:   
-        #     mesh_bound_cond_df_withtimes =self.mesh_bound_cond_df.copy()
-        #     for ti in times:
-        #         print(ti)
-        #         self.mesh_bound_cond_df['time']= ti
-        #         mesh_bound_cond_df_withtimes=pd.concat([mesh_bound_cond_df_withtimes,
-        #                                                 self.mesh_bound_cond_df])
-
-        #     self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes
-    
-    
+        # -------------------------------------------------------------------   
         if len(times) > 1:
             mesh_bound_cond_df_withtimes = pd.concat(
                 [self.mesh_bound_cond_df.assign(time=ti) for ti in times]
-            )
-            self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes
-
-            
-            
-        # if len(times) > 1:
-        #     mesh_bound_cond_df_withtimes = self.mesh_bound_cond_df.copy()
-        #     for ti in times[1:]:
-        #         mesh_bound_cond_df_withtimes = mesh_bound_cond_df_withtimes.append(
-        #             self.mesh_bound_cond_df.loc[:, self.mesh_bound_cond_df.columns != 'time']
-        #             .assign(time=ti)
-        #         )
-        #     self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes
-            
+            ).reset_index(drop=True)
+            self.mesh_bound_cond_df = mesh_bound_cond_df_withtimes             
                 
-                
-
             
 
     def assign_mesh_bc_df(self, BCtypName, times=0, **kwargs):
@@ -3344,8 +3349,9 @@ class CATHY:
     def update_mesh_boundary_cond(
         self,
         time,
-        BC_bool_name=[],
-        BC_bool_val=[],
+        BC_name=[],
+        BC_val=[],
+        nodesId=[],
     ):
         """
         update_mesh_bounds
@@ -3358,12 +3364,17 @@ class CATHY:
             Boolean for bound cond.
         """
         self.console.print(":sponge: [b]update boundary condition dataframe[/b]")
+        
+        if 'BC_type' not in self.mesh_bound_cond_df.columns:
+            self.mesh_bound_cond_df.loc[
+                                        self.mesh_bound_cond_df["time"] == time, 
+                                        BC_name
+                                        ] = None
         self.mesh_bound_cond_df.loc[
-            self.mesh_bound_cond_df["time"] == time, "BC_type"
-        ] = BC_bool_name
-        self.mesh_bound_cond_df.loc[
-            self.mesh_bound_cond_df["time"] == time, "BC_type_val"
-        ] = BC_bool_val
+                                    (self.mesh_bound_cond_df["time"] == time) & 
+                                    (self.mesh_bound_cond_df["id_node"].isin(nodesId)),
+                                    BC_name
+                                    ] = BC_val        
         pass
 
     def create_mesh_vtkris3d_vtk9(self):
@@ -3727,7 +3738,7 @@ class CATHY:
             # Plot nansfdirbc
             # ------------------------------------
             ax = fig.add_subplot(1, 3, 1, projection='3d')
-            plt_CT.plot_mesh_bounds('nansfdirbc', 
+            cmap = plt_CT.plot_mesh_bounds('nansfdirbc', 
                                     self.mesh_bound_cond_df, 
                                     time, 
                                     ax
@@ -3735,7 +3746,7 @@ class CATHY:
             # Plot nansfneubc
             # ------------------------------------
             ax = fig.add_subplot(1, 3, 2, projection='3d')
-            plt_CT.plot_mesh_bounds('nansfneubc', 
+            cmap = plt_CT.plot_mesh_bounds('nansfneubc', 
                                     self.mesh_bound_cond_df, 
                                     time, 
                                     ax
@@ -3743,14 +3754,18 @@ class CATHY:
             # Plot sfbc
             # ------------------------------------
             ax = fig.add_subplot(1, 3, 3, projection='3d')
-            plt_CT.plot_mesh_bounds('sfbc', 
+            cmap = plt_CT.plot_mesh_bounds('sfbc', 
                                     self.mesh_bound_cond_df, 
                                     time, 
                                     ax
                                     )    
             plt.tight_layout()
         else:
-            plt_CT.plot_mesh_bounds(BCtypName, self.mesh_bound_cond_df, time, ax)           
+            cmap = plt_CT.plot_mesh_bounds(BCtypName, 
+                                    self.mesh_bound_cond_df, 
+                                    time, 
+                                    ax
+                                    )           
 
         pass
 
