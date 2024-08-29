@@ -2218,22 +2218,30 @@ class CATHY:
             if len(time)>25:
                 print('Nb of times is too big to handle bc condition in the df')
             else:
+                self.create_mesh_bounds_df("nansfneubc", 
+                                           self.grid3d['mesh3d_nodes'], 
+                                           time
+                                           )
                 # self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
-                self.assign_mesh_bc_df("nansfneubc", 
-                                       time, 
-                                       no_flow=no_flow
-                                       )
+                # self.assign_mesh_bc_df("nansfneubc", 
+                #                        time, 
+                #                        no_flow=no_flow
+                #                        )
         else:
             if no_flow:
                 self.assign_mesh_bc_df("nansfneubc", 
                                        time, 
                                        no_flow=no_flow
                                        )
+                self.update_cathyH(NQMAX=1)
+
             elif whereBC:
                 NQ = np.sum(self.mesh_bound_cond_df.set_index('time').loc[0,whereBC]==True)
                 CONTQ = list(np.where(self.mesh_bound_cond_df[whereBC]==True)[0])
                 nodes_id_CONTQ = list(self.mesh_bound_cond_df.loc[CONTQ,'id_node'].unique())
                 # len(nodes_id_CONTQ)
+                self.update_cathyH(NQMAX=NQ)
+
             else:
                 raise ValueError('Not yet implemented')
                 
@@ -2244,7 +2252,6 @@ class CATHY:
                                                 BC_val=val,
                                                 nodesId=CONTQ
                                                )
-        self.update_cathyH(NQMAX=NQ)
         # read existing input nansfneubc file
         # --------------------------------------------------------------------
         with open(os.path.join(self.workdir, 
@@ -2546,7 +2553,7 @@ class CATHY:
             SPP_map_dict = SPP_map
             if hasattr(self, 'zone3d'):
                 num_rows, num_cols = np.shape(self.zone3d)[0],(np.shape(self.zone3d)[1] * np.shape(self.zone3d)[2])
-                df_SPP_map = self.init_soil_df(num_cols, num_rows)
+                df_SPP_map = self.init_soil_SPP_map_df(num_cols, num_rows)
         
                 for i, layersi_zones in enumerate(self.zone3d):
                     layersi_zones = np.hstack(layersi_zones)
@@ -2559,7 +2566,7 @@ class CATHY:
                         df_SPP_map.loc[(slice(None), i + 1), c] = layersi_zones_prop
             else:
                 nzones, nstr = self.dem_parameters["nzone"], self.dem_parameters["nstr"]
-                df_SPP_map = self.init_soil_df(nzones, nstr)
+                df_SPP_map = self.init_soil_SPP_map_df(nzones, nstr)
         
                 for key, values in SPP_map.items():
                     if len(values) == 1:
@@ -2673,14 +2680,31 @@ class CATHY:
                    'VGNCELL', 'VGRMCCELL', 'VGPSATCELL'
                    ]
         return columns
-        
-        
-    def init_soil_df(self, nzones, nstr):
+    
+    def _get_soil_FP_columnsNames(self):
+            
+        # Define the column names
+        columns = ['PCANA', 'PCREF', 'PCWLT',
+                   'ZROOT',
+                   'PZ','OMGC'
+                   ]
+        return columns
+    
+    def init_soil_FP_map_df(self, nveg):
+
+        columns = self._get_soil_FP_columnsNames()
+        FP_map = pd.DataFrame(index=np.arange(1,nveg), 
+                              columns=columns
+                              )
+        FP_map.index.name = 'Veg nb'
+        return FP_map
+
+    def init_soil_SPP_map_df(self, nzones, nstr):
         
         columns = self._get_soil_SPP_columnsNames()
         
         # Generate the lists of integers for zones and strings
-        zones = list(range(nzones))
+        zones = [ni + 1 for ni in range(nzones)]
         strings = [ni + 1 for ni in range(nstr)]
         
         # Create multi-level index
@@ -2724,18 +2748,28 @@ class CATHY:
 
         if FP_map_default:
 
-            FP_map = {
-                # Feddes parameters default values
-                "PCANA": [0.0],
-                "PCREF": [-4.0],
-                "PCWLT": [-150],
-                "ZROOT": [1.0],
-                "PZ": [1.0],
-                "OMGC": [1.0],
-            }
-
+            # FP_map = {
+            #     # Feddes parameters default values
+            #     "PCANA": [0.0],
+            #     "PCREF": [-4.0],
+            #     "PCWLT": [-150],
+            #     "ZROOT": [1.0],
+            #     "PZ": [1.0],
+            #     "OMGC": [1.0],
+            # }
+            PCANA= 0.0
+            PCREF=-4.0
+            PCWLT=-150
+            ZROOT=1
+            PZ=1
+            OMGC=1
             # self.soil.update(FP)
+            nveg = len(np.unique(self.veg_map))
+            FP_map = self.init_soil_FP_map_df(nveg+1)
 
+            for c in FP_map.columns:
+                FP_map[c] = eval(c)
+                
             return FP_map
 
         # # set Soil Physical Properties defaults parameters
@@ -2754,7 +2788,7 @@ class CATHY:
             nzones = self.dem_parameters["nzone"]
             nstr = self.dem_parameters["nstr"]
                     
-            SPP_map = self.init_soil_df(nzones,nstr)
+            SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
             
             for c in SPP_map.columns:
                 SPP_map[c] = eval(c)
