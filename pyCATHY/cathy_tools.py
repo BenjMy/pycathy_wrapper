@@ -2893,8 +2893,8 @@ class CATHY:
             - 'PCREF': field capacity
             - 'PCWLT': wilting point
             - 'ZROOT': float root depth
-            - 'PZ': ??
-            - 'OMGC': float ??
+            - 'PZ': float, can be negative, defines the root profile
+            - 'OMGC': float, compensatory mechanism
             For details, see http://dx.doi.org/10.1002/2015WR017139
         Returns
         -------
