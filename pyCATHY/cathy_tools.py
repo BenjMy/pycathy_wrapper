@@ -3829,53 +3829,64 @@ class CATHY:
             hapin = self.hapin
             plt_CT.show_dem(df[0], hapin, ax=ax, **kwargs)
         elif prop == "zone":
-            plt_CT.show_zone(df[0], ax=ax)
+            plt_CT.show_zone(df[0], ax=ax)           
         elif prop == "soil":
-
-            # in 2 dimensions
-            # -------------
-            zone_mat = in_CT.read_zone(
-                os.path.join(self.workdir, self.project_name, "prepro/zone")
-            )
-
-            layer_nb = 0
-            if "layer_nb" in kwargs:
-                layer_nb = kwargs["layer_nb"]
+            SPP_colname = self._get_soil_SPP_columnsNames()
+            FP_colname = self._get_soil_FP_columnsNames()
 
             yprop = "PERMX"
             if "yprop" in kwargs:
                 yprop = kwargs["yprop"]
+                    
+            if yprop in SPP_colname:
+                # in 2 dimensions
+                # -------------
+                zone_mat = in_CT.read_zone(
+                    os.path.join(self.workdir, self.project_name, "prepro/zone")
+                )
+    
+                layer_nb = 0
+                if "layer_nb" in kwargs:
+                    layer_nb = kwargs["layer_nb"]
+    
 
-            soil_map_prop = zone_mat[0]
-
-            # self.DEM
-            # NZONES = 
-            
-            exclude_zone = self._check_outside_DEM(zone_mat[0])
-            NZONES = len(np.unique(zone_mat[0])) - exclude_zone
-
-            if NZONES-1>1:
-                for z in range(NZONES-1):
-                    soil_map_prop[zone_mat[0] == z+1] = df[0][yprop].xs(
-                                                                (z+1,layer_nb)
-                                                                )
-            else:
-                soil_map_prop[zone_mat[0] == 1] = df[0][yprop].xs((1, 
-                                                                   layer_nb)
-                                                                  )
-
-            cmap = plt_CT.show_soil(soil_map_prop, ax=ax,
-                             **kwargs)
-            return cmap
+    
+                soil_map_prop = zone_mat[0]
+                
+                exclude_zone = self._check_outside_DEM(zone_mat[0])
+                NZONES = len(np.unique(zone_mat[0])) - exclude_zone
+    
+                if NZONES-1>1:
+                    for z in range(NZONES-1):
+                        soil_map_prop[zone_mat[0] == z+1] = df[0][yprop].xs(
+                                                                    (z+1,layer_nb)
+                                                                    )
+                else:
+                    soil_map_prop[zone_mat[0] == 1] = df[0][yprop].xs((1, 
+                                                                       layer_nb)
+                                                                      )
+    
+                cmap = plt_CT.show_soil(soil_map_prop, ax=ax,
+                                 **kwargs)
+                return cmap
         
-            # in 3 dimensions
-            # --------------
-            # SPP = df[0].to_dict()
-            # SoilPhysProp = self._prepare_SPP_tb(SPP)
-            # soil_SPP_plot = {}
-            # soil_SPP_plot['SPP'] = SoilPhysProp # matrice with respect to zones
-            # soil_SPP_plot['SPP_map'] = SPP # mapping with respect to zones
-            # self.map_prop2mesh(SPP)
+                # in 3 dimensions
+                # --------------
+                # SPP = df[0].to_dict()
+                # SoilPhysProp = self._prepare_SPP_tb(SPP)
+                # soil_SPP_plot = {}
+                # soil_SPP_plot['SPP'] = SoilPhysProp # matrice with respect to zones
+                # soil_SPP_plot['SPP_map'] = SPP # mapping with respect to zones
+                # self.map_prop2mesh(SPP)
+                
+            elif yprop in FP_colname:
+                FP_map_prop = np.copy(self.veg_map)
+                for vegi in range(len(np.unique(FP_map_prop))):
+                    FP_map_prop[FP_map_prop == vegi+1] = df[1][yprop][vegi+1]
+                    
+                cmap = plt_CT.show_soil(FP_map_prop, ax=ax,
+                                 **kwargs)
+                return cmap
 
         elif ("dtm_" in prop) | ("lakes_map" in prop):
             raster_mat, header_raster = in_CT.read_raster(

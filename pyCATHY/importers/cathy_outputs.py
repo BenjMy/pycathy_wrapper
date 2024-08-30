@@ -83,12 +83,12 @@ def read_fort777(filename, **kwargs):
     df_fort777_stack = np.vstack(np.reshape(df_fort777, [np.shape(df_fort777)[0] * np.shape(df_fort777)[1], 5]))
     # fort777_file collumns information
     # -------------------------------------------------------------------------
-    cols_fort777 = ["time_sec","SURFACE NODE","X","Y","ACT. ETRA"]
+    cols_fort777 = ["time_sec","SURFACE NODE","x","y","ACT. ETRA"]
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
     df_fort777 = pd.DataFrame(df_fort777_stack, columns=cols_fort777)
     df_fort777["time"] = pd.to_timedelta(df_fort777["time_sec"], unit="s")
-    df_fort777_multiindex = df_fort777.set_index(['time', 'X', 'Y'])
+    df_fort777_multiindex = df_fort777.set_index(['time', 'x', 'y'])
     df_fort777_unique = df_fort777_multiindex[~df_fort777_multiindex.index.duplicated(keep='first')]
     df_fort777_unique = df_fort777_unique.reset_index()
 
