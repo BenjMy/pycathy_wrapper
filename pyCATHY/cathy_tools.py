@@ -2893,8 +2893,8 @@ class CATHY:
             - 'PCREF': field capacity
             - 'PCWLT': wilting point
             - 'ZROOT': float root depth
-            - 'PZ': ??
-            - 'OMGC': float ??
+            - 'PZ': float, can be negative, defines the root profile
+            - 'OMGC': float, compensatory mechanism
             For details, see http://dx.doi.org/10.1002/2015WR017139
         Returns
         -------
@@ -2933,14 +2933,12 @@ class CATHY:
 
         # check number of vegetation
         # --------------------------------------------------------------------
-        if self.cathyH["MAXVEG"] > 1:   
+        if self.cathyH["MAXVEG"] > 1:
             FeddesParam = np.zeros([self.cathyH["MAXVEG"], 6])
-            for iveg in range(
-                self.cathyH["MAXVEG"]
-            ):  # loop over veg zones within a strate
+            for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
                 for sfp in FP_map:
-                    izoneVeg_tmp.append(FP_map[sfp][iveg+1])
+                    izoneVeg_tmp.append(FP_map[sfp][iveg])
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
