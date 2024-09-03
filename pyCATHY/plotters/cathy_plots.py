@@ -423,9 +423,14 @@ def show_COCumflowvol(df_cumflowvol=[], workdir=None, project_name=None, **kwarg
     if "ax" not in kwargs:
         fig, ax = plt.subplots()
     else:
-        ax = kwargs["ax"]
+        ax = kwargs.pop("ax")
 
-    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], "b-.")
+    # color = b
+    # if color in kwargs:
+    #     color = 
+        
+    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], 
+            marker='.', **kwargs)
     ax.plot(df_cumflowvol[:, 2] / 3600, df_cumflowvol[:, 7])
     ax.set_title("Cumulative flow volume")
     ax.set(xlabel="Time (s)", ylabel="Net Flow Volume (m^3)")
@@ -1177,34 +1182,14 @@ def dem_plot_2d_top(parameter, label="", **kwargs):
     return fig, ax
 
 
-def get_dem_coords(dem_mat=[], hapin={}):
-
-    # if len(dem_mat) == 0:
-    # # Read the Header
-    #     dem_mat, str_hd_dem = in_CT.read_dem(
-    #         os.path.join(workdir, project_name, "prepro/dem"),
-    #         os.path.join(workdir, project_name, "prepro/dtm_13.val"),
-    #     )
-
-    # transpose because values in dtm_13 files from where the DEM raster is extracted are transposed ...
-    # dem_mat = dem_mat.T
-    # dem_mat = np.flipud(dem_mat)
-
-    # print(dem_mat)
-    
+def get_dem_coords(dem_mat=[], hapin={}):   
     x = np.zeros(dem_mat.shape[1]) # + hapin["xllcorner"]
     y = np.zeros(dem_mat.shape[0]) # + hapin["yllcorner"]
-    
-    # print(x)
-    # print(str_hd_dem)
-
     for a in range(0, dem_mat.shape[1]):
         x[a] = float(hapin["xllcorner"]) + hapin["delta_x"] * (a + 1) - hapin["delta_x"]/2
-
     for a in range(0, dem_mat.shape[0]):
         y[a] = float(hapin["yllcorner"]) + hapin["delta_y"] * (a + 1) - hapin["delta_y"]/2
-
-    return x, np.flipud(y) # np.flipud(dem_mat)
+    return x, np.flipud(y) 
 
 
 def show_dem(
@@ -1244,12 +1229,8 @@ def show_dem(
 
 
 def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
-    
-    m = np.array(["o", "+"])
     mvalue = []
     alpha = []
-    
-    
     mesh_bound_cond_df_selec = mesh_bound_cond_df[mesh_bound_cond_df['time']==time]
     for bound_val in mesh_bound_cond_df_selec[BCtypName]:
         if bound_val == 0:
@@ -1258,11 +1239,9 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
         else:
             mvalue.append(0)
             alpha.append(0.1)
-
     if ax is None:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
-
     cmap = ax.scatter(
         mesh_bound_cond_df_selec["x"],
         mesh_bound_cond_df_selec["y"],
@@ -1273,9 +1252,6 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
     ax.set_ylabel("Y Label")
     ax.set_zlabel("Z Label")
     ax.set_title(BCtypName + " Time " + str(time))
-    # ax.set_title(BCtypName)
-    # plt.show(block=False)
-    # return fig, ax
     return cmap
 
 

@@ -2582,13 +2582,6 @@ class CATHY:
             self.console.rule(
                 ":warning: residual water content is > porosity :warning:", style="yellow"
             )
-        # if (SPP_map["VGRMCCELL"] >= SPP_map["POROS"]).all():
-        #     raise ValueError(
-        #         "ALL residual water content are"
-        #         + str(SPP_map["VGRMCCELL"])
-        #         + "> porosity "
-        #         + str(SPP_map["POROS"])
-        #     )
 
         # create prepro inputs if not existing (containing info about the DEM)
         # --------------------------------------------------------------------
@@ -2717,7 +2710,10 @@ class CATHY:
         return SPP_map
             
             
-    def set_SOIL_defaults(self, FP_map_default=False, SPP_map_default=False):
+    def set_SOIL_defaults(self, 
+                          FP_map_default=False, 
+                          SPP_map_default=False
+                          ):
 
         self.soil = {
             "PMIN": -5.0,
@@ -2907,8 +2903,6 @@ class CATHY:
         """
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
         # --------------------------------------------------------------------
-        
-        self.veg_map
         # Check if root_map file exist and is updated
         # -------------------------------------------
         if hasattr(self, "veg_map") is False:
@@ -2938,7 +2932,7 @@ class CATHY:
             for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
                 for sfp in FP_map:
-                    izoneVeg_tmp.append(FP_map[sfp][iveg])
+                    izoneVeg_tmp.append(FP_map[sfp].iloc[iveg])
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
@@ -3855,7 +3849,7 @@ class CATHY:
                 NZONES = len(np.unique(zone_mat[0])) - exclude_zone
     
                 if NZONES-1>1:
-                    for z in range(NZONES-1):
+                    for z in range(NZONES):
                         soil_map_prop[zone_mat[0] == z+1] = df[0][yprop].xs(
                                                                     (z+1,layer_nb)
                                                                     )
@@ -3867,15 +3861,6 @@ class CATHY:
                 cmap = plt_CT.show_soil(soil_map_prop, ax=ax,
                                  **kwargs)
                 return cmap
-        
-                # in 3 dimensions
-                # --------------
-                # SPP = df[0].to_dict()
-                # SoilPhysProp = self._prepare_SPP_tb(SPP)
-                # soil_SPP_plot = {}
-                # soil_SPP_plot['SPP'] = SoilPhysProp # matrice with respect to zones
-                # soil_SPP_plot['SPP_map'] = SPP # mapping with respect to zones
-                # self.map_prop2mesh(SPP)
                 
             elif yprop in FP_colname:
                 FP_map_prop = np.copy(self.veg_map)
