@@ -2686,7 +2686,7 @@ class CATHY:
     def init_soil_FP_map_df(self, nveg):
 
         columns = self._get_soil_FP_columnsNames()
-        FP_map = pd.DataFrame(index=np.arange(1,nveg), 
+        FP_map = pd.DataFrame(index=np.arange(1,nveg+1), 
                               columns=columns
                               )
         FP_map.index.name = 'Veg nb'
@@ -2761,7 +2761,7 @@ class CATHY:
             OMGC=1
             # self.soil.update(FP)
             nveg = len(np.unique(self.veg_map))
-            FP_map = self.init_soil_FP_map_df(nveg+1)
+            FP_map = self.init_soil_FP_map_df(nveg)
 
             for c in FP_map.columns:
                 FP_map[c] = eval(c)

@@ -55,7 +55,7 @@ simu.update_veg_map(np.ones([int(simu.hapin['N']),int(simu.hapin['M'])]))
 simu.update_zone(np.ones([int(simu.hapin['N']),int(simu.hapin['M'])]))
 simu.show_input(prop="root_map")
 
-simu.update_soil()
+# simu.update_soil()
 
 #%%
 veg_map = simu.veg_map
@@ -66,19 +66,25 @@ simu.show_input(prop="root_map")
 #%% Update Feddes parameters
 # Feddes is a dictionnary with 6 entries, and for each a list
 
-FP_map_1zone = simu.soil_FP["FP_map"]  # read existing mapping
-FP_map_2zones = {}
-for k in FP_map_1zone:
+# _, df_soil_FP = simu.read_inputs('soil',MAXVEG=1)
+
+df_soil_FP_2veg = simu.init_soil_FP_map_df(nveg=2)
+df_soil_FP_2veg = simu.set_SOIL_defaults(FP_map_default=True)
+
+# FP_map_1zone = simu.soil_FP["FP_map"]  # read existing mapping
+
+# FP_map_2zones = {}
+for k in df_soil_FP_2veg.keys():
     if k == "ZROOT":
-        ZROOT_zone2 = FP_map_1zone["ZROOT"][0] / 2
-        FP_map_2zones[k] = [FP_map_1zone[k][0], ZROOT_zone2]
+        ZROOT_zone2 = df_soil_FP_2veg["ZROOT"].values[0] / 2
+        df_soil_FP_2veg[k] = [df_soil_FP_2veg[k].values[0], ZROOT_zone2]
     else:
-        FP_map_2zones[k] = [FP_map_1zone[k][0], FP_map_1zone[k][0]]
+        df_soil_FP_2veg[k] = [df_soil_FP_2veg[k].values[0], df_soil_FP_2veg[k].values[0]]
 
 # simu.show_input(prop='soil', yprop='ZROOT', layer_nb=12)
 
 #%%
-simu.update_soil(FP_map=FP_map_2zones, show=True)
+simu.update_soil(FP_map=df_soil_FP_2veg, show=True)
 
 # simu.update_zone(veg_map)
 # simu.update_veg_map(veg_map)
@@ -122,21 +128,12 @@ simu.show_input(prop="zone")
 # we just need to build a dictionnary as: {property: [value_zone1, value_zone2]}
 # or a panda dataframe
 
-SPP_map_1zone = simu.soil_SPP["SPP_map"]  # read existing mapping
+df_SPP_map = simu.init_soil_SPP_map_df(nzones=2,nstr=15)
+SPP_map_2zones = simu.set_SOIL_defaults(SPP_map_default=True)
 
-PERMX_zones = [SPP_map_1zone["PERMX"][0], 
-         SPP_map_1zone["PERMX"][0]/2]
+SPP_map_2zones.xs(2).loc[:,'PERMX'] = 0.000188/5
 
-SPP_map_zone2 = simu.init_soil_df(2, len(SPP_map_1zone))
-
-for c in SPP_map_1zone:
-    SPP_map_zone2.loc[[0],c]=SPP_map_1zone[c].values
-    SPP_map_zone2.loc[[1],c]=SPP_map_1zone[c].values
-
-for i, pi in enumerate(PERMX_zones):
-    SPP_map_zone2.loc[[i],'PERMX']=PERMX_zones[i].values
-
-simu.update_soil(SPP_map=SPP_map_zone2)
+simu.update_soil(SPP_map=SPP_map_2zones)
 
 #%%
 simu.show_input(prop="soil", yprop="PERMX", layer_nb=2)
