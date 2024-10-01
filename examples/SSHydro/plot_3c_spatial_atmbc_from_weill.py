@@ -34,20 +34,26 @@ from pyCATHY.plotters import cathy_plots as cplt
 #%% Init CATHY model
 # ------------------------
 path2prj = "../SSHydro/"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj, prj_name="atmbc_spatially_from_weill")
+simu = cathy_tools.CATHY(dirName=path2prj, 
+                         prj_name="atmbc_spatially_from_weill"
+                         )
 
 simu.create_mesh_vtk(verbose=True)
 
 #%% spatially variable atmospheric boundary condition inputs
 
 grid3d = simu.read_outputs('grid3d')
-DEM, dem_header = simu.read_inputs('dem')
+
+# np.shape(simu.DEM)
+
+# DEM, dem_header = simu.read_inputs('dem')
 t_atmbc = [0,86400]
 v_atmbc = np.zeros(int(grid3d['nnod']))
 v_atmbc[0:int(len(np.zeros(int(grid3d['nnod'])))/2)] = 1e-7
 
-
-v_atmbc_mat = np.reshape(v_atmbc,[21,21])
+v_atmbc_mat = np.reshape(v_atmbc,[np.shape(simu.DEM)[0]+1,
+                                  np.shape(simu.DEM)[1]+1
+                                  ])
 fig, ax = plt.subplots()
 ax.imshow(v_atmbc_mat)
 

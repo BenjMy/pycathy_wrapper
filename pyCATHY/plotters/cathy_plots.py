@@ -1162,6 +1162,7 @@ def dem_plot_2d_top(parameter, label="", **kwargs):
             sharey=True,
         )
         for ax, p in zip(axs.reshape(-1), parameter.keys()):
+            # print(p)
             cf = ax.imshow(parameter[p])  # edgecolors="black"
             fig.colorbar(cf, ax=ax, label=p, fraction=0.046, pad=0.04, shrink=0.8)
             ax.set_xlabel("x")

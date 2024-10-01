@@ -3680,7 +3680,7 @@ class CATHY:
             for d in dict_props.keys():
                 map_veg = np.zeros(np.shape(self.veg_map))
                 for i, value in enumerate(dict_props[d]):
-                    map_veg[self.veg_map == i + 1] = value
+                    map_veg[self.veg_map == i] = value
                 update_map_veg[d] = map_veg
 
             return update_map_veg
