@@ -2235,7 +2235,7 @@ class CATHY:
                                        )
                 self.update_cathyH(NQMAX=1)
 
-            elif whereBC:
+            elif whereBC is not None:
                 NQ = np.sum(self.mesh_bound_cond_df.set_index('time').loc[0,whereBC]==True)
                 CONTQ = list(np.where(self.mesh_bound_cond_df[whereBC]==True)[0])
                 nodes_id_CONTQ = list(self.mesh_bound_cond_df.loc[CONTQ,'id_node'].unique())
@@ -3096,7 +3096,8 @@ class CATHY:
         if len(np.unique(indice_veg))>1:
             exclude_veg = self._check_outside_DEM(indice_veg)
             self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
-            
+            self.MAXVEG = len(np.unique(indice_veg))# - exclude_veg
+
             if exclude_veg>0:
                 print('excluding outside DEM')
                 print('MAXVEG='+ str(self.MAXVEG))

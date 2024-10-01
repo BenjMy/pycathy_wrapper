@@ -103,6 +103,9 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
         for i, j in enumerate(range(1, len(lines), int(grid["nnod"])+1)):
             values = lines[j+1:j+int(grid["nnod"])+1]
             for value in values:
+                # print(i,j)
+                # print(len(lines[j+1:j+int(grid["nnod"])+1]))
+                # print(len(t))
                 data_dicts.append({'time': t[i], 'value': float(value.split()[0])})
         
         # Create a DataFrame from the list of dictionaries

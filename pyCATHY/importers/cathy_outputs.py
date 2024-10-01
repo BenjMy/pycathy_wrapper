@@ -27,24 +27,10 @@ def read_grid3d(grid3dfile, **kwargs):
     }
     return grid
 
-
-def read_fort777(filename, **kwargs):
-    """
-    0  0.00000000E+00     NSTEP   TIME
-    SURFACE NODE              X              Y      ACT. ETRA
-
-    Parameters
-    ----------
-    filename : str
-        Path to the fort.777 file.
-    Returns
-    -------
-    xyz_df : pd.DataFrame()
-        Dataframe containing time_sec,SURFACE NODE,X,Y,ACT. ETRA.
-
-    """
-    fort777_file = open(filename, "r")
-    lines = fort777_file.readlines()
+def read_spatial_format(filename,prop=None):
+    
+    spatial_out_file = open(filename, "r")
+    lines = spatial_out_file.readlines()
 
     nstep = []
     surf_node = []
@@ -68,31 +54,61 @@ def read_fort777(filename, **kwargs):
 
     # build a numpy array
     # ------------------------------------------------------------------------
-    df_fort777 = []
+    df_spatial = []
     for i, sn_line in enumerate(surf_node):
         tt = np.ones([nsurfnodes]) * time_nstep[i]
-        df_fort777.append(
+        df_spatial.append(
                             np.vstack(
                                         [
                                             tt.T,
-                                            np.loadtxt(filename, skiprows=sn_line[0] + 1, max_rows=nsurfnodes).T,
+                                            np.loadtxt(filename, skiprows=sn_line[0] + 1, 
+                                                       max_rows=nsurfnodes).T,
                                         ]
                                     ).T
         )
 
-    df_fort777_stack = np.vstack(np.reshape(df_fort777, [np.shape(df_fort777)[0] * np.shape(df_fort777)[1], 5]))
+    df_spatial_stack = np.vstack(np.reshape(df_spatial, 
+                                            [np.shape(df_spatial)[0] * np.shape(df_spatial)[1], 5]
+                                            )
+                                 )
     # fort777_file collumns information
     # -------------------------------------------------------------------------
-    cols_fort777 = ["time_sec","SURFACE NODE","x","y","ACT. ETRA"]
+    colsnames = ["time_sec","SURFACE NODE","x","y",prop]
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
-    df_fort777 = pd.DataFrame(df_fort777_stack, columns=cols_fort777)
-    df_fort777["time"] = pd.to_timedelta(df_fort777["time_sec"], unit="s")
-    df_fort777_multiindex = df_fort777.set_index(['time', 'x', 'y'])
-    df_fort777_unique = df_fort777_multiindex[~df_fort777_multiindex.index.duplicated(keep='first')]
-    df_fort777_unique = df_fort777_unique.reset_index()
+    df_spatial = pd.DataFrame(df_spatial_stack, 
+                              columns=colsnames
+                              )
+    df_spatial["time"] = pd.to_timedelta(df_spatial["time_sec"], unit="s")
+    df_spatial_multiindex = df_spatial.set_index(['time', 'x', 'y'])
+    df_spatial_unique = df_spatial_multiindex[~df_spatial_multiindex.index.duplicated(keep='first')]
+    df_spatial_unique = df_spatial_unique.reset_index()
+    
+    return df_spatial_unique
+    
+def read_recharge(filename, **kwargs):   
+    df_recharge = read_spatial_format(filename,prop='recharge')
+    return df_recharge
 
-    return df_fort777_unique
+def read_fort777(filename, **kwargs):
+    """
+    0  0.00000000E+00     NSTEP   TIME
+    SURFACE NODE              X              Y      ACT. ETRA
+
+    Parameters
+    ----------
+    filename : str
+        Path to the fort.777 file.
+    Returns
+    -------
+    xyz_df : pd.DataFrame()
+        Dataframe containing time_sec,SURFACE NODE,X,Y,ACT. ETRA.
+
+    """
+    
+    df_fort777 = read_spatial_format(filename,prop='ACT. ETRA')
+
+    return df_fort777
     
     
 def read_xyz(filename, **kwargs):
@@ -345,43 +361,76 @@ def read_sw(filename, **kwargs):
     None.
 
     """
+    # Step 1: Read the entire file
+    with open(filename, "r") as sw_file:
+        lines = sw_file.readlines()
 
-    sw_file = open(filename, "r")
-    lines = sw_file.readlines()
-    sw_file.close()
-
-    # nstep = len(lines)-2
-
-    idx = []
-    step_i = []
-    time_i = []
-
-    # loop over lines of file and identified NSTEP and SURFACE NODE line nb
-    # ------------------------------------------------------------------------
-    for i, ll in enumerate(lines):
-        if "TIME" in ll:
-            # print('TIME')
+    # Step 2: Find the indices and extract step and time information
+    step_i, time_i, idx = [], [], []
+    for i, line in enumerate(lines):
+        if "TIME" in line:
+            parts = line.split()
+            step_i.append(parts[0])
+            time_i.append(float(parts[1]))  # Directly store as float
             idx.append(i)
-            splt = ll.split()
-            step_i.append(splt[0])
-            time_i.append(float(splt[1]))
-    idx.append(i + 1)
 
-    sw_sub = []
-    for j, ind in enumerate(idx):
-        for i, ll in enumerate(lines):
-            if i > idx[j] and i < idx[j + 1]:
-                splt = ll.split()
-                sw_sub.append([float(k) for k in splt])
+    # Step 3: Collect all numerical data between identified indices
+    num_data = []
+    idx.append(len(lines))  # Add final boundary for the last segment
 
-    sw_sub = np.hstack(sw_sub)
-    d_sw_t = np.reshape(
-        sw_sub, [len(idx) - 1, int(np.shape(sw_sub)[0] / (len(idx) - 1))]
-    )
+    for j in range(len(idx) - 1):
+        block_data = [line.split() for line in lines[idx[j] + 1:idx[j + 1]]]
+        num_data.extend(float(value) for line in block_data for value in line)
 
-    df_sw_t = pd.DataFrame(d_sw_t, time_i)
-    df_sw_t.index.names = ['Time']
+    # Step 4: Convert list to numpy array and reshape
+    num_array = np.array(num_data, dtype=float)
+    num_rows = len(idx) - 1
+    num_cols = num_array.size // num_rows
+    d_sw_t = num_array.reshape(num_rows, num_cols)
+
+    # Step 5: Create DataFrame
+    df_sw_t = pd.DataFrame(d_sw_t, index=time_i)
+    df_sw_t.index.name = 'Time'
+
+    # Step 6: Remove duplicate indices, if any
     df_sw_t = df_sw_t[~df_sw_t.index.duplicated(keep='first')]
+    
+    # sw_file = open(filename, "r")
+    # lines = sw_file.readlines()
+    # sw_file.close()
+
+    # # nstep = len(lines)-2
+
+    # idx = []
+    # step_i = []
+    # time_i = []
+
+    # # loop over lines of file and identified NSTEP and SURFACE NODE line nb
+    # # ------------------------------------------------------------------------
+    # for i, ll in enumerate(lines):
+    #     if "TIME" in ll:
+    #         # print('TIME')
+    #         idx.append(i)
+    #         splt = ll.split()
+    #         step_i.append(splt[0])
+    #         time_i.append(float(splt[1]))
+    # idx.append(i + 1)
+
+    # sw_sub = []
+    # for j, ind in enumerate(idx):
+    #     for i, ll in enumerate(lines):
+    #         if i > idx[j] and i < idx[j + 1]:
+    #             splt = ll.split()
+    #             sw_sub.append([float(k) for k in splt])
+
+    # sw_sub = np.hstack(sw_sub)
+    # d_sw_t = np.reshape(
+    #     sw_sub, [len(idx) - 1, int(np.shape(sw_sub)[0] / (len(idx) - 1))]
+    # )
+
+    # df_sw_t = pd.DataFrame(d_sw_t, time_i)
+    # df_sw_t.index.names = ['Time']
+    # df_sw_t = df_sw_t[~df_sw_t.index.duplicated(keep='first')]
 
 
     # if 'delta_t' in kwargs:
@@ -406,40 +455,76 @@ def read_psi(filename):
     None.
 
     """
-    psi_file = open(filename, "r")
-    lines = psi_file.readlines()
-    psi_file.close()
-    idx = []
-    step_i = []
-    time_i = []
-
-    # loop over lines of file and identified NSTEP and SURFACE NODE line nb
-    # ------------------------------------------------------------------------
-    for i, ll in enumerate(lines):
-        if "TIME" in ll:
-            idx.append(i)
-            splt = ll.split()
-            step_i.append(splt[0])
-            time_i.append(splt[1])
-    idx.append(i + 1)
-
-    psi_sub = []
-    for j, ind in enumerate(idx):
-        for i, ll in enumerate(lines):
-            if i > idx[j] and i < idx[j + 1]:
-                splt = ll.split()
-                psi_sub.append([float(k) for k in splt])
-
-    psi_sub = np.hstack(psi_sub)
-    d_psi_t = np.reshape(
-        psi_sub, [len(idx) - 1, int(np.shape(psi_sub)[0] / (len(idx) - 1))]
-    )
     
-    # time_i = time_i.astype(float)  # Ensure the index is float
-    df_psi_t = pd.DataFrame(d_psi_t, time_i)
-    df_psi_t.index = df_psi_t.index.astype(float)
-    df_psi_t.index.names = ['Time']
+    # Step 1: Read the entire file
+    with open(filename, "r") as psi_file:
+        lines = psi_file.readlines()
+    
+    # Step 2: Find the indices and extract step and time information
+    step_i, time_i, idx = [], [], []
+    for i, line in enumerate(lines):
+        if "TIME" in line:
+            parts = line.split()
+            step_i.append(parts[0])
+            time_i.append(float(parts[1]))  # Directly store as float
+            idx.append(i)
+    
+    # Step 3: Collect all numerical data between identified indices
+    num_data = []
+    idx.append(len(lines))  # Add final boundary for last segment
+    
+    for j in range(len(idx) - 1):
+        block_data = [line.split() for line in lines[idx[j] + 1:idx[j + 1]]]
+        num_data.extend(float(value) for line in block_data for value in line)
+    
+    # Step 4: Convert list to numpy array and reshape
+    num_array = np.array(num_data, dtype=float)
+    num_rows = len(idx) - 1
+    num_cols = num_array.size // num_rows
+    d_psi_t = num_array.reshape(num_rows, num_cols)
+    
+    # Step 5: Create DataFrame
+    df_psi_t = pd.DataFrame(d_psi_t, index=time_i)
+    df_psi_t.index.name = 'Time'
+    
+    # Step 6: Remove duplicate indices, if any
     df_psi_t = df_psi_t[~df_psi_t.index.duplicated(keep='first')]
+    
+
+    # psi_file = open(filename, "r")
+    # lines = psi_file.readlines()
+    # psi_file.close()
+    # idx = []
+    # step_i = []
+    # time_i = []
+
+    # # loop over lines of file and identified NSTEP and SURFACE NODE line nb
+    # # ------------------------------------------------------------------------
+    # for i, ll in enumerate(lines):
+    #     if "TIME" in ll:
+    #         idx.append(i)
+    #         splt = ll.split()
+    #         step_i.append(splt[0])
+    #         time_i.append(splt[1])
+    # idx.append(i + 1)
+
+    # psi_sub = []
+    # for j, ind in enumerate(idx):
+    #     for i, ll in enumerate(lines):
+    #         if i > idx[j] and i < idx[j + 1]:
+    #             splt = ll.split()
+    #             psi_sub.append([float(k) for k in splt])
+
+    # psi_sub = np.hstack(psi_sub)
+    # d_psi_t = np.reshape(
+    #     psi_sub, [len(idx) - 1, int(np.shape(psi_sub)[0] / (len(idx) - 1))]
+    # )
+    
+    # # time_i = time_i.astype(float)  # Ensure the index is float
+    # df_psi_t = pd.DataFrame(d_psi_t, time_i)
+    # df_psi_t.index = df_psi_t.index.astype(float)
+    # df_psi_t.index.names = ['Time']
+    # df_psi_t = df_psi_t[~df_psi_t.index.duplicated(keep='first')]
 
     return df_psi_t
 
@@ -477,6 +562,11 @@ def read_hgsfdet(filename):
 
 def read_hgatmsf(filename):
     
+    # Processes HGATMSF and creates graph:
+    # Time (day) - Overland flow (m3/day)
+    # Time (day) - Return Flow (m3/day)
+
+
     hgatmsf_file = open(filename, "r")
     hgatmsf = np.loadtxt(hgatmsf_file)
     hgatmsf_file.close()
@@ -490,7 +580,7 @@ def read_hgatmsf(filename):
      'POT. FLUX',
      'ACT. FLUX',
      'OVL. FLUX', # The superficial flow, that is the difference between POT.FLUX and ACT.FLUX;
-     'RET. FLUX', # flusso che dal sotterraneo va al super ciale (return flux);  
+     'RET. FLUX', # flusso che dal sotterraneo va al superficiale (return flux);  
      'SEEP FLUX',   
      'REC. FLUX',   
      'REC.VOL.',

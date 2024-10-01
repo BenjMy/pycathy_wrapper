@@ -39,13 +39,27 @@ simu = cathy_tools.CATHY(dirName=path2prj,
                          )
 
 rootpath = os.path.join(simu.workdir + simu.project_name)
+simu.run_preprocessor(verbose=False)
+simu.run_processor(IPRT1=3,verbose=True)
 
-simu.create_mesh_vtk(verbose=False)
+#%% Define zones and create 
 
-#%% Define and map layers
-simu.update_zone()
+simu.DEM
+zones = np.ones(np.shape(simu.DEM))
+zones[:,0:2] = 2
+zones[:,2:4] = 3
+zones[:,4:6] = 4
 
-df_SPP_map = simu.init_soil_df(nb_zones,
-                               nb_layers,
-                               )
+simu.update_zone(zones)
+simu.show_input('zone')
+
+#%% Create an empty dataframe of SPP and set default SPP properties 
+
+df_SPP_map = simu.init_soil_SPP_map_df(nzones=4,nstr=15)
 SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
+
+#%% Update soil file
+
+simu.update_soil(SPP_map=SPP_map)
+
+
