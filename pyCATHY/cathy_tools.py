@@ -1915,7 +1915,7 @@ class CATHY:
                 str(HSPATM) + "\t" + str(IETO) + "\t" + "HSPATM" + "\t" + "IETO" + "\n"
             )
 
-            # atmbc are homoegenous
+            # atmbc are homogeneous
             # -----------------------------------------------------------------
             if HSPATM == 1:
                 for t, v in zip(time, v_atmbc):
@@ -2503,18 +2503,20 @@ class CATHY:
                                       MAXVEG=self.MAXVEG
                                       )
                 if len(FP_map)==0:
-                    FP_map = df[1].reset_index(drop=True).to_dict(orient='list')
+                    # FP_map = df[1].reset_index(drop=True).to_dict(orient='list')
+                    FP_map = df[1] #.reset_index(drop=True).to_dict(orient='list')
             except:
                 pass
 
         if len(SPP_map) == 0:
             SPP_map = self.set_SOIL_defaults(SPP_map_default=True)
 
-        if (not hasattr(self, "soil_FP")) and (len(FP_map) == 0):
+        if len(FP_map) == 0:
             FP_map = self.set_SOIL_defaults(FP_map_default=True)
             
-        elif len(FP_map) == 0:
-            FP_map = self.soil_FP["FP_map"]
+        # elif len(FP_map) == 0:
+        #     # FP_map = self.soil_FP["FP_map"]
+        #     FP_map = self.set_SOIL_defaults(FP_map_default=True)
 
         # check size of the heteregeneity
         # -----------------------------------
@@ -2932,7 +2934,7 @@ class CATHY:
             for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
                 for sfp in FP_map:
-                    izoneVeg_tmp.append(FP_map[sfp].iloc[iveg])
+                    izoneVeg_tmp.append(FP_map[sfp].loc[iveg+1])
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
@@ -3680,7 +3682,7 @@ class CATHY:
             for d in dict_props.keys():
                 map_veg = np.zeros(np.shape(self.veg_map))
                 for i, value in enumerate(dict_props[d]):
-                    map_veg[self.veg_map == i] = value
+                    map_veg[self.veg_map == i+1] = value
                 update_map_veg[d] = map_veg
 
             return update_map_veg

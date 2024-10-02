@@ -7,6 +7,8 @@
 import pandas as pd
 import numpy as np
 from scipy.stats import stats, qmc, norm
+from scipy.stats import truncnorm
+
 from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 import re 
@@ -659,7 +661,7 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
             scenario_sampling = "lognormal"
 
         clip_min = 0
-        clip_max = None
+        clip_max = simu_DA.dem_parameters['base']
         
         df_SPP, df_FP = simu_DA.read_inputs('soil')
         
@@ -707,7 +709,7 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
 
 def sampling_dist_trunc(myclip_a, myclip_b, ensemble_size, **kwargs):
     # https://stackoverflow.com/questions/18441779/how-to-specify-upper-and-lower-limits-when-using-numpy-random-normal
-    X = stats.truncnorm(
+    X = truncnorm(
         (myclip_a - kwargs["loc"]) / kwargs["scale"],
         (myclip_b - kwargs["loc"]) / kwargs["scale"],
         loc=kwargs["loc"],

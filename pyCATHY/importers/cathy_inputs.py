@@ -103,29 +103,8 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
         for i, j in enumerate(range(1, len(lines), int(grid["nnod"])+1)):
             values = lines[j+1:j+int(grid["nnod"])+1]
             for value in values:
-                # print(i,j)
-                # print(len(lines[j+1:j+int(grid["nnod"])+1]))
-                # print(len(t))
                 data_dicts.append({'time': t[i], 'value': float(value.split()[0])})
-        
-        # Create a DataFrame from the list of dictionaries
         df_atmbc = pd.DataFrame(data_dicts)
-
-
-        # d_atmbc = []
-        # for ti in range(len(t)):
-        #     d_atmbc.append(
-        #         np.column_stack(
-        #             (
-        #                 t[ti] * np.ones(int(grid["nnod3"])),
-        #                 value[ti] * np.ones(int(grid["nnod3"])),
-        #                 grid["mesh3d_nodes"],
-        #             )
-        #         )
-        #     )
-        # d_atmbc = np.vstack(d_atmbc)
-        # cols_atmbc = ["time", "value", "nodeidx", "x", "y", "z"]
-        # df_atmbc = pd.DataFrame(d_atmbc, columns=cols_atmbc)
 
     if show == True:
         pltCT.show_atmbc(t, value, IETO=IETO)

@@ -51,7 +51,7 @@ def ET_mapper(obs2map_node,
     # Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]
     # Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]
     # Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]
-    console.print(f"Read actual ET on node {obs2map_node}")
+    # console.print(f"Read actual ET on node {obs2map_node}")
 
     df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
                                                   'fort.777'),

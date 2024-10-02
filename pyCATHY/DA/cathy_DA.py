@@ -54,6 +54,7 @@ import re
 import shutil
 import subprocess
 import warnings
+import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1748,7 +1749,7 @@ class DA(CATHY):
         
         # Initialise matrice of ensemble
         # ------------------------------
-        FeddesParam_mat_ens = []  # matrice of ensemble for Feddes parameters
+        Feddes_withPertParam = []  # matrice of ensemble for Feddes parameters
         VG_parms_mat_ens = []  # matrice of ensemble for VG parameters
         VG_p_possible_names = ["n_VG", "thetar_VG", "alpha_VG", "VGPSATCELL_VG"]
         VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
@@ -1768,6 +1769,18 @@ class DA(CATHY):
             "n_Archie",
             "pert_sigma_Archie",
         ]
+        
+        # Feddes
+        # -------
+        Feddes_p_names = [
+            "PCANA", 
+            "PCREF", 
+            "PCWLT", 
+            "ZROOT", 
+            "PZ", 
+            "OMGC",
+        ]
+        
         # Soil 3d if existing
         # -------------------
         zone3d = []
@@ -1785,6 +1798,7 @@ class DA(CATHY):
             key_root = re.split("(\d+)", key)
             if len(key_root) == 1:
                 key_root.append("0")
+            print(key_root)
 
             shellprint_update = True
             # ------------------------------------------------------------------
@@ -1933,8 +1947,6 @@ class DA(CATHY):
                 # VG parameters update
                 # --------------------------------------------------------------
                 elif key_root[0] in VG_p_possible_names:
-                    
-
                     # equivalence_CATHY = {
                     #                      'thetar_VG':'VGRMCCELL',
                     #                      'alpha_VG':'-1/VGPSATCELL',
@@ -2009,42 +2021,23 @@ class DA(CATHY):
                         backup=True,
                     )
 
+
                 # FeddesParam update
                 # --------------------------------------------------------------
-                elif key_root[0] in ["PCANA", "PCREF", "PCWLT", "ZROOT", "PZ", "OMGC"]:
+                elif key_root[0] in Feddes_p_names:
                     SPP_map = self.soil_SPP["SPP_map"]
 
-                    if len(FeddesParam_mat_ens) == 0:
-                        FeddesParam_mat = self.soil_FP["FP"]
-                        FeddesParam_mat_ens = np.repeat(
-                            FeddesParam_mat, self.NENS, axis=0
-                        )
-                        FeddesParam_mat_ens = np.reshape(
-                            FeddesParam_mat_ens, (self.NENS, self.cathyH["MAXVEG"], 6)
-                        )
+                    if len(Feddes_withPertParam) == 0:
+                        Feddes =  self.soil_FP["FP_map"]
+                        Feddes_ENS = [Feddes]*self.NENS
+                        Feddes_withPertParam = [copy.deepcopy(feddes) for feddes in Feddes_ENS]
 
-                    idFeddes = ["PCANA", "PCREF", "PCWLT", "ZROOT", "PZ", "OMGC"].index(
-                        key_root[0]
-                    )
-
-                    # if self.cathyH["MAXVEG"]<2: # Case where only 1 vegetation type
-                    FeddesParam_mat_ens[:, int(key_root[1]), idFeddes] = dict_parm_pert[
-                        key
-                    ][update_key]
-                    # FeddesParam_mat_ens[:,:,idFeddes] = parm_pert[key][update_key]
-                    # else: # Case where only 1 vegetation type
-
-                    FeddesParam_map_ensi = []
-                    for es in range(self.NENS):
-                        fed = dict()
-                        for i, f in enumerate(
-                            ["PCANA", "PCREF", "PCWLT", "ZROOT", "PZ", "OMGC"]
-                        ):
-                            fed[f] = list(FeddesParam_mat_ens[es, :, i])
-                        FeddesParam_map_ensi.append(fed)
+                    new_Feddes_parm = dict_parm_pert[key][update_key]
+                    Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]                    
+                    
                     
                     self.update_soil(
-                        FP_map=FeddesParam_map_ensi[ens_nb],
+                        FP_map=Feddes_withPertParam[ens_nb],
                         SPP_map=SPP_map,
                         zone3d=zone3d,
                         verbose=self.verbose,
@@ -2052,6 +2045,7 @@ class DA(CATHY):
                         shellprint_update=shellprint_update,
                         backup=True,
                     )
+
                 # Archie_p update
                 # --------------------------------------------------------------
                 elif key_root[0] in Archie_p_names:

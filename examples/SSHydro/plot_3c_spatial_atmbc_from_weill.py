@@ -83,7 +83,7 @@ cplt.show_vtk(
     unit="pressure",
     timeStep=1,
     notebook=False,
-    path=simu.workdir + "/atmbc_spatially_timely_from_weill/vtk/",
+    path=simu.workdir + "/atmbc_spatially_from_weill/vtk/",
     savefig=True,
 )
 

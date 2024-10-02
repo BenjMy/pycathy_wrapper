@@ -9,7 +9,7 @@ Herman, J. and Usher, W. (2017) SALib: An open-source Python library for sensiti
 
 import matplotlib.pyplot as plt
 import numpy as np
-from SALib.analyze import morris as ma
+# from SALib.analyze import morris as ma
 from SALib.plotting import morris as mp
 from SALib.sample import morris as ms
 
