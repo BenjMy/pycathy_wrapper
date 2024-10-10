@@ -36,11 +36,13 @@ simu.run_preprocessor(verbose=False)
 # simu.run_processor(IPRT1=3,verbose=True)
 
 # simu.read_inputs('atmbc')
-simu.update_parm(TIMPRTi=[1800,7200])
+simu.update_parm(TIMPRTi=[1800,7200],
+                 VTKF=2
+                 )
 
 # simu.atmbc
-simu.parm
-
+# simu.parm
+# simu.update_parm(VTKF=2)
 
 # simu.grid3d
 # len(simu.grid3d["mesh_tetra"])

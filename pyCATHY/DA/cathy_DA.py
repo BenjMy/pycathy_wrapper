@@ -334,54 +334,17 @@ class DA(CATHY):
 
         return ENS_times, newlist_parm2update, update_key
 
-    def run_DA_sequential(
-                            self,
-                            DA_type,
-                            dict_obs,
-                            list_parm2update,
-                            dict_parm_pert,
-                            list_assimilated_obs,
-                            open_loop_run=False,
-                            parallel=True,
-                            **kwargs,
-                        ):
+    def prepare_DA(
+                    self,
+                    dict_obs,
+                    dict_parm_pert,
+                    list_parm2update,
+                    list_assimilated_obs,
+                    open_loop_run,
+                    parallel,
+                    **kwargs
+                    ):
 
-        """
-
-        Run Data Assimilation
-
-        .. note::
-
-            Steps are:
-            1. DA init (create subfolders)
-            2a. run CATHY hydrological model (open loop)
-            2b. run CATHY hydrological model recursively using DA times
-                <- Loop-->
-                    3. check before analysis
-                    4. analysis
-                    5. check after analysis
-                    6. update input files
-                <- Loop-->
-
-        Parameters
-        ----------
-        callexe : str
-            processor exe filename
-        parallel : bool
-            True for multiple ensemble folder simulations.
-        DA_type : str
-            type of Data Assimilation.
-        list_assimilated_obs : TYPE
-            list of names of observations to assimilate.
-        dict_obs : dict
-            observations dictionnary.
-        list_update_parm : list
-            list of names of parameters to update.
-        dict_parm_pert : dict
-            parameters perturbated dictionnary.
-
-
-        """
         self.run_processor(DAFLAG=1,
                            runProcess=False,
                            **kwargs) # to create the processor exe
@@ -429,14 +392,187 @@ class DA(CATHY):
         # end of Open loop
         # -------------------------------------------------------------------
 
+        return (callexe, 
+                all_atmbc_times, 
+                threshold_rejected, 
+                ENS_times, 
+                update_key)
+
+    def run_DA_smooth(
+                        self,
+                        DA_type,
+                        dict_obs,
+                        list_parm2update,
+                        dict_parm_pert,
+                        list_assimilated_obs,
+                        open_loop_run=False,
+                        parallel=True,
+                        **kwargs
+                    ):
+
+        """
+
+        Run Data Assimilation
+
+        .. note::
+
+            Steps are:
+            1. DA init (create subfolders)
+            2a. run CATHY hydrological model (open loop)
+            2b. run CATHY hydrological model stacked using ALL DA times
+            3. check before analysis
+            4. analysis
+            5. check after analysis
+
+        Parameters
+        ----------
+        parallel : bool
+            True for multiple ensemble folder simulations.
+        DA_type : str
+            type of Data Assimilation.
+        list_assimilated_obs : TYPE
+            list of names of observations to assimilate.
+        dict_obs : dict
+            observations dictionnary.
+        list_update_parm : list
+            list of names of parameters to update.
+        dict_parm_pert : dict
+            parameters perturbated dictionnary.
+        """
+
+        (callexe, 
+         all_atmbc_times, 
+         threshold_rejected, 
+         ENS_times, 
+         update_key) = self.prepare_DA(
+                                         dict_obs,
+                                         dict_parm_pert,
+                                         list_parm2update,
+                                         list_assimilated_obs,
+                                         open_loop_run,
+                                         parallel,
+                                         **kwargs
+                                         )
+                                    
+        # self._run_ensemble_hydrological_model(parallel, callexe)
+        # os.chdir(os.path.join(self.workdir))
+
+        # map states to observation = apply H operator to state variable
+        # ----------------------------------------------------------------
+        prediction = self.map_states2Observations(
+                                                    list_assimilated_obs,
+                                                    default_state="psi",
+                                                    parallel=parallel,
+                                                )
+        np.shape(prediction)
+        self.atmbc
+        
+        # DA analysis
+        # ----------------------------------------------------------------
+        self.console.print(
+            r""":chart_with_upwards_trend: [b]Analysis[/b]:
+                               - DA type: {}
+                               - Damping: {}
+                           """.format(
+                DA_type, self.damping
+            )
+        )
+
+
+        (
+            ensemble_psi_valid_bef_update,
+            ensemble_sw_valid_bef_update,
+            ens_size,
+            sim_size,
+        ) = self._read_state_ensemble()
+        
+        
+        (
+            ensemble_psi,
+            ensemble_sw,
+            data,
+            analysis,
+            analysis_param,
+        ) = self._DA_analysis(
+                            prediction,
+                            DA_type,
+                            list_parm2update,
+                            list_assimilated_obs,
+                            ens_valid=self.ens_valid,
+        )
+
+        pass
+
+    def run_DA_sequential(
+                            self,
+                            DA_type,
+                            dict_obs,
+                            list_parm2update,
+                            dict_parm_pert,
+                            list_assimilated_obs,
+                            open_loop_run=False,
+                            parallel=True,
+                            **kwargs,
+                        ):
+
+        """
+
+        Run Data Assimilation
+
+        .. note::
+
+            Steps are:
+            1. DA init (create subfolders)
+            2a. run CATHY hydrological model (open loop)
+            2b. run CATHY hydrological model recursively using DA times
+                <- Loop-->
+                    3. check before analysis
+                    4. analysis
+                    5. check after analysis
+                    6. update input files
+                <- Loop-->
+
+        Parameters
+        ----------
+        parallel : bool
+            True for multiple ensemble folder simulations.
+        DA_type : str
+            type of Data Assimilation.
+        list_assimilated_obs : TYPE
+            list of names of observations to assimilate.
+        dict_obs : dict
+            observations dictionnary.
+        list_update_parm : list
+            list of names of parameters to update.
+        dict_parm_pert : dict
+            parameters perturbated dictionnary.
+
+
+        """
+        
+        (callexe, 
+         all_atmbc_times, 
+         threshold_rejected, 
+         ENS_times, 
+         update_key) = self.prepare_DA(
+                                         dict_obs,
+                                         dict_parm_pert,
+                                         list_parm2update,
+                                         list_assimilated_obs,
+                                         open_loop_run,
+                                         parallel,
+                                         **kwargs
+                                         )
+                                    
+
         # -------------------------------------------------------------------
-        # update input files ensemble again (time-windowed)
+        # (time-windowed) update input files ensemble again 
         # -------------------------------------------------------------------
         self._update_input_ensemble(
             list(self.atmbc["time"]),
             list_parm2update=list_parm2update,         
         )
-
+        
         # -----------------------------------
         # Run hydrological model sequentially
         # = Loop over atmbc times (including assimilation observation times)
@@ -1090,19 +1226,19 @@ class DA(CATHY):
         """mark invalid ensemble - invalid ensemble are filled with NaN values"""
 
         ensemble_psi_valid = np.empty(ensemble_psi.shape)
-        ensemble_psi_valid[:] = np.NaN
+        ensemble_psi_valid[:] = np.nan
         ensemble_psi_valid[:, ens_valid] = ensemble_psi[:, ens_valid]
 
         ensemble_sw_valid = np.empty(ensemble_psi.shape)
-        ensemble_sw_valid[:] = np.NaN
+        ensemble_sw_valid[:] = np.nan
         ensemble_sw_valid[:, ens_valid] = ensemble_sw[:, ens_valid]
 
         analysis_valid = np.empty(ensemble_psi.shape)
-        analysis_valid[:] = np.NaN
+        analysis_valid[:] = np.nan
         analysis_valid[:, ens_valid] = analysis
 
         prediction_valid = np.empty([prediction.shape[0], ensemble_psi.shape[1]])
-        prediction_valid[:] = np.NaN
+        prediction_valid[:] = np.nan
         prediction_valid[:, ens_valid] = prediction
 
         analysis_param_valid = []
@@ -1110,7 +1246,7 @@ class DA(CATHY):
             analysis_param_valid = np.empty(
                 [analysis_param.shape[1], ensemble_psi.shape[1]]
             )
-            analysis_param_valid[:] = np.NaN
+            analysis_param_valid[:] = np.nan
             analysis_param_valid[:, ens_valid] = analysis_param.T
 
         return (
@@ -1490,23 +1626,23 @@ class DA(CATHY):
                 write2shell_map = True
                 for t in range(len(ENS_times)):
                     prediction_stacked = self.map_states2Observations(
-                        list_assimilated_obs,
-                        ENS_times=ENS_times,
-                        savefig=False,
-                        parallel=parallel,
-                        write2shell_map=write2shell_map,
-                    )
+                                                                        list_assimilated_obs,
+                                                                        ENS_times=ENS_times,
+                                                                        savefig=False,
+                                                                        parallel=parallel,
+                                                                        write2shell_map=write2shell_map,
+                                                                    )
                     prediction_OL.append(prediction_stacked)
                     write2shell_map = False
 
         else:
             for t in range(len(ENS_times)):
                 prediction_stacked = self.map_states2Observations(
-                    list_assimilated_obs,
-                    ENS_times=ENS_times,
-                    savefig=False,
-                    parallel=parallel,
-                )
+                                                                    list_assimilated_obs,
+                                                                    ENS_times=ENS_times,
+                                                                    savefig=False,
+                                                                    parallel=parallel,
+                                                                )
                 # prediction_stacked is meas_size * ens_size
                 prediction_OL.append(prediction_stacked)
                 # prediction_OL is meas_size * ens_size * ENS_times size
@@ -2031,7 +2167,8 @@ class DA(CATHY):
                         Feddes =  self.soil_FP["FP_map"]
                         Feddes_ENS = [Feddes]*self.NENS
                         Feddes_withPertParam = [copy.deepcopy(feddes) for feddes in Feddes_ENS]
-
+                    
+                    print(key,update_key)
                     new_Feddes_parm = dict_parm_pert[key][update_key]
                     Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]                    
                     
@@ -2583,13 +2720,13 @@ class DA(CATHY):
             if self.count_atmbc_cycle is not None:
                 if HSPATM==0:
                     time_window_atmbc = [
-                        df_atmbc.time.unique()[self.count_atmbc_cycle],
-                        df_atmbc.time.unique()[self.count_atmbc_cycle+1]    
+                        int(df_atmbc.time.unique()[self.count_atmbc_cycle]),
+                        int(df_atmbc.time.unique()[self.count_atmbc_cycle+1]) 
                         ]
                 else:
                     time_window_atmbc = [
-                        df_atmbc.iloc[self.count_atmbc_cycle]["time"],
-                        df_atmbc.iloc[self.count_atmbc_cycle + 1]["time"],
+                        int(df_atmbc.time.iloc[self.count_atmbc_cycle]),
+                        int(df_atmbc.time.iloc[self.count_atmbc_cycle + 1]),
                     ]
             else:
                 time_window_atmbc = [ENS_times[0], ENS_times[1]]

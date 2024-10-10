@@ -20,6 +20,7 @@ import pyvista as pv
 # -----------------------
 simuWithDA = DA(
                 dirName='./DA_with_swc',
+                prj_name='import_SMC',
                 notebook=True,
                 )
 
@@ -63,7 +64,7 @@ for d in SMC_depths:
     nodes_SMC.append(nodeId)
     closestPos.append(closest)
 
-nodes_SMC = np.vstack(nodes_SMC)
+nodes_SMC = np.hstack(nodes_SMC)
 SMC_XYZ = np.vstack(closestPos)
 
     
@@ -116,11 +117,7 @@ _,_, stacked_data_cov = make_data_cov(
 print(np.shape(stacked_data_cov))
 simuWithDA.stacked_data_cov = stacked_data_cov
 
-#%% Run assimilation
-# simuWithDA.run_DA_sequential(
-#                               dict_obs= dict_obs,
-#                               list_assimilated_obs='all', # default
-#                               list_parm2update=...,
-#                               DA_type=...,
-#                               dict_parm_pert=...,
-#                             )
+#%% Save dict of observations
+import pickle
+with open('obs_prepared_SMC.pkl', 'wb') as fp:
+    pickle.dump(dict_obs, fp)

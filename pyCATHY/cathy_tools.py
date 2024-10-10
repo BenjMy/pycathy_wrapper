@@ -1443,8 +1443,8 @@ class CATHY:
             # ----------------------------------------------------------------
             if kk == "TIMPRTi":
                 key = "(TIMPRT(I),I=1,NPRT)"
-
-                self.parm[key] = list(value)
+                TIMPRTinew = [int(lv) for lv in list(value)]
+                self.parm[key] = TIMPRTinew
 
             # points of interest NODVP
             # ----------------------------------------------------------------
@@ -1502,7 +1502,7 @@ class CATHY:
                     # ------------------------------------------------------------
                     if "(TIMPRT(I),I=1,NPRT)" in kk:
                         if self.parm["TMAX"] < max(self.parm["(TIMPRT(I),I=1,NPRT)"]):
-                            self.parm["TMAX"] = max(self.parm["(TIMPRT(I),I=1,NPRT)"])
+                            self.parm["TMAX"] = int(max(self.parm["(TIMPRT(I),I=1,NPRT)"]))
 
         # check if consistency between times of interest and
         # number of times of interest
@@ -1542,7 +1542,7 @@ class CATHY:
             warnings_parm.append(
                 "Adjusting TMAX with respect to time of interests requested" + "\n"
             )
-            self.parm["TMAX"] = max(self.parm["(TIMPRT(I),I=1,NPRT)"])
+            self.parm["TMAX"] = int(max(self.parm["(TIMPRT(I),I=1,NPRT)"]))
 
         if len(warnings_parm) > 0:
             self.console.rule(
@@ -1921,7 +1921,8 @@ class CATHY:
                 for t, v in zip(time, v_atmbc):
                     if verbose:
                         print(t, v)
-                    atmbcfile.write("{:.0f}".format(t) + "\t" + "time" + "\n")
+                    # atmbcfile.write("{:.0f}".format(t) + "\t" + "time" + "\n")
+                    atmbcfile.write("%i\t%s\n" % (t, "time"))
                     # atmbcfile.close()
                     if isinstance(v, float) | isinstance(v, int):
                         atmbcfile.write("{:.3e}".format(v) + "\t" + "VALUE" + "\n")
@@ -1938,7 +1939,7 @@ class CATHY:
 
         atmbcfile.close()
 
-        self.update_parm(TIMPRTi=[time[0],time[-1]], NPRT=2, TMAX=max(time))
+        self.update_parm(TIMPRTi=[time[0],time[-1]], NPRT=2, TMAX=int(max(time)))
         # self.update_parm(TIMPRTi=time, NPRT=len(time), TMAX=max(time))
 
         # don't need to update if sequential DA as the cathy.exe is already created

@@ -126,7 +126,7 @@ simu.run_processor(
     DELTAT=5,  # Time increment
     TRAFLAG=0,  # Transport flag off
     VTKF=2,  # Output VTK format
-    verbose=False  # Turn off verbose mode
+    verbose=True  # Turn off verbose mode
 )
 
 #%% Visualize results
