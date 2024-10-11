@@ -34,7 +34,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 #%% Initialize CATHY model
 # Define the project directory and model name. This example uses 'atmbc_spatially_from_weill'.
 path2prj = "../SSHydro/"  # Replace with your local project path
-simu = cathy_tools.CATHY(dirName=path2prj, prj_name="atmbc_spatially_from_weill")
+simu = cathy_tools.CATHY(dirName=path2prj, prj_name="atmbc_spatially_from_weill_withnodata")
 figpath = "../results/DA_ET_test/"  # Path to store figures/results
 
 #%% Load and manipulate the DEM (Digital Elevation Model)
