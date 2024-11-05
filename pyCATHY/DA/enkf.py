@@ -130,24 +130,17 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
 
     # Set up observations covariance matrix
     # -------------------------------------------------------------------------
-    
-    # data_cov = np.zeros((2411, 2411))
-    # Fill the diagonal with the value 1e2 (100)
-    # np.fill_diagonal(data_cov, 1e2)
-
     if Sakov:
         COV = data_cov.transpose()
     else:
-        COV = ( (1.0 / float(ens_size - 1)) *
-                np.dot(obs_pert, obs_pert.transpose()) 
-               + data_cov.transpose()
-              )
-        np.shape(np.dot(obs_pert, obs_pert.transpose()) )
-        np.shape(data_cov)
+        COV = ( (1.0 / float(ens_size - 1)) * np.dot(obs_pert, obs_pert.transpose()) + data_cov.transpose())
     # Compute inv(COV)*dD
     # -------------------------------------------------------------------------
     # Should be (MeasSize)x(ens_size)
     inv_data_pert = np.linalg.solve(COV, data_pert)
+    print("Compute inv(COV)*dD")
+    print(np.shape(COV))
+
 
     # Adjust ensemble perturbations
     # -------------------------------------------------------------------------
@@ -160,6 +153,7 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # -------------------------------------------------------------------------
     # Analysis is (sim_size+ParSize)x(ens_size)
     analysis = augm_state + np.dot(pert, inv_data_pert)
+    print("Analysis ...")
 
     # Separate and return Analyzed ensemble and Analyzed parameters.
     # -------------------------------------------------------------------------
@@ -296,7 +290,7 @@ def enkf_analysis_inflation(data, data_cov, param, ensemble, observation, **kwar
     Analysisparam = Analysis[sim_size:, :].transpose()
     Analysis = Analysis[0:sim_size, :]
 
-    print(np.shape(Analysisparam))
+    # print(np.shape(Analysisparam))
 
     return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
 
@@ -391,7 +385,6 @@ def enkf_analysis_inflation_multiparm(data, data_cov, param, ensemble, observati
     Analysisparam = Analysis[sim_size:, :].transpose()
     Analysis = Analysis[0:sim_size, :]
 
-    print(np.shape(Analysisparam))
 
     return [A, Amean, dA, dD, MeasAvg, S, COV, B, dAS, Analysis, Analysisparam]
 

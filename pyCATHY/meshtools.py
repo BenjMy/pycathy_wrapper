@@ -1053,3 +1053,37 @@ def add_markers2mesh(
         xyz_layers,
         saveMeshPath
     )
+#%%
+def map_cells_to_nodes(raster_map, grid3d_shape):
+    """
+    Map a raster to a grid of nodes (providing the mesh is regular).
+    
+    Args:
+        raster_map (np.ndarray): 20x20 vegetation map.
+        grid3d_shape (tuple): Shape of the 3D grid (e.g., (21, 21)).
+    
+    Returns:
+        np.ndarray: n+1 grid with node values based on the corresponding cell values from raster_map.
+    """
+    grid3d_mapped = np.zeros(grid3d_shape)
+
+    # Define scaling factor for mapping
+    scale_x = (raster_map.shape[0] - 1) / (grid3d_shape[0] - 1)
+    scale_y = (raster_map.shape[1] - 1) / (grid3d_shape[1] - 1)
+
+    # Loop over the 21x21 nodes and map the corresponding veg_map value
+    for i in range(grid3d_shape[0]):
+        for j in range(grid3d_shape[1]):
+            # Find the corresponding cell in the veg_map using the scale factor
+            x = int(round(i * scale_x))
+            y = int(round(j * scale_y))
+            
+            # Ensure that indices stay within bounds of veg_map
+            x = min(max(x, 0), raster_map.shape[0] - 1)
+            y = min(max(y, 0), raster_map.shape[1] - 1)
+            
+            # Assign the vegetation map value to the corresponding node
+            grid3d_mapped[i, j] = raster_map[x, y]
+
+    return grid3d_mapped
+

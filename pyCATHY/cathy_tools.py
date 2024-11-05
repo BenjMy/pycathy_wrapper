@@ -3580,9 +3580,6 @@ class CATHY:
             Values of the property. 
         to_nodes : bool, optional
             Map to the mesh nodes. The default is False.
-
-
-
         
         Returns
         -------

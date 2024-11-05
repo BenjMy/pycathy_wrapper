@@ -43,6 +43,7 @@ _,_, stacked_data_cov = make_data_cov(
                                         )
 print(np.shape(stacked_data_cov))
 simuWithDA.stacked_data_cov = stacked_data_cov
+# print(np.shape(simuWithDA.stacked_data_cov))
 
 #%%
 DEM, _ = simuWithDA.read_inputs('dem')

@@ -55,8 +55,8 @@ def create_dict_entry(
                       ):
     
     per_type = scenario["per_type"][index]
-    if type(nstri) == int: 
-        per_type = scenario["per_type"][index][nstri]
+    # if type(nstri) == int: 
+    #     per_type = scenario["per_type"][index][nstri]
         
     dict_parm_entry = {
         "type_parm": name + str(nstri),
@@ -409,93 +409,140 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
 
+        scenario_sampling = "normal"
+        if "sampling_type" in scenario:
+            scenario_sampling = scenario["sampling_type"][index]
+            
         clip_min = None
         clip_max = None
 
+        # Handling different configurations for zones, root maps, and layer perturbations of Ks:
+        # If the scenario includes ['zone', 'root_map', 'layers'], it should contain a list of lists of lists.
+        # If it includes ['zone', 'root_map'], it should contain a list of lists.
+        # And so on...
 
-        if type(scenario["per_nom"][index]) is list:                   
-            for nstri in range(nlayers):
-                
-                if nlayers > 1:
-                    scenario_nom = scenario["per_nom"][index][nstri]
-                    scenario_mean = scenario["per_mean"][index][nstri]
-                    scenario_sd = scenario["per_sigma"][index][nstri]
-    
-                ks = create_dict_entry(
-                            'ks',scenario,index,nstri, 
-                            scenario_nom, scenario_mean, scenario_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            )
+        pert_key_order = ['zone','root_map','layers']
+        if 'pert_key_order' in scenario:
+            pert_key_order = scenario['pert_key_order'][index]
+        
+        
+        df_SPP, df_FP = simu_DA.read_inputs('soil')
+        zone_raster, zone_header = simu_DA.read_inputs('zone')
+        # veg_raster, veg_header = simu_DA.read_inputs('root_map')
+        
+        if 'zone' in pert_key_order: 
+            for zonei in range(len(np.unique(zone_raster))):
+           
+                if len(np.unique(zone_raster)) > 1:
+                    scenario_nom = scenario["per_nom"][index][zonei]
+                    scenario_mean = scenario["per_mean"][index][zonei]
+                    scenario_sd = scenario["per_sigma"][index][zonei]
+           
+                ks = {
+                    "type_parm": "ks" + str(zonei),
+                    "nominal": scenario_nom,  # nominal value
+                    "mean": scenario_mean,
+                    "sd": scenario_sd,
+                    "units": "$m$",  # units
+                    "sampling_type": scenario_sampling,
+                    "ensemble_size": NENS,  # size of the ensemble
+                    "per_type": scenario["per_type"][index],
+                    "savefig": "ks" + str(zonei) + ".png",
+                    "surf_zones_param": zonei,
+                    "clip_min": clip_min,
+                    "clip_max": clip_max,
+                    "pert_key_order": pert_key_order,
+                }
                 list_pert.append(ks)
         else:
-                ks = create_dict_entry(
-                            'ks',scenario,index,'', 
-                            scenario_nom, scenario_mean, scenario_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            )
-                # check_distribution(ks)
-                list_pert.append(ks)
+            raise ValueError('not yet implemented for other perturbation than veg_map areas')
+             
+     
+        # # for nstri in range(len(simu_DA.soil["PZ"])):
+        # for nzonesi in range(len(df_FP.index.unique())):
+
+        # if type(scenario["per_nom"][index]) is list:                   
+        #     for nstri in range(nlayers):
+                
+        #         if nlayers > 1:
+        #             scenario_nom = scenario["per_nom"][index][nstri]
+        #             scenario_mean = scenario["per_mean"][index][nstri]
+        #             scenario_sd = scenario["per_sigma"][index][nstri]
+    
+        #         ks = create_dict_entry(
+        #                     'ks',scenario,index,nstri, 
+        #                     scenario_nom, scenario_mean, scenario_sd, 
+        #                     clip_min,clip_max,
+        #                     NENS,
+        #                     )
+        #         list_pert.append(ks)
+        # else:
+        #         ks = create_dict_entry(
+        #                     'ks',scenario,index,'', 
+        #                     scenario_nom, scenario_mean, scenario_sd, 
+        #                     clip_min,clip_max,
+        #                     NENS,
+        #                     )
+        #         # check_distribution(ks)
+        #         list_pert.append(ks)
                 
                 
+    # Check if 'porosity' is a parameter in the scenario and get its index if present
     if "porosity" in scenario["per_name"]:
         index = scenario["per_name"].index("porosity")
-
+    
+        # Set perturbation order, defaulting to ['zone', 'root_map', 'layers'] if not specified
+        pert_key_order = scenario.get("pert_key_order", ['zone', 'root_map', 'layers'])[index]
+    
+        # Retrieve nominal, mean, and sigma values for the scenario
         scenario_nom = scenario["per_nom"][index]
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
-
-        clip_min = 0.2  # minimum soil porosity
-        clip_max = 0.7  # maximum soil porosity           
-
-        if type(scenario["per_nom"][index]) is list:                   
+    
+        # Define clipping bounds for soil porosity
+        clip_min, clip_max = 0.2, 0.7
+    
+        # Perturb by 'zone' if specified
+        if 'zone' in pert_key_order:
+            for zonei in range(len(np.unique(zone_raster))):
+                # Adjust bounds and retrieve parameters for the current zone
+                clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
+    
+                # Create porosity entry for this zone and validate distribution
+                porosity = create_dict_entry(
+                    'porosity', scenario, index, zonei, zone_nom, zone_mean, zone_sd, 
+                    clip_min, clip_max, NENS
+                )
+                check_distribution(porosity)
+                list_pert.append(porosity)
+    
+        # Perturb by 'layers' if specified
+        elif 'layers' in pert_key_order:
             for nstri in range(nlayers):
+                # Adjust bounds and retrieve parameters for the current layer
+                clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
     
-                clip_min, clip_max = check4bounds(
-                    scenario,
-                    index,
-                    clip_min,
-                    clip_max,
-                    het_size=len(simu_DA.soil_SPP["SPP_map"]["POROS"]),
-                    het_nb=nstri,
-                )
-    
-                if nlayers > 1:
-                    if type(scenario["per_nom"][index]) is list:
-                        scenario_nom = scenario["per_nom"][index][nstri]
-                        scenario_mean = scenario["per_mean"][index][nstri]
-                        scenario_sd = scenario["per_sigma"][index][nstri]
-    
+                # Create porosity entry for this layer and validate distribution
                 porosity = create_dict_entry(
-                            'porosity',scenario,index,nstri, 
-                            scenario_nom, scenario_mean, scenario_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            )
+                    'porosity', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
+                    clip_min, clip_max, NENS
+                )
                 check_distribution(porosity)
                 list_pert.append(porosity)
+    
+        # Default case: apply global perturbation if neither 'zone' nor 'layers' specified
         else:
-                clip_min, clip_max = check4bounds(
-                    scenario,
-                    index,
-                    clip_min,
-                    clip_max,
-                )
+            clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+            porosity = create_dict_entry(
+                'porosity', scenario, index, '', scenario_nom, scenario_mean, scenario_sd, 
+                clip_min, clip_max, NENS
+            )
+            check_distribution(porosity)
+            list_pert.append(porosity)
+    
 
-                scenario_nom = scenario["per_nom"][index]
-                scenario_mean = scenario["per_mean"][index]
-                scenario_sd = scenario["per_sigma"][index]
-                
-                porosity = create_dict_entry(
-                            'porosity',scenario,index,'', 
-                            scenario_nom, scenario_mean, scenario_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            )
-               
-                check_distribution(porosity)
-                list_pert.append(porosity)
 
     #%% Plant parameters
     # ------------------------------------------------------------------------
@@ -665,7 +712,7 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
         
         df_SPP, df_FP = simu_DA.read_inputs('soil')
         
-        for nstri in range(len(df_FP.index.unique())):
+        for nzonesi in range(len(df_FP.index.unique())):
 
             clip_min, clip_max = check4bounds(
                 scenario,
@@ -673,16 +720,16 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
                 clip_min,
                 clip_max,
                 het_size=len(df_FP.index.unique()),
-                het_nb=nstri,
+                het_nb=nzonesi,
             )
 
             if len(df_FP.index.unique()) > 1:
-                scenario_nom = scenario["per_nom"][index][nstri]
-                scenario_mean = scenario["per_mean"][index][nstri]
-                scenario_sd = scenario["per_sigma"][index][nstri]
+                scenario_nom = scenario["per_nom"][index][nzonesi]
+                scenario_mean = scenario["per_mean"][index][nzonesi]
+                scenario_sd = scenario["per_sigma"][index][nzonesi]
 
             ZROOT = {
-                "type_parm": "ZROOT" + str(nstri),
+                "type_parm": "ZROOT" + str(nzonesi),
                 "nominal": scenario_nom,  # nominal value
                 "mean": scenario_mean,
                 "sd": scenario_sd,
@@ -690,8 +737,8 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
                 "sampling_type": scenario_sampling,
                 "ensemble_size": NENS,  # size of the ensemble
                 "per_type": scenario["per_type"][index],
-                "savefig": "ZROOT" + str(nstri) + ".png",
-                "surf_zones_param": nstri,
+                "savefig": "ZROOT" + str(nzonesi) + ".png",
+                "surf_zones_param": nzonesi,
                 "clip_min": clip_min,
                 "clip_max": clip_max,
             }
@@ -722,7 +769,7 @@ def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
     # sampling
     np.random.seed(1)
     if sampling_type == "lognormal":
-        parm_sampling = np.random.lognormal(mean, sigma=sd, size=ensemble_size)
+        parm_sampling = np.random.lognormal(np.log(mean), sigma=sd, size=ensemble_size)       
     elif sampling_type == "normal":
         # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
         parm_sampling = np.random.normal(mean, scale=sd, size=ensemble_size)

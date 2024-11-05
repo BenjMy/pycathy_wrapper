@@ -268,20 +268,20 @@ def show_spatialET(df_fort777,**kwargs):
 
     else:
         
-        df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
-        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')
+        df_fort777_select_t_xr = df_fort777_select_t.set_index(['x','y']).to_xarray()
+        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('x','y')
         
         if crs is not None:
             df_fort777_select_t_xr.rio.write_crs(crs, inplace=True)
-        df_fort777_select_t_xr = df_fort777_select_t_xr.transpose('Y', 'X')
+        df_fort777_select_t_xr = df_fort777_select_t_xr.transpose('y', 'x')
         data_array = df_fort777_select_t_xr['ACT. ETRA'].values
         
         # Plot using plt.imshow
         cmap = ax.imshow(data_array, 
                          cmap=cmap, 
                          origin='lower', 
-                         extent=[min(df_fort777_select_t['X']),max(df_fort777_select_t['X']),
-                                 min(df_fort777_select_t['Y']),max(df_fort777_select_t['Y'])],
+                         extent=[min(df_fort777_select_t['x']),max(df_fort777_select_t['x']),
+                                 min(df_fort777_select_t['y']),max(df_fort777_select_t['y'])],
                          clim = clim,
                   )        
     title = 'ETa'
@@ -1359,7 +1359,7 @@ def show_DA_process_ens(
 
     ax = fig.add_subplot(2, 5, 2)
     cax = ax.matshow(np.tile(Data, (np.shape(EnsembleX)[1], 1)).T, aspect="auto")
-    ax.set_title(label_sensor)
+    # ax.set_title(label_sensor)
     ax.set_ylabel("Meas")
     ax.set_xlabel("Members #")
     cbar = fig.colorbar(cax, location="bottom")
@@ -1569,9 +1569,10 @@ def DA_plot_parm_dynamic_scatter(
         color = kwargs["color"]
     
     if len(df.columns)>15:
-        # nii = [int(ni) for ni in np.arange(0,len(df.columns),6)]
-        name = [str(ni+1) for ni in list_assimilation_times]
-        df = df.iloc[:,list_assimilation_times]
+        nii = [int(ni) for ni in np.arange(0,len(df.columns),6)]
+        # name = [str(ni+1) for ni in list_assimilation_times]
+        name = ["#" + str(ni) for ni in nii]
+        df = df.iloc[:,nii]
         
     boxplot = df.boxplot(
                          color=color,
@@ -1591,7 +1592,7 @@ def DA_plot_parm_dynamic_scatter(
     if "log" in kwargs:
         if kwargs["log"]:
             boxplot.set_yscale("log")
-    return ax
+    return ax, df
 
 
 def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs):
@@ -1809,8 +1810,9 @@ def DA_plot_time_dynamic(
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
 
-    alpha = 0.5
-    colors_minmax = 'darkblue'
+    alpha = 0.8
+    # colors_minmax = 'darkblue'
+    colors_minmax = 'grey'
     if "colors_minmax" in kwargs:
         colors_minmax = kwargs["colors_minmax"]
         
@@ -1862,7 +1864,7 @@ def DA_plot_time_dynamic(
             prep_DA["ens_max_isENS_time"][keytime],
             prep_DA["ens_min_isENS_time"]["min(ENS)"],
             prep_DA["ens_max_isENS_time"]["max(ENS)"],
-            alpha=0.2,
+            alpha=alpha,
             color=colors_minmax,
             label="minmax DA",
         )
