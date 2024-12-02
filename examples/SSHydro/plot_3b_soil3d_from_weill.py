@@ -118,7 +118,11 @@ simu.update_soil(
 simu.update_zone()
 
 layers = {1: [0, 2], 2: [2, 100]}
-zone3d_flag = mt.map_layers_2_DEM(layers, simu.DEM, simu.zone, simu.dem_parameters)
+zone3d_flag = mt.map_layers_2_DEM(layers, 
+                                  simu.DEM,
+                                  simu.zone, 
+                                  simu.dem_parameters
+                                  )
 
 #%% Define a dictionnary of Soil Physical Properties
 
@@ -145,4 +149,8 @@ simu.update_soil(
 
 #%% Run  hydrological model
 
-# simu.run_processor(IPRT1=2, TRAFLAG=0, verbose=False)
+simu.run_processor(IPRT1=2, 
+                   TRAFLAG=0, 
+                   verbose=False,
+                    VTKF=2,
+                   )

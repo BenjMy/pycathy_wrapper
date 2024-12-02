@@ -61,3 +61,10 @@ Show outputs
               path="./my_cathy_prj/vtk/")
    
    
+Recommandations
+================
+
+Start from the simpliest and run tests prograssivelty getting to complexity. 
+- Building the mesh - test the mesh with unique vegetation raster, soil and atmbc uniform
+- Change vegetation properties --> test
+- Change soil properties --> test

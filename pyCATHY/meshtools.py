@@ -25,7 +25,7 @@ except ImportError:
     pygimli = None
 
 import matplotlib.pylab as plt
-
+import xarray as xr
 
 def CATHY_2_Simpeg(
     mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwargs
@@ -1054,7 +1054,7 @@ def add_markers2mesh(
         saveMeshPath
     )
 #%%
-def map_cells_to_nodes(raster_map, grid3d_shape):
+def map_cells_to_nodes(raster_map, grid3d_shape=None):
     """
     Map a raster to a grid of nodes (providing the mesh is regular).
     
@@ -1065,7 +1065,12 @@ def map_cells_to_nodes(raster_map, grid3d_shape):
     Returns:
         np.ndarray: n+1 grid with node values based on the corresponding cell values from raster_map.
     """
-    grid3d_mapped = np.zeros(grid3d_shape)
+    if grid3d_shape is None:
+        grid3d_mapped = np.zeros(np.shape(raster_map)[0]+1,
+                                 np.shape(raster_map)[1]+1,
+                                 )
+    else:
+        grid3d_mapped = np.zeros(grid3d_shape)
 
     # Define scaling factor for mapping
     scale_x = (raster_map.shape[0] - 1) / (grid3d_shape[0] - 1)
@@ -1087,3 +1092,40 @@ def map_cells_to_nodes(raster_map, grid3d_shape):
 
     return grid3d_mapped
 
+def xarraytoDEM_pad(data_array):
+    # Get the resolution (pixel size) directly from the DataArray's transform
+    # Get the Affine transform
+    transform = data_array.rio.transform()
+    
+    # Extract pixel size from the transform
+    pixel_size_x = transform.a  # Pixel width (x-direction)
+    pixel_size_y = -transform.e  # Pixel height (y-direction, note the negative sign for y)
+    
+    # Define padding in pixels
+    pad_pixels_y = 1  # Padding in y-direction (top and bottom)
+    pad_pixels_x = 1  # Padding in x-direction (left and right)
+    
+    # Calculate padding in meters (or coordinate units)
+    pad_m_y = pad_pixels_y * (pixel_size_y / 2)  # Padding in y-direction
+    pad_m_x = pad_pixels_x * (pixel_size_x / 2)  # Padding in x-direction
+    
+    # Apply padding using numpy.pad
+    pad_width = ((0, 0), (pad_pixels_y, 0), (0, pad_pixels_x))  # (time, y, x)
+    padded_array_np = np.pad(data_array.values, 
+                             pad_width, 
+                             mode='edge', 
+                             # constant_values=np.nan
+                             )
+   
+    # Create a new xarray.DataArray with the padded data
+    padded_data_array = xr.DataArray(
+        padded_array_np,
+        dims=['time', 'y', 'x'],
+        coords={
+            'time': data_array.time,
+            'y': np.concatenate([data_array.y.values - pad_m_y, [data_array.y.values[-1] + pad_m_y]]),
+            'x': np.concatenate([data_array.x.values - pad_m_x, [data_array.x.values[-1] + pad_m_x]])
+        },
+        attrs=data_array.attrs  # Preserve metadata
+    )
+    return padded_data_array

@@ -175,6 +175,7 @@ class CATHY:
         # ---------------------------------------------------------------------
         self.parm = {}  # dict of parm input parameters
         self.soil = {}  # dict of soil input parameters
+        # self.zone = None  # raster of zone input parameters
         self.ic = {}  # dict of ic input parameters
         self.cathyH = {}  # dict of cathyH C header parameters
         # self.nudging = {'NUDN': 0}   # Temporary
@@ -2598,7 +2599,7 @@ class CATHY:
         if len(SPP) > 0:
             self.soil_SPP["SPP"] = SPP  # matrice with respect to zones
         else:
-            SoilPhysProp = SPP_map.values
+            SoilPhysProp = SPP_map
             self.soil_SPP["SPP"] = SoilPhysProp  # matrice with respect to zones/layers
             
         # Vegetation properties (PCANA,PCREF,PCWLT,ZROOT,PZ,OMGC)
@@ -2987,13 +2988,6 @@ class CATHY:
         if "filename" in kwargs:
             soil_filepath = os.path.join(kwargs["filename"]) #, "soil")
             
-            
-        # print('v'*13)
-        # print(backup)
-        # print('backup soil')
-        # print(self.count_DA_cycle)
-        # print(soil_filepath)
-
         if backup:
             if self.count_DA_cycle is not None:
                 dst_dir = soil_filepath + str(self.count_DA_cycle)
@@ -4162,28 +4156,148 @@ class CATHY:
                 
     def backup_results_DA(self, meta_DA=[]):
         """
-        Save minimal dataframes of the simulation for result visualisation within python
-
-        Returns
-        -------
-        project_filename_df.pkl
-
+        Save minimal dataframes of the simulation for result visualization within Python.
+    
+        Saves the specified attributes to a pickle file for later use.
         """
-        with open(
-            os.path.join(
-                self.workdir, self.project_name, self.project_name + "_df.pkl"
-            ),
-            "wb",
-        ) as f:
-            pickle.dump(meta_DA, f)
-            pickle.dump(self.dict_parm_pert, f)
-            pickle.dump(self.df_DA, f)
-            pickle.dump(self.dict_obs, f)
-            if hasattr(self, "df_performance"):
-                pickle.dump(self.df_performance, f)
-            if hasattr(self, "df_Archie"):
-                pickle.dump(self.df_Archie, f)
-        f.close()
+        file_path = os.path.join(
+            self.workdir, self.project_name, f"{self.project_name}_df.pkl"
+        )
+        
+        try:
+            with open(file_path, "wb") as f:
+                # Save the metadata
+                pickle.dump(meta_DA, f)
+                # Save attributes in a predefined order
+                attributes = [
+                    "dict_parm_pert",
+                    "df_DA",
+                    "dict_obs",
+                    "df_performance",
+                    "ET_DA_xr",
+                    "df_Archie",
+                ]
+                for attr in attributes:
+                    if hasattr(self, attr):
+                        pickle.dump(getattr(self, attr), f)
+        except Exception as e:
+            print(f"An error occurred while saving results: {e}")
+            raise
+
+    # def backup_results_DA(self, meta_DA=[]):
+    #     """
+    #     Save minimal dataframes of the simulation for result visualization within Python.
+    
+    #     Saves each variable in a separate pickle file.
+    
+    #     Returns
+    #     -------
+    #     None
+    #     """
+    #     save_dir = os.path.join(self.workdir, self.project_name)
+    #     os.makedirs(save_dir, exist_ok=True)  # Ensure the directory exists
+    
+    #     # Dictionary of attributes to save
+    #     objects_to_save = {
+    #         "meta_DA.pkl": meta_DA,
+    #         "dict_parm_pert.pkl": self.dict_parm_pert,
+    #         "df_DA.pkl": self.df_DA,
+    #         "dict_obs.pkl": self.dict_obs,
+    #     }
+    
+    #     # Add optional attributes dynamically
+    #     # if hasattr(self, "df_performance"):
+    #     #     objects_to_save["df_performance.pkl"] = self.df_performance
+    #     if hasattr(self, "ET_DA_xr"):
+    #         objects_to_save["ET_DA_xr.pkl"] = self.ET_DA_xr
+    #     if hasattr(self, "df_Archie"):
+    #         objects_to_save["df_Archie.pkl"] = self.df_Archie
+    
+    #     # Save each object to its respective file
+    #     for filename, obj in objects_to_save.items():
+    #         file_path = os.path.join(save_dir, filename)
+    #         try:
+    #             with open(file_path, "wb") as f:
+    #                 pickle.dump(obj, f)
+    #             print(f"Saved {filename} to {file_path}")
+    #         except Exception as e:
+    #             print(f"Error saving {filename}: {e}")
+
+
+    # def backup_results_DA(self, meta_DA=[]):
+    #     """
+    #     Save minimal dataframes of the simulation for result visualisation within python
+
+    #     Returns
+    #     -------
+    #     project_filename_df.pkl
+
+    #     """
+    #     with open(
+    #         os.path.join(
+    #             self.workdir, self.project_name, self.project_name + "_df.pkl"
+    #         ),
+    #         "wb",
+    #     ) as f:
+    #         pickle.dump(meta_DA, f)
+    #         pickle.dump(self.dict_parm_pert, f)
+    #         pickle.dump(self.df_DA, f)
+    #         pickle.dump(self.dict_obs, f)
+    #         if hasattr(self, "df_performance"):
+    #             pickle.dump(self.df_performance, f)
+    #         if hasattr(self, "ET_DA_xr"):
+    #             pickle.dump(self.ET_DA_xr, f)
+    #         if hasattr(self, "df_Archie"):
+    #             pickle.dump(self.df_Archie, f)
+    #     f.close()
+
+    # def load_pickle_backup(self, filename=""):
+    #     """
+    #     Load a pickle backup file created by `backup_results_DA`.
+    
+    #     Parameters
+    #     ----------
+    #     filename : str, optional
+    #         Path to the pickle file. Defaults to the project's standard backup location.
+    
+    #     Returns
+    #     -------
+    #     dict_backup : dict
+    #         Dictionary mapping attribute names to loaded objects.
+    #     """
+    #     if not filename:
+    #         filename = os.path.join(
+    #             self.workdir, self.project_name, f"{self.project_name}_df.pkl"
+    #         )
+    
+    #     all_names = [
+    #         "meta_DA",
+    #         "dict_parm_pert",
+    #         "df_DA",
+    #         "dict_obs",
+    #         "df_performance",
+    #         "ET_DA_xr",
+    #         "df_Archie",
+    #     ]
+        
+    #     try:
+    #         with open(filename, "rb") as f:
+    #             # Attempt to load objects in the same order they were saved
+    #             backup_list = []
+    #             for name in all_names:
+    #                 try:
+    #                     backup_list.append(pickle.load(f))
+    #                 except EOFError:
+    #                     # Reached the end of the file
+    #                     break
+    
+    #         # Create a dictionary of loaded objects
+    #         return {name: obj for name, obj in zip(all_names, backup_list)}
+    
+    #     except (FileNotFoundError, pickle.UnpicklingError) as e:
+    #         print(f"Error loading backup: {e}")
+    #         return {}
+
 
     def load_pickle_backup(self,filename=""):
         if len(filename) == 0:
@@ -4202,25 +4316,25 @@ class CATHY:
             "df_DA",
             "dict_obs",
             "df_performance",
+            "ET_DA_xr",
             "df_Archie",
         ]
         names = []
-        i = 0
+        # i = 0
         # pickle_off = open(filename, "rb")
         # df = pd.read_pickle(pickle_off)
 
         with open(filename, "rb") as f:
-                for i in range(len(all_names)):
-                    try:
-                        df = pd.read_pickle(f)
-                        backup_list.append(df)
-                        # backup_list.append(pickle.load(f))
-                        names.append(all_names[i])
-                        # i += 1
-                    except:
-                        pass
-        f.close()
-        dict_backup = {}
-        for i, n in enumerate(names):
-            dict_backup[n] = backup_list[i]
+            for name in all_names:
+                # try:
+                # Attempt to load the next object
+                obj = pickle.load(f)
+                backup_list.append(obj)
+                names.append(name)
+                # except (EOFError, pickle.UnpicklingError):
+                #     # End of file or unpickling issue—break gracefully
+                #     break
+    
+        # Create a dictionary mapping names to loaded objects
+        dict_backup = {name: backup_list[i] for i, name in enumerate(names)}
         return dict_backup

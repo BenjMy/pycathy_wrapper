@@ -11,6 +11,7 @@ import numpy as np
 
 from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.importers import sensors_measures as in_meas
+from pyCATHY.DA.cathy_DA import dictObs_2pd
 
 
 def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kwargs):
@@ -272,7 +273,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
     return dict_obs
 
 
-def make_data_cov(simu, dict_obs, list_assimilated_obs="all", nb_assimilation_times=[]):
+def make_data_cov(simu, dict_obs, list_assimilated_obs="all"):
     """
     Combine covariance between different observations
 
@@ -321,11 +322,15 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", nb_assimilation_ti
     # Here we consider that the covariance doesnt change with time
 
     items_dict = list(dict_obs.items())
+    data_measure_df = dictObs_2pd(dict_obs) 
+    nb_assimilation_times = len(np.unique(data_measure_df.index.get_level_values(1)))
+    assimilation_times = np.unique(data_measure_df.index.get_level_values(1))
 
     # covariance change with time
     # ----------------------------------------------------------------
     data_cov_list = []
-    for nbt in range(nb_assimilation_times):
+    # for nbt in range(nb_assimilation_times):
+    for tA in assimilation_times:
         data = []
         data_ERT = []
         data_cov = []
@@ -334,46 +339,57 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", nb_assimilation_ti
         # There can be multiple sensors measuring at the same time
         # -----------------------------------------------------------------
         if "all" in list_assimilated_obs:
-            for sensor in items_dict[nbt][1].keys():
-                print(sensor)
+            # for sensor in items_dict[nbt][1].keys():
+            for sensor in data_measure_df.xs(tA,level=1).index:
+                # print(sensor)
                 if "ERT" in sensor:
                     data_ERT.append(
-                        np.array(items_dict[nbt][1][sensor]["data"]["rhoa"])
+                        # np.array(items_dict[nbt][1][sensor]["data"]["rhoa"])
+                        np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"])
+
                     )
                     data_cov.append(
                         np.ones(
-                            len(np.array(items_dict[nbt][1][sensor]["data"]["rhoa"]))
+                            # len(np.array(items_dict[nbt][1][sensor]["data"]["rhoa"]))
+                            len(np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"]))
+
                         )
-                        * items_dict[nbt][1][sensor]["data_err"]
+                        # * items_dict[nbt][1][sensor]["data_err"]
+                        * data_measure_df.xs((sensor,tA))["data_err"]
                     )
                 else:
-                    data.append(items_dict[nbt][1][sensor]["data"])
+                    # data.append(items_dict[nbt][1][sensor]["data"])
+                    data.append(data_measure_df.xs((sensor,tA))["data"])
 
-            data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
+            # data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
+            data_cov.append(np.ones(len(data)) * data_measure_df.xs((sensor,tA))["data_err"])
             data = data + data_ERT
 
         else:
             for l in list_assimilated_obs:
-                for sensor in items_dict[nbt][1].keys():
+                # for sensor in items_dict[nbt][1].keys():
+                for sensor in data_measure_df.xs(tA,level=1).index:
                     if l in sensor:
                         if "ERT" in l:
                             data_ERT.append(
-                                np.array(items_dict[nbt][1][sensor]["data"]["rhoa"])
+                                # np.array(items_dict[nbt][1][sensor]["data"]["rhoa"])
+                                np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"])
                             )
                             data_cov.append(
                                 np.ones(
-                                    len(
-                                        np.array(
-                                            items_dict[nbt][1][sensor]["data"]["rhoa"]
-                                        )
-                                    )
+                                    # len(np.array(items_dict[nbt][1][sensor]["data"]["rhoa"]))
+                                    len(np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"]))
+                     
                                 )
-                                * items_dict[nbt][1][sensor]["data_err"]
+                                # * items_dict[nbt][1][sensor]["data_err"]
+                                * data_measure_df.xs((sensor,tA))["data_err"]
                             )
                         else:
-                            data.append(items_dict[nbt][1][sensor]["data"])
+                            # data.append(items_dict[nbt][1][sensor]["data"])
+                            data.append(data_measure_df.xs((sensor,tA))["data"])
 
-            data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
+            # data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
+            data_cov.append(np.ones(len(data)) * data_measure_df.xs((sensor,tA))["data_err"])
             data = data + data_ERT
 
         data = np.hstack(data)

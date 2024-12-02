@@ -48,10 +48,12 @@ def check4bounds(scenario, index, clip_min, clip_max, het_size=1, het_nb=None):
     return clip_min, clip_max
 
 def create_dict_entry(
-                         name,scenario,index,nstri, 
+                         name,scenario,
+                         index,nstri, 
                          scenario_nom, scenario_mean, scenario_sd, 
                          clip_min,clip_max,
                          NENS,
+                         pert_control_name=None
                       ):
     
     per_type = scenario["per_type"][index]
@@ -71,12 +73,14 @@ def create_dict_entry(
         "surf_zones_param": nstri,
         "clip_min": clip_min,
         "clip_max": clip_max,
+        "pert_control_name": pert_control_name,
     }
     
     return dict_parm_entry
 
 
-def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
+def perturbate(simu_DA, scenario, NENS, 
+               **kwargs):
     """Write a list of dictionaries, each containing all the informations on how to
     perturbate the parameters based on the scenario to consider
     
@@ -86,11 +90,18 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
     dictionnary of perturbated parameters is build per layers i.e. 
     ks0= layer 0, ks1=layer 1, etc...
    
-    """
+    """    
+    if 'nzones' in kwargs: 
+        nzones = kwargs.pop('nzones')
+    else:
+        nzones = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(0).unique())
 
-    nzones = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(0).unique())
-    nlayers = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(1).unique())
-    nlayers_PERMX = len(simu_DA.soil_SPP['SPP_map']['PERMX'].unique())
+    if 'nlayers' in kwargs: 
+        nzones = kwargs.pop('nlayers')
+    else:
+        nlayers = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(1).unique())
+        nlayers_PERMX = len(simu_DA.soil_SPP['SPP_map']['PERMX'].unique())
+        
     list_pert = []
 
     #%% Initial and boundary conditions parameters
@@ -402,8 +413,9 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
     #%% SOIL parameters
     # ------------------------------------------------------------------------
 
-    if "ks" in scenario["per_name"]:
-        index = scenario["per_name"].index("ks")
+
+    if "Ks" in scenario["per_name"]:
+        index = scenario["per_name"].index("Ks")
 
         scenario_nom = scenario["per_nom"][index]
         scenario_mean = scenario["per_mean"][index]
@@ -421,78 +433,65 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
         # If it includes ['zone', 'root_map'], it should contain a list of lists.
         # And so on...
 
-        pert_key_order = ['zone','root_map','layers']
-        if 'pert_key_order' in scenario:
-            pert_key_order = scenario['pert_key_order'][index]
-        
+        pert_control_name = None
+        if 'pert_control_name' in scenario:
+            pert_control_name = scenario['pert_control_name'][index]
         
         df_SPP, df_FP = simu_DA.read_inputs('soil')
         zone_raster, zone_header = simu_DA.read_inputs('zone')
-        # veg_raster, veg_header = simu_DA.read_inputs('root_map')
+        veg_raster, veg_header = simu_DA.read_inputs('root_map')
         
-        if 'zone' in pert_key_order: 
+        if pert_control_name=='zone': 
             for zonei in range(len(np.unique(zone_raster))):
            
                 if len(np.unique(zone_raster)) > 1:
                     scenario_nom = scenario["per_nom"][index][zonei]
                     scenario_mean = scenario["per_mean"][index][zonei]
                     scenario_sd = scenario["per_sigma"][index][zonei]
+                Ks = create_dict_entry(
+                            'Ks',scenario,index,zonei, 
+                            scenario_nom, scenario_mean, scenario_sd, 
+                            clip_min,clip_max,
+                            NENS,
+                            pert_control_name=pert_control_name
+                            )
+                
+                list_pert.append(Ks)
+        
+        elif pert_control_name=='root_map': 
+            for vegi in range(len(np.unique(veg_raster))):
            
-                ks = {
-                    "type_parm": "ks" + str(zonei),
-                    "nominal": scenario_nom,  # nominal value
-                    "mean": scenario_mean,
-                    "sd": scenario_sd,
-                    "units": "$m$",  # units
-                    "sampling_type": scenario_sampling,
-                    "ensemble_size": NENS,  # size of the ensemble
-                    "per_type": scenario["per_type"][index],
-                    "savefig": "ks" + str(zonei) + ".png",
-                    "surf_zones_param": zonei,
-                    "clip_min": clip_min,
-                    "clip_max": clip_max,
-                    "pert_key_order": pert_key_order,
-                }
-                list_pert.append(ks)
+                if len(np.unique(zone_raster)) > 1:
+                    scenario_nom = scenario["per_nom"][index][vegi]
+                    scenario_mean = scenario["per_mean"][index][vegi]
+                    scenario_sd = scenario["per_sigma"][index][vegi]
+                    
+                Ks = create_dict_entry(
+                            'Ks',scenario,index,vegi, 
+                            scenario_nom, scenario_mean, scenario_sd, 
+                            clip_min,clip_max,
+                            NENS,
+                            pert_control_name=pert_control_name
+                            )
+                list_pert.append(Ks)
+        
+        
         else:
-            raise ValueError('not yet implemented for other perturbation than veg_map areas')
-             
-     
-        # # for nstri in range(len(simu_DA.soil["PZ"])):
-        # for nzonesi in range(len(df_FP.index.unique())):
-
-        # if type(scenario["per_nom"][index]) is list:                   
-        #     for nstri in range(nlayers):
-                
-        #         if nlayers > 1:
-        #             scenario_nom = scenario["per_nom"][index][nstri]
-        #             scenario_mean = scenario["per_mean"][index][nstri]
-        #             scenario_sd = scenario["per_sigma"][index][nstri]
-    
-        #         ks = create_dict_entry(
-        #                     'ks',scenario,index,nstri, 
-        #                     scenario_nom, scenario_mean, scenario_sd, 
-        #                     clip_min,clip_max,
-        #                     NENS,
-        #                     )
-        #         list_pert.append(ks)
-        # else:
-        #         ks = create_dict_entry(
-        #                     'ks',scenario,index,'', 
-        #                     scenario_nom, scenario_mean, scenario_sd, 
-        #                     clip_min,clip_max,
-        #                     NENS,
-        #                     )
-        #         # check_distribution(ks)
-        #         list_pert.append(ks)
-                
+            Ks = create_dict_entry(
+                        'Ks',scenario,index,'', 
+                        scenario_nom, scenario_mean, scenario_sd, 
+                        clip_min,clip_max,
+                        NENS,
+                        )
+            list_pert.append(Ks)
+                               
                 
     # Check if 'porosity' is a parameter in the scenario and get its index if present
     if "porosity" in scenario["per_name"]:
         index = scenario["per_name"].index("porosity")
     
         # Set perturbation order, defaulting to ['zone', 'root_map', 'layers'] if not specified
-        pert_key_order = scenario.get("pert_key_order", ['zone', 'root_map', 'layers'])[index]
+        pert_control_name = scenario.get("pert_control_name", ['zone', 'root_map', 'layers'])[index]
     
         # Retrieve nominal, mean, and sigma values for the scenario
         scenario_nom = scenario["per_nom"][index]
@@ -503,7 +502,7 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
         clip_min, clip_max = 0.2, 0.7
     
         # Perturb by 'zone' if specified
-        if 'zone' in pert_key_order:
+        if 'zone' in pert_control_name:
             for zonei in range(len(np.unique(zone_raster))):
                 # Adjust bounds and retrieve parameters for the current zone
                 clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -518,7 +517,7 @@ def perturbate(simu_DA, scenario, NENS, pertControl='Layer'):
                 list_pert.append(porosity)
     
         # Perturb by 'layers' if specified
-        elif 'layers' in pert_key_order:
+        elif 'layers' in pert_control_name:
             for nstri in range(nlayers):
                 # Adjust bounds and retrieve parameters for the current layer
                 clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -869,7 +868,7 @@ def VG_pert_rules(
 
 
 def atmbc_pert_rules(
-    var_per_2add,
+        var_per_2add,
     parm,
     type_parm,
     ensemble_size,
@@ -879,8 +878,14 @@ def atmbc_pert_rules(
     sampling_type,
     **kwargs,
 ):
-
+    # ensemble_size = 15
+    mean = 1
+    sd = 0.2
     parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+    # parm_sampling = sampling_dist(sampling_type, mean, sd, 128)
+    import matplotlib.pyplot as plt
+    plt.hist(parm_sampling)
+    
     # parm_sampling = sampling_dist(sampling_type, mean, 1e-6, ensemble_size)
     parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
     var_per_2add[type_parm] = parm
@@ -888,42 +893,41 @@ def atmbc_pert_rules(
     qk_0 = parm_per_array
     atmbc_times = parm["data2perturbate"]["time"]
     atmbc_values = parm["data2perturbate"]["VALUE"]
-    # print(per_type)
-    # print(atmbc_values)
-
-    # # Create a histogram plot for perturbed sand conductivities
-    # plt.figure(figsize=(10, 5))
-    # # plt.hist(parm_sampling, bins=20, alpha=0.5, color='blue', label='Atmbc ENS')
-    # plt.hist(parm_per_array, bins=20, alpha=0.5, color='red', label='* Atmbc ENS')
-    # plt.xlabel('Perturbed atmbc')
-    # plt.ylabel('Frequency')
-    # # plt.title('Perturbed Saturated Hydraulic Conductivities')
-    # plt.legend(loc='upper right')
-    # plt.grid(True)
-    
-    
     parm_per_array_time_variable = []
     for i, t in enumerate(atmbc_times):
+    # for i, t in enumerate(atmbc_times[0:10]):
         if i == 0:
             # qk_0 = wk0
             parm_per_array_time_variable.append(qk_0)
         else:
             qk_0 = parm_per_array_time_variable[i - 1]
             parm["nominal"] = atmbc_values[i]
-            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-            # wk = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-            wk = sampling_dist(sampling_type, mean, sd, ensemble_size)
-            # plt.plot(wk)
+            wk = sampling_dist(sampling_type, 
+                               parm["nominal"],
+                               sd, 
+                                ensemble_size
+                               )
             deltaT = abs(atmbc_times[i] - atmbc_times[i - 1])
-            # qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
-            qk_i = wk
-            # plt.plot(qk_i)
+            qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
             parm_per_array_time_variable.append(qk_i)
-
+            
+    parm_per_array_time_variable = np.vstack(parm_per_array_time_variable)
+    np.shape(atmbc_values)
+    
+    fig, ax = plt.subplots()
+    for iii in range(np.shape(parm_per_array_time_variable)[1]):
+        # plt.plot(parm_per_array_time_variable[:,iii],
+        #          color='grey')
+        plt.plot(atmbc_values,
+                 color='red')
+        plt.plot(atmbc_values*parm_per_array_time_variable[:,iii],
+                 color='grey',
+                 alpha=0.3)
+        
     # print(parm["nominal"])
     # print(parm_per_array_time_variable)
     key = "time_variable_perturbation"
-    var_per_2add[type_parm][key] = parm_per_array_time_variable
+    var_per_2add[type_parm][key] = parm_per_array_time_variable.T*atmbc_values
     
     return parm_sampling, parm_per_array, var_per_2add
 

@@ -53,6 +53,7 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 import geopandas as gpd
 import rioxarray as rio
+import scipy.stats as stats
 
 
 # mpl.style.use('default')
@@ -239,20 +240,20 @@ def show_spatialET(df_fort777,**kwargs):
         polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
         filtered_data = []
         for i in range(len(df_fort777_select_t)):
-            point = gpd.points_from_xy([df_fort777_select_t['X'].iloc[i]],
-                                       [df_fort777_select_t['Y'].iloc[i]])[0]
+            point = gpd.points_from_xy([df_fort777_select_t['x'].iloc[i]],
+                                       [df_fort777_select_t['y'].iloc[i]])[0]
             if polygon.contains(point):
-                filtered_data.append([df_fort777_select_t['X'].iloc[i],
-                                      df_fort777_select_t['Y'].iloc[i],
+                filtered_data.append([df_fort777_select_t['x'].iloc[i],
+                                      df_fort777_select_t['y'].iloc[i],
                                       df_fort777_select_t['ACT. ETRA'].iloc[i]])
                 
         mask.crs
         filtered_data = np.vstack(filtered_data)
-        df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
-        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')
+        df_fort777_select_t_xr = df_fort777_select_t.set_index(['x','y']).to_xarray()
+        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('x','y')
         df_fort777_select_t_xr.rio.write_crs(mask.crs, inplace=True)
         df_fort777_select_t_xr_clipped = df_fort777_select_t_xr.rio.clip(mask.geometry)
-        df_fort777_select_t_xr_clipped = df_fort777_select_t_xr_clipped.transpose('Y', 'X')
+        df_fort777_select_t_xr_clipped = df_fort777_select_t_xr_clipped.transpose('y', 'x')
         data_array = df_fort777_select_t_xr_clipped['ACT. ETRA'].values
         
         df_fort777_select_t_xr_clipped.rio.bounds()
@@ -1429,59 +1430,98 @@ def show_DA_process_ens(
 
 
 def DA_RMS(df_performance, sensorName, **kwargs):
-    """Plot result of Data Assimilation: RMS evolution over the time"""
+    """Plot result of Data Assimilation: RMS evolution over time."""
     
-    if "ax" in kwargs:
-        ax = kwargs["ax"]
-    # else:
-    #     if "start_date" in kwargs:
-    #         fig, ax = plt.subplots(3, 1, sharex=True)
-    #     else:
-    #         fig, ax = plt.subplots(2, 1)
-    keytime = "time"
-    xlabel = "assimilation #"
-    start_date = None
-    keytime = "time"
-    xlabel = "assimilation #"
-    if kwargs.get("start_date") is not None:
-        keytime = "time_date"
-        xlabel = "date"
+    # Get optional arguments with defaults
+    ax = kwargs.get("ax")
+    start_date = kwargs.get("start_date")
+    atmbc_times = kwargs.get("atmbc_times")
+
+    # Define keytime and xlabel based on start_date presence
+    keytime = "time_date" if start_date else "time"
+    xlabel = "date" if start_date else "assimilation #"
     
+    # Filter and cast necessary columns in one pass for efficiency
+    df_perf_plot = df_performance[["time", "ObsType", f"RMSE{sensorName}", f"NMRMSE{sensorName}", "OL"]].dropna()
+    df_perf_plot = df_perf_plot.astype({f"RMSE{sensorName}": "float64", 
+                                        f"NMRMSE{sensorName}": "float64", 
+                                        "OL": "str"})
 
-    atmbc_times = None
-    if "atmbc_times" in kwargs:
-        atmbc_times = kwargs["atmbc_times"]
-
-    header = ["time", "ObsType", "RMSE" + sensorName, "NMRMSE" + sensorName, "OL"]
-    df_perf_plot = df_performance[header]
-    df_perf_plot["RMSE" + sensorName] = df_perf_plot["RMSE" + sensorName].astype(
-        "float64"
-    )
-    df_perf_plot["NMRMSE" + sensorName] = df_perf_plot["NMRMSE" + sensorName].astype(
-        "float64"
-    )
-    df_perf_plot.OL = df_perf_plot.OL.astype("str")
-    df_perf_plot.dropna(inplace=True)
-
-    # len(dates)
-    # len(df_perf_plot["time"])
-    # len(atmbc_times)
-    
-    if start_date is not None:
+    # Replace 'time' with converted dates if start_date is given
+    if start_date:
         dates = change_x2date(atmbc_times, start_date)
-        df_perf_plot["time_date"] = df_perf_plot["time"].replace(
-            list(df_perf_plot["time"].unique()), dates)
-    p0 = df_perf_plot.pivot(index=keytime, columns="OL", values="RMSE" + sensorName)
-    p1 = df_perf_plot.pivot(index=keytime, columns="OL", values="NMRMSE" + sensorName)
+        df_perf_plot["time_date"] = df_perf_plot["time"].map(dict(zip(df_perf_plot["time"].unique(), dates)))
+    
+    # Pivot tables for RMSE and NMRMSE to prepare for plotting
+    p0 = df_perf_plot.pivot(index=keytime, columns="OL", values=f"RMSE{sensorName}")
+    p1 = df_perf_plot.pivot(index=keytime, columns="OL", values=f"NMRMSE{sensorName}")
 
-    if "start_date" in kwargs:
-        p0.plot(xlabel=xlabel, ylabel="RMSE" + sensorName, ax=ax[1], style=[".-"])
-        p1.plot(xlabel=xlabel, ylabel="NMRMSE" + sensorName, ax=ax[2], style=[".-"])
-    else:
-        p0.plot(xlabel=xlabel, ylabel="RMSE" + sensorName, ax=ax[0], style=[".-"])
-        p1.plot(xlabel=xlabel, ylabel="NMRMSE" + sensorName, ax=ax[1], style=[".-"])
+    # Plot layout setup if no axes are provided
+    if ax is None:
+        num_plots = 3 if start_date else 2
+        fig, ax = plt.subplots(num_plots, 1, sharex=True)
+    
+    # Plotting
+    p0.plot(ax=ax[1 if start_date else 0], xlabel=xlabel, ylabel=f"RMSE{sensorName}", style=[".-"])
+    p1.plot(ax=ax[2 if start_date else 1], xlabel=xlabel, ylabel=f"NMRMSE{sensorName}", style=[".-"])
 
     return ax, plt
+
+
+# def DA_RMS(df_performance, sensorName, **kwargs):
+#     """Plot result of Data Assimilation: RMS evolution over the time"""
+    
+#     if "ax" in kwargs:
+#         ax = kwargs["ax"]
+#     # else:
+#     #     if "start_date" in kwargs:
+#     #         fig, ax = plt.subplots(3, 1, sharex=True)
+#     #     else:
+#     #         fig, ax = plt.subplots(2, 1)
+#     keytime = "time"
+#     xlabel = "assimilation #"
+#     start_date = None
+#     keytime = "time"
+#     xlabel = "assimilation #"
+#     if kwargs.get("start_date") is not None:
+#         keytime = "time_date"
+#         xlabel = "date"
+    
+
+#     atmbc_times = None
+#     if "atmbc_times" in kwargs:
+#         atmbc_times = kwargs["atmbc_times"]
+
+#     header = ["time", "ObsType", "RMSE" + sensorName, "NMRMSE" + sensorName, "OL"]
+#     df_perf_plot = df_performance[header]
+#     df_perf_plot["RMSE" + sensorName] = df_perf_plot["RMSE" + sensorName].astype(
+#         "float64"
+#     )
+#     df_perf_plot["NMRMSE" + sensorName] = df_perf_plot["NMRMSE" + sensorName].astype(
+#         "float64"
+#     )
+#     df_perf_plot.OL = df_perf_plot.OL.astype("str")
+#     df_perf_plot.dropna(inplace=True)
+
+#     # len(dates)
+#     # len(df_perf_plot["time"])
+#     # len(atmbc_times)
+    
+#     if start_date is not None:
+#         dates = change_x2date(atmbc_times, start_date)
+#         df_perf_plot["time_date"] = df_perf_plot["time"].replace(
+#             list(df_perf_plot["time"].unique()), dates)
+#     p0 = df_perf_plot.pivot(index=keytime, columns="OL", values="RMSE" + sensorName)
+#     p1 = df_perf_plot.pivot(index=keytime, columns="OL", values="NMRMSE" + sensorName)
+
+#     if "start_date" in kwargs:
+#         p0.plot(xlabel=xlabel, ylabel="RMSE" + sensorName, ax=ax[1], style=[".-"])
+#         p1.plot(xlabel=xlabel, ylabel="NMRMSE" + sensorName, ax=ax[2], style=[".-"])
+#     else:
+#         p0.plot(xlabel=xlabel, ylabel="RMSE" + sensorName, ax=ax[0], style=[".-"])
+#         p1.plot(xlabel=xlabel, ylabel="NMRMSE" + sensorName, ax=ax[1], style=[".-"])
+
+#     return ax, plt
 
 
 def DA_plot_parm_dynamic(
@@ -1916,3 +1956,157 @@ def DA_plot_time_dynamic(
     if savefig == True:
         plt.savefig(savename + ".png", dpi=300)
     pass
+
+
+def DA_plot_ET_dynamic(ET_DA,
+                        nodePos=None,
+                        nodeIndice=None,
+                        observations=None,
+                        ax=None,
+                        unit='m/s'
+                        ):
+    
+    if nodePos is not None:
+        # Select data for the specific node
+        ET_DA_node = ET_DA.sel(x=nodePos[0], 
+                               y=nodePos[1], 
+                               method="nearest"
+                               )
+        ET_DA_act_etra = ET_DA_node["ACT. ETRA"]
+    else:
+        ET_DA_act_etra = ET_DA.mean(dim=['x','y'])
+
+    if unit=='mm/day':
+        ET_DA_act_etra = ET_DA_act_etra*(1e3*86400)
+            
+    # Plot each ensemble member in grey
+    ET_DA_act_etra.plot(
+        ax=ax, 
+        x="assimilation", 
+        hue="ensemble", 
+        color="grey", 
+        alpha=0.2, 
+        add_legend=False
+    )
+
+    # Plot the mean across ensembles in red
+    ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
+    ET_DA_mean.plot(ax=ax, x="assimilation", color="red", 
+                    alpha=0.5,
+                    linewidth=2, 
+                    label="Mean pred."
+                    )
+
+    if observations is not None:
+        if nodePos is not None:
+            obs2plot_selecnode = observations.xs(f'ETact{nodeIndice}')[['data','data_err','datetime']]
+            obs2plot = obs2plot_selecnode.iloc[:len(ET_DA_mean)][['data','datetime']]
+        else:
+            import copy
+            obs2plot = copy.copy(observations)
+
+        if unit=='mm/day':
+            obs2plot['data'] = obs2plot['data']*(1e3*86400)
+            
+        ax.scatter(
+            obs2plot.datetime,
+            obs2plot.data,
+            label="Observed",
+            color='darkgreen'
+        )
+    # ax.set_title('')
+    if nodePos is not None:
+        ax.set_title(f"Node at ({nodePos[0]}, {nodePos[1]})")
+
+    ax.set_ylabel(f'ETa - {unit}')
+        
+def DA_plot_ET_performance(ET_DA,
+                            observations,
+                            axi,
+                            nodeposi=None,
+                            nodei=None,
+                            unit='m/s'
+                            ):
+    
+    if nodeposi is not None:
+    # Select data for the specific node
+        ET_DA_node = ET_DA.sel(x=nodeposi[0], y=nodeposi[1], method="nearest")
+        obs2plot_selecnode = observations.xs(f'ETact{nodei}')[['data','data_err']]
+        # Extract the "ACT. ETRA" variable as a DataArray
+        ET_DA_act_etra = ET_DA_node["ACT. ETRA"]
+    else:
+        ET_DA_act_etra = ET_DA.mean(dim=['x','y'])
+        obs2plot_selecnode = observations[['data','data_err']].groupby(level=1).mean()
+        
+    ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
+    if unit=='mm/day':
+        ET_DA_act_etra = ET_DA_act_etra*(1e3*86400)
+        ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
+        
+    # Plot data for each ensemble member
+    for ensi in range(len(ET_DA_act_etra.ensemble)):
+        ET_DA_act_etra_ensi = ET_DA_act_etra.isel(ensemble=ensi)
+
+        obs2plot = obs2plot_selecnode.iloc[:len(ET_DA_act_etra_ensi)].data
+        if unit=='mm/day':
+            obs2plot = obs2plot*(1e3*86400)
+
+            
+        axi.scatter(
+            ET_DA_act_etra_ensi.values,
+            obs2plot,
+            label=f"Ensemble {ensi}" if ensi == 0 else "",  # Label only once
+            color='grey',
+            alpha=0.2, 
+        )
+    
+    axi.scatter(
+        ET_DA_mean.values,
+        obs2plot,
+        alpha=0.5,
+        color='red',
+    )
+
+    # Add 1:1 line
+    min_val = min(np.nanmin(ET_DA_act_etra.values), np.nanmin(obs2plot_selecnode.data))
+    max_val = max(np.nanmax(ET_DA_act_etra.values), np.nanmax(obs2plot_selecnode.data))
+    axi.plot([min_val, max_val], [min_val, max_val], "k--", label="1:1 Line")
+    axi.set_xlim([min_val, max_val])
+    axi.set_ylim([min_val, max_val])
+
+
+    # Calculate R² and p-value using the separate function
+    r2, p_value = calculate_r2_p_value(ET_DA_mean.values, obs2plot)
+
+    # Annotate the plot with R² and p-value using the separate function
+    annotate_r2_p_value(axi, r2, p_value)
+
+    # Customize subplot
+    if nodeposi is not None:
+        axi.set_title(f"Node at ({nodeposi[0]}, {nodeposi[1]})")
+    axi.set_xlabel("Modelled ACT. ETRA")
+    axi.set_ylabel("Observed Data")
+    axi.legend()
+    axi.set_aspect('equal')
+
+
+# Function to calculate R² and p-value
+def calculate_r2_p_value(modelled_data, observed_data):
+    corr_coeff, p_value = stats.pearsonr(modelled_data, observed_data)
+    r2 = corr_coeff ** 2  # R² value
+    return r2, p_value
+
+# Function to annotate the plot with R² and p-value
+def annotate_r2_p_value(axi, r2, p_value):
+    # annotation_text = f"R² = {r2:.2f}\np-value = {p_value:.2e}"
+    annotation_text = f"R² = {r2:.2f}"
+    axi.annotate(annotation_text,
+                 xy=(0.05, 0.95),
+                 xycoords='axes fraction',
+                 fontsize=12,
+                 ha='left',
+                 va='top',
+                 bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', boxstyle="round,pad=0.5")
+                 )
+
+

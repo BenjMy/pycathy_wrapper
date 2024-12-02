@@ -7,6 +7,7 @@ Utilities for pyCATHY
 """
 
 import pandas as pd
+from shapely.geometry import mapping
 
 from datetime import datetime, timedelta
 # from rosetta import rosetta, SoilData
@@ -138,3 +139,90 @@ def dictObs_2pd(obs2plot):
     df_obs = pd.DataFrame(df_obs[0].values.T.tolist(), index=df_obs.index)
     df_obs.index.names = ["sensorNameidx", "assimilation time"]
     return df_obs
+
+
+def backup_simulog_DA(args,filename='DAlog.csv'):
+    '''
+    Get simulation arguments and save it to a csv file to keep track of the Data
+    Assimilation done.
+    Returns the index if the simulation is already existing
+    '''
+    results_df = pd.read_csv(filename,index_col=0)
+    now = datetime.now()
+    results_df_cols = vars(args).keys()
+    results_df_new = pd.DataFrame([vars(args)])
+    cols2check = list(vars(args).keys())
+    
+    values = results_df_new[cols2check].values
+    matching_index = results_df.index[(results_df[cols2check] == values).all(axis=1)].tolist()
+    if matching_index:
+        now = datetime.now()
+        results_df.loc[matching_index, 'datetime'] = now
+        matching_index = matching_index[0]
+    else:
+        results_df_new['datetime']=now
+        results_df = pd.concat([results_df,results_df_new],ignore_index=True)
+        matching_index = len(results_df)-1
+    results_df.to_csv(filename)
+    return results_df, matching_index
+
+
+def clip_ET_withLandCover(
+    LCnames,
+    gdf_AOI,
+    ETxr,
+    ETname='ACT. ETRA',
+    crs_ET=None,
+):
+    """
+    Clips an ET xarray dataset using land cover masks and returns the modified dataset.
+
+    Parameters
+    ----------
+    LCnames : list of str
+        Names of the land cover classes to use as masks, corresponding to the 'POI/AOI' column in `gdf_AOI`.
+    gdf_AOI : geopandas.GeoDataFrame
+        GeoDataFrame containing the area of interest (AOI) polygons with a 'POI/AOI' column for land cover types.
+    ETxr : xarray.Dataset
+        The xarray dataset containing the evapotranspiration (ET) data.
+    ETname : str, optional
+        Name of the ET variable in `ETxr`. Default is 'ACT. ETRA'.
+    crs_ET : str, optional
+        Coordinate reference system of the ET dataset. If not provided, it is inferred from the dataset.
+
+    Returns
+    -------
+    xarray.Dataset
+        The modified `ETxr` dataset with added layers for each land cover mask under the names "<LCname>_CLCmask".
+        
+    Notes
+    -----
+    - Each land cover mask is created using the geometry in `gdf_AOI` for the specified `LCnames`.
+    - The `clip` method uses the geometries to create masks applied to the ET dataset.
+    - The function returns the modified dataset without generating any plots.
+
+    Examples
+    --------
+    >>> ETxr_updated = clip_ET_withLandCover(
+    ...     LCnames=['Lake', 'Intensive Irrigation'],
+    ...     gdf_AOI=gdf,
+    ...     ETxr=et_xr,
+    ...     ETname='ET',
+    ...     crs_ET='EPSG:4326'
+    ... )
+    """
+    for lcn in LCnames:  # axs is still included for flexibility
+        CLC_mask = gdf_AOI.set_index('POI/AOI').loc[lcn].geometry
+        ETxr = ETxr.rio.write_crs(crs_ET)
+        mask_ETA = ETxr[ETname].rio.clip(
+            CLC_mask.apply(mapping), 
+            crs_ET, 
+            drop=False
+        )
+
+        ETxr[lcn + '_CLCmask'] = mask_ETA
+
+    return ETxr
+
+        
+        

@@ -60,12 +60,13 @@ import warnings
 import copy
 
 import matplotlib.pyplot as plt
+import xarray as xr
 import numpy as np
 import pandas as pd
 from rich.progress import track
 
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
-from pyCATHY.DA import enkf, pf, mapper
+from pyCATHY.DA import enkf, pf, mapper, localisation
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 # from pyCATHY.importers import sensors_measures as in_meas
@@ -298,6 +299,7 @@ class DA(CATHY):
         self.dict_parm_pert = dict_parm_pert
         self.df_DA = pd.DataFrame()
         self.df_Archie = pd.DataFrame()
+        self.localisationBool = False
         
         # backup all spatial ET iterations (self.backupfort777)
         # ET file are large!
@@ -353,29 +355,18 @@ class DA(CATHY):
                            **kwargs) # to create the processor exe
         callexe = "./" + self.processor_name
 
-        self.damping = 1
-        if "damping" in kwargs:
-            self.damping = kwargs["damping"]
-
-        self.localisation = None
-        if "localisation" in kwargs:
-            self.localisation = kwargs["localisation"]
-
-        threshold_rejected = 10
-        if "threshold_rejected" in kwargs:
-            threshold_rejected = kwargs["threshold_rejected"]
-
-        self.verbose = False
-        if "verbose" in kwargs:
-            self.verbose = kwargs["verbose"]
+        self.damping = kwargs.get("damping", 1)
+        self.localisation = kwargs.get("localisation", None)
+        threshold_rejected = kwargs.get("threshold_rejected", 10)
+        self.verbose = kwargs.get("verbose", False)
 
         # initiate DA
         # -------------------------------------------------------------------
         ENS_times, list_parm2update, update_key = self._DA_init(
-            dict_obs,
-            dict_parm_pert,
-            list_parm2update,
-        )
+                                                                dict_obs,
+                                                                dict_parm_pert,
+                                                                list_parm2update,
+                                                            )
 
         # initiate mapping petro
         # -------------------------------------------------------------------
@@ -448,9 +439,9 @@ class DA(CATHY):
         """
 
         (callexe, 
-         all_atmbc_times, 
+         self.all_atmbc_times, 
          threshold_rejected, 
-         ENS_times, 
+         self.ENS_times, 
          update_key) = self.prepare_DA(
                                          dict_obs,
                                          dict_parm_pert,
@@ -568,9 +559,9 @@ class DA(CATHY):
         """
         
         (callexe, 
-         all_atmbc_times, 
+         self.all_atmbc_times, 
          threshold_rejected, 
-         ENS_times, 
+         self.ENS_times, 
          update_key) = self.prepare_DA(
                                          dict_obs,
                                          dict_parm_pert,
@@ -586,7 +577,6 @@ class DA(CATHY):
         # (time-windowed) update input files ensemble again 
         # -------------------------------------------------------------------
         self._update_input_ensemble(
-            list(self.atmbc["time"]),
             list_parm2update=list_parm2update,         
         )
         
@@ -594,14 +584,10 @@ class DA(CATHY):
         # Run hydrological model sequentially
         # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
-        for t_atmbc in all_atmbc_times:  # atmbc times MUST include assimilation observation times
+        for t_atmbc in self.all_atmbc_times:  # atmbc times MUST include assimilation observation times
 
             self._run_ensemble_hydrological_model(parallel, callexe)
             os.chdir(os.path.join(self.workdir))
-
-            # self.plot_ini_state_cov()
-            # def plot_ini_state_cov():
-            #     ensemble_psi, ensemble_sw, ens_size, sim_size = self._read_state_ensemble()
 
             # check scenario (result of the hydro simulation)
             # ----------------------------------------------------------------
@@ -612,6 +598,8 @@ class DA(CATHY):
             id_valid = ~np.array(rejected_ens)
             self.ens_valid = list(np.arange(0, self.NENS)[id_valid])
             ensemble_psi_valid_bef_update = []
+            
+            
             #!! define subloop here to optimize the inflation!!
             # if 'optimize_inflation' in DA_type:
             # threshold_convergence = 10
@@ -619,21 +607,17 @@ class DA(CATHY):
 
             # check if there is an observation at the given atmbc time
             # --------------------------------------------------------
-            if t_atmbc in ENS_times:
+            if t_atmbc in self.ENS_times:
 
                 self.console.print(":world_map: [b] map states to observations [/b]")
-                #%%
-                # map states to observation = apply H operator to state variable
+                #%% map states to observation = apply H operator to state variable
                 # ----------------------------------------------------------------
                 prediction = self.map_states2Observations(
                                                             list_assimilated_obs,
                                                             default_state="psi",
                                                             parallel=parallel,
                                                         )
-
-                # print(['Im done with mapping']*10)
-                #%%
-                # DA analysis
+                #%% DA analysis preparation
                 # ----------------------------------------------------------------
                 self.console.print(
                     r""":chart_with_upwards_trend: [b]Analysis[/b]:
@@ -643,8 +627,6 @@ class DA(CATHY):
                         DA_type, self.damping
                     )
                 )
-    
-    
                 (
                     ensemble_psi_valid_bef_update,
                     ensemble_sw_valid_bef_update,
@@ -652,74 +634,59 @@ class DA(CATHY):
                     sim_size,
                 ) = self._read_state_ensemble()
                 
-                #%%
-                self.localisationBool = False
+                #%% DA localisation preparation
+                # ----------------------------------------------------------------
+
                 if self.localisation is not None:
-                    self.localisationBool = any(item in self.localisation for item in ['veg_map', 'zones', 'nodes'])
+                    self.localisationBool = any(item in self.localisation for item in ['veg_map', 
+                                                                                       'zones',
+                                                                                       'nodes']
+                                                )
                     
                 if self.localisationBool:
                     self.console.print(f":carpentry_saw: [b] Domain localisation: {self.localisation} [/b]")
-                        
-                    def mesh_nodes_localisation(raster_local):
-                        # Extract 3D grid nodes from the mesh data
-                        grid3d = self.grid3d['mesh3d_nodes']
-                        num_nodes = grid3d.shape[0]
-                        node_ids = np.arange(num_nodes)
-                        x_coords = grid3d[:, 0]  # x values
-                        y_coords = grid3d[:, 1]  # y values
-                        ix = np.unique(x_coords)
-                        iy = np.unique(y_coords)
-                        mesh_nodes_valid = []
-                        # Iterate over unique surface node identifiers
-                        for msirfi in np.unique(raster_local):
-                            # Get indices where raster_local equals the current identifier
-                            mask = (raster_local == msirfi)
-                            # Get the indices of the valid nodes
-                            idmxi, idmyi = np.where(mask)
-                            # Filter for valid node IDs based on x and y coordinates
-                            valid_nodes = []
-                            for idx, idy in zip(idmxi, idmyi):
-                                valid_node = node_ids[(x_coords == ix[idx]) & (y_coords == iy[idy])]
-                                valid_nodes.extend(valid_node)  # Extend list with valid nodes
-                            mesh_nodes_valid.append(np.array(valid_nodes))
-                        return mesh_nodes_valid
-                    
-                    def nodes_localisation():
-                        # Determine the map nodes based on the localisation type
-                        if self.localisation == 'veg_map':
-                            map_surface_nodes = mt.map_cells_to_nodes(self.veg_map, (self.hapin['M'] + 1, self.hapin['N'] + 1))
-                        elif self.localisation == 'zones':
-                            map_surface_nodes = mt.map_cells_to_nodes(self.zones, (self.hapin['M'] + 1, self.hapin['N'] + 1))
-                        elif self.localisation == 'nodes':
-                            map_surface_nodes = np.arange(self.grid3d['nnod']).reshape([self.hapin['M'] + 1,
-                                                                                        self.hapin['N'] + 1]
-                                                                                        )  # Treat each node individually                           
-                        mesh_nodes_valid = mesh_nodes_localisation(map_surface_nodes)
-                        return mesh_nodes_valid, map_surface_nodes
-                    
-                    mesh_nodes_valid, map_surface_nodes = nodes_localisation()
-                    
+                                        
+                    (mesh_nodes_valid, 
+                     mask_surface_nodes) = localisation.create_mask_localisation(self.localisation,
+                                                                                self.veg_map,
+                                                                                self.zone,
+                                                                                self.hapin,
+                                                                                self.grid3d
+                                                                                )
                     ensemble_psi = []
                     ensemble_sw = []
                     data = []
                     analysis_with_localisation = []
                     analysis_param = []
-
                     # Loop over unique map nodes and perform the DA analysis
-                    for loci, node_value in enumerate(np.unique(map_surface_nodes)):
+                    for loci, node_value in enumerate(np.unique(mask_surface_nodes)):
+                        
                         # Initialize valid observation nodes as all true
                         obs_surface_nodes = np.ones(int(self.grid3d['nnod']), dtype=bool)
-                        obs_surface_nodes[map_surface_nodes.ravel() != node_value] = False
+                        obs_surface_nodes[mask_surface_nodes.ravel() != node_value] = False
+                        
+                        # check position of the sensors to make sure it is located in the right area
+                        # --------------------------------------------------------------------------
                         (mesh_nodes_observed,
                         mesh_mask_nodes_observed) = self.get_mesh_mask_nodes_observed(list_assimilated_obs)
-                        obs_surface_nodes_valid = obs_surface_nodes[mesh_nodes_observed]
                         
+                        if len(mesh_nodes_observed) <= len(obs_surface_nodes):
+                            obs_surface_nodes_valid = obs_surface_nodes[mesh_nodes_observed]
+                        else:
+                            self.console.print(f"""[b] 
+                                               Observations nodes is not contained within the surface mesh
+                                               Cannot validate its positionning regarding to the localisation mask
+                                               ['NOT IMPLEMENTED YET']
+                                               [/b]"""
+                                               )
+                        # if None of the observation are within the localisation area: 
+                        #     continue without analysis
+                        # ------------------------------------------------------------
                         if np.sum(obs_surface_nodes_valid)==0:
                             continue
                         
                         selected_parm2update = list_parm2update
                         if any(item in self.localisation for item in ['veg_map', 'zones']):
-
                             selected_parm2update = [list_parm2update[0], list_parm2update[loci + 1]]
                         self.console.print(f"""[b] 
                                            SHORTCUT: ALL PARAMS ARE UPDATED and
@@ -727,7 +694,9 @@ class DA(CATHY):
                                            with observation localisation [/b]
                                            """)
                         self.console.print(f"[b] Params to update (domain loc): {selected_parm2update} [/b]")
-                        # Perform DA analysis for each node
+                        
+                        # Perform DA analysis for each mask of localisation
+                        # --------------------------------------------------
                         (
                             ensemble_psi_loci,
                             ensemble_sw_loci,
@@ -740,21 +709,21 @@ class DA(CATHY):
                             selected_parm2update,
                             list_assimilated_obs,
                             ens_valid=self.ens_valid,
-                            surface_nodes_valid=obs_surface_nodes_valid,
-                            mesh_nodes_valid= mesh_nodes_valid[loci]
+                            obs_valid=obs_surface_nodes_valid,
+                            obs_mesh_nodes_valid= mesh_nodes_valid[loci]
                         )
                         data.append(data_loci)
                         analysis_with_localisation.append(np.c_[mesh_nodes_valid[loci],analysis_loci])
                         analysis_param.append(analysis_param_loci)
 
+                    self.console.print(f"[b] ONLY TAKE THE first part of the data? [/b]")
                     data = data[0]
                     ensemble_psi = ensemble_psi_loci
                     ensemble_sw = ensemble_sw_loci
                     analysis_with_localisation = np.vstack(analysis_with_localisation)
                     analysis_with_localisation = analysis_with_localisation[analysis_with_localisation[:, 0].argsort()]
-                    # analysis_with_localisation = analysis_with_localisation[:,1:]
                     analysis_param = np.hstack(analysis_param)
-
+                    
                     if len(analysis_with_localisation)!=len(ensemble_psi):
                         self.console.print(f"""
                                                [b] !! All the mesh nodes havent been analysed with DA !! [/b]
@@ -774,7 +743,8 @@ class DA(CATHY):
                         
                 else:
                     # No localisation, consider all nodes as valid
-                    obs_surface_nodes_valid = np.ones(prediction.shape[0], dtype=bool)
+                    # ---------------------------------------------------------
+                    obs_valid = np.ones(prediction.shape[0], dtype=bool)
                     mesh_nodes_valid =  np.ones(int(self.grid3d['nnod3']), dtype=bool) 
                     
                     # Perform DA analysis without localisation
@@ -790,8 +760,8 @@ class DA(CATHY):
                         list_parm2update,
                         list_assimilated_obs,
                         ens_valid=self.ens_valid,
-                        surface_nodes_valid=obs_surface_nodes_valid,
-                        mesh_nodes_valid= mesh_nodes_valid
+                        obs_valid=obs_valid,
+                        obs_mesh_nodes_valid= mesh_nodes_valid
                     )
                         
                     # fig, ax = plt.subplots()
@@ -816,24 +786,19 @@ class DA(CATHY):
                 )
                 # print(['Im done with _invalid_ensemble']*10)
 
-                #%%
-                # check analysis quality
+                #%% check analysis quality
                 # ----------------------------------------------------------------
 
                 self.console.print(
                     ":face_with_monocle: [b]check analysis performance[/b]"
                 )
-                
-                self._performance_assessement(
+                self._performance_assessement_pq(
                                                 list_assimilated_obs,
                                                 data,
                                                 prediction_valid,
                                                 t_obs=self.count_DA_cycle,
                                             )
-                # print(['Im done with _analysis performance']*10)
-
-                #%%
-                # the counter is incremented here
+                #%% the counter is incremented here
                 # ----------------------------------------------------------------
                 self.count_DA_cycle = self.count_DA_cycle + 1
 
@@ -874,7 +839,7 @@ class DA(CATHY):
                 ":round_pushpin: end of time step (s) "
                 + str(int(t_atmbc))
                 + "/"
-                + str(int(all_atmbc_times[-1]))
+                + str(int(self.all_atmbc_times[-1]))
                 + " :round_pushpin:",
                 style="yellow",
             )
@@ -882,15 +847,13 @@ class DA(CATHY):
                 ":round_pushpin: end of atmbc update # "
                 + str(self.count_atmbc_cycle)
                 + "/"
-                + str(len(all_atmbc_times))
+                + str(len(self.all_atmbc_times))
                 + " :round_pushpin:",
                 style="yellow",
             )
 
             # create dataframe _DA_var_pert_df holding the results of the DA update
-            # ---------------------------------------------------------------------
-            # self.DA_df
-            
+            # ---------------------------------------------------------------------           
             if len(ensemble_psi_valid_bef_update)==0:
                 (
                     ensemble_psi_valid_bef_update,
@@ -898,19 +861,18 @@ class DA(CATHY):
                     ens_size,
                     sim_size,
                 ) = self._read_state_ensemble()
-            else:
-                self._DA_df(
-                    state=[ensemble_psi_valid_bef_update, 
-                           ensemble_sw_valid_bef_update
-                           ],
-                    state_analysis=analysis_valid,
-                    rejected_ens=rejected_ens,
-                )
-            # self.df_DA
+            # else:
+            self.console.rule("Back up DA step")
+            self._DA_df(
+                state=[ensemble_psi_valid_bef_update, 
+                       ensemble_sw_valid_bef_update
+                       ],
+                state_analysis=analysis_valid,
+                rejected_ens=rejected_ens,
+            )
             
-            # print(['Im done with dataframe _DA_var_pert_df']*10)
-
-
+            self._DA_ET_xr()
+            
             # export summary results of DA
             # ----------------------------------------------------------------
             meta_DA = {
@@ -930,9 +892,8 @@ class DA(CATHY):
 
             # overwrite input files ensemble (perturbated variables)
             # ---------------------------------------------------------------------
-            if (self.count_atmbc_cycle < len(all_atmbc_times) - 1):  # -1 cause all_atmbc_times include TMAX
+            if (self.count_atmbc_cycle < len(self.all_atmbc_times) - 1):  # -1 cause all_atmbc_times include TMAX
                 self._update_input_ensemble(
-                                                all_atmbc_times, 
                                                 list_parm2update, 
                                                 analysis=analysis_valid
                 )
@@ -945,7 +906,7 @@ class DA(CATHY):
                                 ":red_circle: end of DA update "
                                 + str(self.count_DA_cycle)
                                 + "/"
-                                + str(len(ENS_times))
+                                + str(len(self.ENS_times))
                                 + " :red_circle:",
                                 style="yellow",
                             )
@@ -1027,15 +988,15 @@ class DA(CATHY):
             path_CATHY_folder=cwd,
         )
 
-    def _DA_openLoop(self, ENS_times, list_assimilated_obs, parallel, verbose=False):
+    def _DA_openLoop(self, list_assimilated_obs, parallel, verbose=False):
         """
         Run open Loop (no update/assimilation) hydro simulation for an ensemble of realisation
         Evaluate the performance by comparison with measured data after mapping
 
         Parameters
         ----------
-        ENS_times : list
-            List of the time steps (in sec) where observations are assimilated.
+        # ENS_times : list
+        #     List of the time steps (in sec) where observations are assimilated.
         list_assimilated_obs : list
             List of assimilation observations.
         parallel : Bool, optional
@@ -1138,7 +1099,7 @@ class DA(CATHY):
             )
         )
         prediction_OL = self._evaluate_perf_OL(
-            parallel, list_assimilated_obs, path_fwd_CATHY_list, ENS_times
+            parallel, list_assimilated_obs, path_fwd_CATHY_list, self.ENS_times
         )
 
         # ------------------------------------------------------
@@ -1153,8 +1114,8 @@ class DA(CATHY):
         list_update_parm=["St. var."],
         list_assimilated_obs="all",
         ens_valid=[],
-        surface_nodes_valid=[],
-        mesh_nodes_valid=[],
+        obs_valid=[],
+        obs_mesh_nodes_valid=[],
     ):
         """
         Analysis ensemble using DA
@@ -1245,11 +1206,11 @@ class DA(CATHY):
         # This is implemented particulary for DA with localisation
         
                        
-        data_valid = data[surface_nodes_valid]
-        data_cov_valid = data_cov[surface_nodes_valid,:][:,surface_nodes_valid]
-        prediction_valid = prediction[surface_nodes_valid, :]
-        ensemble_psi_valid = ensemble_psi_valid[mesh_nodes_valid, :]
-        ensemble_sw_valid = ensemble_sw_valid[mesh_nodes_valid, :]
+        data_valid = data[obs_valid]
+        data_cov_valid = data_cov[obs_valid,:][:,obs_valid]
+        prediction_valid = prediction[obs_valid, :]
+        ensemble_psi_valid = ensemble_psi_valid[obs_mesh_nodes_valid, :]
+        ensemble_sw_valid = ensemble_sw_valid[obs_mesh_nodes_valid, :]
                
         # run Analysis
         # ---------------------------------------------------------------------
@@ -1284,29 +1245,28 @@ class DA(CATHY):
                 analysis_param,
             ] = result_analysis
             
-            if self.localisation is None:
-                self.console.print("[b]Plotting COV matrices[/b]")
-                try:
-                    plt_CT.show_DA_process_ens(
-                        ensemble_psi_valid,
-                        data_valid,
-                        COV,
-                        dD,
-                        dAS,
-                        B,
-                        analysis,
-                        savefig=True,
-                        savename=os.path.join(
-                            self.workdir,
-                            self.project_name,
-                            "DA_Ensemble",
-                            "DA_Matrices_t" + str(self.count_DA_cycle),
-                        ),
-                        # label_sensor=str([*self.dict_obs[0]])
-                        label_sensor=str([*obskey2map]),
-                    )
-                except:
-                    self.console.print("[b]Impossible to plot matrices[/b]")
+            self.console.print("[b]Plotting COV matrices[/b]")
+            try:
+                plt_CT.show_DA_process_ens(
+                    ensemble_psi_valid,
+                    data_valid,
+                    COV,
+                    dD,
+                    dAS,
+                    B,
+                    analysis,
+                    savefig=True,
+                    savename=os.path.join(
+                        self.workdir,
+                        self.project_name,
+                        "DA_Ensemble",
+                        "DA_Matrices_t" + str(self.count_DA_cycle),
+                    ),
+                    # label_sensor=str([*self.dict_obs[0]])
+                    label_sensor=str([*obskey2map]),
+                )
+            except:
+                self.console.print("[b]Impossible to plot matrices[/b]")
 
 
         else:
@@ -1720,7 +1680,7 @@ class DA(CATHY):
         return np.array(param_new)
 
     def _evaluate_perf_OL(
-        self, parallel, list_assimilated_obs, path_fwd_CATHY_list, ENS_times
+        self, parallel, list_assimilated_obs, path_fwd_CATHY_list
     ):
 
         prediction_OL = []
@@ -1742,10 +1702,10 @@ class DA(CATHY):
                                                         )
             else:
                 write2shell_map = True
-                for t in range(len(ENS_times)):
+                for t in range(len(self.ENS_times)):
                     prediction_stacked = self.map_states2Observations(
                                                                         list_assimilated_obs,
-                                                                        ENS_times=ENS_times,
+                                                                        ENS_times=self.ENS_times,
                                                                         savefig=False,
                                                                         parallel=parallel,
                                                                         write2shell_map=write2shell_map,
@@ -1754,10 +1714,10 @@ class DA(CATHY):
                     write2shell_map = False
 
         else:
-            for t in range(len(ENS_times)):
+            for t in range(len(self.ENS_times)):
                 prediction_stacked = self.map_states2Observations(
                                                                     list_assimilated_obs,
-                                                                    ENS_times=ENS_times,
+                                                                    ENS_times=self.ENS_times,
                                                                     savefig=False,
                                                                     parallel=parallel,
                                                                 )
@@ -1777,10 +1737,10 @@ class DA(CATHY):
             [
                 np.shape(prediction_OL)[1],
                 self.NENS,
-                len(ENS_times),
+                len(self.ENS_times),
             ],
         )
-        for t in range(len(ENS_times)):
+        for t in range(len(self.ENS_times)):
             # print(str(t) + 't perf OL')
             data_t, _ = self._get_data2assimilate(
                 list_assimilated_obs,
@@ -1811,7 +1771,7 @@ class DA(CATHY):
         # if hasattr(self, 'soil_SPP') is False:
             # self.read_inputs('soil')
             
-        porosity = self.soil_SPP["SPP"][:, 4][0]
+        porosity = self.soil_SPP["SPP"]['POROS'].mean()
         if not isinstance(porosity, list):
             porosity = [porosity]
 
@@ -1889,18 +1849,27 @@ class DA(CATHY):
 
             print('''
                   Assuming that the dictionnary of perturbated parameters 
-                  is build using 'pert_key_order' i.e. 
+                  is build using 'pert_control_name' i.e. 
                   per layers i.e. ks0= layer 0, ks1=layer 1, etc...
                   '''
                   )        
         if key_root[0].casefold() == 'ks':
-            pert_order = dict_parm_pert[key]['pert_key_order']
+            pert_control_name = dict_parm_pert[key]['pert_control_name']
             update_value = dict_parm_pert[key][update_key][ens_nb]
         
-            if pert_order[0] == 'zone':
+            if pert_control_name == 'zone':
                 df_SPP_2fill[ens_nb].loc[(int(key_root[1])+1, slice(None)), ['PERMX', 'PERMY', 'PERMZ']] = update_value
-            elif pert_order[0] == 'layers':
+            elif pert_control_name == 'layers':
                 df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), ['PERMX', 'PERMY', 'PERMZ']] = update_value
+            elif pert_control_name == 'root_map':
+                mask_vegi = (int(key_root[1])+1 == self.veg_map)
+                # Get zones corresponding to current vegetation mask
+                zones_in_vegi = self.zone[mask_vegi]
+                # Update permeability values for all matching zones
+                df_SPP_2fill[ens_nb].loc[zones_in_vegi, ['PERMX', 'PERMY', 'PERMZ']] = update_value
+            else:
+                df_SPP_2fill[ens_nb].loc[:, ['PERMX', 'PERMY', 'PERMZ']] = update_value
+
 
         elif key_root[0].casefold() in 'porosity':
             df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'POROS'] = dict_parm_pert[key][update_key][ens_nb]
@@ -2094,20 +2063,22 @@ class DA(CATHY):
                 if key_root[0].casefold() in "atmbc".casefold():
                     
                     if key.casefold() in "atmbc0".casefold():
-                        tper_stacked = []
-                        for kk in dict_parm_pert:
-                            if 'atmbc' in kk:
-                                tper_stacked.append(dict_parm_pert[kk]['time_variable_perturbation'])
-                        tper_stacked = np.array(tper_stacked)
-                        VALUE = tper_stacked[:,:,ens_nb]
+                        # tper_stacked = []
+                        # for kk in dict_parm_pert:
+                        #     if 'atmbc' in kk:
+                        #         tper_stacked.append(dict_parm_pert[kk]['time_variable_perturbation'])
+                        # tper_stacked = np.array(tper_stacked)
+                        # VALUE = tper_stacked[:,:,ens_nb]
                         times = dict_parm_pert[key]['data2perturbate']['time']                           
+                        VALUE = dict_parm_pert[key]['time_variable_perturbation'][ens_nb]                  
                         self.update_atmbc(
                                             HSPATM=self.atmbc['HSPATM'],
                                             IETO=self.atmbc['IETO'],
-                                            time=times,
-                                            netValue=VALUE.T,
+                                            time=list(times),
+                                            netValue=VALUE,
                                             filename=os.path.join(os.getcwd(), "input/atmbc"),
                                             verbose=self.verbose,
+                                            # show=True
                                         )
                         
                     else:
@@ -2441,6 +2412,29 @@ class DA(CATHY):
                     obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
         return obskey2map, obs2map
 
+
+    def _check_prediction_shape(self,Hx_ens,obskey2map):
+        if isinstance(Hx_ens, list):
+            try:
+                Hx_ens = np.array(Hx_ens) 
+            except:
+                pass
+       
+        if not isinstance(Hx_ens, float):
+            Hx_ens_shape = np.shape(Hx_ens)
+            expected_shape = (len(obskey2map),len(self.ens_valid))
+        
+            if Hx_ens_shape != expected_shape:
+                if Hx_ens_shape == (len(self.ens_valid), 1, len(obskey2map)):
+                    Hx_ens = np.vstack(Hx_ens).T
+                elif Hx_ens_shape[0] == expected_shape[1]:
+                    Hx_ens = np.array(Hx_ens).T
+                # elif Hx_ens_shape != expected_shape:
+                #     Hx_ens = np.hstack(Hx_ens)
+
+        return Hx_ens
+
+
     def map_states2Observations(
                                     self, 
                                     list_assimilated_obs="all", 
@@ -2533,8 +2527,8 @@ class DA(CATHY):
                 state = [df_psi.iloc[-1], df_sw.iloc[-1].values]            
             
             Hx_stacked = []  # stacked predicted observation   
-            testET = any('ETact' in item for item in obskey2map)
-            if testET:
+            isET = any('ETact' in item for item in obskey2map)
+            if isET:
                 df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
                                                               'fort.777'),
                                                   )
@@ -2549,7 +2543,7 @@ class DA(CATHY):
                     if obsi['data_type']=='ETact':
                         obs2map_node.append(obsi['mesh_nodes'])
                 ETobs_selected = df_fort777.loc[t_ET[-1]]['ACT. ETRA'].iloc[obs2map_node]
-                Hx_stacked.append(ETobs_selected.to_list())
+                Hx_stacked.append(ETobs_selected.values)
                 
             # Loop over observations to map
             # ---------------------------------------------------------------------
@@ -2625,20 +2619,14 @@ class DA(CATHY):
                         Hx_stacked = np.hstack(Hx_stacked)
 
             if len(Hx_stacked) > 0:
-                Hx_ens.append(Hx_stacked)
-        
-        if not isinstance(Hx_ens, float):
-            Hx_ens_shape = np.shape(Hx_ens)
-            expected_shape = (len(self.ens_valid), len(obskey2map))
-        
-            if Hx_ens_shape != expected_shape:
-                if Hx_ens_shape == (len(self.ens_valid), 1, len(obskey2map)):
-                    Hx_ens = np.vstack(Hx_ens).T
-                elif Hx_ens_shape != expected_shape:
-                    Hx_ens = np.hstack(Hx_ens)
-                else:
-                    Hx_ens = np.array(Hx_ens).T
-               
+                Hx_stacked_all_obs = np.hstack(Hx_stacked)
+                Hx_ens.append(Hx_stacked_all_obs)
+            
+        # np.shape(Hx_ens)
+        Hx_ens = self._check_prediction_shape(Hx_ens,
+                                              obskey2map
+                                              )
+                       
         #%%
         # ---------------------------------------------------------------------
         # special case of ERT // during sequential assimilation
@@ -2776,7 +2764,7 @@ class DA(CATHY):
         pass
 
     def _update_input_ensemble(
-        self, ENS_times, list_parm2update=["St. var."], analysis=[], **kwargs
+        self, list_parm2update=["St. var."], analysis=[], **kwargs
     ):
         """
         Select the time window of the hietograph.
@@ -2797,7 +2785,7 @@ class DA(CATHY):
 
         # resample atmbc file for the given DA window
         # ---------------------------------------------------------------------
-        self.selec_atmbc_window(self.NENS, ENS_times)
+        self.selec_atmbc_window()
 
         # ---------------------------------------------------------------------
         self.update_ENS_files(
@@ -2809,7 +2797,7 @@ class DA(CATHY):
 
         pass
 
-    def selec_atmbc_window(self, NENS, ENS_times):
+    def selec_atmbc_window(self):
         """
         Select the time window of the hietograph
         == time between two assimilation observations
@@ -2818,8 +2806,6 @@ class DA(CATHY):
         ----------
         NENS : list
             # of valid ensemble.
-        ENS_times : list
-            Assimilation times (in sec).
         """
 
         if len(self.grid3d) == 0:
@@ -2847,7 +2833,7 @@ class DA(CATHY):
             # -------------------------------
             if 'atmbc0' in self.dict_parm_pert.keys(): # case where atmbc are homogeneous
                 if HSPATM!=0:
-                    VALUE = np.array(self.dict_parm_pert['atmbc0']['time_variable_perturbation'])[:,ens_nb]
+                    VALUE = np.array(self.dict_parm_pert['atmbc0']['time_variable_perturbation'])[ens_nb]
                     times = self.dict_parm_pert['atmbc0']['data2perturbate']['time']
                     df_atmbc = pd.DataFrame(np.c_[times,VALUE],
                                             columns=['time','value']
@@ -2865,7 +2851,7 @@ class DA(CATHY):
                         int(df_atmbc.time.iloc[self.count_atmbc_cycle + 1]),
                     ]
             else:
-                time_window_atmbc = [ENS_times[0], ENS_times[1]]
+                time_window_atmbc = [self.ENS_times[0], self.ENS_times[1]]
     
             df_atmbc_window = df_atmbc[
                 (df_atmbc["time"] >= time_window_atmbc[0])
@@ -2895,6 +2881,68 @@ class DA(CATHY):
 
         pass
 
+    def _create_empty_ET_xr(self):
+        x = np.unique(self.grid3d['mesh3d_nodes'][:,0])
+        y = np.unique(self.grid3d['mesh3d_nodes'][:,1])
+        nan_dataset = xr.Dataset(
+                                {
+                                    "time_sec": self.all_atmbc_times[self.count_atmbc_cycle-1],
+                                    "SURFACE NODE": (("x", "y"), np.full((len(x), len(y)), np.nan)),
+                                    "ACT. ETRA": (("x", "y"), np.full((len(x), len(y)), np.nan)),
+                                },
+                                coords={
+                                    "x": x,
+                                    "y": y,
+                                }
+                            )
+        return nan_dataset
+                
+    def _DA_ET_xr(self):
+        
+        ET_ftime_ensi = []
+        for nensi in range(self.NENS):
+            if nensi in self.ens_valid:
+                try:
+                    df_fort777 = out_CT.read_fort777(
+                        os.path.join(self.workdir, 
+                                     self.project_name, 
+                                     f'DA_Ensemble/cathy_{nensi+1}', 
+                                     'fort.777'
+                                     )
+                    )
+                    df_fort777 = df_fort777.drop_duplicates()
+                    df_fort777 = df_fort777.set_index(['time', 'x', 'y']).to_xarray()
+                    
+                    df_fort777_selec_ti = df_fort777.isel(time=-1)
+                    df_fort777_selec_ti = df_fort777_selec_ti.rio.set_spatial_dims('x', 'y')
+                    df_fort777_selec_ti = df_fort777_selec_ti.reset_coords("time", 
+                                                                           drop=True
+                                                                           )
+                    df_fort777_selec_ti['time_sec'] = self.all_atmbc_times[self.count_atmbc_cycle-1]
+                    ET_ftime_ensi.append(df_fort777_selec_ti)
+                    
+                except:
+                    print(f'Impossible to read ET - exclude scenario ensemble {nensi}')
+                    nan_dataset = self._create_empty_ET_xr()
+                    ET_ftime_ensi.append(nan_dataset)
+            else:
+                nan_dataset = self._create_empty_ET_xr()
+                ET_ftime_ensi.append(nan_dataset)
+        ET_DA_xr_time_i = xr.concat(ET_ftime_ensi, 
+                                dim="ensemble"
+                                )
+        
+        # Concatenate along the "assimilation" dimension if `self.ET_DA_xr` exists, or create it otherwise
+        if hasattr(self, 'ET_DA_xr'):
+            self.ET_DA_xr = xr.concat([self.ET_DA_xr, 
+                                       ET_DA_xr_time_i.expand_dims(assimilation=[self.count_atmbc_cycle])], 
+                                      dim="assimilation"
+                                      )
+        else:
+            self.ET_DA_xr = ET_DA_xr_time_i.expand_dims(assimilation=[self.count_atmbc_cycle])
+          
+        pass
+        
     def _DA_df(
         self, state=[None, None], state_analysis=None, rejected_ens=[], **kwargs
     ):
@@ -3103,7 +3151,125 @@ class DA(CATHY):
             "n_Archie": n_Archie,
             "pert_sigma_Archie": pert_sigma_Archie,
         }
+        pass
+
+    def _compute_diff_matrix(self,data, prediction):
+        """Computes the difference matrix between data and prediction."""
+        diff_mat = np.zeros_like(prediction)
+        for i in range(len(data)):
+            for j in range(prediction.shape[1]):  # Loop over ensemble columns
+                diff_mat[i, j] = abs(data[i] - prediction[i, j])
+        return diff_mat
+    
+    def _compute_rmse(self,diff_matrix, num_predictions):
+        """Computes RMSE from difference matrix."""
+        diff_avg = np.nansum(diff_matrix, axis=1) / num_predictions
+        return np.sum(diff_avg) / len(diff_avg)
+    
+    def _get_rmse_for_sensor(self, obs2eval, prediction, num_predictions):
+        """Computes RMSE for a given sensor."""
+        diff_mat = self._compute_diff_matrix(obs2eval, prediction)
+        return self._compute_rmse(diff_mat, num_predictions)
+    
+    def _append_to_performance_df(self,df_performance, t_obs, name_sensor, 
+                                  rmse_sensor, rmse_avg, nrmse_sensor, nrmse_avg,
+                                  ol_bool):
+        """Appends performance metrics to the main DataFrame."""
+        data = {
+            "time": [t_obs],
+            "ObsType": [name_sensor],
+            "RMSE" + name_sensor: [rmse_sensor],
+            "RMSE_avg": [rmse_avg],
+            "NMRMSE" + name_sensor: [nrmse_sensor],
+            "NMRMSE_avg": [nrmse_avg],
+            "OL": [ol_bool]
+        }
+        return pd.concat([df_performance, pd.DataFrame(data)], ignore_index=True)
+    
+    def _save_performance_to_parquet(self,df_performance, file_path="performance_data.parquet"):
+        """Saves the performance DataFrame to Parquet format, appending if the file exists."""
+        if os.path.exists(file_path):
+            df_performance.to_parquet(file_path, engine="pyarrow", compression="snappy", index=False, append=True)
+        else:
+            df_performance.to_parquet(file_path, engine="pyarrow", compression="snappy", index=False)
+    
+    def _load_performance_from_parquet(self,file_path="performance_data.parquet"):
+        """Loads performance data from a Parquet file if it exists."""
+        if os.path.exists(file_path):
+            return pd.read_parquet(file_path, engine="pyarrow")
+        else:
+            return pd.DataFrame()  # Return an empty DataFrame if no file exists
+
+    def _performance_assessement_pq(self,
+                                    list_assimilated_obs,
+                                    data, 
+                                    prediction,
+                                    t_obs,
+                                    file_path="performance_data.parquet", 
+                                    **kwargs
+                                    ):
+        """Calculates (N)RMSE for each observation in a data assimilation cycle."""
         
+        ol_bool = kwargs.get("openLoop", False)
+        
+        # Initialize df_performance if file exists
+        self.df_performance = self._load_performance_from_parquet(os.path.join(
+                                                                     self.workdir,
+                                                                     self.project_name,
+                                                                     file_path,
+                                                                     )
+                                                        )
+        rmse_avg_stacked = []  # This list will track average RMSE values over time steps
+        
+        num_predictions = len(prediction)
+        all_obs_diff_mat = self._compute_diff_matrix(data, prediction)
+        all_obs_rmse_avg = self._compute_rmse(all_obs_diff_mat, num_predictions)
+        
+        # Example function to retrieve list of keys for assimilated observations
+        obs2eval_key = self._get_data2assimilate(list_assimilated_obs)[1]
+        start_line_obs = 0
+        
+        for name_sensor in obs2eval_key:
+            obs2eval = self._get_data2assimilate([name_sensor], match=True)[0]
+            n_obs = len(obs2eval)
+            prediction2eval = prediction[start_line_obs:start_line_obs + n_obs]
+            
+            rmse_sensor = self._get_rmse_for_sensor(obs2eval, prediction2eval, num_predictions)
+            rmse_avg_stacked.append(all_obs_rmse_avg)
+            
+            if "ObsType" in self.df_performance and name_sensor in self.df_performance["ObsType"].unique():
+                prev_rmse = self.df_performance[self.df_performance["ObsType"] == name_sensor]["RMSE" + name_sensor].sum()
+                rmse_sensor_stacked = prev_rmse + rmse_sensor
+            else:
+                rmse_sensor_stacked = rmse_sensor
+    
+            if t_obs == 0:
+                nrmse_sensor = rmse_sensor
+                nrmse_avg = all_obs_rmse_avg
+            else:
+                nrmse_sensor = rmse_sensor_stacked / (t_obs + 1)
+                nrmse_avg = np.sum(rmse_avg_stacked) / (t_obs + 1)
+    
+            self.df_performance = self._append_to_performance_df(
+                self.df_performance, t_obs, name_sensor, rmse_sensor, all_obs_rmse_avg, nrmse_sensor, nrmse_avg, ol_bool
+            )
+            
+            start_line_obs += n_obs
+        
+        # Save to Parquet and clear memory if too large
+        if len(self.df_performance) > 10000:  # Adjust batch size as needed
+            self._save_performance_to_parquet(self.df_performance, 
+                                         os.path.join(
+                                                    self.workdir,
+                                                    self.project_name,
+                                                    file_path,
+                                                    )
+                                         )
+            self.df_performance = self.pd.DataFrame()  # Clear in-memory DataFrame
+        
+        # return df_performance
+
+
     def _performance_assessement(
                                 self, 
                                 list_assimilated_obs, 
