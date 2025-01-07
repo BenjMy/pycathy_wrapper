@@ -1247,24 +1247,28 @@ class DA(CATHY):
             
             self.console.print("[b]Plotting COV matrices[/b]")
             try:
-                plt_CT.show_DA_process_ens(
-                    ensemble_psi_valid,
-                    data_valid,
-                    COV,
-                    dD,
-                    dAS,
-                    B,
-                    analysis,
-                    savefig=True,
-                    savename=os.path.join(
-                        self.workdir,
-                        self.project_name,
-                        "DA_Ensemble",
-                        "DA_Matrices_t" + str(self.count_DA_cycle),
-                    ),
-                    # label_sensor=str([*self.dict_obs[0]])
-                    label_sensor=str([*obskey2map]),
-                )
+                if np.shape(COV)[0]<1000:
+                
+                    plt_CT.show_DA_process_ens(
+                        ensemble_psi_valid,
+                        data_valid,
+                        COV,
+                        dD,
+                        dAS,
+                        B,
+                        analysis,
+                        savefig=True,
+                        savename=os.path.join(
+                            self.workdir,
+                            self.project_name,
+                            "DA_Ensemble",
+                            "DA_Matrices_t" + str(self.count_DA_cycle),
+                        ),
+                        # label_sensor=str([*self.dict_obs[0]])
+                        label_sensor=str([*obskey2map]),
+                    )
+                else: 
+                    self.console.print("[b]Impossible to plot matrices[/b]")
             except:
                 self.console.print("[b]Impossible to plot matrices[/b]")
 

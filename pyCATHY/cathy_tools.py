@@ -357,10 +357,16 @@ class CATHY:
 
             os.chdir(self.workdir)
         # move to the directory where the source FORTRAN files are contained (cathy_main.f)
-        shutil.move(
-            os.path.join(self.workdir, self.project_name, "prepro/src/pycppp"),
-            os.path.join(self.workdir, self.project_name, "prepro/pycppp"),
-        )
+        # shutil.move(
+        #     os.path.join(self.workdir, self.project_name, "prepro/src/pycppp"),
+        #     os.path.join(self.workdir, self.project_name, "prepro/pycppp"),
+        # )
+        src = Path(self.workdir) / self.project_name / "prepro/src/pycppp"
+        dst = Path(self.workdir) / self.project_name / "prepro/pycppp"
+
+        if dst.exists():
+            dst.unlink()  # Delete the existing destination file
+        src.rename(dst)
 
         self.console.print(":athletic_shoe: [b]Run preprocessor[/b]")
         os.chdir(os.path.join(self.workdir, self.project_name, "prepro"))
@@ -4326,13 +4332,13 @@ class CATHY:
 
         with open(filename, "rb") as f:
             for name in all_names:
-                # try:
+                try:
                 # Attempt to load the next object
-                obj = pickle.load(f)
-                backup_list.append(obj)
-                names.append(name)
-                # except (EOFError, pickle.UnpicklingError):
-                #     # End of file or unpickling issue—break gracefully
+                    obj = pickle.load(f)
+                    backup_list.append(obj)
+                    names.append(name)
+                except:
+                    pass
                 #     break
     
         # Create a dictionary mapping names to loaded objects
