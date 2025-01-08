@@ -687,7 +687,11 @@ class DA(CATHY):
                         
                         selected_parm2update = list_parm2update
                         if any(item in self.localisation for item in ['veg_map', 'zones']):
-                            selected_parm2update = [list_parm2update[0], list_parm2update[loci + 1]]
+                            if len(list_parm2update)>1:
+                                selected_parm2update = [list_parm2update[0], list_parm2update[loci + 1]]
+                            else:
+                                selected_parm2update = [list_parm2update[0]]
+
                         self.console.print(f"""[b] 
                                            SHORTCUT: ALL PARAMS ARE UPDATED and
                                            are not necessaraly associated 
