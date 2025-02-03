@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from scipy.stats import stats, qmc, norm
 from scipy.stats import truncnorm
+import matplotlib.pyplot as plt
 
 from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
@@ -878,65 +879,62 @@ def atmbc_pert_rules(
     sampling_type,
     **kwargs,
 ):
-    # ensemble_size = 15
-    mean = 1
-    sd = 0.2
-    parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
-    # parm_sampling = sampling_dist(sampling_type, mean, sd, 128)
-    import matplotlib.pyplot as plt
-    plt.hist(parm_sampling)
-    
-    # parm_sampling = sampling_dist(sampling_type, mean, 1e-6, ensemble_size)
-    parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-    var_per_2add[type_parm] = parm
-    Tau = parm["time_decorrelation_len"]
-    qk_0 = parm_per_array
+
     atmbc_times = parm["data2perturbate"]["time"]
     atmbc_values = parm["data2perturbate"]["VALUE"]
-    parm_per_array_time_variable = []
-    for i, t in enumerate(atmbc_times):
-    # for i, t in enumerate(atmbc_times[0:10]):
-        if i == 0:
-            # qk_0 = wk0
-            parm_per_array_time_variable.append(qk_0)
-        else:
-            qk_0 = parm_per_array_time_variable[i - 1]
-            parm["nominal"] = atmbc_values[i]
-            wk = sampling_dist(sampling_type, 
-                               parm["nominal"],
-                               sd, 
-                                ensemble_size
-                               )
-            deltaT = abs(atmbc_times[i] - atmbc_times[i - 1])
-            qk_i = Evensen2003(qk_0, wk, deltaT, Tau)
-            parm_per_array_time_variable.append(qk_i)
-            
-    parm_per_array_time_variable = np.vstack(parm_per_array_time_variable)
-    np.shape(atmbc_values)
+    parm_per_ti = []
+    white_noise =  np.random.normal(0, 1, size=(ensemble_size, 
+                                                    len(atmbc_times)
+                                                    )
+                                    )
+
+    Tau = parm["time_decorrelation_len"]
+
+    # Compute perturbed hyetographs
+    q = np.zeros_like(white_noise)
+    q[:, 0] = white_noise[:, 0]  # Initialize with white noise
     
-    fig, ax = plt.subplots()
-    for iii in range(np.shape(parm_per_array_time_variable)[1]):
-        # plt.plot(parm_per_array_time_variable[:,iii],
-        #          color='grey')
-        plt.plot(atmbc_values,
-                 color='red')
-        plt.plot(atmbc_values*parm_per_array_time_variable[:,iii],
-                 color='grey',
-                 alpha=0.3)
-        
-    # print(parm["nominal"])
-    # print(parm_per_array_time_variable)
+    deltaT = np.diff(np.r_[atmbc_times,atmbc_times[-1]+86400])
+    gamma = np.array([1 - (dt / Tau) for dt in deltaT])
+    
+    for i in range(1, len(deltaT)):
+        print(i)
+        q[:, i] = (gamma[i] * q[:, i-1]) + (np.sqrt(1 - gamma[i] ** 2) * white_noise[:, i])
+
+    q_Evenson = q
+  
+    # Transform using log-normal function
+    # m_i, s_i = 1, 0.1  # Example mean and std for transformation
+    q_log = np.log(mean) - 0.5 * np.log(((sd / mean) ** 2) + 1) + q_Evenson * np.sqrt(np.log(((sd / mean) ** 2) + 1))
+    
+    # Back transformation
+    q_logback = np.exp(q_log)
+    
+    # Compute final perturbed forcing
+    parm_per_ti = np.multiply(atmbc_values, q_logback)
+    
+    # Plot perturbed hyetographs
+    plt.figure(figsize=(10, 5))
+    for i in range(ensemble_size):
+        plt.step(atmbc_times, parm_per_ti[i, :], where="post", alpha=0.5, label=f"Perturbation {i+1}")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Forcing (Perturbed)")
+    plt.title("Perturbed Hyetographs")
+    plt.legend()
+    plt.show()
+
+    # var_per_2add[type_parm] = parm_per_ti
     key = "time_variable_perturbation"
-    var_per_2add[type_parm][key] = parm_per_array_time_variable.T*atmbc_values
+    var_per_2add[type_parm][key] = parm_per_ti
     
-    return parm_sampling, parm_per_array, var_per_2add
+    return white_noise, parm_per_ti
 
 
 def Johnson1970(self):
     print("not yet implemented - see Botto 2018")
 
 
-def Evensen2003(qk_0, wk, deltaT, Tau):
+def Evensen2003(q, wk, deltaT, gamma):
     """
     Ensemble Generation of time-variable atmospheric forcing rates.
     Parameters
@@ -955,14 +953,15 @@ def Evensen2003(qk_0, wk, deltaT, Tau):
     qki : Ensemble of time-variable atmospheric forcing rates at time i
 
     """
-    if Tau < deltaT:
-        raise ValueError(
-            "Time decorrelation length is too small; should be at least>=" + str(deltaT)
-        )
-    gamma = 1 - deltaT / Tau
-    qki = gamma * qk_0 + np.sqrt(1 - (gamma * gamma)) * wk
+    for i in range(1, len(deltaT)):
+        # if Tau < deltaT[i]:
+        #     raise ValueError(
+        #         "Time decorrelation length is too small; should be at least>=" + str(deltaT)
+        #     )
+        # else:
+            q[:, i] = (gamma[i] * q[:, i-1]) + (np.sqrt(1 - gamma[i] ** 2) * wk[:, i])
 
-    return qki
+    return q
 
 
 def build_dict_attributes_pert(
@@ -1118,17 +1117,17 @@ def perturbate_parm(
     # --------------------------------------------------------------------
     elif "atmbc" in type_parm:
     # elif any("atmbc" in item for item in type_parm):
-        parm_sampling, parm_per_array, var_per_2add = atmbc_pert_rules(    
-                                                                        var_per_2add,
-                                                                        parm,
-                                                                        type_parm,
-                                                                        ensemble_size,
-                                                                        mean,
-                                                                        sd,
-                                                                        per_type,
-                                                                        sampling_type,
-                                                                        **kwargs
-                                                                        )
+        parm_sampling, parm_per_array = atmbc_pert_rules(    
+                                                        var_per_2add,
+                                                        parm,
+                                                        type_parm,
+                                                        ensemble_size,
+                                                        mean,
+                                                        sd,
+                                                        per_type,
+                                                        sampling_type,
+                                                        **kwargs
+                                                        )
         savefig = False
 
     elif match_ic_withLayers:

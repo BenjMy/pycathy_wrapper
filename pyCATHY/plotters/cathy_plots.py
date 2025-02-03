@@ -2035,7 +2035,7 @@ def DA_plot_ET_performance(ET_DA,
         # Extract the "ACT. ETRA" variable as a DataArray
         ET_DA_act_etra = ET_DA_node["ACT. ETRA"]
     else:
-        ET_DA_act_etra = ET_DA.mean(dim=['x','y'])
+        ET_DA_act_etra = ET_DA.mean(dim=['x','y'])["ACT. ETRA"]
         obs2plot_selecnode = observations[['data','data_err']].groupby(level=1).mean()
         
     ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
@@ -2047,7 +2047,7 @@ def DA_plot_ET_performance(ET_DA,
     for ensi in range(len(ET_DA_act_etra.ensemble)):
         ET_DA_act_etra_ensi = ET_DA_act_etra.isel(ensemble=ensi)
 
-        obs2plot = obs2plot_selecnode.iloc[:len(ET_DA_act_etra_ensi)].data
+        obs2plot = obs2plot_selecnode.iloc[1:len(ET_DA_act_etra_ensi)+1].data
         if unit=='mm/day':
             obs2plot = obs2plot*(1e3*86400)
 
