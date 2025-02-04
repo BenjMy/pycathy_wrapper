@@ -2895,7 +2895,7 @@ class DA(CATHY):
         y = np.unique(self.grid3d['mesh3d_nodes'][:,1])
         nan_dataset = xr.Dataset(
                                 {
-                                    "time_sec": self.all_atmbc_times[self.count_atmbc_cycle+1],
+                                    "time_sec": self.all_atmbc_times[self.count_atmbc_cycle],
                                     "SURFACE NODE": (("x", "y"), np.full((len(x), len(y)), np.nan)),
                                     "ACT. ETRA": (("x", "y"), np.full((len(x), len(y)), np.nan)),
                                 },
@@ -2921,13 +2921,12 @@ class DA(CATHY):
                     )
                     df_fort777 = df_fort777.drop_duplicates()
                     df_fort777 = df_fort777.set_index(['time', 'x', 'y']).to_xarray()
-
                     df_fort777_selec_ti = df_fort777.isel(time=-1)
                     df_fort777_selec_ti = df_fort777_selec_ti.rio.set_spatial_dims('x', 'y')
                     df_fort777_selec_ti = df_fort777_selec_ti.reset_coords("time",
                                                                            drop=True
                                                                            )
-                    df_fort777_selec_ti['time_sec'] = self.all_atmbc_times[self.count_atmbc_cycle+1]
+                    df_fort777_selec_ti['time_sec'] = self.all_atmbc_times[self.count_atmbc_cycle]
                     ET_ftime_ensi.append(df_fort777_selec_ti)
 
                 except:

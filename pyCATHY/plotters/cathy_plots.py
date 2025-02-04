@@ -1611,7 +1611,7 @@ def DA_plot_parm_dynamic_scatter(
     if len(df.columns)>15:
         nii = [int(ni) for ni in np.arange(0,len(df.columns),6)]
         # name = [str(ni+1) for ni in list_assimilation_times]
-        name = ["#" + str(ni) for ni in nii]
+        name = [str(ni) for ni in nii]
         df = df.iloc[:,nii]
         
     boxplot = df.boxplot(
@@ -1638,6 +1638,8 @@ def DA_plot_parm_dynamic_scatter(
 def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs):
     """Select data from DA_df dataframe"""
    
+    
+    DAc = DA.copy()
     keytime = "time"
     start_date = None
     xlabel = "time (h)"
@@ -1655,20 +1657,20 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
     if start_date is not None:
         dates = change_x2date(atmbc_times, start_date)
 
-        if len(dates) < len(list(DA["time"].unique())):
-            DA = DA.drop(DA[DA.time + 1 >= len(list(DA["time"].unique()))].index)
-        if len(dates) > len(list(DA["time"].unique())):
+        if len(dates) < len(list(DAc["time"].unique())):
+            DAc = DAc.drop(DAc[DAc.time + 1 >= len(list(DAc["time"].unique()))].index)
+        if len(dates) > len(list(DAc["time"].unique())):
             # check if contains difference in time otherwise add articifially 1s to keep
             # the formatting. (Else plot crashes)
             if all(dates[: len(list(DA["time"].unique()))].hour == 0):
                 time_delta_change = datetime.timedelta(seconds=1)
                 dates.values[0] = dates[0] + time_delta_change
-            dates = dates[: len(list(DA["time"].unique()))]
-        unique_times = DA["time"].unique()
-        DA["time_date"] = DA["time"].map(dict(zip(unique_times, dates)))
+            dates = dates[: len(list(DAc["time"].unique()))]
+        unique_times = DAc["time"].unique()
+        DAc["time_date"] = DAc["time"].map(dict(zip(unique_times, dates[1:])))
 
-    isOL = DA.loc[DA["OL"] == True]
-    isENS = DA.loc[DA["OL"] == False]
+    isOL = DAc.loc[DAc["OL"] == True]
+    isENS = DAc.loc[DAc["OL"] == False]
 
     isENS_time_Ens = isENS.set_index(["time", "Ensemble_nb"])
     isOL_time_Ens = isOL.set_index(["time", "Ensemble_nb"])
@@ -1676,7 +1678,7 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
     if type(nodes_of_interest) != list:
         nodes_of_interest = [nodes_of_interest]
 
-    NENS = int(max(DA["Ensemble_nb"].unique()))
+    NENS = int(max(DAc["Ensemble_nb"].unique()))
 
     key2plot = "psi_bef_update"
     if "sw" in state:
@@ -1870,6 +1872,7 @@ def DA_plot_time_dynamic(
     # --------------------------------------------------------------------------
 
     if len(prep_DA["isENS"]) > 0:
+        
         prep_DA["ens_mean_isENS_time"].pivot(
             index=keytime,
             columns=["idnode"],
@@ -1877,6 +1880,11 @@ def DA_plot_time_dynamic(
             values=["mean(ENS)"],
         ).plot(ax=ax, style=[".-"], color=colors_minmax,
                )
+
+        # print(prep_DA["ens_mean_isENS_time"].isna().sum())
+        # print(prep_DA["ens_mean_isENS_time"]['mean(ENS)'].dtype)
+        # print(prep_DA["ens_mean_isENS_time"]['time_date'].dtype)
+
 
         prep_DA["ens_max_isENS_time"].pivot(
             index=keytime,
@@ -2010,7 +2018,7 @@ def DA_plot_ET_dynamic(ET_DA,
             
         ax.scatter(
             obs2plot.datetime,
-            obs2plot.data,
+            obs2plot.data[0:len(obs2plot.datetime)],
             label="Observed",
             color='darkgreen'
         )

@@ -898,7 +898,6 @@ def atmbc_pert_rules(
     gamma = np.array([1 - (dt / Tau) for dt in deltaT])
     
     for i in range(1, len(deltaT)):
-        print(i)
         q[:, i] = (gamma[i] * q[:, i-1]) + (np.sqrt(1 - gamma[i] ** 2) * white_noise[:, i])
 
     q_Evenson = q
