@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 import re 
+import os
 
 #%%
 def check_distribution(parm2check):
@@ -913,19 +914,21 @@ def atmbc_pert_rules(
     parm_per_ti = np.multiply(atmbc_values, q_logback)
     
     # Plot perturbed hyetographs
-    plt.figure(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(10, 5))
     for i in range(ensemble_size):
-        plt.step(atmbc_times, parm_per_ti[i, :], where="post", alpha=0.5, label=f"Perturbation {i+1}")
-    plt.xlabel("Time [s]")
-    plt.ylabel("Forcing (Perturbed)")
+        ax.step(atmbc_times, parm_per_ti[i, :], where="post", alpha=0.5, label=f"Perturbation {i+1}")
+    ax.set_xlabel("Time [s]")
+    ax.set_ylabel("Forcing (Perturbed)")
     plt.title("Perturbed Hyetographs")
-    plt.legend()
-    plt.show()
+    # plt.legend()
+    # plt.show()
 
     # var_per_2add[type_parm] = parm_per_ti
     key = "time_variable_perturbation"
     var_per_2add[type_parm][key] = parm_per_ti
-    
+    fig.savefig(os.path.join(os.getcwd(), kwargs["savefig"]), dpi=350)
+
+
     return white_noise, parm_per_ti
 
 

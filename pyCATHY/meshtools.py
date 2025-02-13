@@ -10,8 +10,8 @@ import os
 
 import numpy as np
 import pyvista as pv
-pv.set_plot_theme("document")
-#pv.set_jupyter_backend('static')
+# pv.set_plot_theme("document")
+# pv.set_jupyter_backend('static')
 
 import pandas as pd
 
@@ -71,7 +71,7 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     # ------------------------------------------------------------------------
     in_nodes_mod = np.array(mesh_CATHY.points)
     # in_nodes_mod_pg = np.array(mesh_OUT.points)
-    
+
     # mesh_nodes_modif = None
     if 'mesh_nodes_modif' in ERT_meta_dict:
         print('mesh transformation before interpolation')
@@ -83,18 +83,18 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
     path = os.getcwd()
     if "path" in kwargs:
         path = kwargs["path"]
-    
+
     meshCATHY_tmp = mesh_CATHY.copy()
-    
+
     data_OUT, warm_0 = trace_mesh(
-                                    meshCATHY_tmp, 
-                                    mesh_OUT, 
-                                    scalar=scalar, 
-                                    threshold=1e-1, 
+                                    meshCATHY_tmp,
+                                    mesh_OUT,
+                                    scalar=scalar,
+                                    threshold=1e-1,
                                     in_nodes_mod=in_nodes_mod_m
                                     )
-        
-        
+
+
     if len(warm_0) > 0:
         print(warm_0)
 
@@ -115,14 +115,14 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
 
     show = False
     if show:
-        
+
         p = pv.Plotter(window_size=[1024 * 3, 768 * 2], off_screen=True,) #notebook=True)
         p.add_mesh(mesh_new_attr, scalars=scalar_new)
         _ = p.add_bounding_box(line_width=5, color="black")
         cpos = p.show(True)
         p.save_graphic(
-            'test21.svg', title="", 
-            # raster=True, 
+            'test21.svg', title="",
+            # raster=True,
             # painter=True
         )
 
@@ -166,7 +166,7 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
         in_nodes_mod=in_nodes_mod,
     )
 
-    
+
     # print(len(data_OUT))
     scalar_new = scalar + "_nearIntrp2Resipymsh"
     print('Add new attribute to mesh')
@@ -189,8 +189,8 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
         _ = p.add_bounding_box(line_width=5, color="black")
         cpos = p.show(True)
         p.save_graphic(
-            'test21.svg', title="", 
-            raster=True, 
+            'test21.svg', title="",
+            raster=True,
             painter=True
         )
 
@@ -209,8 +209,8 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
     #     plotter.view_xz(negative=False)
     #     plotter.show_grid()
         p.save_graphic(
-            'test.svg', title="", 
-            raster=True, 
+            'test.svg', title="",
+            raster=True,
             painter=True
         )
 
@@ -240,13 +240,13 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     # meshIN.points = in_nodes_mod
     meshOUT.points = in_nodes_mod
     # len(in_nodes_mod)
-    
+
     # print(meshIN.points)
-    
+
     # set_interpolation_radius()
     rd = max(np.diff(meshIN.points[:, 0])) / 1
-    meshOUT_interp = meshOUT.interpolate(meshIN, 
-                                         radius=rd, 
+    meshOUT_interp = meshOUT.interpolate(meshIN,
+                                         radius=rd,
                                          pass_point_data=True
                                          )
     # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
@@ -524,12 +524,12 @@ def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
     zone3d_topflag = []
     for li in range(dem_parameters["nstr"]):
         zone3d_topflag_li = np.ones(np.shape(dem_mat3d_layers_top[0]))
-    
+
         bool_top_lli = []
         for ll in layers.keys():
             layers_adj_top = DEM - abs(layers[ll][0])
             layers_adj_bot = DEM - abs(layers[ll][1])
-            
+
             # differences between top of the layer i of the mesh and top of the desired layer
             # -------------------------------------------------------------------------------
             diff_top = dem_mat3d_layers_top[li] - layers_adj_top
@@ -539,7 +539,7 @@ def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
             cond2 = diff_bot <= 1e-2
             # print('lmeshi'+str(li),
                   # ll,layers[ll],np.mean(diff_top),np.mean(diff_bot),cond1[0][0],cond2[0][0])
-    
+
             # if li<dem_parameters["nstr"]-1:
             #     cond2 = abs(diff)<= abs(dem_mat3d_layers_top[li+1] - dem_mat3d_layers_top[li])
             # else:
@@ -916,7 +916,7 @@ def _build_xyz_marker_mat_squareDEM(
 
     xyz_layers = np.vstack(xyz_layers)
     xyz_layers_nodes = np.vstack(xyz_layers_nodes)
-    xyz_layers_cells = np.vstack(np.r_[xyz_layers_cells_top, 
+    xyz_layers_cells = np.vstack(np.r_[xyz_layers_cells_top,
                                        xyz_layers_cells_cent]
                                  )
 
@@ -991,10 +991,10 @@ def add_markers2mesh(
     # Reduce all to 1D
     # ------------------------------------------------------------------
     zones3d_layers_array = np.ravel(zones3d_layered)
-    
+
     x, y = cplt.get_dem_coords(dem,hapin=hapin)
     dem_flip = dem
-    
+
     # Get layer top and bottom
     # ------------------------------------------------------------------
     zone3d_top = []
@@ -1003,7 +1003,7 @@ def add_markers2mesh(
         top, bot = get_layer_depth(dem_parameters, li)
         zone3d_top.append(np.ones(np.shape(zones3d_layered[li]))*top)
         zone3d_bot.append(np.ones(np.shape(zones3d_layered[li]))*bot)
-        
+
     zone3d_top = np.array(zone3d_top)
     zone3d_bot = np.array(zone3d_bot)
 
@@ -1011,7 +1011,7 @@ def add_markers2mesh(
     if to_nodes:
         dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
     else:
-        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2] 
+        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
 
     # Create a regular mesh from the DEM x and y coordinates and elevation
     # ------------------------------------------------------------------
@@ -1022,24 +1022,24 @@ def add_markers2mesh(
             np.ravel(ygrid),
         ]
     ).T
-        
+
     # Reduce all to 1D
     # ------------------------------------------------------------------
     dem_mat_stk = np.ravel(dem_mat3d_layers)
     # dem_mat_stk = np.fliplr(dem_mat_stk)
 
     grid_coords_stk_rep = np.vstack(np.array([grid_coords_dem] * dem_parameters["nstr"]))
-    
+
 
     zones3d_col_stk = np.ravel(zones3d_layered)
     xyz_layers = np.c_[grid_coords_stk_rep, dem_mat_stk, zones3d_col_stk]
 
     # Plot to check position of points VS mesh
     # ------------------------------------------------------------------
-    
+
     if show:
-        _plot_cellsMarkerpts(mesh_pv_attributes, 
-                             xyz_layers, 
+        _plot_cellsMarkerpts(mesh_pv_attributes,
+                             xyz_layers,
                              )
 
     #%%
@@ -1057,11 +1057,11 @@ def add_markers2mesh(
 def map_cells_to_nodes(raster_map, grid3d_shape=None):
     """
     Map a raster to a grid of nodes (providing the mesh is regular).
-    
+
     Args:
         raster_map (np.ndarray): 20x20 vegetation map.
         grid3d_shape (tuple): Shape of the 3D grid (e.g., (21, 21)).
-    
+
     Returns:
         np.ndarray: n+1 grid with node values based on the corresponding cell values from raster_map.
     """
@@ -1082,11 +1082,11 @@ def map_cells_to_nodes(raster_map, grid3d_shape=None):
             # Find the corresponding cell in the veg_map using the scale factor
             x = int(round(i * scale_x))
             y = int(round(j * scale_y))
-            
+
             # Ensure that indices stay within bounds of veg_map
             x = min(max(x, 0), raster_map.shape[0] - 1)
             y = min(max(y, 0), raster_map.shape[1] - 1)
-            
+
             # Assign the vegetation map value to the corresponding node
             grid3d_mapped[i, j] = raster_map[x, y]
 
@@ -1096,27 +1096,27 @@ def xarraytoDEM_pad(data_array):
     # Get the resolution (pixel size) directly from the DataArray's transform
     # Get the Affine transform
     transform = data_array.rio.transform()
-    
+
     # Extract pixel size from the transform
     pixel_size_x = transform.a  # Pixel width (x-direction)
     pixel_size_y = -transform.e  # Pixel height (y-direction, note the negative sign for y)
-    
+
     # Define padding in pixels
     pad_pixels_y = 1  # Padding in y-direction (top and bottom)
     pad_pixels_x = 1  # Padding in x-direction (left and right)
-    
+
     # Calculate padding in meters (or coordinate units)
     pad_m_y = pad_pixels_y * (pixel_size_y / 2)  # Padding in y-direction
     pad_m_x = pad_pixels_x * (pixel_size_x / 2)  # Padding in x-direction
-    
+
     # Apply padding using numpy.pad
     pad_width = ((0, 0), (pad_pixels_y, 0), (0, pad_pixels_x))  # (time, y, x)
-    padded_array_np = np.pad(data_array.values, 
-                             pad_width, 
-                             mode='edge', 
+    padded_array_np = np.pad(data_array.values,
+                             pad_width,
+                             mode='edge',
                              # constant_values=np.nan
                              )
-   
+
     # Create a new xarray.DataArray with the padded data
     padded_data_array = xr.DataArray(
         padded_array_np,

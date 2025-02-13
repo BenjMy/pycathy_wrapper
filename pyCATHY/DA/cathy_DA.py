@@ -65,6 +65,7 @@ import numpy as np
 import pandas as pd
 from rich.progress import track
 
+from pyCATHY.cathy_utils import dictObs_2pd
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
 from pyCATHY.DA import enkf, pf, mapper, localisation
 from pyCATHY.importers import cathy_inputs as in_CT
@@ -194,49 +195,6 @@ def run_analysis(
                                                     )
         return Analysis, AnalysisParam
 
-
-# utils observations
-# ------------------
-
-
-def dictObs_2pd(dict_obs):
-    """dict of observation to dataframe of observation"""
-    df_obs = pd.DataFrame.from_dict(dict_obs).stack().to_frame()
-    df_obs = pd.DataFrame(df_obs[0].values.T.tolist(), index=df_obs.index)
-    df_obs.index.names = ["sensorNameidx", "assimilation time"]
-    return df_obs
-
-
-def resynchronise_times(data_measure, atmbc_df, time_offset):
-    """resynchronise dict as old key is elapsed time in second from the first observation,
-    while new key is from the first atmbc time
-    """
-    data_measure_sync = dict(data_measure)
-    try:
-        new_keys = []
-        for d in range(len(data_measure_sync.keys())):
-            items_dict = list(data_measure_sync.items())
-            # new_key = (
-            #     atmbc_df["diff"]
-            #     .dt.total_seconds()
-            #     .unique()[d]
-            # )
-
-            old_key = list(data_measure_sync.keys())[d]
-            new_key = list(data_measure_sync.keys())[d] - time_offset
-
-            for sensor in list(items_dict[d][1].keys()):
-                data_measure_sync[old_key][sensor]["assimilation_times"] = new_key
-            new_keys.append(new_key)
-        data_measure_sync = dict(zip(new_keys, data_measure_sync.values()))
-
-    except:
-        print("datetime first atmbc point")
-        print(atmbc_df["datetime"][0])
-        print("datetime first measurement")
-        print(data_measure[0][sensor]["datetime"])
-        print("cant synchronise times - continue without")
-    return data_measure_sync
 
 
 #%%
@@ -1251,7 +1209,7 @@ class DA(CATHY):
 
             self.console.print("[b]Plotting COV matrices[/b]")
             try:
-                if np.shape(COV)[0]<1000:
+                if np.shape(COV)[0]<1e9:
 
                     plt_CT.show_DA_process_ens(
                         ensemble_psi_valid,
@@ -1268,7 +1226,6 @@ class DA(CATHY):
                             "DA_Ensemble",
                             "DA_Matrices_t" + str(self.count_DA_cycle),
                         ),
-                        # label_sensor=str([*self.dict_obs[0]])
                         label_sensor=str([*obskey2map]),
                     )
                 else:
@@ -3222,12 +3179,15 @@ class DA(CATHY):
         ol_bool = kwargs.get("openLoop", False)
 
         # Initialize df_performance if file exists
-        self.df_performance = self._load_performance_from_parquet(os.path.join(
-                                                                     self.workdir,
-                                                                     self.project_name,
-                                                                     file_path,
-                                                                     )
-                                                        )
+        if hasattr(self, 'df_performance') is False:
+            self.df_performance = pd.DataFrame()
+        if len(self.df_performance) > 10000:
+            self.df_performance = self._load_performance_from_parquet(os.path.join(
+                                                                         self.workdir,
+                                                                         self.project_name,
+                                                                         file_path,
+                                                                         )
+                                                            )
         rmse_avg_stacked = []  # This list will track average RMSE values over time steps
 
         num_predictions = len(prediction)
@@ -3259,9 +3219,17 @@ class DA(CATHY):
                 nrmse_sensor = rmse_sensor_stacked / (t_obs + 1)
                 nrmse_avg = np.sum(rmse_avg_stacked) / (t_obs + 1)
 
+            # t_obs = 3
             self.df_performance = self._append_to_performance_df(
-                self.df_performance, t_obs, name_sensor, rmse_sensor, all_obs_rmse_avg, nrmse_sensor, nrmse_avg, ol_bool
-            )
+                                                                self.df_performance, 
+                                                                t_obs, 
+                                                                name_sensor,
+                                                                rmse_sensor, 
+                                                                all_obs_rmse_avg,
+                                                                nrmse_sensor,
+                                                                nrmse_avg, 
+                                                                ol_bool
+                                                                )
 
             start_line_obs += n_obs
 

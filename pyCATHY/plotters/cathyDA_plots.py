@@ -43,10 +43,10 @@ plt.rcParams["axes.linewidth"] = 0.75
 # -----------------------------------------------------------------------------
 
 def plot_perf(id2plot,obs_df,sensor_match):
-    
-    
+
+
     fig, ax = plt.subplots(3,1,sharex=True)
-    for sensor in sensor_match:   
+    for sensor in sensor_match:
         prepare_Noble_plots.DA_RMS(results['df_performance'],
                                       sensor,
                                       atmbc_times=list(obs_df.loc[sensor].index),
@@ -56,8 +56,8 @@ def plot_perf(id2plot,obs_df,sensor_match):
         prepare_Noble_plots.plot_secondaxis(ax[0],
                                                 df_atmbc,
                                                 start_date=simu_args.startD,
-                                                )     
-            
+                                                )
+
         # savename = (os.path.join(simu_Noble.workdir,simu_Noble.project_name,
         #                          'perf_' + sensor + '.png')
         #          )
@@ -89,8 +89,8 @@ def DA_plot_time_dynamic(
     colors_minmax = 'blue'
     if "colors_minmax" in kwargs:
         colors_minmax = kwargs["colors_minmax"]
-        
-        
+
+
     keytime = "time"
     xlabel = "time (h)"
     if "start_date" in kwargs:

@@ -363,9 +363,6 @@ def read_soil(soilfile, dem_parm, MAXVEG):
         for line in f:  # iterate over each line
             if count>2 and count<MAXVEG+3:
                 FP_soil.append(line.split('PCANA')[0].split(' '))
-            # if count < 9:
-            # str_hd, value_hd = line.split()  # split it by whitespace
-            # soilfile[str_hd.replace(":", "")] = value_hd
             count += 1
 
 

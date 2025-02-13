@@ -36,7 +36,7 @@ Once all the files were updated, the `run_preprocessor()` or `run_processor()`
 are taking care of recompiling the source files via bash cmd.
    
 """
-
+import json
 import os
 import sys
 import warnings
@@ -49,6 +49,8 @@ import pyCATHY.meshtools as mt
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
+from pyCATHY.cathy_utils import dictObs_2pd
+
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -4159,36 +4161,192 @@ class CATHY:
         f.close()
         pass
 
-                
-    def backup_results_DA(self, meta_DA=[]):
-        """
-        Save minimal dataframes of the simulation for result visualization within Python.
     
-        Saves the specified attributes to a pickle file for later use.
-        """
-        file_path = os.path.join(
-            self.workdir, self.project_name, f"{self.project_name}_df.pkl"
-        )
-        
+    def backup_results_DA(self, meta_DA=[]):
+        file_path = os.path.join(self.workdir, self.project_name, f"{self.project_name}")
+    
         try:
-            with open(file_path, "wb") as f:
-                # Save the metadata
-                pickle.dump(meta_DA, f)
-                # Save attributes in a predefined order
-                attributes = [
-                    "dict_parm_pert",
-                    "df_DA",
-                    "dict_obs",
-                    "df_performance",
-                    "ET_DA_xr",
-                    "df_Archie",
-                ]
-                for attr in attributes:
-                    if hasattr(self, attr):
-                        pickle.dump(getattr(self, attr), f)
+            self.df_obs = dictObs_2pd(self.dict_obs)  # Convert observations to DataFrame
+            
+            # Save collumns that are not serialized are they are too large
+            meta_DA['mesh_nodes_modif'] = self.df_obs['mesh_nodes_modif']
+            meta_DA['data_cov'] = self.df_obs['data_cov'][0]
+            meta_DA['elecs'] = self.df_obs['elecs'][0]
+
+            # Drop collumns that are not serialized are they are too large
+            self.df_obs = self.df_obs.drop(columns=["mesh_nodes_modif",'elecs','data_cov'], errors="ignore")
+            self.df_obs['data'] = self.df_obs['data'].apply(lambda x: x.to_json() if isinstance(x, pd.DataFrame) else x)
+
+            attributes = ["dict_parm_pert", "df_DA", "df_obs", "df_performance", "ET_DA_xr", "df_Archie"]  
+            
+            for attr in attributes:
+                if hasattr(self, attr):
+                    data = getattr(self, attr)
+                    save_path = f"{file_path}_{attr}"
+                    
+                    if isinstance(data, pd.DataFrame):
+                        try:
+                            data.to_parquet(f"{save_path}.parquet", 
+                                            engine="pyarrow")
+                        except:
+                            with open(f"{save_path}.pkl", "wb") as f:
+                                pickle.dump(data, f)
+                    else:
+                        with open(f"{save_path}.pkl", "wb") as f:
+                            pickle.dump(data, f)
         except Exception as e:
-            print(f"An error occurred while saving results: {e}")
-            raise
+            print(f"Error saving results: {e}")
+
+    def serialize(self,obj):
+        return json.dumps(obj.tolist() if isinstance(obj, (list, np.ndarray)) else obj)
+                    
+    def deserialize(self,obj):
+        try:
+            # Check if the object is a JSON string and convert back to list or np.ndarray
+            return json.loads(obj) if isinstance(obj, str) else obj
+        except:
+            return obj
+    
+    def load_backup(self, filename=""):
+        if not filename:
+            filename = os.path.join(self.workdir, self.project_name, f"{self.project_name}")
+    
+        # List of all names (attributes) to load
+        all_names = [
+            "meta_DA",
+            "dict_parm_pert",
+            "df_DA",
+            "df_obs",
+            "df_performance",
+            "ET_DA_xr",
+            "df_Archie",
+        ]
+    
+        dict_backup = {}
+    
+        for name in all_names:
+            file_base_path = f"{filename}_{name}"
+    
+            # Try to find the file with either .pkl or .parquet extensions
+            file_path = None
+            for ext in [".pkl", ".parquet"]:
+                if os.path.exists(file_base_path + ext):
+                    file_path = file_base_path + ext
+                    break
+    
+            if file_path is None:
+                print(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")
+                continue
+            else:                 
+                print(f"Reading File {name}: {file_base_path}")
+
+    
+            # Load based on file extension
+            if file_path.endswith(".pkl"):
+                # Load from pickle file
+                try:
+                    with open(file_path, "rb") as f:
+                        obj = pickle.load(f)
+    
+                        # Deserialize DataFrame columns if needed
+                        if isinstance(obj, pd.DataFrame):
+                            if "data" in obj.columns:
+                                obj["data"] = obj["data"].apply(lambda x: pd.read_json(x) if isinstance(x, str) else x)
+    
+                        dict_backup[name] = obj
+                except Exception as e:
+                    print(f"Error loading pickle file for {name}: {e}")
+            
+            elif file_path.endswith(".parquet"):
+                # Load from parquet file
+                try:
+                    df = pd.read_parquet(file_path, engine="pyarrow")
+    
+                    # Deserialize specific columns if necessary
+                    if "data_cov" in df.columns:
+                        df["data_cov"] = df["data_cov"].apply(self.deserialize)
+                    if "data" in df.columns:
+                        df["data"] = df["data"].apply(lambda x: pd.read_json(x) if isinstance(x, str) else x)
+    
+                    dict_backup[name] = df
+                except Exception as e:
+                    print(f"Error loading parquet file for {name}: {e}")
+            
+            else:
+                print(f"Unsupported file type for {name}: {file_path}")
+                continue
+    
+        return dict_backup
+
+    # def load_pickle_backup(self,filename=""):
+    #     if len(filename) == 0:
+    #         filename = os.path.join(
+    #             self.workdir, 
+    #             self.project_name, 
+    #             self.project_name + "_df.pkl"
+    #         )
+    #         # filename = os.path.join(
+    #         #     self.workdir, self.project_name, str(idsimu) + "_df.pkl"
+    #         # )
+    #     backup_list = []
+    #     all_names = [
+    #         "meta_DA",
+    #         "dict_parm_pert",
+    #         "df_DA",
+    #         "dict_obs",
+    #         "df_performance",
+    #         "ET_DA_xr",
+    #         "df_Archie",
+    #     ]
+    #     names = []
+    #     # i = 0
+    #     # pickle_off = open(filename, "rb")
+    #     # df = pd.read_pickle(pickle_off)
+
+    #     with open(filename, "rb") as f:
+    #         for name in all_names:
+    #             try:
+    #             # Attempt to load the next object
+    #                 obj = pickle.load(f)
+    #                 backup_list.append(obj)
+    #                 names.append(name)
+    #             except:
+    #                 pass
+    #             #     break
+    
+    #     # Create a dictionary mapping names to loaded objects
+    #     dict_backup = {name: backup_list[i] for i, name in enumerate(names)}
+    #     return dict_backup
+    
+    # def backup_results_DA(self, meta_DA=[]):
+    #     """
+    #     Save minimal dataframes of the simulation for result visualization within Python.
+    
+    #     Saves the specified attributes to a pickle file for later use.
+    #     """
+    #     file_path = os.path.join(
+    #         self.workdir, self.project_name, f"{self.project_name}_df.pkl"
+    #     )
+        
+    #     try:
+    #         with open(file_path, "wb") as f:
+    #             # Save the metadata
+    #             pickle.dump(meta_DA, f)
+    #             # Save attributes in a predefined order
+    #             attributes = [
+    #                 "dict_parm_pert",
+    #                 "df_DA",
+    #                 "dict_obs",
+    #                 "df_performance",
+    #                 "ET_DA_xr",
+    #                 "df_Archie",
+    #             ]
+    #             for attr in attributes:
+    #                 if hasattr(self, attr):
+    #                     pickle.dump(getattr(self, attr), f)
+    #     except Exception as e:
+    #         print(f"An error occurred while saving results: {e}")
+    #         raise
 
     # def backup_results_DA(self, meta_DA=[]):
     #     """
@@ -4305,16 +4463,16 @@ class CATHY:
     #         return {}
 
 
-    def load_pickle_backup(self,filename=""):
+    
+    
+    def load_parquet_backup(self, filename=""):
         if len(filename) == 0:
             filename = os.path.join(
                 self.workdir, 
                 self.project_name, 
-                self.project_name + "_df.pkl"
+                self.project_name + "_df.parquet"
             )
-            # filename = os.path.join(
-            #     self.workdir, self.project_name, str(idsimu) + "_df.pkl"
-            # )
+        
         backup_list = []
         all_names = [
             "meta_DA",
@@ -4326,21 +4484,20 @@ class CATHY:
             "df_Archie",
         ]
         names = []
-        # i = 0
-        # pickle_off = open(filename, "rb")
-        # df = pd.read_pickle(pickle_off)
-
-        with open(filename, "rb") as f:
-            for name in all_names:
-                try:
-                # Attempt to load the next object
-                    obj = pickle.load(f)
-                    backup_list.append(obj)
-                    names.append(name)
-                except:
-                    pass
-                #     break
     
+        # Open the Parquet file for each attribute (assuming each attribute is saved as a separate Parquet file)
+        for name in all_names:
+            try:
+                # Read the corresponding Parquet file for each attribute
+                file_path = filename.replace(".parquet", f"_{name}.parquet")
+                obj = pd.read_parquet(file_path)
+                backup_list.append(obj)
+                names.append(name)
+            except Exception as e:
+                print(f"Failed to load {name} from {file_path}: {e}")
+                pass
+        
         # Create a dictionary mapping names to loaded objects
         dict_backup = {name: backup_list[i] for i, name in enumerate(names)}
         return dict_backup
+    

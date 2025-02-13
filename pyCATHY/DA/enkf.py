@@ -107,8 +107,8 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # data_pert = (data - observation).T
 
     if np.max(abs(data_pert)) > 1e3:
-        print(f'data mean: {np.mean(data)}, min: {np.min(data)}, max{np.max(data)}')
-        print(f'data obs: {np.mean(observation)}, min: {np.min(observation)}, max{np.max(observation)}')
+        print(f'data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
+        print(f'data obs: {np.mean(observation)}, min: {np.min(observation)}, max: {np.max(observation)}')
         print('!predictions are too far from observations!')
 
     # Calculate S = ensemble observations perturbation from ensemble observation mean.
@@ -118,8 +118,13 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
         observation.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
     ).transpose()
     
+    # np.max(obs_avg)
+    # np.min(obs_avg)
+    
     obs_pert = observation - obs_avg
-
+    # np.max(obs_pert)
+    # np.min(obs_pert)
+    
     if obs_pert.mean() == 0:
         print(
             "Ensemble observations perturbation from ensemble"
@@ -186,8 +191,12 @@ def enkf_dual_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # -----------------------------------------
     cov_data_second_step = np.diag([np.mean(np.diag(cov_data_first_step))] * len(first_step_analysis[9]))   
     observation_2nd_step = ensemble
-    return  enkf_analysis(first_step_analysis[9], cov_data_second_step, 
-                          param, ensemble, observation_2nd_step, **kwargs)
+    return  enkf_analysis(first_step_analysis[9], 
+                          cov_data_second_step, 
+                          param, ensemble, 
+                          observation_2nd_step, 
+                          **kwargs
+                          )
     
 # def enkf_analysis_Sakov(data, data_cov, param, ensemble, observation,Sakov=True):
     

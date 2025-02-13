@@ -132,15 +132,6 @@ def change_x2date(time_in_sec, start_date,
 ## ---------------------------------------------------------------------------
 
 
-def dictObs_2pd(obs2plot):
-    """transform Observation dictionnary to panda dataframe for a given observation"""
-
-    df_obs = pd.DataFrame.from_dict(obs2plot).stack().to_frame()
-    df_obs = pd.DataFrame(df_obs[0].values.T.tolist(), index=df_obs.index)
-    df_obs.index.names = ["sensorNameidx", "assimilation time"]
-    return df_obs
-
-
 def backup_simulog_DA(args,filename='DAlog.csv'):
     '''
     Get simulation arguments and save it to a csv file to keep track of the Data
@@ -225,4 +216,46 @@ def clip_ET_withLandCover(
     return ETxr
 
         
-        
+
+# utils observations
+# ------------------
+
+
+def dictObs_2pd(dict_obs):
+    """dict of observation to dataframe of observation"""
+    df_obs = pd.DataFrame.from_dict(dict_obs).stack().to_frame()
+    df_obs = pd.DataFrame(df_obs[0].values.T.tolist(), index=df_obs.index)
+    df_obs.index.names = ["sensorNameidx", "assimilation time"]
+    return df_obs
+
+
+def resynchronise_times(data_measure, atmbc_df, time_offset):
+    """resynchronise dict as old key is elapsed time in second from the first observation,
+    while new key is from the first atmbc time
+    """
+    data_measure_sync = dict(data_measure)
+    try:
+        new_keys = []
+        for d in range(len(data_measure_sync.keys())):
+            items_dict = list(data_measure_sync.items())
+            # new_key = (
+            #     atmbc_df["diff"]
+            #     .dt.total_seconds()
+            #     .unique()[d]
+            # )
+
+            old_key = list(data_measure_sync.keys())[d]
+            new_key = list(data_measure_sync.keys())[d] - time_offset
+
+            for sensor in list(items_dict[d][1].keys()):
+                data_measure_sync[old_key][sensor]["assimilation_times"] = new_key
+            new_keys.append(new_key)
+        data_measure_sync = dict(zip(new_keys, data_measure_sync.values()))
+
+    except:
+        print("datetime first atmbc point")
+        print(atmbc_df["datetime"][0])
+        print("datetime first measurement")
+        print(data_measure[0][sensor]["datetime"])
+        print("cant synchronise times - continue without")
+    return data_measure_sync

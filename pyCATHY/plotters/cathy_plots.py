@@ -5,7 +5,7 @@ Plotting functions for pyCATHY (2D and 3D)
 
 Plotting:
     - output files
-    - inputs files 
+    - inputs files
     - petro/pedophysical relationships
     - Data assimilation results
 """
@@ -15,8 +15,8 @@ import os
 
 import pyvista as pv
 
-pv.set_plot_theme("document")
-pv.set_jupyter_backend('static')
+#pv.set_plot_theme("document")
+#pv.set_jupyter_backend('static')
 
 
 import datetime
@@ -76,18 +76,18 @@ plt.rcParams["axes.linewidth"] = 0.75
 # -----------------------------------------------------------------------------
 
 def create_gridded_mask(x,y,**kwargs):
-    
+
     buffer = False
     if 'buffer' in kwargs:
         buffer = kwargs['buffer']
-        
+
     # points = MultiPoint(np.column_stack((x, y)))
     points = np.column_stack((x, y))
     multi_point = MultiPoint(points)
     boundary = Polygon(points)
 
     # interval =100
-    
+
     if buffer:
         interval = int(x[1]- x[0])*4
         boundary = multi_point.buffer(interval/2).buffer(-interval/2)
@@ -101,37 +101,37 @@ def create_gridded_mask(x,y,**kwargs):
     xx, yy = xi.flatten(), yi.flatten()
     mask = [Point(coord).within(boundary) for coord in zip(xx, yy)]
     mask = np.array(mask).reshape(xi.shape)
-    
+
     return xi, yi, mask
-    
-    
+
+
 def plot_WTD(XYZsurface,WT,**kwargs):
-    
+
     #  FLAG, flag for what has happened
     # - 1 watertable calculated correctly
     # - 2 unstaturated zone above saturated zone above unsaturated zone
     # - 3 watertable not encountered, fully saturated vertical profile
     # - 4 watertable not encountered, unsaturated profile
-    
+
     if "ax" not in kwargs:
         fig, ax = plt.subplots()
     else:
         ax = kwargs["ax"]
-    
-    
+
+
     colorbar = True
     if 'colorbar' in kwargs:
         colorbar = kwargs['colorbar']
-        
-        
+
+
     ti = 0
     if 'ti' in kwargs:
         ti = kwargs['ti']
-    
+
     scatter=False
     if 'scatter' in kwargs:
         scatter = kwargs['scatter']
-        
+
     if scatter:
         valid_kwargs = ['vmin', 'vmax']
         relevant_kwargs = {key: value for key, value in kwargs.items() if key in valid_kwargs}
@@ -144,56 +144,56 @@ def plot_WTD(XYZsurface,WT,**kwargs):
     else:
         x = XYZsurface[:,0]
         y = XYZsurface[:,1]
-        
+
         cmap = 'viridis'
         if type(ti) is list:
             z = WT[ti[1]]-WT[ti[0]]
             cmap = 'bwr'
         else:
             z = WT[ti]
-        
-        
+
+
         xi, yi, mask = create_gridded_mask(x,y)
         xx, yy = xi.flatten(), yi.flatten()
-    
+
         zi = griddata((x, y), z, (xx, yy), method='nearest')
-    
+
         # Apply the mask to the gridded data
         zi_masked = np.ma.masked_where(~mask, zi.reshape(xi.shape))
-    
+
         # Plot the masked data
         cmap = ax.contourf(xi, yi, zi_masked, cmap=cmap)
-    
+
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
     ax.axis('equal')
     ax.grid(True, linestyle='-.')
-    
+
     if colorbar:
         cbar = plt.colorbar(cmap,ax=ax)
-        
+
         if type(ti) is list:
             cbar.set_label(r'$\Delta$ GWD (m)')
         else:
             cbar.set_label('GWD (m)')
-        
+
     return cmap
 
-    
-    
-        
-    
+
+
+
+
 def show_spatialET(df_fort777,**kwargs):
 
     unit = 'ms-1'
     unit_str = '$ms^{-1}$'
     if 'unit' in kwargs:
         unit = kwargs.pop('unit')
-        
+
     cmap = 'Blues'
     if 'cmap' in kwargs:
         cmap = kwargs.pop('cmap')
-            
+
     crs = None
     if 'crs' in kwargs:
         crs = kwargs.pop('crs')
@@ -205,20 +205,20 @@ def show_spatialET(df_fort777,**kwargs):
     scatter=False
     if 'scatter' in kwargs:
         scatter = kwargs.pop('scatter')
-    
+
     mask = None
     if 'mask_gpd' in kwargs:
         mask = kwargs.pop('mask_gpd')
-      
+
     clim = None
     if 'clim' in kwargs:
         clim = kwargs.pop('clim')
 
-        
+
     colorbar = True
     if 'colorbar' in kwargs:
         colorbar = kwargs.pop('colorbar')
-        
+
     df_fort777_indexes = df_fort777.set_index('time_sec').index.unique().to_numpy()
     df_fort777_select_t = df_fort777.set_index('time_sec').loc[df_fort777_indexes[ti]]
 
@@ -226,17 +226,17 @@ def show_spatialET(df_fort777,**kwargs):
         fig, ax = plt.subplots()
     else:
         ax = kwargs.pop("ax")
-    
+
 
     # if scatter:
     df_fort777_select_t = df_fort777_select_t.drop_duplicates()
-    
+
     if unit == 'mmday-1':
         df_fort777_select_t['ACT. ETRA'] = df_fort777_select_t['ACT. ETRA']*1e3*86000
         unit_str = '$mm.day^{-1}$'
 
     if mask is not None:
-        
+
         polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
         filtered_data = []
         for i in range(len(df_fort777_select_t)):
@@ -246,7 +246,7 @@ def show_spatialET(df_fort777,**kwargs):
                 filtered_data.append([df_fort777_select_t['x'].iloc[i],
                                       df_fort777_select_t['y'].iloc[i],
                                       df_fort777_select_t['ACT. ETRA'].iloc[i]])
-                
+
         mask.crs
         filtered_data = np.vstack(filtered_data)
         df_fort777_select_t_xr = df_fort777_select_t.set_index(['x','y']).to_xarray()
@@ -255,51 +255,51 @@ def show_spatialET(df_fort777,**kwargs):
         df_fort777_select_t_xr_clipped = df_fort777_select_t_xr.rio.clip(mask.geometry)
         df_fort777_select_t_xr_clipped = df_fort777_select_t_xr_clipped.transpose('y', 'x')
         data_array = df_fort777_select_t_xr_clipped['ACT. ETRA'].values
-        
+
         df_fort777_select_t_xr_clipped.rio.bounds()
-        
+
         # Plot using plt.imshow
-        cmap = ax.imshow(data_array, 
-                         cmap=cmap, 
-                         origin='lower', 
+        cmap = ax.imshow(data_array,
+                         cmap=cmap,
+                         origin='lower',
                          extent=[min(filtered_data[:,0]),max(filtered_data[:,0]),
                                  min(filtered_data[:,1]),max(filtered_data[:,1])],
                          clim = clim,
                   )
 
     else:
-        
+
         df_fort777_select_t_xr = df_fort777_select_t.set_index(['x','y']).to_xarray()
         df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('x','y')
-        
+
         if crs is not None:
             df_fort777_select_t_xr.rio.write_crs(crs, inplace=True)
         df_fort777_select_t_xr = df_fort777_select_t_xr.transpose('y', 'x')
         data_array = df_fort777_select_t_xr['ACT. ETRA'].values
-        
+
         # Plot using plt.imshow
-        cmap = ax.imshow(data_array, 
-                         cmap=cmap, 
-                         origin='lower', 
+        cmap = ax.imshow(data_array,
+                         cmap=cmap,
+                         origin='lower',
                          extent=[min(df_fort777_select_t['x']),max(df_fort777_select_t['x']),
                                  min(df_fort777_select_t['y']),max(df_fort777_select_t['y'])],
                          clim = clim,
-                  )        
+                  )
     title = 'ETa'
     if 'title' in kwargs:
         title = kwargs['title']
-        
+
     ax.set_title(title)
 
     ax.set_xlabel('x (m)')
     ax.set_ylabel('y (m)')
     # ax.axis('equal')
     ax.grid(True, linestyle='-.')
-    
+
     if colorbar:
         cbar = plt.colorbar(cmap,ax=ax)
         cbar.set_label('ETa ' + unit_str)
-    
+
     return cmap
 
 
@@ -367,7 +367,7 @@ def show_dtcoupling(
        fig, ax = plt.subplots()
     else:
        ax = kwargs["ax"]
-       
+
     if len(df_dtcoupling) == 0:
         df_dtcoupling = out_CT.read_dtcoupling(filename="dtcoupling")
     nstep = len(df_dtcoupling["Atmpot-d"])
@@ -376,8 +376,8 @@ def show_dtcoupling(
     for i in np.arange(1, nstep):
         timeatm.append(timeatm[i - 1] + df_dtcoupling["Deltat"][i - 1])
     len(timeatm)
-    ax.step(timeatm, df_dtcoupling[yprop], 
-             color="green", where="post", 
+    ax.step(timeatm, df_dtcoupling[yprop],
+             color="green", where="post",
              label=yprop,
              # ax=ax
              )
@@ -428,9 +428,9 @@ def show_COCumflowvol(df_cumflowvol=[], workdir=None, project_name=None, **kwarg
 
     # color = b
     # if color in kwargs:
-    #     color = 
-        
-    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7], 
+    #     color =
+
+    ax.plot(df_cumflowvol[:, 2], -df_cumflowvol[:, 7],
             marker='.', **kwargs)
     ax.plot(df_cumflowvol[:, 2] / 3600, df_cumflowvol[:, 7])
     ax.set_title("Cumulative flow volume")
@@ -499,11 +499,11 @@ def show_vtk(
     my_colormap = "viridis"
     if path is None:
         path = os.getcwd()
-    
+
     legend = True
     if 'legend' in kwargs:
         legend = kwargs.pop('legend')
-        
+
     # Parse physical attribute + cmap from unit
     # -------------------------------------------------------------------------
     if filename is None:
@@ -538,7 +538,7 @@ def show_vtk(
             filename = "ER_converted" + str(timeStep) + "_nearIntrp2_pg_msh.vtk"
             my_colormap = "viridis"
             unit = "ER_converted" + str(timeStep) + "_nearIntrp2_pg_msh"
-            
+
     if unit == 'PERMX':
         my_colormap = None
         print('No colormap')
@@ -546,13 +546,13 @@ def show_vtk(
 
     if 'cmap' in kwargs:
         my_colormap = kwargs.pop('cmap')
-    
+
 
     show_edges = True
     if "show_edges" in kwargs:
         show_edges = kwargs['show_edges']
-        
-    
+
+
     mesh = pv.read(os.path.join(path, filename))
     if unit in list(mesh.array_names):
         print("plot " + str(unit))
@@ -630,7 +630,7 @@ def show_vtk(
         if "clim" in kwargs:
             ax.update_scalar_bar_range([kwargs["clim"][0], kwargs["clim"][1]])
         # add time stamp as legend
-        
+
         if legend:
             legend_entries = []
             time_delta = transform2_time_delta(mesh["TIME"], "s")
@@ -730,20 +730,20 @@ def show_vtk_TL(
     offscreen = True
     if show == False:
         offscreen = True
-        
+
     if 'pl' in kwargs:
         plotter= kwargs.pop('pl')
-        
+
     plotter = pv.Plotter(
         notebook=notebook,
         off_screen=offscreen,
     )
-    
+
     # print('*'*10)
     # print(unit)
-    
-    plotter.add_mesh(mesh, 
-                      scalars=unit, 
+
+    plotter.add_mesh(mesh,
+                      scalars=unit,
                      cmap=my_colormap,
                      # opacity=0.3,
                      **kwargs,
@@ -758,7 +758,7 @@ def show_vtk_TL(
     # options to colorbar
     # ---------------------------------------------------------------------
     if "clim" in kwargs:
-        plotter.update_scalar_bar_range([kwargs["clim"][0], 
+        plotter.update_scalar_bar_range([kwargs["clim"][0],
                                          kwargs["clim"][1]]
                                         )
 
@@ -786,7 +786,7 @@ def show_vtk_TL(
         if x_units is not None:
             xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
             legend_entry = "Time=" + str(t_lgd) + xlabel
-        
+
         # print(array_new)
         plotter.update_scalars(array_new, render=True)
         plotter.add_text(legend_entry, name="time-label")
@@ -941,14 +941,14 @@ def show_soil(soil_map, ax=None, **kwargs):
     # linewidth = 1
     # if 'linewidth' in kwargs:
     #     linewidth = kwargs['linewidth']
-        
+
     cf = ax.pcolormesh(
         soil_map,
         edgecolors="black",
         cmap=cmap,
         **kwargs,
     )
-    
+
     if "clim" in kwargs:
         clim = kwargs["clim"]
     else:
@@ -967,7 +967,7 @@ def show_soil(soil_map, ax=None, **kwargs):
 
     # try:
         # cax.set_ticklabels(range(int(min(soil_map.flatten())), nb_of_zones))
-        
+
     cax.ax.set_yticklabels(
         [
             "{:.1e}".format(x)
@@ -1093,21 +1093,21 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
     if "cmap" in kwargs:
         cmap = kwargs.pop("cmap")
 
-    if ax is None:  
+    if ax is None:
         fig, ax = plt.subplots()
     # cf = ax.pcolormesh(
-    #                    veg_map, 
-    #                    edgecolors="black", 
+    #                    veg_map,
+    #                    edgecolors="black",
     #                    cmap=cmap,
     #                    **kwargs
     #                    )
-    
-    cf = ax.imshow(veg_map, 
-                        # edgecolors="black", 
+
+    cf = ax.imshow(veg_map,
+                        # edgecolors="black",
                         cmap=cmap,
                         **kwargs
                         )
-    
+
     # fig.colorbar(cf, ax=ax, label='indice of vegetation')
 
     cax = plt.colorbar(
@@ -1118,10 +1118,10 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
         ax=ax,
         label="indice of vegetation",
     )
-    
+
     # cax.set_ticklabels(range(int(min(veg_map.flatten())), nb_of_zones + 2))
     cax.set_ticklabels(np.arange(
-                                    int(min(veg_map.flatten())), 
+                                    int(min(veg_map.flatten())),
                                     int(max(veg_map.flatten())) +1
                                     # nb_of_zones + 1
                                     )
@@ -1184,14 +1184,14 @@ def dem_plot_2d_top(parameter, label="", **kwargs):
     return fig, ax
 
 
-def get_dem_coords(dem_mat=[], hapin={}):   
+def get_dem_coords(dem_mat=[], hapin={}):
     x = np.zeros(dem_mat.shape[1]) # + hapin["xllcorner"]
     y = np.zeros(dem_mat.shape[0]) # + hapin["yllcorner"]
     for a in range(0, dem_mat.shape[1]):
         x[a] = float(hapin["xllcorner"]) + hapin["delta_x"] * (a + 1) - hapin["delta_x"]/2
     for a in range(0, dem_mat.shape[0]):
         y[a] = float(hapin["yllcorner"]) + hapin["delta_y"] * (a + 1) - hapin["delta_y"]/2
-    return x, np.flipud(y) 
+    return x, np.flipud(y)
 
 
 def show_dem(
@@ -1211,15 +1211,15 @@ def show_dem(
         ax = fig.add_subplot(projection="3d")
 
     X, Y = np.meshgrid(x, y)
-    
+
     dem_mat[dem_mat==-9999] = np.nan
     surf = ax.plot_surface(X, Y, dem_mat, cmap="viridis", **kwargs)
     # surf = ax.plot_surface(Y,X, dem_mat, cmap="viridis",**kwargs)
     cbar = plt.colorbar(
         surf, shrink=0.25, orientation="horizontal", label="Elevation (m)"
     )
-    ax.set(xlabel="Easting (m)", 
-           ylabel="Northing (m)", 
+    ax.set(xlabel="Easting (m)",
+           ylabel="Northing (m)",
            zlabel="Elevation (m)")
     # plt.show(block=False)
     # plt.close()
@@ -1408,8 +1408,8 @@ def show_DA_process_ens(
     if savefig == True:
         fig.savefig(savename + ".png", dpi=300)
     plt.close()
-    
-    
+
+
     # fig, ax = plt.subplots()
     # cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="jet")
     # ax.set_title("Correction")
@@ -1417,7 +1417,7 @@ def show_DA_process_ens(
     # ax.set_xlabel("Members #")
     # cbar = fig.colorbar(cax, location="bottom")
     # ax.set_yticks([])
-    
+
     # fig, ax = plt.subplots()
     # cax = ax.matshow(DataCov, aspect="auto", cmap="gray_r")
     # ax.set_title("cov(meas)")
@@ -1425,13 +1425,13 @@ def show_DA_process_ens(
     # ax.set_xlabel("Meas")
     # cbar = fig.colorbar(cax, location="bottom")
     # ax.set_yticks([])
-    
+
     return fig, ax
 
 
 def DA_RMS(df_performance, sensorName, **kwargs):
     """Plot result of Data Assimilation: RMS evolution over time."""
-    
+
     # Get optional arguments with defaults
     ax = kwargs.get("ax")
     start_date = kwargs.get("start_date")
@@ -1440,18 +1440,18 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     # Define keytime and xlabel based on start_date presence
     keytime = "time_date" if start_date else "time"
     xlabel = "date" if start_date else "assimilation #"
-    
+
     # Filter and cast necessary columns in one pass for efficiency
     df_perf_plot = df_performance[["time", "ObsType", f"RMSE{sensorName}", f"NMRMSE{sensorName}", "OL"]].dropna()
-    df_perf_plot = df_perf_plot.astype({f"RMSE{sensorName}": "float64", 
-                                        f"NMRMSE{sensorName}": "float64", 
+    df_perf_plot = df_perf_plot.astype({f"RMSE{sensorName}": "float64",
+                                        f"NMRMSE{sensorName}": "float64",
                                         "OL": "str"})
 
     # Replace 'time' with converted dates if start_date is given
     if start_date:
         dates = change_x2date(atmbc_times, start_date)
         df_perf_plot["time_date"] = df_perf_plot["time"].map(dict(zip(df_perf_plot["time"].unique(), dates)))
-    
+
     # Pivot tables for RMSE and NMRMSE to prepare for plotting
     p0 = df_perf_plot.pivot(index=keytime, columns="OL", values=f"RMSE{sensorName}")
     p1 = df_perf_plot.pivot(index=keytime, columns="OL", values=f"NMRMSE{sensorName}")
@@ -1460,7 +1460,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     if ax is None:
         num_plots = 3 if start_date else 2
         fig, ax = plt.subplots(num_plots, 1, sharex=True)
-    
+
     # Plotting
     p0.plot(ax=ax[1 if start_date else 0], xlabel=xlabel, ylabel=f"RMSE{sensorName}", style=[".-"])
     p1.plot(ax=ax[2 if start_date else 1], xlabel=xlabel, ylabel=f"NMRMSE{sensorName}", style=[".-"])
@@ -1470,7 +1470,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
 
 # def DA_RMS(df_performance, sensorName, **kwargs):
 #     """Plot result of Data Assimilation: RMS evolution over the time"""
-    
+
 #     if "ax" in kwargs:
 #         ax = kwargs["ax"]
 #     # else:
@@ -1486,7 +1486,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
 #     if kwargs.get("start_date") is not None:
 #         keytime = "time_date"
 #         xlabel = "date"
-    
+
 
 #     atmbc_times = None
 #     if "atmbc_times" in kwargs:
@@ -1506,7 +1506,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
 #     # len(dates)
 #     # len(df_perf_plot["time"])
 #     # len(atmbc_times)
-    
+
 #     if start_date is not None:
 #         dates = change_x2date(atmbc_times, start_date)
 #         df_perf_plot["time_date"] = df_perf_plot["time"].replace(
@@ -1532,12 +1532,12 @@ def DA_plot_parm_dynamic(
     # nb_times = len(df_DA['time'].unique())
 
     # fig = plt.figure(figsize=(6, 3), dpi=150)
-    
+
     if 'ax' in kwargs:
         ax = kwargs['ax']
     else:
         fig, ax = plt.subplots()
-        
+
     ax.hist(
         dict_parm_pert[parm]["ini_perturbation"],
         ensemble_size,
@@ -1569,14 +1569,14 @@ def DA_plot_parm_dynamic_scatter(
     parm="ks", dict_parm_pert={}, list_assimilation_times=[], savefig=False, **kwargs
 ):
     """Plot result of Data Assimilation: parameter estimation evolution over the time"""
-    
+
     if "ax" in kwargs:
         ax = kwargs["ax"]
     else:
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
-        
-        
+
+
     ensemble_size = len(dict_parm_pert[parm]["ini_perturbation"])
     mean_t = [np.mean(dict_parm_pert[parm]["ini_perturbation"])]
     mean_t_yaxis = np.mean(dict_parm_pert[parm]["ini_perturbation"])
@@ -1602,31 +1602,31 @@ def DA_plot_parm_dynamic_scatter(
     df = pd.DataFrame()
     df = pd.DataFrame(data=dict_parm_new)
     df.index.name = "Ensemble_nb"
-    
-    
+
+
     color = 'k'
     if "color" in kwargs:
         color = kwargs["color"]
-    
+
     if len(df.columns)>15:
         nii = [int(ni) for ni in np.arange(0,len(df.columns),6)]
         # name = [str(ni+1) for ni in list_assimilation_times]
         name = [str(ni) for ni in nii]
         df = df.iloc[:,nii]
-        
+
     boxplot = df.boxplot(
                          color=color,
                          ax=ax,
-                         grid=False, 
-                         flierprops=dict(marker='o', 
-                                         color='black', 
+                         grid=False,
+                         flierprops=dict(marker='o',
+                                         color='black',
                                          markersize=5
                                          )
                          )
-    boxplot.set_xticklabels(name, 
+    boxplot.set_xticklabels(name,
                             # rotation=90
                             )
-    
+
     ax.set_ylabel(parm)
     ax.set_xlabel("assimilation #")
     if "log" in kwargs:
@@ -1637,8 +1637,8 @@ def DA_plot_parm_dynamic_scatter(
 
 def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs):
     """Select data from DA_df dataframe"""
-   
-    
+
+
     DAc = DA.copy()
     keytime = "time"
     start_date = None
@@ -1653,7 +1653,7 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
     atmbc_times = None
     if "atmbc_times" in kwargs:
         atmbc_times = kwargs["atmbc_times"]
-    
+
     if start_date is not None:
         dates = change_x2date(atmbc_times, start_date)
 
@@ -1760,13 +1760,13 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     ),
                     True,
                 )
-            else:               
+            else:
                 isENS.insert(
                     2,"idnode",
                     np.tile(np.arange(nb_of_nodes), nb_of_times*nb_of_ens),
                     True,
                 )
-                
+
             check_notrejected = isENS['rejected']==0
 
             isENS = isENS[check_notrejected]
@@ -1830,8 +1830,8 @@ def DA_plot_time_dynamic(
     DA, state="psi", nodes_of_interest=[], savefig=False, **kwargs
 ):
     """Plot result of Data Assimilation: state estimation evolution over the time"""
-    
-    
+
+
     keytime = "time"
     xlabel = "time (h)"
     if kwargs.get("start_date") is not None:
@@ -1841,9 +1841,9 @@ def DA_plot_time_dynamic(
 
 
     prep_DA = prepare_DA_plot_time_dynamic(
-                                            DA, 
-                                            state=state, 
-                                            nodes_of_interest=nodes_of_interest, 
+                                            DA,
+                                            state=state,
+                                            nodes_of_interest=nodes_of_interest,
                                             **kwargs
                                         )
     if "ax" in kwargs:
@@ -1857,13 +1857,13 @@ def DA_plot_time_dynamic(
     colors_minmax = 'grey'
     if "colors_minmax" in kwargs:
         colors_minmax = kwargs["colors_minmax"]
-        
+
 
     if "keytime" in kwargs:
         keytime = kwargs['keytime']
         xlabel = "assimilation_times"
-        
-        
+
+
     ylabel = r"pressure head $\psi$ (m)"
     if "sw" in state:
         ylabel = "water saturation (-)"
@@ -1872,7 +1872,7 @@ def DA_plot_time_dynamic(
     # --------------------------------------------------------------------------
 
     if len(prep_DA["isENS"]) > 0:
-        
+
         prep_DA["ens_mean_isENS_time"].pivot(
             index=keytime,
             columns=["idnode"],
@@ -1906,8 +1906,8 @@ def DA_plot_time_dynamic(
             xlabel="(assimilation) time - (h)",
             ylabel="pressure head $\psi$ (m)",
         )
-        
-        
+
+
         lgd = ax.fill_between(
             prep_DA["ens_max_isENS_time"][keytime],
             prep_DA["ens_min_isENS_time"]["min(ENS)"],
@@ -1973,11 +1973,11 @@ def DA_plot_ET_dynamic(ET_DA,
                         ax=None,
                         unit='m/s'
                         ):
-    
+
     if nodePos is not None:
         # Select data for the specific node
-        ET_DA_node = ET_DA.sel(x=nodePos[0], 
-                               y=nodePos[1], 
+        ET_DA_node = ET_DA.sel(x=nodePos[0],
+                               y=nodePos[1],
                                method="nearest"
                                )
         ET_DA_act_etra = ET_DA_node["ACT. ETRA"]
@@ -1986,22 +1986,22 @@ def DA_plot_ET_dynamic(ET_DA,
 
     if unit=='mm/day':
         ET_DA_act_etra = ET_DA_act_etra*(1e3*86400)
-            
+
     # Plot each ensemble member in grey
     ET_DA_act_etra.plot(
-        ax=ax, 
-        x="assimilation", 
-        hue="ensemble", 
-        color="grey", 
-        alpha=0.2, 
+        ax=ax,
+        x="assimilation",
+        hue="ensemble",
+        color="grey",
+        alpha=0.1,
         add_legend=False
     )
 
     # Plot the mean across ensembles in red
     ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
-    ET_DA_mean.plot(ax=ax, x="assimilation", color="red", 
+    ET_DA_mean.plot(ax=ax, x="assimilation", color="red",
                     alpha=0.5,
-                    linewidth=2, 
+                    linewidth=1,
                     label="Mean pred."
                     )
 
@@ -2015,19 +2015,20 @@ def DA_plot_ET_dynamic(ET_DA,
 
         if unit=='mm/day':
             obs2plot['data'] = obs2plot['data']*(1e3*86400)
-            
+
         ax.scatter(
             obs2plot.datetime,
             obs2plot.data[0:len(obs2plot.datetime)],
             label="Observed",
-            color='darkgreen'
+            color='darkgreen',
+            s=6
         )
     # ax.set_title('')
     if nodePos is not None:
         ax.set_title(f"Node at ({nodePos[0]}, {nodePos[1]})")
 
     ax.set_ylabel(f'ETa - {unit}')
-        
+
 def DA_plot_ET_performance(ET_DA,
                             observations,
                             axi,
@@ -2035,7 +2036,7 @@ def DA_plot_ET_performance(ET_DA,
                             nodei=None,
                             unit='m/s'
                             ):
-    
+
     if nodeposi is not None:
     # Select data for the specific node
         ET_DA_node = ET_DA.sel(x=nodeposi[0], y=nodeposi[1], method="nearest")
@@ -2045,31 +2046,33 @@ def DA_plot_ET_performance(ET_DA,
     else:
         ET_DA_act_etra = ET_DA.mean(dim=['x','y'])["ACT. ETRA"]
         obs2plot_selecnode = observations[['data','data_err']].groupby(level=1).mean()
-        
+
     ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
     if unit=='mm/day':
         ET_DA_act_etra = ET_DA_act_etra*(1e3*86400)
         ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
-        
+
     # Plot data for each ensemble member
     for ensi in range(len(ET_DA_act_etra.ensemble)):
         ET_DA_act_etra_ensi = ET_DA_act_etra.isel(ensemble=ensi)
 
-        obs2plot = obs2plot_selecnode.iloc[1:len(ET_DA_act_etra_ensi)+1].data
+        obs2plot = obs2plot_selecnode.iloc[0:len(ET_DA_act_etra_ensi)+1].data
         if unit=='mm/day':
             obs2plot = obs2plot*(1e3*86400)
 
-            
+        # print(len(obs2plot))
+        # print(len(ET_DA_act_etra_ensi.values))
+
         axi.scatter(
-            ET_DA_act_etra_ensi.values,
+            ET_DA_act_etra_ensi.values[:],
             obs2plot,
             label=f"Ensemble {ensi}" if ensi == 0 else "",  # Label only once
             color='grey',
-            alpha=0.2, 
+            alpha=0.1,
         )
-    
+
     axi.scatter(
-        ET_DA_mean.values,
+        ET_DA_mean.values[:],
         obs2plot,
         alpha=0.5,
         color='red',
@@ -2092,10 +2095,11 @@ def DA_plot_ET_performance(ET_DA,
     # Customize subplot
     if nodeposi is not None:
         axi.set_title(f"Node at ({nodeposi[0]}, {nodeposi[1]})")
-    axi.set_xlabel("Modelled ACT. ETRA")
-    axi.set_ylabel("Observed Data")
+    axi.set_xlabel("Modelled ETa")
+    axi.set_ylabel("Observed ETa")
     axi.legend()
     axi.set_aspect('equal')
+    
 
 
 # Function to calculate R² and p-value
@@ -2116,5 +2120,3 @@ def annotate_r2_p_value(axi, r2, p_value):
                  va='top',
                  bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', boxstyle="round,pad=0.5")
                  )
-
-
