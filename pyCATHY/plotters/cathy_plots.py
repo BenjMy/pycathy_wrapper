@@ -54,6 +54,7 @@ from pyCATHY.importers import cathy_outputs as out_CT
 import geopandas as gpd
 import rioxarray as rio
 import scipy.stats as stats
+import seaborn
 
 
 # mpl.style.use('default')
@@ -1321,7 +1322,11 @@ def plot_hist_perturbated_parm(parm, var_per, type_parm, parm_per_array, **kwarg
             )
     else:
         # plt.hist(parm_sampling, ensemble_size/2, alpha=0.5, label='sampling')
-        plt.hist(parm_per_array, alpha=0.5, label="ini_perturbation")
+        plt.hist(parm_per_array, 
+                 bins=7,  # Increase the number of bins
+                 alpha=0.5, 
+                 label="ini_perturbation"
+                 )
         plt.axvline(x=parm["nominal"], linestyle="--", color="red")
     plt.legend(loc="upper right")
     plt.xlabel(parm["units"])
@@ -1602,33 +1607,34 @@ def DA_plot_parm_dynamic_scatter(
     df = pd.DataFrame()
     df = pd.DataFrame(data=dict_parm_new)
     df.index.name = "Ensemble_nb"
-
-
+   
     color = 'k'
     if "color" in kwargs:
         color = kwargs["color"]
 
-    if len(df.columns)>15:
-        nii = [int(ni) for ni in np.arange(0,len(df.columns),6)]
-        # name = [str(ni+1) for ni in list_assimilation_times]
+    if len(df.columns)>30:
+        nii = [int(ni) for ni in np.arange(0,len(df.columns),15)]
         name = [str(ni) for ni in nii]
         df = df.iloc[:,nii]
+        # dates = pd.to_datetime(list_assimilation_times[nii])
+        list_assimilation_times = list_assimilation_times[nii]
 
-    boxplot = df.boxplot(
-                         color=color,
-                         ax=ax,
-                         grid=False,
-                         flierprops=dict(marker='o',
-                                         color='black',
-                                         markersize=5
-                                         )
+
+    df.columns = list_assimilation_times
+    boxplot = seaborn.boxplot(
+                            df,
+                            color='grey',
+                            ax=ax
                          )
-    boxplot.set_xticklabels(name,
-                            # rotation=90
-                            )
-
+    
+    # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+    if pd.api.types.is_datetime64_any_dtype(df.columns):
+        ax.set_xticklabels([pd.to_datetime(date).strftime('%d %b') for date in df.columns], 
+                       rotation=45)
+    
     ax.set_ylabel(parm)
     ax.set_xlabel("assimilation #")
+
     if "log" in kwargs:
         if kwargs["log"]:
             boxplot.set_yscale("log")
@@ -1839,7 +1845,7 @@ def DA_plot_time_dynamic(
         xlabel = "date"
         keytime = "time_date"
 
-
+    # kwargs['keytime']
     prep_DA = prepare_DA_plot_time_dynamic(
                                             DA,
                                             state=state,
@@ -1852,7 +1858,7 @@ def DA_plot_time_dynamic(
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
 
-    alpha = 0.8
+    alpha = 0.2
     # colors_minmax = 'darkblue'
     colors_minmax = 'grey'
     if "colors_minmax" in kwargs:
@@ -1878,7 +1884,9 @@ def DA_plot_time_dynamic(
             columns=["idnode"],
             # columns=['idnode'],
             values=["mean(ENS)"],
-        ).plot(ax=ax, style=[".-"], color=colors_minmax,
+        ).plot(ax=ax, style=["--"], 
+               color=colors_minmax,
+               alpha=0.2
                )
 
         # print(prep_DA["ens_mean_isENS_time"].isna().sum())
@@ -1891,7 +1899,9 @@ def DA_plot_time_dynamic(
             columns=["idnode"],
             # columns=['idnode'],
             values=["max(ENS)"],
-        ).plot(ax=ax, style=[".-"], color=colors_minmax,
+        ).plot(ax=ax, 
+               style=["-"], 
+               color=colors_minmax,
                )
 
         prep_DA["ens_min_isENS_time"].pivot(
@@ -1901,7 +1911,8 @@ def DA_plot_time_dynamic(
             values=["min(ENS)"],
         ).plot(
             ax=ax,
-            style=[".-"],
+            # style=[".-"],
+            style=["-"],
             color=colors_minmax,
             xlabel="(assimilation) time - (h)",
             ylabel="pressure head $\psi$ (m)",
@@ -1971,9 +1982,17 @@ def DA_plot_ET_dynamic(ET_DA,
                         nodeIndice=None,
                         observations=None,
                         ax=None,
-                        unit='m/s'
+                        unit='m/s',
+                        **kwargs
                         ):
 
+    meanETacolor = 'red'
+    if 'color' in kwargs:
+        meanETacolor = kwargs.pop('color')
+    alphaENS = 0.1
+    if 'alphaENS' in kwargs:
+        alphaENS = kwargs.pop('alphaENS')
+        
     if nodePos is not None:
         # Select data for the specific node
         ET_DA_node = ET_DA.sel(x=nodePos[0],
@@ -1993,13 +2012,14 @@ def DA_plot_ET_dynamic(ET_DA,
         x="assimilation",
         hue="ensemble",
         color="grey",
-        alpha=0.1,
+        alpha=alphaENS,
         add_legend=False
     )
 
     # Plot the mean across ensembles in red
     ET_DA_mean = ET_DA_act_etra.mean(dim="ensemble")
-    ET_DA_mean.plot(ax=ax, x="assimilation", color="red",
+    ET_DA_mean.plot(ax=ax, x="assimilation", 
+                    color=meanETacolor,
                     alpha=0.5,
                     linewidth=1,
                     label="Mean pred."
@@ -2017,7 +2037,7 @@ def DA_plot_ET_dynamic(ET_DA,
             obs2plot['data'] = obs2plot['data']*(1e3*86400)
 
         ax.scatter(
-            obs2plot.datetime,
+            obs2plot.datetime[:],
             obs2plot.data[0:len(obs2plot.datetime)],
             label="Observed",
             color='darkgreen',
@@ -2056,16 +2076,16 @@ def DA_plot_ET_performance(ET_DA,
     for ensi in range(len(ET_DA_act_etra.ensemble)):
         ET_DA_act_etra_ensi = ET_DA_act_etra.isel(ensemble=ensi)
 
-        obs2plot = obs2plot_selecnode.iloc[0:len(ET_DA_act_etra_ensi)+1].data
+        obs2plot = obs2plot_selecnode.iloc[0:len(ET_DA_act_etra_ensi)].data
         if unit=='mm/day':
             obs2plot = obs2plot*(1e3*86400)
 
-        # print(len(obs2plot))
-        # print(len(ET_DA_act_etra_ensi.values))
+        print(len(obs2plot))
+        print(len(ET_DA_act_etra_ensi.values[:]))
 
         axi.scatter(
             ET_DA_act_etra_ensi.values[:],
-            obs2plot,
+            obs2plot.values,
             label=f"Ensemble {ensi}" if ensi == 0 else "",  # Label only once
             color='grey',
             alpha=0.1,
@@ -2089,6 +2109,15 @@ def DA_plot_ET_performance(ET_DA,
     # Calculate R² and p-value using the separate function
     r2, p_value = calculate_r2_p_value(ET_DA_mean.values, obs2plot)
 
+    # Example usage
+    # rmse, nrmse = calculate_rmse_nrmse(ET_DA_mean.values, 
+    #                                    obs2plot, 
+    #                                    normalization="mean"
+    #                                    )
+    # print(f'RMSE:{rmse}')
+    # print(f'nrmse:{nrmse}')
+
+
     # Annotate the plot with R² and p-value using the separate function
     annotate_r2_p_value(axi, r2, p_value)
 
@@ -2100,6 +2129,31 @@ def DA_plot_ET_performance(ET_DA,
     axi.legend()
     axi.set_aspect('equal')
     
+
+
+def calculate_rmse_nrmse(y_pred, y_obs, normalization="range"):
+    """Calculate RMSE and NRMSE between two time series.
+    
+    Args:
+        y_pred (array-like): Predicted values.
+        y_obs (array-like): Observed values.
+        normalization (str): "mean", "range", or "std" for NRMSE normalization.
+    
+    Returns:
+        tuple: (RMSE, NRMSE)
+    """
+    rmse = np.sqrt(np.mean((y_obs - y_pred) ** 2))
+
+    if normalization == "mean":
+        nrmse = rmse / np.mean(y_obs)
+    elif normalization == "range":
+        nrmse = rmse / (np.max(y_obs) - np.min(y_obs))
+    elif normalization == "std":
+        nrmse = rmse / np.std(y_obs)
+    else:
+        raise ValueError("Invalid normalization method. Choose 'mean', 'range', or 'std'.")
+
+    return rmse, nrmse
 
 
 # Function to calculate R² and p-value

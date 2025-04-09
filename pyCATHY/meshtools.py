@@ -85,6 +85,11 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
         path = kwargs["path"]
 
     meshCATHY_tmp = mesh_CATHY.copy()
+    
+    print('Tracing mesh')
+
+    # print(meshCATHY_tmp)
+    # print(mesh_OUT)
 
     data_OUT, warm_0 = trace_mesh(
                                     meshCATHY_tmp,
@@ -111,6 +116,8 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
             data_OUT, mesh_OUT, scalar_new, overwrite=True, path=path
         )
 
+
+    # print(mesh_new_attr)
     print('end of CATHY_2_pg')
 
     show = False
@@ -244,7 +251,7 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     # print(meshIN.points)
 
     # set_interpolation_radius()
-    rd = max(np.diff(meshIN.points[:, 0])) / 1
+    rd = max(np.diff(meshIN.points[:, 0])) * 10
     meshOUT_interp = meshOUT.interpolate(meshIN,
                                          radius=rd,
                                          pass_point_data=True
@@ -823,119 +830,13 @@ def _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers):
     pl.show()
 
 
-def _build_xyz_marker_mat_squareDEM(
-    zones3d_layered,
-    mesh_pv_attributes,
-    hapin,
-    dem_parameters,
-    workdir,
-    project_name,
-    to_nodes,
-):
-    ''' DEPRECATED FOR _find_nearest_point2DEM'''
-
-    # top, bot = get_layer_depth(dem_parameters,li)
-
-    # get layers properties
-    # ----------------------------------------------------------------
-    dempar = dem_parameters["zratio(i),i=1,nstr"].split("\t")
-    dempar_ratio = [float(d) for d in dempar]
-
-    layeri_top = []
-    layeri_top = [
-        np.cumsum(dempar_ratio[0 : li + 1])[-1] * (dem_parameters["base"])
-        for li in range(dem_parameters["nstr"])
-    ]
-    layeri_top.insert(0, 0)
-    layeri_center = [
-        (layeri_top[lti + 1] + layeri_top[lti]) / 2
-        for lti in range(len(layeri_top) - 1)
-    ]
-
-    # get dem coordinates
-    # ----------------------------------------------------------------
-    y, x = cplt.get_dem_coords(dem, hapin=hapin)
-
-    # build dem coordinates of the size of the DEM
-    # ----------------------------------------------------------------
-    xn = [np.ones(len(y)) * xu for xu in np.unique(x)]
-    xn = np.hstack(xn)
-    yn = np.tile(y, len(x))
-
-    xyz = np.c_[
-        xn - dem_parameters["delta_x"] / 2,
-        yn - dem_parameters["delta_y"] / 2,
-        np.hstack(dem.T),
-    ]
-
-    xyz_celldown = np.c_[
-        xn - dem_parameters["delta_x"] / 4,
-        yn - dem_parameters["delta_y"] / 4,
-        np.hstack(dem.T),
-    ]
-
-    xyz_cellup = np.c_[
-        xn + dem_parameters["delta_x"] / 4,
-        yn + dem_parameters["delta_y"] / 4,
-        np.hstack(dem.T),
-    ]
-
-    xyz_cells = np.r_[xyz_cellup, xyz_celldown]
-    # len(xyz_cellup)
-
-    xyz_nodes = np.c_[xn, yn, np.hstack(dem.T)]
-
-    # meshpts = mesh_pv_attributes.points
-    # cellpts = mesh_pv_attributes.cell_centers().points
-
-    xyz_layers_nodes = []
-    for i, li in enumerate(layeri_top[:-1]):
-        marker_zone = np.ravel(zones3d_layered[i])
-        xyz_layers_nodes.append(
-            np.c_[xyz_nodes[:, 0:2], xyz_nodes[:, 2] - li, marker_zone]
-        )
-
-    xyz_layers = []
-    for i, li in enumerate(layeri_center[:]):
-        marker_zone = np.ravel(zones3d_layered[i])
-        xyz_layers.append(np.c_[xyz[:, 0:2], xyz[:, 2] - li, marker_zone])
-
-    xyz_layers_cells_top = []
-    for i, li in enumerate(layeri_top[:-1]):
-        marker_zone = np.hstack([np.ravel(zones3d_layered[i])] * 2)
-        xyz_layers_cells_top.append(
-            np.c_[xyz_cells[:, 0:2], xyz_cells[:, 2] - li, marker_zone]
-        )
-
-    xyz_layers_cells_cent = []
-    for i, li in enumerate(layeri_center[:]):
-        marker_zone = np.hstack([np.ravel(zones3d_layered[i])] * 2)
-        xyz_layers_cells_cent.append(
-            np.c_[xyz_cells[:, 0:2], xyz_cells[:, 2] - li, marker_zone]
-        )
-
-    xyz_layers = np.vstack(xyz_layers)
-    xyz_layers_nodes = np.vstack(xyz_layers_nodes)
-    xyz_layers_cells = np.vstack(np.r_[xyz_layers_cells_top,
-                                       xyz_layers_cells_cent]
-                                 )
-
-    _plot_cellsMarkerpts(mesh_pv_attributes, xyz_layers, workdir, project_name)
-
-    _find_nearest_point2DEM(
-        to_nodes,
-        mesh_pv_attributes,
-        xyz_layers_cells,
-        xyz_layers_nodes,
-    )
-
-
 def _find_nearest_point2DEM(
     to_nodes,
     mesh_pv_attributes,
-    xyz_layers_cells=[],
-    xyz_layers_nodes=[],
+    # xyz_layers_cells=[],
+    xyz_layers=[],
     saveMeshPath=None,
+    marker_name='layers',
 ):
 
     if to_nodes:
@@ -945,11 +846,11 @@ def _find_nearest_point2DEM(
         for nmesh in mesh_pv_attributes.points:
             # euclidean distance
             d = (
-                (xyz_layers_nodes[:, 0] - nmesh[0]) ** 2
-                + (xyz_layers_nodes[:, 1] - nmesh[1]) ** 2
-                + (xyz_layers_nodes[:, 2] - nmesh[2]) ** 2
+                (xyz_layers[:, 0] - nmesh[0]) ** 2
+                + (xyz_layers[:, 1] - nmesh[1]) ** 2
+                + (xyz_layers[:, 2] - nmesh[2]) ** 2
             )** 0.5
-            node_markers.append(xyz_layers_nodes[np.argmin(d), 3])
+            node_markers.append(xyz_layers[np.argmin(d), 3])
         # add data to the mesh
         # ----------------------------------------------------------------
         mesh_pv_attributes["node_markers_old"] = node_markers
@@ -958,25 +859,25 @@ def _find_nearest_point2DEM(
         cell_centers = mesh_pv_attributes.cell_centers().points
 
         # Create a KDTree from xyz_layers_cells
-        tree = KDTree(xyz_layers_cells[:, :3])
+        tree = KDTree(xyz_layers[:, :3])
 
         # Find the nearest neighbors for each cell center
         distances, indices = tree.query(cell_centers, k=1)
 
         # Get the cell_markers values based on the nearest neighbors
-        cell_markers = xyz_layers_cells[indices, 3]
+        cell_markers = xyz_layers[indices, 3]
 
         # Add the data to the mesh
-        mesh_pv_attributes["cell_markers"] = cell_markers
+        mesh_pv_attributes[f"cell_markers_{marker_name}"] = cell_markers
         nodepv = mesh_pv_attributes.cell_data_to_point_data()
-        noderounded = [np.ceil(npv) for npv in nodepv.point_data['cell_markers']]
-        mesh_pv_attributes['node_markers_new'] = noderounded
+        noderounded = [np.ceil(npv) for npv in nodepv.point_data[f'cell_markers_{marker_name}']]
+        mesh_pv_attributes[f'node_markers_{marker_name}'] = noderounded
 
     if saveMeshPath is not None:
         mesh_pv_attributes.save(saveMeshPath,binary=False)
 
 
-def add_markers2mesh(
+def add_markers_layers_2_mesh(
     zones3d_layered,
     dem,
     mesh_pv_attributes,
@@ -988,13 +889,18 @@ def add_markers2mesh(
     saveMeshPath=None,
 ):
 
-    # Reduce all to 1D
+    # Create a regular mesh from the DEM x and y coordinates and elevation
     # ------------------------------------------------------------------
-    zones3d_layers_array = np.ravel(zones3d_layered)
-
     x, y = cplt.get_dem_coords(dem,hapin=hapin)
     dem_flip = dem
-
+    xgrid, ygrid = np.meshgrid(x, y)
+    grid_coords_dem = np.array(
+        [
+            np.ravel(xgrid),
+            np.ravel(ygrid),
+        ]
+    ).T
+    
     # Get layer top and bottom
     # ------------------------------------------------------------------
     zone3d_top = []
@@ -1007,51 +913,34 @@ def add_markers2mesh(
     zone3d_top = np.array(zone3d_top)
     zone3d_bot = np.array(zone3d_bot)
 
+    # if to_nodes:
+    dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
+    # else:
+        # dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
 
-    if to_nodes:
-        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
-    else:
-        dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
-
-    # Create a regular mesh from the DEM x and y coordinates and elevation
-    # ------------------------------------------------------------------
-    xgrid, ygrid = np.meshgrid(x, y)
-    grid_coords_dem = np.array(
-        [
-            np.ravel(xgrid),
-            np.ravel(ygrid),
-        ]
-    ).T
 
     # Reduce all to 1D
     # ------------------------------------------------------------------
     dem_mat_stk = np.ravel(dem_mat3d_layers)
-    # dem_mat_stk = np.fliplr(dem_mat_stk)
-
     grid_coords_stk_rep = np.vstack(np.array([grid_coords_dem] * dem_parameters["nstr"]))
-
-
     zones3d_col_stk = np.ravel(zones3d_layered)
     xyz_layers = np.c_[grid_coords_stk_rep, dem_mat_stk, zones3d_col_stk]
 
     # Plot to check position of points VS mesh
     # ------------------------------------------------------------------
-
     if show:
         _plot_cellsMarkerpts(mesh_pv_attributes,
                              xyz_layers,
                              )
 
-    #%%
-    # print('_find_nearest_point2DEM')
     # Assign marker to mesh and overwrite it
     # ------------------------------------------------------------------
     _find_nearest_point2DEM(
         to_nodes,
         mesh_pv_attributes,
         xyz_layers,
-        xyz_layers,
-        saveMeshPath
+        saveMeshPath,
+        marker_name='layers'
     )
 #%%
 def map_cells_to_nodes(raster_map, grid3d_shape=None):

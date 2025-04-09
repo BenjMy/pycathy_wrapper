@@ -493,8 +493,13 @@ def perturbate(simu_DA, scenario, NENS,
         index = scenario["per_name"].index("porosity")
     
         # Set perturbation order, defaulting to ['zone', 'root_map', 'layers'] if not specified
-        pert_control_name = scenario.get("pert_control_name", ['zone', 'root_map', 'layers'])[index]
-    
+        
+        
+        pert_control_name = None
+        if 'pert_control_name' in scenario:
+            pert_control_name = scenario['pert_control_name'][index]
+        
+        
         # Retrieve nominal, mean, and sigma values for the scenario
         scenario_nom = scenario["per_nom"][index]
         scenario_mean = scenario["per_mean"][index]
@@ -1056,8 +1061,9 @@ def perturbate_parm(
     if per_type=='None':
         per_type = None
     
-
-    match_ic_withLayers = re.search(r'ic\d+', type_parm)
+    # type_parm2check = 
+    # match_withLayers = re.search(rf'{type_parm}\d+', type_parm)
+    match_withLayers = re.search(r'\d', type_parm)
     nlayers = None
     if 'nlayers' in kwargs:
         nlayers = kwargs['nlayers']
@@ -1072,6 +1078,8 @@ def perturbate_parm(
     var_per_2add[type_parm][key] = sampling_type
     key = "sampling_mean"
     var_per_2add[type_parm][key] = mean
+    key = "sampling_nominal"
+    var_per_2add[type_parm][key] = parm['nominal']
     key = "sampling_sd"
     var_per_2add[type_parm][key] = sd
     key = "per_type"
@@ -1084,10 +1092,23 @@ def perturbate_parm(
             parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
         )
     elif "porosity" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=0, myclip_b=1, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+        if match_withLayers:
+            param_withLayers = perturbate_parm_by_layers(type_parm,
+                                                                  ensemble_size,
+                                                                  nlayers,
+                                                                  mean,
+                                                                  sd,
+                                                                  )
+            key_root = re.split("(\d+)", type_parm)
+            parm_sampling = param_withLayers[int(key_root[1])]
+            parm_per_array = param_withLayers[int(key_root[1])]
+            var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
+    
+        else:
+            parm_sampling = sampling_dist_trunc(
+                myclip_a=0, myclip_b=1, ensemble_size=ensemble_size, loc=mean, scale=sd
+            )
+            parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
 
     elif "zroot".casefold() in type_parm.casefold():
         parm_sampling = sampling_dist_trunc(
@@ -1132,18 +1153,20 @@ def perturbate_parm(
                                                         )
         savefig = False
 
-    elif match_ic_withLayers:
-        pressure_head_withLayers = perturbate_parm_by_layers(type_parm,
-                                                              ensemble_size,
-                                                              nlayers,
-                                                              mean,
-                                                              sd,
-                                                              )
-        key_root = re.split("(\d+)", type_parm)
+    elif "ic" in type_parm:
 
-        parm_sampling = pressure_head_withLayers[int(key_root[1])]
-        parm_per_array = pressure_head_withLayers[int(key_root[1])]
-        var_per_2add[type_parm]['ini_ic_withLayers'] = pressure_head_withLayers
+        if match_withLayers:
+            param_withLayers = perturbate_parm_by_layers(type_parm,
+                                                                  ensemble_size,
+                                                                  nlayers,
+                                                                  mean,
+                                                                  sd,
+                                                                  )
+            key_root = re.split("(\d+)", type_parm)
+    
+            parm_sampling = param_withLayers[int(key_root[1])]
+            parm_per_array = param_withLayers[int(key_root[1])]
+            var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
     
     
     # For all other types of perturbation
@@ -1154,11 +1177,11 @@ def perturbate_parm(
                 myclip_a=var_per_2add[type_parm]["clip_min"],
                 myclip_b=var_per_2add[type_parm]["clip_max"],
                 ensemble_size=ensemble_size,
-                loc=mean,
+                loc= parm['mean'],
                 scale=sd,
             )
         else:
-            parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+            parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
         parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
 
     # build dictionnary of perturbated variable

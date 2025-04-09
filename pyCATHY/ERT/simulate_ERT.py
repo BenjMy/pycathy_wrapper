@@ -25,10 +25,11 @@ except ImportError:
     resipy = None
 
 
-def create_ERT_survey_pg(pathERT, sequence, mesh,
-                         # DAcnb,
-                         # pathfig,
-                         **kwargs):
+def create_ERT_survey_pg(pathERT, 
+                         sequence, 
+                         mesh,
+                         **kwargs
+                         ):
 
     verbose = False
     if "verbose" in kwargs:
@@ -39,12 +40,8 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
         fwdNoiseLevel = kwargs["fwdNoiseLevel"]
     print(f"fwd ERT Noise Level: {fwdNoiseLevel}")
     pre, ext = os.path.splitext(mesh)
+    print(pre, ext)
 
-    # print('-'*30)
-    # print(pre, ext)
-    # print('-'*30)
-
-    
     try:
         mesh3d = mt.readGmsh(pre + ".msh", verbose=verbose)
     except:
@@ -58,19 +55,6 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
                 raise ValueError(
                     "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
                 )
-
-    # print('-'*30)
-    # print(mesh3d)
-    # print('-'*30)
-    
-    # import pyvista
-    # mesh2test2 = pyvista.read(mesh)
-    # print('-'*30)
-    # print(mesh2test2)
-    # print('-'*30)
-    
-    # import sys 
-    # sys.exit()
     
     sequence_file_extension = os.path.splitext(sequence)[1]
 
@@ -91,20 +75,10 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
         raise ValueError(
             "Sequence file format not recognized use .shm or .txt as a list of quadrupoles"
         )
-
-    # print(kwargs)
-    # print(mesh3d)
-    # print(len(mesh3d.cells()))
     
     res0 = 1
     if "res0" in kwargs:
         res0 = kwargs["res0"]
-
-    # print(res0)
-    # print(len(res0))
-    # print(ss)
-    # import sys 
-    # sys.exit()
 
     if len(res0) != len(mesh3d.cells()):
         raise ValueError("wrong initial resistivity input")
@@ -116,6 +90,15 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
             os.dup2(devnull.fileno(), 1)
     except:
         pass
+    
+    print('+'*20)
+    print(sequence_file_extension)
+    print(sequence)
+    print(scheme)
+    print(mesh3d)
+    print(fwdNoiseLevel)
+    print('+'*20)
+    
     het = ert.simulate(
         mesh3d,
         res=res0,
@@ -126,6 +109,8 @@ def create_ERT_survey_pg(pathERT, sequence, mesh,
     )
     # pg.show(mesh3d)
     # pg.show(het)
+    # het.exportVTK('testmeshpg.vtk')
+    # het.saveResult('testpg')
 
     try:
         if not verbose:
