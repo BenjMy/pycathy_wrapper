@@ -394,23 +394,51 @@ def perturbate(simu_DA, scenario, NENS,
         # c = (mean = 1.6,sd = 0.5,min = 0.0, max = 2.0),
         # m = (mean = 2.5,sd = 0.8,min = 0.0, max = 3.0)
 
-        archie_units = ["", "", "", ""]
-
+        # archie_units = ["", "", "", ""]
+            
         for i, p in enumerate(Archie_2pert):
-            index = scenario["per_name"].index(p)
+            
+            index = scenario["per_name"].index(p)      
+            pert_control_name = None
+            if 'pert_control_name' in scenario:
+                pert_control_name = scenario['pert_control_name'][index]
+                
 
-            p_archie = {
-                "type_parm": p,
-                "nominal": scenario["per_nom"][index],  # nominal value
-                "mean": scenario["per_mean"][index],
-                "sd": scenario["per_sigma"][index],
-                "units": archie_units[i],  # units
-                "sampling_type": "normal",
-                "ensemble_size": NENS,  # size of the ensemble
-                "per_type": scenario["per_type"][index],
-                "savefig": "_Archie" + p + ".png",
-            }
-            list_pert.append(p_archie)
+            scenario_nom = scenario["per_nom"][index]
+            scenario_mean = scenario["per_mean"][index]
+            scenario_sd = scenario["per_sigma"][index]
+
+
+
+            if 'layers' in pert_control_name:
+                for nstri in range(nlayers):
+                    # Adjust bounds and retrieve parameters for the current layer
+                    # clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                    layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
+        
+                    # Create porosity entry for this layer and validate distribution
+                    p_archie = create_dict_entry(
+                        p, scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
+                        clip_min, clip_max, NENS
+                    )
+                    check_distribution(p_archie)
+                    list_pert.append(p_archie)
+            else:
+                # pass
+                index = scenario["per_name"].index(p)
+        
+                p_archie = {
+                    "type_parm": p,
+                    "nominal": scenario["per_nom"][index],  # nominal value
+                    "mean": scenario["per_mean"][index],
+                    "sd": scenario["per_sigma"][index],
+                    # "units": archie_units[i],  # units
+                    "sampling_type": "normal",
+                    "ensemble_size": NENS,  # size of the ensemble
+                    "per_type": scenario["per_type"][index],
+                    "savefig": "_Archie" + p + ".png",
+                }
+                list_pert.append(p_archie)
 
     #%% SOIL parameters
     # ------------------------------------------------------------------------
@@ -476,7 +504,21 @@ def perturbate(simu_DA, scenario, NENS,
                             pert_control_name=pert_control_name
                             )
                 list_pert.append(Ks)
-        
+                
+        # Perturb by 'layers' if specified
+        elif 'layers' in pert_control_name:
+            for nstri in range(nlayers):
+                # Adjust bounds and retrieve parameters for the current layer
+                clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
+    
+                # Create porosity entry for this layer and validate distribution
+                Ks = create_dict_entry(
+                    'Ks', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
+                    clip_min, clip_max, NENS
+                )
+                check_distribution(Ks)
+                list_pert.append(Ks)
         
         else:
             Ks = create_dict_entry(
@@ -1088,9 +1130,21 @@ def perturbate_parm(
     # Contrainsted perturbation (bounded)
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
-        parm_sampling, parm_per_array = Archie_pert_rules(
-            parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
-        )
+        if match_withLayers:
+            param_withLayers = perturbate_parm_by_layers(type_parm,
+                                                        ensemble_size,
+                                                        nlayers,
+                                                        mean,
+                                                        sd,
+                                                        )
+            key_root = re.split("(\d+)", type_parm)
+            parm_sampling = param_withLayers[int(key_root[1])]
+            parm_per_array = param_withLayers[int(key_root[1])]
+            var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
+        else:
+            parm_sampling, parm_per_array = Archie_pert_rules(
+                parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
+            )
     elif "porosity" in type_parm:
         if match_withLayers:
             param_withLayers = perturbate_parm_by_layers(type_parm,

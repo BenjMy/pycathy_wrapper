@@ -1652,7 +1652,6 @@ class DA(CATHY):
         if parallel:
             if "ERT" in list_assimilated_obs:
                 prediction_OL_ERT = mapper._map_ERT_parallel(
-
                                                             self.dict_obs,
                                                             self.count_DA_cycle,
                                                             self.project_name,
@@ -1800,7 +1799,6 @@ class DA(CATHY):
                                             self.dem_parameters,
                                             self.cathyH["MAXVEG"]
                                             )
-                # df_SPP_2fill = [df_SPP.copy() for _ in range(self.NENS)]
                 df_SPP_2fill.append(df_SPP.copy())
 
                 if key_root[0].casefold() == 'ks':
@@ -1864,18 +1862,19 @@ class DA(CATHY):
             # np.shape(self.zone3d)            
             # mt.map_cells_to_nodes()
             
-            os.path.join(os.getcwd())
-            (prop_mesh_nodes_test
-             # prop_mesh_nodes_test
+            # os.path.join(os.getcwd())
+            (
+            POROS_mesh_cells,
+             POROS_mesh_nodes
              ) = self.map_prop_2mesh_markers('POROS', 
                                             df_SPP_2fill[ens_nb]['POROS'].groupby('layer').mean().to_list(), 
-                                            to_nodes=True,
+                                            to_nodes=False,
                                             saveMeshPath=saveMeshPath,
                                             # zones_markers_3d=None,
                                             )
-            self.map_prop2mesh({"POROS": prop_mesh_nodes_test})
+            self.map_prop2mesh({"POROS": POROS_mesh_nodes})
         
-
+        
         return df_SPP_2fill
 
     def update_ENS_files(self, dict_parm_pert, list_parm2update, **kwargs):
@@ -2034,12 +2033,6 @@ class DA(CATHY):
                 if key_root[0].casefold() in "atmbc".casefold():
 
                     if key.casefold() in "atmbc0".casefold():
-                        # tper_stacked = []
-                        # for kk in dict_parm_pert:
-                        #     if 'atmbc' in kk:
-                        #         tper_stacked.append(dict_parm_pert[kk]['time_variable_perturbation'])
-                        # tper_stacked = np.array(tper_stacked)
-                        # VALUE = tper_stacked[:,:,ens_nb]
                         times = dict_parm_pert[key]['data2perturbate']['time']
                         VALUE = dict_parm_pert[key]['time_variable_perturbation'][ens_nb]
                         self.update_atmbc(
@@ -2156,11 +2149,6 @@ class DA(CATHY):
                             backup=True,
                         )
                         
-
-                    # self.map_prop2mesh({"POROS": kwargs["pressure_head_ini"]})
-
-
-
                 # VG parameters update
                 # --------------------------------------------------------------
                 elif key_root[0] in VG_p_possible_names:
@@ -2267,13 +2255,28 @@ class DA(CATHY):
 
                 # Archie_p update
                 # --------------------------------------------------------------
-                elif key_root[0] in Archie_p_names:
+                elif key_root[0].casefold() in Archie_p_names:
                     self.console.print(
                         ":arrows_counterclockwise: [b]Update Archie parameters[/b]"
                     )
 
-                    # self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
                     idArchie = Archie_p_names.index(key_root[0])
+                    
+                    pert_control_name = dict_parm_pert[key_root[0]]['pert_control_name']
+                    update_value = dict_parm_pert[key_root[0]][update_key][ens_nb]
+                    
+                    # POROS_het_ens = self._read_dict_pert_and_update_ens_SPP(
+                    #                                    dict_parm_pert,
+                    #                                    POROS_het_ens,
+                    #                                    key_root,
+                    #                                    key,
+                    #                                    update_key,
+                    #                                    ens_nb,
+                    #                                    shellprint_update
+                    #                                    )
+                                            
+                                            
+                    # self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
                     if len(Archie_parms_mat_ens) == 0:
                         for p in Archie_p_names:
                             if len(self.Archie_parms[p]) != self.NENS:
@@ -2580,7 +2583,10 @@ class DA(CATHY):
                         Hx_ERT, df_Archie, mesh2test = mapper._map_ERT(
                                                             state,
                                                             path_fwd_CATHY,
-                                                            ens_nb,
+                                                            ens_nb=ens_nb,
+                                                            Archie_parms=self.Archie_parms,
+                                                            count_DA_cycle=self.count_DA_cycle,
+                                                            path_fwd_CATHY=path_fwd_CATHY_list,
                                                             **kwargs
                                                             )
                         df_Archie_new = mapper._add_2_ensemble_Archie(self.df_Archie,
@@ -2638,12 +2644,24 @@ class DA(CATHY):
                     )
                     self.console.rule("", style="green")
 
+                # self.mesh_pv_attributes.array_names
+                # self.mesh_pv_attributes['POROS']
+                # self.mesh_pv_attributes["node_markers_layers"]
+                
+                (
+                POROS_mesh_cell_ensi,
+                 POROS_mesh_nodes_ensi
+                 ) = self.map_prop_2mesh_markers('POROS', 
+                                                SPP_ensi['POROS'].groupby('layer').mean().to_list(), 
+                                                to_nodes=False,
+                                                )               
                 if parallel:
                     Hx_ens_ERT, df_Archie, mesh2test = mapper._map_ERT_parallel(
                                                                     self.dict_obs,
                                                                     self.count_DA_cycle,
                                                                     self.project_name,
                                                                     self.Archie_parms,
+                                                                    POROS_mesh_nodes_ensi,
                                                                     path_fwd_CATHY_list,
                                                                     list_assimilated_obs="all",
                                                                     default_state="psi",

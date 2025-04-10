@@ -137,7 +137,7 @@ def SW_2_ERa_DA(
     ER_converted_ti = Archie_rho_DA(
                                     rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
                                     sat=[df_sw],
-                                    porosity=ArchieParms2parse["porosity"],
+                                    porosity=porosity,
                                     a_Archie=ArchieParms2parse["a_Archie"],
                                     m_Archie=ArchieParms2parse["m_Archie"],
                                     n_Archie=ArchieParms2parse["n_Archie"],
@@ -341,6 +341,10 @@ def Archie_rho_DA(
     """
     verbose = True
     console = rich.console.Console(stderr=True, quiet=not verbose)
+    
+    print('------------- Archie transformation -------------')
+    print(f'Shape Saturation predicted: {np.shape(sat)}')
+    print(f'Shape Porosity nodes: {np.shape(sat)}')
 
     # Loop over soil type (as many soil type than a_Archie list length)
     # -----------------------------------------------
@@ -353,6 +357,10 @@ def Archie_rho_DA(
             * sat[i] ** (-n_Archie[i])
         )
         sigma = 1 / rho
+        print(f'min RHO converted SW nodes: {np.min(rho)}')
+        print(f'max RHO converted SW nodes: {np.max(rho)}')
+        print(f'nb of porosities in the soil: {len(np.unique(porosity))}')
+
         # sat[0]
         try: # CASE WITH DATA ASSIMILATION
             for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
@@ -393,6 +401,6 @@ def Archie_rho_DA(
                 )  # See eq. 4.4 thesis Isabelle p.95
                 sigma[meas_nb] = sigma[meas_nb] + noise
 
-    print('max res after Archie')
-    print(np.max(1 / sigma))
+    # print('max res after Archie')
+    # print(np.max(1 / sigma))
     return 1 / sigma

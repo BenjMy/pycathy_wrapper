@@ -3565,6 +3565,7 @@ class CATHY:
                                prop_map, 
                                zones_markers_3d=None,
                                to_nodes=False,
+                               # save_mesh=False,
                                **kwargs):
         """
         Map a physical property to the CATHY mesh nodes/cells.
@@ -3592,12 +3593,7 @@ class CATHY:
         if hasattr(self, "mesh_pv_attributes") == False:
             self.create_mesh_vtk()
         
-        saveMeshPath = os.path.join(
-                                    self.workdir, 
-                                    self.project_name, 
-                                    "vtk/", 
-                                    self.project_name + ".vtk"
-                                    )
+        saveMeshPath = None
         if 'saveMeshPath' in kwargs:
             saveMeshPath = kwargs.pop('saveMeshPath')
             
@@ -3625,26 +3621,53 @@ class CATHY:
                 prop_mesh_nodes[
                                 self.mesh_pv_attributes["node_markers_layers"] == m
                                 ] = prop_map[m]
-            self.mesh_pv_attributes[prop_name] = prop_mesh_nodes
-            self.mesh_pv_attributes.save(saveMeshPath,
-                                            binary=False,
+            self.mesh_pv_attributes[f'{prop_name}_nodes'] = prop_mesh_nodes
+            
+            if saveMeshPath is not None:
+                self.mesh_pv_attributes.save(saveMeshPath,
+                                             binary=False,
                                             )
             return list(prop_mesh_nodes)
 
         else:
-            prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers_layers"]))
-            for m in range(len(prop_map)):
-                prop_mesh_cells[
-                    self.mesh_pv_attributes["cell_markers_layers"] == m
-                                ] = prop_map[m]
-            self.mesh_pv_attributes[prop_name] = prop_mesh_cells
-            self.mesh_pv_attributes.save(saveMeshPath,
-                                            binary=False,
-                                            )
-            self.mesh_pv_attributes.set_active_scalars(prop_name)
-            prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data()
+            # prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers_layers"]))
+            # for m in range(len(prop_map)):
+            #     prop_mesh_cells[self.mesh_pv_attributes["cell_markers_layers"] == m] = prop_map[m]
+            # self.mesh_pv_attributes[f'{prop_name}_cells'] = prop_mesh_cells
+            
+            # # len(prop_mesh_cells)
+            # self.mesh_pv_attributes.set_active_scalars(f'{prop_name}_cells')
+            # prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data()
+            # prop_mesh_nodes.array_names
+            # self.mesh_pv_attributes.array_names
+            # self.mesh_pv_attributes[f'{prop_name}_nodes'] = prop_mesh_nodes[f'{prop_name}_nodes']
 
-            return prop_mesh_cells, prop_mesh_nodes[prop_name]
+            # Initialize property values for each mesh cell
+            prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers_layers"]))
+            
+            # Assign property values to mesh cells based on marker indices
+            for m in range(len(prop_map)):
+                prop_mesh_cells[self.mesh_pv_attributes["cell_markers_layers"] == m] = prop_map[m]
+            
+            # Store cell property values in the mesh attributes
+            self.mesh_pv_attributes[f'{prop_name}_cells'] = prop_mesh_cells
+            
+            # Set active scalars for proper visualization and conversion
+            self.mesh_pv_attributes.set_active_scalars(f'{prop_name}_cells')
+            
+            # Convert cell data to point data (interpolation to nodes)
+            # prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data(pass_cell_data=True)
+            prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data()
+            
+            # Assign interpolated property to mesh node attributes
+            self.mesh_pv_attributes[f'{prop_name}_nodes'] = prop_mesh_nodes[f'{prop_name}_cells']
+
+            if saveMeshPath is not None:
+                self.mesh_pv_attributes.save(saveMeshPath,
+                                                binary=False,
+                                                )
+                
+            return list(prop_mesh_cells), list(self.mesh_pv_attributes[f'{prop_name}_nodes'])
 
     def map_prop2mesh(self, dict_props):
         """

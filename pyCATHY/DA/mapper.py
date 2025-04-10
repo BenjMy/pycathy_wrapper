@@ -128,6 +128,7 @@ def _map_ERT_parallel_DA(
                         DA_cnb,
                         project_name,
                         Archie_parms,
+                        POROS_nodes_ensi,
                     ):
     """
     Parallel mapping of ERT data using pedophysical transformation H
@@ -140,7 +141,8 @@ def _map_ERT_parallel_DA(
                                 Archie.SW_2_ERa_DA,
                                 project_name,
                                 Archie_parms,
-                                Archie_parms["porosity"],
+                                # Archie_parms["porosity"],
+                                POROS_nodes_ensi,
                                 ERT_meta_dict,
                                 DA_cnb=DA_cnb,
                                 savefig=False,
@@ -262,6 +264,7 @@ def _map_ERT_parallel(
                         count_DA_cycle,
                         project_name,
                         Archie_parms,
+                        POROS_nodes_ensi,
                         path_fwd_CATHY_list,
                         list_assimilated_obs="all",
                         default_state="psi",
@@ -292,26 +295,27 @@ def _map_ERT_parallel(
     # -------------------------------------------
     ERT_meta_dict = _parse_ERT_metadata(key_time)
 
-    if len(ENS_times) > 0:  # case of the open Loop = nested loop with ensemble time
-        Hx_ERT_ens = _map_ERT_parallel_OL(
-                                            project_name,
-                                            Archie_parms,
-                                            ENS_times,
-                                            ERT_meta_dict,
-                                            key_time,
-                                            path_fwd_CATHY_list,
-                                        )
-    else:
-        Hx_ERT_ens, df_Archie, mesh2test = _map_ERT_parallel_DA(
-                                                    dict_obs,
-                                                    ENS_times,
-                                                    ERT_meta_dict,
-                                                    key_time,
-                                                    path_fwd_CATHY_list,
-                                                    DA_cnb,
-                                                    project_name,
-                                                    Archie_parms,
-                                                )
+    # if len(ENS_times) > 0:  # case of the open Loop = nested loop with ensemble time
+    #     Hx_ERT_ens = _map_ERT_parallel_OL(
+    #                                         project_name,
+    #                                         Archie_parms,
+    #                                         ENS_times,
+    #                                         ERT_meta_dict,
+    #                                         key_time,
+    #                                         path_fwd_CATHY_list,
+    #                                     )
+    # else:
+    Hx_ERT_ens, df_Archie, mesh2test = _map_ERT_parallel_DA(
+                                                dict_obs,
+                                                ENS_times,
+                                                ERT_meta_dict,
+                                                key_time,
+                                                path_fwd_CATHY_list,
+                                                DA_cnb,
+                                                project_name,
+                                                Archie_parms,
+                                                POROS_nodes_ensi,
+                                            )
     prediction_ERT = np.vstack(Hx_ERT_ens).T
 
     return prediction_ERT, df_Archie, mesh2test
