@@ -1838,7 +1838,7 @@ class DA(CATHY):
             df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'POROS'] = dict_parm_pert[key][update_key][ens_nb]
 
         #%% check if contains nan (if not update soil file)
-        contains_nan = df_SPP_2fill[ens_nb].isna().any().any()      
+        contains_nan = df_SPP_2fill[ens_nb].isna().any().any()
         if contains_nan==False:
             self.update_soil(
                 SPP_map=df_SPP_2fill[ens_nb],
@@ -1848,33 +1848,33 @@ class DA(CATHY):
                 shellprint_update=shellprint_update,
                 backup=True,
             )
-            
+
             saveMeshPath = os.path.join(
-                                        os.getcwd(), 
-                                        "vtk/", 
+                                        os.getcwd(),
+                                        "vtk/",
                                         self.project_name + ".vtk"
                                         )
-            
+
             # self.mesh_pv_attributes["node_markers_layers"]
             # self.mesh_pv_attributes
             # df_SPP_2fill[ens_nb]
             # self.zone3d
-            # np.shape(self.zone3d)            
+            # np.shape(self.zone3d)
             # mt.map_cells_to_nodes()
-            
+
             # os.path.join(os.getcwd())
             (
             POROS_mesh_cells,
              POROS_mesh_nodes
-             ) = self.map_prop_2mesh_markers('POROS', 
-                                            df_SPP_2fill[ens_nb]['POROS'].groupby('layer').mean().to_list(), 
+             ) = self.map_prop_2mesh_markers('POROS',
+                                            df_SPP_2fill[ens_nb]['POROS'].groupby('layer').mean().to_list(),
                                             to_nodes=False,
                                             saveMeshPath=saveMeshPath,
                                             # zones_markers_3d=None,
                                             )
             self.map_prop2mesh({"POROS": POROS_mesh_nodes})
-        
-        
+
+
         return df_SPP_2fill
 
     def update_ENS_files(self, dict_parm_pert, list_parm2update, **kwargs):
@@ -2125,7 +2125,7 @@ class DA(CATHY):
                                                            ens_nb,
                                                            shellprint_update
                                                            )
-                        
+
                     else:
                         df_SPP, _ = in_CT.read_soil(os.path.join(
                                                                 self.workdir,
@@ -2148,7 +2148,7 @@ class DA(CATHY):
                             shellprint_update=shellprint_update,
                             backup=True,
                         )
-                        
+
                 # VG parameters update
                 # --------------------------------------------------------------
                 elif key_root[0] in VG_p_possible_names:
@@ -2261,10 +2261,10 @@ class DA(CATHY):
                     )
 
                     idArchie = Archie_p_names.index(key_root[0])
-                    
+
                     pert_control_name = dict_parm_pert[key_root[0]]['pert_control_name']
                     update_value = dict_parm_pert[key_root[0]][update_key][ens_nb]
-                    
+
                     # POROS_het_ens = self._read_dict_pert_and_update_ens_SPP(
                     #                                    dict_parm_pert,
                     #                                    POROS_het_ens,
@@ -2274,8 +2274,8 @@ class DA(CATHY):
                     #                                    ens_nb,
                     #                                    shellprint_update
                     #                                    )
-                                            
-                                            
+
+
                     # self.Archie_parms = {'rFluid':rFluid, 'a':a, 'm':m, 'n':n, 'pert_sigma':pert_sigma}
                     if len(Archie_parms_mat_ens) == 0:
                         for p in Archie_p_names:
@@ -2350,7 +2350,7 @@ class DA(CATHY):
             return data2add
 
         if time_ass is None:
-            time_ass = self.count_DA_cycle + 1  # + 1 since we compare the predicted observation at ti +1 
+            time_ass = self.count_DA_cycle + 1  # + 1 since we compare the predicted observation at ti +1
 
         data = []
         # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
@@ -2647,14 +2647,14 @@ class DA(CATHY):
                 # self.mesh_pv_attributes.array_names
                 # self.mesh_pv_attributes['POROS']
                 # self.mesh_pv_attributes["node_markers_layers"]
-                
+
                 (
                 POROS_mesh_cell_ensi,
                  POROS_mesh_nodes_ensi
-                 ) = self.map_prop_2mesh_markers('POROS', 
-                                                SPP_ensi['POROS'].groupby('layer').mean().to_list(), 
+                 ) = self.map_prop_2mesh_markers('POROS',
+                                                SPP_ensi['POROS'].groupby('layer').mean().to_list(),
                                                 to_nodes=False,
-                                                )               
+                                                )
                 if parallel:
                     Hx_ens_ERT, df_Archie, mesh2test = mapper._map_ERT_parallel(
                                                                     self.dict_obs,
@@ -3183,16 +3183,16 @@ class DA(CATHY):
     def _save_performance_to_parquet(self,df_performance, file_path="performance_data.parquet"):
         """Saves the performance DataFrame to Parquet format, appending if the file exists."""
         # if os.path.exists(file_path):
-            # df_performance.to_parquet(file_path, engine="pyarrow", 
-            #                           compression="snappy", 
-            #                           index=False, 
+            # df_performance.to_parquet(file_path, engine="pyarrow",
+            #                           compression="snappy",
+            #                           index=False,
             #                           append=True
             #                           )
 
         if os.path.exists(file_path):
             df_existing = pd.read_parquet(file_path, engine="pyarrow")
             df_performance = pd.concat([df_existing, df_performance], ignore_index=True)
-        
+
         df_performance.to_parquet(file_path, engine="pyarrow", compression="snappy", index=False)
 
 
@@ -3258,13 +3258,13 @@ class DA(CATHY):
 
             # t_obs = 3
             self.df_performance = self._append_to_performance_df(
-                                                                self.df_performance, 
-                                                                t_obs, 
+                                                                self.df_performance,
+                                                                t_obs,
                                                                 name_sensor,
-                                                                rmse_sensor, 
+                                                                rmse_sensor,
                                                                 all_obs_rmse_avg,
                                                                 nrmse_sensor,
-                                                                nrmse_avg, 
+                                                                nrmse_avg,
                                                                 ol_bool
                                                                 )
 

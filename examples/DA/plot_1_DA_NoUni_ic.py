@@ -35,8 +35,8 @@ scenario = {
 #%% Create a CATHY project
 # -----------------------
 simuWithDA = DA(
-                        dirName='./DA_with_non_uniform_ic',
-                        # prj_name= 'DA_with_non_uniform_ic', 
+                        dirName='./',
+                        prj_name= 'DA_with_non_uniform_ic', 
                         notebook=True,
                     )
 

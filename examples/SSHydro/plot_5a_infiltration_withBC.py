@@ -38,7 +38,7 @@ import pyvista as pv
 
 #%% Init CATHY model
 # ------------------------
-path2prj = "./SSHydro/"  # add your local path here
+path2prj = "./"  # add your local path here
 simu = cathy_tools.CATHY(dirName=path2prj, 
                          prj_name="bc_noflow"
                          )

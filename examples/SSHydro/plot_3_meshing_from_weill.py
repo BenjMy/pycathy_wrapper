@@ -204,9 +204,6 @@ import pyvista as pv
 mesh2plot = pv.read(meshfile)
 mesh2plot.plot(show_edges=True, show_axes=True, show_bounds=True)
 
-
-
-
 #%% Change coordinates offset
 
 simu.update_prepo_inputs(

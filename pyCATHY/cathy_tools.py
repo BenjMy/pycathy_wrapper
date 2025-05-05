@@ -3965,6 +3965,13 @@ class CATHY:
         elif filename == "grid3d":
             df = out_CT.read_grid3d(path)
             return df
+        elif filename == "ET":
+            path = os.path.join(self.workdir, 
+                                self.project_name, 
+                                'fort.777'
+                                )
+            df = out_CT.read_fort777(path)
+            return df
         else:
             print("no file specified")
         pass

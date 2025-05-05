@@ -73,14 +73,14 @@ def read_spatial_format(filename,prop=None):
                                  )
     # fort777_file collumns information
     # -------------------------------------------------------------------------
-    colsnames = ["time_sec","SURFACE NODE","x","y",prop]
+    colsnames = ["time_sec","SURFACE NODE","X","Y",prop]
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
     df_spatial = pd.DataFrame(df_spatial_stack, 
                               columns=colsnames
                               )
     df_spatial["time"] = pd.to_timedelta(df_spatial["time_sec"], unit="s")
-    df_spatial_multiindex = df_spatial.set_index(['time', 'x', 'y'])
+    df_spatial_multiindex = df_spatial.set_index(['time', 'X', 'Y'])
     df_spatial_unique = df_spatial_multiindex[~df_spatial_multiindex.index.duplicated(keep='first')]
     df_spatial_unique = df_spatial_unique.reset_index()
     

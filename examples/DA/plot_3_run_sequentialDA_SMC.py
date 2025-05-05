@@ -137,7 +137,6 @@ simuWithDA.update_atmbc(HSPATM=1,IETO=0,
 
 #%%
 
-# aa
 simuWithDA.run_DA_sequential(
                               VTKF=2,
                               TRAFLAG=0,
