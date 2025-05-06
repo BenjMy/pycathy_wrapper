@@ -9,6 +9,7 @@ rich
 pandas
 natsort
 shapely
+seaborn
 
 pypandoc
 # Optionnal packages
