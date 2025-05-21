@@ -143,28 +143,52 @@ def perturbate(simu_DA, scenario, NENS,
 
         index = scenario["per_name"].index("ic")
 
+        pert_control_name = None
+        if 'pert_control_name' in scenario:
+            pert_control_name = scenario['pert_control_name'][index]
+        
         scenario_nom = scenario["per_nom"][index]
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
         
+        df_SPP, df_FP = simu_DA.read_inputs('soil')
+        zone_raster, zone_header = simu_DA.read_inputs('zone')
+        veg_raster, veg_header = simu_DA.read_inputs('root_map')
+        
         clip_min = None
         clip_max = None
-        if type(scenario["per_nom"][index]) is list:                   
-            for nstri in range(nlayers):
+        if type(scenario["per_nom"][index]) is list:    
+            if 'layers' in pert_control_name:
+                for nstri in range(nlayers):
+                    
+                    if nlayers > 1:
+                        scenario_nom = scenario["per_nom"][index][nstri]
+                        scenario_mean = scenario["per_mean"][index][nstri]
+                        scenario_sd = scenario["per_sigma"][index][nstri]
+        
+                    ic = create_dict_entry(
+                                'ic',scenario,index,nstri, 
+                                scenario_nom, scenario_mean, scenario_sd, 
+                                clip_min,clip_max,
+                                NENS,
+                                )
+                    
+                    list_pert.append(ic)
+                    
+            elif 'zone' in pert_control_name:
+                for zonei in range(len(np.unique(zone_raster))):
+                    # Adjust bounds and retrieve parameters for the current zone
+                    clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                    zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
+        
+                    ic = create_dict_entry(
+                        'ic', scenario, index, zonei, zone_nom, zone_mean, zone_sd, 
+                        clip_min, clip_max, NENS,
+                        pert_control_name=pert_control_name
+                    )
+                    check_distribution(ic)
+                    list_pert.append(ic)        
                 
-                if nlayers > 1:
-                    scenario_nom = scenario["per_nom"][index][nstri]
-                    scenario_mean = scenario["per_mean"][index][nstri]
-                    scenario_sd = scenario["per_sigma"][index][nstri]
-    
-                ic = create_dict_entry(
-                            'ic',scenario,index,nstri, 
-                            scenario_nom, scenario_mean, scenario_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            )
-                
-                list_pert.append(ic)
         else: 
             
             ic = create_dict_entry(
@@ -1105,12 +1129,14 @@ def perturbate_parm(
     
     # type_parm2check = 
     # match_withLayers = re.search(rf'{type_parm}\d+', type_parm)
-    match_withLayers = re.search(r'\d', type_parm)
+    # match_withLayers = re.search(r'\d', type_parm)
     nlayers = None
     if 'nlayers' in kwargs:
         nlayers = kwargs['nlayers']
 
     var_per_2add = {}
+    
+    # pert_control_name
 
     # copy initiail variable dict and add 'sampling' and 'ini_perturbation' attributes
     # -------------------------------------------------------------------------
@@ -1130,7 +1156,7 @@ def perturbate_parm(
     # Contrainsted perturbation (bounded)
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
-        if match_withLayers:
+        if parm['pert_control_name']=='layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
@@ -1146,7 +1172,7 @@ def perturbate_parm(
                 parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
             )
     elif "porosity" in type_parm:
-        if match_withLayers:
+        if parm['pert_control_name']=='layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                                   ensemble_size,
                                                                   nlayers,
@@ -1209,7 +1235,7 @@ def perturbate_parm(
 
     elif "ic" in type_parm:
 
-        if match_withLayers:
+        if parm['pert_control_name']=='layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                                   ensemble_size,
                                                                   nlayers,
@@ -1221,7 +1247,9 @@ def perturbate_parm(
             parm_sampling = param_withLayers[int(key_root[1])]
             parm_per_array = param_withLayers[int(key_root[1])]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
-    
+        else:
+            parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
+            parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
     
     # For all other types of perturbation
     # --------------------------------------------------------------------

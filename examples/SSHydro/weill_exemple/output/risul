@@ -1,6 +1,6 @@
 
-     ISIMGR (0 FLOW3D only w/ grid input,
-             1 FLOW3D only w/ DEM input,
+     ISIMGR (0 FLOW3D only w/ grid input, 
+             1 FLOW3D only w/ DEM input, 
              2 FLOW3D and SURF_ROUTE w/ DEM) =      2
      PONDH_MIN (MIN. PONDING HEAD)           =     0.00000E+00
      IPRT1  (FOR OUTPUT OF INPUT DATA)       =      2
@@ -27,14 +27,14 @@
      ITUNS1 (DELTAT INCREASE THRESHOLD)      =      5
      ITUNS2 (DELTAT DECREASE THRESHOLD)      =      7
 
-     ISOLV  (-5 BiCGSTAB w/ diag precond,
-             -4 BiCGSTAB without precond,
-             -3 TFQMR   w/ diag precond,
-             -2 TFQMR   without precond,
-             -1 TFQMR   w/ K^-1  precond,
-              0 BiCGSTAB w/ K^-1  precond,
-              1 GRAMRB (min residual),
-              2 GCRK(5) (ORTHOMIN),
+     ISOLV  (-5 BiCGSTAB w/ diag precond, 
+             -4 BiCGSTAB without precond, 
+             -3 TFQMR   w/ diag precond, 
+             -2 TFQMR   without precond, 
+             -1 TFQMR   w/ K^-1  precond, 
+              0 BiCGSTAB w/ K^-1  precond, 
+              1 GRAMRB (min residual), 
+              2 GCRK(5) (ORTHOMIN), 
               3 NONSYM (direct solver))      =      2
      ITMXCG (MAX ITER FOR CG LINEAR SOLVERS) =    500
      TOLCG  (TOLER. FOR CG LINEAR SOLVERS)   =     1.00000E-10
@@ -50,11 +50,11 @@
 
      PMIN  (AIR DRY PRESSURE HEAD VALUE)     =    -5.00000E+00
      IPEAT (flag for peat deformation)       =      0
-     IVGHU (-1 moisture curve lookup table,
-            0 van Genuchten,
-            1 extended van Genuchten,
-            2 Huyakorn with Kr=Se**n,
-            3 Huyakorn with log_10 Kr(Se),
+     IVGHU (-1 moisture curve lookup table, 
+            0 van Genuchten, 
+            1 extended van Genuchten, 
+            2 Huyakorn with Kr=Se**n, 
+            3 Huyakorn with log_10 Kr(Se), 
             4 Brooks-Corey)                  =      0
  SPATIALLY VARIABLE VAN GENUCHTEN PARAMETERS
 
@@ -1853,13 +1853,13 @@
      VOLTOT  (TOT VOL OF DISCRETIZED CATCH.) =     3.00000E+02
 
      NATM, NSF DIRICHLET BCs AT BEGINNING OF SIMULATION
-     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
 
 
      NATM, NSF DIRICHLET BCs INPUT AT TIME:   0.0000E+00
 
        NATM, NSF NEUMANN BCs AT BEGINNING OF SIMULATION
-     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE
+     #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
 
 
        NATM, NSF NEUMANN BCs INPUT AT TIME:   0.0000E+00
@@ -1890,7 +1890,7 @@
    24   7.527575E-11   7.527575E-11  <<SYMMETRIC SOLVER>>
    28   7.536964E-11   7.536961E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.1565E+00 -1.3658E-01  6616   2.86E+00   3.00E+00  2.647E-05  2.764E-06
@@ -1924,7 +1924,7 @@
    22   9.255476E-11   9.255476E-11  <<SYMMETRIC SOLVER>>
    27   8.324158E-11   8.324157E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.1054E+00 -1.3364E-01  6616   2.87E+00   3.00E+00  2.647E-05  2.764E-06
@@ -1958,7 +1958,7 @@
    20   5.610642E-11   5.610642E-11  <<SYMMETRIC SOLVER>>
    27   5.443558E-11   5.443556E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.0109E+00 -1.2818E-01  6616   2.87E+00   3.00E+00  2.647E-05  2.764E-06
@@ -1992,7 +1992,7 @@
    19   5.129310E-11   5.129310E-11  <<SYMMETRIC SOLVER>>
    25   6.764767E-11   6.764765E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8480E+00 -1.1869E-01  6616   2.88E+00   3.00E+00  2.647E-05  2.764E-06
@@ -2026,7 +2026,7 @@
    17   4.909786E-11   4.909786E-11  <<SYMMETRIC SOLVER>>
    20   7.652824E-11   7.652824E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5980E+00 -1.0387E-01  6616   2.90E+00   3.00E+00  2.647E-05  2.764E-06
@@ -2060,7 +2060,7 @@
    15   6.731353E-11   6.731353E-11  <<SYMMETRIC SOLVER>>
    18   6.507720E-11   6.507720E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2739E+00 -8.4103E-02  6616   2.92E+00   3.00E+00  2.647E-05  2.764E-06
@@ -2094,7 +2094,7 @@
    12   4.769626E-11   4.769626E-11  <<SYMMETRIC SOLVER>>
    15   6.976975E-11   6.976975E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.3121E-01  6.2316E-02  7056   3.06E+00   3.00E+00  2.647E-05  2.764E-06
@@ -2128,7 +2128,7 @@
    11   3.508309E-11   3.508309E-11  <<SYMMETRIC SOLVER>>
    11   6.903856E-11   6.903856E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.3221E-01  4.3574E-02  7056   3.04E+00   3.00E+00  2.647E-05  2.764E-06
@@ -2162,7 +2162,7 @@
     9   2.626213E-11   2.626213E-11  <<SYMMETRIC SOLVER>>
     9   1.764202E-11   1.764202E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.0588E-01  2.8630E-02  7056   3.03E+00   3.00E+00  2.647E-05  2.764E-06
@@ -2199,7 +2199,7 @@
     6   1.717039E-11   1.717039E-11  <<SYMMETRIC SOLVER>>
     6   2.918854E-11   2.918854E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.6462E-01 -1.1023E-02  6616   2.96E+00   2.97E+00  1.876E-05  1.898E-06
@@ -2230,7 +2230,7 @@
     6   2.492749E-11   2.492749E-11  <<SYMMETRIC SOLVER>>
     6   4.236169E-11   4.236169E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5137E-01 -1.0109E-02  6616   2.95E+00   2.96E+00  1.769E-05  2.354E-06
@@ -2264,7 +2264,7 @@
     6   7.372512E-11   7.372512E-11  <<SYMMETRIC SOLVER>>
     7   1.382565E-11   1.382565E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.4282E-01 -9.4061E-03  6616   2.94E+00   2.95E+00  1.718E-05  2.685E-06
@@ -2299,7 +2299,7 @@
     6   1.969720E-11   1.969720E-11  <<SYMMETRIC SOLVER>>
     6   3.328831E-11   3.328831E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0574E-01 -6.8531E-03  6616   2.94E+00   2.94E+00  1.699E-05  2.953E-06
@@ -2332,7 +2332,7 @@
     6   2.671882E-11   2.671882E-11  <<SYMMETRIC SOLVER>>
     6   4.503967E-11   4.503967E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.5803E-02 -6.1015E-03  6616   2.93E+00   2.94E+00  1.699E-05  3.133E-06
@@ -2365,7 +2365,7 @@
     6   1.677520E-11   1.677520E-11  <<SYMMETRIC SOLVER>>
     6   2.827362E-11   2.827362E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.7472E-02 -5.4721E-03  6616   2.92E+00   2.93E+00  1.709E-05  3.284E-06
@@ -2398,7 +2398,7 @@
     6   1.898667E-11   1.898667E-11  <<SYMMETRIC SOLVER>>
     6   3.208716E-11   3.208716E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.0305E-02 -4.9357E-03  6616   2.92E+00   2.92E+00  1.725E-05  3.415E-06
@@ -2432,7 +2432,7 @@
     6   2.481474E-11   2.481474E-11  <<SYMMETRIC SOLVER>>
     6   4.044061E-11   4.044061E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.4023E-02 -4.4724E-03  6616   2.91E+00   2.92E+00  1.744E-05  3.530E-06
@@ -2467,7 +2467,7 @@
     6   2.102850E-11   2.102850E-11  <<SYMMETRIC SOLVER>>
     6   3.452301E-11   3.452301E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.8440E-02 -4.0682E-03  6616   2.91E+00   2.91E+00  1.767E-05  3.632E-06
@@ -2501,7 +2501,7 @@
     6   1.638479E-11   1.638479E-11  <<SYMMETRIC SOLVER>>
     6   2.766743E-11   2.766743E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.3426E-02 -3.7128E-03  6616   2.91E+00   2.91E+00  1.791E-05  3.724E-06
@@ -2534,7 +2534,7 @@
     6   1.836312E-11   1.836312E-11  <<SYMMETRIC SOLVER>>
     6   3.094853E-11   3.094853E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.8886E-02 -3.3982E-03  6616   2.90E+00   2.91E+00  1.816E-05  3.807E-06
@@ -2567,7 +2567,7 @@
     6   1.608113E-11   1.608113E-11  <<SYMMETRIC SOLVER>>
     6   2.712423E-11   2.712423E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.4750E-02 -3.1181E-03  6616   2.90E+00   2.90E+00  1.841E-05  3.882E-06
@@ -2601,7 +2601,7 @@
     6   2.227639E-11   2.227639E-11  <<SYMMETRIC SOLVER>>
     6   3.595307E-11   3.595307E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.0962E-02 -2.8675E-03  6616   2.90E+00   2.90E+00  1.866E-05  3.951E-06
@@ -2635,7 +2635,7 @@
     6   1.659918E-11   1.659918E-11  <<SYMMETRIC SOLVER>>
     6   2.800844E-11   2.800844E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.7481E-02 -2.6423E-03  6616   2.90E+00   2.90E+00  1.892E-05  4.014E-06
@@ -2668,7 +2668,7 @@
     6   2.010042E-11   2.010042E-11  <<SYMMETRIC SOLVER>>
     6   3.387865E-11   3.387865E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.4270E-02 -2.4391E-03  6616   2.89E+00   2.90E+00  1.917E-05  4.072E-06
@@ -2701,7 +2701,7 @@
     6   1.412034E-11   1.412034E-11  <<SYMMETRIC SOLVER>>
     6   2.392679E-11   2.392679E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.1302E-02 -2.2551E-03  6616   2.89E+00   2.89E+00  1.941E-05  4.125E-06
@@ -2735,7 +2735,7 @@
     6   2.184664E-11   2.184664E-11  <<SYMMETRIC SOLVER>>
     6   3.672191E-11   3.672191E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.8552E-02 -2.0879E-03  6616   2.89E+00   2.89E+00  1.964E-05  4.174E-06
@@ -2769,7 +2769,7 @@
     6   1.889434E-11   1.889434E-11  <<SYMMETRIC SOLVER>>
     6   3.187974E-11   3.187974E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.6000E-02 -1.9357E-03  6616   2.89E+00   2.89E+00  1.987E-05  4.220E-06
@@ -2802,7 +2802,7 @@
     6   1.737794E-11   1.737794E-11  <<SYMMETRIC SOLVER>>
     6   2.928696E-11   2.928696E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.3630E-02 -1.7965E-03  6616   2.88E+00   2.89E+00  2.009E-05  4.262E-06
@@ -2836,7 +2836,7 @@
     6   2.823868E-11   2.823868E-11  <<SYMMETRIC SOLVER>>
     6   4.734496E-11   4.734496E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.1425E-02 -1.6691E-03  6616   2.88E+00   2.88E+00  2.028E-05  4.301E-06
@@ -2870,7 +2870,7 @@
     6   1.654678E-11   1.654678E-11  <<SYMMETRIC SOLVER>>
     6   2.789818E-11   2.789818E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.9373E-02 -1.5522E-03  6616   2.88E+00   2.88E+00  2.048E-05  4.338E-06
@@ -2903,7 +2903,7 @@
     6   1.665388E-11   1.665388E-11  <<SYMMETRIC SOLVER>>
     6   2.810291E-11   2.810291E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.7462E-02 -1.4447E-03  6616   2.88E+00   2.88E+00  2.067E-05  4.372E-06
@@ -2936,7 +2936,7 @@
     6   1.656837E-11   1.656837E-11  <<SYMMETRIC SOLVER>>
     6   2.798772E-11   2.798772E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.5680E-02 -1.3456E-03  6616   2.88E+00   2.88E+00  2.085E-05  4.403E-06
@@ -2966,7 +2966,7 @@
     8   1.254651E-11   1.254651E-11  <<SYMMETRIC SOLVER>>
     6   5.724971E-11   5.724971E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.4020E-02 -1.2542E-03  6616   2.88E+00   2.88E+00  2.102E-05  4.432E-06
@@ -2996,7 +2996,7 @@
     6   3.396233E-11   3.396233E-11  <<SYMMETRIC SOLVER>>
     6   5.723052E-11   5.723052E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.4559E-02 -1.2782E-03  6616   2.88E+00   2.88E+00  2.118E-05  4.460E-06
@@ -3029,7 +3029,7 @@
     6   4.518109E-11   4.518109E-11  <<SYMMETRIC SOLVER>>
     6   7.587484E-11   7.587484E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.2834E-02 -1.1850E-03  6616   2.87E+00   2.88E+00  2.134E-05  4.487E-06
@@ -3059,7 +3059,7 @@
     8   2.163536E-11   2.163536E-11  <<SYMMETRIC SOLVER>>
     7   9.752600E-12   9.752600E-12  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.1234E-02 -1.0993E-03  6616   2.87E+00   2.87E+00  2.150E-05  4.513E-06
@@ -3089,7 +3089,7 @@
     6   6.990761E-11   6.990761E-11  <<SYMMETRIC SOLVER>>
     7   1.385371E-11   1.385371E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.1575E-02 -1.1144E-03  6616   2.87E+00   2.87E+00  2.165E-05  4.537E-06
@@ -3122,7 +3122,7 @@
     6   7.077816E-11   7.077816E-11  <<SYMMETRIC SOLVER>>
     7   1.344007E-11   1.344007E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.9934E-02 -1.0277E-03  6616   2.87E+00   2.87E+00  2.180E-05  4.561E-06
@@ -3152,7 +3152,7 @@
     8   3.609383E-11   3.609383E-11  <<SYMMETRIC SOLVER>>
     7   2.063439E-11   2.063439E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8422E-02 -9.4824E-04  6616   2.87E+00   2.87E+00  2.194E-05  4.583E-06
@@ -3183,7 +3183,7 @@
     7   2.262633E-11   2.262633E-11  <<SYMMETRIC SOLVER>>
     7   3.655573E-11   3.655573E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8593E-02 -9.5564E-04  6616   2.87E+00   2.87E+00  2.207E-05  4.604E-06
@@ -3217,7 +3217,7 @@
     6   8.830627E-11   8.830627E-11  <<SYMMETRIC SOLVER>>
     7   2.117559E-11   2.117559E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.7067E-02 -8.7605E-04  6616   2.87E+00   2.87E+00  2.220E-05  4.624E-06
@@ -3247,7 +3247,7 @@
     8   6.041671E-11   6.041670E-11  <<SYMMETRIC SOLVER>>
     7   5.013418E-11   5.013418E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5671E-02 -8.0354E-04  6616   2.87E+00   2.87E+00  2.233E-05  4.643E-06
@@ -3277,7 +3277,7 @@
     7   3.431310E-11   3.431310E-11  <<SYMMETRIC SOLVER>>
     7   5.744275E-11   5.744275E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5707E-02 -8.0460E-04  6616   2.87E+00   2.87E+00  2.244E-05  4.660E-06
@@ -3307,7 +3307,7 @@
     9   1.340720E-11   1.340720E-11  <<SYMMETRIC SOLVER>>
     7   8.360213E-11   8.360213E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.4320E-02 -7.3287E-04  6616   2.87E+00   2.87E+00  2.255E-05  4.677E-06
@@ -3334,7 +3334,7 @@
     9   2.899876E-11   2.899876E-11  <<SYMMETRIC SOLVER>>
     8   2.215677E-11   2.215677E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.4245E-02 -7.2834E-04  6616   2.87E+00   2.87E+00  2.266E-05  4.693E-06
@@ -3364,7 +3364,7 @@
     8   1.892935E-11   1.892935E-11  <<SYMMETRIC SOLVER>>
     8   3.160594E-11   3.160594E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.4050E-02 -7.1755E-04  6616   2.87E+00   2.87E+00  2.276E-05  4.708E-06
@@ -3394,7 +3394,7 @@
     9   5.515628E-11   5.515628E-11  <<SYMMETRIC SOLVER>>
     8   4.571883E-11   4.571883E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2611E-02 -6.4324E-04  6616   2.86E+00   2.87E+00  2.286E-05  4.723E-06
@@ -3421,7 +3421,7 @@
    10   1.651732E-11   1.651732E-11  <<SYMMETRIC SOLVER>>
     8   8.727683E-11   8.727683E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2341E-02 -6.2848E-04  6616   2.86E+00   2.86E+00  2.296E-05  4.737E-06
@@ -3448,7 +3448,7 @@
    10   3.280969E-11   3.280969E-11  <<SYMMETRIC SOLVER>>
     9   3.006200E-11   3.006200E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1968E-02 -6.0813E-04  6616   2.86E+00   2.86E+00  2.305E-05  4.750E-06
@@ -3478,7 +3478,7 @@
     9   2.690273E-11   2.690273E-11  <<SYMMETRIC SOLVER>>
     9   4.443161E-11   4.443161E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1500E-02 -5.8247E-04  6616   2.86E+00   2.86E+00  2.313E-05  4.762E-06
@@ -3508,7 +3508,7 @@
    10   5.600230E-11   5.600230E-11  <<SYMMETRIC SOLVER>>
     9   6.192299E-11   6.192299E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0076E-02 -5.0817E-04  6616   2.86E+00   2.86E+00  2.321E-05  4.774E-06
@@ -3539,7 +3539,7 @@
     9   6.708838E-11   6.708838E-11  <<SYMMETRIC SOLVER>>
    10   2.172021E-11   2.172021E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.6328E-03 -4.8274E-04  6616   2.86E+00   2.86E+00  2.328E-05  4.784E-06
@@ -3570,7 +3570,7 @@
    10   9.149450E-11   9.149450E-11  <<SYMMETRIC SOLVER>>
    10   3.106234E-11   3.106234E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.4137E-03 -4.1806E-04  6616   2.86E+00   2.86E+00  2.334E-05  4.793E-06
@@ -3600,7 +3600,7 @@
    10   2.042318E-11   2.042318E-11  <<SYMMETRIC SOLVER>>
    10   3.343708E-11   3.343708E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.0147E-03 -3.9434E-04  6616   2.86E+00   2.86E+00  2.339E-05  4.814E-06
@@ -3633,7 +3633,7 @@
    10   2.541393E-11   2.541393E-11  <<SYMMETRIC SOLVER>>
    10   4.161848E-11   4.161848E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.0055E-03 -3.3938E-04  6616   2.86E+00   2.86E+00  2.342E-05  4.807E-06
@@ -3663,7 +3663,7 @@
    11   3.029723E-11   3.029724E-11  <<SYMMETRIC SOLVER>>
    10   6.331222E-11   6.331222E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.1740E-03 -2.9333E-04  6616   2.86E+00   2.86E+00  2.346E-05  4.813E-06
@@ -3690,7 +3690,7 @@
    11   5.564087E-11   5.564087E-11  <<SYMMETRIC SOLVER>>
    11   2.648310E-11   2.648310E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.9801E-03 -2.7671E-04  6616   2.86E+00   2.86E+00  2.349E-05  4.818E-06
@@ -3720,7 +3720,7 @@
    10   9.298437E-11   9.298437E-11  <<SYMMETRIC SOLVER>>
    11   4.047381E-11   4.047381E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.8036E-03 -2.5930E-04  6616   2.86E+00   2.86E+00  2.351E-05  4.821E-06
@@ -3750,7 +3750,7 @@
    11   8.877509E-11   8.877509E-11  <<SYMMETRIC SOLVER>>
    11   5.147561E-11   5.147561E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.1930E-03 -2.2274E-04  6616   2.86E+00   2.86E+00  2.354E-05  4.824E-06
@@ -3777,7 +3777,7 @@
    12   4.178707E-11   4.178707E-11  <<SYMMETRIC SOLVER>>
    11   9.544576E-11   9.544576E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.1438E-03 -2.0970E-04  6616   2.86E+00   2.86E+00  2.356E-05  4.827E-06
@@ -3804,7 +3804,7 @@
    12   7.750000E-11   7.750000E-11  <<SYMMETRIC SOLVER>>
    12   2.370121E-11   2.370121E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.1400E-03 -1.9720E-04  6616   2.86E+00   2.86E+00  2.357E-05  4.829E-06
@@ -3831,7 +3831,7 @@
    13   4.075086E-11   4.075086E-11  <<SYMMETRIC SOLVER>>
    12   7.657672E-11   7.657672E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.1514E-03 -1.8968E-04     3  -4.84E-03  -4.65E-03  2.357E-05  4.851E-06
@@ -3858,7 +3858,7 @@
    13   7.470311E-11   7.470311E-11  <<SYMMETRIC SOLVER>>
    13   4.797006E-11   4.797006E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.2585E-03 -2.0525E-04     3  -5.04E-03  -4.84E-03  2.355E-05  4.826E-06
@@ -3885,7 +3885,7 @@
    14   2.668924E-11   2.668924E-11  <<SYMMETRIC SOLVER>>
    14   2.587482E-11   2.587482E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.3844E-03 -2.1443E-04     4  -5.08E-03  -4.87E-03  2.353E-05  4.822E-06
@@ -3915,7 +3915,7 @@
    13   6.978914E-11   6.978914E-11  <<SYMMETRIC SOLVER>>
    14   3.266703E-11   3.266703E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.5663E-03 -2.2614E-04     5  -5.19E-03  -4.96E-03  2.349E-05  4.817E-06
@@ -3945,7 +3945,7 @@
    14   4.751682E-11   4.751682E-11  <<SYMMETRIC SOLVER>>
    14   2.926288E-11   2.926288E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.2179E-03 -2.1487E-04     7  -5.25E-03  -5.04E-03  2.340E-05  4.807E-06
@@ -3975,7 +3975,7 @@
    14   3.307782E-11   3.307782E-11  <<SYMMETRIC SOLVER>>
    14   5.026297E-11   5.026297E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.3845E-03 -2.2330E-04    11  -5.31E-03  -5.09E-03  2.330E-05  4.799E-06
@@ -4005,7 +4005,7 @@
    14   8.202066E-11   8.202066E-11  <<SYMMETRIC SOLVER>>
    14   4.784761E-11   4.784761E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.0435E-03 -2.0999E-04    15  -5.35E-03  -5.14E-03  2.311E-05  4.784E-06
@@ -4032,7 +4032,7 @@
    15   2.533776E-11   2.533776E-11  <<SYMMETRIC SOLVER>>
    14   9.171089E-11   9.171089E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.2855E-03 -2.1801E-04    17  -5.38E-03  -5.16E-03  2.298E-05  4.773E-06
@@ -4062,7 +4062,7 @@
    15   3.738619E-11   3.738620E-11  <<SYMMETRIC SOLVER>>
    15   5.904565E-11   5.904565E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.5984E-03 -2.2764E-04    18  -5.45E-03  -5.22E-03  2.286E-05  4.760E-06
@@ -4092,7 +4092,7 @@
    15   4.228904E-11   4.228904E-11  <<SYMMETRIC SOLVER>>
    15   7.066627E-11   7.066627E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.3741E-03 -2.1714E-04    43  -5.25E-03  -5.03E-03  2.267E-05  4.203E-06
@@ -4120,7 +4120,7 @@
    15   7.371150E-11   7.371150E-11  <<SYMMETRIC SOLVER>>
    16   6.099837E-11   6.099837E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.7203E-03 -2.3459E-04    43  -5.48E-03  -5.24E-03  2.256E-05  4.192E-06
@@ -4151,7 +4151,7 @@
    16   3.428031E-11   3.428031E-11  <<SYMMETRIC SOLVER>>
    16   5.214547E-11   5.214547E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0938E-03 -2.3403E-04    24  -5.33E-03  -5.10E-03  2.247E-05  4.177E-06
@@ -4181,7 +4181,7 @@
    16   4.094879E-11   4.094879E-11  <<SYMMETRIC SOLVER>>
    16   4.301086E-11   4.301086E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.9068E-03 -2.2048E-04    25  -5.33E-03  -5.10E-03  2.231E-05  3.938E-06
@@ -4211,7 +4211,7 @@
    16   6.125510E-11   6.125510E-11  <<SYMMETRIC SOLVER>>
    16   9.458223E-11   9.458223E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.2957E-03 -2.3343E-04    64  -5.40E-03  -5.17E-03  2.218E-05  3.799E-06
@@ -4244,7 +4244,7 @@
    16   5.759077E-11   5.759077E-11  <<SYMMETRIC SOLVER>>
    16   7.309815E-11   7.309815E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0342E-03 -2.1899E-04    28  -5.43E-03  -5.22E-03  2.193E-05  3.582E-06
@@ -4274,7 +4274,7 @@
    16   8.156793E-11   8.156793E-11  <<SYMMETRIC SOLVER>>
    16   7.970999E-11   7.970999E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.7604E-03 -2.0760E-04    31  -5.47E-03  -5.26E-03  2.159E-05  3.406E-06
@@ -4301,7 +4301,7 @@
    17   3.722851E-11   3.722851E-11  <<SYMMETRIC SOLVER>>
    17   4.588901E-11   4.588901E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0422E-03 -2.1757E-04    85  -5.44E-03  -5.22E-03  2.114E-05  3.197E-06
@@ -4328,7 +4328,7 @@
    17   6.218633E-11   6.218633E-11  <<SYMMETRIC SOLVER>>
    17   6.259740E-11   6.259740E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.4138E-03 -2.3494E-04    85  -5.67E-03  -5.44E-03  2.072E-05  3.050E-06
@@ -4359,7 +4359,7 @@
    18   6.717473E-11   6.717473E-11  <<SYMMETRIC SOLVER>>
    18   9.603758E-11   9.603758E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.7838E-03 -2.3550E-04    45  -5.44E-03  -5.21E-03  2.039E-05  2.899E-06
@@ -4390,7 +4390,7 @@
    17   9.513451E-11   9.513451E-11  <<SYMMETRIC SOLVER>>
    18   4.844043E-11   4.844044E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.5279E-03 -2.2630E-04   106  -5.62E-03  -5.39E-03  2.011E-05  2.818E-06
@@ -4420,7 +4420,7 @@
    18   4.551207E-11   4.551207E-11  <<SYMMETRIC SOLVER>>
    18   6.585536E-11   6.585536E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.9432E-03 -2.3479E-04    46  -5.54E-03  -5.31E-03  1.990E-05  2.888E-06
@@ -4450,7 +4450,7 @@
    18   5.196075E-11   5.196075E-11  <<SYMMETRIC SOLVER>>
    18   7.611975E-11   7.611975E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.7267E-03 -2.2161E-04    86  -5.58E-03  -5.36E-03  1.975E-05  2.948E-06
@@ -4477,7 +4477,7 @@
    18   8.290330E-11   8.290330E-11  <<SYMMETRIC SOLVER>>
    19   4.243018E-11   4.243018E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.1223E-03 -2.3106E-04    48  -5.58E-03  -5.34E-03  1.961E-05  3.001E-06
@@ -4507,7 +4507,7 @@
    19   7.563850E-11   7.563850E-11  <<SYMMETRIC SOLVER>>
    20   3.162738E-11   3.162738E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.6095E-03 -2.4433E-04    66  -5.68E-03  -5.43E-03  1.949E-05  3.049E-06
@@ -4537,7 +4537,7 @@
    19   5.553890E-11   5.553890E-11  <<SYMMETRIC SOLVER>>
    19   4.995876E-11   4.995876E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.2823E-03 -2.2894E-04    51  -5.69E-03  -5.46E-03  1.932E-05  3.093E-06
@@ -4564,7 +4564,7 @@
    19   8.079139E-11   8.079139E-11  <<SYMMETRIC SOLVER>>
    19   6.159774E-11   6.159774E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.7395E-03 -2.3921E-04    67  -5.67E-03  -5.43E-03  1.918E-05  3.132E-06
@@ -4594,7 +4594,7 @@
    20   3.812703E-11   3.812703E-11  <<SYMMETRIC SOLVER>>
    20   5.462047E-11   5.462047E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.1047E-03 -2.4612E-04    87  -5.65E-03  -5.41E-03  1.901E-05  3.167E-06
@@ -4624,7 +4624,7 @@
    20   4.096686E-11   4.096686E-11  <<SYMMETRIC SOLVER>>
    19   8.782781E-11   8.782781E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.7861E-03 -2.3928E-04   442  -4.76E-03  -4.52E-03  1.881E-05  3.201E-06
@@ -4651,7 +4651,7 @@
    20   5.726187E-11   5.726187E-11  <<SYMMETRIC SOLVER>>
    20   3.530504E-11   3.530504E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.2059E-03 -2.5873E-04   442  -5.02E-03  -4.76E-03  1.866E-05  3.230E-06
@@ -4681,7 +4681,7 @@
    21   3.891660E-11   3.891660E-11  <<SYMMETRIC SOLVER>>
    21   5.342933E-11   5.342933E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.6717E-03 -2.7968E-04   442  -5.30E-03  -5.02E-03  1.855E-05  3.258E-06
@@ -4711,7 +4711,7 @@
    20   7.504472E-11   7.504472E-11  <<SYMMETRIC SOLVER>>
    20   6.454175E-11   6.454175E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.2962E-03 -2.7486E-04   442  -5.57E-03  -5.30E-03  1.841E-05  3.284E-06
@@ -4738,7 +4738,7 @@
    21   5.710235E-11   5.710235E-11  <<SYMMETRIC SOLVER>>
    20   7.458692E-11   7.458692E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.7760E-03 -2.9746E-04   442  -5.87E-03  -5.57E-03  1.833E-05  3.307E-06
@@ -4765,7 +4765,7 @@
    21   7.630607E-11   7.630607E-11  <<SYMMETRIC SOLVER>>
    20   9.425673E-11   9.425673E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.2531E-03 -3.2184E-04   442  -6.19E-03  -5.87E-03  1.825E-05  3.329E-06
@@ -4792,7 +4792,7 @@
    22   5.652343E-11   5.652343E-11  <<SYMMETRIC SOLVER>>
    21   8.199337E-11   8.199337E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.7099E-03 -3.4816E-04   442  -6.53E-03  -6.19E-03  1.816E-05  3.350E-06
@@ -4822,7 +4822,7 @@
    22   3.619040E-11   3.619040E-11  <<SYMMETRIC SOLVER>>
    22   5.035705E-11   5.035705E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0277E-02 -3.7661E-04   442  -6.91E-03  -6.53E-03  1.809E-05  3.370E-06
@@ -4852,7 +4852,7 @@
    22   6.957451E-11   6.957451E-11  <<SYMMETRIC SOLVER>>
    22   6.886631E-11   6.886631E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.8351E-03 -3.7049E-04   442  -7.28E-03  -6.91E-03  1.802E-05  3.389E-06
@@ -4882,7 +4882,7 @@
    22   4.981853E-11   4.981853E-11  <<SYMMETRIC SOLVER>>
    22   6.850150E-11   6.850150E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0391E-02 -4.0136E-04   442  -7.68E-03  -7.28E-03  1.798E-05  3.406E-06
@@ -4912,7 +4912,7 @@
    22   8.358891E-11   8.358891E-11  <<SYMMETRIC SOLVER>>
    22   9.574023E-11   9.574023E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0002E-02 -3.9545E-04   442  -8.07E-03  -7.68E-03  1.793E-05  3.422E-06
@@ -4939,7 +4939,7 @@
    23   3.773968E-11   3.773968E-11  <<SYMMETRIC SOLVER>>
    23   4.137704E-11   4.137704E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0596E-02 -4.2900E-04   442  -8.50E-03  -8.07E-03  1.792E-05  3.436E-06
@@ -4969,7 +4969,7 @@
    22   4.270561E-11   4.270561E-11  <<SYMMETRIC SOLVER>>
    22   6.087872E-11   6.087872E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1231E-02 -4.6540E-04   442  -8.97E-03  -8.50E-03  1.789E-05  3.449E-06
@@ -5000,7 +5000,7 @@
    23   7.771200E-11   7.771200E-11  <<SYMMETRIC SOLVER>>
    22   8.266521E-11   8.266522E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0872E-02 -4.5928E-04   442  -9.42E-03  -8.96E-03  1.788E-05  3.461E-06
@@ -5028,7 +5028,7 @@
    23   5.333900E-11   5.333900E-11  <<SYMMETRIC SOLVER>>
    23   7.712826E-11   7.712826E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1480E-02 -4.4113E-04   443  -8.49E-03  -8.05E-03  1.786E-05  3.472E-06
@@ -5058,7 +5058,7 @@
    23   8.701249E-11   8.701249E-11  <<SYMMETRIC SOLVER>>
    24   7.742761E-11   7.742760E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2206E-02 -4.7790E-04   443  -8.97E-03  -8.49E-03  1.784E-05  3.474E-06
@@ -5089,7 +5089,7 @@
    24   4.666039E-11   4.666039E-11  <<SYMMETRIC SOLVER>>
    22   9.512106E-11   9.512106E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1852E-02 -4.7113E-04   443  -9.44E-03  -8.97E-03  1.784E-05  3.482E-06
@@ -5117,7 +5117,7 @@
    23   7.283682E-11   7.283682E-11  <<SYMMETRIC SOLVER>>
    24   4.363573E-11   4.363573E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2566E-02 -4.7646E-04   444  -9.19E-03  -8.72E-03  1.782E-05  3.481E-06
@@ -5145,7 +5145,7 @@
    24   6.372266E-11   6.372266E-11  <<SYMMETRIC SOLVER>>
    23   3.717499E-11   3.717499E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.3389E-02 -5.1631E-04   444  -9.71E-03  -9.19E-03  1.780E-05  3.477E-06
@@ -5174,7 +5174,7 @@
    24   7.211131E-11   7.211131E-11  <<SYMMETRIC SOLVER>>
    23   6.423163E-11   6.423164E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.4247E-02 -5.3736E-04   445  -9.83E-03  -9.29E-03  1.778E-05  3.478E-06
@@ -5203,7 +5203,7 @@
    24   8.944032E-11   8.944031E-11  <<SYMMETRIC SOLVER>>
    23   6.382366E-11   6.382365E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5166E-02 -5.7009E-04   463  -1.01E-02  -9.53E-03  1.775E-05  3.474E-06
@@ -5232,7 +5232,7 @@
    25   4.536946E-11   4.536946E-11  <<SYMMETRIC SOLVER>>
    24   8.454167E-11   8.454168E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5921E-02 -5.8941E-04   464  -9.92E-03  -9.33E-03  1.767E-05  3.456E-06
@@ -5263,7 +5263,7 @@
    24   9.508665E-11   9.508665E-11  <<SYMMETRIC SOLVER>>
    23   9.293922E-11   9.293922E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.6720E-02 -6.1272E-04   451  -1.05E-02  -9.89E-03  1.752E-05  3.066E-06
@@ -5296,7 +5296,7 @@
    24   7.883334E-11   7.883334E-11  <<SYMMETRIC SOLVER>>
    23   6.489925E-11   6.489925E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5942E-02 -5.7391E-04   455  -1.06E-02  -1.00E-02  1.736E-05  3.050E-06
@@ -5327,7 +5327,7 @@
    24   8.427291E-11   8.427291E-11  <<SYMMETRIC SOLVER>>
    24   8.187466E-11   8.187466E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.5223E-02 -5.3764E-04   466  -1.00E-02  -9.49E-03  1.722E-05  2.872E-06
@@ -5356,7 +5356,7 @@
    25   4.088934E-11   4.088934E-11  <<SYMMETRIC SOLVER>>
    24   7.320659E-11   7.320659E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.6282E-02 -5.8227E-04   466  -1.06E-02  -1.00E-02  1.709E-05  2.854E-06
@@ -5385,7 +5385,7 @@
    25   5.155703E-11   5.155703E-11  <<SYMMETRIC SOLVER>>
    24   9.898144E-11   9.898144E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.7174E-02 -5.9529E-04   468  -1.05E-02  -9.95E-03  1.692E-05  2.644E-06
@@ -5416,7 +5416,7 @@
    25   9.002133E-11   9.002130E-11  <<SYMMETRIC SOLVER>>
    25   6.677379E-11   6.677380E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8283E-02 -6.2805E-04   485  -1.08E-02  -1.02E-02  1.675E-05  2.551E-06
@@ -5447,7 +5447,7 @@
    24   9.431467E-11   9.431467E-11  <<SYMMETRIC SOLVER>>
    23   7.321769E-11   7.321769E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.7396E-02 -5.8639E-04   473  -1.09E-02  -1.03E-02  1.646E-05  2.390E-06
@@ -5478,7 +5478,7 @@
    25   9.902202E-11   9.902201E-11  <<SYMMETRIC SOLVER>>
    26   5.571573E-11   5.571573E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8421E-02 -6.0653E-04   476  -1.10E-02  -1.04E-02  1.619E-05  2.251E-06
@@ -5511,7 +5511,7 @@
    25   9.806054E-11   9.806055E-11  <<SYMMETRIC SOLVER>>
    25   4.146850E-11   4.146849E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.7776E-02 -5.8733E-04   883  -7.81E-03  -7.22E-03  1.598E-05  2.279E-06
@@ -5542,7 +5542,7 @@
    25   5.623602E-11   5.623602E-11  <<SYMMETRIC SOLVER>>
    25   6.241851E-11   6.241851E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.7050E-02 -5.8010E-04   883  -8.40E-03  -7.82E-03  1.579E-05  2.344E-06
@@ -5571,7 +5571,7 @@
    25   4.758550E-11   4.758550E-11  <<SYMMETRIC SOLVER>>
    24   6.761231E-11   6.761231E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8323E-02 -6.3033E-04   883  -9.03E-03  -8.40E-03  1.568E-05  2.404E-06
@@ -5602,7 +5602,7 @@
    25   7.153803E-11   7.153803E-11  <<SYMMETRIC SOLVER>>
    24   7.951137E-11   7.951138E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.9631E-02 -6.8517E-04   883  -9.73E-03  -9.04E-03  1.561E-05  2.458E-06
@@ -5633,7 +5633,7 @@
    25   6.176632E-11   6.176632E-11  <<SYMMETRIC SOLVER>>
    24   7.953064E-11   7.953064E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.8976E-02 -6.7854E-04   883  -1.04E-02  -9.74E-03  1.554E-05  2.508E-06
@@ -5662,7 +5662,7 @@
    24   9.101468E-11   9.101468E-11  <<SYMMETRIC SOLVER>>
    25   4.126457E-11   4.126457E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.0197E-02 -7.3919E-04   883  -1.12E-02  -1.04E-02  1.544E-05  2.551E-06
@@ -5691,7 +5691,7 @@
    24   9.277590E-11   9.277590E-11  <<SYMMETRIC SOLVER>>
    25   4.450494E-11   4.450494E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.1586E-02 -8.0572E-04   883  -1.20E-02  -1.12E-02  1.536E-05  2.589E-06
@@ -5720,7 +5720,7 @@
    24   8.976056E-11   8.976056E-11  <<SYMMETRIC SOLVER>>
    25   5.817171E-11   5.817171E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.2980E-02 -8.7892E-04   883  -1.29E-02  -1.20E-02  1.527E-05  2.624E-06
@@ -5750,7 +5750,7 @@
    24   6.622354E-11   6.622351E-11  <<SYMMETRIC SOLVER>>
    25   9.410504E-11   9.410503E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.4405E-02 -9.5966E-04   883  -1.39E-02  -1.29E-02  1.519E-05  2.656E-06
@@ -5783,7 +5783,7 @@
    27   4.879265E-11   4.879265E-11  <<SYMMETRIC SOLVER>>
    24   6.354820E-11   6.354820E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.5771E-02 -9.5703E-04   884  -1.29E-02  -1.20E-02  1.508E-05  2.676E-06
@@ -5816,7 +5816,7 @@
    26   4.739856E-11   4.739856E-11  <<SYMMETRIC SOLVER>>
    26   4.435788E-11   4.435788E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.4942E-02 -9.4809E-04   884  -1.39E-02  -1.29E-02  1.501E-05  2.695E-06
@@ -5847,7 +5847,7 @@
    26   6.765993E-11   6.765994E-11  <<SYMMETRIC SOLVER>>
    26   9.404775E-11   9.404775E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.6542E-02 -9.5575E-04   885  -1.34E-02  -1.24E-02  1.492E-05  2.696E-06
@@ -5878,7 +5878,7 @@
    26   8.545332E-11   8.545332E-11  <<SYMMETRIC SOLVER>>
    26   8.004786E-11   8.004786E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  2.8408E-02 -1.0390E-03   885  -1.44E-02  -1.34E-02  1.486E-05  2.696E-06
@@ -5909,7 +5909,7 @@
    26   6.350352E-11   6.350352E-11  <<SYMMETRIC SOLVER>>
    26   6.068501E-11   6.068501E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.0117E-02 -1.0827E-03   905  -1.40E-02  -1.30E-02  1.480E-05  2.694E-06
@@ -5939,7 +5939,7 @@
    26   2.677886E-11   2.677886E-11  <<SYMMETRIC SOLVER>>
    26   6.436634E-11   6.436633E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.2028E-02 -1.1717E-03   905  -1.52E-02  -1.41E-02  1.470E-05  2.665E-06
@@ -5970,7 +5970,7 @@
    26   6.743995E-11   6.743995E-11  <<SYMMETRIC SOLVER>>
    26   5.014518E-11   5.014518E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.3874E-02 -1.1922E-03   888  -1.57E-02  -1.45E-02  1.453E-05  2.387E-06
@@ -6002,7 +6002,7 @@
    24   8.846618E-11   8.846618E-11  <<SYMMETRIC SOLVER>>
    25   9.069026E-11   9.069025E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.2583E-02 -1.1416E-03   906  -1.55E-02  -1.44E-02  1.442E-05  2.360E-06
@@ -6033,7 +6033,7 @@
    27   4.754083E-11   4.754082E-11  <<SYMMETRIC SOLVER>>
    26   6.939759E-11   6.939759E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.4350E-02 -1.1757E-03   907  -1.56E-02  -1.44E-02  1.424E-05  2.215E-06
@@ -6064,7 +6064,7 @@
    26   5.233467E-11   5.233467E-11  <<SYMMETRIC SOLVER>>
    26   5.526010E-11   5.526010E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.6374E-02 -1.2264E-03   908  -1.60E-02  -1.47E-02  1.408E-05  2.105E-06
@@ -6095,7 +6095,7 @@
    27   3.589609E-11   3.589612E-11  <<SYMMETRIC SOLVER>>
    26   6.291618E-11   6.291618E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.8259E-02 -1.2815E-03   926  -1.62E-02  -1.49E-02  1.390E-05  2.000E-06
@@ -6126,7 +6126,7 @@
    26   6.571873E-11   6.571873E-11  <<SYMMETRIC SOLVER>>
    26   7.571550E-11   7.571550E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.0408E-02 -1.3633E-03  1324  -1.25E-02  -1.12E-02  1.367E-05  1.977E-06
@@ -6157,7 +6157,7 @@
    27   4.831215E-11   4.831215E-11  <<SYMMETRIC SOLVER>>
    26   7.497854E-11   7.497855E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.2610E-02 -1.4929E-03  1324  -1.41E-02  -1.26E-02  1.348E-05  2.083E-06
@@ -6188,7 +6188,7 @@
    27   5.631619E-11   5.631617E-11  <<SYMMETRIC SOLVER>>
    26   6.837349E-11   6.837349E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.4864E-02 -1.6401E-03  1324  -1.58E-02  -1.42E-02  1.328E-05  2.157E-06
@@ -6219,7 +6219,7 @@
    27   5.802937E-11   5.802932E-11  <<SYMMETRIC SOLVER>>
    26   8.586465E-11   8.586465E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.7224E-02 -1.8060E-03  1324  -1.77E-02  -1.59E-02  1.313E-05  2.230E-06
@@ -6250,7 +6250,7 @@
    27   6.189774E-11   6.189774E-11  <<SYMMETRIC SOLVER>>
    27   5.510016E-11   5.510016E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.0328E-02 -1.9936E-03  1324  -1.98E-02  -1.78E-02  1.306E-05  2.286E-06
@@ -6281,7 +6281,7 @@
    27   6.388821E-11   6.388822E-11  <<SYMMETRIC SOLVER>>
    26   7.384892E-11   7.384892E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.3084E-02 -2.0249E-03  1325  -1.93E-02  -1.72E-02  1.299E-05  2.314E-06
@@ -6311,7 +6311,7 @@
    24   5.060893E-11   5.060893E-11  <<SYMMETRIC SOLVER>>
    26   9.073218E-11   9.073218E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.6279E-02 -2.0359E-03  1326  -1.87E-02  -1.66E-02  1.289E-05  2.312E-06
@@ -6342,7 +6342,7 @@
    26   9.911945E-11   9.911944E-11  <<SYMMETRIC SOLVER>>
    27   3.959192E-11   3.959193E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.9654E-02 -2.2305E-03  1326  -2.10E-02  -1.88E-02  1.281E-05  2.287E-06
@@ -6374,7 +6374,7 @@
    27   6.766564E-11   6.766564E-11  <<SYMMETRIC SOLVER>>
    27   5.712922E-11   5.712922E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.7239E-02 -2.1034E-03  1327  -2.14E-02  -1.93E-02  1.268E-05  2.073E-06
@@ -6406,7 +6406,7 @@
    27   6.313300E-11   6.313301E-11  <<SYMMETRIC SOLVER>>
    27   5.707780E-11   5.707780E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0559E-02 -2.1476E-03  1347  -2.07E-02  -1.86E-02  1.253E-05  2.025E-06
@@ -6438,7 +6438,7 @@
    27   6.522548E-11   6.522553E-11  <<SYMMETRIC SOLVER>>
    27   5.675291E-11   5.675291E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.8190E-02 -2.0155E-03  1348  -2.07E-02  -1.87E-02  1.239E-05  1.899E-06
@@ -6470,7 +6470,7 @@
    26   6.624171E-11   6.624170E-11  <<SYMMETRIC SOLVER>>
    27   5.289507E-11   5.289506E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.2093E-02 -2.0913E-03  1349  -2.13E-02  -1.92E-02  1.226E-05  1.791E-06
@@ -6502,7 +6502,7 @@
    27   6.181312E-11   6.181312E-11  <<SYMMETRIC SOLVER>>
    26   8.712896E-11   8.712896E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.9608E-02 -2.0413E-03  1367  -2.21E-02  -2.01E-02  1.211E-05  1.807E-06
@@ -6534,7 +6534,7 @@
    27   4.297815E-11   4.297815E-11  <<SYMMETRIC SOLVER>>
    27   5.572915E-11   5.572915E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.3265E-02 -2.2299E-03  1765  -1.94E-02  -1.72E-02  1.189E-05  1.907E-06
@@ -6565,7 +6565,7 @@
    26   5.891427E-11   5.891427E-11  <<SYMMETRIC SOLVER>>
    27   6.186471E-11   6.186472E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.1219E-02 -2.2672E-03  1765  -2.19E-02  -1.96E-02  1.177E-05  1.987E-06
@@ -6595,7 +6595,7 @@
    28   3.772619E-11   3.772622E-11  <<SYMMETRIC SOLVER>>
    27   5.161570E-11   5.161569E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.5285E-02 -2.5284E-03  1765  -2.46E-02  -2.21E-02  1.161E-05  2.014E-06
@@ -6627,7 +6627,7 @@
    28   4.648745E-11   4.648744E-11  <<SYMMETRIC SOLVER>>
    27   4.984167E-11   4.984167E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.8983E-02 -2.6173E-03  1766  -2.41E-02  -2.15E-02  1.150E-05  2.036E-06
@@ -6659,7 +6659,7 @@
    28   3.461980E-11   3.461980E-11  <<SYMMETRIC SOLVER>>
    25   7.405739E-11   7.405739E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.6370E-02 -2.4229E-03  1787  -2.15E-02  -1.91E-02  1.139E-05  2.020E-06
@@ -6690,7 +6690,7 @@
    28   4.483277E-11   4.483276E-11  <<SYMMETRIC SOLVER>>
    25   9.318784E-11   9.318784E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.1416E-02 -2.6684E-03  1787  -2.44E-02  -2.17E-02  1.133E-05  1.975E-06
@@ -6721,7 +6721,7 @@
    27   9.265173E-11   9.265172E-11  <<SYMMETRIC SOLVER>>
    27   6.920656E-11   6.920656E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.6365E-02 -2.9565E-03  1787  -2.76E-02  -2.47E-02  1.124E-05  1.934E-06
@@ -6752,7 +6752,7 @@
    27   7.832527E-11   7.832527E-11  <<SYMMETRIC SOLVER>>
    27   4.541464E-11   4.541464E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.0856E-02 -2.8728E-03  1788  -2.57E-02  -2.28E-02  1.106E-05  1.759E-06
@@ -6786,7 +6786,7 @@
    26   9.244468E-11   9.244468E-11  <<SYMMETRIC SOLVER>>
    26   7.003583E-11   7.003585E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.5532E-02 -2.9739E-03  1770  -2.70E-02  -2.40E-02  1.094E-05  1.667E-06
@@ -6820,7 +6820,7 @@
    24   7.457804E-11   7.457804E-11  <<SYMMETRIC SOLVER>>
    26   4.782132E-11   4.782132E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.3563E-02  4.7550E-03   166   4.49E-04  -4.31E-03  1.094E-05  1.574E-06
@@ -6851,7 +6851,7 @@
    27   6.979159E-11   6.979159E-11  <<SYMMETRIC SOLVER>>
    27   6.325477E-11   6.325477E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.5753E-02 -1.6172E-03  1808  -2.50E-02  -2.34E-02  1.075E-05  1.550E-06
@@ -6882,7 +6882,7 @@
    27   5.451354E-11   5.451355E-11  <<SYMMETRIC SOLVER>>
    27   5.112845E-11   5.112845E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  4.9911E-02 -1.7857E-03  1808  -2.69E-02  -2.51E-02  1.068E-05  1.617E-06
@@ -6915,7 +6915,7 @@
    27   7.116443E-11   7.116443E-11  <<SYMMETRIC SOLVER>>
    27   6.020460E-11   6.020461E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.3578E-02 -1.9659E-03  2206  -2.41E-02  -2.21E-02  1.057E-05  1.677E-06
@@ -6948,7 +6948,7 @@
    27   8.881318E-11   8.881318E-11  <<SYMMETRIC SOLVER>>
    27   7.154879E-11   7.154879E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.2458E-02 -1.8922E-03  2207  -2.24E-02  -2.05E-02  1.052E-05  1.701E-06
@@ -6979,7 +6979,7 @@
    28   3.809399E-11   3.809398E-11  <<SYMMETRIC SOLVER>>
    26   9.501840E-11   9.501841E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.6866E-02 -2.0703E-03  2207  -2.46E-02  -2.25E-02  1.043E-05  1.714E-06
@@ -7010,7 +7010,7 @@
    27   9.414538E-11   9.414537E-11  <<SYMMETRIC SOLVER>>
    27   8.157352E-11   8.157352E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.1389E-02 -2.2830E-03  2207  -2.70E-02  -2.47E-02  1.035E-05  1.691E-06
@@ -7042,7 +7042,7 @@
    27   8.479766E-11   8.479765E-11  <<SYMMETRIC SOLVER>>
    27   6.576261E-11   6.576261E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.5730E-02 -2.3288E-03  2228  -2.34E-02  -2.11E-02  1.025E-05  1.638E-06
@@ -7075,7 +7075,7 @@
    27   8.609656E-11   8.609655E-11  <<SYMMETRIC SOLVER>>
    27   7.677326E-11   7.677328E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.3640E-02 -2.3457E-03  2228  -2.60E-02  -2.36E-02  1.013E-05  1.600E-06
@@ -7107,7 +7107,7 @@
    27   7.949476E-11   7.949475E-11  <<SYMMETRIC SOLVER>>
    27   6.184115E-11   6.184116E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.2113E-02 -2.1687E-03  2209  -2.46E-02  -2.25E-02  1.002E-05  1.528E-06
@@ -7138,7 +7138,7 @@
    28   4.250413E-11   4.250413E-11  <<SYMMETRIC SOLVER>>
    26   6.968061E-11   6.968061E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.7134E-02 -2.3837E-03  2209  -2.72E-02  -2.48E-02  9.911E-06  1.471E-06
@@ -7170,7 +7170,7 @@
    27   8.624375E-11   8.624376E-11  <<SYMMETRIC SOLVER>>
    27   7.694613E-11   7.694613E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.1834E-02 -2.4852E-03  2229  -2.76E-02  -2.51E-02  9.829E-06  1.431E-06
@@ -7202,7 +7202,7 @@
    28   4.276681E-11   4.276680E-11  <<SYMMETRIC SOLVER>>
    27   5.894095E-11   5.894094E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.0113E-02 -2.3501E-03  2230  -2.56E-02  -2.32E-02  9.712E-06  1.365E-06
@@ -7233,7 +7233,7 @@
    28   4.880931E-11   4.880930E-11  <<SYMMETRIC SOLVER>>
    27   5.975863E-11   5.975863E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.5935E-02 -2.5553E-03  2211  -2.84E-02  -2.58E-02  9.658E-06  1.389E-06
@@ -7265,7 +7265,7 @@
    27   7.273556E-11   7.273557E-11  <<SYMMETRIC SOLVER>>
    27   7.074438E-11   7.074436E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.1455E-02 -2.6685E-03  2249  -2.66E-02  -2.39E-02  9.571E-06  1.506E-06
@@ -7297,7 +7297,7 @@
    28   4.649910E-11   4.649910E-11  <<SYMMETRIC SOLVER>>
    27   9.766682E-11   9.766681E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.9191E-02 -2.5338E-03  2213  -2.86E-02  -2.61E-02  9.452E-06  1.597E-06
@@ -7328,7 +7328,7 @@
    28   4.391148E-11   4.391147E-11  <<SYMMETRIC SOLVER>>
    27   7.792881E-11   7.792881E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.5370E-02 -2.6876E-03  2647  -2.72E-02  -2.45E-02  9.340E-06  1.627E-06
@@ -7359,7 +7359,7 @@
    28   4.570880E-11   4.570881E-11  <<SYMMETRIC SOLVER>>
    27   9.589668E-11   9.589668E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.1652E-02 -3.0010E-03  2647  -3.04E-02  -2.74E-02  9.269E-06  1.649E-06
@@ -7390,7 +7390,7 @@
    28   4.358839E-11   4.358839E-11  <<SYMMETRIC SOLVER>>
    27   7.216991E-11   7.216991E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.7450E-02 -3.3608E-03  2647  -3.41E-02  -3.07E-02  9.157E-06  1.621E-06
@@ -7421,7 +7421,7 @@
    27   9.803927E-11   9.803926E-11  <<SYMMETRIC SOLVER>>
    27   8.408084E-11   8.408084E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0379E-01 -3.7613E-03  2647  -3.82E-02  -3.44E-02  9.079E-06  1.608E-06
@@ -7453,7 +7453,7 @@
    27   7.391245E-11   7.391245E-11  <<SYMMETRIC SOLVER>>
    27   8.211640E-11   8.211640E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1012E-01 -4.2042E-03  2647  -4.28E-02  -3.86E-02  8.961E-06  1.590E-06
@@ -7485,7 +7485,7 @@
    28   4.783741E-11   4.783742E-11  <<SYMMETRIC SOLVER>>
    27   7.470131E-11   7.470130E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0747E-01 -4.3014E-03  2647  -4.76E-02  -4.33E-02  8.885E-06  1.541E-06
@@ -7516,7 +7516,7 @@
    28   4.266885E-11   4.266885E-11  <<SYMMETRIC SOLVER>>
    28   4.043970E-11   4.043971E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1562E-01 -4.7674E-03  2647  -5.29E-02  -4.82E-02  8.784E-06  1.483E-06
@@ -7547,7 +7547,7 @@
    28   7.709537E-11   7.709538E-11  <<SYMMETRIC SOLVER>>
    28   5.679080E-11   5.679081E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2314E-01 -4.8274E-03  2648  -5.35E-02  -4.87E-02  8.705E-06  1.441E-06
@@ -7578,7 +7578,7 @@
    28   3.316362E-11   3.316362E-11  <<SYMMETRIC SOLVER>>
    27   6.473166E-11   6.473166E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.3039E-01 -4.9255E-03  2649  -5.10E-02  -4.60E-02  8.587E-06  1.377E-06
@@ -7609,7 +7609,7 @@
    28   7.048868E-11   7.048868E-11  <<SYMMETRIC SOLVER>>
    28   5.847648E-11   5.847646E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2704E-01 -4.8702E-03  2650  -4.98E-02  -4.49E-02  8.517E-06  1.328E-06
@@ -7640,7 +7640,7 @@
    28   4.425283E-11   4.425283E-11  <<SYMMETRIC SOLVER>>
    28   3.453059E-11   3.453059E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.2253E-01 -4.5701E-03  2651  -4.86E-02  -4.41E-02  8.356E-06  1.265E-06
@@ -7674,7 +7674,7 @@
    28   7.320767E-11   7.320767E-11  <<SYMMETRIC SOLVER>>
    28   7.183519E-11   7.183522E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.1906E-01 -4.3387E-03  2651  -5.33E-02  -4.90E-02  8.256E-06  1.219E-06
@@ -7708,7 +7708,7 @@
    25   4.919589E-11   4.919589E-11  <<SYMMETRIC SOLVER>>
    25   4.045402E-11   4.045403E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0134E-02  4.5485E-03   229   1.44E-03  -3.10E-03  8.256E-06  1.152E-06
@@ -7739,7 +7739,7 @@
    28   5.043859E-11   5.043857E-11  <<SYMMETRIC SOLVER>>
    27   5.669832E-11   5.669831E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.4708E-02 -2.3565E-03  2652  -5.30E-02  -5.06E-02  8.129E-06  1.202E-06
@@ -7770,7 +7770,7 @@
    27   6.619631E-11   6.619634E-11  <<SYMMETRIC SOLVER>>
    26   4.843760E-11   4.843760E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.0302E-02 -2.5559E-03  2653  -5.06E-02  -4.80E-02  8.079E-06  1.280E-06
@@ -7801,7 +7801,7 @@
    28   4.631060E-11   4.631059E-11  <<SYMMETRIC SOLVER>>
    28   5.222330E-11   5.222328E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.6096E-02 -2.6996E-03  2689  -5.47E-02  -5.20E-02  8.062E-06  1.342E-06
@@ -7832,7 +7832,7 @@
    27   6.128271E-11   6.128271E-11  <<SYMMETRIC SOLVER>>
    26   7.736141E-11   7.736142E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.1939E-02 -2.8473E-03  2654  -5.15E-02  -4.86E-02  7.990E-06  1.395E-06
@@ -7863,7 +7863,7 @@
    26   9.117524E-11   9.117524E-11  <<SYMMETRIC SOLVER>>
    26   5.260058E-11   5.260059E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.8302E-02 -2.9203E-03  2655  -4.98E-02  -4.69E-02  7.913E-06  1.395E-06
@@ -7894,7 +7894,7 @@
    28   6.313502E-11   6.313503E-11  <<SYMMETRIC SOLVER>>
    28   6.083190E-11   6.083191E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.6171E-02 -3.1552E-03  2655  -5.32E-02  -5.01E-02  7.905E-06  1.389E-06
@@ -7925,7 +7925,7 @@
    27   9.018714E-11   9.018714E-11  <<SYMMETRIC SOLVER>>
    27   5.439824E-11   5.439825E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0317E-01 -3.4229E-03  3088  -3.87E-02  -3.53E-02  7.810E-06  1.359E-06
@@ -7957,7 +7957,7 @@
    27   8.684157E-11   8.684156E-11  <<SYMMETRIC SOLVER>>
    27   9.151642E-11   9.151641E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0332E-01 -3.5787E-03  3088  -4.25E-02  -3.89E-02  7.748E-06  1.325E-06
@@ -7989,7 +7989,7 @@
    27   9.778950E-11   9.778950E-11  <<SYMMETRIC SOLVER>>
    27   8.179042E-11   8.179042E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  1.0152E-01 -3.6438E-03  3088  -4.64E-02  -4.28E-02  7.685E-06  1.292E-06
@@ -8020,7 +8020,7 @@
    28   6.077122E-11   6.077123E-11  <<SYMMETRIC SOLVER>>
    28   4.355212E-11   4.355212E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.8838E-02 -3.6914E-03  3088  -5.03E-02  -4.66E-02  7.593E-06  1.267E-06
@@ -8051,7 +8051,7 @@
    26   6.852120E-11   6.852120E-11  <<SYMMETRIC SOLVER>>
    26   5.978454E-11   5.978454E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.7752E-02 -3.7184E-03  3088  -5.43E-02  -5.06E-02  7.539E-06  1.236E-06
@@ -8082,7 +8082,7 @@
    26   6.399192E-11   6.399191E-11  <<SYMMETRIC SOLVER>>
    26   3.638341E-11   3.638341E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.6670E-02  3.6329E-03   380  -1.68E-03  -5.31E-03  7.536E-06  1.211E-06
@@ -8112,7 +8112,7 @@
    27   7.700164E-11   7.700166E-11  <<SYMMETRIC SOLVER>>
    27   9.239219E-11   9.239218E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.4151E-02 -3.4465E-03  3090  -4.77E-02  -4.43E-02  7.430E-06  1.184E-06
@@ -8142,7 +8142,7 @@
    26   6.530276E-11   6.530276E-11  <<SYMMETRIC SOLVER>>
    26   8.149721E-11   8.149721E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.2745E-02 -3.2683E-03  3090  -5.11E-02  -4.78E-02  7.338E-06  1.168E-06
@@ -8172,7 +8172,7 @@
    28   4.483977E-11   4.483979E-11  <<SYMMETRIC SOLVER>>
    26   6.586110E-11   6.586110E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  9.2033E-02 -3.2198E-03  3091  -4.62E-02  -4.30E-02  7.321E-06  1.149E-06
@@ -8202,7 +8202,7 @@
    28   8.799227E-11   8.799226E-11  <<SYMMETRIC SOLVER>>
    28   9.465499E-11   9.465499E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.9741E-02 -3.2208E-03  3091  -4.96E-02  -4.64E-02  7.224E-06  1.123E-06
@@ -8233,7 +8233,7 @@
    27   6.680327E-11   6.680326E-11  <<SYMMETRIC SOLVER>>
    27   3.658176E-11   3.658177E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.7951E-02 -3.0162E-03  3091  -5.27E-02  -4.97E-02  7.124E-06  1.093E-06
@@ -8264,7 +8264,7 @@
    27   4.485123E-11   4.485125E-11  <<SYMMETRIC SOLVER>>
    28   4.443128E-11   4.443128E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.6867E-02 -2.9949E-03  3092  -4.81E-02  -4.51E-02  7.072E-06  1.068E-06
@@ -8295,7 +8295,7 @@
    28   4.592048E-11   4.592050E-11  <<SYMMETRIC SOLVER>>
    28   3.658438E-11   3.658438E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.5376E-02 -2.8710E-03  3092  -5.11E-02  -4.82E-02  7.025E-06  1.047E-06
@@ -8325,7 +8325,7 @@
    27   6.823009E-11   6.823010E-11  <<SYMMETRIC SOLVER>>
    28   3.958376E-11   3.958378E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.3548E-02 -2.7867E-03  3093  -4.67E-02  -4.39E-02  6.935E-06  1.014E-06
@@ -8355,7 +8355,7 @@
    27   7.941117E-11   7.941117E-11  <<SYMMETRIC SOLVER>>
    28   3.608231E-11   3.608231E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.2704E-02 -2.7661E-03  3093  -4.96E-02  -4.68E-02  6.883E-06  1.034E-06
@@ -8385,7 +8385,7 @@
    27   8.299283E-11   8.299283E-11  <<SYMMETRIC SOLVER>>
    27   8.967226E-11   8.967224E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  8.1603E-02 -2.6256E-03  3093  -5.23E-02  -4.97E-02  6.859E-06  1.105E-06
@@ -8414,7 +8414,7 @@
    27   5.770265E-11   5.770265E-11  <<SYMMETRIC SOLVER>>
    26   8.907904E-11   8.907904E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.9733E-02 -2.5794E-03  3094  -4.80E-02  -4.54E-02  6.777E-06  1.172E-06
@@ -8444,7 +8444,7 @@
    26   8.725376E-11   8.725376E-11  <<SYMMETRIC SOLVER>>
    28   4.240197E-11   4.240195E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.8692E-02 -2.5514E-03  3094  -5.07E-02  -4.81E-02  6.724E-06  1.221E-06
@@ -8475,7 +8475,7 @@
    29   5.388271E-11   5.388273E-11  <<SYMMETRIC SOLVER>>
    26   8.191363E-11   8.191363E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.7718E-02 -2.4073E-03  3094  -5.31E-02  -5.07E-02  6.717E-06  1.269E-06
@@ -8505,7 +8505,7 @@
    27   5.096866E-11   5.096866E-11  <<SYMMETRIC SOLVER>>
    28   3.604121E-11   3.604120E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.5944E-02 -2.3813E-03  3095  -4.88E-02  -4.64E-02  6.639E-06  1.244E-06
@@ -8535,7 +8535,7 @@
    26   5.873432E-11   5.873431E-11  <<SYMMETRIC SOLVER>>
    25   9.989321E-11   9.989321E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.5174E-02 -2.3495E-03  3095  -5.13E-02  -4.89E-02  6.562E-06  1.238E-06
@@ -8566,7 +8566,7 @@
    26   9.130954E-11   9.130954E-11  <<SYMMETRIC SOLVER>>
    28   6.050006E-11   6.050003E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.4409E-02 -2.2188E-03  3096  -4.68E-02  -4.46E-02  6.541E-06  1.234E-06
@@ -8596,7 +8596,7 @@
    27   5.429017E-11   5.429016E-11  <<SYMMETRIC SOLVER>>
    26   8.704110E-11   8.704110E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.3339E-02 -2.1939E-03  3096  -4.91E-02  -4.69E-02  6.500E-06  1.230E-06
@@ -8625,7 +8625,7 @@
    26   7.476423E-11   7.476424E-11  <<SYMMETRIC SOLVER>>
    27   8.242118E-11   8.242119E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.2203E-02 -2.1627E-03  3096  -5.14E-02  -4.92E-02  6.440E-06  1.190E-06
@@ -8655,7 +8655,7 @@
    26   6.570707E-11   6.570707E-11  <<SYMMETRIC SOLVER>>
    26   3.670432E-11   3.670432E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.1099E-02 -2.0453E-03  3097  -4.68E-02  -4.48E-02  6.388E-06  1.172E-06
@@ -8685,7 +8685,7 @@
    26   8.988536E-11   8.988536E-11  <<SYMMETRIC SOLVER>>
    28   4.985022E-11   4.985021E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  7.0537E-02  3.3575E-03   381  -1.34E-03  -4.69E-03  6.390E-06  1.158E-06
@@ -8714,7 +8714,7 @@
    27   4.398116E-11   4.398117E-11  <<SYMMETRIC SOLVER>>
    28   4.232448E-11   4.232449E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.9516E-02 -1.9914E-03  3097  -5.10E-02  -4.90E-02  6.318E-06  1.144E-06
@@ -8744,7 +8744,7 @@
    26   5.788500E-11   5.788499E-11  <<SYMMETRIC SOLVER>>
    26   9.843019E-11   9.843020E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.8323E-02 -1.9280E-03  3529  -4.34E-02  -4.15E-02  6.270E-06  1.134E-06
@@ -8775,7 +8775,7 @@
    27   7.019923E-11   7.019922E-11  <<SYMMETRIC SOLVER>>
    27   7.258448E-11   7.258448E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.7626E-02 -1.9441E-03  3529  -4.54E-02  -4.35E-02  6.252E-06  1.120E-06
@@ -8805,7 +8805,7 @@
    26   8.334159E-11   8.334161E-11  <<SYMMETRIC SOLVER>>
    28   4.984653E-11   4.984653E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.6616E-02  2.2147E-03   364  -9.76E-04  -3.19E-03  6.217E-06  1.106E-06
@@ -8835,7 +8835,7 @@
    26   5.268092E-11   5.268092E-11  <<SYMMETRIC SOLVER>>
    26   5.389988E-11   5.389988E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.5750E-02 -1.9656E-03  3529  -4.95E-02  -4.75E-02  6.155E-06  1.085E-06
@@ -8865,7 +8865,7 @@
    26   7.272930E-11   7.272930E-11  <<SYMMETRIC SOLVER>>
    27   6.780506E-11   6.780506E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.4798E-02 -1.9714E-03  3529  -5.15E-02  -4.96E-02  6.123E-06  1.070E-06
@@ -8894,7 +8894,7 @@
    26   7.580762E-11   7.580762E-11  <<SYMMETRIC SOLVER>>
    28   5.136952E-11   5.136950E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.4257E-02 -1.9742E-03  3529  -5.36E-02  -5.16E-02  6.081E-06  1.058E-06
@@ -8924,7 +8924,7 @@
    26   6.197243E-11   6.197242E-11  <<SYMMETRIC SOLVER>>
    26   8.003216E-11   8.003216E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.3767E-02 -1.9750E-03  3529  -5.56E-02  -5.36E-02  6.061E-06  1.044E-06
@@ -8954,7 +8954,7 @@
    26   8.537169E-11   8.537169E-11  <<SYMMETRIC SOLVER>>
    27   7.372666E-11   7.372666E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.2611E-02 -1.9747E-03  3529  -5.77E-02  -5.57E-02  6.033E-06  1.032E-06
@@ -8983,7 +8983,7 @@
    26   9.035625E-11   9.035625E-11  <<SYMMETRIC SOLVER>>
    28   6.742400E-11   6.742398E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.1582E-02 -1.9702E-03  3529  -5.97E-02  -5.77E-02  5.977E-06  1.015E-06
@@ -9013,7 +9013,7 @@
    27   8.055763E-11   8.055763E-11  <<SYMMETRIC SOLVER>>
    28   4.757169E-11   4.757169E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0899E-02 -1.9633E-03  3529  -6.17E-02  -5.98E-02  5.931E-06  9.962E-07
@@ -9043,7 +9043,7 @@
    26   7.617600E-11   7.617601E-11  <<SYMMETRIC SOLVER>>
    27   7.956000E-11   7.955999E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  6.0424E-02 -1.9543E-03  3529  -6.37E-02  -6.18E-02  5.921E-06  9.865E-07
@@ -9074,7 +9074,7 @@
    26   7.994139E-11   7.994140E-11  <<SYMMETRIC SOLVER>>
    26   5.805444E-11   5.805444E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.9960E-02 -1.9438E-03  3529  -6.57E-02  -6.38E-02  5.883E-06  9.796E-07
@@ -9106,7 +9106,7 @@
    26   8.199244E-11   8.199245E-11  <<SYMMETRIC SOLVER>>
    27   7.579775E-11   7.579774E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.9277E-02 -1.9322E-03  3529  -6.77E-02  -6.58E-02  5.874E-06  9.807E-07
@@ -9136,7 +9136,7 @@
    26   7.726520E-11   7.726521E-11  <<SYMMETRIC SOLVER>>
    28   4.479792E-11   4.479793E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.8437E-02  2.3007E-03   365  -8.35E-04  -3.14E-03  5.842E-06  9.683E-07
@@ -9165,7 +9165,7 @@
    26   6.268740E-11   6.268740E-11  <<SYMMETRIC SOLVER>>
    27   8.860245E-11   8.860245E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.7546E-02 -1.9044E-03  3529  -7.17E-02  -6.98E-02  5.772E-06  9.598E-07
@@ -9195,7 +9195,7 @@
    26   5.169934E-11   5.169935E-11  <<SYMMETRIC SOLVER>>
    25   6.866856E-11   6.866857E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.7036E-02 -1.8863E-03  3529  -7.36E-02  -7.17E-02  5.739E-06  9.459E-07
@@ -9226,7 +9226,7 @@
    26   4.465283E-11   4.465283E-11  <<SYMMETRIC SOLVER>>
    25   6.928369E-11   6.928368E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.6856E-02  2.3064E-03   292  -7.43E-04  -3.05E-03  5.739E-06  9.357E-07
@@ -9256,7 +9256,7 @@
    26   6.219372E-11   6.219373E-11  <<SYMMETRIC SOLVER>>
    28   3.344565E-11   3.344567E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.6684E-02  3.6733E-03   382  -9.46E-04  -4.62E-03  5.749E-06  9.297E-07
@@ -9285,7 +9285,7 @@
    26   6.171933E-11   6.171932E-11  <<SYMMETRIC SOLVER>>
    27   6.553977E-11   6.553978E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  5.5359E-02 -1.8287E-03  3529  -7.93E-02  -7.75E-02  5.663E-06  9.249E-07
@@ -9315,7 +9315,7 @@
    25   3.067930E-11   3.067930E-11  <<SYMMETRIC SOLVER>>
    25   4.035768E-11   4.035768E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.6613E-02  2.0282E-03   382   1.13E-03  -9.02E-04  5.652E-06  9.165E-07
@@ -9345,7 +9345,7 @@
    26   7.282661E-11   7.282661E-11  <<SYMMETRIC SOLVER>>
    27   9.541315E-11   9.541317E-11  <<SYMMETRIC SOLVER>>
 
-                     NONLINEAR CONVERGENCE BEHAVIOR
+                     NONLINEAR CONVERGENCE BEHAVIOR 
  iter- convergence error norms  node    PNEW at    POLD at  residual error norms
  ation         PL2      PIKMAX IKMAX      IKMAX      IKMAX        FL2       FINF
      1  3.6521E-02 -1.2133E-03  3529  -8.18E-02  -8.06E-02  5.610E-06  9.100E-07
@@ -9387,21 +9387,21 @@
   TOTAL NUMBER OF LINEAR SOLVER FAILURES         :      0
 
 
-  TOT CPU FOR THE SIMULATION           =           29.20 SECONDS  100.00 %
-  TOT CPU FOR NONLINEAR SCHEME         =           27.32 SECONDS   93.54 %
-  TOT CPU FOR OVERHEAD (SEE CODE DESC.)=            1.89 SECONDS    6.46 %
+  TOT CPU FOR THE SIMULATION           =           14.51 SECONDS  100.00 %
+  TOT CPU FOR NONLINEAR SCHEME         =           13.71 SECONDS   94.48 %
+  TOT CPU FOR OVERHEAD (SEE CODE DESC.)=            0.80 SECONDS    5.52 %
 
-  TOT CPU FOR UNSAT CHARACTERISTICS    =            2.21 SECONDS    7.55 %
-  TOT CPU FOR INIT. OF SYSTEM MATRICES =            0.36 SECONDS    1.23 %
-  TOT CPU FOR LOCAL SYSTEM ASSEMBLY    =            3.82 SECONDS   13.07 %
-  TOT CPU FOR RHS CALCULATION W/O BC'S =            0.60 SECONDS    2.06 %
-  TOT CPU FOR GLOBAL LHS SYSTEM MATRIX =            0.16 SECONDS    0.56 %
-  TOT CPU FOR BC CONTRIBUTIONS TO RHS  =            0.80 SECONDS    2.75 %
-  TOT CPU FOR LINEAR SOLVER & RESIDUAL =           18.58 SECONDS   63.63 %
-  TOT CPU FOR DIR. RESETTING AND DIFMAX=            0.02 SECONDS    0.06 %
-  TOT CPU FOR B-FLX, M-BAL, SW, & EX-PT=            0.72 SECONDS    2.45 %
+  TOT CPU FOR UNSAT CHARACTERISTICS    =            1.15 SECONDS    7.95 %
+  TOT CPU FOR INIT. OF SYSTEM MATRICES =            0.13 SECONDS    0.86 %
+  TOT CPU FOR LOCAL SYSTEM ASSEMBLY    =            1.79 SECONDS   12.34 %
+  TOT CPU FOR RHS CALCULATION W/O BC'S =            0.30 SECONDS    2.06 %
+  TOT CPU FOR GLOBAL LHS SYSTEM MATRIX =            0.08 SECONDS    0.53 %
+  TOT CPU FOR BC CONTRIBUTIONS TO RHS  =            0.37 SECONDS    2.57 %
+  TOT CPU FOR LINEAR SOLVER & RESIDUAL =            9.52 SECONDS   65.61 %
+  TOT CPU FOR DIR. RESETTING AND DIFMAX=            0.01 SECONDS    0.05 %
+  TOT CPU FOR B-FLX, M-BAL, SW, & EX-PT=            0.34 SECONDS    2.36 %
                                          -----------         -------
-                                               27.27 SECONDS   93.37 %
+                                               13.69 SECONDS   94.34 %
 
   TOTAL NUMBER OF TIME STEPS           =      235
   SMALLEST TIME STEP SIZE              =   1.000E-02  AT TIME   2.953E-02
@@ -9412,7 +9412,7 @@
   AVG NL ITERATIONS PER TIME STEP      =     4.20
   AVG LINEAR ITERATIONS PER TIME STEP  =    86.65
   AVG LIN ITERATIONS PER NL ITERATION  =    20.63
-  AVG TOT CPU PER TIME STEP            =     0.12 SECONDS
-  AVG TOT CPU PER NL ITERATION         =     0.03 SECONDS
-  AVG TOT NL CPU PER TIME STEP         =     0.12 SECONDS
-  AVG TOT NL CPU PER NL ITERATION      =     0.03 SECONDS
+  AVG TOT CPU PER TIME STEP            =     0.06 SECONDS
+  AVG TOT CPU PER NL ITERATION         =     0.01 SECONDS
+  AVG TOT NL CPU PER TIME STEP         =     0.06 SECONDS
+  AVG TOT NL CPU PER NL ITERATION      =     0.01 SECONDS

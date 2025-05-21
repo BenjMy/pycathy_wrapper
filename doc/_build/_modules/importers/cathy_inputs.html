@@ -1,0 +1,1031 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>importers.cathy_inputs &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/importers/cathy_inputs';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="May 21, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../content/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/gettingstarted.html">Getting Started</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../content/SSHydro/index.html">Surface subsurface hydrological model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_1_pyCATHY_weilletal.html">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_2_pyCATHY_inputs.html">Input plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_3_meshing_from_Camporese.html">Meshing from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_3_meshing_from_weill.html">Changing mesh properties (resolution, coordinates, …)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_3a_create_soil_withzones.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_3b_soil3d_from_weill.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_3c_spatial_atmbc_from_weill.html">Weil et al example with spatially heterogeneous atmbc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_3d_spatial_atmbc_from_weill.html">Update with spatially and temporally distributed atmospheric boundary conditions (bc)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_4_pyCATHY_outputs.html">Output plots part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_4b_pyCATHY_outputs.html">Output plots part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_4b_waterTable_from_weill.html">Plot Water Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/SSHydro/plot_5a_infiltration_withBC.html">Update and show Boundary conditions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../content/DA/index.html">Data Assimilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../content/DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../content/FromLiterature/LaCecilia2023_myst/LaCecilia2023_myst.html">D. La Cecilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../content/api/api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/cathy_tools.html">cathy_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/importers.cathy_outputs.html">importers.cathy_outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/importers.cathy_inputs.html">importers.cathy_inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/DA.cathy_DA.html">DA.cathy_DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/ERT.petro_Archie.html">ERT.petro_Archie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/plotters.cathy_plots.html">plotters.cathy_plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../content/api/generated/pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../content/contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/importers/cathy_inputs.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for importers.cathy_inputs</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Reader for CATHY input files&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.plotters</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">pltCT</span>
+
+
+<div class="viewcode-block" id="read_atmbc">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_atmbc.html#importers.cathy_inputs.read_atmbc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_atmbc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="p">[],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    read atmbc file</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    atmbc dataframe.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># filename = &#39;./input/atmbc&#39;</span>
+    <span class="n">atmbc_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">atmbc_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="c1"># lines = [ligne.strip() for ligne in lines] # avoid retour chariot</span>
+    <span class="n">atmbc_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># read header flags</span>
+    <span class="n">Line0_header</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
+    <span class="n">HSPATM</span> <span class="o">=</span> <span class="n">Line0_header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">IETO</span> <span class="o">=</span> <span class="n">Line0_header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tstep_idx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># loop over lines</span>
+    
+    <span class="k">if</span> <span class="n">HSPATM</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># homogeneous on all surf mesh nodes</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># test_char = re.search(&#39;[a-zA-Z]&#39;, ll)</span>
+                <span class="c1"># if test_char is not None:</span>
+                <span class="k">if</span> <span class="s2">&quot;TIME&quot;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
+                    <span class="n">tstep_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">splt</span> <span class="o">=</span> <span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splt</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    
+                <span class="c1"># two cases (according to file formatting):</span>
+                <span class="c1"># numerical values + flag of value</span>
+                <span class="c1"># -----------------------------------------------------------------</span>
+                <span class="c1"># 1/ value (numeric) + &#39;VALUE&#39;</span>
+                <span class="k">elif</span> <span class="s2">&quot;VALUE&quot;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;ATMINP&quot;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+    
+                <span class="k">elif</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>               
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span>  <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                        <span class="c1"># take care of the additionnal empty lines (retour chariot)</span>
+                        <span class="c1"># in the end of the file</span>
+                        <span class="c1"># pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># only numerical values</span>
+                    <span class="c1"># 2/ value (numeric)</span>
+                    <span class="c1"># -----------------------------------------------------------------</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+    
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Number of values does not match number of times (check flags TIME, VALUE)&quot;</span>
+            <span class="p">)</span>
+    
+        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">])</span>
+        <span class="n">cols_atmbc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d_atmbc</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols_atmbc</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># heterogeneous on all surf mesh nodes</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># test_char = re.search(&#39;[a-zA-Z]&#39;, ll)</span>
+                <span class="c1"># if test_char is not None:</span>
+                <span class="k">if</span> <span class="s2">&quot;TIME&quot;</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
+                    <span class="n">tstep_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">splt</span> <span class="o">=</span> <span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splt</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    
+                    
+        <span class="c1"># Example numerical data</span>
+        <span class="c1"># data_list = [1.0, 10, 15, 20, 1.5, 5, 8, 12, ...]  # Replace with your actual data</span>
+        <span class="c1"># n = int(grid[&quot;nnod&quot;])  # Number of values for each time</span>
+        
+        <span class="c1"># Create a list of dictionaries with &#39;time&#39; and &#39;values&#39;</span>
+        <span class="n">data_dicts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">&quot;nnod&quot;</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">&quot;nnod&quot;</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="c1"># print(i,j)</span>
+                <span class="c1"># print(t[i])</span>
+                <span class="n">data_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])})</span>
+        <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_dicts</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">IETO</span><span class="o">=</span><span class="n">IETO</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc_3d</span><span class="p">(</span><span class="n">df_atmbc</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no vtk file found&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_atmbc</span><span class="p">,</span> <span class="n">HSPATM</span><span class="p">,</span> <span class="n">IETO</span></div>
+
+
+
+<div class="viewcode-block" id="read_parm">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_parm.html#importers.cathy_inputs.read_parm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_parm</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    read parm file</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parm dict</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="c1"># parm_header = [</span>
+    <span class="c1">#     &quot;PERMX&quot;,</span>
+    <span class="c1">#     &quot;PERMY&quot;,</span>
+    <span class="c1">#     &quot;PERMZ&quot;,</span>
+    <span class="c1">#     &quot;ELSTOR&quot;,</span>
+    <span class="c1">#     &quot;POROS&quot;,</span>
+    <span class="c1">#     &quot;VGNCELL&quot;,</span>
+    <span class="c1">#     &quot;VGRMCCELL&quot;,</span>
+    <span class="c1">#     &quot;VGPSATCELL&quot;,</span>
+    <span class="c1"># ]</span>
+    
+    <span class="n">parm_header</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;IPRT1&quot;</span><span class="p">,</span>  <span class="c1"># Flag for output of input and coordinate data</span>
+        <span class="s2">&quot;NCOUT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TRAFLAG&quot;</span><span class="p">,</span>  <span class="c1"># Flag for transport</span>
+        
+        <span class="s2">&quot;ISIMGR&quot;</span><span class="p">,</span>  <span class="c1"># Flag for type of simulation and type of surface grid</span>
+        <span class="s2">&quot;PONDH_MIN&quot;</span><span class="p">,</span>  <span class="c1"># Minimum ponding head</span>
+        <span class="s2">&quot;VELREC&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;KSLOPE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TOLKSL&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;PKRL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PKRR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PSEL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PSER&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;PDSE1L&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PDSE1R&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PDSE2L&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PDSE2R&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;ISFONE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ISFCVG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DUPUIT&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;TETAF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LUMP&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IOPT&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;NLRELX&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;OMEGA&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;L2NORM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TOLUNS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TOLSWI&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ERNLMX&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;ITUNS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ITUNS1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ITUNS2&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;ISOLV&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ITMXCG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TOLCG&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;DELTAT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DTMIN&quot;</span><span class="p">,</span>  <span class="c1"># Minimum FLOW3D time step size allowed</span>
+        <span class="s2">&quot;DTMAX&quot;</span><span class="p">,</span>  <span class="c1"># Maximum FLOW3D time step size allowed</span>
+        <span class="s2">&quot;TMAX&quot;</span><span class="p">,</span> <span class="c1"># Time at end of simulation (TMAX is set to 0.0 for steady state problem)</span>
+
+        <span class="s2">&quot;DTMAGA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DTMAGM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DTREDS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DTREDM&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;IPRT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VTKF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NPRT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(TIMPRT(I),I=1,NPRT)&quot;</span><span class="p">,</span>
+        
+        <span class="s2">&quot;NUMVP&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(NODVP(I),I=1,NUMVP)&quot;</span><span class="p">,</span>  <span class="c1"># should be positive (first node is 1)</span>
+        
+        <span class="s2">&quot;NR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CONTR(I),I=1,NR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;NUM_QOUT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(ID_QOUT(I),I=1,NUM_QOUT)&quot;</span><span class="p">,</span>
+        
+    <span class="p">]</span>
+
+    <span class="n">dict_parm</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">parm_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">parm_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">ligne</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">ligne</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span> <span class="c1"># avoid retour chariot</span>
+    <span class="n">parm_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">ll</span> <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">lines_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+    <span class="n">flat_lines_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">lines_s</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+    <span class="n">lines_s_num</span><span class="p">,</span> <span class="n">lines_s_names</span> <span class="o">=</span> <span class="n">_search_num_values_in_list</span><span class="p">(</span><span class="n">flat_lines_s</span><span class="p">)</span>
+   
+    <span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">lname</span> <span class="ow">in</span> <span class="n">lines_s_names</span><span class="p">:</span>
+        <span class="c1"># print(lname)</span>
+        <span class="k">if</span> <span class="n">lname</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;(TIMPRT(I),I=1,NPRT)&quot;</span><span class="p">,</span><span class="s2">&quot;(TIMPRT(I)I=1NPRT)&quot;</span><span class="p">,</span><span class="s2">&quot;(TIMPRT(I).I=1.NPRT)&quot;</span><span class="p">]:</span> 
+            <span class="n">lines_s_num_TIMPRT</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NPRT&#39;</span><span class="p">]):</span>
+                <span class="n">lines_s_num_TIMPRT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines_s_num</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">dict_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_s_num_TIMPRT</span>
+            <span class="n">ii</span> <span class="o">+=</span> <span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NPRT&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">lname</span> <span class="o">==</span> <span class="s2">&quot;(NODVP(I),I=1,NUMVP)&quot;</span> <span class="ow">or</span> <span class="n">lname</span><span class="o">==</span> <span class="s2">&quot;(NODVP(I).I=1.NUMVP)&quot;</span><span class="p">:</span>
+            <span class="n">lines_s_num_NODVP</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NUMVP&#39;</span><span class="p">]):</span>
+                <span class="n">lines_s_num_NODVP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines_s_num</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">dict_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_s_num_NODVP</span>
+            <span class="n">ii</span> <span class="o">+=</span> <span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NUMVP&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">lname</span> <span class="o">==</span> <span class="s2">&quot;(ID_QOUT(I).I=1.NUM_QOUT)&quot;</span> <span class="ow">or</span> <span class="n">lname</span> <span class="o">==</span> <span class="s2">&quot;(ID_QOUT(I),I=1,NUM_QOUT)&quot;</span><span class="p">:</span>
+            <span class="n">lines_s_num_ID_QOUT</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NUM_QOUT&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">dict_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="mi">441</span>
+                <span class="n">ii</span> <span class="o">+=</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>       
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NUM_QOUT&#39;</span><span class="p">]):</span>
+                    <span class="n">lines_s_num_ID_QOUT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines_s_num</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">dict_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_s_num_ID_QOUT</span>
+                <span class="n">ii</span> <span class="o">+=</span> <span class="n">dict_parm</span><span class="p">[</span><span class="s1">&#39;NUM_QOUT&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_s_num</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">+=</span><span class="mi">1</span>
+            
+    <span class="c1"># workaound for NUM_QOUT  </span>
+    <span class="c1"># -----------------------</span>
+    <span class="c1"># dict_parm[&#39;NUM_QOUT&#39;] = 441</span>
+
+    <span class="k">return</span> <span class="n">dict_parm</span></div>
+
+
+
+<div class="viewcode-block" id="read_dem_parameters">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_dem_parameters.html#importers.cathy_inputs.read_dem_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_dem_parameters</span><span class="p">(</span><span class="n">dem_parametersfile</span><span class="p">):</span>
+
+    <span class="c1"># header_fmt = [1, 1, 1, 1, 3, 3]  # nb of values per lines</span>
+    <span class="n">dem_parameters</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;delta_x&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;delta_y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;factor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dostep&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nzone&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nstr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ivert&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;isp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;base&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;zratio(i),i=1,nstr&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    
+    
+    <span class="n">parm_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dem_parametersfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">parm_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">ligne</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">ligne</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span> <span class="c1"># avoid retour chariot</span>
+    <span class="n">parm_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">ll</span> <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">lines_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+    <span class="n">flat_lines_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">lines_s</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+    <span class="n">lines_s_num</span><span class="p">,</span> <span class="n">lines_s_names</span> <span class="o">=</span> <span class="n">_search_num_values_in_list</span><span class="p">(</span><span class="n">flat_lines_s</span><span class="p">)</span>
+    
+
+    <span class="n">dict_dem_parm</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">lname</span> <span class="ow">in</span> <span class="n">lines_s_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lname</span> <span class="o">==</span> <span class="s2">&quot;zratio(i),i=1,nstr&quot;</span> <span class="ow">or</span> <span class="n">lname</span> <span class="o">==</span> <span class="s1">&#39;zratio(i).i=1.nstr&#39;</span><span class="p">:</span> 
+            <span class="n">lines_s_num_zratio</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dict_dem_parm</span><span class="p">[</span><span class="s1">&#39;nstr&#39;</span><span class="p">]):</span>
+                <span class="c1"># print(k)</span>
+                <span class="n">lines_s_num_zratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines_s_num</span><span class="p">[</span><span class="n">ii</span><span class="o">+</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">dict_dem_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_s_num_zratio</span>
+            <span class="n">ii</span> <span class="o">+=</span> <span class="n">dict_dem_parm</span><span class="p">[</span><span class="s1">&#39;nstr&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_dem_parm</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_s_num</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+            <span class="n">ii</span> <span class="o">+=</span><span class="mi">1</span>
+            
+    <span class="k">return</span> <span class="n">dict_dem_parm</span></div>
+
+
+
+<div class="viewcode-block" id="read_soil">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_soil.html#importers.cathy_inputs.read_soil">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_soil</span><span class="p">(</span><span class="n">soilfile</span><span class="p">,</span> <span class="n">dem_parm</span><span class="p">,</span> <span class="n">MAXVEG</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read soil file</span>
+
+
+<span class="sd">    This is an example of 3 layers and  2 zones; The inner reading cycle is by zone, and the outer one by layers, i.e.:</span>
+
+<span class="sd">    PERMX_z1_str1 PERMY_z1_str1  PERMZ_z1_str1  ELSTOR_z1_str1 POROS_z1_str1 VGNCELL_z1_str1 VGRMCCELL__z1_str1 VGPSATCELL__z1_str1</span>
+<span class="sd">    PERMX_z2_str1 PERMY_z2_str1  PERMZ_z2_str1  ELSTOR_z2_str1 POROS_z2_str1 VGNCELL_z2_str1 VGRMCCELL__z2_str1 VGPSATCELL__z2_str1</span>
+<span class="sd">    PERMX_z1_str2 PERMY_z1_str2  PERMZ_z1_str2  ELSTOR_z1_str2 POROS_z1_str2 VGNCELL_z1_str2 VGRMCCELL__z1_str2 VGPSATCELL__z1_str2</span>
+<span class="sd">    PERMX_z2_str2 PERMY_z2_str2  PERMZ_z2_str2  ELSTOR_z2_str2 POROS_z2_str2 VGNCELL_z2_str2 VGRMCCELL__z2_str2 VGPSATCELL__z2_str2</span>
+<span class="sd">    PERMX_z1_str3 PERMY_z1_str3  PERMZ_z1_str3  ELSTOR_z1_str3 POROS_z1_str3 VGNCELL_z1_str3 VGRMCCELL__z1_str3 VGPSATCELL__z1_str3</span>
+<span class="sd">    PERMX_z2_str3 PERMY_z2_str3  PERMZ_z2_str3  ELSTOR_z2_str3 POROS_z2_str3 VGNCELL_z2_str3 VGRMCCELL__z2_str3  VGPSATCELL__z2_str3</span>
+
+
+<span class="sd">    Zone indexing starts from 1 while layers indexing starts from 0!</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    soilfile : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    dem_parm : dict</span>
+<span class="sd">        dict of dem parameters (from read_dem_parameters)</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dataframe</span>
+<span class="sd">        df containing soil properties</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the dem file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Read FP parameters</span>
+    <span class="c1"># ---------------------</span>
+    <span class="n">FP_header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PCANA&#39;</span><span class="p">,</span><span class="s1">&#39;PCREF&#39;</span><span class="p">,</span><span class="s1">&#39;PCWLT&#39;</span><span class="p">,</span><span class="s1">&#39;ZROOT&#39;</span><span class="p">,</span><span class="s1">&#39;PZ&#39;</span><span class="p">,</span><span class="s1">&#39;OMGC&#39;</span><span class="p">]</span>
+    
+
+    <span class="c1"># Read SPP parameters</span>
+    <span class="c1"># ---------------------</span>
+    <span class="n">soil_header</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;PERMX&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PERMY&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PERMZ&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ELSTOR&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;POROS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VGNCELL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VGRMCCELL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;VGPSATCELL&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">FP_soil</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">str_hd_soil</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">nb_of_header_lines</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">+</span> <span class="n">MAXVEG</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">soilfile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span><span class="o">&gt;</span><span class="mi">2</span> <span class="ow">and</span> <span class="n">count</span><span class="o">&lt;</span><span class="n">MAXVEG</span><span class="o">+</span><span class="mi">3</span><span class="p">:</span>
+                <span class="n">FP_soil</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;PCANA&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="n">soil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                        <span class="n">soilfile</span><span class="p">,</span> 
+                        <span class="n">skiprows</span><span class="o">=</span><span class="n">nb_of_header_lines</span><span class="p">,</span> 
+                        <span class="n">max_rows</span><span class="o">=</span><span class="n">count</span> <span class="o">-</span> <span class="n">nb_of_header_lines</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">soil</span><span class="p">)</span>
+    <span class="n">FP_soil_mat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="n">FP_soil</span><span class="p">:</span>
+        <span class="n">FP_soil_mat</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">fpi</span><span class="p">)</span> <span class="k">for</span> <span class="n">fpi</span> <span class="ow">in</span> <span class="n">fp</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fpi</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">FP_soil_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">FP_soil_mat</span><span class="p">)</span>
+    <span class="n">df_FP</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">FP_soil_mat</span><span class="p">)</span>
+    <span class="n">df_FP</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">FP_header</span>
+    <span class="n">df_FP</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Veg. Indice&#39;</span>
+    <span class="n">df_FP</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span>  <span class="n">df_FP</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+    
+    <span class="n">layer_id</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">zone_id</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dem_parm</span><span class="p">[</span><span class="s2">&quot;nstr&quot;</span><span class="p">])):</span>
+        <span class="k">for</span> <span class="n">dz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dem_parm</span><span class="p">[</span><span class="s2">&quot;nzone&quot;</span><span class="p">])):</span>
+            <span class="n">layer_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+            <span class="n">zone_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dz</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># zone numbers starts from 1</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">soil</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer_id</span><span class="p">):</span> <span class="c1">#*dem_parm[&#39;nzone&#39;]:</span>
+       <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Inconsistent number of zones/layers with respect to the number of soil lines: &quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">soil</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layer_id</span><span class="p">))</span> <span class="o">+</span> 
+            <span class="s2">&quot;!Revise dem_parm file!&quot;</span>
+
+        <span class="p">)</span>
+        
+    <span class="c1"># name_str = np.sort(name_str)</span>
+    <span class="n">df_soil</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">soil</span><span class="p">,</span> <span class="p">[</span><span class="n">zone_id</span><span class="p">,</span>
+                                  <span class="n">layer_id</span><span class="p">],</span> 
+                            <span class="n">soil_header</span><span class="p">)</span>
+    <span class="c1"># df_soil.xs(1)</span>
+    <span class="n">df_soil</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="s2">&quot;zone&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_soil</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="s2">&quot;layer&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_soil</span><span class="p">,</span><span class="n">df_FP</span></div>
+
+
+
+<div class="viewcode-block" id="read_raster">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_raster.html#importers.cathy_inputs.read_raster">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_raster</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applicable for all DEM type of CATHY outputs such as dtm_Ws1_sf_1, dtm_Ws1_sf_2, ...</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        filename of the raster type file to read (including abs path).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the raster info.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the raster file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_hd_raster</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_raster</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">raster_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">raster_mat</span><span class="p">,</span> <span class="n">str_hd_raster</span></div>
+
+
+
+<div class="viewcode-block" id="read_zone">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_zone.html#importers.cathy_inputs.read_zone">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_zone</span><span class="p">(</span><span class="n">zonefile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read zone file and infer soil zones in the DEM</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    zonefile : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the zones.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the zone file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_hd_zones</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">zonefile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_zones</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">zones_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">zonefile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">zones_mat</span><span class="p">,</span> <span class="n">str_hd_zones</span></div>
+
+
+
+<div class="viewcode-block" id="read_dem">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_dem.html#importers.cathy_inputs.read_dem">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_dem</span><span class="p">(</span><span class="n">demfile</span><span class="p">,</span> <span class="n">dtm_13file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read dem file and infer number of altitudes in the DEM</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    demfile : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    dtm_13file : str</span>
+<span class="sd">        filename (including abs path).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the elevation.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the dem file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_hd_dem</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">demfile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_dem</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">dem_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dtm_13file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">dem_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">dem_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dem_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># import matplotlib.pyplot as plt</span>
+    <span class="c1"># plt.imshow(dem_mat)</span>
+
+    <span class="k">return</span> <span class="n">dem_mat</span><span class="p">,</span> <span class="n">str_hd_dem</span></div>
+
+
+
+<div class="viewcode-block" id="read_root_map">
+<a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_root_map.html#importers.cathy_inputs.read_root_map">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_root_map</span><span class="p">(</span><span class="n">rootmapfile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read root map file and infer number of vegetations in the DEM</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rootmapfile : str</span>
+<span class="sd">        filename (including abs path).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.array([])</span>
+<span class="sd">        2d array containing the flag for the vegetation type.</span>
+<span class="sd">    dict</span>
+<span class="sd">        Header of the root map file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">str_hd_rootmap</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootmapfile</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># open the file for reading</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># iterate over each line</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">str_hd</span><span class="p">,</span> <span class="n">value_hd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># split it by whitespace</span>
+                <span class="n">str_hd_rootmap</span><span class="p">[</span><span class="n">str_hd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value_hd</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">rootmap_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">rootmapfile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rootmap_mat</span><span class="p">,</span> <span class="n">str_hd_rootmap</span></div>
+
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_search_num_values_in_list</span><span class="p">(</span><span class="n">flat_lines_s</span><span class="p">):</span>
+    
+    <span class="n">lines_s_num</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lines_s_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">lli</span> <span class="ow">in</span> <span class="n">flat_lines_s</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lli</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lli</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lli</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lli</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lli</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lli</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">lli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;e-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">lines_s_num</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lli</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lines_s_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lli</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">lines_s_num</span><span class="p">,</span> <span class="n">lines_s_names</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on May 21, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

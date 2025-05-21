@@ -5,7 +5,7 @@ Grid spacing along the x-direction =                           0.50
 Grid spacing along the y-direction =                           0.50
 DEM rectangle size along the x-direction =                    20
 DEM rectangle size along the y-direction =                    20
-Number of cells within the catchment =                       300
+Number of cells within the catchment =                       285
 X low left corner coordinate =                                 0.00000000
 Y low left corner coordinate =                                 0.00000000
 ------------------------------------------------------------------------------

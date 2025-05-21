@@ -2068,8 +2068,12 @@ class DA(CATHY):
                 # --------------------------------------------------------------
                 elif key_root[0].casefold() in "ic".casefold():
                     match_ic_withLayers = re.search(r'ic\d+', key)
-
-                    if match_ic_withLayers:
+                    
+                    if dict_parm_pert[key]['pert_control_name'] == 'layers':
+                        # print('test')
+                    
+                        
+                    # if match_ic_withLayers:
                         DApath = os.getcwd()
                         saveMeshPath = os.path.join(DApath, "vtk",
                                                      self.project_name + '.vtk'

@@ -1,0 +1,63 @@
+
+
+Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3d_spatial_atmbc_from_weill_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Update with spatially and temporally distributed atmospheric boundary conditions (bc)</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_1_DA_NoUni_ic_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">DA with Random Initial Conditions on Soil Layers</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

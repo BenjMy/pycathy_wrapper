@@ -25,7 +25,6 @@ sphinx-thebe
 jupyter-sphinx #==0.3.*
 sphinxcontrib-bibtex
 matplotlib
-vtk>=9
 myst_nb
 jupytext
 geopandas

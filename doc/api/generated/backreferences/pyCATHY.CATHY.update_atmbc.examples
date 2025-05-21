@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.CATHY.update_atmbc``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3d_spatial_atmbc_from_weill_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Update with spatially and temporally distributed atmospheric boundary conditions (bc)</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

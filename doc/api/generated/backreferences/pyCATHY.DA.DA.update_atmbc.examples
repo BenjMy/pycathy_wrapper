@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.DA.DA.update_atmbc``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrate how to read SMC sensors dataset to be prepare for DA">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_3_run_sequentialDA_SMC_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Read SMC sensors observations to assimilate</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

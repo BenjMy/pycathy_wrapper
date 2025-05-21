@@ -4,8 +4,8 @@
 Weil et al example with spatially heterogeneous atmbc
 =====================================================
 
-Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
-Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),
 https://doi.org/10.1016/j.advwatres.2010.10.001.
 
 
@@ -34,7 +34,7 @@ from pyCATHY.plotters import cathy_plots as cplt
 #%% Init CATHY model
 # ------------------------
 path2prj = "../SSHydro/"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj, 
+simu = cathy_tools.CATHY(dirName=path2prj,
                          prj_name="atmbc_spatially_from_weill"
                          )
 
@@ -67,7 +67,7 @@ simu.update_atmbc(
                   )
 
 #%%
-simu.run_processor(IPRT1=2, 
+simu.run_processor(IPRT1=2,
                     DTMIN=1e-2,
                     DTMAX=1e2,
                     DELTAT=5,
@@ -76,7 +76,7 @@ simu.run_processor(IPRT1=2,
                    )
 
 # cplt.show_spatial_atmbc()
-    
+
 #%%
 
 cplt.show_vtk(
@@ -98,5 +98,3 @@ cplt.show_vtk_TL(
                 clim = [0.55,0.70],
                 savefig=True,
             )
-
-
