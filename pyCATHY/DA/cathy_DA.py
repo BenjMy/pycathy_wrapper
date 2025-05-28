@@ -266,6 +266,8 @@ class DA(CATHY):
         # Infer ensemble size NENS from perturbated parameter dictionnary
         # -------------------------------------------------------------------
         for name in self.dict_parm_pert:
+            # print(name)
+            # print(self.dict_parm_pert[name])
             self.NENS = len(self.dict_parm_pert[name]["ini_perturbation"])
 
         # Infer ensemble update times ENS_times from observation dictionnary
@@ -311,6 +313,8 @@ class DA(CATHY):
         self.run_processor(DAFLAG=1,
                            runProcess=False,
                            **kwargs) # to create the processor exe
+        print(list_parm2update)
+
         callexe = "./" + self.processor_name
 
         self.damping = kwargs.get("damping", 1)
@@ -325,6 +329,8 @@ class DA(CATHY):
                                                                 dict_parm_pert,
                                                                 list_parm2update,
                                                             )
+        
+        print(list_parm2update)
 
         # initiate mapping petro
         # -------------------------------------------------------------------
@@ -337,6 +343,7 @@ class DA(CATHY):
             list_parm2update="all",
             cycle_nb=self.count_DA_cycle,
         )
+        print(list_parm2update)
 
         all_atmbc_times = np.copy(self.atmbc["time"])
 
@@ -535,7 +542,7 @@ class DA(CATHY):
         # (time-windowed) update input files ensemble again
         # -------------------------------------------------------------------
         self._update_input_ensemble(
-            list_parm2update=list_parm2update,
+                                        list_parm2update,
         )
 
         # -----------------------------------
@@ -851,7 +858,7 @@ class DA(CATHY):
             self.backup_results_DA(meta_DA)
             self.backup_simu()
 
-
+            print(list_parm2update)
             # overwrite input files ensemble (perturbated variables)
             # ---------------------------------------------------------------------
             if (self.count_atmbc_cycle < len(self.all_atmbc_times) - 1):  # -1 cause all_atmbc_times include TMAX
@@ -864,6 +871,9 @@ class DA(CATHY):
                     ":red_circle: end of DA" ":red_circle:", style="yellow"
                 )
                 pass
+        
+            print(list_parm2update)
+
             self.console.rule(
                                 ":red_circle: end of DA update "
                                 + str(self.count_DA_cycle)
@@ -1784,6 +1794,10 @@ class DA(CATHY):
         Use dictionnary of perturbated parameters and parse it progressively to
         df_SPP_2fill to build a matrice and update soil
         '''
+        
+        pert_control_name = dict_parm_pert[key]['pert_control_name']
+        update_value = dict_parm_pert[key][update_key][ens_nb]
+
         # initiate SPP_2_fill if not existing
         # -----------------------------------------------------------
         if len(df_SPP_2fill) == 0:
@@ -1817,8 +1831,6 @@ class DA(CATHY):
                   '''
                   )
         if key_root[0].casefold() == 'ks':
-            pert_control_name = dict_parm_pert[key]['pert_control_name']
-            update_value = dict_parm_pert[key][update_key][ens_nb]
 
             if pert_control_name == 'zone':
                 df_SPP_2fill[ens_nb].loc[(int(key_root[1])+1, slice(None)), ['PERMX', 'PERMY', 'PERMZ']] = update_value
@@ -1835,7 +1847,22 @@ class DA(CATHY):
 
 
         elif key_root[0].casefold() in 'porosity':
-            df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'POROS'] = dict_parm_pert[key][update_key][ens_nb]
+            # df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), 'POROS'] = dict_parm_pert[key][update_key][ens_nb]
+            print('key_root')
+            print(key_root)
+            if pert_control_name == 'zone':
+                df_SPP_2fill[ens_nb].loc[(int(key_root[1])+1, slice(None)), ['POROS']] = update_value
+            elif pert_control_name == 'layers':
+                df_SPP_2fill[ens_nb].loc[(slice(None), int(key_root[1])), ['POROS']] = update_value
+            elif pert_control_name == 'root_map':
+                mask_vegi = (int(key_root[1])+1 == self.veg_map)
+                # Get zones corresponding to current vegetation mask
+                zones_in_vegi = self.zone[mask_vegi]
+                # Update permeability values for all matching zones
+                df_SPP_2fill[ens_nb].loc[zones_in_vegi, ['POROS']] = update_value
+            else:
+                df_SPP_2fill[ens_nb].loc[:, ['POROS']] = update_value
+
 
         #%% check if contains nan (if not update soil file)
         contains_nan = df_SPP_2fill[ens_nb].isna().any().any()
@@ -1863,16 +1890,17 @@ class DA(CATHY):
             # mt.map_cells_to_nodes()
 
             # os.path.join(os.getcwd())
-            (
-            POROS_mesh_cells,
-             POROS_mesh_nodes
-             ) = self.map_prop_2mesh_markers('POROS',
-                                            df_SPP_2fill[ens_nb]['POROS'].groupby('layer').mean().to_list(),
-                                            to_nodes=False,
-                                            saveMeshPath=saveMeshPath,
-                                            # zones_markers_3d=None,
-                                            )
-            self.map_prop2mesh({"POROS": POROS_mesh_nodes})
+            if pert_control_name == 'layers':
+                (
+                POROS_mesh_cells,
+                 POROS_mesh_nodes
+                 ) = self.map_prop_2mesh_markers('POROS',
+                                                df_SPP_2fill[ens_nb]['POROS'].groupby('layer').mean().to_list(),
+                                                to_nodes=False,
+                                                saveMeshPath=saveMeshPath,
+                                                # zones_markers_3d=None,
+                                                )
+                self.map_prop2mesh({"POROS": POROS_mesh_nodes})
 
 
         return df_SPP_2fill
@@ -2119,39 +2147,38 @@ class DA(CATHY):
 
                 elif key_root[0].casefold() in 'porosity':
 
-                    if hasattr(self, 'zone3d'):
-                        POROS_het_ens = self._read_dict_pert_and_update_ens_SPP(
-                                                           dict_parm_pert,
-                                                           POROS_het_ens,
-                                                           key_root,
-                                                           key,
-                                                           update_key,
-                                                           ens_nb,
-                                                           shellprint_update
-                                                           )
+                    POROS_het_ens = self._read_dict_pert_and_update_ens_SPP(
+                                                       dict_parm_pert,
+                                                       POROS_het_ens,
+                                                       key_root,
+                                                       key,
+                                                       update_key,
+                                                       ens_nb,
+                                                       shellprint_update
+                                                       )
 
-                    else:
-                        df_SPP, _ = in_CT.read_soil(os.path.join(
-                                                                self.workdir,
-                                                                self.project_name,
-                                                                'DA_Ensemble/cathy_'+ str(ens_nb+1),
-                                                                'input/soil'
-                                                                ),
-                                                    self.dem_parameters,
-                                                    self.cathyH["MAXVEG"]
-                                                    )
+                    # else:
+                    #     df_SPP, _ = in_CT.read_soil(os.path.join(
+                    #                                             self.workdir,
+                    #                                             self.project_name,
+                    #                                             'DA_Ensemble/cathy_'+ str(ens_nb+1),
+                    #                                             'input/soil'
+                    #                                             ),
+                    #                                 self.dem_parameters,
+                    #                                 self.cathyH["MAXVEG"]
+                    #                                 )
 
-                        df_SPP_2fill = df_SPP.copy()
-                        df_SPP_2fill['POROS'] = dict_parm_pert[key][update_key][ens_nb]
+                    #     df_SPP_2fill = df_SPP.copy()
+                    #     df_SPP_2fill['POROS'] = dict_parm_pert[key][update_key][ens_nb]
 
-                        self.update_soil(
-                            SPP_map=df_SPP_2fill,
-                            FP_map=self.soil_FP["FP_map"],
-                            verbose=self.verbose,
-                            filename=os.path.join(os.getcwd(), "input/soil"),
-                            shellprint_update=shellprint_update,
-                            backup=True,
-                        )
+                    #     self.update_soil(
+                    #         SPP_map=df_SPP_2fill,
+                    #         FP_map=self.soil_FP["FP_map"],
+                    #         verbose=self.verbose,
+                    #         filename=os.path.join(os.getcwd(), "input/soil"),
+                    #         shellprint_update=shellprint_update,
+                    #         backup=True,
+                    #     )
 
                 # VG parameters update
                 # --------------------------------------------------------------

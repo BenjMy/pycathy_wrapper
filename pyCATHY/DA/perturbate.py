@@ -158,7 +158,7 @@ def perturbate(simu_DA, scenario, NENS,
         clip_min = None
         clip_max = None
         if type(scenario["per_nom"][index]) is list:    
-            if 'layers' in pert_control_name:
+            if pert_control_name=='layers':
                 for nstri in range(nlayers):
                     
                     if nlayers > 1:
@@ -175,7 +175,7 @@ def perturbate(simu_DA, scenario, NENS,
                     
                     list_pert.append(ic)
                     
-            elif 'zone' in pert_control_name:
+            elif pert_control_name=='zone':
                 for zonei in range(len(np.unique(zone_raster))):
                     # Adjust bounds and retrieve parameters for the current zone
                     clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -434,7 +434,7 @@ def perturbate(simu_DA, scenario, NENS,
 
 
 
-            if 'layers' in pert_control_name:
+            if pert_control_name=='layers':
                 for nstri in range(nlayers):
                     # Adjust bounds and retrieve parameters for the current layer
                     # clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -530,7 +530,7 @@ def perturbate(simu_DA, scenario, NENS,
                 list_pert.append(Ks)
                 
         # Perturb by 'layers' if specified
-        elif 'layers' in pert_control_name:
+        elif pert_control_name == 'layers':
             for nstri in range(nlayers):
                 # Adjust bounds and retrieve parameters for the current layer
                 clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -539,7 +539,8 @@ def perturbate(simu_DA, scenario, NENS,
                 # Create porosity entry for this layer and validate distribution
                 Ks = create_dict_entry(
                     'Ks', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
-                    clip_min, clip_max, NENS
+                    clip_min, clip_max, NENS,
+                    pert_control_name=pert_control_name
                 )
                 check_distribution(Ks)
                 list_pert.append(Ks)
@@ -575,7 +576,7 @@ def perturbate(simu_DA, scenario, NENS,
         clip_min, clip_max = 0.2, 0.7
     
         # Perturb by 'zone' if specified
-        if 'zone' in pert_control_name:
+        if pert_control_name=='zone':
             for zonei in range(len(np.unique(zone_raster))):
                 # Adjust bounds and retrieve parameters for the current zone
                 clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -584,13 +585,14 @@ def perturbate(simu_DA, scenario, NENS,
                 # Create porosity entry for this zone and validate distribution
                 porosity = create_dict_entry(
                     'porosity', scenario, index, zonei, zone_nom, zone_mean, zone_sd, 
-                    clip_min, clip_max, NENS
+                    clip_min, clip_max, NENS,
+                    pert_control_name=pert_control_name
                 )
                 check_distribution(porosity)
                 list_pert.append(porosity)
     
         # Perturb by 'layers' if specified
-        elif 'layers' in pert_control_name:
+        elif pert_control_name=='layers':
             for nstri in range(nlayers):
                 # Adjust bounds and retrieve parameters for the current layer
                 clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
@@ -599,7 +601,8 @@ def perturbate(simu_DA, scenario, NENS,
                 # Create porosity entry for this layer and validate distribution
                 porosity = create_dict_entry(
                     'porosity', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
-                    clip_min, clip_max, NENS
+                    clip_min, clip_max, NENS,
+                    pert_control_name=pert_control_name
                 )
                 check_distribution(porosity)
                 list_pert.append(porosity)
@@ -1153,6 +1156,12 @@ def perturbate_parm(
     key = "per_type"
     var_per_2add[type_parm][key] = per_type
 
+    key_root = re.split("(\d+)", type_parm)
+    parm_key_nb = 0
+    if len(key_root)>1:
+        parm_key_nb = int(key_root[1])
+       
+        
     # Contrainsted perturbation (bounded)
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
@@ -1163,9 +1172,8 @@ def perturbate_parm(
                                                         mean,
                                                         sd,
                                                         )
-            key_root = re.split("(\d+)", type_parm)
-            parm_sampling = param_withLayers[int(key_root[1])]
-            parm_per_array = param_withLayers[int(key_root[1])]
+            parm_sampling = param_withLayers[parm_key_nb]
+            parm_per_array = param_withLayers[parm_key_nb]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
         else:
             parm_sampling, parm_per_array = Archie_pert_rules(
@@ -1180,16 +1188,32 @@ def perturbate_parm(
                                                                   sd,
                                                                   )
             key_root = re.split("(\d+)", type_parm)
-            parm_sampling = param_withLayers[int(key_root[1])]
-            parm_per_array = param_withLayers[int(key_root[1])]
+            parm_sampling = param_withLayers[parm_key_nb]
+            parm_per_array = param_withLayers[parm_key_nb]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
     
         else:
             parm_sampling = sampling_dist_trunc(
                 myclip_a=0, myclip_b=1, ensemble_size=ensemble_size, loc=mean, scale=sd
             )
-            parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-
+            # parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            
+            if len(key_root)>1:
+                # Case with different zones
+                parm_per_array = perturbate_dist(parm,
+                                                 per_type[parm_key_nb],
+                                                 parm_sampling,
+                                                 ensemble_size
+                                                 )
+            else:
+                parm_per_array = perturbate_dist(parm,
+                                                 per_type,
+                                                 parm_sampling,
+                                                 ensemble_size
+                                                 )  
+    
+    
+    
     elif "zroot".casefold() in type_parm.casefold():
         parm_sampling = sampling_dist_trunc(
             myclip_a=var_per_2add[type_parm]["clip_min"],
@@ -1244,12 +1268,25 @@ def perturbate_parm(
                                                                   )
             key_root = re.split("(\d+)", type_parm)
     
-            parm_sampling = param_withLayers[int(key_root[1])]
-            parm_per_array = param_withLayers[int(key_root[1])]
+            parm_sampling = param_withLayers[parm_key_nb]
+            parm_per_array = param_withLayers[parm_key_nb]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
         else:
             parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
-            parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            
+            if len(key_root)>1:
+                # Case with different zones
+                parm_per_array = perturbate_dist(parm,
+                                                 per_type[parm_key_nb],
+                                                 parm_sampling,
+                                                 ensemble_size
+                                                 )
+            else:
+                parm_per_array = perturbate_dist(parm,
+                                                 per_type,
+                                                 parm_sampling,
+                                                 ensemble_size
+                                                 )  
     
     # For all other types of perturbation
     # --------------------------------------------------------------------

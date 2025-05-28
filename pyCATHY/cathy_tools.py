@@ -691,15 +691,13 @@ class CATHY:
 
         """
 
-        try:
-            if hasattr(self, "veg_map"):
-                if np.shape(self.veg_map) != np.shape(self.DEM):
-                    raise ValueError(
-                        "Inconsistent shapes between vegetation map and DEM - need to update veg first"
-                    )
-        except:
-            self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
-            pass
+        # try:
+        if hasattr(self, "veg_map"):
+            if np.shape(self.veg_map) != np.shape(self.DEM):
+                self.console.print(
+                   f"Inconsistent shapes between vegetation map {np.shape(self.veg_map) } and DEM {np.shape(self.DEM)} - need to update veg first"
+                )
+                self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
 
     #%%
     # --------------------------------------------------------------------------- #
@@ -1141,7 +1139,8 @@ class CATHY:
                 DEMRES=min([self.hapin["delta_x"], self.hapin["delta_y"]])
             )
 
-        self.update_dem_parameters(**kwargs)
+        self.update_dem_parameters(
+                                   **kwargs)
 
         if show == True:
             plt_CT.show_dem(DEM, self.hapin)
@@ -2765,19 +2764,12 @@ class CATHY:
             #     "PZ": [1.0],
             #     "OMGC": [1.0],
             # }
-            PCANA= 0.0
-            PCREF=-4.0
-            PCWLT=-150
-            ZROOT=1
-            PZ=1
-            OMGC=1
-            # self.soil.update(FP)
+            values = dict(PCANA=0.0, PCREF=-4.0, PCWLT=-150, ZROOT=1, PZ=1, OMGC=1)
             nveg = len(np.unique(self.veg_map))
             FP_map = self.init_soil_FP_map_df(nveg)
+            # FP_map.loc[:, values.keys()] = pd.DataFrame([values] * nveg)
+            FP_map.update(pd.DataFrame([values]*len(FP_map), index=FP_map.index))
 
-            for c in FP_map.columns:
-                FP_map[c] = eval(c)
-                
             return FP_map
 
         # # set Soil Physical Properties defaults parameters
@@ -2785,22 +2777,34 @@ class CATHY:
 
         if SPP_map_default:
 
-            PERMX = PERMY = PERMZ = 1.88e-04
-            ELSTOR = 1.00e-05
-            POROS = 0.55
-            VGNCELL = 1.46
-            VGRMCCELL = 0.15
-            VGPSATCELL = 0.03125
+            # PERMX = PERMY = PERMZ = 1.88e-04
+            # ELSTOR = 1.00e-05
+            # POROS = 0.55
+            # VGNCELL = 1.46
+            # VGRMCCELL = 0.15
+            # VGPSATCELL = 0.03125
 
-            # Replace these values with your actual number of zones and strings
-            nzones = self.dem_parameters["nzone"]
-            nstr = self.dem_parameters["nstr"]
+            # # Replace these values with your actual number of zones and strings
+            # nzones = self.dem_parameters["nzone"]
+            # nstr = self.dem_parameters["nstr"]
                     
-            SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
+            # SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
             
-            for c in SPP_map.columns:
-                SPP_map[c] = eval(c)
-                
+            # for c in SPP_map.columns:
+            #     SPP_map[c] = eval(c)
+            
+            vals = dict(PERMX=1.88e-4, PERMY=1.88e-4, PERMZ=1.88e-4, 
+                        ELSTOR=1e-5, 
+                        POROS=0.55, 
+                        VGNCELL=1.46, VGRMCCELL=0.15, VGPSATCELL=0.03125
+                        )
+            SPP_map = self.init_soil_SPP_map_df(self.dem_parameters["nzone"], 
+                                                self.dem_parameters["nstr"]
+                                                )
+            # SPP_map.loc[:, vals.keys()] = pd.DataFrame([vals] * len(SPP_map)
+            #                                            )
+            SPP_map.update(pd.DataFrame([vals]*len(SPP_map), index=SPP_map.index))
+
             return SPP_map
 
         pass
