@@ -146,7 +146,6 @@ def SW_2_ERa_DA(
 
     # build df Archie df
     df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
-    
     df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
     df_Archie["ens_nbi"] = Ens_nbi * np.ones(len(ER_converted_ti))
     df_Archie["sw"] = df_sw
@@ -154,12 +153,7 @@ def SW_2_ERa_DA(
     df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
         len(ER_converted_ti)
     )
-    
-    # print('Correct bug mesh size')
-    # print('-'*12)
-    # print(f'len ER converted vector {len(df_Archie["ER_converted"])}')
-
-    # print(df_Archie["ER_converted"].describe())
+  
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(
@@ -169,10 +163,6 @@ def SW_2_ERa_DA(
         overwrite=True,
         path=path_CATHY,
     )
-    # print('-'*12)
-    # print('fwd mesh CATHY')
-    # print(mesh_CATHY_new_attr)
-    # print('-'*12)
 
     if "pygimli" in ERT_meta_dict["data_format"]:
         # copy attribute to pg mesh
@@ -203,7 +193,17 @@ def SW_2_ERa_DA(
     res0 = mesh_geophy_new_attr.get_array(scalar_new)
 
     # ------------------------------------------------------------------------
-    print('fwd ER data')
+    print('----fwd ER data-----')
+    # print(scalar_new)
+    # print("Shape:", res0.shape)
+    # print("ERT_meta_dict:", ERT_meta_dict)
+    # print("sequenceERT:", ERT_meta_dict["sequenceERT"])
+    
+    res0 = list(res0)
+    res0 = [int(round(x)) for x in res0]
+    res0 = np.array(res0)
+ 
+
     if "pygimli" in ERT_meta_dict["data_format"]:       
         ERT_predicted = simuERT.create_ERT_survey_pg(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
@@ -392,7 +392,7 @@ def Archie_rho_DA(
                 console.rule("", style="green")
         except:
             if i == 0:
-                print('Add noise to sigma - See eq. 4.4 thesis Isabelle p.95')
+                print('Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95')
             for meas_nb in range(len(sigma)):  # Loop over mesh nodes
                 # See eq. 4.4 thesis Isabelle p.95
                 # ------------------------------------

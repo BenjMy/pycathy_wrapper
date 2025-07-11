@@ -176,19 +176,27 @@ def _map_ERT_parallel_DA(
 
 
 
-def _add_2_ensemble_Archie(Archie_df,df_Archie_2add):
+def _add_2_ensemble_Archie(Archie_df, df_Archie_2add):
     """
-    Store in a dataframe Archie relationship for all ensembles and all assimilation times
+    Append Archie relationship data for a specific ensemble and time step to the main ensemble DataFrame.
+
+    This function concatenates a new DataFrame (`df_Archie_2add`) containing Archie-related
+    simulation or assimilation results to an existing ensemble-level DataFrame (`Archie_df`).
+    If `Archie_df` is empty, it initializes it with the appropriate columns.
 
     Parameters
     ----------
-    df_Archie_2add : TYPE
-        DESCRIPTION.
+    Archie_df : pd.DataFrame
+        DataFrame containing existing Archie relationship entries with columns:
+        ["time", "ens_nb", "sw", "ER_converted", "OL"].
+
+    df_Archie_2add : pd.DataFrame
+        New data to append, structured with the same columns as `Archie_df`.
 
     Returns
     -------
-    None.
-
+    pd.DataFrame
+        Updated `Archie_df` with the new entries from `df_Archie_2add` appended.
     """
 
     if len(Archie_df) == 0:
@@ -199,65 +207,65 @@ def _add_2_ensemble_Archie(Archie_df,df_Archie_2add):
     
     return Archie_df
     
-def _map_ERT_parallel_OL(
-                            project_name,
-                            Archie_parms,
-                            ENS_times,
-                            ERT_meta_dict,
-                            key_time,
-                            path_fwd_CATHY_list,
-                        ):
-    """
-    Parallel mapping of ERT data using pedophysical transformation H
-    case of the open Loop = nested loop with ensemble time
-    """
+# def _map_ERT_parallel_OL(
+#                             project_name,
+#                             Archie_parms,
+#                             ENS_times,
+#                             ERT_meta_dict,
+#                             key_time,
+#                             path_fwd_CATHY_list,
+#                         ):
+#     """
+#     Parallel mapping of ERT data using pedophysical transformation H
+#     case of the open Loop = nested loop with ensemble time
+#     """
 
-    Hx_ERT_ens = []
-    for t in range(len(ENS_times)):
-        print("t_openLoop mapping:" + str(t))
+#     Hx_ERT_ens = []
+#     for t in range(len(ENS_times)):
+#         print("t_openLoop mapping:" + str(t))
 
-        # freeze fixed arguments of Archie.SW_2_ERa
-        # -----------------------------------------------------------------
-        ERTmapping_args = partial(
-                                    Archie.SW_2_ERa_DA,
-                                    project_name,
-                                    Archie_parms,
-                                    Archie_parms["porosity"],
-                                    ERT_meta_dict,
-                                    time_ass=t,
-                                    savefig=True,
-                                    noise_level=ERT_meta_dict["data_err"],
-                                    dict_ERT=key_time[1]["ERT"],
-                                )
-        #
-        # -----------------------------------------------------------------
-        with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
-            results_mapping_time_i = pool.map(ERTmapping_args, path_fwd_CATHY_list)
-            # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
+#         # freeze fixed arguments of Archie.SW_2_ERa
+#         # -----------------------------------------------------------------
+#         ERTmapping_args = partial(
+#                                     Archie.SW_2_ERa_DA,
+#                                     project_name,
+#                                     Archie_parms,
+#                                     Archie_parms["porosity"],
+#                                     ERT_meta_dict,
+#                                     time_ass=t,
+#                                     savefig=True,
+#                                     noise_level=ERT_meta_dict["data_err"],
+#                                     dict_ERT=key_time[1]["ERT"],
+#                                 )
+#         #
+#         # -----------------------------------------------------------------
+#         with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
+#             results_mapping_time_i = pool.map(ERTmapping_args, path_fwd_CATHY_list)
+#             # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
 
-        for ens_i in range(len(path_fwd_CATHY_list)):
-            Hx_ERT_time_i = results_mapping_time_i[ens_i][0]
+#         for ens_i in range(len(path_fwd_CATHY_list)):
+#             Hx_ERT_time_i = results_mapping_time_i[ens_i][0]
 
-            # print(np.shape(results_mapping_time_i))
-            df_Archie = results_mapping_time_i[ens_i][1]
+#             # print(np.shape(results_mapping_time_i))
+#             df_Archie = results_mapping_time_i[ens_i][1]
 
-            # print(df_Archie)
-            df_Archie["OL"] = np.ones(len(df_Archie))
-            _add_2_ensemble_Archie(df_Archie)
+#             # print(df_Archie)
+#             df_Archie["OL"] = np.ones(len(df_Archie))
+#             _add_2_ensemble_Archie(df_Archie)
 
-            if "pygimli" in ERT_meta_dict["data_format"]:
-                Hx_ERT_ens = _add_2_ensemble_Hx(
-                    Hx_ERT_ens, Hx_ERT_time_i["rhoa"]
-                )
-            else:
-                Hx_ERT_ens = _add_2_ensemble_Hx(
-                    Hx_ERT_ens, Hx_ERT_time_i["resist"]
-                )
+#             if "pygimli" in ERT_meta_dict["data_format"]:
+#                 Hx_ERT_ens = _add_2_ensemble_Hx(
+#                     Hx_ERT_ens, Hx_ERT_time_i["rhoa"]
+#                 )
+#             else:
+#                 Hx_ERT_ens = _add_2_ensemble_Hx(
+#                     Hx_ERT_ens, Hx_ERT_time_i["resist"]
+#                 )
 
-    # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
-    #                                         len(Hx_ERT_ens[0]),
-    #                                         len(ENS_times)])  # (EnSize * data size * times)
-    return Hx_ERT_ens
+#     # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
+#     #                                         len(Hx_ERT_ens[0]),
+#     #                                         len(ENS_times)])  # (EnSize * data size * times)
+#     return Hx_ERT_ens
 
 def _map_ERT_parallel(
                         dict_obs,
@@ -294,17 +302,6 @@ def _map_ERT_parallel(
     # Load ERT metadata information form obs dict
     # -------------------------------------------
     ERT_meta_dict = _parse_ERT_metadata(key_time)
-
-    # if len(ENS_times) > 0:  # case of the open Loop = nested loop with ensemble time
-    #     Hx_ERT_ens = _map_ERT_parallel_OL(
-    #                                         project_name,
-    #                                         Archie_parms,
-    #                                         ENS_times,
-    #                                         ERT_meta_dict,
-    #                                         key_time,
-    #                                         path_fwd_CATHY_list,
-    #                                     )
-    # else:
     Hx_ERT_ens, df_Archie, mesh2test = _map_ERT_parallel_DA(
                                                 dict_obs,
                                                 ENS_times,

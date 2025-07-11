@@ -13,7 +13,7 @@ from rich import print
 from rich.progress import track
 
 
-def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
+def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     """
     Case with non linear observation operator:
 
@@ -34,7 +34,7 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
         model parameters (perturbated and to update)
     ensemble : np.array([])
         state values (can be either pressure heads or saturation water).
-    observation : TYPE
+    predict_obs : TYPE
         stacked predicted observation (after mapping) in the same physical quantity than data.
     """
 
@@ -80,51 +80,61 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # -------------------------------------------------------------------------
     # augm_state_pert should be (sim_size+ParSize)x(ens_size)
     augm_state_pert = augm_state - augm_state_mean
+
     # augm_state_pert[sim_size:, :][0]
 
     
     # Calculate data perturbation from ensemble measurements
     # -------------------------------------------------------------------------
     # data_pert should be (MeasSize)x(ens_size)
-    if isinstance(observation, list):
+    if isinstance(predict_obs, list):
         if len(list) == 1:
-            observation = np.array(observation[0])
+            predict_obs = np.array(predict_obs[0])
         else:
-            print(observation)
-            print("observation is a list? should be a numpy array")
+            print(predict_obs)
+            print("predict obs is a list? should be a numpy array")
             
     if  data.ndim>0:
         # print(f"Number of dimensions >0:
         # Case of dual analysis where data are within an ensemble
         # OR case where data are perturbated (add noise and create an ensemble)
-        data_pert = (data.T - observation.T).T
+        data_pert = (data.T - predict_obs.T).T
     else:
-        data_pert = (data - observation.T).T
+        data_pert = (data - predict_obs.T).T
 
-
-    # print(np.shape(data))
-    # print(np.shape(observation.T))
-    # data_pert = (data - observation).T
-
-    if np.max(abs(data_pert)) > 1e3:
+    max_residual = 1e2
+    if np.max(abs(data_pert)) > max_residual:
         print(f'measured data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
-        print(f'predicted data obs mean: {np.mean(observation)}, min: {np.min(observation)}, max: {np.max(observation)}')
-        print('!predictions are too far from observations!')
+        print(f'predicted data obs mean: {np.mean(predict_obs)}, min: {np.min(predict_obs)}, max: {np.max(predict_obs)}')
+        print('!predictions are too far from predict_obs!')
+        # data_pert = np.clip(data_pert, -max_residual, max_residual)
+        # observation = np.clip(observation, -max_residual, max_residual)
+
 
     # Calculate S = ensemble observations perturbation from ensemble observation mean.
     # -------------------------------------------------------------------------
     # S is (MeasSize)x(ens_size)
     obs_avg = (1.0 / float(ens_size)) * np.tile(
-        observation.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
+        predict_obs.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
     ).transpose()
     
-    # np.max(obs_avg)
-    # np.min(obs_avg)
     
-    obs_pert = observation - obs_avg
-    # np.max(obs_pert)
-    # np.min(obs_pert)
+    # Flatten obs_pert to visualize the distribution across all members and measurements
+    obs_pert_flat = predict_obs.flatten()
+    # predict_obs_transformed = np.log1p(obs_pert_flat)  # log1p(x) = log(1 + x), avoids log(0)
     
+    # Plot histogram
+    # plt.figure(figsize=(8, 5))
+    # plt.hist(obs_pert_flat, bins=50, color='skyblue', edgecolor='k', alpha=0.8)
+    # plt.title("Distribution of Observation Perturbations")
+    # plt.xlabel("Perturbation Value")
+    # plt.ylabel("Frequency")
+    # plt.grid(True)
+    # plt.tight_layout()
+    # plt.show()
+
+
+    obs_pert = predict_obs - obs_avg    
     if obs_pert.mean() == 0:
         print(
             "Ensemble observations perturbation from ensemble"
@@ -137,27 +147,44 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     # -------------------------------------------------------------------------
     if Sakov:
         COV = data_cov.transpose()
+        inv_data_pert = data_pert /  np.diag(COV)[:, None]
     else:
         COV = ( (1.0 / float(ens_size - 1)) * np.dot(obs_pert, obs_pert.transpose()) + data_cov.transpose())
-    # Compute inv(COV)*dD
-    # -------------------------------------------------------------------------
-    # Should be (MeasSize)x(ens_size)
-    inv_data_pert = np.linalg.solve(COV, data_pert)
+        # Compute inv(COV)*dD
+        # -------------------------------------------------------------------------
+        # Should be (MeasSize)x(ens_size)
+        inv_data_pert = np.linalg.solve(COV, data_pert)
+        
     print("Compute inv(COV)*dD")
-    print(np.shape(COV))
-
+    print("Statistics of inv_data_pert:")
+    print(f"  Shape: {inv_data_pert.shape}")
+    print(f"  Min:   {np.min(inv_data_pert)}")
+    print(f"  Max:   {np.max(inv_data_pert)}")
+    print(f"  Mean:  {np.mean(inv_data_pert)}")
+    print(f"  Std:   {np.std(inv_data_pert)}")
+    print(f"  Median:{np.median(inv_data_pert)}")
+    # np.linalg.cond(COV)  # Condition number
 
     # Adjust ensemble perturbations
     # -------------------------------------------------------------------------
     # Should be (sim_size+ParSize)x(MeasSize)
-    pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
+    ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
                                                 obs_pert.T
                                                 )
-
+    
+    # ensemble_pert = ensemble_pert/10
+    print("Statistics of ensemble perturbations:")
+    print(f"  Shape: {ensemble_pert.shape}")
+    print(f"  Min:   {np.min(ensemble_pert)}")
+    print(f"  Max:   {np.max(ensemble_pert)}")
+    print(f"  Mean:  {np.mean(ensemble_pert)}")
+    print(f"  Std:   {np.std(ensemble_pert)}")
+    print(f"  Median:{np.median(ensemble_pert)}")
+    
     # Compute analysis
     # -------------------------------------------------------------------------
     # Analysis is (sim_size+ParSize)x(ens_size)
-    analysis = augm_state + np.dot(pert, inv_data_pert)
+    analysis = augm_state + np.dot(ensemble_pert, inv_data_pert)
     print("Analysis ...")
 
     # Separate and return Analyzed ensemble and Analyzed parameters.
@@ -174,7 +201,7 @@ def enkf_analysis(data, data_cov, param, ensemble, observation, **kwargs):
         obs_pert,
         COV,
         inv_data_pert,
-        pert,
+        ensemble_pert,
         analysis,
         analysis_param,
     ]

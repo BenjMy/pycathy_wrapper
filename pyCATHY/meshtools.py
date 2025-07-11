@@ -244,13 +244,8 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     """
     in_nodes_mod = kwargs["in_nodes_mod"]
     meshIN.set_active_scalars(scalar)
-    # meshIN.points = in_nodes_mod
     meshOUT.points = in_nodes_mod
-    # len(in_nodes_mod)
 
-    # print(meshIN.points)
-
-    # set_interpolation_radius()
     rd = max(np.diff(meshIN.points[:, 0])) * 10
     meshOUT_interp = meshOUT.interpolate(meshIN,
                                          radius=rd,
@@ -836,7 +831,7 @@ def _find_nearest_point2DEM(
     # xyz_layers_cells=[],
     xyz_layers=[],
     saveMeshPath=None,
-    marker_name='layers',
+    marker_name='zone3d',
 ):
 
     if to_nodes:
@@ -853,7 +848,7 @@ def _find_nearest_point2DEM(
             node_markers.append(xyz_layers[np.argmin(d), 3])
         # add data to the mesh
         # ----------------------------------------------------------------
-        mesh_pv_attributes["node_markers_old"] = node_markers
+        # mesh_pv_attributes["node_markers_old"] = node_markers
     else:
         # Get the mesh cell centers
         cell_centers = mesh_pv_attributes.cell_centers().points
@@ -877,7 +872,7 @@ def _find_nearest_point2DEM(
         mesh_pv_attributes.save(saveMeshPath,binary=False)
 
 
-def add_markers_layers_2_mesh(
+def add_markers_zone3d_2_mesh(
     zones3d_layered,
     dem,
     mesh_pv_attributes,
@@ -887,7 +882,7 @@ def add_markers_layers_2_mesh(
     to_nodes=False,
     show=False,
     saveMeshPath=None,
-):
+    ):
 
     # Create a regular mesh from the DEM x and y coordinates and elevation
     # ------------------------------------------------------------------
@@ -940,7 +935,6 @@ def add_markers_layers_2_mesh(
         mesh_pv_attributes,
         xyz_layers,
         saveMeshPath,
-        marker_name='layers'
     )
 #%%
 def map_cells_to_nodes(raster_map, grid3d_shape=None):

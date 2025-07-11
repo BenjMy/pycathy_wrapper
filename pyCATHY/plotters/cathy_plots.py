@@ -1381,8 +1381,9 @@ def show_DA_process_ens(
     cbar = fig.colorbar(cax, location="bottom")
     ax.set_yticks([])
 
+    # vlim = np.percentile(np.abs(dD), 95)  # symmetric color scale
     ax = fig.add_subplot(2, 5, 3)
-    cax = ax.matshow(dD, aspect="auto", cmap="jet")
+    cax = ax.matshow(dD, aspect="auto", cmap="seismic") #, vmin=-vlim, vmax=vlim)
     ax.set_title("Meas - Sim")
     ax.set_ylabel("Meas")
     ax.set_xlabel("Members #")
@@ -1390,7 +1391,7 @@ def show_DA_process_ens(
     ax.set_yticks([])
 
     ax = fig.add_subplot(2, 5, 4, sharey=ax1)
-    cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="jet")
+    cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="seismic")
     ax.set_title("Correction")
     ax.set_ylabel("$\psi$ params #")
     ax.set_xlabel("Members #")

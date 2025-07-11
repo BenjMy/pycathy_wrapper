@@ -55,10 +55,12 @@ def create_dict_entry(
                          scenario_nom, scenario_mean, scenario_sd, 
                          clip_min,clip_max,
                          NENS,
-                         pert_control_name=None
+                         per_type,
+                         pert_control_name=None,
+                         transf_type=None
                       ):
     
-    per_type = scenario["per_type"][index]
+    # per_type = scenario["per_type"][index]
     # if type(nstri) == int: 
     #     per_type = scenario["per_type"][index][nstri]
         
@@ -71,6 +73,7 @@ def create_dict_entry(
         "sampling_type": "normal",
         "ensemble_size": NENS,  # size of the ensemble
         "per_type": per_type,
+        "transf_type": transf_type,
         "savefig": name + str(nstri) + ".png",
         "surf_zones_param": nstri,
         "clip_min": clip_min,
@@ -79,6 +82,126 @@ def create_dict_entry(
     }
     
     return dict_parm_entry
+
+def process_perturbation_block(
+    scenario, 
+    NENS,
+    index,
+    nlayers=None, 
+    zone_raster=None,
+    veg_raster=None,
+):
+    """
+    Process perturbation for a single parameter (given by index) from scenario dict.
+
+    Returns a list of perturbation dict entries (does NOT append to external list).
+
+    Parameters:
+    - scenario: dict with keys 'per_name', 'per_nom', 'per_mean', 'per_sigma', 'per_type', optional 'per_bounds' and 'pert_control_name'.
+    - NENS: int, number of ensemble members.
+    - index: int, index of the parameter in scenario dict lists to process.
+    - nlayers: int, required for 'layers' mode.
+    - zone_raster: np.ndarray, required for 'zone' mode.
+    - veg_raster: np.ndarray, required for 'root_map' mode.
+    """
+    entries = []
+    pname = scenario["per_name"][index]
+    pert_control_name = scenario.get('pert_control_name', [None]*len(scenario["per_name"]))[index]
+    scenario_nom = scenario["per_nom"][index]
+    scenario_mean = scenario["per_mean"][index]
+    scenario_sd = scenario["per_sigma"][index]
+    per_type = scenario["per_type"][index]
+    transf_type = scenario["transf_type"][index]
+
+    # Pull bounds dynamically if available
+    clip_min, clip_max = None, None
+    if "per_bounds" in scenario:
+        bounds = scenario["per_bounds"][index]
+        if isinstance(bounds, (list, tuple)) and len(bounds) == 2:
+            clip_min, clip_max = bounds
+
+    # Handle perturbation by control type
+    if isinstance(scenario_nom, list):
+        if pert_control_name == 'layers':
+            if nlayers is None:
+                raise ValueError("nlayers must be provided for 'layers' perturbation control.")
+            for layer_idx in range(nlayers):
+                entry = create_dict_entry(
+                    pname, scenario, index, layer_idx,
+                    scenario_nom[layer_idx],
+                    scenario_mean[layer_idx],
+                    scenario_sd[layer_idx],
+                    clip_min, clip_max, NENS,
+                    per_type=per_type[layer_idx],
+                    pert_control_name=pert_control_name,
+                    transf_type = transf_type
+                )
+                check_distribution(entry)
+                entries.append(entry)
+
+        elif pert_control_name == 'zone':
+            if zone_raster is None:
+                raise ValueError("zone_raster must be provided for 'zone' perturbation control.")
+            unique_zones = np.unique(zone_raster)
+            for zone_idx in range(len(unique_zones)):
+                z_nom = scenario_nom[zone_idx]
+                z_mean = scenario_mean[zone_idx]
+                z_sd = scenario_sd[zone_idx]
+                z_type = per_type[zone_idx]
+
+                entry = create_dict_entry(
+                    pname, scenario, index, zone_idx,
+                    z_nom, z_mean, z_sd,
+                    clip_min, clip_max, NENS,
+                    per_type=z_type,
+                    pert_control_name=pert_control_name,
+                    transf_type = transf_type
+                )
+                check_distribution(entry)
+                entries.append(entry)
+
+        elif pert_control_name == 'root_map':
+            if veg_raster is None:
+                raise ValueError("veg_raster must be provided for 'root_map' perturbation control.")
+            unique_roots = np.unique(veg_raster)
+            for veg_idx in range(len(unique_roots)):
+                r_nom = scenario_nom[veg_idx]
+                r_mean = scenario_mean[veg_idx]
+                r_sd = scenario_sd[veg_idx]
+                r_type = per_type[veg_idx] if isinstance(per_type, list) else per_type
+
+                entry = create_dict_entry(
+                    pname, scenario, index, veg_idx,
+                    r_nom, r_mean, r_sd,
+                    clip_min, clip_max, NENS,
+                    per_type=r_type,
+                    pert_control_name=pert_control_name,
+                    transf_type = transf_type
+                )
+                check_distribution(entry)
+                entries.append(entry)
+
+        else:
+            raise ValueError(
+                f"Unknown list-type perturbation control '{pert_control_name}' for parameter '{pname}'. "
+                "Expected 'layers', 'zone', or 'root_map'."
+            )
+
+    else:
+        # Scalar perturbation
+        entry = create_dict_entry(
+            pname, scenario, index, '',
+            scenario_nom, scenario_mean, scenario_sd,
+            clip_min, clip_max, NENS,
+            per_type=per_type,
+            pert_control_name=pert_control_name,
+            transf_type = transf_type
+        )
+        check_distribution(entry)
+        entries.append(entry)
+
+    return entries
+
 
 
 def perturbate(simu_DA, scenario, NENS, 
@@ -92,7 +215,12 @@ def perturbate(simu_DA, scenario, NENS,
     dictionnary of perturbated parameters is build per layers i.e. 
     ks0= layer 0, ks1=layer 1, etc...
    
-    """    
+    """  
+    
+    df_SPP, df_FP = simu_DA.read_inputs('soil')
+    zone_raster, zone_header = simu_DA.read_inputs('zone')
+    veg_raster, veg_header = simu_DA.read_inputs('root_map')
+        
     if 'nzones' in kwargs: 
         nzones = kwargs.pop('nzones')
     else:
@@ -103,7 +231,8 @@ def perturbate(simu_DA, scenario, NENS,
     else:
         nlayers = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(1).unique())
         nlayers_PERMX = len(simu_DA.soil_SPP['SPP_map']['PERMX'].unique())
-        
+
+    #%%
     list_pert = []
 
     #%% Initial and boundary conditions parameters
@@ -151,9 +280,6 @@ def perturbate(simu_DA, scenario, NENS,
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
         
-        df_SPP, df_FP = simu_DA.read_inputs('soil')
-        zone_raster, zone_header = simu_DA.read_inputs('zone')
-        veg_raster, veg_header = simu_DA.read_inputs('root_map')
         
         clip_min = None
         clip_max = None
@@ -165,12 +291,16 @@ def perturbate(simu_DA, scenario, NENS,
                         scenario_nom = scenario["per_nom"][index][nstri]
                         scenario_mean = scenario["per_mean"][index][nstri]
                         scenario_sd = scenario["per_sigma"][index][nstri]
+                        scenario_per_type = scenario["per_type"][index][nstri]
+                        transf_type = scenario["transf_type"][index][nstri]
         
                     ic = create_dict_entry(
                                 'ic',scenario,index,nstri, 
                                 scenario_nom, scenario_mean, scenario_sd, 
                                 clip_min,clip_max,
                                 NENS,
+                                per_type=scenario_per_type,
+                                transf_type = transf_type
                                 )
                     
                     list_pert.append(ic)
@@ -180,15 +310,20 @@ def perturbate(simu_DA, scenario, NENS,
                     # Adjust bounds and retrieve parameters for the current zone
                     clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
                     zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
-        
+                    scenario_per_type = scenario["per_type"][index][zonei]
+
                     ic = create_dict_entry(
                         'ic', scenario, index, zonei, zone_nom, zone_mean, zone_sd, 
                         clip_min, clip_max, NENS,
-                        pert_control_name=pert_control_name
+                        per_type=scenario_per_type,
+                        pert_control_name=pert_control_name,
+                        transf_type = scenario["transf_type"][index]
                     )
                     check_distribution(ic)
                     list_pert.append(ic)        
-                
+            else:
+                raise ValueError(f"List-type perturbation provided, but unknown control name: '{pert_control_name}'. "
+                         f"Expected 'layers' or 'zone'.")
         else: 
             
             ic = create_dict_entry(
@@ -196,6 +331,8 @@ def perturbate(simu_DA, scenario, NENS,
                         scenario_nom, scenario_mean, scenario_sd, 
                         clip_min,clip_max,
                         NENS,
+                        per_type=scenario["per_type"][index],
+                        transf_type = scenario["transf_type"][index]
                         )
             list_pert.append(ic)
 
@@ -241,168 +378,92 @@ def perturbate(simu_DA, scenario, NENS,
 
     #%% Petro-Pedophysical parameters
     # ------------------------------------------------------------------------
+    
+    if "SATCELL_VG" in scenario["per_name"]:
+        index = scenario["per_name"].index("SATCELL_VG")
+        SATCELL_VG = process_perturbation_block(scenario,
+                                                NENS=NENS, 
+                                                index=index,
+                                                nlayers=nlayers, 
+                                                zone_raster=zone_raster, 
+                                                veg_raster=veg_raster
+                                                )
+        list_pert.extend(SATCELL_VG)
+
+
     if "thetar_VG" in scenario["per_name"]:
+        
         index = scenario["per_name"].index("thetar_VG")
-
-        scenario_nom = scenario["per_nom"][index]
-        scenario_mean = scenario["per_mean"][index]
-        scenario_sd = scenario["per_sigma"][index]
-
-        clip_min = 0
-        clip_max = 1
-
-        for nstri in range(nlayers):
-            if nlayers > 1:
-                scenario_nom = scenario["per_nom"][index][nstri]
-                scenario_mean = scenario["per_mean"][index][nstri]
-                scenario_sd = scenario["per_sigma"][index][nstri]
-
-            clip_min, clip_max = check4bounds(
-                scenario,
-                index,
-                clip_min,
-                clip_max,
-                het_size=len(simu_DA.soil_SPP["SPP_map"]["PERMX"]),
-                het_nb=nstri,
-            )
-
-            thetar_VG = {
-                "type_parm": "thetar_VG" + str(nstri),
-                "nominal": scenario_nom,  # nominal value
-                "mean": scenario_mean,
-                "sd": scenario_sd,
-                "units": "$m^{3}/m^{3}$",  # units
-                "sampling_type": "normal",
-                "ensemble_size": NENS,  # size of the ensemble
-                "per_type": scenario["per_type"][index],
-                "savefig": "thetar_VG" + str(nstri) + ".png",
-                "surf_zones_param": nstri,
-                "clip_min": clip_min,
-                "clip_max": clip_max,
-            }
-            list_pert.append(thetar_VG)
-
+        thetar_VG = process_perturbation_block(scenario,
+                                                NENS=NENS, 
+                                                index=index,
+                                                nlayers=nlayers, 
+                                                zone_raster=zone_raster, 
+                                                veg_raster=veg_raster
+                                                )
+        list_pert.extend(thetar_VG)
+        
     if "alpha_VG" in scenario["per_name"]:
-        index = scenario["per_name"].index("alpha_VG")
-
-        scenario_nom = scenario["per_nom"][index]
-        scenario_mean = scenario["per_mean"][index]
-        scenario_sd = scenario["per_sigma"][index]
-
-        for nstri in range(nlayers):
-            if nlayers > 1:
-                scenario_nom = scenario["per_nom"][index][nstri]
-                scenario_mean = scenario["per_mean"][index][nstri]
-                scenario_sd = scenario["per_sigma"][index][nstri]
-
-            alpha_VG = {
-                "type_parm": "alpha_VG" + str(nstri),
-                "nominal": scenario_nom,  # nominal value
-                "mean": scenario_mean,
-                "sd": scenario_sd,
-                "units": "$cm^{-1}$",  # units
-                "sampling_type": "normal",
-                "ensemble_size": NENS,  # size of the ensemble
-                "per_type": scenario["per_type"][index],
-                "savefig": "alpha_VG" + str(nstri) + ".png",
-                "surf_zones_param": nstri,
-            }
-            list_pert.append(alpha_VG)
-
-    if "VGPSATCELL" in scenario["per_name"]:
-        index = scenario["per_name"].index("VGPSATCELL")
-
-        scenario_nom = scenario["per_nom"][index]
-        scenario_mean = scenario["per_mean"][index]
-        scenario_sd = scenario["per_sigma"][index]
-
-        # clip_min = 0
-        # clip_max = 1
-
-        for nstri in range(nlayers):
-            if nlayers > 1:
-                scenario_nom = scenario["per_nom"][index][nstri]
-                scenario_mean = scenario["per_mean"][index][nstri]
-                scenario_sd = scenario["per_sigma"][index][nstri]
-
-            VGPSATCELL_VG = {
-                "type_parm": "VGPSATCELL_VG" + str(nstri),
-                "nominal": scenario_nom,  # nominal value
-                "mean": scenario_mean,
-                "sd": scenario_sd,
-                "units": "$cm^{-1}$",  # units
-                "sampling_type": "normal",
-                "ensemble_size": NENS,  # size of the ensemble
-                "per_type": scenario["per_type"][index],
-                "savefig": "VGPSATCELL_VG" + str(nstri) + ".png",
-                "surf_zones_param": nstri,
-            }
-            list_pert.append(VGPSATCELL_VG)
+        index = scenario["per_name"].index("alpha_VG")          
+        alpha_VG = process_perturbation_block(scenario,
+                                                NENS=NENS, 
+                                                index=index,
+                                                nlayers=nlayers, 
+                                                zone_raster=zone_raster, 
+                                                veg_raster=veg_raster
+                                                )
+        list_pert.extend(alpha_VG)
 
     if "n_VG" in scenario["per_name"]:
         index = scenario["per_name"].index("n_VG")
+        n_VG = process_perturbation_block(scenario,
+                                                NENS=NENS, 
+                                                index=index,
+                                                nlayers=nlayers, 
+                                                zone_raster=zone_raster, 
+                                                veg_raster=veg_raster
+                                                )
+        
+        list_pert.extend(n_VG)
 
-        scenario_nom = scenario["per_nom"][index]
-        scenario_mean = scenario["per_mean"][index]
-        scenario_sd = scenario["per_sigma"][index]
 
-        for nstri in range(nlayers):
-            if nlayers > 1:
-                scenario_nom = scenario["per_nom"][index][nstri]
-                scenario_mean = scenario["per_mean"][index][nstri]
-                scenario_sd = scenario["per_sigma"][index][nstri]
+    # if "VGP" in scenario["per_name"]:
+    #     # - 'PERMX' (NSTR, nstriONE): saturated hydraulic conductivity - xx
+    #     # - 'PERMY' (NSTR, nstriONE): saturated hydraulic conductivity - yy
+    #     # - 'PERMZ' (NSTR, nstriONE): saturated hydraulic conductivity - zz
+    #     # - 'ELSTOR' (NSTR, nstriONE): specific storage
+    #     # - 'POROS'  (NSTR, nstriONE): porosity (moisture content at saturation) = \thetaS
 
-            n_VG = {
-                "type_parm": "n_VG" + str(nstri),
-                "nominal": scenario_nom,  # nominal value
-                "mean": scenario_mean,
-                "sd": scenario_sd,
-                "units": "$(-)$",  # units
-                "sampling_type": "normal",
-                "ensemble_size": NENS,  # size of the ensemble
-                "per_type": scenario["per_type"][index],
-                "savefig": "n_VG" + str(nstri) + ".png",
-                "surf_zones_param": nstri,
-            }
-            list_pert.append(n_VG)
+    #     # retention curves parameters VGN, VGRMC, and VGPSAT
+    #     # - 'VGNCELL' (NSTR, nstriONE): van Genuchten curve exponent  = n
+    #     # - 'VGRMCCELL' (NSTR, nstriONE): residual moisture content = \thetaR
+    #     # - 'VGPSATCELL' (NSTR, nstriONE): van Genuchten curve exponent -->
+    #     #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
+    #     # ['ks','ss','phi','thetar','alpha','n'])
+    #     # ['PERMX','ELSTOR','POROS','VGRMCCELL','VGPSATCELL','VGNCELL'])
 
-    if "VGP" in scenario["per_name"]:
-        # - 'PERMX' (NSTR, nstriONE): saturated hydraulic conductivity - xx
-        # - 'PERMY' (NSTR, nstriONE): saturated hydraulic conductivity - yy
-        # - 'PERMZ' (NSTR, nstriONE): saturated hydraulic conductivity - zz
-        # - 'ELSTOR' (NSTR, nstriONE): specific storage
-        # - 'POROS'  (NSTR, nstriONE): porosity (moisture content at saturation) = \thetaS
+    #     # need to account for transformation of the parameters see Boto
 
-        # retention curves parameters VGN, VGRMC, and VGPSAT
-        # - 'VGNCELL' (NSTR, nstriONE): van Genuchten curve exponent  = n
-        # - 'VGRMCCELL' (NSTR, nstriONE): residual moisture content = \thetaR
-        # - 'VGPSATCELL' (NSTR, nstriONE): van Genuchten curve exponent -->
-        #                               VGPSAT == -1/alpha (with alpha expressed in [L-1]);
-        # ['ks','ss','phi','thetar','alpha','n'])
-        # ['PERMX','ELSTOR','POROS','VGRMCCELL','VGPSATCELL','VGNCELL'])
+    #     VGP_units = ["", "", "", "", "", ""]
 
-        # need to account for transformation of the parameters see Boto
+    #     for i, p in enumerate(["ks", "ss", "phi", "thetar", "alpha", "r"]):
+    #         index = scenario["per_name"].index("VGP")
 
-        VGP_units = ["", "", "", "", "", ""]
-
-        for i, p in enumerate(["ks", "ss", "phi", "thetar", "alpha", "r"]):
-            index = scenario["per_name"].index("VGP")
-
-            if p not in scenario["per_nom"][index]:
-                pass
-            else:
-                p_VGP = {
-                    "type_parm": p,
-                    "nominal": scenario["per_nom"][index][p],  # nominal value
-                    "mean": scenario["per_mean"][index][p],
-                    "sd": scenario["per_sigma"][index][p],
-                    "units": VGP_units[i],  # units
-                    "sampling_type": "normal",
-                    "ensemble_size": NENS,  # size of the ensemble
-                    "per_type": scenario["per_type"][index],
-                    "savefig": "_VGP" + p + ".png",
-                }
-                list_pert.append(p_VGP)
+    #         if p not in scenario["per_nom"][index]:
+    #             pass
+    #         else:
+    #             p_VGP = {
+    #                 "type_parm": p,
+    #                 "nominal": scenario["per_nom"][index][p],  # nominal value
+    #                 "mean": scenario["per_mean"][index][p],
+    #                 "sd": scenario["per_sigma"][index][p],
+    #                 "units": VGP_units[i],  # units
+    #                 "sampling_type": "normal",
+    #                 "ensemble_size": NENS,  # size of the ensemble
+    #                 "per_type": scenario["per_type"][index],
+    #                 "savefig": "_VGP" + p + ".png",
+    #             }
+    #             # list_pert.append(p_VGP)
 
     Archie_2pert = [ele for ele in scenario["per_name"] if ("Archie" in ele)]
     if len(Archie_2pert) > 0:
@@ -419,7 +480,15 @@ def perturbate(simu_DA, scenario, NENS,
         # m = (mean = 2.5,sd = 0.8,min = 0.0, max = 3.0)
 
         # archie_units = ["", "", "", ""]
-            
+        archie_units = {
+            "porosity": "-",                   # dimensionless (volume fraction)
+            "a": "-",                          # tortuosity factor (dimensionless)
+            "m": "-",                          # cementation exponent (dimensionless)
+            "n": "-",                          # saturation exponent (dimensionless)
+            "rFluid_Archie": "ohm.m",           # resistivity of water
+        }
+
+
         for i, p in enumerate(Archie_2pert):
             
             index = scenario["per_name"].index(p)      
@@ -427,23 +496,24 @@ def perturbate(simu_DA, scenario, NENS,
             if 'pert_control_name' in scenario:
                 pert_control_name = scenario['pert_control_name'][index]
                 
-
+            
             scenario_nom = scenario["per_nom"][index]
             scenario_mean = scenario["per_mean"][index]
             scenario_sd = scenario["per_sigma"][index]
+            scenario_per_type = scenario["per_type"][index]
 
 
 
-            if pert_control_name=='layers':
+            if pert_control_name is not None and pert_control_name == 'layers':
                 for nstri in range(nlayers):
                     # Adjust bounds and retrieve parameters for the current layer
                     # clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
                     layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
-        
                     # Create porosity entry for this layer and validate distribution
                     p_archie = create_dict_entry(
                         p, scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
-                        clip_min, clip_max, NENS
+                        clip_min, clip_max, NENS,
+                        per_type=scenario_per_type[nstri],
                     )
                     check_distribution(p_archie)
                     list_pert.append(p_archie)
@@ -456,11 +526,13 @@ def perturbate(simu_DA, scenario, NENS,
                     "nominal": scenario["per_nom"][index],  # nominal value
                     "mean": scenario["per_mean"][index],
                     "sd": scenario["per_sigma"][index],
-                    # "units": archie_units[i],  # units
+                    "units": archie_units[p],  # units
                     "sampling_type": "normal",
                     "ensemble_size": NENS,  # size of the ensemble
                     "per_type": scenario["per_type"][index],
                     "savefig": "_Archie" + p + ".png",
+                    'pert_control_name':pert_control_name
+
                 }
                 list_pert.append(p_archie)
 
@@ -474,6 +546,7 @@ def perturbate(simu_DA, scenario, NENS,
         scenario_nom = scenario["per_nom"][index]
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
+        scenario_per_type = scenario["per_type"][index]
 
         scenario_sampling = "normal"
         if "sampling_type" in scenario:
@@ -498,20 +571,18 @@ def perturbate(simu_DA, scenario, NENS,
         if pert_control_name=='zone': 
             for zonei in range(len(np.unique(zone_raster))):
            
-                if len(np.unique(zone_raster)) > 1:
-                    scenario_nom = scenario["per_nom"][index][zonei]
-                    scenario_mean = scenario["per_mean"][index][zonei]
-                    scenario_sd = scenario["per_sigma"][index][zonei]
+                zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
                 Ks = create_dict_entry(
                             'Ks',scenario,index,zonei, 
-                            scenario_nom, scenario_mean, scenario_sd, 
+                            zone_nom, zone_mean, zone_sd, 
                             clip_min,clip_max,
                             NENS,
+                            per_type=scenario_per_type[zonei],
                             pert_control_name=pert_control_name
                             )
                 
                 list_pert.append(Ks)
-        
+                              
         elif pert_control_name=='root_map': 
             for vegi in range(len(np.unique(veg_raster))):
            
@@ -519,7 +590,7 @@ def perturbate(simu_DA, scenario, NENS,
                     scenario_nom = scenario["per_nom"][index][vegi]
                     scenario_mean = scenario["per_mean"][index][vegi]
                     scenario_sd = scenario["per_sigma"][index][vegi]
-                    
+
                 Ks = create_dict_entry(
                             'Ks',scenario,index,vegi, 
                             scenario_nom, scenario_mean, scenario_sd, 
@@ -540,6 +611,7 @@ def perturbate(simu_DA, scenario, NENS,
                 Ks = create_dict_entry(
                     'Ks', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
                     clip_min, clip_max, NENS,
+                    per_type=scenario_per_type[nstri],
                     pert_control_name=pert_control_name
                 )
                 check_distribution(Ks)
@@ -551,6 +623,7 @@ def perturbate(simu_DA, scenario, NENS,
                         scenario_nom, scenario_mean, scenario_sd, 
                         clip_min,clip_max,
                         NENS,
+                        per_type=scenario["per_type"][index],
                         )
             list_pert.append(Ks)
                                
@@ -571,6 +644,7 @@ def perturbate(simu_DA, scenario, NENS,
         scenario_nom = scenario["per_nom"][index]
         scenario_mean = scenario["per_mean"][index]
         scenario_sd = scenario["per_sigma"][index]
+        scenario_per_type = scenario["per_type"][index]
     
         # Define clipping bounds for soil porosity
         clip_min, clip_max = 0.2, 0.7
@@ -586,6 +660,7 @@ def perturbate(simu_DA, scenario, NENS,
                 porosity = create_dict_entry(
                     'porosity', scenario, index, zonei, zone_nom, zone_mean, zone_sd, 
                     clip_min, clip_max, NENS,
+                    per_type=scenario_per_type[zonei],
                     pert_control_name=pert_control_name
                 )
                 check_distribution(porosity)
@@ -602,6 +677,7 @@ def perturbate(simu_DA, scenario, NENS,
                 porosity = create_dict_entry(
                     'porosity', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
                     clip_min, clip_max, NENS,
+                    per_type=scenario_per_type[nstri],
                     pert_control_name=pert_control_name
                 )
                 check_distribution(porosity)
@@ -612,7 +688,8 @@ def perturbate(simu_DA, scenario, NENS,
             clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
             porosity = create_dict_entry(
                 'porosity', scenario, index, '', scenario_nom, scenario_mean, scenario_sd, 
-                clip_min, clip_max, NENS
+                clip_min, clip_max, NENS,
+                per_type=scenario["per_type"][index],
             )
             check_distribution(porosity)
             list_pert.append(porosity)
@@ -919,29 +996,99 @@ def VG_pert_rules(
     sampling_type,
     **kwargs,
 ):
+
+    # if "Carsel_Parrish_VGN_pert" in kwargs:
+    #     utils.Carsel_Parrish_1988(soilTexture=None)
+    #     Carsel_Parrish_VGN_pert()
+    # else:
+    #     if "clip_min" in var_per_2add[type_parm].keys():
+    #         parm_sampling = sampling_dist_trunc(
+    #             myclip_a=var_per_2add[type_parm]["clip_min"],
+    #             myclip_b=var_per_2add[type_parm]["clip_max"],
+    #             ensemble_size=ensemble_size,
+    #             loc=mean,
+    #             scale=sd,
+    #         )
+    #     else:
+    #         parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+    #     parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+    
+    """
+    Sample a single van Genuchten physical parameter and transform it to Gaussian space via Johnson transformation.
+
+    Parameters:
+    - parm: dict
+        Must include:
+            - 'nominal': float
+            - 'sampling_type': 'lognormal' | 'normal' | 'uniform'
+            - 'mean': mean of sampling distribution (in physical space)
+            - 'sd': standard deviation of sampling
+            - 'per_type': 'additive' | 'multiplicative' | None
+            - 'type': 'LN' | 'SB' | 'SU' (Johnson transform type)
+            - 'A': Johnson transform A parameter (for SB)
+            - 'B': Johnson transform B parameter (for SB)
+            - Optional: 'minmax_uni': [min, max] (if uniform)
+
+    - ensemble_size: int
+    - seed: int
+
+    Returns:
+    - v_array: (ensemble_size,) ndarray of physical parameter samples
+    - y_array: (ensemble_size,) ndarray of transformed (Gaussian) samples
+    """
+    
     print(
-        "The parameters of the van Genuchten retention curves α,"
+        "(NOT YET IMPLEMENTED - The parameters of the van Genuchten retention curves α,"
         + "n, and θ r are perturbed taking into account their mutual cor-"
         + "relation according to Carsel and Parrish (1988)"
     )
+    
+    np.random.seed(seed=1)
 
-    if "Carsel_Parrish_VGN_pert" in kwargs:
-        utils.Carsel_Parrish_1988(soilTexture=None)
-        Carsel_Parrish_VGN_pert()
-    else:
-        if "clip_min" in var_per_2add[type_parm].keys():
-            parm_sampling = sampling_dist_trunc(
-                myclip_a=var_per_2add[type_parm]["clip_min"],
-                myclip_b=var_per_2add[type_parm]["clip_max"],
-                ensemble_size=ensemble_size,
-                loc=mean,
-                scale=sd,
-            )
-        else:
-            parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
-    return parm_per_array
+    # --- Sampling ---
+    sampling_type = parm["sampling_type"]
+    mean = parm["mean"]
+    sd = parm["sd"]
+    per_type = parm.get("per_type", None)
+    transf_type = parm.get("transf_type", None)
 
+    kwargs = {}
+    if sampling_type == "uniform" and "minmax_uni" in parm:
+        kwargs["minmax_uni"] = parm["minmax_uni"]
+
+    # parm_sampling = sampling_dist(
+    #     sampling_type=sampling_type,
+    #     mean=mean,
+    #     sd=sd,
+    #     ensemble_size=ensemble_size,
+    #     **kwargs
+    # )
+
+    parm_sampling = sampling_dist_trunc(
+        myclip_a=parm["clip_min"],
+        myclip_b=parm["clip_max"],
+        ensemble_size=ensemble_size,
+        loc= parm['mean'],
+        scale=sd,
+    )
+            
+    # --- Perturbation (physical space) ---
+    v_array = perturbate_dist(
+        parm=parm,
+        per_type=per_type,
+        parm_sampling=parm_sampling,
+        ensemble_size=ensemble_size
+    )
+
+    # # --- Johnson transform (to Gaussian space) ---
+    # y_array = Johnson1970_transform(
+    #     v_array,
+    #     transform_type=transf_type,
+    #     A=parm['clip_min'],
+    #     B=parm['clip_max']
+    # )
+
+    return parm_sampling, v_array
 
 def atmbc_pert_rules(
         var_per_2add,
@@ -1006,8 +1153,66 @@ def atmbc_pert_rules(
     return white_noise, parm_per_ti
 
 
-def Johnson1970(self):
-    print("not yet implemented - see Botto 2018")
+# def Johnson1970():
+#     print("not yet implemented - see Botto 2018")
+
+
+def Johnson1970_transform(V, transform_type, A=None, B=None):
+    """
+    Apply Johnson transformation to a parameter V. ( see Botto 2018)
+
+    Parameters:
+    - V: float or ndarray
+        Original parameter(s) to transform.
+    - transform_type: str
+        One of 'LN', 'SB', or 'SU' indicating which Johnson transformation to use.
+    - A, B: float
+        Bounds required for the 'SB' transformation.
+
+    Returns:
+    - Y: float or ndarray
+        Transformed variable (normally distributed).
+    """
+    rootName = 'Johnson_'
+    if transform_type == rootName+'LN':
+        return np.log(V)
+    elif transform_type == rootName+'SB':
+        if A is None or B is None:
+            raise ValueError("A and B must be provided for the SB transformation.")
+        U = (V - A) / (B - V)
+        return np.log(U)
+    elif transform_type == rootName+'SU':
+        return np.arcsinh(V)
+    else:
+        raise ValueError("Invalid transform_type. Choose from 'LN', 'SB', or 'SU'.")
+
+def inverse_Johnson1970_transform(Y, transform_type, A=None, B=None):
+    """
+    Inverse Johnson transformation from Y to V.
+
+    Parameters:
+    - Y: float or ndarray
+        Transformed (normal) variable.
+    - transform_type: str
+        One of 'LN', 'SB', or 'SU'.
+    - A, B: float
+        Bounds required for 'SB' transformation.
+
+    Returns:
+    - V: float or ndarray
+        Original variable value.
+    """
+    if transform_type == 'LN':
+        return np.exp(Y)
+    elif transform_type == 'SB':
+        if A is None or B is None:
+            raise ValueError("A and B must be provided for the SB transformation.")
+        U = np.exp(Y)
+        return (A + B * U) / (1 + U)
+    elif transform_type == 'SU':
+        return np.sinh(Y)
+    else:
+        raise ValueError("Invalid transform_type. Choose from 'LN', 'SB', or 'SU'.")
 
 
 def Evensen2003(q, wk, deltaT, gamma):
@@ -1201,7 +1406,7 @@ def perturbate_parm(
             if len(key_root)>1:
                 # Case with different zones
                 parm_per_array = perturbate_dist(parm,
-                                                 per_type[parm_key_nb],
+                                                 per_type,
                                                  parm_sampling,
                                                  ensemble_size
                                                  )
@@ -1228,17 +1433,17 @@ def perturbate_parm(
     # ----------------------------------------------------------------------
     # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
     elif "VG" in type_parm:  # van Genuchten retention curves
-        parm_per_array = VG_pert_rules(
-            var_per_2add,
-            parm,
-            type_parm,
-            ensemble_size,
-            mean,
-            sd,
-            per_type,
-            sampling_type,
-            **kwargs,
-        )
+        parm_sampling, parm_per_array = VG_pert_rules(
+                                                        var_per_2add,
+                                                        parm,
+                                                        type_parm,
+                                                        ensemble_size,
+                                                        mean,
+                                                        sd,
+                                                        per_type,
+                                                        sampling_type,
+                                                        **kwargs,
+                                                    )
 
     # Time dependant perturbation
     # --------------------------------------------------------------------
@@ -1277,7 +1482,7 @@ def perturbate_parm(
             if len(key_root)>1:
                 # Case with different zones
                 parm_per_array = perturbate_dist(parm,
-                                                 per_type[parm_key_nb],
+                                                 per_type,
                                                  parm_sampling,
                                                  ensemble_size
                                                  )
@@ -1306,8 +1511,12 @@ def perturbate_parm(
     # build dictionnary of perturbated variable
     # --------------------------------------------------------------------
     var_per_2add = build_dict_attributes_pert(
-        var_per_2add, type_parm, parm_per_array, parm_sampling, **kwargs
-    )
+                                                var_per_2add, 
+                                                type_parm, 
+                                                parm_per_array, 
+                                                parm_sampling, 
+                                                **kwargs
+                                                )
 
     # Add to var perturbated stacked dict
     # ----------------------------------

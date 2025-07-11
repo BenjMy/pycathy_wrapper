@@ -91,33 +91,39 @@ def create_ERT_survey_pg(pathERT,
     except:
         pass
     
-    print('+'*20)
-    print(sequence_file_extension)
-    print(sequence)
-    print(scheme)
-    print(mesh3d)
-    print(fwdNoiseLevel)
-    print('+'*20)
+    # print('+'*20)
+    # print(sequence_file_extension)
+    # print(sequence)
+    # print(scheme)
+    # print(mesh3d)
+    # print(fwdNoiseLevel)
+    # print('+'*20)
     
     het = ert.simulate(
         mesh3d,
         res=res0,
         scheme=scheme,
         calcOnly=False,
-        verbose=verbose,
+        verbose=False,
         noiseLevel=fwdNoiseLevel,
     )
     # pg.show(mesh3d)
     # pg.show(het)
     # het.exportVTK('testmeshpg.vtk')
     # het.saveResult('testpg')
-
+    
     try:
         if not verbose:
             os.dup2(oldstdout_fno, 1)
     except:
         pass
     pg.info('Filtered rhoa (min/max)', min(het['rhoa']), max(het['rhoa']))
+    print('Correction of rhoa <= 0 to 1e-3')
+    # het.loc[het['rhoa'] <= 0, 'rhoa'] = 1e-3
+    het['rhoa'][het['rhoa'] <= 0] = 1e-3
+
+
+
     return het
 
 

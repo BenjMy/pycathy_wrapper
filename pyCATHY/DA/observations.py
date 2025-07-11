@@ -14,7 +14,8 @@ from pyCATHY.importers import sensors_measures as in_meas
 from pyCATHY.DA.cathy_DA import dictObs_2pd
 
 
-def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kwargs):
+def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, 
+                      **kwargs):
     """
     read measures (real observations) from file
     and prepare for DA analysis (covariance matrice and perturbation)
@@ -205,6 +206,12 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, **kw
         fwdNoiseLevel = 5
         if "fwdNoiseLevel" in kwargs:
             fwdNoiseLevel = kwargs.pop('fwdNoiseLevel')
+            
+        sequenceERT = None
+        if "sequenceERT" in kwargs:
+            sequenceERT = kwargs.pop('sequenceERT')
+            # import pygimli as pg
+            # shm = pg.load(sequenceERT)
             
         dict_obs_2add.update(elecs=elecs)
         dict_obs_2add.update(fwdNoiseLevel=fwdNoiseLevel)
