@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="May 21, 2025"/>
+    <meta name="docbuild:last-update" content="Jul 11, 2025"/>
   </head>
   
   
@@ -208,16 +208,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="cathy_tools.html">cathy_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_outputs.html">importers.cathy_outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_inputs.html">importers.cathy_inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DA.cathy_DA.html">DA.cathy_DA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ERT.petro_Archie.html">ERT.petro_Archie</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sensitivity.html">sensitivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plotters.cathy_plots.html">plotters.cathy_plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
@@ -416,9 +409,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -434,17 +425,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotters.cathy_plots.LogNorm"><code class="docutils literal notranslate"><span class="pre">LogNorm</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotters.cathy_plots.LogNorm.__init__"><code class="docutils literal notranslate"><span class="pre">LogNorm.__init__</span></code></a></li>
-</ul>
-</li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -456,83 +436,6 @@ document.write(`
                   
   <section id="plotters-cathy-plots-lognorm">
 <h1>plotters.cathy_plots.LogNorm<a class="headerlink" href="#plotters-cathy-plots-lognorm" title="Link to this heading">#</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="plotters.cathy_plots.LogNorm">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">plotters.cathy_plots.</span></span><span class="sig-name descname"><span class="pre">LogNorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#plotters.cathy_plots.LogNorm" title="Link to this definition">#</a></dt>
-<dd><p>Normalize a given value to the 0-1 range on a log scale.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="plotters.cathy_plots.LogNorm.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#plotters.cathy_plots.LogNorm.__init__" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>None</em>) – Values within the range <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code> from the input data will be
-linearly mapped to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>. If either <em>vmin</em> or <em>vmax</em> is not
-provided, they default to the minimum and maximum values of the input,
-respectively.</p></li>
-<li><p><strong>vmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>None</em>) – Values within the range <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code> from the input data will be
-linearly mapped to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>. If either <em>vmin</em> or <em>vmax</em> is not
-provided, they default to the minimum and maximum values of the input,
-respectively.</p></li>
-<li><p><strong>clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default: False</em>) – <p>Determines the behavior for mapping values outside the range
-<code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code>.</p>
-<p>If clipping is off, values outside the range <code class="docutils literal notranslate"><span class="pre">[vmin,</span> <span class="pre">vmax]</span></code> are
-also transformed, resulting in values outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>.  This
-behavior is usually desirable, as colormaps can mark these <em>under</em>
-and <em>over</em> values with specific colors.</p>
-<p>If clipping is on, values below <em>vmin</em> are mapped to 0 and values
-above <em>vmax</em> are mapped to 1. Such values become indistinguishable
-from regular boundary values, which may cause misinterpretation of
-the data.</p>
-</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">vmin</span> <span class="pre">==</span> <span class="pre">vmax</span></code>, input data will be mapped to 0.</p>
-</dd></dl>
-
-<p class="rubric">Methods</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#plotters.cathy_plots.LogNorm.__init__" title="plotters.cathy_plots.LogNorm.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([vmin, vmax, clip])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoscale</span></code>(A)</p></td>
-<td><p>Set <em>vmin</em>, <em>vmax</em> to min, max of <em>A</em>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoscale_None</span></code>(A)</p></td>
-<td><p>If <em>vmin</em> or <em>vmax</em> are not set, use the min/max of <em>A</em> to set them.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse</span></code>(value)</p></td>
-<td><p>Maps the normalized value (i.e., index in the colormap) back to image data value.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_value</span></code>(value)</p></td>
-<td><p>Homogenize the input <em>value</em> for easy and efficient normalization.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scaled</span></code>()</p></td>
-<td><p>Return whether <em>vmin</em> and <em>vmax</em> are both set.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p class="rubric">Attributes</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmax</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmin</span></code></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</dd></dl>
-
 </section>
 
     <script type="text/x-thebe-config">
@@ -572,24 +475,6 @@ the data.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotters.cathy_plots.LogNorm"><code class="docutils literal notranslate"><span class="pre">LogNorm</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotters.cathy_plots.LogNorm.__init__"><code class="docutils literal notranslate"><span class="pre">LogNorm.__init__</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
-
-</div></div>
-              
             
           </div>
           <footer class="bd-footer-content">
@@ -618,7 +503,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 21, 2025.
+  Last updated on Jul 11, 2025.
   <br/>
 </p>
   </div>

@@ -1,401 +1,43 @@
 {
- "pyCATHY.CATHY": [
+ "pyCATHY.cathy_tools.CATHY": [
   [
-   "plot_3d_spatial_atmbc_from_weill.py",
+   "plot_3c_spatial_atmbc_from_weill.py",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weil et al example with spatially heterogeneous atmbc"
   ],
   [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.CATHY._create_subfolders_ensemble": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.CATHY.create_mesh_vtk": [
-  [
    "plot_3d_spatial_atmbc_from_weill.py",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model.",
    "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.read_inputs": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.read_outputs": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.run_preprocessor": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.run_processor": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.show_input": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.update_ENS_files": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.CATHY.update_atmbc": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.update_dem_parameters": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.CATHY.update_parm": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ]
- ],
- "pyCATHY.CATHY.update_prepo_inputs": [
-  [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ],
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.CATHY.update_soil": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.CATHY.update_veg_map": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA._create_subfolders_ensemble": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA.update_ENS_files": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA.update_dem_parameters": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA.update_prepo_inputs": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA.update_soil": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.DA.update_veg_map": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA._create_subfolders_ensemble": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA._create_subfolders_ensemble": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA.update_ENS_files": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA.update_dem_parameters": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA.update_prepo_inputs": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA.update_soil": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.cathy_DA.DA.update_veg_map": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.perturbate.perturbate": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.perturbate.perturbate_parm": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.update_ENS_files": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.update_dem_parameters": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.update_prepo_inputs": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.update_soil": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.DA.update_veg_map": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.cathy_tools.CATHY._create_subfolders_ensemble": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
-  ]
- ],
- "pyCATHY.cathy_tools.CATHY.update_ENS_files": [
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
   ]
  ],
  "pyCATHY.plotters.cathy_plots.show_vtk": [
   [
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weil et al example with spatially heterogeneous atmbc"
+  ],
+  [
    "plot_3d_spatial_atmbc_from_weill.py",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model.",
    "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
-  ],
-  [
-   "plot_1_DA_NoUni_ic.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
-   "DA with Random Initial Conditions on Soil Layers"
   ]
  ],
  "pyCATHY.plotters.cathy_plots.show_vtk_TL": [
   [
-   "plot_3d_spatial_atmbc_from_weill.py",
+   "plot_3c_spatial_atmbc_from_weill.py",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weil et al example with spatially heterogeneous atmbc"
   ]
  ]
 }

@@ -62,11 +62,11 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/api/api';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="cathy_tools" href="generated/cathy_tools.html" />
+    <link rel="next" title="ERT.simulate_ERT" href="generated/ERT.simulate_ERT.html" />
     <link rel="prev" title="Zanetti, F., Botter, G., &amp; Camporese, M. (2024)" href="../FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="May 21, 2025"/>
+    <meta name="docbuild:last-update" content="Jul 11, 2025"/>
   </head>
   
   
@@ -208,16 +208,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="generated/cathy_tools.html">cathy_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/importers.cathy_outputs.html">importers.cathy_outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/importers.cathy_inputs.html">importers.cathy_inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/DA.cathy_DA.html">DA.cathy_DA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/ERT.petro_Archie.html">ERT.petro_Archie</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/sensitivity.html">sensitivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/plotters.cathy_plots.html">plotters.cathy_plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generated/pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../change_log.html">Change log</a></li>
@@ -440,9 +433,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy">CATHY</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importers">Importers</a><ul class="nav section-nav flex-column">
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importers">Importers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-assimilation">Data assimilation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ert">ERT</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitivity-analysis">Sensitivity analysis</a></li>
@@ -465,9 +456,6 @@ document.write(`
 <h2>CATHY<a class="headerlink" href="#cathy" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/cathy_tools.html#module-cathy_tools" title="cathy_tools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cathy_tools</span></code></a></p></td>
-<td><p>Main class controlling the wrapper.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -476,17 +464,11 @@ document.write(`
 <h2>Importers<a class="headerlink" href="#importers" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/importers.cathy_outputs.html#module-importers.cathy_outputs" title="importers.cathy_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">importers.cathy_outputs</span></code></a></p></td>
-<td><p>Reader for CATHY outputs files</p></td>
-</tr>
 </tbody>
 </table>
 </div>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/importers.cathy_inputs.html#module-importers.cathy_inputs" title="importers.cathy_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">importers.cathy_inputs</span></code></a></p></td>
-<td><p>Reader for CATHY input files</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -495,9 +477,6 @@ document.write(`
 <h2>Data assimilation<a class="headerlink" href="#data-assimilation" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/DA.cathy_DA.html#module-DA.cathy_DA" title="DA.cathy_DA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DA.cathy_DA</span></code></a></p></td>
-<td><p>Class managing Data Assimilation process i.e.:</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -506,10 +485,7 @@ document.write(`
 <h2>ERT<a class="headerlink" href="#ert" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/ERT.petro_Archie.html#module-ERT.petro_Archie" title="ERT.petro_Archie"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ERT.petro_Archie</span></code></a></p></td>
-<td><p>Pedophysical transformations</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/ERT.simulate_ERT.html#module-ERT.simulate_ERT" title="ERT.simulate_ERT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ERT.simulate_ERT</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/ERT.simulate_ERT.html#module-ERT.simulate_ERT" title="ERT.simulate_ERT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ERT.simulate_ERT</span></code></a></p></td>
 <td><p>Class managing ERT data simulation and inversion + petrophysical transformation</p></td>
 </tr>
 </tbody>
@@ -531,9 +507,6 @@ document.write(`
 <h2>Plotting<a class="headerlink" href="#plotting" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/plotters.cathy_plots.html#module-plotters.cathy_plots" title="plotters.cathy_plots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotters.cathy_plots</span></code></a></p></td>
-<td><p>Plotting functions for pyCATHY (2D and 3D)</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -544,9 +517,6 @@ document.write(`
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/pyCATHY.cathy_utils.html#module-pyCATHY.cathy_utils" title="pyCATHY.cathy_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cathy_utils</span></code></a></p></td>
 <td><p>Utilities for pyCATHY - Unit conversion and labelling - Others utilities</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/pyCATHY.meshtools.html#module-pyCATHY.meshtools" title="pyCATHY.meshtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meshtools</span></code></a></p></td>
-<td><p>Meshing tools</p></td>
 </tr>
 </tbody>
 </table>
@@ -594,11 +564,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="generated/cathy_tools.html"
+       href="generated/ERT.simulate_ERT.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">cathy_tools</p>
+        <p class="prev-next-title">ERT.simulate_ERT</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -619,9 +589,7 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy">CATHY</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importers">Importers</a><ul class="nav section-nav flex-column">
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importers">Importers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-assimilation">Data assimilation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ert">ERT</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitivity-analysis">Sensitivity analysis</a></li>
@@ -660,7 +628,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 21, 2025.
+  Last updated on Jul 11, 2025.
   <br/>
 </p>
   </div>

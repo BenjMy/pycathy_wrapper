@@ -10,6 +10,7 @@ pandas
 natsort
 shapely
 seaborn
+rioxarray
 
 pypandoc
 # Optionnal packages
@@ -59,4 +60,4 @@ ipykernel
 pyvista
 vtk>=9
 trame
-
+imageio

@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="May 21, 2025"/>
+    <meta name="docbuild:last-update" content="Jul 11, 2025"/>
   </head>
   
   
@@ -208,16 +208,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="cathy_tools.html">cathy_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_outputs.html">importers.cathy_outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_inputs.html">importers.cathy_inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DA.cathy_DA.html">DA.cathy_DA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ERT.petro_Archie.html">ERT.petro_Archie</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sensitivity.html">sensitivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plotters.cathy_plots.html">plotters.cathy_plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
@@ -416,9 +409,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -434,17 +425,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo"><code class="docutils literal notranslate"><span class="pre">Repo</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo.__init__"><code class="docutils literal notranslate"><span class="pre">Repo.__init__</span></code></a></li>
-</ul>
-</li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -456,267 +436,6 @@ document.write(`
                   
   <section id="cathy-tools-repo">
 <h1>cathy_tools.Repo<a class="headerlink" href="#cathy-tools-repo" title="Link to this heading">#</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="cathy_tools.Repo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cathy_tools.</span></span><span class="sig-name descname"><span class="pre">Repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~os.PathLike[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odbt:</span> <span class="pre">~typing.Type[~gitdb.db.loose.LooseObjectDB]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'git.db.GitCmdObjectDB'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_parent_directories:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo" title="Link to this definition">#</a></dt>
-<dd><p>Represents a git repository and allows you to query references, create commit
-information, generate diffs, create and clone repositories, and query the log.</p>
-<p>The following attributes are worth using:</p>
-<ul class="simple">
-<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">working_dir</span></code> is the working directory of the git command, which is the
-working tree directory if available or the <code class="docutils literal notranslate"><span class="pre">.git</span></code> directory in case of bare
-repositories.</p></li>
-<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">working_tree_dir</span></code> is the working tree directory, but will return <code class="docutils literal notranslate"><span class="pre">None</span></code>
-if we are a bare repository.</p></li>
-<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">git_dir</span></code> is the <code class="docutils literal notranslate"><span class="pre">.git</span></code> repository directory, which is always set.</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="cathy_tools.Repo.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~os.PathLike[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odbt:</span> <span class="pre">~typing.Type[~gitdb.db.loose.LooseObjectDB]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'git.db.GitCmdObjectDB'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_parent_directories:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.__init__" title="Link to this definition">#</a></dt>
-<dd><p>Create a new <a class="reference internal" href="#cathy_tools.Repo" title="cathy_tools.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a> instance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> – <p>The path to either the worktree directory or the .git directory itself:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;/Users/mtrier/Development/git-python&quot;</span><span class="p">)</span>
-<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;/Users/mtrier/Development/git-python.git&quot;</span><span class="p">)</span>
-<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;~/Development/git-python.git&quot;</span><span class="p">)</span>
-<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;$REPOSITORIES/Development/git-python.git&quot;</span><span class="p">)</span>
-<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="sa">R</span><span class="s2">&quot;C:\Users\mtrier\Development\git-python\.git&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<ul>
-<li><p>In <em>Cygwin</em>, <cite>path</cite> may be a <code class="docutils literal notranslate"><span class="pre">cygdrive/...</span></code> prefixed path.</p></li>
-<li><p>If <cite>path</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code> or an empty string, <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GIT_DIR</span></code> is used. If
-that environment variable is absent or empty, the current directory is
-used.</p></li>
-</ul>
-</p></li>
-<li><p><strong>odbt</strong> – Object DataBase type - a type which is constructed by providing the
-directory containing the database objects, i.e. <code class="docutils literal notranslate"><span class="pre">.git/objects</span></code>. It will be
-used to access all object data.</p></li>
-<li><p><strong>search_parent_directories</strong> – <p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, all parent directories will be searched for a valid repo as
-well.</p>
-<p>Please note that this was the default behaviour in older versions of
-GitPython, which is considered a bug though.</p>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>git.exc.InvalidGitRepositoryError</strong> – </p></li>
-<li><p><strong>git.exc.NoSuchPathError</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#cathy_tools.Repo" title="cathy_tools.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<p class="rubric">Methods</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.__init__" title="cathy_tools.Repo.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([path, odbt, ...])</p></td>
-<td><p>Create a new <a class="reference internal" href="#cathy_tools.Repo" title="cathy_tools.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a> instance.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">archive</span></code>(ostream[, treeish, prefix])</p></td>
-<td><p>Archive the tree at the given revision.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blame</span></code>(rev, file[, incremental, rev_opts])</p></td>
-<td><p>The blame information for the given file at the given revision.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blame_incremental</span></code>(rev, file, **kwargs)</p></td>
-<td><p>Iterator for blame information for the given file at the given revision.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code>(path[, progress, multi_options, ...])</p></td>
-<td><p>Create a clone from this repository.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone_from</span></code>(url, to_path[, progress, env, ...])</p></td>
-<td><p>Create a clone from the given URL.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">commit</span></code>([rev])</p></td>
-<td><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Commit</span></code> object for the specified revision.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_reader</span></code>([config_level])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_writer</span></code>([config_level])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_head</span></code>(path[, commit, force, logmsg])</p></td>
-<td><p>Create a new head within the repository.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_remote</span></code>(name, url, **kwargs)</p></td>
-<td><p>Create a new remote.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_submodule</span></code>(*args, **kwargs)</p></td>
-<td><p>Create a new submodule.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_tag</span></code>(path[, ref, message, force])</p></td>
-<td><p>Create a new tag reference.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">currently_rebasing_on</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_head</span></code>(*heads, **kwargs)</p></td>
-<td><p>Delete the given heads.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_remote</span></code>(remote)</p></td>
-<td><p>Delete the given remote.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_tag</span></code>(*tags)</p></td>
-<td><p>Delete the given tag references.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_separate_working_tree</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ignored</span></code>(*paths)</p></td>
-<td><p>Checks if paths are ignored via <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code>([path, mkdir, odbt, expand_vars])</p></td>
-<td><p>Initialize a git repository at the given path if specified.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_ancestor</span></code>(ancestor_rev, rev)</p></td>
-<td><p>Check if a commit is an ancestor of another.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_dirty</span></code>([index, working_tree, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_valid_object</span></code>(sha[, object_type])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_commits</span></code>([rev, paths])</p></td>
-<td><p>An iterator of <code class="xref py py-class docutils literal notranslate"><span class="pre">Commit</span></code> objects representing the history of a given ref/commit.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_submodules</span></code>(*args, **kwargs)</p></td>
-<td><p>An iterator yielding Submodule instances.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_trees</span></code>(*args, **kwargs)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_base</span></code>(*rev, **kwargs)</p></td>
-<td><p>Find the closest common ancestor for the given revision (<code class="xref py py-class docutils literal notranslate"><span class="pre">Commit</span></code>s, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code>s, <code class="xref py py-class docutils literal notranslate"><span class="pre">Reference</span></code>s, etc.).</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">remote</span></code>([name])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rev_parse</span></code>(rev)</p></td>
-<td><p>Parse a revision string.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodule</span></code>(name)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodule_update</span></code>(*args, **kwargs)</p></td>
-<td><p>Update the submodules, keeping the repository consistent as it will take the previous state into consideration.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tag</span></code>(path)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tree</span></code>([rev])</p></td>
-<td><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Tree</span></code> object for the given tree-ish revision.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p class="rubric">Attributes</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DAEMON_EXPORT_FILE</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_branch</span></code></p></td>
-<td><p>The name of the currently active branch.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">alternates</span></code></p></td>
-<td><p>Retrieve a list of alternates paths or set a list paths to be used as alternates</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bare</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the repository is bare</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">branches</span></code></p></td>
-<td><p>Alias for heads.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">common_dir</span></code></p></td>
-<td><p>return: The git dir that holds everything except possibly HEAD, FETCH_HEAD, ORIG_HEAD, COMMIT_EDITMSG, index, and logs/.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_level</span></code></p></td>
-<td><p>Represents the configuration level of a configuration file.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">daemon_export</span></code></p></td>
-<td><p>If True, git-daemon may export this repository</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">description</span></code></p></td>
-<td><p>the project's description</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">git</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">head</span></code></p></td>
-<td><p>return: <code class="xref py py-class docutils literal notranslate"><span class="pre">HEAD</span></code> object pointing to the current head reference</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">heads</span></code></p></td>
-<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Head</span></code> objects representing the branch heads in this repo.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_author_committer_start</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_envvars</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_hexsha_only</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_hexsha_shortened</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_tab_full_line</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_whitespace</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">references</span></code></p></td>
-<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Reference</span></code> objects representing tags, heads and remote references.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">refs</span></code></p></td>
-<td><p>Alias for references.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">remotes</span></code></p></td>
-<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Remote</span></code> objects allowing to access and manipulate remotes.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodules</span></code></p></td>
-<td><p>return: git.IterableList(Submodule, ...) of direct submodules available from the current head</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tags</span></code></p></td>
-<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">TagReference</span></code> objects that are available in this repo.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_git_clone_options</span></code></p></td>
-<td><p>Options to <em class="manpage">git-clone(1)</em> that allow arbitrary commands to be executed.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">untracked_files</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">working_tree_dir</span></code></p></td>
-<td><p>return: The working tree directory of our git repository.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">working_dir</span></code></p></td>
-<td><p>The working directory of the git command.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">git_dir</span></code></p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">.git</span></code> repository directory.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</dd></dl>
-
 </section>
 
     <script type="text/x-thebe-config">
@@ -756,24 +475,6 @@ GitPython, which is considered a bug though.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo"><code class="docutils literal notranslate"><span class="pre">Repo</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo.__init__"><code class="docutils literal notranslate"><span class="pre">Repo.__init__</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
-
-</div></div>
-              
             
           </div>
           <footer class="bd-footer-content">
@@ -802,7 +503,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 21, 2025.
+  Last updated on Jul 11, 2025.
   <br/>
 </p>
   </div>

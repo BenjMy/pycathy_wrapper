@@ -2,16 +2,16 @@
 Update with spatially and temporally distributed atmospheric boundary conditions (bc)
 ====================================================================================
 
-This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially 
+This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially
 and temporally distributed data in a hydrological model.
 
 Reference:
-Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface 
-Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface
+Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),
 https://doi.org/10.1016/j.advwatres.2010.10.001.
 
-This example uses the **pyCATHY wrapper** for the CATHY model to reproduce results from the Weill et al. dataset. 
-The notebook is interactive and can be executed in sections to observe the intermediate results. It can also 
+This example uses the **pyCATHY wrapper** for the CATHY model to reproduce results from the Weill et al. dataset.
+The notebook is interactive and can be executed in sections to observe the intermediate results. It can also
 be shared for collaborative work without any installation required.
 
 *Estimated time to run the notebook = 5 minutes*
@@ -45,6 +45,7 @@ DEM, dem_header = simu.read_inputs('dem')
 DEM_new = np.ones(np.shape(DEM))  # Initialize new DEM with ones
 DEM_new[-1, -1] = 1 - 1e-3  # Adjust a specific corner value
 DEM_new[10:20, 0:10] = -9999  # Add an interior block of invalid values to simulate an irregular boundary
+DEM_new[0:3, 15:20] = -9999  # Add an interior block of invalid values to simulate an irregular boundary
 
 # Update the CATHY inputs with the modified DEM
 simu.update_prepo_inputs(DEM_new)
@@ -88,7 +89,7 @@ if int(grid3d['nnod']) == len(np.ravel(elevation_matrix)):
 else:
     # For cases where the number of nodes doesn't match, calculate for all nodes
     v_atmbc_all_nodes = np.ones(len(np.ravel(elevation_matrix))) * v_atmbc_value * np.ravel(np.exp(elevation_matrix**2))
-    
+
     # Reshape the boundary condition values to match the DEM shape
     v_atmbc_mat = np.reshape(v_atmbc_all_nodes, [np.shape(simu.DEM)[0] + 1, np.shape(simu.DEM)[0] + 1])
 
@@ -143,12 +144,12 @@ cplt.show_vtk(
 #%% Generate time-lapse visualization of pressure
 
 # Create a time-lapse visualization of pressure distribution over time
-cplt.show_vtk_TL(
-    unit="saturation",
-    notebook=False,
-    path=simu.workdir + simu.project_name + "/vtk/",  # Path to VTK files
-    show=False,  # Disable showing the plot
-    x_units='days',  # Time units
-    clim=[0.55, 0.70],  # Color limits for pressure values
-    savefig=True,  # Save the figure
-)
+# cplt.show_vtk_TL(
+#     unit="saturation",
+#     notebook=False,
+#     path=simu.workdir + simu.project_name + "/vtk/",  # Path to VTK files
+#     show=False,  # Disable showing the plot
+#     x_units='days',  # Time units
+#     clim=[0.55, 0.70],  # Color limits for pressure values
+#     savefig=True,  # Save the figure
+# )

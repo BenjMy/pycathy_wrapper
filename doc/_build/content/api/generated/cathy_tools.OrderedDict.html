@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="May 21, 2025"/>
+    <meta name="docbuild:last-update" content="Jul 11, 2025"/>
   </head>
   
   
@@ -208,16 +208,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="cathy_tools.html">cathy_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_outputs.html">importers.cathy_outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_inputs.html">importers.cathy_inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DA.cathy_DA.html">DA.cathy_DA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ERT.petro_Archie.html">ERT.petro_Archie</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sensitivity.html">sensitivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plotters.cathy_plots.html">plotters.cathy_plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
@@ -416,9 +409,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -434,17 +425,6 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.OrderedDict"><code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.OrderedDict.__init__"><code class="docutils literal notranslate"><span class="pre">OrderedDict.__init__</span></code></a></li>
-</ul>
-</li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -456,62 +436,6 @@ document.write(`
                   
   <section id="cathy-tools-ordereddict">
 <h1>cathy_tools.OrderedDict<a class="headerlink" href="#cathy-tools-ordereddict" title="Link to this heading">#</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="cathy_tools.OrderedDict">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cathy_tools.</span></span><span class="sig-name descname"><span class="pre">OrderedDict</span></span><a class="reference internal" href="../../../_modules/collections.html#OrderedDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.OrderedDict" title="Link to this definition">#</a></dt>
-<dd><p>Dictionary that remembers insertion order</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="cathy_tools.OrderedDict.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cathy_tools.OrderedDict.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.OrderedDict.__init__" title="cathy_tools.OrderedDict.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code>([value])</p></td>
-<td><p>Create a new ordered dictionary with keys from iterable and values set to value.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(key[, default])</p></td>
-<td><p>Return the value for key if key is in the dictionary, else default.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_to_end</span></code>(key[, last])</p></td>
-<td><p>Move an existing element to the end (or beginning if last is false).</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>(key[,default])</p></td>
-<td><p>If the key is not found, return the default if given; otherwise, raise a KeyError.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code>([last])</p></td>
-<td><p>Remove and return a (key, value) pair from the dictionary.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code>(key[, default])</p></td>
-<td><p>Insert key with a value of default if key is not in the dictionary.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>([E, ]**F)</p></td>
-<td><p>If E is present and has a .keys() method, then does:  for k in E: D[k] = E[k] If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v In either case, this is followed by: for k in F:  D[k] = F[k]</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</dd></dl>
-
 </section>
 
     <script type="text/x-thebe-config">
@@ -551,24 +475,6 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.OrderedDict"><code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.OrderedDict.__init__"><code class="docutils literal notranslate"><span class="pre">OrderedDict.__init__</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
-
-</div></div>
-              
             
           </div>
           <footer class="bd-footer-content">
@@ -597,7 +503,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 21, 2025.
+  Last updated on Jul 11, 2025.
   <br/>
 </p>
   </div>

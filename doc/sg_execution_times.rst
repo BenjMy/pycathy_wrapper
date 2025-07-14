@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**02:09.149** total execution time for 15 files **from all galleries**:
+**00:01.324** total execution time for 15 files **from all galleries**:
 
 .. container::
 
@@ -32,11 +32,14 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py``)
+     - 00:01.303
+     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3d_spatial_atmbc_from_weill.py``)
-     - 01:58.526
+     - 00:00.020
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py` (``../examples/DA/plot_1_DA_NoUni_ic.py``)
-     - 00:10.622
+     - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``../examples/DA/plot_2_prepare_SMC_obs4DA.py``)
      - 00:00.000
@@ -60,9 +63,6 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weill.py` (``../examples/SSHydro/plot_3b_soil3d_from_weill.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``../examples/SSHydro/plot_4_pyCATHY_outputs.py``)

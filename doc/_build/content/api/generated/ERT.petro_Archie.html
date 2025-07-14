@@ -62,11 +62,9 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'content/api/generated/ERT.petro_Archie';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="ERT.simulate_ERT" href="ERT.simulate_ERT.html" />
-    <link rel="prev" title="DA.cathy_DA" href="DA.cathy_DA.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="May 21, 2025"/>
+    <meta name="docbuild:last-update" content="Jul 11, 2025"/>
   </head>
   
   
@@ -126,6 +124,8 @@
     <div class="bd-container__inner bd-page-width">
       
       
+      
+        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -206,18 +206,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="cathy_tools.html">cathy_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_outputs.html">importers.cathy_outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="importers.cathy_inputs.html">importers.cathy_inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DA.cathy_DA.html">DA.cathy_DA</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">ERT.petro_Archie</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sensitivity.html">sensitivity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plotters.cathy_plots.html">plotters.cathy_plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
@@ -441,41 +434,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-ERT.petro_Archie">
-<span id="ert-petro-archie"></span><h1>ERT.petro_Archie<a class="headerlink" href="#module-ERT.petro_Archie" title="Link to this heading">#</a></h1>
-<p>Pedophysical transformations</p>
-<p class="rubric">Functions</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="ERT.petro_Archie.Archie_rho_DA.html#ERT.petro_Archie.Archie_rho_DA" title="ERT.petro_Archie.Archie_rho_DA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Archie_rho_DA</span></code></a>([rFluid_Archie, sat, ...])</p></td>
-<td><p>Compute ER values at each mesh nodes.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="ERT.petro_Archie.CATHY_2_Resipy.html#ERT.petro_Archie.CATHY_2_Resipy" title="ERT.petro_Archie.CATHY_2_Resipy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY_2_Resipy</span></code></a>(mesh_CATHY, mesh_Resipy[, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="ERT.petro_Archie.CATHY_2_pg.html#ERT.petro_Archie.CATHY_2_pg" title="ERT.petro_Archie.CATHY_2_pg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CATHY_2_pg</span></code></a>(mesh_CATHY, ERT_meta_dict[, ...])</p></td>
-<td><p>Interpolate CATHY mesh attribute to pygimli mesh.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="ERT.petro_Archie.SW_2_ERa_DA.html#ERT.petro_Archie.SW_2_ERa_DA" title="ERT.petro_Archie.SW_2_ERa_DA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SW_2_ERa_DA</span></code></a>(project_name, ArchieParms, ...)</p></td>
-<td><p>Data Assimilation
-
-Map saturation water from CATHY model to apparent Electrical Resistivities
-1. Import/read CATHY sw file result
-2. Convert SW to ER uisng Archie law
-3. Fwd ERT model to obtain apparent resistivities (predicted observation for DA)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="ERT.petro_Archie.get_Archie_ens_i.html#ERT.petro_Archie.get_Archie_ens_i" title="ERT.petro_Archie.get_Archie_ens_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_Archie_ens_i</span></code></a>(ArchieParms, Ens_nb)</p></td>
-<td><p>Return Archie parameter for a given ensemble (if ensemble exist)</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="ERT.petro_Archie.get_sw_ens_i.html#ERT.petro_Archie.get_sw_ens_i" title="ERT.petro_Archie.get_sw_ens_i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sw_ens_i</span></code></a>(path_fwd_CATHY, **kwargs)</p></td>
-<td><p>Return sw array for a given ensemble (if ensemble exist)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="ERT.petro_Archie.print.html#ERT.petro_Archie.print" title="ERT.petro_Archie.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>(*objects[, sep, end, file, flush])</p></td>
-<td><p>Print object(s) supplied via positional arguments.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+  <section id="ert-petro-archie">
+<h1>ERT.petro_Archie<a class="headerlink" href="#ert-petro-archie" title="Link to this heading">#</a></h1>
 </section>
 
     <script type="text/x-thebe-config">
@@ -508,24 +468,6 @@ Map saturation water from CATHY model to apparent Electrical Resistivities
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="DA.cathy_DA.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">DA.cathy_DA</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="ERT.simulate_ERT.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">ERT.simulate_ERT</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
@@ -561,7 +503,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on May 21, 2025.
+  Last updated on Jul 11, 2025.
   <br/>
 </p>
   </div>

@@ -117,7 +117,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.">
 
 .. only:: html
 
@@ -134,7 +134,7 @@ Surface subsurface hydrological model
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially  and temporally distributed data in a hydrological model.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model.">
 
 .. only:: html
 

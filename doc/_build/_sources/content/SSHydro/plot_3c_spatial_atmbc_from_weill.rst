@@ -21,8 +21,8 @@
 Weil et al example with spatially heterogeneous atmbc
 =====================================================
 
-Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
-Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
+Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».
+Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),
 https://doi.org/10.1016/j.advwatres.2010.10.001.
 
 
@@ -53,7 +53,20 @@ This example shows how to use pyCATHY object to create spatially and temporally 
 
 
 
+.. rst-class:: sphx-glr-script-out
 
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py", line 28, in <module>
+        import pyCATHY.meshtools as mt
+      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/__init__.py", line 4, in <module>
+        from . import cathy_utils, meshtools, sensitivity
+      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/meshtools.py", line 18, in <module>
+        from pyCATHY.plotters import cathy_plots as cplt
+      File "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/plotters/cathy_plots.py", line 55, in <module>
+        import rioxarray as rio
+    ModuleNotFoundError: No module named 'rioxarray'
 
 
 
@@ -67,334 +80,11 @@ This example shows how to use pyCATHY object to create spatially and temporally 
 .. code-block:: Python
 
     path2prj = "../SSHydro/"  # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj, 
+    simu = cathy_tools.CATHY(dirName=path2prj,
                              prj_name="atmbc_spatially_from_weill"
                              )
 
     simu.create_mesh_vtk(verbose=True)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    🏁 Initiate CATHY object
-    🍳 gfortran compilation
-    👟 Run preprocessor
-
-     wbb...
-
-     searching the dtm_13.val input file...
-     assigned nodata value =  -9999.0000000000000     
-
-     number of processed cells =         400
-
-     ...wbb completed
-
-     rn...
-     csort I...
-     ...completed
-
-     depit...
-     dem modifications =            0
-     dem modifications =            0 (total)
-     ...completed
-
-     csort II...
-     ...completed
-
-     cca...
-
-     contour curvature threshold value =    9.99999996E+11
-     ...completed
-
-     smean...
-     mean (min,max) facet slope =  0.052056253 ( 0.020000000, 0.053851648)
-     ...completed
-
-     dsf...
-     the drainage direction of the outlet cell (           8 ) is used
-     ...completed
-
-     hg...
-     ...completed
-
-     saving the data in the basin_b/basin_i files...
-
-     ...rn completed
-
-     mrbb...
-
-
-     Select the header type:
-     0) None
-     1) ESRI ascii file
-     2) GRASS ascii file
-     (Ctrl C to exit)
-
-     -> 
-     Select the nodata value:
-     (Ctrl C to exit)
-
-     -> 
-     Select the pointer system:
-     1) HAP system
-     2) Arc/Gis system
-     (Ctrl C to exit)
-
-     ->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dem file
-
-     min value = 0.335000E+00
-     max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.667500E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     lakes_map file
-
-     min value =     0
-     max value =     0
-     number of cells =   400
-     mean value =     0.000000
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     zone file
-
-     min value =     1
-     max value =     1
-     number of cells =   400
-     mean value =     1.000000
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_w_1 file
-
-     min value = 0.515524E+00
-     max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.607575E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_w_2 file
-
-     min value = 0.000000E+00
-     max value = 0.484476E+00
-     number of cells =   400
-     mean value = 0.392425E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_p_outflow_1 file
-
-     min value =     4
-     max value =     8
-     number of cells =   400
-     mean value =     4.200000
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_p_outflow_2 file
-
-     min value =     0
-     max value =     9
-     number of cells =   400
-     mean value =     6.792500
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     A_inflow file
-
-     min value = 0.000000000000E+00
-     max value = 0.997499787031E+02
-     number of cells =   400
-     mean value = 0.388447785378E+01
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_local_slope_1 file
-
-     min value = 0.200000E-01
-     max value = 0.500000E-01
-     number of cells =   400
-     mean value = 0.485000E-01
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_local_slope_2 file
-
-     min value = 0.000000E+00
-     max value = 0.494975E-01
-     number of cells =   400
-     mean value = 0.400930E-01
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_epl_1 file
-
-     min value = 0.500000E+00
-     max value = 0.500000E+00
-     number of cells =   400
-     mean value = 0.500000E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_epl_2 file
-
-     min value = 0.000000E+00
-     max value = 0.707107E+00
-     number of cells =   400
-     mean value = 0.572757E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_kSs1_sf_1 file
-
-     min value = 0.240040E+02
-     max value = 0.240040E+02
-     number of cells =   400
-     mean value = 0.240040E+02
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_kSs1_sf_2 file
-
-     min value = 0.000000E+00
-     max value = 0.240040E+02
-     number of cells =   400
-     mean value = 0.194432E+02
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_Ws1_sf file
-
-     min value = 0.100000E+01
-     max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.100000E+01
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_Ws1_sf_2 file
-
-     min value = 0.000000E+00
-     max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.810000E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_b1_sf file
-
-     min value = 0.000000E+00
-     max value = 0.000000E+00
-     number of cells =   400
-     mean value = 0.000000E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_y1_sf file
-
-     min value = 0.000000E+00
-     max value = 0.000000E+00
-     number of cells =   400
-     mean value = 0.000000E+00
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_hcID file
-
-     min value =     0
-     max value =     0
-     number of cells =   400
-     mean value =     0.000000
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_q_output file
-
-     min value =     0
-     max value =     0
-     number of cells =   400
-     mean value =     0.000000
-
-     writing the output file...
-
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-     dtm_nrc file
-
-     min value = 0.100000E+01
-     max value = 0.100000E+01
-     number of cells =   400
-     mean value = 0.100000E+01
-
-     writing the output file...
-
-     ...mrbb completed
-
-     bb2shp...
-
-     writing file river_net.shp
-
-    Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
-
-    🔄 Update parm file 
-    🔄 Update hap.in file
-    🔄 Update dem_parameters file 
-    🔄 Update dem_parameters file 
-    🛠  Recompile src files [3s]
-    🍳 gfortran compilation [8s]
-    b''
-    👟 Run processor
-    b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
-
-
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 44-69
@@ -427,29 +117,11 @@ This example shows how to use pyCATHY object to create spatially and temporally 
                       )
 
 
-
-
-.. image-sg:: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_001.png
-   :alt: plot 3c spatial atmbc from weill
-   :srcset: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_001.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    🔄 Update atmbc
-    🔄 Update parm file 
-
-
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 70-80
 
 .. code-block:: Python
 
-    simu.run_processor(IPRT1=2, 
+    simu.run_processor(IPRT1=2,
                         DTMIN=1e-2,
                         DTMAX=1e2,
                         DELTAT=5,
@@ -458,22 +130,6 @@ This example shows how to use pyCATHY object to create spatially and temporally 
                        )
 
     # cplt.show_spatial_atmbc()
-    
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    🔄 Update parm file 
-    🛠  Recompile src files [8s]
-    🍳 gfortran compilation [13s]
-    b''
-    👟 Run processor
-
-
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 81-90
@@ -485,33 +141,12 @@ This example shows how to use pyCATHY object to create spatially and temporally 
         unit="pressure",
         timeStep=1,
         notebook=False,
-        path=simu.workdir + "/atmbc_spatially_from_weill/vtk/",
+        path=simu.workdir + simu.project_name + "/vtk/",
         savefig=True,
     )
 
 
-
-
-
-.. image-sg:: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_002.png
-   :alt: plot 3c spatial atmbc from weill
-   :srcset: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_002.png
-   :class: sphx-glr-single-img
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    plot pressure
-    figure saved/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//atmbc_spatially_from_weill/vtk/101.vtkpressure.png
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 91-103
+.. GENERATED FROM PYTHON SOURCE LINES 91-101
 
 .. code-block:: Python
 
@@ -527,44 +162,9 @@ This example shows how to use pyCATHY object to create spatially and temporally 
                 )
 
 
-
-
-
-
-.. image-sg:: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_003.gif
-   :alt: plot 3c spatial atmbc from weill
-   :srcset: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_003.gif
-   :class: sphx-glr-single-img
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    days
-    plot pressure
-    Time= [0.]
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/100.vtk
-    [0.]
-    /home/z0272571a@CAMPUS.CSIC.ES/miniconda3/envs/myenv/lib/python3.10/site-packages/pyvista/plotting/plotter.py:4814: PyVistaDeprecationWarning: This method is deprecated and will be removed in a future version of PyVista. Directly modify the scalars of a mesh in-place instead.
-      warnings.warn(
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/101.vtk
-    [0.01953]
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/102.vtk
-    [86400.]
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/103.vtk
-    [86400.]
-    gif saved/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/pressure.gif
-
-
-
-
-
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 59.725 seconds)
+   **Total running time of the script:** (0 minutes 1.303 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py:
