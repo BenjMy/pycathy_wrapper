@@ -258,6 +258,12 @@ def enkf_dual_analysis(data, data_cov, param, ensemble, observation, **kwargs):
 
 def enkf_analysis_inflation(data, data_cov, param, ensemble, observation, **kwargs):
 
+    Sakov = False
+    if 'Sakov' in kwargs:
+        Sakov = kwargs.pop('Sakov')
+    print('Sakov' + str(Sakov))
+    
+    
     alpha = 1  # <alpha> = (scalar) covariance inflation parameter. Usually alpha >= 1.
 
     if "alpha" in kwargs:
@@ -307,11 +313,25 @@ def enkf_analysis_inflation(data, data_cov, param, ensemble, observation, **kwar
 
     # Set up measurement covariance matrix
     # COV is (MeasSize)x(MeasSize)
-    COV = (1.0 / float(ens_size - 1)) * np.dot(S, S.transpose()) + data_cov
+    # COV = (1.0 / float(ens_size - 1)) * np.dot(S, S.transpose()) + data_cov
 
+    # Set up observations covariance matrix
+    # -------------------------------------------------------------------------
+    if Sakov:
+        COV = data_cov.transpose()
+        B = dD /  np.diag(COV)[:, None]
+    else:
+        COV = ( (1.0 / float(ens_size - 1)) * np.dot(S, S.transpose()) + data_cov.transpose())
+        # Compute inv(COV)*dD
+        # -------------------------------------------------------------------------
+        # Should be (MeasSize)x(ens_size)
+        B = np.linalg.solve(COV, dD)
+        
+        
+        
     # Compute inv(COV)*dD
     # Should be (MeasSize)x(ens_size)
-    B = np.linalg.solve(COV, dD)
+    # B = np.linalg.solve(COV, dD)
     # np.shape(B)
 
     # Adjust ensemble perturbations

@@ -54,7 +54,76 @@ def get_Archie_ens_i(ArchieParms, Ens_nb):
         ArchieParms2parse = ArchieParms
     return ArchieParms2parse
 
-def SW_2_ERa_DA(
+def SW_2_ER0_DA(
+                project_name, 
+                ArchieParms, 
+                porosity, 
+                meta_dict, 
+                path_fwd_CATHY, 
+                **kwargs
+                ):
+    
+    if "DA_cnb" in kwargs:
+        DA_cnb = kwargs["DA_cnb"]
+    if "Ens_nbi" in kwargs:
+        Ens_nbi = kwargs["Ens_nbi"]
+        
+    # Get sw array for a given ensemble
+    # ------------------------------------
+    df_sw = get_sw_ens_i(path_fwd_CATHY, **kwargs)
+
+    # Choose archie parameter for a given realisation (from the ensemble)
+    # --------------------------------------------------------------------
+    ArchieParms2parse = get_Archie_ens_i(ArchieParms, Ens_nbi)
+    
+    # Convert to SW to ER values
+    # --------------------------------------------------------------------
+    print("****")
+    print(f"Ens_nbi indices: {Ens_nbi}")
+    print(f"Porosity shape: {np.shape(porosity)}")
+    print(f"Porosity statistics (selected indices): min={np.min(porosity[Ens_nbi]):.3f}, "
+          f"mean={np.mean(porosity[Ens_nbi]):.3f}, max={np.max(porosity[Ens_nbi]):.3f}")
+    print("****")
+
+    if porosity[0].ndim > 1:
+        porosity_ensi = porosity[Ens_nbi]
+    else:
+        porosity_ensi = porosity
+    
+
+    
+    ER_converted_ti = Archie_rho_DA(
+                                    rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
+                                    sat=[df_sw],
+                                    porosity=porosity_ensi,
+                                    a_Archie=ArchieParms2parse["a_Archie"],
+                                    m_Archie=ArchieParms2parse["m_Archie"],
+                                    n_Archie=ArchieParms2parse["n_Archie"],
+                                    pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
+                                )
+
+    # build df Archie df
+    df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
+    df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
+    df_Archie["ens_nbi"] = Ens_nbi * np.ones(len(ER_converted_ti))
+    df_Archie["sw"] = df_sw
+    df_Archie["ER_converted"] = ER_converted_ti
+    df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
+        len(ER_converted_ti)
+    )
+    return ER_converted_ti, df_Archie, df_sw
+
+# def ER0_to_EM_ECa_DA(ER_converted_ti,EM_meta_dict):
+    
+#     # ------------------------------------------------------------------------
+#     print('----fwd ER data-----')
+#     from emagpy import Problem
+#     k= Problem()
+#     k.createSurvey(EM_meta_dict['filename'])
+    
+    
+    
+def SW_2_ERT_ERa_DA(
                 project_name, 
                 ArchieParms, 
                 porosity, 
@@ -102,6 +171,7 @@ def SW_2_ERa_DA(
         Dataframe of the current (given ensemble and given assimilation time) Archie relationship.
 
     """
+    
     path_CATHY = os.path.join(path_fwd_CATHY, "vtk/")
 
     # Some flag for DA assimilation
@@ -116,44 +186,23 @@ def SW_2_ERa_DA(
         Ens_nbi = kwargs["Ens_nbi"]
     if "savefig" in kwargs:
         savefig = kwargs["savefig"]
-
-    # Get sw array for a given ensemble
-    # ------------------------------------
-    df_sw = get_sw_ens_i(path_fwd_CATHY, **kwargs)
-
+        
+        
+    ER_converted_ti, df_Archie, df_sw = SW_2_ER0_DA(
+                                            ArchieParms, 
+                                            porosity, 
+                                            ERT_meta_dict, 
+                                            path_fwd_CATHY, 
+                                            **kwargs
+                                            )
+    
     # Read the input mesh using pyvista
     # ------------------------------------
     if DA_cnb is not None:
         mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, "vtk/100.vtk"))
     else:
         mesh_CATHY_ref = pv.read(os.path.join("vtk/100.vtk"))
-
-    # Choose archie parameter for a given realisation (from the ensemble)
-    # --------------------------------------------------------------------
-    ArchieParms2parse = get_Archie_ens_i(ArchieParms, Ens_nbi)
-    
-    # Convert to SW to ER values
-    # --------------------------------------------------------------------
-    ER_converted_ti = Archie_rho_DA(
-                                    rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
-                                    sat=[df_sw],
-                                    porosity=porosity,
-                                    a_Archie=ArchieParms2parse["a_Archie"],
-                                    m_Archie=ArchieParms2parse["m_Archie"],
-                                    n_Archie=ArchieParms2parse["n_Archie"],
-                                    pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
-                                )
-
-    # build df Archie df
-    df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
-    df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
-    df_Archie["ens_nbi"] = Ens_nbi * np.ones(len(ER_converted_ti))
-    df_Archie["sw"] = df_sw
-    df_Archie["ER_converted"] = ER_converted_ti
-    df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
-        len(ER_converted_ti)
-    )
-  
+        
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------
     mesh_CATHY_new_attr, active_attr = mt.add_attribute_2mesh(

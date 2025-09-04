@@ -17,6 +17,34 @@ try:
 except ImportError:
     Project = None
 
+try:
+    import emagpy
+    from emagpy import Problem
+except ImportError:
+    emagpy = None
+
+
+
+def read_EM(filename, data_format, **kwargs):
+    """
+    Reader for emagpy data container type
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    timeLapse = False
+    if timeLapse in kwargs:
+        timeLapse = kwargs.pop('timeLapse')
+        
+    k = Problem()
+    k.createSurvey(str(filename))
+    df_EM = k.surveys[0].df
+    
+    return df_EM,  k 
+
 
 def read_ERT(filename, data_format, **kwargs):
     """

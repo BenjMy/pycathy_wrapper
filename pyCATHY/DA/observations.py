@@ -174,6 +174,24 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
         units = 'm'
         obs_cov_type = None
 
+    # EM (Electromagnetic survey) type read
+    # ---------------------------------------------------------------------
+    elif data_type == "EM":
+        obs_cov_type = "reciprocal_err"
+        if "obs_cov_type" in kwargs:
+            obs_cov_type = kwargs["obs_cov_type"]
+        data_format = "resipy"
+        if "data_format" in kwargs['meta']:
+            data_format = kwargs['meta']["data_format"]
+            dict_obs_2add.update(data_format=data_format)
+            
+        df, k = in_meas.read_EM(obs_2_add, data_format)
+        dict_obs_2add.update(coils=k.coils)
+        dict_obs_2add.update(k_emagpy=k)
+        filename = obs_2_add
+        units = "$mS/m$"
+        # df = df
+
     # ERT type read
     # ---------------------------------------------------------------------
     elif data_type == "ERT":
@@ -280,144 +298,269 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
     return dict_obs
 
 
-def make_data_cov(simu, dict_obs, list_assimilated_obs="all"):
+
+def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
     """
-    Combine covariance between different observations
+    Build covariance matrices for assimilated observations.
 
-    cov_swc = [ 1.  0   0
-                0   1.  0
-                0   0   1
-            ]
+   Combine covariance between different observations
 
-    cov_tensio = [  err_tensio      0               0
-                    0               err_tensio.     0
-                    0               0               err_tensio
-                ]
+   cov_swc = [ 1.  0   0
+               0   1.  0
+               0   0   1
+           ]
 
-    cov_ert =   [   1.  0   0
-                    0   1.  0
-                    0   0   1
-                ]
+   cov_tensio = [  err_tensio      0               0
+                   0               err_tensio.     0
+                   0               0               err_tensio
+               ]
 
-    COV_swc_tensio = [  1.  0   0   0   0   0
-                        0   1.  0   0   0   0
-                        0   0   1   0   0   0
-                        0   0   0   1   0   0
-                        0   0   0   0   1   0
-                        0   0   0   0   0   1
-                    ]
+   cov_ert =   [   1.  0   0
+                   0   1.  0
+                   0   0   1
+               ]
 
+   COV_swc_tensio = [  1.  0   0   0   0   0
+                       0   1.  0   0   0   0
+                       0   0   1   0   0   0
+                       0   0   0   1   0   0
+                       0   0   0   0   1   0
+                       0   0   0   0   0   1
+                   ]
+   
     Parameters
     ----------
-    simu : TYPE
-        DESCRIPTION.
-    dict_obs : TYPE
-        DESCRIPTION.
+    simu : object
+        Simulation object that will store stacked covariance.
+    dict_obs : dict
+        Dictionary of observations, passed to dictObs_2pd().
+    list_assimilated_obs : list or "all", optional
+        Which sensors to assimilate. Default = "all".
+    kwargs : dict
+        Optional arguments (e.g., coils for EM sensors).
 
     Returns
     -------
-    None.
-
+    data_cov : np.ndarray
+        Covariance matrix (per time step).
+    data_pert : np.ndarray
+        Perturbed data (from prepare_observations).
+    stacked_data_cov : list of np.ndarray
+        Time-dependent covariance matrices.
     """
 
-    # merge all dataset and compute covariance matrice
-    # for exemple merging ERT data with SWC data would consist in
-    #
-    #  [R,Theta] --> cov[R,Theta]
-    #
-    # initialize the matrice [meas*meas] size
-    # Here we consider that the covariance doesnt change with time
-
-    items_dict = list(dict_obs.items())
-    data_measure_df = dictObs_2pd(dict_obs) 
-    nb_assimilation_times = len(np.unique(data_measure_df.index.get_level_values(1)))
+    data_measure_df = dictObs_2pd(dict_obs)
     assimilation_times = np.unique(data_measure_df.index.get_level_values(1))
 
-    # covariance change with time
-    # ----------------------------------------------------------------
-    data_cov_list = []
-    # for nbt in range(nb_assimilation_times):
-    for tA in assimilation_times:
-        data = []
-        data_ERT = []
-        data_cov = []
+    def extract_sensor_data(sensor, tA):
+        """Helper: extract data and covariance for one sensor at time tA."""
+        entry = data_measure_df.xs((sensor, tA))
 
-        # self.get_selected_data()
-        # There can be multiple sensors measuring at the same time
-        # -----------------------------------------------------------------
-        if "all" in list_assimilated_obs:
-            # for sensor in items_dict[nbt][1].keys():
-            for sensor in data_measure_df.xs(tA,level=1).index:
-                # print(sensor)
-                if "ERT" in sensor:
-                    data_ERT.append(
-                        # np.array(items_dict[nbt][1][sensor]["data"]["rhoa"])
-                        np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"])
-
-                    )
-                    data_cov.append(
-                        np.ones(
-                            # len(np.array(items_dict[nbt][1][sensor]["data"]["rhoa"]))
-                            len(np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"]))
-
-                        )
-                        # * items_dict[nbt][1][sensor]["data_err"]
-                        * data_measure_df.xs((sensor,tA))["data_err"]
-                    )
-                else:
-                    # data.append(items_dict[nbt][1][sensor]["data"])
-                    data.append(data_measure_df.xs((sensor,tA))["data"])
-
-            # data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
-            data_cov.append(np.ones(len(data)) * data_measure_df.xs((sensor,tA))["data_err"])
-            data = data + data_ERT
-
+        if "ERT" in sensor:
+            values = np.array(entry["data"]["rhoa"])
+        elif "EM" in sensor:
+            coils = kwargs.get("coils", None)
+            if coils is None:
+                raise ValueError("Missing `coils` argument for EM data.")
+            values = np.array(entry["data"][coils])
         else:
-            for l in list_assimilated_obs:
-                # for sensor in items_dict[nbt][1].keys():
-                for sensor in data_measure_df.xs(tA,level=1).index:
-                    if l in sensor:
-                        if "ERT" in l:
-                            data_ERT.append(
-                                # np.array(items_dict[nbt][1][sensor]["data"]["rhoa"])
-                                np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"])
-                            )
-                            data_cov.append(
-                                np.ones(
-                                    # len(np.array(items_dict[nbt][1][sensor]["data"]["rhoa"]))
-                                    len(np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"]))
-                     
-                                )
-                                # * items_dict[nbt][1][sensor]["data_err"]
-                                * data_measure_df.xs((sensor,tA))["data_err"]
-                            )
-                        else:
-                            # data.append(items_dict[nbt][1][sensor]["data"])
-                            data.append(data_measure_df.xs((sensor,tA))["data"])
+            values = np.array(entry["data"])
 
-            # data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
-            data_cov.append(np.ones(len(data)) * data_measure_df.xs((sensor,tA))["data_err"])
-            data = data + data_ERT
+        cov = np.ones(len(values)) * entry["data_err"]**2 # **2 as we need to take the variance
+        return values, cov
 
-        data = np.hstack(data)
-        data_cov = np.hstack(data_cov)
+    # Store covariance per assimilation time
+    data_cov_list = []
 
-        data_cov_diag = np.zeros([len(data_cov), len(data_cov)])
-        np.fill_diagonal(data_cov_diag, data_cov)
-        data_cov_list.append(data_cov_diag)
+    for tA in assimilation_times:
+        sensors_at_t = data_measure_df.xs(tA, level=1).index
 
-    # # covariance doesnt change with time
-    # # ----------------------------------------------------------------
-    # for nbt in range(nb_assimilation_times):
-    #     data_cov_list.append(data_cov)
+        # Determine which sensors to use
+        if list_assimilated_obs == "all":
+            selected_sensors = sensors_at_t
+        else:
+            selected_sensors = [s for s in sensors_at_t if any(l in s for l in list_assimilated_obs)]
 
-    data_cov, data_pert, stacked_data_cov = prepare_observations(
-        stacked_data_cov=data_cov_list
-    )
+        # Collect data and covariance
+        all_values, all_cov = [], []
+        for sensor in selected_sensors:
+            values, cov = extract_sensor_data(sensor, tA)
+            all_values.append(values)
+            all_cov.append(cov)
 
+        # Flatten and build diagonal covariance
+        data_flat = np.hstack(all_values)
+        cov_flat = np.hstack(all_cov)
+
+        cov_diag = np.zeros((len(cov_flat), len(cov_flat)))
+        np.fill_diagonal(cov_diag, cov_flat)
+
+        data_cov_list.append(cov_diag)
+
+    # Prepare final covariance structures
+    data_cov, data_pert, stacked_data_cov = prepare_observations(stacked_data_cov=data_cov_list)
     simu.stacked_data_cov = stacked_data_cov
 
     return data_cov, data_pert, stacked_data_cov
+
+
+
+
+# def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
+#     """
+#     Combine covariance between different observations
+
+#     cov_swc = [ 1.  0   0
+#                 0   1.  0
+#                 0   0   1
+#             ]
+
+#     cov_tensio = [  err_tensio      0               0
+#                     0               err_tensio.     0
+#                     0               0               err_tensio
+#                 ]
+
+#     cov_ert =   [   1.  0   0
+#                     0   1.  0
+#                     0   0   1
+#                 ]
+
+#     COV_swc_tensio = [  1.  0   0   0   0   0
+#                         0   1.  0   0   0   0
+#                         0   0   1   0   0   0
+#                         0   0   0   1   0   0
+#                         0   0   0   0   1   0
+#                         0   0   0   0   0   1
+#                     ]
+
+#     Parameters
+#     ----------
+#     simu : TYPE
+#         DESCRIPTION.
+#     dict_obs : TYPE
+#         DESCRIPTION.
+
+#     Returns
+#     -------
+#     None.
+
+#     """
+
+#     # merge all dataset and compute covariance matrice
+#     # for exemple merging ERT data with SWC data would consist in
+#     #
+#     #  [R,Theta] --> cov[R,Theta]
+#     #
+#     # initialize the matrice [meas*meas] size
+#     # Here we consider that the covariance doesnt change with time
+
+#     items_dict = list(dict_obs.items())
+#     data_measure_df = dictObs_2pd(dict_obs) 
+#     nb_assimilation_times = len(np.unique(data_measure_df.index.get_level_values(1)))
+#     assimilation_times = np.unique(data_measure_df.index.get_level_values(1))
+
+#     # covariance change with time
+#     # ----------------------------------------------------------------
+#     data_cov_list = []
+#     # for nbt in range(nb_assimilation_times):
+#     for tA in assimilation_times:
+#         data = []
+#         data_ERT = []
+#         data_EM = []
+#         data_cov = []
+
+#         # self.get_selected_data()
+#         # There can be multiple sensors measuring at the same time
+#         # -----------------------------------------------------------------
+#         if "all" in list_assimilated_obs:
+#             for sensor in data_measure_df.xs(tA,level=1).index:
+#                 print(sensor)
+#                 if "ERT" in sensor:
+#                     data_ERT.append(
+#                         np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"])
+
+#                     )
+#                     data_cov.append(
+#                         np.ones(
+#                             len(np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"]))
+#                         )
+#                         * data_measure_df.xs((sensor,tA))["data_err"]
+#                     )
+#                 elif "EM" in sensor:
+#                    print('EMs')
+#                    coils = kwargs.pop('coils') 
+#                    data_EM.append(
+#                        np.array(data_measure_df.xs((sensor,tA))["data"][coils])
+
+#                    )
+#                    data_cov.append(
+#                        np.ones(
+#                            len(np.array(data_measure_df.xs((sensor,tA))["data"][coils]))
+#                        )
+#                        * data_measure_df.xs((sensor,tA))["data_err"]
+#                    )
+#                 else:
+#                     data.append(data_measure_df.xs((sensor,tA))["data"])
+
+#             # data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
+#             data_cov.append(np.ones(len(data)) * data_measure_df.xs((sensor,tA))["data_err"])
+#             data = data + data_ERT
+
+#         else:
+#             for l in list_assimilated_obs:
+#                 # for sensor in items_dict[nbt][1].keys():
+#                 for sensor in data_measure_df.xs(tA,level=1).index:
+#                     if l in sensor:
+#                         if "ERT" in l:
+#                             data_ERT.append(
+#                                 np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"])
+#                             )
+#                             data_cov.append(
+#                                 np.ones(
+#                                     len(np.array(data_measure_df.xs((sensor,tA))["data"]["rhoa"]))
+                     
+#                                 )
+#                                 * data_measure_df.xs((sensor,tA))["data_err"]
+#                             )
+#                         elif "EM" in sensor:
+#                            print('EMs')
+#                            coils = kwargs.pop('coils') 
+#                            data_EM.append(
+#                                np.array(data_measure_df.xs((sensor,tA))["data"][coils])
+        
+#                            )
+#                            data_cov.append(
+#                                np.ones(
+#                                    len(np.array(data_measure_df.xs((sensor,tA))["data"][coils]))
+#                                )
+#                                * data_measure_df.xs((sensor,tA))["data_err"]
+#                            )
+#                         else:
+#                             data.append(data_measure_df.xs((sensor,tA))["data"])
+
+#             # data_cov.append(np.ones(len(data)) * items_dict[nbt][1][sensor]["data_err"])
+#             data_cov.append(np.ones(len(data)) * data_measure_df.xs((sensor,tA))["data_err"])
+#             data = data + data_ERT
+
+#         data = np.hstack(data)
+#         data_cov = np.hstack(data_cov)
+
+#         data_cov_diag = np.zeros([len(data_cov), len(data_cov)])
+#         np.fill_diagonal(data_cov_diag, data_cov)
+#         data_cov_list.append(data_cov_diag)
+
+#     # # covariance doesnt change with time
+#     # # ----------------------------------------------------------------
+#     # for nbt in range(nb_assimilation_times):
+#     #     data_cov_list.append(data_cov)
+
+#     data_cov, data_pert, stacked_data_cov = prepare_observations(
+#         stacked_data_cov=data_cov_list
+#     )
+
+#     simu.stacked_data_cov = stacked_data_cov
+
+#     return data_cov, data_pert, stacked_data_cov
 
 
 def prepare_observations(

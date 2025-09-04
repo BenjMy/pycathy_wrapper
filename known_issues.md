@@ -23,6 +23,11 @@ https://askubuntu.com/questions/623578/installing-blas-and-lapack-packages
 
 ## while running
 
+--> killed 
+conflicting files check (remove working folder entirely)
+
+
+
 the processor only return :  nsf  (# of seepage faces)               =      0
 
 --> problem with the mesh

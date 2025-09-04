@@ -98,7 +98,11 @@ def create_ERT_survey_pg(pathERT,
     # print(mesh3d)
     # print(fwdNoiseLevel)
     # print('+'*20)
+
+    if np.isnan(res0).any():
+        raise ValueError("⚠️ Error: res0 contains NaN values! Stopping execution.")
     
+
     het = ert.simulate(
         mesh3d,
         res=res0,

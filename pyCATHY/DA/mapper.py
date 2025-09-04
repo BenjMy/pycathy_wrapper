@@ -74,50 +74,141 @@ def _add_2_ensemble_Hx(Hx, Hx_2add):
         Hx = list(Hx)
         Hx.append(Hx_2add)
     return Hx
+
+
+def build_forward_profiles(sw_nodes: np.ndarray,
+                           mesh3d_nodes: np.ndarray,
+                           var: str = "EC"):
+    """
+    Build depths and conductivity arrays for all (x, y) columns from 3D node data.
+
+    Parameters
+    ----------
+    sw_nodes : np.ndarray, shape (nnodes,)
+        Array of SW or EC values at each node.
+    mesh3d_nodes : np.ndarray, shape (nnodes, 3)
+        Node coordinates, columns: [x, y, z].
+    var : str
+        Name of the variable (for labeling, not used in calculations).
+
+    Returns
+    -------
+    depths : list of np.ndarray
+        List of layer thicknesses for each (x, y) column.
+    conds : list of np.ndarray
+        List of conductivity arrays for each (x, y) column.
+    xy_coords : list of tuple
+        List of (x, y) coordinates corresponding to each profile.
+    """
+
+    depths = []
+    conds = []
+    xy_coords = []
+
+    # extract x, y, z
+    x_nodes = mesh3d_nodes[:, 0]
+    y_nodes = mesh3d_nodes[:, 1]
+    z_nodes = mesh3d_nodes[:, 2]
+
+    # get unique (x, y) pairs
+    xy_unique = np.unique(np.column_stack([x_nodes, y_nodes]), axis=0)
+
+    for x, y in xy_unique:
+        # mask for nodes at this (x, y)
+        mask = (x_nodes == x) & (y_nodes == y)
+        z_profile = z_nodes[mask]
+        cond_profile = sw_nodes[mask]
+
+        # sort so that surface is first (highest z)
+        sort_idx = np.argsort(-z_profile)  # descending
+        z_sorted = z_profile[sort_idx]
+        cond_sorted = cond_profile[sort_idx]
+
+        nz = len(cond_sorted)
+
+        if nz == 1:
+            depths.append(np.array([]).reshape(1, -1))
+            conds.append(cond_sorted.reshape(1, -1))
+        else:
+            # interface depths = difference from surface to next layers
+            z_surface = z_sorted[0]
+            depth_interfaces = np.abs(z_surface - z_sorted[1:])  # (nz-1,)
+            depths.append(depth_interfaces.reshape(1, -1))
+            conds.append(cond_sorted.reshape(1, -1))
+
+        xy_coords.append((float(x), float(y)))
+
+    return depths, conds, xy_coords
+
     
-def _map_ERT(state,
+  
+def _map_EM(
              dict_obs, 
              project_name,
              Archie_parms,
              count_DA_cycle,
              path_fwd_CATHY, 
              ens_nb, 
+             POROS_mesh_nodes_ensi,
+             grid3d,
              **kwargs
              ):
+   
     """
     Mapping of state variable to observation (predicted)
-    ERT using pedophysical transformation H
+    EM using pedophysical transformation H
     """
-
-    savefig = False
-    if "savefig" in kwargs:
-        savefig = kwargs["savefig"]
-
+    
     # search key value to identify time and method
     # --------------------------------------------
     tuple_list_obs = list(dict_obs.items())
     key_time = tuple_list_obs[count_DA_cycle]
     
+    #%%
     # Load ERT metadata information form obs dict
     # -------------------------------------------
-    ERT_meta_dict = _parse_ERT_metadata(key_time)
-
-    Hx_ERT, df_Archie, meshWithAttribute = Archie.SW_2_ERa_DA(
+    EM_meta_dict = _parse_EM_metadata(key_time)
+    EM_meta_dict.keys()
+    
+    ER_converted_ti, df_Archie, sw_nodes =   Archie.SW_2_ER0_DA(
                                             project_name,
                                             Archie_parms,
-                                            Archie_parms["porosity"],
-                                            ERT_meta_dict,
+                                            POROS_mesh_nodes_ensi,
+                                            EM_meta_dict,
                                             path_fwd_CATHY,
-                                            df_sw=state[1],  # kwargs
                                             DA_cnb=count_DA_cycle,  # kwargs
                                             Ens_nbi=ens_nb,  # kwargs
-                                            savefig=savefig,  # kwargs
-                                            noise_level=ERT_meta_dict["data_err"],  # kwargs
-                                            dict_ERT=key_time[1]["ERT"],  #  kwargs
+                                            # savefig=savefig,  # kwargs
+                                            noise_level=EM_meta_dict["data_err"],  # kwargs
                                         )
     df_Archie["OL"] = np.ones(len(df_Archie["time"])) * False
+    EC_converted_ti_mS_m = (1.0 / ER_converted_ti) * 1000  
+    
+    print("EC_converted_ti_mS_m stats:")
+    print(f"  min = {EC_converted_ti_mS_m.min():.2f} mS/m")
+    print(f"  max = {EC_converted_ti_mS_m.max():.2f} mS/m")
 
-    return Hx_ERT, df_Archie, meshWithAttribute
+    print('Build forward EM model')
+    depths, conds, xy_coords = build_forward_profiles(EC_converted_ti_mS_m, 
+                                                      grid3d['mesh3d_nodes'],
+                                                      var="EC")
+
+    from emagpy import Problem
+    k = Problem()
+    k.setModels(depths,conds)
+    
+    print('Forward EM model')
+    # dfsFSeq = k.forward(forwardModel='FSeq', coils=coils, noise=5)
+    EM_fwd_model_array = k.forward(forwardModel='FSlin',
+                         coils=EM_meta_dict["coils"],
+                         noise=5)
+    # np.shape(dfsFSlin)
+    EM_fwd_model_2darray = np.vstack(EM_fwd_model_array)
+    EM_fwd_model_1darray = np.hstack(EM_fwd_model_2darray)
+
+    return EM_fwd_model_1darray, df_Archie
+ 
+
 
 def _map_ERT_parallel_DA(
                         dict_obs,
@@ -128,21 +219,23 @@ def _map_ERT_parallel_DA(
                         DA_cnb,
                         project_name,
                         Archie_parms,
-                        POROS_nodes_ensi,
+                        POROS_nodes_ensi_list,
                     ):
     """
     Parallel mapping of ERT data using pedophysical transformation H
     """
     Hx_ERT_ens = []
 
-    # freeze fixed arguments of Archie.SW_2_ERa_DA
+    # freeze fixed arguments of Archie.SW_2_ERT_ERa_DA
     # -----------------------------------------------------------------
+    # print("POROS_nodes_ensi shape:", np.shape(POROS_nodes_ensi))
+    # print("fwd_path shape:", np.shape(path_fwd_CATHY_list))
+
     ERTmapping_args = partial(
-                                Archie.SW_2_ERa_DA,
+                                Archie.SW_2_ERT_ERa_DA,
                                 project_name,
                                 Archie_parms,
-                                # Archie_parms["porosity"],
-                                POROS_nodes_ensi,
+                                POROS_nodes_ensi_list,
                                 ERT_meta_dict,
                                 DA_cnb=DA_cnb,
                                 savefig=False,
@@ -207,72 +300,12 @@ def _add_2_ensemble_Archie(Archie_df, df_Archie_2add):
     
     return Archie_df
     
-# def _map_ERT_parallel_OL(
-#                             project_name,
-#                             Archie_parms,
-#                             ENS_times,
-#                             ERT_meta_dict,
-#                             key_time,
-#                             path_fwd_CATHY_list,
-#                         ):
-#     """
-#     Parallel mapping of ERT data using pedophysical transformation H
-#     case of the open Loop = nested loop with ensemble time
-#     """
-
-#     Hx_ERT_ens = []
-#     for t in range(len(ENS_times)):
-#         print("t_openLoop mapping:" + str(t))
-
-#         # freeze fixed arguments of Archie.SW_2_ERa
-#         # -----------------------------------------------------------------
-#         ERTmapping_args = partial(
-#                                     Archie.SW_2_ERa_DA,
-#                                     project_name,
-#                                     Archie_parms,
-#                                     Archie_parms["porosity"],
-#                                     ERT_meta_dict,
-#                                     time_ass=t,
-#                                     savefig=True,
-#                                     noise_level=ERT_meta_dict["data_err"],
-#                                     dict_ERT=key_time[1]["ERT"],
-#                                 )
-#         #
-#         # -----------------------------------------------------------------
-#         with multiprocessing.Pool(processes=multiprocessing.cpu_count()-REMOVE_CPU) as pool:
-#             results_mapping_time_i = pool.map(ERTmapping_args, path_fwd_CATHY_list)
-#             # print(f"x= {path_fwd_CATHY_list}, PID = {os.getpid()}")
-
-#         for ens_i in range(len(path_fwd_CATHY_list)):
-#             Hx_ERT_time_i = results_mapping_time_i[ens_i][0]
-
-#             # print(np.shape(results_mapping_time_i))
-#             df_Archie = results_mapping_time_i[ens_i][1]
-
-#             # print(df_Archie)
-#             df_Archie["OL"] = np.ones(len(df_Archie))
-#             _add_2_ensemble_Archie(df_Archie)
-
-#             if "pygimli" in ERT_meta_dict["data_format"]:
-#                 Hx_ERT_ens = _add_2_ensemble_Hx(
-#                     Hx_ERT_ens, Hx_ERT_time_i["rhoa"]
-#                 )
-#             else:
-#                 Hx_ERT_ens = _add_2_ensemble_Hx(
-#                     Hx_ERT_ens, Hx_ERT_time_i["resist"]
-#                 )
-
-#     # prediction_ERT = np.reshape(Hx_ERT_ens,[self.NENS,
-#     #                                         len(Hx_ERT_ens[0]),
-#     #                                         len(ENS_times)])  # (EnSize * data size * times)
-#     return Hx_ERT_ens
-
 def _map_ERT_parallel(
                         dict_obs,
                         count_DA_cycle,
                         project_name,
                         Archie_parms,
-                        POROS_nodes_ensi,
+                        POROS_nodes_ensi_list,
                         path_fwd_CATHY_list,
                         list_assimilated_obs="all",
                         default_state="psi",
@@ -311,13 +344,26 @@ def _map_ERT_parallel(
                                                 DA_cnb,
                                                 project_name,
                                                 Archie_parms,
-                                                POROS_nodes_ensi,
+                                                POROS_nodes_ensi_list,
                                             )
     prediction_ERT = np.vstack(Hx_ERT_ens).T
 
     return prediction_ERT, df_Archie, mesh2test
 
 
+def _parse_EM_metadata(key_value):
+    """
+    Extract EM metadata information form obs dict
+    """
+    EM_meta_dict = {}
+    
+    for kk in key_value[1]["EM"].keys():
+        if 'filename' in kk:
+            EM_meta_dict["pathEM"] = os.path.split(key_value[1]["EM"]["filename"])[0]
+        else:
+            EM_meta_dict[kk]= key_value[1]["EM"][kk]
+
+    return EM_meta_dict
 
 def _parse_ERT_metadata(key_value):
     """
@@ -337,57 +383,3 @@ def _parse_ERT_metadata(key_value):
     return ERT_meta_dict
 
 
-#%%
-
-# class petro(CATHY):
-    
-#     def set_Archie_parm(
-#         self,
-#         porosity=[],
-#         rFluid_Archie=[1.0],
-#         a_Archie=[1.0],
-#         m_Archie=[2.0],
-#         n_Archie=[2.0],
-#         pert_sigma_Archie=[0],
-#     ):
-#         """
-#         Dict of Archie parameters. Each type of soil is describe within a list
-#         Note that if pert_sigma is not None a normal noise is
-#         added during the translation of Saturation Water to ER
-    
-#         Parameters
-#         ----------
-#         rFluid : TYPE, optional
-#             Resistivity of the pore fluid. The default is [1.0].
-#         a : TYPE, optional
-#             Tortuosity factor. The default is [1.0].
-#         m : TYPE, optional
-#             Cementation exponent. The default is [2.0].
-#             (usually in the range 1.3 -- 2.5 for sandstones)
-#         n : TYPE, optional
-#             Saturation exponent. The default is [2.0].
-#         pert_sigma_Archie : TYPE, optional
-#             Gaussian noise to add. The default is None.
-    
-#         ..note:
-#             Field procedure to obtain tce he covariance structure of the model
-#             estimates is described in Tso et al () - 10.1029/2019WR024964
-#             "Fit a straight line for log 10 (S) and log 10 (ρ S ) using the least-squares criterion.
-#             The fitting routine returns the covariance structure of the model estimates, which can be used to de-
-#             termine the 68% confidence interval (1 standard deviation) of the model estimates.""
-    
-#         """
-#         if len(porosity) == 0:
-#             porosity = self.soil_SPP["SPP"][:, 4][0]
-#         if not isinstance(porosity, list):
-#             porosity = [porosity]
-#         self.Archie_parms = {
-#             "porosity": porosity,
-#             "rFluid_Archie": rFluid_Archie,
-#             "a_Archie": a_Archie,
-#             "m_Archie": m_Archie,
-#             "n_Archie": n_Archie,
-#             "pert_sigma_Archie": pert_sigma_Archie,
-#         }
-    
-#         pass
