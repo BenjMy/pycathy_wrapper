@@ -1,0 +1,5 @@
+exclude example/*
+recursive-exclude example *
+
+exclude examplesTmp/*
+recursive-exclude examplesTmp *
