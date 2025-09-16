@@ -138,6 +138,54 @@ def run_analysis(
                                )
         return Analysis
 
+
+    if DA_type == "enkf_analysis_localized":
+        L = kwargs.pop('localisationMatrix')
+        Analysis = enkf.enkf_analysis_localized(data,
+                               data_cov,
+                               param,
+                               ensembleX[id_state],
+                               prediction,
+                               L,  # localization matrix (state x obs)
+                               Sakov=True,
+                               )
+        return Analysis
+
+    if DA_type == "enkf_analysis_localized_with_inflation":
+        
+        L = kwargs.pop('localisationMatrix', None)
+        if L is None:
+            warnings.warn("L not provided. None as default.")
+    
+        inflate_states = kwargs.pop('damping', None)
+        if inflate_states is None:
+            inflate_states = 1.0
+            warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    
+        inflate_params = kwargs.pop('inflate_params', None)
+        if inflate_params is None:
+            inflate_params = 1.0
+            warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    
+        jitter_params = kwargs.pop('jitter_params', None)
+        if jitter_params is None:
+            jitter_params = 0.0
+            warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+
+        Analysis = enkf.enkf_analysis_localized_with_inflation(data,
+                               data_cov,
+                               param,
+                               ensembleX[id_state],
+                               prediction,
+                               L,  # localization matrix (state x obs)
+                               Sakov=True,
+                               inflate_states=inflate_states,
+                               inflate_params=inflate_params,
+                               jitter_params=jitter_params,
+                               )
+        return Analysis
+    
     if DA_type == "enkf_analysis_inflation":
         Analysis = enkf.enkf_analysis_inflation(
                                                 data,
@@ -246,7 +294,8 @@ class DA(CATHY):
         self.df_DA = pd.DataFrame()
         self.df_Archie = pd.DataFrame()
         self.localisationBool = False
-        
+        # self.localisationMatrix = []
+
 
         # backup all spatial ET iterations (self.backupfort777)
         # ET file are large!
@@ -446,13 +495,19 @@ class DA(CATHY):
         mesh_mask_nodes_observed = np.zeros(int(self.grid3d['nnod3']), dtype=bool)
         obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
         mesh_nodes_observed = []
-        
         if obskey2map[0] == 'ERT':
             raise ValueError("Cannot localise with apparent resistivity data.")
-        
-        for obsi in obs2map:
-            mesh_mask_nodes_observed[obsi['mesh_nodes']] = True
-            mesh_nodes_observed.append(obsi['mesh_nodes'])
+        elif obskey2map[0] == 'EM':
+            nbofcoils =  len(obs2map[0]['coils'])
+            for node_nb in obs2map[0]['data']['mesh_node']:
+                mesh_mask_nodes_observed[int(node_nb)] = True
+                mesh_nodes_observed.append(int(node_nb))
+            mesh_mask_nodes_observed = [mesh_mask_nodes_observed]*nbofcoils
+            mesh_nodes_observed = [mesh_nodes_observed]*nbofcoils
+        else:
+            for obsi in obs2map:
+                mesh_mask_nodes_observed[obsi['mesh_nodes']] = True
+                mesh_nodes_observed.append(obsi['mesh_nodes'])
         return mesh_nodes_observed, mesh_mask_nodes_observed
 
     def run_DA_sequential(
@@ -555,10 +610,23 @@ class DA(CATHY):
                                                             default_state="psi",
                                                             parallel=parallel,
                                                         )
-                invalid = (prediction <= 0) | np.isnan(prediction)
-                if np.any(invalid):
-                    print(f"⚠️ Invalid values found in prediction: {np.sum(invalid)} entries invalid")
+                # invalid = (prediction <= 0) | np.isnan(prediction)
+                # if np.any(invalid):
+                #     print(f"⚠️ Invalid values found in prediction: {np.sum(invalid)} entries invalid")
 
+                # Check for negatives and NaNs
+                invalid = (prediction <= 0) | np.isnan(prediction)
+                num_invalid = np.sum(invalid)
+                num_nan = np.sum(np.isnan(prediction))
+                num_negative = np.sum(prediction < 0)
+                
+                if np.any(invalid):
+                    print(f"⚠️ Invalid prediction values detected: {num_invalid} entries total")
+                    print(f"   - NaN values: {num_nan}")
+                    print(f"   - Negative or zero values: {num_negative}")
+                    raise ValueError("prediction contains invalid values. Please clean or replace them before proceeding.")
+                    
+    
                 #%% DA analysis preparation
                 # ----------------------------------------------------------------
                 self.console.print(
@@ -587,7 +655,7 @@ class DA(CATHY):
                 if self.localisationBool:
                     self.console.print(f":carpentry_saw: [b] Domain localisation: {self.localisation} [/b]")
 
-                    (mesh_nodes_valid,
+                    (mesh3d_nodes_valid,
                      mask_surface_nodes) = localisation.create_mask_localisation(self.localisation,
                                                                                 self.veg_map,
                                                                                 self.zone,
@@ -606,16 +674,25 @@ class DA(CATHY):
                         obs_surface_nodes = np.ones(int(self.grid3d['nnod']), dtype=bool)
                         obs_surface_nodes[mask_surface_nodes.ravel() != node_value] = False
 
+                        #%%
                         # check position of the sensors to make sure it is located in the right area
                         # --------------------------------------------------------------------------
                         (mesh_nodes_observed,
                         mesh_mask_nodes_observed) = self.get_mesh_mask_nodes_observed(list_assimilated_obs)
+                        mesh_nodes_observed = np.hstack(mesh_nodes_observed)
+                                                   
+                        if np.shape(mesh_mask_nodes_observed)[0]>1: #Case of EM dataset that contains multiple coils
+                            obs_surface_nodes_valid = []
+                            for i in range(np.shape(mesh_mask_nodes_observed)[0]):
+                                obs_surface_nodes_valid.append(obs_surface_nodes[mesh_mask_nodes_observed[i][0:len(obs_surface_nodes)]])
+                            obs_surface_nodes_valid = np.hstack(obs_surface_nodes_valid)
+                        else:
+                            obs_surface_nodes_valid = obs_surface_nodes[mesh_mask_nodes_observed[0:len(obs_surface_nodes)]] 
 
                         if len(mesh_nodes_observed) <= len(obs_surface_nodes):
-                            obs_surface_nodes_valid = obs_surface_nodes[mesh_nodes_observed]
-                        else:
+                        # else:
                             self.console.print(f"""[b]
-                                               Observations nodes is not contained within the surface mesh
+                                               Observations nodes is **might** not be contained within the surface mesh
                                                Cannot validate its positionning regarding to the localisation mask
                                                ['NOT IMPLEMENTED YET']
                                                [/b]"""
@@ -655,13 +732,16 @@ class DA(CATHY):
                             list_assimilated_obs,
                             ens_valid=self.ens_valid,
                             obs_valid=obs_surface_nodes_valid,
-                            obs_mesh_nodes_valid= mesh_nodes_valid[loci]
+                            obs_mesh_nodes_valid= mesh3d_nodes_valid[loci]
                         )
                         data.append(data_loci)
-                        analysis_with_localisation.append(np.c_[mesh_nodes_valid[loci],analysis_loci])
+                        analysis_with_localisation.append(np.c_[mesh3d_nodes_valid[loci],analysis_loci])
                         analysis_param.append(analysis_param_loci)
 
-                    self.console.print(f"[b] ONLY TAKE THE first part of the data? [/b]")
+                    self.console.print(f"""[b] ONLY TAKE THE first part of the data? 
+                                       Need to refactor performance assesement for DA with localisation 
+                                       self._performance_assessement_pq( [/b]
+                                        """)
                     data = data[0]
                     ensemble_psi = ensemble_psi_loci
                     ensemble_sw = ensemble_sw_loci
@@ -690,7 +770,7 @@ class DA(CATHY):
                     # No localisation, consider all nodes as valid
                     # ---------------------------------------------------------
                     obs_valid = np.ones(prediction.shape[0], dtype=bool)
-                    mesh_nodes_valid =  np.ones(int(self.grid3d['nnod3']), dtype=bool)
+                    mesh3d_nodes_valid =  np.ones(int(self.grid3d['nnod3']), dtype=bool)
 
                     # Perform DA analysis without localisation
                     (
@@ -706,7 +786,7 @@ class DA(CATHY):
                         list_assimilated_obs,
                         ens_valid=self.ens_valid,
                         obs_valid=obs_valid,
-                        obs_mesh_nodes_valid= mesh_nodes_valid
+                        obs_mesh_nodes_valid= mesh3d_nodes_valid
                     )
 
 
@@ -944,7 +1024,7 @@ class DA(CATHY):
         #%% prepare states
         # ---------------------------------------------------------------------
         ensemble_psi, ensemble_sw, ens_size, sim_size = self._read_state_ensemble()
-
+        #%%
         # ---------------------------------------------------------------------
         # prepare data
         # ---------------------------------------------------------------------
@@ -952,6 +1032,9 @@ class DA(CATHY):
         # ---------------------------------------------------------------------
         print(f'Assimilated Observations are: {list_assimilated_obs}')
         data, _ = self._get_data2assimilate(list_assimilated_obs)
+        # data_test = np.hstack(data).T
+        
+        #%%
         self.console.print(
             r""":
                                - Data size: {}
@@ -973,7 +1056,12 @@ class DA(CATHY):
             )
 
         data_cov = self.stacked_data_cov[self.count_DA_cycle]
-
+        
+        if hasattr(self,'localisationMatrix')>0:
+            localisationMatrix = self.localisationMatrix[self.count_DA_cycle]
+        else:
+            localisationMatrix = []
+            
         # # filter non-valid ensemble before Analysis
         # # ---------------------------------------------------------------------
         prediction_valid = prediction[:] # already been filtered out from bad ensemble
@@ -1004,8 +1092,8 @@ class DA(CATHY):
         prediction_valid = prediction[obs_valid, :]
         ensemble_psi_valid = ensemble_psi_valid[obs_mesh_nodes_valid, :]
         ensemble_sw_valid = ensemble_sw_valid[obs_mesh_nodes_valid, :]
-        ensemble_sw_valid.min()
-        ensemble_sw_valid.max()
+        # ensemble_sw_valid.min()
+        # ensemble_sw_valid.max()
         
         def check_cov_consistency(data_valid, 
                                   prediction_valid, 
@@ -1063,15 +1151,6 @@ class DA(CATHY):
             print(f"Observed log10(ERa): min = {data_valid_log.min():.2f}, max = {data_valid_log.max():.2f}")
             print(f"Predicted log10(ERa): min = {prediction_valid_log.min():.2f}, max = {prediction_valid_log.max():.2f}")
     
-    
-            # Optional: update covariance matrix for log space
-            # Note: This assumes a diagonal covariance matrix and applies Jacobian transform
-            # if np.allclose(data_cov_valid, np.diag(np.diag(data_cov_valid))):
-            #     jacobian_diag = 1 / ((data_valid + eps) * np.log(10))
-            #     data_cov_valid = np.diag(jacobian_diag**2) @ data_cov_valid @ np.diag(jacobian_diag**2)
-            # else:
-            #     print("⚠️ Non-diagonal R; log-transform of covariance skipped or must be generalized.")
-            
 
             # Run check
             check_cov_consistency(data_valid, prediction_valid, 
@@ -1108,6 +1187,7 @@ class DA(CATHY):
                                             [ensemble_psi_valid, ensemble_sw_valid],
                                             prediction_valid_log,
                                             alpha=self.damping,
+                                            localisationMatrix =localisationMatrix
                                         )
 
         else:
@@ -1117,7 +1197,7 @@ class DA(CATHY):
                 self.workdir,
                 self.project_name,
                 "DA_Ensemble",
-                "Obs_Pred_hist",
+                "Obs_Pred_hist" + str(self.count_DA_cycle),
             )
             fig, ax = plt.subplots()
             ax.boxplot(
@@ -1141,11 +1221,13 @@ class DA(CATHY):
                                             [ensemble_psi_valid, ensemble_sw_valid],
                                             prediction_valid,
                                             alpha=self.damping,
+                                            localisationMatrix =localisationMatrix
                                         )
                 
-
+        #%%
         _ , obs2eval_key = self._get_data2assimilate(list_assimilated_obs)
 
+        #%%
 
 
         # plot ensemble covariance matrices and changes (only for ENKF)
@@ -1578,6 +1660,10 @@ class DA(CATHY):
         warnings_petro = []
         # check that porosity is a list
         # -------------------------------------
+        
+        if hasattr(self, 'soil_SPP') is False:
+            self.read_inputs('soil')
+            
         porosity = self.soil_SPP["SPP"]['POROS'].mean()
         if not isinstance(porosity, list):
             porosity = [porosity]
@@ -2135,11 +2221,11 @@ class DA(CATHY):
                         items_dict[time_ass][1][sensor]["data"]["resist"].to_numpy()
                     )
                 data2add = np.hstack(data2add)
-            if "EM" in sensor:
+            elif "EM" in sensor:
                 data2add.append(
-                    np.array(items_dict[time_ass][1][sensor]["data"][obs2map[0]['coils']])
+                    np.hstack(items_dict[time_ass][1][sensor]["data"][obs2map[0]['coils']].to_numpy())
+                    # items_dict[time_ass][1][sensor]["data"][obs2map[0]['coils']].to_numpy()
                 )
-
             else:
                 data2add.append(items_dict[time_ass][1][sensor]["data"])
 
@@ -2169,7 +2255,7 @@ class DA(CATHY):
                         data2add = extract_data(sensor, time_ass, data)
                         data.append(data2add)
 
-        return np.hstack(data), obskey2map
+        return np.squeeze(data), obskey2map
 
     def _obs_key_select(self, list_assimilated_obs):
         """find data to map from dictionnary of observations"""
@@ -2275,9 +2361,9 @@ class DA(CATHY):
             )
                 
             POROS_mesh_cell_ensi, POROS_mesh_nodes_ensi = self.map_prop_2mesh_markers(
-                  'POROS',
-                  SPP_ensi['POROS'].groupby('zone').mean().to_list(),
-                  to_nodes=False,
+                          'POROS',
+                          SPP_ensi['POROS'].to_list(),
+                          to_nodes=False,
               )
               
             # print('ens nb:' + str(ens_nb))
@@ -2317,8 +2403,8 @@ class DA(CATHY):
                 df_fort777 = df_fort777.set_index('time_sec')
                 t_ET = df_fort777.index.unique()
                 df_fort777.loc[t_ET[-1]]['ACT. ETRA']
-                obs2map
-                dictObs_2pd(obs2map)
+                # obs2map
+                # dictObs_2pd(obs2map)
 
                 obs2map_node=[]
                 for obsi in obs2map:
@@ -2400,37 +2486,47 @@ class DA(CATHY):
         # ---------------------------------------------------------------------
         
         if parallel:
-            path_fwd_CATHY_list = []  # list of ensemble paths
-            POROS_mesh_nodes_ensi_list = np.empty(self.NENS, dtype=object)  # preallocate object array
+            if "ERT" in obs_key:
+                path_fwd_CATHY_list = []  # list of ensemble paths
+                POROS_mesh_nodes_ensi_list = np.empty(self.NENS, dtype=object)  # preallocate object array
+                # POROS_mesh_nodes_ensi_list = []
+                print(self.ens_valid)
+                
+                for ens_nb in self.ens_valid:  # loop over ensemble files
+                    # Build path to ensemble
+                    path_fwd_CATHY_i = os.path.join(
+                        self.workdir,
+                        self.project_name,
+                        f"DA_Ensemble/cathy_{ens_nb + 1}",
+                    )
+                    path_fwd_CATHY_list.append(path_fwd_CATHY_i)
+            
+                    # Read soil properties
+                    SPP_ensi, _ = in_CT.read_soil(
+                        os.path.join(path_fwd_CATHY_i, self.input_dirname, 'soil'),
+                        self.dem_parameters,
+                        self.cathyH["MAXVEG"]
+                    )
+            
+                    # Map porosity to mesh nodes
+                    POROS_mesh_cell_ensi, POROS_mesh_nodes_ensi = self.map_prop_2mesh_markers(
+                        'POROS',
+                        # SPP_ensi['POROS'].groupby('zone').mean().to_list(),
+                        SPP_ensi['POROS'].to_list(),
+                        to_nodes=False,
+                    )
+            
+                    # Store porosity array for this ensemble
+                    POROS_mesh_nodes_ensi_list[ens_nb] = POROS_mesh_nodes_ensi
+                    # POROS_mesh_nodes_ensi_list.append(POROS_mesh_nodes_ensi)
+                    
+                    # if POROS_mesh_nodes_ensi is None or len(POROS_mesh_nodes_ensi) == 0:
+                    #     print("Warning: first ensemble porosity is empty or None")
+                    # else:
+                    #     print("Nb of porosity used in Archie in the ensemble:", len(np.unique(POROS_mesh_nodes_ensi)))
         
-            for ens_nb in self.ens_valid:  # loop over ensemble files
-                # Build path to ensemble
-                path_fwd_CATHY_i = os.path.join(
-                    self.workdir,
-                    self.project_name,
-                    f"DA_Ensemble/cathy_{ens_nb + 1}",
-                )
-                path_fwd_CATHY_list.append(path_fwd_CATHY_i)
-        
-                # Read soil properties
-                SPP_ensi, _ = in_CT.read_soil(
-                    os.path.join(path_fwd_CATHY_i, self.input_dirname, 'soil'),
-                    self.dem_parameters,
-                    self.cathyH["MAXVEG"]
-                )
-        
-                # Map porosity to mesh nodes
-                POROS_mesh_cell_ensi, POROS_mesh_nodes_ensi = self.map_prop_2mesh_markers(
-                    'POROS',
-                    SPP_ensi['POROS'].groupby('zone').mean().to_list(),
-                    to_nodes=False,
-                )
-        
-                # Store porosity array for this ensemble
-                POROS_mesh_nodes_ensi_list[ens_nb] = POROS_mesh_nodes_ensi
-        
-            # Optional: check the first ensemble
-            print('Nb of porosity used in Archie (first ensemble):', len(np.unique(POROS_mesh_nodes_ensi_list[0])))
+                # Optional: check the first ensemble
+                print('Nb of porosity used in Archie (first ensemble):', len(np.unique(POROS_mesh_nodes_ensi_list[0])))
 
 
         for i, obs_key in enumerate(obskey2map):
@@ -2468,6 +2564,9 @@ class DA(CATHY):
                 # self.mesh_pv_attributes["node_markers_layers"]
                 # SPP_ensi['POROS'].groupby('layer').mean().to_list()
                 # SPP_ensi['POROS'].groupby('zone').mean().to_list()
+                print("Shape of POROS_mesh_nodes_ensi_list:", np.shape(POROS_mesh_nodes_ensi_list))
+                print("Shape of path_fwd_CATHY_list:", np.shape(path_fwd_CATHY_list))
+
             
                 if parallel:
                     Hx_ens_ERT, df_Archie, mesh2test = mapper._map_ERT_parallel(

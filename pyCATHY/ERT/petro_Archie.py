@@ -79,23 +79,27 @@ def SW_2_ER0_DA(
     # Convert to SW to ER values
     # --------------------------------------------------------------------
     print("****")
+ 
+
+    
+    if isinstance(porosity[0], (list, np.ndarray)):
+        porosity = porosity[Ens_nbi]
+    else:
+        porosity = porosity
+        
+    # print(f"porosity_ensi: {porosity_ensi}")
+    # print(f"porosity_ensi: {porosity_ensi}")
     print(f"Ens_nbi indices: {Ens_nbi}")
     print(f"Porosity shape: {np.shape(porosity)}")
     print(f"Porosity statistics (selected indices): min={np.min(porosity[Ens_nbi]):.3f}, "
           f"mean={np.mean(porosity[Ens_nbi]):.3f}, max={np.max(porosity[Ens_nbi]):.3f}")
     print("****")
 
-    if porosity[0].ndim > 1:
-        porosity_ensi = porosity[Ens_nbi]
-    else:
-        porosity_ensi = porosity
-    
-
     
     ER_converted_ti = Archie_rho_DA(
                                     rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
                                     sat=[df_sw],
-                                    porosity=porosity_ensi,
+                                    porosity=porosity,
                                     a_Archie=ArchieParms2parse["a_Archie"],
                                     m_Archie=ArchieParms2parse["m_Archie"],
                                     n_Archie=ArchieParms2parse["n_Archie"],
@@ -186,13 +190,14 @@ def SW_2_ERT_ERa_DA(
         Ens_nbi = kwargs["Ens_nbi"]
     if "savefig" in kwargs:
         savefig = kwargs["savefig"]
-        
-        
+                
     ER_converted_ti, df_Archie, df_sw = SW_2_ER0_DA(
+                                            project_name,
                                             ArchieParms, 
                                             porosity, 
                                             ERT_meta_dict, 
                                             path_fwd_CATHY, 
+                                            Ens_nbi=Ens_nbi,
                                             **kwargs
                                             )
     
@@ -248,11 +253,37 @@ def SW_2_ERT_ERa_DA(
     # print("ERT_meta_dict:", ERT_meta_dict)
     # print("sequenceERT:", ERT_meta_dict["sequenceERT"])
     
-    res0 = list(res0)
-    res0 = [int(round(x)) for x in res0]
-    res0 = np.array(res0)
- 
+    # res0 = list(res0)
+    # res0 = [int(round(x)) for x in res0]
 
+    # --- Ens_nbi check ---
+    if 'Ens_nbi' in locals():
+        print(f"Ens_nbi: {Ens_nbi}")
+    else:
+        print("Warning: Ens_nbi variable not found in scope.")
+    
+    # --- res0 checks ---
+    res0 = np.array(res0, dtype=float)
+    
+    if res0.size == 0:
+        raise ValueError("res0 is empty. Please provide a valid initial resistivity array.")
+    
+    # Check for NaNs
+    if np.any(np.isnan(res0)):
+        # Optional: check porosity for this Ens_nbi index if exists
+        if 'porosity' in locals() and 'Ens_nbi' in locals():
+            try:
+                poro_value = porosity[Ens_nbi]
+                if np.any(np.isnan(poro_value)):
+                    print("Porosity contains NaN values!")
+            except IndexError:
+                print("Ens_nbi index out of bounds for porosity.")
+        raise ValueError("res0 contains NaN values. Please clean or replace them before proceeding.")
+    
+    # Check for negative values
+    if np.any(res0 <= 0):
+        raise ValueError("res0 contains negative values. Resistivity must be positive.")
+        
     if "pygimli" in ERT_meta_dict["data_format"]:       
         ERT_predicted = simuERT.create_ERT_survey_pg(
             os.path.join(ERT_meta_dict["pathERT"], project_name, "predicted"),
@@ -393,7 +424,8 @@ def Archie_rho_DA(
     
     print('------------- Archie transformation -------------')
     print(f'Shape Saturation predicted: {np.shape(sat)}')
-    print(f'Shape Porosity nodes: {np.shape(sat)}')
+    print(f'Shape Porosity nodes: {np.shape(porosity)}')
+    print(f'Shape rFluid_Archie: {np.shape(rFluid_Archie)}')
 
     # Loop over soil type (as many soil type than a_Archie list length)
     # -----------------------------------------------
@@ -406,10 +438,11 @@ def Archie_rho_DA(
             * sat[i] ** (-n_Archie[i])
         )
         sigma = 1 / rho
+        
         print(f'min RHO converted SW nodes: {np.min(rho)}')
         print(f'max RHO converted SW nodes: {np.max(rho)}')
         print(f'nb of porosities in the soil: {len(np.unique(porosity))}')
-
+        print(f'sigma: {np.shape(sigma)}')
         # sat[0]
         try: # CASE WITH DATA ASSIMILATION
             for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times

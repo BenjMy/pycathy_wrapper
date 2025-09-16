@@ -362,7 +362,7 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
             coils = kwargs.get("coils", None)
             if coils is None:
                 raise ValueError("Missing `coils` argument for EM data.")
-            values = np.array(entry["data"][coils])
+            values = np.hstack(np.array(entry["data"][coils]))
         else:
             values = np.array(entry["data"])
 

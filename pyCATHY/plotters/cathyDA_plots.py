@@ -13,7 +13,7 @@ Plotting:
 
 import os
 
-
+import numpy as np
 from pyCATHY.cathy_utils import (
     change_x2date,
     convert_time_units,
@@ -22,6 +22,9 @@ from pyCATHY.cathy_utils import (
 )
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import scipy.stats as stats
 
 # mpl.style.use('default')
 mpl.rcParams["grid.color"] = "k"
@@ -271,6 +274,24 @@ def DA_plot_ET_dynamic(ET_DA,
 
     ax.set_ylabel(f'ETa - {unit}')
 
+# Function to calculate R² and p-value
+def calculate_r2_p_value(modelled_data, observed_data):
+    corr_coeff, p_value = stats.pearsonr(modelled_data, observed_data)
+    r2 = corr_coeff ** 2  # R² value
+    return r2, p_value
+
+# Function to annotate the plot with R² and p-value
+def annotate_r2_p_value(axi, r2, p_value):
+    # annotation_text = f"R² = {r2:.2f}\np-value = {p_value:.2e}"
+    annotation_text = f"R² = {r2:.2f}"
+    axi.annotate(annotation_text,
+                 xy=(0.05, 0.95),
+                 xycoords='axes fraction',
+                 fontsize=12,
+                 ha='left',
+                 va='top',
+                 bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', boxstyle="round,pad=0.5")
+                 )
 
 
 def DA_plot_ET_performance(ET_DA,

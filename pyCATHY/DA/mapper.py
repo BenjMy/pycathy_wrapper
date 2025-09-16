@@ -201,7 +201,8 @@ def _map_EM(
     # dfsFSeq = k.forward(forwardModel='FSeq', coils=coils, noise=5)
     EM_fwd_model_array = k.forward(forwardModel='FSlin',
                          coils=EM_meta_dict["coils"],
-                         noise=5)
+                         noise=EM_meta_dict["fwdEMnoise"]
+                         )
     # np.shape(dfsFSlin)
     EM_fwd_model_2darray = np.vstack(EM_fwd_model_array)
     EM_fwd_model_1darray = np.hstack(EM_fwd_model_2darray)

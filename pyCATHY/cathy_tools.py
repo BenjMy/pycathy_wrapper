@@ -3609,18 +3609,18 @@ class CATHY:
                             show=False,
                             saveMeshPath = saveMeshPath
                             )
-    
-        # print("Point Data Arrays:", self.mesh_pv_attributes.point_data.keys())
-        # print("Cell Data Arrays:", self.mesh_pv_attributes.cell_data.keys())
-
-        # self.mesh_pv_attributes.plot(scalars='node_markers_layers')
-        # self.mesh_pv_attributes.save("mesh_output.vtk")
-
-        # pl = pv.Plotter()
-        # pl.add_mesh(self.mesh_pv_attributes, scalars='node_markers_layers', show_edges=False)
-        # pl.add_scalar_bar(title='node_markers_layers')
-        # pl.show()
         
+        # Get unique markers in the mesh
+        unique_markers = np.unique(self.mesh_pv_attributes["cell_markers_zone3d"])
+        
+        # Check that the number of properties matches the number of unique markers
+        if len(prop_map) != len(unique_markers):
+            raise ValueError(
+                f"Mismatch between property map (len={len(prop_map)}) "
+                f"and unique mesh cell markers (len={len(unique_markers)}). "
+                f"Markers: {unique_markers}"
+            )
+
         if to_nodes:
             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_zone3d"]))
             for m in range(len(prop_map)):

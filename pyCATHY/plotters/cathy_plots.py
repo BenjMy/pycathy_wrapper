@@ -241,20 +241,20 @@ def show_spatialET(df_fort777,**kwargs):
         polygon = mask.geometry.iloc[0]  # Assuming a single polygon in the shapefile
         filtered_data = []
         for i in range(len(df_fort777_select_t)):
-            point = gpd.points_from_xy([df_fort777_select_t['x'].iloc[i]],
-                                       [df_fort777_select_t['y'].iloc[i]])[0]
+            point = gpd.points_from_xy([df_fort777_select_t['X'].iloc[i]],
+                                       [df_fort777_select_t['Y'].iloc[i]])[0]
             if polygon.contains(point):
-                filtered_data.append([df_fort777_select_t['x'].iloc[i],
-                                      df_fort777_select_t['y'].iloc[i],
+                filtered_data.append([df_fort777_select_t['X'].iloc[i],
+                                      df_fort777_select_t['Y'].iloc[i],
                                       df_fort777_select_t['ACT. ETRA'].iloc[i]])
 
         mask.crs
         filtered_data = np.vstack(filtered_data)
-        df_fort777_select_t_xr = df_fort777_select_t.set_index(['x','y']).to_xarray()
-        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('x','y')
+        df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
+        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')
         df_fort777_select_t_xr.rio.write_crs(mask.crs, inplace=True)
         df_fort777_select_t_xr_clipped = df_fort777_select_t_xr.rio.clip(mask.geometry)
-        df_fort777_select_t_xr_clipped = df_fort777_select_t_xr_clipped.transpose('y', 'x')
+        df_fort777_select_t_xr_clipped = df_fort777_select_t_xr_clipped.transpose('Y', 'X')
         data_array = df_fort777_select_t_xr_clipped['ACT. ETRA'].values
 
         df_fort777_select_t_xr_clipped.rio.bounds()
@@ -270,20 +270,20 @@ def show_spatialET(df_fort777,**kwargs):
 
     else:
 
-        df_fort777_select_t_xr = df_fort777_select_t.set_index(['x','y']).to_xarray()
-        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('x','y')
+        df_fort777_select_t_xr = df_fort777_select_t.set_index(['X','Y']).to_xarray()
+        df_fort777_select_t_xr = df_fort777_select_t_xr.rio.set_spatial_dims('X','Y')
 
         if crs is not None:
             df_fort777_select_t_xr.rio.write_crs(crs, inplace=True)
-        df_fort777_select_t_xr = df_fort777_select_t_xr.transpose('y', 'x')
+        df_fort777_select_t_xr = df_fort777_select_t_xr.transpose('Y', 'X')
         data_array = df_fort777_select_t_xr['ACT. ETRA'].values
 
         # Plot using plt.imshow
         cmap = ax.imshow(data_array,
                          cmap=cmap,
                          origin='lower',
-                         extent=[min(df_fort777_select_t['x']),max(df_fort777_select_t['x']),
-                                 min(df_fort777_select_t['y']),max(df_fort777_select_t['y'])],
+                         extent=[min(df_fort777_select_t['X']),max(df_fort777_select_t['X']),
+                                 min(df_fort777_select_t['Y']),max(df_fort777_select_t['Y'])],
                          clim = clim,
                   )
     title = 'ETa'
@@ -1649,9 +1649,9 @@ def DA_plot_parm_dynamic_scatter(
     # if pd.api.types.is_datetime64_any_dtype(df.columns):
     #     ax.set_xticklabels([pd.to_datetime(date).strftime('%d %b') for date in df.columns], 
     #                    rotation=45)
-    if pd.api.types.is_datetime64_any_dtype(df.columns):
-        ax.set_xticklabels([pd.to_datetime(date).strftime('%d (%-I%p)') for date in df.columns], 
-                       rotation=45)
+    # if pd.api.types.is_datetime64_any_dtype(df.columns):
+        # ax.set_xticklabels([pd.to_datetime(date).strftime('%d (%-I%p)') for date in df.columns], 
+        #                rotation=45)
         # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b %-I %p'.lower()))
         # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b %H h'))
         
@@ -1748,6 +1748,7 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
                     True,
                 )
                 select_isOL = isOL[isOL["idnode"].isin(nodes_of_interest)]
+                # select_isOL = isOL[isOL["idnode"].isin(3570)]
                 select_isOL = select_isOL.set_index([keytime, "idnode"])
                 select_isOL = select_isOL.reset_index()
 
@@ -1807,6 +1808,7 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
             isENS = isENS[check_notrejected]
 
             select_isENS = isENS[isENS["idnode"].isin(nodes_of_interest)]
+            # select_isENS = isENS[isENS["idnode"].isin([3570])]
             select_isENS = select_isENS.set_index([keytime, "idnode"])
             select_isENS = select_isENS.reset_index()
 
@@ -2034,21 +2036,5 @@ def calculate_rmse_nrmse(y_pred, y_obs, normalization="range"):
     return rmse, nrmse
 
 
-# Function to calculate R² and p-value
-def calculate_r2_p_value(modelled_data, observed_data):
-    corr_coeff, p_value = stats.pearsonr(modelled_data, observed_data)
-    r2 = corr_coeff ** 2  # R² value
-    return r2, p_value
 
-# Function to annotate the plot with R² and p-value
-def annotate_r2_p_value(axi, r2, p_value):
-    # annotation_text = f"R² = {r2:.2f}\np-value = {p_value:.2e}"
-    annotation_text = f"R² = {r2:.2f}"
-    axi.annotate(annotation_text,
-                 xy=(0.05, 0.95),
-                 xycoords='axes fraction',
-                 fontsize=12,
-                 ha='left',
-                 va='top',
-                 bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', boxstyle="round,pad=0.5")
-                 )
+

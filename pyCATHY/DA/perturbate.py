@@ -224,13 +224,12 @@ def perturbate(simu_DA, scenario, NENS,
     if 'nzones' in kwargs: 
         nzones = kwargs.pop('nzones')
     else:
-        nzones = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(0).unique())
-
+        nzones = len(df_SPP.index.get_level_values(0).unique())
     if 'nlayers' in kwargs: 
         nzones = kwargs.pop('nlayers')
     else:
-        nlayers = len(simu_DA.soil_SPP['SPP_map'].index.get_level_values(1).unique())
-        nlayers_PERMX = len(simu_DA.soil_SPP['SPP_map']['PERMX'].unique())
+        nlayers = len(df_SPP.index.get_level_values(1).unique())
+        nlayers_PERMX = len(df_SPP['PERMX'].unique())
 
     #%%
     list_pert = []

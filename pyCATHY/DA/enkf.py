@@ -15,182 +15,199 @@ from rich.progress import track
 
 def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     """
-    Case with non linear observation operator:
+    Ensemble Kalman Filter (EnKF) analysis step with detailed math,
+    physical meaning, and debug prints.
 
-    ..note::
-        $ K_{t} = P^{f}_{t}H^{T}(HP^{f}_{t}H^{T} + R^{T})^{-1} $
+    -----
+    Theory
+    -----
+    EnKF approximates the Kalman analysis step by operating directly
+    on an ensemble of states and parameters.
 
-        H is the linear observation operator matrix $[N_{obs}\times N_{u}]$,
-        $P^f$ is the forecast error covariance matrix $[N_{u}\times N_{u}]$,
-        and R the measurement error covariance matrix $[N_{obs}\times N_{obs}]$.
+    **Kalman analysis equation**:
 
-    parameters
-    ----------
-    data : np.array([])
-        stacked measured data.
-    data_cov : TYPE
-        measured data covariance matrice.
-    param : TYPE
-        model parameters (perturbated and to update)
-    ensemble : np.array([])
-        state values (can be either pressure heads or saturation water).
-    predict_obs : TYPE
-        stacked predicted observation (after mapping) in the same physical quantity than data.
+        x_a = x_f + K (y - H x_f)
+
+    where:
+        - x_f : forecast state (prior)
+        - x_a : analysis state (posterior)
+        - y   : observations
+        - H   : observation operator
+        - K   : Kalman gain
+
+    **Kalman gain**:
+
+        K = P^f H^T (H P^f H^T + R)^(-1)
+
+    where:
+        - P^f : forecast error covariance
+        - R   : measurement error covariance
+
+    In EnKF:
+        - P^f is approximated from ensemble statistics.
+        - H can be nonlinear → we use ensemble-predicted observations.
+
+    -----
+    Physical meaning of key terms
+    -----
+    - Innovation:   (y - H x_f) = mismatch between observations and model predictions.
+    - P^f:          spread of ensemble (uncertainty in forecast).
+    - H P^f H^T:    uncertainty of predictions in observation space.
+    - Cross-cov:    correlation between errors in states and errors in observations.
+                    This term tells the filter *how changes in states affect obs*.
+    - Gain K:       balance between trusting model vs. trusting observations.
+    - Analysis:     updated states/params nudged toward observations,
+                    with correction proportional to cross-correlation.
     """
 
-    # get kwargs optionnal arguments
-    # --------------------------------
-    # localize = False
-    # if "localize" in kwargs:
-    #     localize = True
+    # --- Options ---
+    Sakov = kwargs.pop('Sakov', False)
+    print(f"\n[INIT] Starting EnKF analysis (Sakov={Sakov})")
 
-    # print(kwargs)
+    # --- Sizes ---
+    ens_size = ensemble.shape[1]   # number of ensemble members
+    sim_size = ensemble.shape[0]   # number of state variables
+    meas_size = data.shape[0]      # number of observations
 
-    Sakov = False
-    if 'Sakov' in kwargs:
-        Sakov = kwargs.pop('Sakov')
-    print('Sakov' + str(Sakov))
-    
-    # Collect data sizes.
-    # - -------------------------------
-    ens_size = ensemble.shape[1]
-    sim_size = ensemble.shape[0]
-    meas_size = data.shape[0]
+    print(f"[INFO] Ensemble size N_ens={ens_size}")
+    print(f"[INFO] Number of state variables N_state={sim_size}")
+    print(f"[INFO] Number of observations N_obs={meas_size}")
 
-    # First combine the ensemble and param arrays (augmented state matrice)
-    # -------------------------------------------------------------------------
+    # ============================================================
+    # Step 1: Ensemble mean
+    # ------------------------------------------------------------
+    # x̄_f = (1/N) Σ x_f^(i)
+    # Physical meaning: the "best guess" of the system before assimilation.
+    # ============================================================
     ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
     ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+    print("[STEP 1] Computed state ensemble mean")
 
-    
     if len(param) > 0:
-        # Take the mean line by line i.e. each line is an independent parameter to update
         param_mean = np.mean(param, axis=1, keepdims=True)
         param_mean = np.tile(param_mean, (1, ens_size))
+        print("[STEP 1b] Computed parameter ensemble mean")
 
-    # Combine the state and parameter means to form the augmented state mean
     if len(param) > 0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
-        augm_state = np.vstack([ensemble, param])
+        augm_state      = np.vstack([ensemble, param])
     else:
         augm_state_mean = ensemble_mean
-        augm_state = ensemble
-        
-    # Calculate ensemble perturbation from mean
-    # -------------------------------------------------------------------------
-    # augm_state_pert should be (sim_size+ParSize)x(ens_size)
+        augm_state      = ensemble
+    print("[STEP 1c] Constructed augmented state [x; θ]")
+
+    # ============================================================
+    # Step 2: Perturbations
+    # ------------------------------------------------------------
+    # X' = X - x̄
+    # Physical meaning: deviations around the mean, encode ensemble spread.
+    # Spread = measure of uncertainty.
+    # ============================================================
     augm_state_pert = augm_state - augm_state_mean
+    print(f"[STEP 2] Computed state+param perturbations. "
+          f"Var={np.var(augm_state_pert):.4f}")
 
-    # augm_state_pert[sim_size:, :][0]
-
-    
-    # Calculate data perturbation from ensemble measurements
-    # -------------------------------------------------------------------------
-    # data_pert should be (MeasSize)x(ens_size)
+    # ============================================================
+    # Step 3: Innovation
+    # ------------------------------------------------------------
+    # d = y - Hx_f
+    # Physical meaning: mismatch between obs and model predictions.
+    # Large d → model diverges from reality.
+    # ============================================================
     if isinstance(predict_obs, list):
-        if len(list) == 1:
+        if len(predict_obs) == 1:
             predict_obs = np.array(predict_obs[0])
         else:
-            print(predict_obs)
-            print("predict obs is a list? should be a numpy array")
-            
-    if  data.ndim>0:
-        # print(f"Number of dimensions >0:
-        # Case of dual analysis where data are within an ensemble
-        # OR case where data are perturbated (add noise and create an ensemble)
+            raise ValueError("predict_obs should be numpy array")
+
+    if data.ndim > 0:
         data_pert = (data.T - predict_obs.T).T
     else:
         data_pert = (data - predict_obs.T).T
+    print(f"[STEP 3] Computed innovation (obs - pred). "
+          f"Mean={np.mean(data_pert):.4f}, Std={np.std(data_pert):.4f}")
 
     max_residual = 1e2
     if np.max(abs(data_pert)) > max_residual:
-        print(f'measured data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
-        print(f'predicted data obs mean: {np.mean(predict_obs)}, min: {np.min(predict_obs)}, max: {np.max(predict_obs)}')
-        print('!predictions are too far from predict_obs!')
-        # data_pert = np.clip(data_pert, -max_residual, max_residual)
-        # observation = np.clip(observation, -max_residual, max_residual)
+        print("[WARNING] Very large innovations! "
+              "Check model bias or obs errors.")
 
-
-    # Calculate S = ensemble observations perturbation from ensemble observation mean.
-    # -------------------------------------------------------------------------
-    # S is (MeasSize)x(ens_size)
-    obs_avg = (1.0 / float(ens_size)) * np.tile(
+    # ============================================================
+    # Step 4: Predicted observation mean and perturbations
+    # ------------------------------------------------------------
+    # ŷ̄ = (1/N) Σ Hx_f^(i)
+    # S = Y - ŷ̄
+    # Physical meaning:
+    # - obs_avg: best guess in obs space
+    # - obs_pert: ensemble spread in obs space (model’s uncertainty in obs)
+    # ============================================================
+    obs_avg = (1.0 / ens_size) * np.tile(
         predict_obs.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
-    ).transpose()
-    
-    
-    # Flatten obs_pert to visualize the distribution across all members and measurements
-    obs_pert_flat = predict_obs.flatten()
-    # predict_obs_transformed = np.log1p(obs_pert_flat)  # log1p(x) = log(1 + x), avoids log(0)
-    
-    # Plot histogram
-    # plt.figure(figsize=(8, 5))
-    # plt.hist(obs_pert_flat, bins=50, color='skyblue', edgecolor='k', alpha=0.8)
-    # plt.title("Distribution of Observation Perturbations")
-    # plt.xlabel("Perturbation Value")
-    # plt.ylabel("Frequency")
-    # plt.grid(True)
-    # plt.tight_layout()
-    # plt.show()
+    ).T
+    obs_pert = predict_obs - obs_avg
+    print(f"[STEP 4] Computed predicted obs mean and perturbations. "
+          f"Obs spread Var={np.var(obs_pert):.4f}")
 
+    if np.allclose(obs_pert.mean(), 0):
+        print("[WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)")
 
-    obs_pert = predict_obs - obs_avg    
-    if obs_pert.mean() == 0:
-        print(
-            "Ensemble observations perturbation from ensemble"
-            " measurement mean is too small (=0):"
-            "- Increase perturbation!"
-            "- Check if the system is not in steady state"
-        )
-
-    # Set up observations covariance matrix
-    # -------------------------------------------------------------------------
+    # ============================================================
+    # Step 5: Observation covariance
+    # ------------------------------------------------------------
+    # COV = (1/(N-1)) S S^T + R
+    # Physical meaning: total uncertainty in obs space =
+    #                   model-prediction uncertainty + measurement noise.
+    # ============================================================
     if Sakov:
-        COV = data_cov.transpose()
-        inv_data_pert = data_pert /  np.diag(COV)[:, None]
+        COV = data_cov.T
+        inv_data_pert = data_pert / np.diag(COV)[:, None]
+        print("[STEP 5] Used Sakov simplified covariance form")
     else:
-        COV = ( (1.0 / float(ens_size - 1)) * np.dot(obs_pert, obs_pert.transpose()) + data_cov.transpose())
-        # Compute inv(COV)*dD
-        # -------------------------------------------------------------------------
-        # Should be (MeasSize)x(ens_size)
+        COV = (1.0 / (ens_size - 1)) * (obs_pert @ obs_pert.T) + data_cov.T
         inv_data_pert = np.linalg.solve(COV, data_pert)
-        
-    print("Compute inv(COV)*dD")
-    print("Statistics of inv_data_pert:")
-    print(f"  Shape: {inv_data_pert.shape}")
-    print(f"  Min:   {np.min(inv_data_pert)}")
-    print(f"  Max:   {np.max(inv_data_pert)}")
-    print(f"  Mean:  {np.mean(inv_data_pert)}")
-    print(f"  Std:   {np.std(inv_data_pert)}")
-    print(f"  Median:{np.median(inv_data_pert)}")
-    # np.linalg.cond(COV)  # Condition number
+        print("[STEP 5] Computed full covariance matrix COV = SS^T + R")
 
-    # Adjust ensemble perturbations
-    # -------------------------------------------------------------------------
-    # Should be (sim_size+ParSize)x(MeasSize)
-    ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
-                                                obs_pert.T
-                                                )
-    
-    # ensemble_pert = ensemble_pert/10
-    print("Statistics of ensemble perturbations:")
-    print(f"  Shape: {ensemble_pert.shape}")
-    print(f"  Min:   {np.min(ensemble_pert)}")
-    print(f"  Max:   {np.max(ensemble_pert)}")
-    print(f"  Mean:  {np.mean(ensemble_pert)}")
-    print(f"  Std:   {np.std(ensemble_pert)}")
-    print(f"  Median:{np.median(ensemble_pert)}")
-    
-    # Compute analysis
-    # -------------------------------------------------------------------------
-    # Analysis is (sim_size+ParSize)x(ens_size)
-    analysis = augm_state + np.dot(ensemble_pert, inv_data_pert)
-    print("Analysis ...")
+    print(f"[INFO] COV shape={COV.shape}, cond#={np.linalg.cond(COV):.2e}")
 
-    # Separate and return Analyzed ensemble and Analyzed parameters.
-    # -------------------------------------------------------------------------
-    analysis_param = analysis[sim_size:, :].transpose()
-    analysis = analysis[0:sim_size, :]
+    # ============================================================
+    # Step 6: Cross-covariance (state vs obs)
+    # ------------------------------------------------------------
+    # P_xo = (1/(N-1)) X' S^T
+    # Physical meaning: how errors in states are correlated
+    # with errors in observations.
+    # This drives how much each state is corrected by each observation.
+    # ============================================================
+    ensemble_pert = (1.0 / (ens_size - 1)) * (augm_state_pert @ obs_pert.T)
+    print(f"[STEP 6] Computed state-observation cross covariance. "
+          f"Norm={np.linalg.norm(ensemble_pert):.4f}")
+#     ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
+#                                                 obs_pert.T
+#                                                 )
+
+    # ============================================================
+    # Step 7: Analysis update
+    # ------------------------------------------------------------
+    # X_a = X_f + P_xo COV^{-1} d
+    # Physical meaning: ensemble is nudged towards observations
+    # proportionally to correlations.
+    # If strongly correlated → strong update.
+    # If weakly correlated → weak update.
+    # ============================================================
+    analysis = augm_state + (ensemble_pert @ inv_data_pert)
+    print("[STEP 7] Applied analysis update")
+
+    # ============================================================
+    # Step 8: Split results
+    # ------------------------------------------------------------
+    # Separate updated states and parameters.
+    # ============================================================
+    analysis_param = analysis[sim_size:, :].T
+    analysis       = analysis[0:sim_size, :]
+    print("[STEP 8] Separated updated states and parameters → DONE.")
+
+
+    # Analyze covariances
+    summary = analyze_covariances(data_cov, obs_pert, augm_state_pert)
 
     return [
         augm_state,
@@ -205,6 +222,410 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
         analysis,
         analysis_param,
     ]
+
+def enkf_analysis_localized_with_inflation(
+    data,
+    data_cov,
+    param,
+    ensemble,
+    predict_obs,
+    L=None,  # localization matrix (state x obs)
+    **kwargs
+):
+    """
+    Ensemble Kalman Filter (EnKF) analysis step with optional covariance localization and inflation.
+
+    Parameters
+    ----------
+    data : array
+        Observations (y)
+    data_cov : array
+        Observation error covariance (R)
+    param : array
+        Ensemble of parameters (optional)
+    ensemble : array
+        Ensemble of states (X_f)
+    predict_obs : array
+        Predicted observations from ensemble
+    L : array or None
+        Localization matrix (state x obs). If None, no localization applied.
+    kwargs : dict
+        Options:
+            - Sakov : bool (default False)
+            - inflate_states : float (e.g., 1.05 for 5% multiplicative inflation)
+            - inflate_params : float (same for parameters)
+            - jitter_params : float (std dev for additive noise in params)
+
+    Returns
+    -------
+    analysis : array
+        Updated states
+    analysis_param : array
+        Updated parameters
+    P_xo : array
+        Cross-covariance
+    COV : array
+        Innovation covariance
+    """
+    Sakov = kwargs.pop('Sakov', False)
+    inflate_states = kwargs.pop('inflate_states', 1.0)
+    inflate_params = kwargs.pop('inflate_params', 1.0)
+    jitter_params = kwargs.pop('jitter_params', 0.0)
+
+    ens_size = ensemble.shape[1]
+    sim_size = ensemble.shape[0]
+    meas_size = data.shape[0]
+
+    # Step 1: Ensemble mean
+    ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
+    ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+
+    if len(param) > 0:
+        param_mean = np.mean(param, axis=1, keepdims=True)
+        param_mean = np.tile(param_mean, (1, ens_size))
+        augm_state_mean = np.vstack([ensemble_mean, param_mean])
+        augm_state = np.vstack([ensemble, param])
+    else:
+        augm_state_mean = ensemble_mean
+        augm_state = ensemble
+
+    # Step 2: Perturbations
+    augm_state_pert = augm_state - augm_state_mean
+
+    # Step 3: Innovation
+    data_pert = data.reshape(-1,1) - predict_obs
+    obs_avg = np.mean(predict_obs, axis=1, keepdims=True)
+    obs_pert = predict_obs - obs_avg
+
+    # Step 4: Observation covariance
+    if Sakov:
+        COV = data_cov
+        inv_data_pert = data_pert / np.diag(COV)[:, None]
+    else:
+        COV = (obs_pert @ obs_pert.T) / (ens_size - 1) + data_cov
+        inv_data_pert = np.linalg.solve(COV, data_pert)
+
+    # Step 5: Cross-covariance
+    P_xo = (augm_state_pert @ obs_pert.T) / (ens_size - 1)
+
+    # Apply localization if provided
+    if L is not None:
+        if L.shape != P_xo.shape:
+            raise ValueError(f"Localization matrix shape {L.shape} does not match P_xo {P_xo.shape}")
+        P_xo = P_xo * L  # element-wise multiplication (localization)
+
+    # Step 6: Analysis update
+    analysis = augm_state + P_xo @ inv_data_pert
+
+    # Step 7: Split results
+    if len(param) > 0:
+        analysis_param = analysis[sim_size:, :].T
+        analysis = analysis[:sim_size, :]
+    else:
+        analysis_param = np.array([])
+
+    # Step 8: Inflation
+    # --- multiplicative inflation ---
+    if inflate_states != 1.0:
+        mean_s = np.mean(analysis, axis=1, keepdims=True)
+        analysis = mean_s + inflate_states * (analysis - mean_s)
+
+    if len(param) > 0 and inflate_params != 1.0:
+        mean_p = np.mean(analysis_param, axis=0, keepdims=True)
+        analysis_param = mean_p + inflate_params * (analysis_param - mean_p)
+
+    # --- additive inflation (jitter) ---
+    if len(param) > 0 and jitter_params > 0.0:
+        noise = np.random.normal(0, jitter_params, analysis_param.shape)
+        analysis_param += noise
+
+    return analysis, analysis_param, P_xo, COV
+
+
+
+def enkf_analysis_localized(
+    data,
+    data_cov,
+    param,
+    ensemble,
+    predict_obs,
+    L=None,  # localization matrix (state x obs)
+    **kwargs
+):
+    """
+    Ensemble Kalman Filter (EnKF) analysis step with optional covariance localization.
+
+    Parameters
+    ----------
+    data : array
+        Observations (y)
+    data_cov : array
+        Observation error covariance (R)
+    param : array
+        Ensemble of parameters (optional)
+    ensemble : array
+        Ensemble of states (X_f)
+    predict_obs : array
+        Predicted observations from ensemble
+    L : array or None
+        Localization matrix (state x obs). If None, no localization applied.
+    kwargs : dict
+        Other options (e.g., Sakov)
+
+    Returns
+    -------
+    analysis : updated states
+    analysis_param : updated parameters
+    ...
+    """
+    Sakov = kwargs.pop('Sakov', False)
+    ens_size = ensemble.shape[1]
+    sim_size = ensemble.shape[0]
+    meas_size = data.shape[0]
+
+    # Step 1: Ensemble mean
+    ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
+    ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+
+    if len(param) > 0:
+        param_mean = np.mean(param, axis=1, keepdims=True)
+        param_mean = np.tile(param_mean, (1, ens_size))
+        augm_state_mean = np.vstack([ensemble_mean, param_mean])
+        augm_state = np.vstack([ensemble, param])
+    else:
+        augm_state_mean = ensemble_mean
+        augm_state = ensemble
+
+    # Step 2: Perturbations
+    augm_state_pert = augm_state - augm_state_mean
+
+    # Step 3: Innovation
+    data_pert = data.reshape(-1,1) - predict_obs
+    obs_avg = np.mean(predict_obs, axis=1, keepdims=True)
+    obs_pert = predict_obs - obs_avg
+
+    # Step 4: Observation covariance
+    if Sakov:
+        COV = data_cov
+        inv_data_pert = data_pert / np.diag(COV)[:, None]
+    else:
+        COV = (obs_pert @ obs_pert.T) / (ens_size - 1) + data_cov
+        inv_data_pert = np.linalg.solve(COV, data_pert)
+
+    # Step 5: Cross-covariance
+    P_xo = (augm_state_pert @ obs_pert.T) / (ens_size - 1)
+
+    # Apply localization if provided
+    if L is not None:
+        if L.shape != P_xo.shape:
+            raise ValueError(f"Localization matrix shape {L.shape} does not match P_xo {P_xo.shape}")
+        P_xo = P_xo * L  # element-wise multiplication (localization)
+
+    # Step 6: Analysis update
+    analysis = augm_state + P_xo @ inv_data_pert
+
+    # Step 7: Split results
+    if len(param) > 0:
+        analysis_param = analysis[sim_size:, :].T
+        analysis = analysis[:sim_size, :]
+    else:
+        analysis_param = np.array([])
+
+    return analysis, analysis_param, P_xo, COV
+
+
+# def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
+#     """
+#     Case with non linear observation operator:
+
+#     ..note::
+#         $ K_{t} = P^{f}_{t}H^{T}(HP^{f}_{t}H^{T} + R^{T})^{-1} $
+
+#         H is the linear observation operator matrix $[N_{obs}\times N_{u}]$,
+#         $P^f$ is the forecast error covariance matrix $[N_{u}\times N_{u}]$,
+#         and R the measurement error covariance matrix $[N_{obs}\times N_{obs}]$.
+
+#     parameters
+#     ----------
+#     data : np.array([])
+#         stacked measured data.
+#     data_cov : TYPE
+#         measured data covariance matrice.
+#     param : TYPE
+#         model parameters (perturbated and to update)
+#     ensemble : np.array([])
+#         state values (can be either pressure heads or saturation water).
+#     predict_obs : TYPE
+#         stacked predicted observation (after mapping) in the same physical quantity than data.
+#     """
+
+#     # get kwargs optionnal arguments
+#     # --------------------------------
+#     # localize = False
+#     # if "localize" in kwargs:
+#     #     localize = True
+
+#     # print(kwargs)
+
+#     Sakov = False
+#     if 'Sakov' in kwargs:
+#         Sakov = kwargs.pop('Sakov')
+#     print('Sakov' + str(Sakov))
+    
+#     # Collect data sizes.
+#     # - -------------------------------
+#     ens_size = ensemble.shape[1]
+#     sim_size = ensemble.shape[0]
+#     meas_size = data.shape[0]
+
+#     # First combine the ensemble and param arrays (augmented state matrice)
+#     # -------------------------------------------------------------------------
+#     ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
+#     ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+
+    
+#     if len(param) > 0:
+#         # Take the mean line by line i.e. each line is an independent parameter to update
+#         param_mean = np.mean(param, axis=1, keepdims=True)
+#         param_mean = np.tile(param_mean, (1, ens_size))
+
+#     # Combine the state and parameter means to form the augmented state mean
+#     if len(param) > 0:
+#         augm_state_mean = np.vstack([ensemble_mean, param_mean])
+#         augm_state = np.vstack([ensemble, param])
+#     else:
+#         augm_state_mean = ensemble_mean
+#         augm_state = ensemble
+        
+#     # Calculate ensemble perturbation from mean
+#     # -------------------------------------------------------------------------
+#     # augm_state_pert should be (sim_size+ParSize)x(ens_size)
+#     augm_state_pert = augm_state - augm_state_mean
+
+#     # augm_state_pert[sim_size:, :][0]
+
+    
+#     # Calculate data perturbation from ensemble measurements
+#     # -------------------------------------------------------------------------
+#     # data_pert should be (MeasSize)x(ens_size)
+#     if isinstance(predict_obs, list):
+#         if len(list) == 1:
+#             predict_obs = np.array(predict_obs[0])
+#         else:
+#             print(predict_obs)
+#             print("predict obs is a list? should be a numpy array")
+            
+#     if  data.ndim>0:
+#         # print(f"Number of dimensions >0:
+#         # Case of dual analysis where data are within an ensemble
+#         # OR case where data are perturbated (add noise and create an ensemble)
+#         data_pert = (data.T - predict_obs.T).T
+#     else:
+#         data_pert = (data - predict_obs.T).T
+
+#     max_residual = 1e2
+#     if np.max(abs(data_pert)) > max_residual:
+#         print(f'measured data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
+#         print(f'predicted data obs mean: {np.mean(predict_obs)}, min: {np.min(predict_obs)}, max: {np.max(predict_obs)}')
+#         print('!predictions are too far from predict_obs!')
+#         # data_pert = np.clip(data_pert, -max_residual, max_residual)
+#         # observation = np.clip(observation, -max_residual, max_residual)
+
+
+#     # Calculate S = ensemble observations perturbation from ensemble observation mean.
+#     # -------------------------------------------------------------------------
+#     # S is (MeasSize)x(ens_size)
+#     obs_avg = (1.0 / float(ens_size)) * np.tile(
+#         predict_obs.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
+#     ).transpose()
+    
+    
+#     # Flatten obs_pert to visualize the distribution across all members and measurements
+#     obs_pert_flat = predict_obs.flatten()
+#     # predict_obs_transformed = np.log1p(obs_pert_flat)  # log1p(x) = log(1 + x), avoids log(0)
+    
+#     # Plot histogram
+#     # plt.figure(figsize=(8, 5))
+#     # plt.hist(obs_pert_flat, bins=50, color='skyblue', edgecolor='k', alpha=0.8)
+#     # plt.title("Distribution of Observation Perturbations")
+#     # plt.xlabel("Perturbation Value")
+#     # plt.ylabel("Frequency")
+#     # plt.grid(True)
+#     # plt.tight_layout()
+#     # plt.show()
+
+
+#     obs_pert = predict_obs - obs_avg    
+#     if obs_pert.mean() == 0:
+#         print(
+#             "Ensemble observations perturbation from ensemble"
+#             " measurement mean is too small (=0):"
+#             "- Increase perturbation!"
+#             "- Check if the system is not in steady state"
+#         )
+
+#     # Set up observations covariance matrix
+#     # -------------------------------------------------------------------------
+#     if Sakov:
+#         COV = data_cov.transpose()
+#         inv_data_pert = data_pert /  np.diag(COV)[:, None]
+#     else:
+#         COV = ( (1.0 / float(ens_size - 1)) * np.dot(obs_pert, obs_pert.transpose()) + data_cov.transpose())
+#         # Compute inv(COV)*dD
+#         # -------------------------------------------------------------------------
+#         # Should be (MeasSize)x(ens_size)
+#         inv_data_pert = np.linalg.solve(COV, data_pert)
+        
+#     print("Compute inv(COV)*dD")
+#     print("Statistics of inv_data_pert:")
+#     print(f"  Shape: {inv_data_pert.shape}")
+#     print(f"  Min:   {np.min(inv_data_pert)}")
+#     print(f"  Max:   {np.max(inv_data_pert)}")
+#     print(f"  Mean:  {np.mean(inv_data_pert)}")
+#     print(f"  Std:   {np.std(inv_data_pert)}")
+#     print(f"  Median:{np.median(inv_data_pert)}")
+#     # np.linalg.cond(COV)  # Condition number
+
+#     # Adjust ensemble perturbations
+#     # -------------------------------------------------------------------------
+#     # Should be (sim_size+ParSize)x(MeasSize)
+#     ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
+#                                                 obs_pert.T
+#                                                 )
+    
+#     # ensemble_pert = ensemble_pert/10
+#     print("Statistics of ensemble perturbations:")
+#     print(f"  Shape: {ensemble_pert.shape}")
+#     print(f"  Min:   {np.min(ensemble_pert)}")
+#     print(f"  Max:   {np.max(ensemble_pert)}")
+#     print(f"  Mean:  {np.mean(ensemble_pert)}")
+#     print(f"  Std:   {np.std(ensemble_pert)}")
+#     print(f"  Median:{np.median(ensemble_pert)}")
+    
+#     # Compute analysis
+#     # -------------------------------------------------------------------------
+#     # Analysis is (sim_size+ParSize)x(ens_size)
+#     analysis = augm_state + np.dot(ensemble_pert, inv_data_pert)
+#     print("Analysis ...")
+
+#     # Separate and return Analyzed ensemble and Analyzed parameters.
+#     # -------------------------------------------------------------------------
+#     analysis_param = analysis[sim_size:, :].transpose()
+#     analysis = analysis[0:sim_size, :]
+
+#     return [
+#         augm_state,
+#         augm_state_mean,
+#         augm_state_pert,
+#         data_pert,
+#         obs_avg,
+#         obs_pert,
+#         COV,
+#         inv_data_pert,
+#         ensemble_pert,
+#         analysis,
+#         analysis_param,
+#     ]
 
 
 def enkf_dual_analysis(data, data_cov, param, ensemble, observation, **kwargs):
@@ -681,3 +1102,76 @@ def enkf_analysis_inflation_with_parm_cov(data, data_cov, param, ensemble, obser
 # param_cov = np.random.rand(param_size, param_size)  # Define your own parameter covariance
 # results = enkf_analysis_inflation(data, data_cov, param, ensemble, observation, param_cov=param_cov)
 
+
+def analyze_covariances(data_cov, obs_pert, augm_state_pert):
+    """
+    Analyze the structure and meaning of covariances used in EnKF.
+
+    Parameters
+    ----------
+    data_cov : np.ndarray, shape (N_obs, N_obs)
+        Measurement error covariance matrix R.
+    obs_pert : np.ndarray, shape (N_obs, N_ens)
+        Perturbations of predicted observations.
+    augm_state_pert : np.ndarray, shape (N_state+N_param, N_ens)
+        Perturbations of augmented state.
+
+    Returns
+    -------
+    summary : dict
+        Dictionary summarizing covariance types and diagnostics.
+    """
+
+    # --------------------------------------------------------
+    # 1. Measurement error covariance R
+    # --------------------------------------------------------
+    diag_R = np.allclose(data_cov, np.diag(np.diag(data_cov)))
+    print("\n[COV-ANALYSIS] Measurement error covariance R:")
+    print(f"  Shape: {data_cov.shape}")
+    print(f"  Diagonal? {diag_R}")
+    if diag_R:
+        print("  → Assumes independent measurement errors (no correlation).")
+    else:
+        print("  → Allows correlated measurement errors (e.g. sensor drift, spatial correlation).")
+
+    # --------------------------------------------------------
+    # 2. Ensemble-based obs covariance (HPH^T)
+    # --------------------------------------------------------
+    obs_cov = (1.0 / (obs_pert.shape[1] - 1)) * (obs_pert @ obs_pert.T)
+    print("\n[COV-ANALYSIS] Ensemble obs covariance (HPH^T):")
+    print(f"  Shape: {obs_cov.shape}")
+    print(f"  Diagonal mean: {np.mean(np.diag(obs_cov)):.4f}")
+    print(f"  Off-diagonal mean: {np.mean(obs_cov - np.diag(np.diag(obs_cov))):.4f}")
+    print("  → Represents uncertainty in predicted observations,")
+    print("    includes correlations between observation points due to model physics.")
+
+    # --------------------------------------------------------
+    # 3. Forecast state covariance P^f
+    # --------------------------------------------------------
+    state_cov = (1.0 / (augm_state_pert.shape[1] - 1)) * (augm_state_pert @ augm_state_pert.T)
+    print("\n[COV-ANALYSIS] Forecast state covariance P^f:")
+    print(f"  Shape: {state_cov.shape}")
+    print(f"  Diagonal mean: {np.mean(np.diag(state_cov)):.4f}")
+    print(f"  Off-diagonal mean: {np.mean(state_cov - np.diag(np.diag(state_cov))):.4f}")
+    print("  → Encodes ensemble uncertainty in state space.")
+    print("  → Off-diagonal terms = spatial correlations between state variables.")
+
+    # --------------------------------------------------------
+    # 4. Cross-covariance P_xo
+    # --------------------------------------------------------
+    cross_cov = (1.0 / (obs_pert.shape[1] - 1)) * (augm_state_pert @ obs_pert.T)
+    print("\n[COV-ANALYSIS] Cross-covariance P_xo:")
+    print(f"  Shape: {cross_cov.shape}")
+    print("  → Links state errors with observation errors.")
+    print("  → High values mean that changing this state strongly affects certain observations.")
+    print("  → This is what determines how much each observation updates each state.")
+
+    # Return a structured summary for later inspection
+    return {
+        "data_cov_diag": diag_R,
+        "obs_cov_diag_mean": np.mean(np.diag(obs_cov)),
+        "obs_cov_offdiag_mean": np.mean(obs_cov - np.diag(np.diag(obs_cov))),
+        "state_cov_diag_mean": np.mean(np.diag(state_cov)),
+        "state_cov_offdiag_mean": np.mean(state_cov - np.diag(np.diag(state_cov))),
+        "cross_cov_shape": cross_cov.shape,
+    }
