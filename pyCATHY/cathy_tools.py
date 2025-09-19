@@ -2539,7 +2539,7 @@ class CATHY:
         
         else:
             self.zone3d=zone3d
-            self.dem_parameters['nzone'] = np.size(np.unique(self.zone3d))
+            self.dem_parameters['nzone'] = len(np.unique(SPP_map.index.get_level_values(0)))
             self.update_dem_parameters()
             self.update_cathyH(MAXZON=self.dem_parameters['nzone'])
 
@@ -2717,7 +2717,7 @@ class CATHY:
         self.soil = {
             "PMIN": -5.0,
             "IPEAT": 0,
-            "SCF": 1.0,  # here we assume that all soil is covered by the vegetation
+            "SCF": 1.0,  # 1 Feddes approach (here we assume that all soil is covered by the vegetation) , or 0 if PMIN approach 
             "CBETA0": 0.4,
             "CANG": 0.225,
             # Feddes parameters default values
@@ -3641,8 +3641,11 @@ class CATHY:
             
             # Assign property values to mesh cells based on marker indices
             for m in range(len(prop_map)):
-                prop_mesh_cells[self.mesh_pv_attributes["cell_markers_zone3d"] == m +1] = prop_map[m]
+                prop_mesh_cells[self.mesh_pv_attributes["cell_markers_zone3d"] == m] = prop_map[m]
             
+            if np.any(prop_mesh_cells == 0):
+                raise ValueError("prop_mesh_cells contains 0 values. Check your property mapping!")
+
             # Store cell property values in the mesh attributes
             self.mesh_pv_attributes[f'{prop_name}_cells'] = prop_mesh_cells
             

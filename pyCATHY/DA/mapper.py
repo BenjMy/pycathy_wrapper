@@ -182,16 +182,30 @@ def _map_EM(
                                             noise_level=EM_meta_dict["data_err"],  # kwargs
                                         )
     df_Archie["OL"] = np.ones(len(df_Archie["time"])) * False
-    EC_converted_ti_mS_m = (1.0 / ER_converted_ti) * 1000  
+    EC_converted_ti_mS_m = (1.0 / ER_converted_ti) * 1000
     
+    # EC_converted_ti_mS_m stats:
+    #   min = 21.94 mS/m
+    #   max = 70.94 mS/m
+      
+    # print("ER_converted_ti stats:")
+    # print(f"  min = {ER_converted_ti.min():.2f} Ohm.m")
+    # print(f"  max = {ER_converted_ti.max():.2f} Ohm.m")
+      
     print("EC_converted_ti_mS_m stats:")
     print(f"  min = {EC_converted_ti_mS_m.min():.2f} mS/m")
     print(f"  max = {EC_converted_ti_mS_m.max():.2f} mS/m")
+
 
     print('Build forward EM model')
     depths, conds, xy_coords = build_forward_profiles(EC_converted_ti_mS_m, 
                                                       grid3d['mesh3d_nodes'],
                                                       var="EC")
+    
+    print("depths stats:")
+    print(f"  min = {np.array(depths).min():.2f} m")
+    print(f"  max = {np.array(depths).max():.2f} m")
+    
 
     from emagpy import Problem
     k = Problem()
@@ -201,8 +215,18 @@ def _map_EM(
     # dfsFSeq = k.forward(forwardModel='FSeq', coils=coils, noise=5)
     EM_fwd_model_array = k.forward(forwardModel='FSlin',
                          coils=EM_meta_dict["coils"],
-                         noise=EM_meta_dict["fwdEMnoise"]
+                         noise=EM_meta_dict["fwdEMnoise"]/100
+                         # noise=0
                          )
+    
+    # EM_fwd_model_array = k.forward(forwardModel='CS',
+    #                      coils=EM_meta_dict["coils"],
+    #                      # noise=EM_meta_dict["fwdEMnoise"]
+    #                      noise=0
+    #                      )
+    # depths[0]
+    # conds[0]
+    # EM_fwd_model_array[0]
     # np.shape(dfsFSlin)
     EM_fwd_model_2darray = np.vstack(EM_fwd_model_array)
     EM_fwd_model_1darray = np.hstack(EM_fwd_model_2darray)

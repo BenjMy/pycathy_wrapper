@@ -153,6 +153,10 @@ def run_analysis(
 
     if DA_type == "enkf_analysis_localized_with_inflation":
         
+        Sakov = kwargs.pop('Sakov', True)
+        if Sakov is True:
+            warnings.warn("Sakov is True")
+            
         L = kwargs.pop('localisationMatrix', None)
         if L is None:
             warnings.warn("L not provided. None as default.")
@@ -174,16 +178,17 @@ def run_analysis(
 
 
         Analysis = enkf.enkf_analysis_localized_with_inflation(data,
-                               data_cov,
-                               param,
-                               ensembleX[id_state],
-                               prediction,
-                               L,  # localization matrix (state x obs)
-                               Sakov=True,
-                               inflate_states=inflate_states,
-                               inflate_params=inflate_params,
-                               jitter_params=jitter_params,
-                               )
+                                                               data_cov,
+                                                               ensembleX[id_state],
+                                                               param,
+                                                               prediction,
+                                                               L,  # localization matrix (state x obs)
+                                                               Sakov=Sakov,
+                                                               inflate_states=inflate_states,
+                                                               inflate_params=inflate_params,
+                                                               jitter_params=jitter_params,
+                                                               )      
+        
         return Analysis
     
     if DA_type == "enkf_analysis_inflation":
@@ -2374,12 +2379,12 @@ class DA(CATHY):
             # infer soil parameters properties
             # ---------------------------------
             # porosity = self.soil_SPP["SPP"][:, 4][0]
-            SPP_ensi, _ = in_CT.read_soil(os.path.join(path_fwd_CATHY,
-                                                       self.input_dirname,'soil'
-                                                       ),
-                                          self.dem_parameters,
-                                          self.cathyH["MAXVEG"]
-                                          )
+            # SPP_ensi, _ = in_CT.read_soil(os.path.join(path_fwd_CATHY,
+            #                                            self.input_dirname,'soil'
+            #                                            ),
+            #                               self.dem_parameters,
+            #                               self.cathyH["MAXVEG"]
+            #                               )
             
             # find data to map with dictionnary of observations
             # --------------------------------------------

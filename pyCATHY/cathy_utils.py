@@ -8,7 +8,7 @@ Utilities for pyCATHY
 
 import pandas as pd
 from shapely.geometry import mapping
-
+import json
 from datetime import datetime, timedelta
 # from rosetta import rosetta, SoilData
 
@@ -259,3 +259,323 @@ def resynchronise_times(data_measure, atmbc_df, time_offset):
         print(data_measure[0][sensor]["datetime"])
         print("cant synchronise times - continue without")
     return data_measure_sync
+
+
+
+#%% ---------------------------------------------------------------------------
+#############  Data Assimilation utils functions          #####################
+## ---------------------------------------------------------------------------
+
+import json
+COMMON_PARAM_VALUES = {
+    "ic":       {"nom": -5,    "mean": -5,   "sigma": 1.75, "bounds": None, "type": None, "sampling": "normal", "transf": None, "update": "St. var."},
+    "Ks":       {"nom": 4e-4,  "mean": 1,    "sigma": 0.5,  "bounds": [0,1], "type": "multiplicative", "sampling": "normal", "transf": None, "update": "Ks"},
+    "porosity": {"nom": 0.35,  "mean": 0.35, "sigma": 0.05, "bounds": [0,1], "type": None, "sampling": "normal", "transf": None, "update": "porosity"}
+}
+
+def create_scenario_file_single_control(
+    scenario_name,
+    parameters=None,      # List of parameters to include
+    use_suggested=True,   # If False, use placeholders
+    control_type=None,    # 'layers', 'zone', 'root_map', or None
+    nlay=0,
+    nzones=0,
+    nveg=0,
+    filetype="json",
+    filename=None
+):
+    import json
+
+    if filename is None:
+        filename = f"{scenario_name}.{filetype}"
+
+    if parameters is None:
+        parameters = list(COMMON_PARAM_VALUES.keys())
+
+    def generate_list(value):
+        if control_type == "layers":
+            return [value] * nlay
+        elif control_type == "zone":
+            return [value] * nzones
+        elif control_type == "root_map":
+            return [[value] * nlay for _ in range(nveg)]
+        else:
+            return value
+
+    per_name, per_type, per_nom, per_mean, per_sigma = [], [], [], [], []
+    per_bounds, sampling_type, transf_type, listUpdateParm, pert_control_name = [], [], [], [], []
+
+    for pname in parameters:
+        if use_suggested and pname in COMMON_PARAM_VALUES:
+            vals = COMMON_PARAM_VALUES[pname]
+        else:
+            # Placeholder values
+            vals = {"nom": None, "mean": None, "sigma": None, "bounds": None, "type": None,
+                    "sampling": None, "transf": None, "update": pname}
+
+        per_name.append(pname)
+        per_type.append(generate_list(vals["type"]))
+        per_nom.append(generate_list(vals["nom"]))
+        per_mean.append(generate_list(vals["mean"]))
+        per_sigma.append(generate_list(vals["sigma"]))
+        per_bounds.append(generate_list(vals["bounds"]))
+        sampling_type.append(generate_list(vals["sampling"]))
+        transf_type.append(generate_list(vals["transf"]))
+        listUpdateParm.append(vals["update"])
+        pert_control_name.append(control_type if control_type else None)
+
+    scenario_data = {
+        scenario_name: {
+            "per_name": per_name,
+            "per_type": per_type,
+            "per_nom": per_nom,
+            "per_mean": per_mean,
+            "per_sigma": per_sigma,
+            "per_bounds": per_bounds,
+            "sampling_type": sampling_type,
+            "transf_type": transf_type,
+            "listUpdateParm": listUpdateParm,
+            "pert_control_name": pert_control_name
+        },
+        "_explanation": {
+            "per_name": "Parameter name",
+            "per_type": "Perturbation type: None or multiplicative",
+            "per_nom": "Nominal value",
+            "per_mean": "Mean value for sampling",
+            "per_sigma": "Standard deviation",
+            "per_bounds": "Bounds for parameter",
+            "sampling_type": "Sampling method: normal, uniform",
+            "transf_type": "Transformation type: None, log, etc.",
+            "listUpdateParm": "Which parameters are updated",
+            "pert_control_name": "Control type: 'layers', 'zone', 'root_map' or None"
+        }
+    }
+
+    with open(filename, "w") as f:
+        json.dump(scenario_data, f, indent=4)
+
+    print(f"Scenario file '{filename}' created successfully with parameters {parameters} and control '{control_type}'.")
+    return 
+
+def create_scenario_file(
+    scenario_name,
+    param_names=None,
+    control_type=None,
+    filename=None,
+    filetype="json",
+    use_common_values=True
+):
+    """
+    Create a scenario file using optionally a set of common suggested values.
+    
+    Parameters
+    ----------
+    scenario_name : str
+        Name of the scenario.
+    param_names : list of str, optional
+        List of parameter names to include. Defaults to all keys in COMMON_PARAM_VALUES.
+    control_type : str or None
+        Optional control type for all parameters ('layers', 'zones', 'root_map', or None).
+    filename : str, optional
+        Output file name.
+    filetype : str
+        'json' (default) or 'toml'.
+    use_common_values : bool
+        If True, fill parameter values from COMMON_PARAM_VALUES table.
+    """
+    if param_names is None:
+        param_names = list(COMMON_PARAM_VALUES.keys())
+
+    n = len(param_names)
+
+    # Build placeholders
+    placeholders = {
+        "per_type": ["<type>"] * n,
+        "per_nom": ["<value>"] * n,
+        "per_mean": ["<mean>"] * n,
+        "per_sigma": ["<sigma>"] * n,
+        "per_bounds": ["<bounds>"] * n,
+        "sampling_type": ["<sampling>"] * n,
+        "transf_type": ["<transf>"] * n,
+        "listUpdateParm": ["<param>"] * n
+    }
+
+    # Fill placeholders from common values
+    if use_common_values:
+        for i, pname in enumerate(param_names):
+            vals = COMMON_PARAM_VALUES.get(pname, {})
+            placeholders["per_type"][i] = vals.get("type", None)
+            placeholders["per_nom"][i] = vals.get("nom", None)
+            placeholders["per_mean"][i] = vals.get("mean", None)
+            placeholders["per_sigma"][i] = vals.get("sigma", None)
+            placeholders["per_bounds"][i] = vals.get("bounds", None)
+            placeholders["sampling_type"][i] = vals.get("sampling", None)
+            placeholders["transf_type"][i] = vals.get("transf", None)
+            placeholders["listUpdateParm"][i] = vals.get("update", pname)
+
+    pert_control = [control_type]*n if control_type else [None]*n
+
+    scenario_data = {
+        scenario_name: {
+            "per_name": param_names,
+            "per_type": placeholders["per_type"],
+            "per_nom": placeholders["per_nom"],
+            "per_mean": placeholders["per_mean"],
+            "per_sigma": placeholders["per_sigma"],
+            "per_bounds": placeholders["per_bounds"],
+            "sampling_type": placeholders["sampling_type"],
+            "transf_type": placeholders["transf_type"],
+            "listUpdateParm": placeholders["listUpdateParm"],
+            "pert_control_name": pert_control
+        }
+    }
+
+    if filetype.lower() == "json":
+        scenario_data["_explanation"] = {
+            "per_type": "Type of parameter: None, multiplicative, etc.",
+            "per_name": "Parameter name",
+            "per_nom": "Nominal value",
+            "per_mean": "Mean for sampling",
+            "per_sigma": "Standard deviation",
+            "per_bounds": "Bounds: [min,max] or None",
+            "sampling_type": "Sampling method",
+            "transf_type": "Transformation: None, log, etc.",
+            "listUpdateParm": "Parameters updated in model",
+            "pert_control_name": "Control type: 'layers', 'zones', 'root_map', or None"
+        }
+        if filename is None:
+            filename = f"{scenario_name}.json"
+        with open(filename, "w") as f:
+            json.dump(scenario_data, f, indent=4)
+    else:
+        try:
+            import toml
+        except ImportError:
+            print("TOML not installed. Use JSON instead.")
+            return
+        if filename is None:
+            filename = f"{scenario_name}.toml"
+        with open(filename, "w") as f:
+            toml.dump(scenario_data, f)
+
+    print(f"Scenario file '{filename}' created successfully for parameters: {param_names}")
+    return 
+
+
+
+    # Save file
+    if filetype.lower() == "toml":
+        try:
+            import toml
+        except ImportError:
+            raise ImportError("Module 'toml' not installed. Use JSON instead.")
+        with open(filename, "w") as f:
+            toml.dump(scenario_data, f)
+    else:
+        with open(filename, "w") as f:
+            json.dump(scenario_data, f, indent=4)
+
+    print(f"Scenario file '{filename}' created successfully with control type '{control_type}'.")
+
+
+
+def read_scenario_file(filename, filetype=None):
+    """
+    Read a scenario file created by `create_scenario_file_single_control`.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the scenario file.
+    filetype : str or None
+        "json" or "toml". If None, inferred from file extension.
+
+    Returns
+    -------
+    dict
+        Dictionary containing the scenario data.
+    """
+    if filetype is None:
+        if filename.endswith(".toml"):
+            filetype = "toml"
+        elif filename.endswith(".json"):
+            filetype = "json"
+        else:
+            raise ValueError("Cannot infer file type. Specify filetype='json' or 'toml'.")
+
+    if filetype.lower() == "toml":
+        try:
+            import toml
+        except ImportError:
+            raise ImportError("Module 'toml' not installed. Use JSON instead.")
+        with open(filename, "r") as f:
+            data = toml.load(f)
+    else:
+        with open(filename, "r") as f:
+            data = json.load(f)
+
+    return data
+
+def scenario_dict_to_df_list(scenario_dict, scenario_name):
+    """
+    Convert a scenario dictionary to a DataFrame where each parameter
+    is a row and its attributes are stored as lists.
+    """
+    scenario = scenario_dict[scenario_name]
+    params = scenario["per_name"]
+    
+    data = {}
+    for i, pname in enumerate(params):
+        data[pname] = {
+            "nom": scenario["per_nom"][i] if not isinstance(scenario["per_nom"][i], list) else scenario["per_nom"][i],
+            "mean": scenario["per_mean"][i] if not isinstance(scenario["per_mean"][i], list) else scenario["per_mean"][i],
+            "sigma": scenario["per_sigma"][i] if not isinstance(scenario["per_sigma"][i], list) else scenario["per_sigma"][i],
+            "bounds": scenario["per_bounds"][i] if not isinstance(scenario["per_bounds"][i], list) else scenario["per_bounds"][i],
+            "type": scenario["per_type"][i],
+            "sampling": scenario["sampling_type"][i],
+            "transf": scenario["transf_type"][i],
+            "control": scenario.get("pert_control_name", [None]*len(params))[i]
+        }
+    
+    df = pd.DataFrame.from_dict(data, orient="index")
+    return df.T
+
+def scenario_dict_to_multiindex_df(scenario_dict, scenario_name):
+    """
+    Convert a scenario dictionary to a MultiIndex DataFrame:
+    - Level 0: per_name
+    - Level 1: attributes ('nom', 'mean', 'sigma', etc.)
+    Rows represent each instance (layer, zone, root_map element).
+    """
+    scenario = scenario_dict[scenario_name]
+    
+    # Determine number of rows
+    n_rows = max(len(x) if isinstance(x, list) else 1 for x in scenario["per_nom"])
+    
+    # Collect data
+    data = {}
+    for i, pname in enumerate(scenario["per_name"]):
+        attrs = {
+            "nom": scenario["per_nom"][i],
+            "mean": scenario["per_mean"][i],
+            "sigma": scenario["per_sigma"][i],
+            "bounds": scenario["per_bounds"][i],
+            "type": scenario["per_type"][i],
+            "sampling": scenario["sampling_type"][i],
+            "transf": scenario["transf_type"][i],
+            "control": scenario.get("pert_control_name", [None]*len(scenario["per_name"]))[i]
+        }
+        
+        # Expand lists to n_rows
+        for key, val in attrs.items():
+            if isinstance(val, list):
+                val_expanded = val + [None]*(n_rows - len(val))
+            else:
+                val_expanded = [val]*n_rows
+            data[(pname, key)] = val_expanded
+    
+    # Create DataFrame with MultiIndex columns
+    df = pd.DataFrame(data)
+    df.columns = pd.MultiIndex.from_tuples(df.columns)
+    
+    return df.T

@@ -222,18 +222,18 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
         analysis,
         analysis_param,
     ]
-
 def enkf_analysis_localized_with_inflation(
     data,
     data_cov,
-    param,
     ensemble,
+    param,
     predict_obs,
     L=None,  # localization matrix (state x obs)
     **kwargs
 ):
     """
-    Ensemble Kalman Filter (EnKF) analysis step with optional covariance localization and inflation.
+    EnKF analysis with an augmented state (states + parameters) and
+    localization applied only to states (state x obs).
 
     Parameters
     ----------
@@ -241,63 +241,58 @@ def enkf_analysis_localized_with_inflation(
         Observations (y)
     data_cov : array
         Observation error covariance (R)
-    param : array
-        Ensemble of parameters (optional)
     ensemble : array
         Ensemble of states (X_f)
+    param : array
+        Ensemble of parameters
     predict_obs : array
         Predicted observations from ensemble
     L : array or None
-        Localization matrix (state x obs). If None, no localization applied.
+        Localization matrix (state x obs)
     kwargs : dict
         Options:
             - Sakov : bool (default False)
-            - inflate_states : float (e.g., 1.05 for 5% multiplicative inflation)
-            - inflate_params : float (same for parameters)
-            - jitter_params : float (std dev for additive noise in params)
+            - inflate_states : float
+            - inflate_params : float
+            - jitter_params : float
 
     Returns
     -------
-    analysis : array
-        Updated states
-    analysis_param : array
-        Updated parameters
-    P_xo : array
-        Cross-covariance
-    COV : array
-        Innovation covariance
+    list of arrays
+        [augm_state,
+         augm_state_mean,
+         augm_state_pert,
+         data_pert,
+         obs_avg,
+         obs_pert,
+         COV,
+         inv_data_pert,
+         ensemble_pert,
+         analysis,
+         analysis_param]
     """
-    Sakov = kwargs.pop('Sakov', False)
-    inflate_states = kwargs.pop('inflate_states', 1.0)
-    inflate_params = kwargs.pop('inflate_params', 1.0)
-    jitter_params = kwargs.pop('jitter_params', 0.0)
+    Sakov = kwargs.pop('Sakov')
+    inflate_states = kwargs.pop('inflate_states')
+    inflate_params = kwargs.pop('inflate_params')
+    jitter_params = kwargs.pop('jitter_params')
 
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0]
-    meas_size = data.shape[0]
 
     # Step 1: Ensemble mean
     ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
-    ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+    param_mean = np.mean(param, axis=1, keepdims=True)
+    augm_mean = np.vstack([ensemble_mean, param_mean])
+    augm_state = np.vstack([ensemble, param])
+    augm_state_pert = augm_state - np.tile(augm_mean, (1, ens_size))
+    ensemble_pert = ensemble - np.tile(ensemble_mean, (1, ens_size))
 
-    if len(param) > 0:
-        param_mean = np.mean(param, axis=1, keepdims=True)
-        param_mean = np.tile(param_mean, (1, ens_size))
-        augm_state_mean = np.vstack([ensemble_mean, param_mean])
-        augm_state = np.vstack([ensemble, param])
-    else:
-        augm_state_mean = ensemble_mean
-        augm_state = ensemble
-
-    # Step 2: Perturbations
-    augm_state_pert = augm_state - augm_state_mean
-
-    # Step 3: Innovation
-    data_pert = data.reshape(-1,1) - predict_obs
+    # Step 2: Innovation
     obs_avg = np.mean(predict_obs, axis=1, keepdims=True)
     obs_pert = predict_obs - obs_avg
+    data_pert = data.reshape(-1,1) - predict_obs
 
-    # Step 4: Observation covariance
+    # Step 3: Observation covariance
     if Sakov:
         COV = data_cov
         inv_data_pert = data_pert / np.diag(COV)[:, None]
@@ -305,327 +300,46 @@ def enkf_analysis_localized_with_inflation(
         COV = (obs_pert @ obs_pert.T) / (ens_size - 1) + data_cov
         inv_data_pert = np.linalg.solve(COV, data_pert)
 
-    # Step 5: Cross-covariance
+    # Step 4: Cross-covariance (augmented)
     P_xo = (augm_state_pert @ obs_pert.T) / (ens_size - 1)
 
-    # Apply localization if provided
+    # Apply localization only to states (top rows)
     if L is not None:
-        if L.shape != P_xo.shape:
-            raise ValueError(f"Localization matrix shape {L.shape} does not match P_xo {P_xo.shape}")
-        P_xo = P_xo * L  # element-wise multiplication (localization)
+        if L.shape != P_xo[:sim_size, :].shape:
+            raise ValueError(f"Localization matrix shape {L.shape} does not match P_xo[:states, :] {P_xo[:sim_size, :].shape}")
+        P_xo[:sim_size, :] = P_xo[:sim_size, :] * L
 
-    # Step 6: Analysis update
-    analysis = augm_state + P_xo @ inv_data_pert
+    # Step 5: Analysis update
+    analysis_augm = augm_state + P_xo @ inv_data_pert
+    analysis = analysis_augm[:sim_size, :]
+    analysis_param = analysis_augm[sim_size:, :]
 
-    # Step 7: Split results
-    if len(param) > 0:
-        analysis_param = analysis[sim_size:, :].T
-        analysis = analysis[:sim_size, :]
-    else:
-        analysis_param = np.array([])
-
-    # Step 8: Inflation
-    # --- multiplicative inflation ---
+    # Step 6: Inflation
     if inflate_states != 1.0:
         mean_s = np.mean(analysis, axis=1, keepdims=True)
         analysis = mean_s + inflate_states * (analysis - mean_s)
 
-    if len(param) > 0 and inflate_params != 1.0:
-        mean_p = np.mean(analysis_param, axis=0, keepdims=True)
+    if inflate_params != 1.0:
+        mean_p = np.mean(analysis_param, axis=1, keepdims=True)
         analysis_param = mean_p + inflate_params * (analysis_param - mean_p)
 
-    # --- additive inflation (jitter) ---
-    if len(param) > 0 and jitter_params > 0.0:
+    if jitter_params > 0.0:
         noise = np.random.normal(0, jitter_params, analysis_param.shape)
         analysis_param += noise
 
-    return analysis, analysis_param, P_xo, COV
-
-
-
-def enkf_analysis_localized(
-    data,
-    data_cov,
-    param,
-    ensemble,
-    predict_obs,
-    L=None,  # localization matrix (state x obs)
-    **kwargs
-):
-    """
-    Ensemble Kalman Filter (EnKF) analysis step with optional covariance localization.
-
-    Parameters
-    ----------
-    data : array
-        Observations (y)
-    data_cov : array
-        Observation error covariance (R)
-    param : array
-        Ensemble of parameters (optional)
-    ensemble : array
-        Ensemble of states (X_f)
-    predict_obs : array
-        Predicted observations from ensemble
-    L : array or None
-        Localization matrix (state x obs). If None, no localization applied.
-    kwargs : dict
-        Other options (e.g., Sakov)
-
-    Returns
-    -------
-    analysis : updated states
-    analysis_param : updated parameters
-    ...
-    """
-    Sakov = kwargs.pop('Sakov', False)
-    ens_size = ensemble.shape[1]
-    sim_size = ensemble.shape[0]
-    meas_size = data.shape[0]
-
-    # Step 1: Ensemble mean
-    ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
-    ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
-
-    if len(param) > 0:
-        param_mean = np.mean(param, axis=1, keepdims=True)
-        param_mean = np.tile(param_mean, (1, ens_size))
-        augm_state_mean = np.vstack([ensemble_mean, param_mean])
-        augm_state = np.vstack([ensemble, param])
-    else:
-        augm_state_mean = ensemble_mean
-        augm_state = ensemble
-
-    # Step 2: Perturbations
-    augm_state_pert = augm_state - augm_state_mean
-
-    # Step 3: Innovation
-    data_pert = data.reshape(-1,1) - predict_obs
-    obs_avg = np.mean(predict_obs, axis=1, keepdims=True)
-    obs_pert = predict_obs - obs_avg
-
-    # Step 4: Observation covariance
-    if Sakov:
-        COV = data_cov
-        inv_data_pert = data_pert / np.diag(COV)[:, None]
-    else:
-        COV = (obs_pert @ obs_pert.T) / (ens_size - 1) + data_cov
-        inv_data_pert = np.linalg.solve(COV, data_pert)
-
-    # Step 5: Cross-covariance
-    P_xo = (augm_state_pert @ obs_pert.T) / (ens_size - 1)
-
-    # Apply localization if provided
-    if L is not None:
-        if L.shape != P_xo.shape:
-            raise ValueError(f"Localization matrix shape {L.shape} does not match P_xo {P_xo.shape}")
-        P_xo = P_xo * L  # element-wise multiplication (localization)
-
-    # Step 6: Analysis update
-    analysis = augm_state + P_xo @ inv_data_pert
-
-    # Step 7: Split results
-    if len(param) > 0:
-        analysis_param = analysis[sim_size:, :].T
-        analysis = analysis[:sim_size, :]
-    else:
-        analysis_param = np.array([])
-
-    return analysis, analysis_param, P_xo, COV
-
-
-# def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
-#     """
-#     Case with non linear observation operator:
-
-#     ..note::
-#         $ K_{t} = P^{f}_{t}H^{T}(HP^{f}_{t}H^{T} + R^{T})^{-1} $
-
-#         H is the linear observation operator matrix $[N_{obs}\times N_{u}]$,
-#         $P^f$ is the forecast error covariance matrix $[N_{u}\times N_{u}]$,
-#         and R the measurement error covariance matrix $[N_{obs}\times N_{obs}]$.
-
-#     parameters
-#     ----------
-#     data : np.array([])
-#         stacked measured data.
-#     data_cov : TYPE
-#         measured data covariance matrice.
-#     param : TYPE
-#         model parameters (perturbated and to update)
-#     ensemble : np.array([])
-#         state values (can be either pressure heads or saturation water).
-#     predict_obs : TYPE
-#         stacked predicted observation (after mapping) in the same physical quantity than data.
-#     """
-
-#     # get kwargs optionnal arguments
-#     # --------------------------------
-#     # localize = False
-#     # if "localize" in kwargs:
-#     #     localize = True
-
-#     # print(kwargs)
-
-#     Sakov = False
-#     if 'Sakov' in kwargs:
-#         Sakov = kwargs.pop('Sakov')
-#     print('Sakov' + str(Sakov))
-    
-#     # Collect data sizes.
-#     # - -------------------------------
-#     ens_size = ensemble.shape[1]
-#     sim_size = ensemble.shape[0]
-#     meas_size = data.shape[0]
-
-#     # First combine the ensemble and param arrays (augmented state matrice)
-#     # -------------------------------------------------------------------------
-#     ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
-#     ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
-
-    
-#     if len(param) > 0:
-#         # Take the mean line by line i.e. each line is an independent parameter to update
-#         param_mean = np.mean(param, axis=1, keepdims=True)
-#         param_mean = np.tile(param_mean, (1, ens_size))
-
-#     # Combine the state and parameter means to form the augmented state mean
-#     if len(param) > 0:
-#         augm_state_mean = np.vstack([ensemble_mean, param_mean])
-#         augm_state = np.vstack([ensemble, param])
-#     else:
-#         augm_state_mean = ensemble_mean
-#         augm_state = ensemble
-        
-#     # Calculate ensemble perturbation from mean
-#     # -------------------------------------------------------------------------
-#     # augm_state_pert should be (sim_size+ParSize)x(ens_size)
-#     augm_state_pert = augm_state - augm_state_mean
-
-#     # augm_state_pert[sim_size:, :][0]
-
-    
-#     # Calculate data perturbation from ensemble measurements
-#     # -------------------------------------------------------------------------
-#     # data_pert should be (MeasSize)x(ens_size)
-#     if isinstance(predict_obs, list):
-#         if len(list) == 1:
-#             predict_obs = np.array(predict_obs[0])
-#         else:
-#             print(predict_obs)
-#             print("predict obs is a list? should be a numpy array")
-            
-#     if  data.ndim>0:
-#         # print(f"Number of dimensions >0:
-#         # Case of dual analysis where data are within an ensemble
-#         # OR case where data are perturbated (add noise and create an ensemble)
-#         data_pert = (data.T - predict_obs.T).T
-#     else:
-#         data_pert = (data - predict_obs.T).T
-
-#     max_residual = 1e2
-#     if np.max(abs(data_pert)) > max_residual:
-#         print(f'measured data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
-#         print(f'predicted data obs mean: {np.mean(predict_obs)}, min: {np.min(predict_obs)}, max: {np.max(predict_obs)}')
-#         print('!predictions are too far from predict_obs!')
-#         # data_pert = np.clip(data_pert, -max_residual, max_residual)
-#         # observation = np.clip(observation, -max_residual, max_residual)
-
-
-#     # Calculate S = ensemble observations perturbation from ensemble observation mean.
-#     # -------------------------------------------------------------------------
-#     # S is (MeasSize)x(ens_size)
-#     obs_avg = (1.0 / float(ens_size)) * np.tile(
-#         predict_obs.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
-#     ).transpose()
-    
-    
-#     # Flatten obs_pert to visualize the distribution across all members and measurements
-#     obs_pert_flat = predict_obs.flatten()
-#     # predict_obs_transformed = np.log1p(obs_pert_flat)  # log1p(x) = log(1 + x), avoids log(0)
-    
-#     # Plot histogram
-#     # plt.figure(figsize=(8, 5))
-#     # plt.hist(obs_pert_flat, bins=50, color='skyblue', edgecolor='k', alpha=0.8)
-#     # plt.title("Distribution of Observation Perturbations")
-#     # plt.xlabel("Perturbation Value")
-#     # plt.ylabel("Frequency")
-#     # plt.grid(True)
-#     # plt.tight_layout()
-#     # plt.show()
-
-
-#     obs_pert = predict_obs - obs_avg    
-#     if obs_pert.mean() == 0:
-#         print(
-#             "Ensemble observations perturbation from ensemble"
-#             " measurement mean is too small (=0):"
-#             "- Increase perturbation!"
-#             "- Check if the system is not in steady state"
-#         )
-
-#     # Set up observations covariance matrix
-#     # -------------------------------------------------------------------------
-#     if Sakov:
-#         COV = data_cov.transpose()
-#         inv_data_pert = data_pert /  np.diag(COV)[:, None]
-#     else:
-#         COV = ( (1.0 / float(ens_size - 1)) * np.dot(obs_pert, obs_pert.transpose()) + data_cov.transpose())
-#         # Compute inv(COV)*dD
-#         # -------------------------------------------------------------------------
-#         # Should be (MeasSize)x(ens_size)
-#         inv_data_pert = np.linalg.solve(COV, data_pert)
-        
-#     print("Compute inv(COV)*dD")
-#     print("Statistics of inv_data_pert:")
-#     print(f"  Shape: {inv_data_pert.shape}")
-#     print(f"  Min:   {np.min(inv_data_pert)}")
-#     print(f"  Max:   {np.max(inv_data_pert)}")
-#     print(f"  Mean:  {np.mean(inv_data_pert)}")
-#     print(f"  Std:   {np.std(inv_data_pert)}")
-#     print(f"  Median:{np.median(inv_data_pert)}")
-#     # np.linalg.cond(COV)  # Condition number
-
-#     # Adjust ensemble perturbations
-#     # -------------------------------------------------------------------------
-#     # Should be (sim_size+ParSize)x(MeasSize)
-#     ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
-#                                                 obs_pert.T
-#                                                 )
-    
-#     # ensemble_pert = ensemble_pert/10
-#     print("Statistics of ensemble perturbations:")
-#     print(f"  Shape: {ensemble_pert.shape}")
-#     print(f"  Min:   {np.min(ensemble_pert)}")
-#     print(f"  Max:   {np.max(ensemble_pert)}")
-#     print(f"  Mean:  {np.mean(ensemble_pert)}")
-#     print(f"  Std:   {np.std(ensemble_pert)}")
-#     print(f"  Median:{np.median(ensemble_pert)}")
-    
-#     # Compute analysis
-#     # -------------------------------------------------------------------------
-#     # Analysis is (sim_size+ParSize)x(ens_size)
-#     analysis = augm_state + np.dot(ensemble_pert, inv_data_pert)
-#     print("Analysis ...")
-
-#     # Separate and return Analyzed ensemble and Analyzed parameters.
-#     # -------------------------------------------------------------------------
-#     analysis_param = analysis[sim_size:, :].transpose()
-#     analysis = analysis[0:sim_size, :]
-
-#     return [
-#         augm_state,
-#         augm_state_mean,
-#         augm_state_pert,
-#         data_pert,
-#         obs_avg,
-#         obs_pert,
-#         COV,
-#         inv_data_pert,
-#         ensemble_pert,
-#         analysis,
-#         analysis_param,
-#     ]
+    return [
+        augm_state,
+        augm_mean,
+        augm_state_pert,
+        data_pert,
+        obs_avg,
+        obs_pert,
+        COV,
+        inv_data_pert,
+        ensemble_pert,
+        analysis,
+        analysis_param,
+    ]
 
 
 def enkf_dual_analysis(data, data_cov, param, ensemble, observation, **kwargs):

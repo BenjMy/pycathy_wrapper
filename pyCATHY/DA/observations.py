@@ -364,7 +364,7 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
                 raise ValueError("Missing `coils` argument for EM data.")
             values = np.hstack(np.array(entry["data"][coils]))
         else:
-            values = np.array(entry["data"])
+            values = [np.array(entry["data"])]
 
         cov = np.ones(len(values)) * entry["data_err"]**2 # **2 as we need to take the variance
         return values, cov

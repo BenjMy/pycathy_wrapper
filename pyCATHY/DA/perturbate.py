@@ -595,7 +595,8 @@ def perturbate(simu_DA, scenario, NENS,
                             scenario_nom, scenario_mean, scenario_sd, 
                             clip_min,clip_max,
                             NENS,
-                            pert_control_name=pert_control_name
+                            pert_control_name=pert_control_name,
+                            per_type=scenario_per_type[vegi],
                             )
                 list_pert.append(Ks)
                 
