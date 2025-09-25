@@ -1007,7 +1007,7 @@ def xarraytoDEM_pad(data_array):
     )
     return padded_data_array
 
-
+    
 def df_to_xarray_2d(df_nodes, grid3d_nodes, nnod=None, name="var"):
     """
     Convert a DataFrame (nodes × time) to a 2D xarray.DataArray (y, x, time)

@@ -268,9 +268,9 @@ def resynchronise_times(data_measure, atmbc_df, time_offset):
 
 import json
 COMMON_PARAM_VALUES = {
-    "ic":       {"nom": -5,    "mean": -5,   "sigma": 1.75, "bounds": None, "type": None, "sampling": "normal", "transf": None, "update": "St. var."},
-    "Ks":       {"nom": 4e-4,  "mean": 1,    "sigma": 0.5,  "bounds": [0,1], "type": "multiplicative", "sampling": "normal", "transf": None, "update": "Ks"},
-    "porosity": {"nom": 0.35,  "mean": 0.35, "sigma": 0.05, "bounds": [0,1], "type": None, "sampling": "normal", "transf": None, "update": "porosity"}
+    "ic":       {"nom": -5,    "mean": -5,   "sigma": 1.75, "bounds": 'None', "type": 'None', "sampling": "normal", "transf": 'None', "update": "St. var."},
+    "Ks":       {"nom": 4e-4,  "mean": 1,    "sigma": 0.5,  "bounds": [0,1], "type": "multiplicative", "sampling": "normal", "transf": 'None', "update": "Ks"},
+    "porosity": {"nom": 0.35,  "mean": 0.35, "sigma": 0.05, "bounds": [0,1], "type": 'None', "sampling": "normal", "transf": 'None', "update": "porosity"}
 }
 
 def create_scenario_file_single_control(
@@ -385,9 +385,8 @@ def create_scenario_file(
     """
     if param_names is None:
         param_names = list(COMMON_PARAM_VALUES.keys())
-
     n = len(param_names)
-
+    
     # Build placeholders
     placeholders = {
         "per_type": ["<type>"] * n,
@@ -399,7 +398,7 @@ def create_scenario_file(
         "transf_type": ["<transf>"] * n,
         "listUpdateParm": ["<param>"] * n
     }
-
+    
     # Fill placeholders from common values
     if use_common_values:
         for i, pname in enumerate(param_names):
@@ -412,9 +411,9 @@ def create_scenario_file(
             placeholders["sampling_type"][i] = vals.get("sampling", None)
             placeholders["transf_type"][i] = vals.get("transf", None)
             placeholders["listUpdateParm"][i] = vals.get("update", pname)
-
+    
     pert_control = [control_type]*n if control_type else [None]*n
-
+    
     scenario_data = {
         scenario_name: {
             "per_name": param_names,
@@ -429,7 +428,7 @@ def create_scenario_file(
             "pert_control_name": pert_control
         }
     }
-
+    
     if filetype.lower() == "json":
         scenario_data["_explanation"] = {
             "per_type": "Type of parameter: None, multiplicative, etc.",
@@ -447,33 +446,177 @@ def create_scenario_file(
             filename = f"{scenario_name}.json"
         with open(filename, "w") as f:
             json.dump(scenario_data, f, indent=4)
-    else:
+    
+    elif filetype.lower() == "toml":
         try:
-            import toml
+            import tomli_w  # For writing
         except ImportError:
-            print("TOML not installed. Use JSON instead.")
+            print("TOML library (tomli_w) not installed. Use: pip install tomli_w")
+            print("Falling back to JSON format.")
+            # Fallback to JSON
+            scenario_data["_explanation"] = {
+                "per_type": "Type of parameter: None, multiplicative, etc.",
+                "per_name": "Parameter name",
+                "per_nom": "Nominal value",
+                "per_mean": "Mean for sampling",
+                "per_sigma": "Standard deviation",
+                "per_bounds": "Bounds: [min,max] or None",
+                "sampling_type": "Sampling method",
+                "transf_type": "Transformation: None, log, etc.",
+                "listUpdateParm": "Parameters updated in model",
+                "pert_control_name": "Control type: 'layers', 'zones', 'root_map', or None"
+            }
+            filename = f"{scenario_name}.json" if filename is None else filename.replace('.toml', '.json')
+            with open(filename, "w") as f:
+                json.dump(scenario_data, f, indent=4)
             return
+        
         if filename is None:
             filename = f"{scenario_name}.toml"
-        with open(filename, "w") as f:
-            toml.dump(scenario_data, f)
-
+        
+        # TOML doesn't support None values, convert to empty string or remove
+        def convert_none_values(obj):
+            """Recursively convert None values to empty strings for TOML compatibility."""
+            if isinstance(obj, dict):
+                return {k: convert_none_values(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_none_values(item) for item in obj]
+            elif obj is None:
+                return ""  # Convert None to empty string
+            else:
+                return obj
+        
+        # Convert the data for TOML
+        toml_data = convert_none_values(scenario_data)
+        
+        # FIXED: Use binary mode "wb" for tomli_w
+        with open(filename, "wb") as f:
+            tomli_w.dump(toml_data, f)
+    
+    else:
+        raise ValueError(f"Unsupported filetype: {filetype}. Use 'json' or 'toml'.")
+    
     print(f"Scenario file '{filename}' created successfully for parameters: {param_names}")
-    return 
+    return filename
+
+# def create_scenario_file(
+#     scenario_name,
+#     param_names=None,
+#     control_type=None,
+#     filename=None,
+#     filetype="json",
+#     use_common_values=True
+# ):
+#     """
+#     Create a scenario file using optionally a set of common suggested values.
+    
+#     Parameters
+#     ----------
+#     scenario_name : str
+#         Name of the scenario.
+#     param_names : list of str, optional
+#         List of parameter names to include. Defaults to all keys in COMMON_PARAM_VALUES.
+#     control_type : str or None
+#         Optional control type for all parameters ('layers', 'zones', 'root_map', or None).
+#     filename : str, optional
+#         Output file name.
+#     filetype : str
+#         'json' (default) or 'toml'.
+#     use_common_values : bool
+#         If True, fill parameter values from COMMON_PARAM_VALUES table.
+#     """
+#     if param_names is None:
+#         param_names = list(COMMON_PARAM_VALUES.keys())
+
+#     n = len(param_names)
+
+#     # Build placeholders
+#     placeholders = {
+#         "per_type": ["<type>"] * n,
+#         "per_nom": ["<value>"] * n,
+#         "per_mean": ["<mean>"] * n,
+#         "per_sigma": ["<sigma>"] * n,
+#         "per_bounds": ["<bounds>"] * n,
+#         "sampling_type": ["<sampling>"] * n,
+#         "transf_type": ["<transf>"] * n,
+#         "listUpdateParm": ["<param>"] * n
+#     }
+
+#     # Fill placeholders from common values
+#     if use_common_values:
+#         for i, pname in enumerate(param_names):
+#             vals = COMMON_PARAM_VALUES.get(pname, {})
+#             placeholders["per_type"][i] = vals.get("type", None)
+#             placeholders["per_nom"][i] = vals.get("nom", None)
+#             placeholders["per_mean"][i] = vals.get("mean", None)
+#             placeholders["per_sigma"][i] = vals.get("sigma", None)
+#             placeholders["per_bounds"][i] = vals.get("bounds", None)
+#             placeholders["sampling_type"][i] = vals.get("sampling", None)
+#             placeholders["transf_type"][i] = vals.get("transf", None)
+#             placeholders["listUpdateParm"][i] = vals.get("update", pname)
+
+#     pert_control = [control_type]*n if control_type else [None]*n
+
+#     scenario_data = {
+#         scenario_name: {
+#             "per_name": param_names,
+#             "per_type": placeholders["per_type"],
+#             "per_nom": placeholders["per_nom"],
+#             "per_mean": placeholders["per_mean"],
+#             "per_sigma": placeholders["per_sigma"],
+#             "per_bounds": placeholders["per_bounds"],
+#             "sampling_type": placeholders["sampling_type"],
+#             "transf_type": placeholders["transf_type"],
+#             "listUpdateParm": placeholders["listUpdateParm"],
+#             "pert_control_name": pert_control
+#         }
+#     }
+
+#     if filetype.lower() == "json":
+#         scenario_data["_explanation"] = {
+#             "per_type": "Type of parameter: None, multiplicative, etc.",
+#             "per_name": "Parameter name",
+#             "per_nom": "Nominal value",
+#             "per_mean": "Mean for sampling",
+#             "per_sigma": "Standard deviation",
+#             "per_bounds": "Bounds: [min,max] or None",
+#             "sampling_type": "Sampling method",
+#             "transf_type": "Transformation: None, log, etc.",
+#             "listUpdateParm": "Parameters updated in model",
+#             "pert_control_name": "Control type: 'layers', 'zones', 'root_map', or None"
+#         }
+#         if filename is None:
+#             filename = f"{scenario_name}.json"
+#         with open(filename, "w") as f:
+#             json.dump(scenario_data, f, indent=4)
+#     else:
+#         try:
+#             # import tomllib
+#             import tomli_w  # For writing
+#         except ImportError:
+#             print("TOML not installed. Use JSON instead.")
+#             return
+#         if filename is None:
+#             filename = f"{scenario_name}.toml"
+#         with open(filename, "w") as f:
+#             tomli_w.dump(scenario_data, f)
+
+#     print(f"Scenario file '{filename}' created successfully for parameters: {param_names}")
+#     return 
 
 
 
     # Save file
-    if filetype.lower() == "toml":
-        try:
-            import toml
-        except ImportError:
-            raise ImportError("Module 'toml' not installed. Use JSON instead.")
-        with open(filename, "w") as f:
-            toml.dump(scenario_data, f)
-    else:
-        with open(filename, "w") as f:
-            json.dump(scenario_data, f, indent=4)
+    # if filetype.lower() == "toml":
+    #     try:
+    #         import tomllib
+    #     except ImportError:
+    #         raise ImportError("Module 'toml' not installed. Use JSON instead.")
+    #     with open(filename, "w") as f:
+    #         tomllib.dump(scenario_data, f)
+    # else:
+    #     with open(filename, "w") as f:
+    #         json.dump(scenario_data, f, indent=4)
 
     print(f"Scenario file '{filename}' created successfully with control type '{control_type}'.")
 
@@ -505,11 +648,11 @@ def read_scenario_file(filename, filetype=None):
 
     if filetype.lower() == "toml":
         try:
-            import toml
+            import tomllib
         except ImportError:
             raise ImportError("Module 'toml' not installed. Use JSON instead.")
-        with open(filename, "r") as f:
-            data = toml.load(f)
+        with open(filename, "rb") as f:
+            data = tomllib.load(f)
     else:
         with open(filename, "r") as f:
             data = json.load(f)

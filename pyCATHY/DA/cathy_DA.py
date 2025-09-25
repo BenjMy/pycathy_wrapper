@@ -621,6 +621,9 @@ class DA(CATHY):
 
                 # Check for negatives and NaNs
                 invalid = (prediction <= 0) | np.isnan(prediction)
+                if self.isET:
+                    invalid = (prediction < 0) | np.isnan(prediction)
+
                 num_invalid = np.sum(invalid)
                 num_nan = np.sum(np.isnan(prediction))
                 num_negative = np.sum(prediction < 0)
@@ -659,14 +662,21 @@ class DA(CATHY):
 
                 if self.localisationBool:
                     self.console.print(f":carpentry_saw: [b] Domain localisation: {self.localisation} [/b]")
-
+                    
+                    if hasattr(self, 'zone') is False: 
+                        zone, _ = self.read_inputs('zone')
+                        self.zone = zone
+                    #%%
                     (mesh3d_nodes_valid,
                      mask_surface_nodes) = localisation.create_mask_localisation(self.localisation,
                                                                                 self.veg_map,
                                                                                 self.zone,
                                                                                 self.hapin,
-                                                                                self.grid3d
+                                                                                self.grid3d,
+                                                                                self.DEM
                                                                                 )
+                                                                                                    
+                    #%%
                     ensemble_psi = []
                     ensemble_sw = []
                     data = []
@@ -674,10 +684,13 @@ class DA(CATHY):
                     analysis_param = []
                     # Loop over unique map nodes and perform the DA analysis
                     for loci, node_value in enumerate(np.unique(mask_surface_nodes)):
+                        if node_value == -9999:
+                            continue
 
                         # Initialize valid observation nodes as all true
-                        obs_surface_nodes = np.ones(int(self.grid3d['nnod']), dtype=bool)
-                        obs_surface_nodes[mask_surface_nodes.ravel() != node_value] = False
+                        obs_surface_nodes_bool = np.ones(int(self.grid3d['nnod']), dtype=bool)
+                        valid_surface_nodes = mask_surface_nodes.ravel()
+                        obs_surface_nodes_bool[valid_surface_nodes != node_value] = False
 
                         #%%
                         # check position of the sensors to make sure it is located in the right area
@@ -685,19 +698,20 @@ class DA(CATHY):
                         (mesh_nodes_observed,
                         mesh_mask_nodes_observed) = self.get_mesh_mask_nodes_observed(list_assimilated_obs)
                         mesh_nodes_observed = np.hstack(mesh_nodes_observed)
-                                                   
-                        if np.shape(mesh_mask_nodes_observed)[0]>1: #Case of EM dataset that contains multiple coils
+                         
+                        #%%                         
+                        if 'EM' in list_assimilated_obs:
                             obs_surface_nodes_valid = []
                             for i in range(np.shape(mesh_mask_nodes_observed)[0]):
-                                obs_surface_nodes_valid.append(obs_surface_nodes[mesh_mask_nodes_observed[i][0:len(obs_surface_nodes)]])
+                                obs_surface_nodes_valid.append(obs_surface_nodes_bool)
                             obs_surface_nodes_valid = np.hstack(obs_surface_nodes_valid)
                         else:
-                            obs_surface_nodes_valid = obs_surface_nodes[mesh_mask_nodes_observed[0:len(obs_surface_nodes)]] 
-
-                        if len(mesh_nodes_observed) <= len(obs_surface_nodes):
+                            obs_surface_nodes_valid = obs_surface_nodes_bool
+                            
+                        if len(mesh_nodes_observed) <= len(obs_surface_nodes_valid):
                         # else:
                             self.console.print(f"""[b]
-                                               Observations nodes is **might** not be contained within the surface mesh
+                                               Observations nodes **might** not be contained within the surface mesh
                                                Cannot validate its positionning regarding to the localisation mask
                                                ['NOT IMPLEMENTED YET']
                                                [/b]"""
@@ -721,7 +735,8 @@ class DA(CATHY):
                                            with observation localisation [/b]
                                            """)
                         self.console.print(f"[b] Params to update (domain loc): {selected_parm2update} [/b]")
-
+                        
+                        #%%
                         # Perform DA analysis for each mask of localisation
                         # --------------------------------------------------
                         (
@@ -739,6 +754,8 @@ class DA(CATHY):
                             obs_valid=obs_surface_nodes_valid,
                             obs_mesh_nodes_valid= mesh3d_nodes_valid[loci]
                         )
+                        #%%
+
                         data.append(data_loci)
                         analysis_with_localisation.append(np.c_[mesh3d_nodes_valid[loci],analysis_loci])
                         analysis_param.append(analysis_param_loci)
@@ -1194,6 +1211,21 @@ class DA(CATHY):
                                             alpha=self.damping,
                                             localisationMatrix =localisationMatrix
                                         )
+            
+            
+            # def run_analysis(
+            #     DA_type,
+            #     data,
+            #     data_cov,
+            #     param,
+            #     list_update_parm,
+            #     ensembleX,
+            #     prediction,
+            #     default_state="psi",
+            #     **kwargs,
+            # ):
+                
+                
 
         else:
             
@@ -2130,8 +2162,20 @@ class DA(CATHY):
                 # FeddesParam update
                 # --------------------------------------------------------------
                 elif key_root[0] in Feddes_p_names:
-                    SPP_map = self.soil_SPP["SPP_map"]
+                    # SPP_map = self.soil_SPP["SPP_map"]
 
+                    df_SPP, _ = in_CT.read_soil(
+                        os.path.join(
+                            self.workdir,
+                            self.project_name,
+                            f'DA_Ensemble/cathy_{ens_nb+1}',
+                            'input/soil'
+                        ),
+                        self.dem_parameters,
+                        self.cathyH["MAXVEG"]
+                    )
+                    # df = df_SPP.copy()
+  
                     if len(Feddes_withPertParam) == 0:
                         Feddes =  self.soil_FP["FP_map"]
                         Feddes_ENS = [Feddes]*self.NENS
@@ -2144,7 +2188,7 @@ class DA(CATHY):
 
                     self.update_soil(
                         FP_map=Feddes_withPertParam[ens_nb],
-                        SPP_map=SPP_map,
+                        SPP_map=df_SPP,
                         zone3d=zone3d,
                         verbose=self.verbose,
                         filename=os.path.join(os.getcwd(), "input/soil"),
@@ -2400,8 +2444,8 @@ class DA(CATHY):
                 state = [df_psi.iloc[-1], df_sw.iloc[-1].values]
 
             Hx_stacked = []  # stacked predicted observation
-            isET = any('ETact' in item for item in obskey2map)
-            if isET:
+            self.isET = any('ETact' in item for item in obskey2map)
+            if self.isET:
                 df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY,
                                                               'fort.777'),
                                                   )

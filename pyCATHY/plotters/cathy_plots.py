@@ -1103,12 +1103,22 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
     #                    **kwargs
     #                    )
 
-    cf = ax.imshow(veg_map,
-                        # edgecolors="black",
-                        cmap=cmap,
-                        **kwargs
-                        )
 
+
+    if  kwargs.get('edgecolors', False):
+        # Use pcolormesh instead of imshow
+        cf = ax.pcolormesh(
+            veg_map, 
+            cmap=cmap, 
+            edgecolors='black',  # cell borders
+            linewidth=0.5        # border thickness
+        )
+    else:
+        cf = ax.imshow(veg_map,
+                            # edgecolors="black",
+                            cmap=cmap,
+                            # **kwargs
+                            )
     # fig.colorbar(cf, ax=ax, label='indice of vegetation')
 
     cax = plt.colorbar(
