@@ -36,7 +36,7 @@ scenario = {
 # -----------------------
 simuWithDA = DA(
                         dirName='./',
-                        prj_name= 'DA_with_non_uniform_ic', 
+                        prj_name= 'DA_with_non_uniform_ic',
                         notebook=True,
                     )
 
@@ -51,7 +51,7 @@ simuWithDA.update_prepo_inputs(
                                 zratio=zr,
                                 base=max(zb),
                                 )
-#%% Add dem and soil/veg properties to the simuWithDA object 
+#%% Add dem and soil/veg properties to the simuWithDA object
 # ----------------------------------------------------------
 simuWithDA.update_dem_parameters()
 simuWithDA.update_veg_map()
@@ -59,11 +59,11 @@ simuWithDA.update_soil()
 
 #%%  Perturbate ic according to the scenario
 # ------------------------------------------
-  
+
 simuWithDA.NENS = 3
 list_pert = perturbate.perturbate(
-                                    simuWithDA, 
-                                    scenario, 
+                                    simuWithDA,
+                                    scenario,
                                     simuWithDA.NENS,
                                  )
 
@@ -71,7 +71,7 @@ var_per_dict_stacked = {}
 for dp in list_pert:
     var_per_dict_stacked = perturbate_parm(
                                 var_per_dict_stacked,
-                                parm=dp, 
+                                parm=dp,
                                 type_parm = dp['type_parm'], # can also be VAN GENUCHTEN PARAMETERS
                                 mean =  dp['mean'],
                                 sd =  dp['sd'],
@@ -88,7 +88,7 @@ for dp in list_pert:
 # This in normally directly called when using run_DA_sequential()
 
 simuWithDA._create_subfolders_ensemble()
-simuWithDA.update_ENS_files(var_per_dict_stacked, 
+simuWithDA.update_ENS_files(var_per_dict_stacked,
                             var_per_dict_stacked.keys(),
                             cycle_nb=0
                             )
@@ -104,17 +104,15 @@ for i, ensi in enumerate([1,3]):
                         DApath,
                         simuWithDA.project_name + '.vtk'
                         )
-    
+
     pl.subplot(0,i)
     CTp.show_vtk(path,
-                 'ic',
+                 'ic_nodes',
                  ax=pl,
                  clim = [-25,-5],
-                 show_scalar_bar=True,
+                 #show_scalar_bar=True,
                  )
     _ = pl.add_legend('')
     pl.add_title(f'Ensemble nb:{ensi}')
-    
-pl.show()
 
-    
+pl.show()

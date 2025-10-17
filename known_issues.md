@@ -20,8 +20,15 @@ https://askubuntu.com/questions/623578/installing-blas-and-lapack-packages
 
 - non-linear convergence induce change in delta T (visible on risul file)
 
+## Vegetation file
+- Raster numbering starts from 1 (not 0)!
 
 ## while running
+
+--> killed 
+conflicting files check (remove working folder entirely)
+
+
 
 the processor only return :  nsf  (# of seepage faces)               =      0
 

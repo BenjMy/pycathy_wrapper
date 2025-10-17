@@ -546,8 +546,6 @@
 
        NATM, NSF NEUMANN BCs VALUES AT TIME:   1.2542E+03
      #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
-<<<<<<< Updated upstream
-=======
 
        NATM, NSF NEUMANN BCs VALUES AT TIME:   1.3112E+03
      #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
@@ -3111,4 +3109,3 @@
        NATM, NSF NEUMANN BCs VALUES AT TIME:   8.6400E+04
      #  NODE  BC VALUE        #  NODE  BC VALUE        #  NODE  BC VALUE    
 
->>>>>>> Stashed changes

@@ -29,7 +29,7 @@ dict_obs = {} # initiate the dictionnary
 
 with open('./DA_with_swc/obs_prepared_SMC.pkl', 'rb') as fp:
     dict_obs = pickle.load(fp)
-data_measure_df = dictObs_2pd(dict_obs) 
+data_measure_df = dictObs_2pd(dict_obs)
     # data_measure_df.index
 #%% Create observation covariance matrices for all assimilation time steps
 # By default, there is no correlation between sensors
@@ -63,7 +63,7 @@ maxZROOT = 2
 scenario = {'per_type': [None],
              'per_name':['ZROOT'],
              'per_nom':[pert_nom_ZROOT],
-             'per_mean':[pert_nom_ZROOT],    
+             'per_mean':[pert_nom_ZROOT],
              'per_sigma': [pert_sigma_ZROOT],
              'per_bounds': [
                             {'min':minZROOT,'max':maxZROOT}
@@ -73,13 +73,13 @@ scenario = {'per_type': [None],
              'listUpdateParm': ['St. var.', 'ZROOT'],
              'listObAss': ['SMC'],
              }
-            
-scenario['per_name']  
-                           
-list_pert = perturbate.perturbate(simuWithDA, 
-                                  scenario, 
+
+scenario['per_name']
+
+list_pert = perturbate.perturbate(simuWithDA,
+                                  scenario,
                                   NENS
-                                  )   
+                                  )
 
 #%% Parameters perturbation
 # stop
@@ -97,7 +97,7 @@ for dp in list_pert:
     # return a dict merging all variable perturbate to parse into prepare_DA
     var_per_dict_stacked = perturbate.perturbate_parm(
                                                     var_per_dict_stacked,
-                                                    parm=dp, 
+                                                    parm=dp,
                                                     type_parm = dp['type_parm'], # can also be VAN GENUCHTEN PARAMETERS
                                                     mean =  dp['mean'],
                                                     sd =  dp['sd'],
@@ -106,15 +106,15 @@ for dp in list_pert:
                                                     per_type= dp['per_type'],
                                                     savefig=savefig
                                                     )
-    
-    
+
+
 #%% Run assimilation
 # f
 # simuWithDA.parm
 # simuWithDA.read_inputs('atmbc')
 atmbc_times = data_measure_df.index.get_level_values(1).unique().to_list()
 simuWithDA.update_atmbc(HSPATM=1,IETO=0,
-                        time=atmbc_times, 
+                        time=atmbc_times,
                         netValue=[0]*len(atmbc_times)
                         )
 
@@ -137,12 +137,12 @@ simuWithDA.update_atmbc(HSPATM=1,IETO=0,
 
 #%%
 
-simuWithDA.run_DA_sequential(
-                              VTKF=2,
-                              TRAFLAG=0,
-                              dict_obs= dict_obs,
-                              list_assimilated_obs='all', # default
-                              list_parm2update= ['St. var.', 'ZROOT0'],
-                              DA_type='enkf_Evensen2009',
-                              dict_parm_pert=var_per_dict_stacked,
-                            )
+# simuWithDA.run_DA_sequential(
+#                               VTKF=2,
+#                               TRAFLAG=0,
+#                               dict_obs= dict_obs,
+#                               list_assimilated_obs='all', # default
+#                               list_parm2update= ['St. var.', 'ZROOT0'],
+#                               DA_type='enkf_Evensen2009',
+#                               dict_parm_pert=var_per_dict_stacked,
+#                             )

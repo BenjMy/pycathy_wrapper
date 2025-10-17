@@ -48,10 +48,10 @@ plt.show()
 
 sm_smooth['Seconds'] = (sm_smooth.index - sm_smooth.index[0]).total_seconds()
 
-#%% Build mesh, and find nodes id at the 3 SMC sensors positions 
+#%% Build mesh, and find nodes id at the 3 SMC sensors positions
 simuWithDA.create_mesh_vtk()
 
-SMC_XY = [5,5] 
+SMC_XY = [5,5]
 SMC_depths = [0.05,0.25,0.75] # SMC depths
 # find the altitudes of the nodes at the mesh position x, y = (0.05,0.25)
 _ , closest = simuWithDA.find_nearest_node(SMC_XY)
@@ -59,7 +59,7 @@ _ , closest = simuWithDA.find_nearest_node(SMC_XY)
 nodes_SMC = []
 closestPos = []
 for d in SMC_depths:
-    SMC_XYZi = [5,5,closest[0][2]-d] 
+    SMC_XYZi = [5,5,closest[0][2]-d]
     nodeId, closest = simuWithDA.find_nearest_node(SMC_XYZi)
     nodes_SMC.append(nodeId)
     closestPos.append(closest)
@@ -67,7 +67,7 @@ for d in SMC_depths:
 nodes_SMC = np.hstack(nodes_SMC)
 SMC_XYZ = np.vstack(closestPos)
 
-    
+
 pl = pv.Plotter(notebook=True)
 mesh = pv.read(
     Path(simuWithDA.workdir) /
@@ -90,7 +90,7 @@ dict_obs = {} # initiate the dictionnary
 
 for i in range(len(sm_smooth.columns)-1):
     for j, assimilation_time_sec in enumerate(sm_smooth['Seconds']):
-        dict_obs = read_observations( 
+        dict_obs = read_observations(
                                         dict_obs,
                                         obs_2_add=sm_smooth[sm_smooth.columns[i]].iloc[j],
                                         tA=assimilation_time_sec,
@@ -101,7 +101,7 @@ for i in range(len(sm_smooth.columns)-1):
                                         datetime=sm_smooth.index[j]
                                         )
 
-data_measure_df = dictObs_2pd(dict_obs) 
+data_measure_df = dictObs_2pd(dict_obs)
 data_measure_df
 
 #%% Create observation covariance matrices for all assimilation time steps
@@ -112,7 +112,6 @@ _,_, stacked_data_cov = make_data_cov(
                                         simuWithDA,
                                         dict_obs,
                                         list_assimilated_obs = 'swc',
-                                        nb_assimilation_times=len(dict_obs)
                                         )
 print(np.shape(stacked_data_cov))
 simuWithDA.stacked_data_cov = stacked_data_cov

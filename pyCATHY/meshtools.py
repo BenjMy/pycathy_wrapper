@@ -244,13 +244,8 @@ def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     """
     in_nodes_mod = kwargs["in_nodes_mod"]
     meshIN.set_active_scalars(scalar)
-    # meshIN.points = in_nodes_mod
     meshOUT.points = in_nodes_mod
-    # len(in_nodes_mod)
 
-    # print(meshIN.points)
-
-    # set_interpolation_radius()
     rd = max(np.diff(meshIN.points[:, 0])) * 10
     meshOUT_interp = meshOUT.interpolate(meshIN,
                                          radius=rd,
@@ -836,7 +831,7 @@ def _find_nearest_point2DEM(
     # xyz_layers_cells=[],
     xyz_layers=[],
     saveMeshPath=None,
-    marker_name='layers',
+    marker_name='zone3d',
 ):
 
     if to_nodes:
@@ -853,7 +848,7 @@ def _find_nearest_point2DEM(
             node_markers.append(xyz_layers[np.argmin(d), 3])
         # add data to the mesh
         # ----------------------------------------------------------------
-        mesh_pv_attributes["node_markers_old"] = node_markers
+        # mesh_pv_attributes["node_markers_old"] = node_markers
     else:
         # Get the mesh cell centers
         cell_centers = mesh_pv_attributes.cell_centers().points
@@ -877,7 +872,7 @@ def _find_nearest_point2DEM(
         mesh_pv_attributes.save(saveMeshPath,binary=False)
 
 
-def add_markers_layers_2_mesh(
+def add_markers_zone3d_2_mesh(
     zones3d_layered,
     dem,
     mesh_pv_attributes,
@@ -887,7 +882,7 @@ def add_markers_layers_2_mesh(
     to_nodes=False,
     show=False,
     saveMeshPath=None,
-):
+    ):
 
     # Create a regular mesh from the DEM x and y coordinates and elevation
     # ------------------------------------------------------------------
@@ -915,9 +910,6 @@ def add_markers_layers_2_mesh(
 
     # if to_nodes:
     dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
-    # else:
-        # dem_mat3d_layers = [dem_flip - zz for zz in zone3d_top-(zone3d_top-zone3d_bot)/2]
-
 
     # Reduce all to 1D
     # ------------------------------------------------------------------
@@ -940,7 +932,6 @@ def add_markers_layers_2_mesh(
         mesh_pv_attributes,
         xyz_layers,
         saveMeshPath,
-        marker_name='layers'
     )
 #%%
 def map_cells_to_nodes(raster_map, grid3d_shape=None):
@@ -948,16 +939,14 @@ def map_cells_to_nodes(raster_map, grid3d_shape=None):
     Map a raster to a grid of nodes (providing the mesh is regular).
 
     Args:
-        raster_map (np.ndarray): 20x20 vegetation map.
+        raster_map (np.ndarray): example 20x20 map.
         grid3d_shape (tuple): Shape of the 3D grid (e.g., (21, 21)).
 
     Returns:
         np.ndarray: n+1 grid with node values based on the corresponding cell values from raster_map.
     """
     if grid3d_shape is None:
-        grid3d_mapped = np.zeros(np.shape(raster_map)[0]+1,
-                                 np.shape(raster_map)[1]+1,
-                                 )
+        grid3d_mapped = np.zeros((raster_map.shape[0]+1, raster_map.shape[1]+1))
     else:
         grid3d_mapped = np.zeros(grid3d_shape)
 
@@ -965,18 +954,17 @@ def map_cells_to_nodes(raster_map, grid3d_shape=None):
     scale_x = (raster_map.shape[0] - 1) / (grid3d_shape[0] - 1)
     scale_y = (raster_map.shape[1] - 1) / (grid3d_shape[1] - 1)
 
-    # Loop over the 21x21 nodes and map the corresponding veg_map value
+    # Loop over the nodes and map the corresponding value
     for i in range(grid3d_shape[0]):
         for j in range(grid3d_shape[1]):
             # Find the corresponding cell in the veg_map using the scale factor
             x = int(round(i * scale_x))
             y = int(round(j * scale_y))
 
-            # Ensure that indices stay within bounds of veg_map
+            # Ensure that indices stay within bounds 
             x = min(max(x, 0), raster_map.shape[0] - 1)
             y = min(max(y, 0), raster_map.shape[1] - 1)
 
-            # Assign the vegetation map value to the corresponding node
             grid3d_mapped[i, j] = raster_map[x, y]
 
     return grid3d_mapped
@@ -1018,3 +1006,75 @@ def xarraytoDEM_pad(data_array):
         attrs=data_array.attrs  # Preserve metadata
     )
     return padded_data_array
+
+    
+def df_to_xarray_2d(df_nodes, grid3d_nodes, nnod=None, name="var"):
+    """
+    Convert a DataFrame (nodes × time) to a 2D xarray.DataArray (y, x, time)
+    using coordinates from grid3d_nodes.
+
+    Parameters
+    ----------
+    df_nodes : pd.DataFrame
+        DataFrame with shape (nodes, time)
+        Rows = nodes, Columns = times
+    grid3d_nodes : np.ndarray or pd.DataFrame
+        Array/DataFrame with columns [x, y, z] for each node
+    nnod : int, optional
+        Number of nodes to use (default: use all in grid3d_nodes)
+    name : str, optional
+        Name for the resulting DataArray
+
+    Returns
+    -------
+    xr.DataArray
+        DataArray with dims ("y", "x", "time") and coordinates "x", "y", "time"
+    """
+    
+    # Use all nodes if nnod not provided
+    if nnod is None:
+        nnod = len(grid3d_nodes)
+    
+    # Extract x and y coordinates
+    x_nodes = np.array(grid3d_nodes[:int(nnod), 0])
+    y_nodes = np.array(grid3d_nodes[:int(nnod), 1])
+    
+    n_nodes = len(x_nodes)
+    
+    # Time coordinate from DataFrame columns
+    time = df_nodes.columns.to_numpy().astype(float)
+    
+    # First, create 1D DataArray
+    da_1d = xr.DataArray(
+        df_nodes.values,
+        dims=["node", "time"],
+        coords={
+            "node": np.arange(n_nodes),
+            "x": ("node", x_nodes),
+            "y": ("node", y_nodes),
+            "time": time
+        },
+        name=name
+    )
+    
+    # Determine grid shape
+    nx = len(np.unique(x_nodes))
+    ny = len(np.unique(y_nodes))
+    assert nx * ny == n_nodes, "Grid shape mismatch: nx*ny != number of nodes"
+    
+    # Reshape to 2D grid
+    da_2d = da_1d.values.reshape(ny, nx, -1)
+    
+    da_2d_xr = xr.DataArray(
+        da_2d,
+        dims=["y", "x", "time"],
+        coords={
+            "x": np.unique(x_nodes),
+            "y": np.unique(y_nodes),
+            "time": time
+        },
+        name=name
+    )
+    
+    return da_2d_xr
+

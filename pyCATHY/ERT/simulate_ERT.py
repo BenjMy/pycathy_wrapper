@@ -82,7 +82,10 @@ def create_ERT_survey_pg(pathERT,
 
     if len(res0) != len(mesh3d.cells()):
         raise ValueError("wrong initial resistivity input")
-
+    # Check for negative values
+    if np.any(res0 < 0):
+        raise ValueError("res0 contains negative values. Resistivity must be positive.")
+        
     try:
         if not verbose:
             devnull = open("/dev/null", "w")
@@ -92,32 +95,50 @@ def create_ERT_survey_pg(pathERT,
         pass
     
     print('+'*20)
-    print(sequence_file_extension)
-    print(sequence)
+    # print(sequence_file_extension)
+    # print(sequence)
     print(scheme)
     print(mesh3d)
     print(fwdNoiseLevel)
     print('+'*20)
-    
+
+    if np.isnan(res0).any():
+        raise ValueError("⚠️ Error: res0 contains NaN values! Stopping execution.")
+    # Check for negative values
+    if np.any(res0 <= 0):
+        raise ValueError("res0 contains negative values. Resistivity must be positive.")
+        
+        
+
     het = ert.simulate(
         mesh3d,
         res=res0,
         scheme=scheme,
         calcOnly=False,
-        verbose=verbose,
+        verbose=False,
         noiseLevel=fwdNoiseLevel,
     )
     # pg.show(mesh3d)
     # pg.show(het)
     # het.exportVTK('testmeshpg.vtk')
     # het.saveResult('testpg')
-
+    
     try:
         if not verbose:
             os.dup2(oldstdout_fno, 1)
     except:
         pass
     pg.info('Filtered rhoa (min/max)', min(het['rhoa']), max(het['rhoa']))
+    print('Correction of rhoa <= 0 to 1e-3')
+    # het.loc[het['rhoa'] <= 0, 'rhoa'] = 1e-3
+    het['rhoa'][het['rhoa'] <= 0] = 1e-3
+
+    # print('*0+'*20)
+    # print(res0)
+    # print('*0+'*20)
+
+
+
     return het
 
 

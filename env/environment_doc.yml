@@ -5,4 +5,6 @@ channels:
 dependencies:
 - python=3.10
 - git
-- pip
+- pip  # Important to include pip if you want to install pip packages
+- pip:
+    - -r requirements_doc.txt  # reference to your pip file (optional, see alternative below)

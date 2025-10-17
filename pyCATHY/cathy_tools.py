@@ -731,15 +731,13 @@ class CATHY:
 
         """
 
-        try:
-            if hasattr(self, "veg_map"):
-                if np.shape(self.veg_map) != np.shape(self.DEM):
-                    raise ValueError(
-                        "Inconsistent shapes between vegetation map and DEM - need to update veg first"
-                    )
-        except:
-            self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
-            pass
+        # try:
+        if hasattr(self, "veg_map"):
+            if np.shape(self.veg_map) != np.shape(self.DEM):
+                self.console.print(
+                   f"Inconsistent shapes between vegetation map {np.shape(self.veg_map) } and DEM {np.shape(self.DEM)} - need to update veg first"
+                )
+                self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
 
     #%%
     # --------------------------------------------------------------------------- #
@@ -1181,7 +1179,8 @@ class CATHY:
                 DEMRES=min([self.hapin["delta_x"], self.hapin["delta_y"]])
             )
 
-        self.update_dem_parameters(**kwargs)
+        self.update_dem_parameters(
+                                   **kwargs)
 
         if show == True:
             plt_CT.show_dem(DEM, self.hapin)
@@ -2580,7 +2579,7 @@ class CATHY:
         
         else:
             self.zone3d=zone3d
-            self.dem_parameters['nzone'] = np.size(self.zone3d[0])
+            self.dem_parameters['nzone'] = len(np.unique(SPP_map.index.get_level_values(0)))
             self.update_dem_parameters()
             self.update_cathyH(MAXZON=self.dem_parameters['nzone'])
 
@@ -2692,7 +2691,7 @@ class CATHY:
             if 'saveMeshPath' in kwargs:
                 saveMeshPath = kwargs.pop('saveMeshPath')
                 
-            mt.add_markers_layers_2_mesh(
+            mt.add_markers_zone3d_2_mesh(
                                 zone3d,
                                 dem,
                                 self.mesh_pv_attributes,
@@ -2703,18 +2702,6 @@ class CATHY:
                                 show=show,
                                 saveMeshPath=saveMeshPath,
                             )
-
-            # mt.add_markers2mesh(
-            #                         zone3d,
-            #                         self.mesh_pv_attributes,
-            #                         self.dem_parameters,
-            #                         self.hapin,
-            #                         to_nodes=True
-            #                     )
-
-            # for spp in SPP_map:
-            #     self.map_prop_2mesh_markers(spp, SPP_map[spp], to_nodes=False)
-
         pass
     
     def _get_soil_SPP_columnsNames(self):
@@ -2770,7 +2757,7 @@ class CATHY:
         self.soil = {
             "PMIN": -5.0,
             "IPEAT": 0,
-            "SCF": 1.0,  # here we assume that all soil is covered by the vegetation
+            "SCF": 1.0,  # 1 Feddes approach (here we assume that all soil is covered by the vegetation) , or 0 if PMIN approach 
             "CBETA0": 0.4,
             "CANG": 0.225,
             # Feddes parameters default values
@@ -2805,19 +2792,12 @@ class CATHY:
             #     "PZ": [1.0],
             #     "OMGC": [1.0],
             # }
-            PCANA= 0.0
-            PCREF=-4.0
-            PCWLT=-150
-            ZROOT=1
-            PZ=1
-            OMGC=1
-            # self.soil.update(FP)
+            values = dict(PCANA=0.0, PCREF=-4.0, PCWLT=-150, ZROOT=1, PZ=1, OMGC=1)
             nveg = len(np.unique(self.veg_map))
             FP_map = self.init_soil_FP_map_df(nveg)
+            # FP_map.loc[:, values.keys()] = pd.DataFrame([values] * nveg)
+            FP_map.update(pd.DataFrame([values]*len(FP_map), index=FP_map.index))
 
-            for c in FP_map.columns:
-                FP_map[c] = eval(c)
-                
             return FP_map
 
         # # set Soil Physical Properties defaults parameters
@@ -2825,22 +2805,34 @@ class CATHY:
 
         if SPP_map_default:
 
-            PERMX = PERMY = PERMZ = 1.88e-04
-            ELSTOR = 1.00e-05
-            POROS = 0.55
-            VGNCELL = 1.46
-            VGRMCCELL = 0.15
-            VGPSATCELL = 0.03125
+            # PERMX = PERMY = PERMZ = 1.88e-04
+            # ELSTOR = 1.00e-05
+            # POROS = 0.55
+            # VGNCELL = 1.46
+            # VGRMCCELL = 0.15
+            # VGPSATCELL = 0.03125
 
-            # Replace these values with your actual number of zones and strings
-            nzones = self.dem_parameters["nzone"]
-            nstr = self.dem_parameters["nstr"]
+            # # Replace these values with your actual number of zones and strings
+            # nzones = self.dem_parameters["nzone"]
+            # nstr = self.dem_parameters["nstr"]
                     
-            SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
+            # SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
             
-            for c in SPP_map.columns:
-                SPP_map[c] = eval(c)
-                
+            # for c in SPP_map.columns:
+            #     SPP_map[c] = eval(c)
+            
+            vals = dict(PERMX=1.88e-4, PERMY=1.88e-4, PERMZ=1.88e-4, 
+                        ELSTOR=1e-5, 
+                        POROS=0.55, 
+                        VGNCELL=1.46, VGRMCCELL=0.15, VGPSATCELL=0.03125
+                        )
+            SPP_map = self.init_soil_SPP_map_df(self.dem_parameters["nzone"], 
+                                                self.dem_parameters["nstr"]
+                                                )
+            # SPP_map.loc[:, vals.keys()] = pd.DataFrame([vals] * len(SPP_map)
+            #                                            )
+            SPP_map.update(pd.DataFrame([vals]*len(SPP_map), index=SPP_map.index))
+
             return SPP_map
 
         pass
@@ -3636,30 +3628,44 @@ class CATHY:
         saveMeshPath = None
         if 'saveMeshPath' in kwargs:
             saveMeshPath = kwargs.pop('saveMeshPath')
+        
+        # mt.add_attribute_2mesh(data, mesh, kwargs)
+        if hasattr(self, 'zone3d'):
+            zones_markers_3d = self.zone3d
             
         if zones_markers_3d is None:
             zones_markers_3d = []
             for l in range(self.dem_parameters['nstr']):
                 zones_markers_3d.append(np.ones([self.hapin["M"], self.hapin["N"]])*l)
             
-            mt.add_markers_layers_2_mesh(
-                                zones_markers_3d,
-                                self.DEM,
-                                self.mesh_pv_attributes,
-                                self.dem_parameters,
-                                self.hapin,
-                                self.grid3d,
-                                to_nodes=False,
-                                show=False,
-                                saveMeshPath = saveMeshPath
+        mt.add_markers_zone3d_2_mesh(
+                            zones_markers_3d,
+                            self.DEM,
+                            self.mesh_pv_attributes,
+                            self.dem_parameters,
+                            self.hapin,
+                            self.grid3d,
+                            to_nodes=False,
+                            show=False,
+                            saveMeshPath = saveMeshPath
                             )
-            
         
+        # Get unique markers in the mesh
+        unique_markers = np.unique(self.mesh_pv_attributes["cell_markers_zone3d"])
+        
+        # Check that the number of properties matches the number of unique markers
+        if len(prop_map) != len(unique_markers):
+            raise ValueError(
+                f"Mismatch between property map (len={len(prop_map)}) "
+                f"and unique mesh cell markers (len={len(unique_markers)}). "
+                f"Markers: {unique_markers}"
+            )
+
         if to_nodes:
-            prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_layers"]))
+            prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_zone3d"]))
             for m in range(len(prop_map)):
                 prop_mesh_nodes[
-                                self.mesh_pv_attributes["node_markers_layers"] == m
+                                self.mesh_pv_attributes["node_markers_zone3d"] == m
                                 ] = prop_map[m]
             self.mesh_pv_attributes[f'{prop_name}_nodes'] = prop_mesh_nodes
             
@@ -3670,25 +3676,16 @@ class CATHY:
             return list(prop_mesh_nodes)
 
         else:
-            # prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers_layers"]))
-            # for m in range(len(prop_map)):
-            #     prop_mesh_cells[self.mesh_pv_attributes["cell_markers_layers"] == m] = prop_map[m]
-            # self.mesh_pv_attributes[f'{prop_name}_cells'] = prop_mesh_cells
-            
-            # # len(prop_mesh_cells)
-            # self.mesh_pv_attributes.set_active_scalars(f'{prop_name}_cells')
-            # prop_mesh_nodes = self.mesh_pv_attributes.cell_data_to_point_data()
-            # prop_mesh_nodes.array_names
-            # self.mesh_pv_attributes.array_names
-            # self.mesh_pv_attributes[f'{prop_name}_nodes'] = prop_mesh_nodes[f'{prop_name}_nodes']
-
             # Initialize property values for each mesh cell
-            prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers_layers"]))
+            prop_mesh_cells = np.zeros(len(self.mesh_pv_attributes["cell_markers_zone3d"]))
             
             # Assign property values to mesh cells based on marker indices
             for m in range(len(prop_map)):
-                prop_mesh_cells[self.mesh_pv_attributes["cell_markers_layers"] == m] = prop_map[m]
+                prop_mesh_cells[self.mesh_pv_attributes["cell_markers_zone3d"] == m] = prop_map[m]
             
+            if np.any(prop_mesh_cells == 0):
+                raise ValueError("prop_mesh_cells contains 0 values. Check your property mapping!")
+
             # Store cell property values in the mesh attributes
             self.mesh_pv_attributes[f'{prop_name}_cells'] = prop_mesh_cells
             
@@ -3706,7 +3703,8 @@ class CATHY:
                 self.mesh_pv_attributes.save(saveMeshPath,
                                                 binary=False,
                                                 )
-                
+            # self.mesh_pv_attributes.save("mesh_output.vtk")
+            self.mesh_pv_attributes['POROS_cells']
             return list(prop_mesh_cells), list(self.mesh_pv_attributes[f'{prop_name}_nodes'])
 
     def map_prop2mesh(self, dict_props):
@@ -4065,11 +4063,7 @@ class CATHY:
         elif filename == "soil":
             dem_parm = in_CT.read_dem_parameters(
                 os.path.join(self.workdir, self.project_name, "input", "dem_parameters")
-            )
-            # self.dem_parameters
-            # self.update_dem_parameters()
-            
-
+            )           
             if 'MAXVEG' in kwargs:
                 MAXVEG = kwargs['MAXVEG']
             else:
