@@ -1,0 +1,63 @@
+
+
+Examples using ``pyCATHY.plotters.cathy_plots.show_vtk``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3c_spatial_atmbc_from_weill_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Weil et al example with spatially heterogeneous atmbc</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model.">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3d_spatial_atmbc_from_weill_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Update with spatially and temporally distributed atmospheric boundary conditions (bc)</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

@@ -1,0 +1,93 @@
+{
+ "cathy_tools.CATHY": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY.cathy_tools",
+   "name": "CATHY"
+  }
+ ],
+ "cplt.show_vtk": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.plotters.cathy_plots",
+   "module_short": "pyCATHY.plotters.cathy_plots",
+   "name": "show_vtk"
+  }
+ ],
+ "cplt.show_vtk_TL": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.plotters.cathy_plots",
+   "module_short": "pyCATHY.plotters.cathy_plots",
+   "name": "show_vtk_TL"
+  }
+ ],
+ "np.reshape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "reshape"
+  }
+ ],
+ "np.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "shape"
+  }
+ ],
+ "np.zeros": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "zeros"
+  }
+ ],
+ "plt.subplots": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplots"
+  }
+ ]
+}

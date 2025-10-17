@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.plotters.cathy_plots.plot_mesh_bounds``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_5a_infiltration_withBC_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_content_SSHydro_plot_5a_infiltration_withBC.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Update and show Boundary conditions</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_content_SSHydro_plot_5a_infiltration_withBC.py`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

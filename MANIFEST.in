@@ -1,0 +1,9 @@
+# Exclude examples and temporary folders
+recursive-exclude example *
+recursive-exclude examplesTmp *
+recursive-exclude doc *
+
+# Exclude large or unnecessary files inside the package
+recursive-exclude pycathy_wrapper/examples *
+recursive-exclude pycathy_wrapper/examplesTmp *
+recursive-exclude pycathy_wrapper/doc *

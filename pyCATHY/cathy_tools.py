@@ -173,6 +173,8 @@ class CATHY:
         self.input_dirname = "input"
         self.output_dirname = "output"
 
+
+
         # dict related to CATHY inputs files
         # ---------------------------------------------------------------------
         self.parm = {}  # dict of parm input parameters
@@ -195,6 +197,26 @@ class CATHY:
         # dict related to the mesh
         # ---------------------------------------------------------------------
         self.grid3d = {}
+
+
+        VERSION_CONFIG = {
+            "G. Manoli": {
+                "src_paths": [
+                    "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
+                ],
+                "input_dirname": ["input"],  # default
+                "has_prepro": False
+            },
+            "withIrr": {
+                "src_paths": [
+                    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/"
+                ],
+                "prepro_src_path": "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/prepro/src",
+                "input_dirname": ["input", "prepro-dem", "other-dem"],
+                "has_prepro": True
+            }
+        }
+
 
         for key, value in kwargs.items():
             # clear src files if required
@@ -259,51 +281,69 @@ class CATHY:
                             os.path.join(pathsrc, file),
                             os.path.join(self.workdir, self.project_name, file),
                         )
-                        
+                    
+                    
+                    if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
+                        self.console.print(
+                            ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
+                        )
+                        shutil.move(
+                            os.path.join(
+                                self.workdir,
+                                self.project_name,
+                                "tmp_src/runs/weilletal/prepro",
+                            ),
+                            os.path.join(self.workdir, self.project_name, "prepro"),
+                        )
+                        # os.remove(os.path.join(
+                        #      self.workdir, self.project_name, "prepro") + '/dem' )
+                    if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
+                        self.console.print(":inbox_tray: [b]Fetch cathy input files[/b]")
+                        shutil.move(
+                            os.path.join(
+                                self.workdir,
+                                self.project_name,
+                                "tmp_src/runs/weilletal/input",
+                            ),
+                            os.path.join(self.workdir, self.project_name, "input"),
+                        )
+
+                    if not os.path.exists(os.path.join(self.workdir, self.project_name, "output")):
+                            self.create_output(output_dirname="output")
+            
+                            shutil.rmtree(
+                                os.path.join(self.workdir, self.project_name, "tmp_src")
+                            )
+                            os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
+                
                 except:
                     print("no internet connection to fetch the files")
                     sys.exit()
                     pass
                 
-            if version == "G. Manoli":
+            elif version == "G. Manoli":
                 print("fetch cathy G. Manoli src files")
                 path_manoli = "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
                 shutil.copytree(
                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
                 )
-
-        if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
-            self.console.print(
-                ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
-            )
-            shutil.move(
-                os.path.join(
-                    self.workdir,
-                    self.project_name,
-                    "tmp_src/runs/weilletal/prepro",
-                ),
-                os.path.join(self.workdir, self.project_name, "prepro"),
-            )
-            # os.remove(os.path.join(
-            #      self.workdir, self.project_name, "prepro") + '/dem' )
-        if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
-            self.console.print(":inbox_tray: [b]Fetch cathy input files[/b]")
-            shutil.move(
-                os.path.join(
-                    self.workdir,
-                    self.project_name,
-                    "tmp_src/runs/weilletal/input",
-                ),
-                os.path.join(self.workdir, self.project_name, "input"),
-            )
-
-        if not os.path.exists(os.path.join(self.workdir, self.project_name, "output")):
-                self.create_output(output_dirname="output")
-
-                shutil.rmtree(
-                    os.path.join(self.workdir, self.project_name, "tmp_src")
+            elif version == "withIrr":
+                print("adjust folder names")
+             
+                path_local_src = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/"
+                path_local_prepro_src = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/prepro/src"
+                shutil.copytree(
+                    path_local_src, os.path.join(self.workdir, self.project_name, "src")
                 )
-                os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
+                shutil.copytree(
+                    path_local_prepro_src, os.path.join(self.workdir, self.project_name, "prepro/src")
+                )
+                self.input_dirname = ["input","prepro-dem","other-dem"]
+
+  
+
+       
+
 
         # clear output files if required
         # ---------------------------------------------------------------------

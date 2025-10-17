@@ -1,0 +1,955 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Zanetti, F., Botter, G., &amp; Camporese, M. (2024) &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css?v=572af1d6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="API reference: The pyCATHY package" href="../../api/api.html" />
+    <link rel="prev" title="D. La Cecilia and M. Camporese (2022)" href="../LaCecilia2023_myst/LaCecilia2023_myst.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 11, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../SSHydro/index.html">Surface subsurface hydrological model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_1_pyCATHY_weilletal.html">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_2_pyCATHY_inputs.html">Input plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3_meshing_from_Camporese.html">Meshing from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3_meshing_from_weill.html">Changing mesh properties (resolution, coordinates, …)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3a_create_soil_withzones.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3b_soil3d_from_weill.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3c_spatial_atmbc_from_weill.html">Weil et al example with spatially heterogeneous atmbc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3d_spatial_atmbc_from_weill.html">Update with spatially and temporally distributed atmospheric boundary conditions (bc)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_4_pyCATHY_outputs.html">Output plots part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_4b_pyCATHY_outputs.html">Output plots part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_4b_waterTable_from_weill.html">Plot Water Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_5a_infiltration_withBC.html">Update and show Boundary conditions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../DA/index.html">Data Assimilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../LaCecilia2023_myst/LaCecilia2023_myst.html">D. La Cecilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/edit/master/doc/content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fcontent/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Zanetti, F., Botter, G., & Camporese, M. (2024)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-the-required-datasets">Importing the required datasets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-the-required-packages">Importing the required packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-cathy-simulation-object">Create a CATHY simulation object</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocessing-step">1. Preprocessing step</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-mesh">Build the mesh</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-the-atmospheric-boundary-conditions">Setting the atmospheric boundary conditions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-simulation">2. Run simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-outputs">3. Plot outputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-streamflow">Plot streamflow</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="zanetti-f-botter-g-camporese-m-2024">
+<h1>Zanetti, F., Botter, G., &amp; Camporese, M. (2024)<a class="headerlink" href="#zanetti-f-botter-g-camporese-m-2024" title="Link to this heading">#</a></h1>
+<p>This is a notebook to reproduce outputs from <a class="reference external" href="https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2023WR035631">Zanetti, F., Botter, G., &amp;
+Camporese, M.
+(2024))</a></p>
+<div class="highlight-{important} notranslate"><div class="highlight"><pre><span></span># Cite this work
+We believe in a community-driven approach of open-source tools that are
+composable and extensible. If you use this notebook cite the work as:
+&gt; Zanetti, F., Botter, G., &amp; Camporese, M. (2024). Stream network dynamics of non‐perennial rivers: Insights from integrated surface‐subsurface hydrological modeling of two virtual catchments. Water Resources Research, 60(2), e2023WR035631. https://doi.org/10.1029/2023WR035631
+</pre></div>
+</div>
+<p>The notebooks describes: 1. <strong>Preprocessing step</strong>: - How to build a
+mesh for the two virtual catchments with different morphology -
+Exploring atmospheric boundary conditions <strong>Atmbc parameters</strong></p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Simulation</strong> (very long, recommended to execute locally): solve the
+surface-subsurface flow during a year considering different
+scenarios.</p></li>
+<li><p><strong>Plot outputs</strong>: analysis of the results</p>
+<ul class="simple">
+<li><p>Spatial distribution of the <strong>stream network</strong> using a
+classification threshold analysis based on <a class="reference external" href="https://doi.org/10.1029/2019WR025563">Durighetto et
+al. (2020)</a> and <a class="reference external" href="https://doi.org/10.1007/s00267-005-0311-2">Jaeger
+et al. (2014)</a>.</p></li>
+</ul>
+</li>
+</ol>
+<p>```{note} Open-Source</p>
+<p>The data set generated and/or analyzed during the current study are
+available on the online repository,
+<a class="reference external" href="https://researchdata.cab.unipd.it/id/eprint/1092">https://researchdata.cab.unipd.it/id/eprint/1092</a> (Zanetti et al., 2023).
+The CATHY model is freely available at
+<a class="reference external" href="https://bitbucket.org/cathy1_0/cathy">https://bitbucket.org/cathy1_0/cathy/</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">{admonition}</span> <span class="pre">What</span> <span class="pre">you</span> <span class="pre">should</span> <span class="pre">already</span> <span class="pre">know</span> <span class="pre">In</span> <span class="pre">order</span> <span class="pre">to</span> <span class="pre">complete</span> <span class="pre">this</span> <span class="pre">tutorial,</span> <span class="pre">you</span> <span class="pre">should</span> <span class="pre">be</span> <span class="pre">relatively</span> <span class="pre">familiar</span> <span class="pre">with</span> <span class="pre">using</span> <span class="pre">the</span> <span class="pre">pyCATHY</span> <span class="pre">for:</span> <span class="pre">-</span> <span class="pre">Building</span> <span class="pre">a</span> <span class="pre">mesh</span> <span class="pre">from</span> <span class="pre">a</span> <span class="pre">DEM</span> <span class="pre">(See</span> <span class="pre">{doc}</span></code>../content/SSHydro/index` for more information.) - Updating soil inputs - …`</p>
+<div class="highlight-{warning} notranslate"><div class="highlight"><pre><span></span>Found a bug 🐛/ a typo ? [Email me](mailto:benjamin.mary@ica.csic.es)
+</pre></div>
+</div>
+<section id="importing-the-required-datasets">
+<h2>Importing the required datasets<a class="headerlink" href="#importing-the-required-datasets" title="Link to this heading">#</a></h2>
+<p>Datasets input files are fetched from the
+<a class="reference external" href="https://researchdata.cab.unipd.it/1092/">https://researchdata.cab.unipd.it/1092/</a> repository using Pooch.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pooch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">odie</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="n">pooch</span><span class="o">.</span><span class="n">os_cache</span><span class="p">(</span><span class="s2">&quot;my-project&quot;</span><span class="p">),</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://researchdata.cab.unipd.it/1092/&quot;</span><span class="p">,</span>
+    <span class="n">registry</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;1/circular_catchment.zip&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;2/elongated_catchment.zip&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1">#&quot;3/src.zip&quot;: None,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+<span class="n">circular_catchment_data</span> <span class="o">=</span> <span class="n">odie</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;1/circular_catchment.zip&quot;</span><span class="p">)</span>
+<span class="n">elongated_catchment_data</span> <span class="o">=</span> <span class="n">odie</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;2/elongated_catchment.zip&quot;</span><span class="p">)</span>
+<span class="c1">#src_data = odie.fetch(&quot;3/src.zip&quot;)</span>
+<span class="n">extract_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;./Zanetti_WRR_2024/&#39;</span><span class="p">)</span>
+<span class="n">extract_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Unzip the file</span>
+<span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">elongated_catchment_data</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+      <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">extract_dir</span><span class="p">)</span>
+<span class="c1"># Unzip the file</span>
+<span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">circular_catchment_data</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+      <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">extract_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="importing-the-required-packages">
+<h2>Importing the required packages<a class="headerlink" href="#importing-the-required-packages" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> in order to <strong>plot</strong> the data;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cathy_tools</span></code> is the main object controlling the simulation;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyCATHY.importers</span></code> allows you to <strong>read CATHY input/outputs</strong>
+files;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyCATHY.plotters</span></code> is a set of functions in order to plot
+simulation outputs.</p></li>
+</ul>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.importers</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_inputs</span> <span class="k">as</span> <span class="n">in_CT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.importers</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_outputs</span> <span class="k">as</span> <span class="n">out_CT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.plotters</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">cplt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="w"> </span><span class="kn">import</span> <span class="n">CATHY</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="c1"># set some default plotting parameters for nicer looking plots</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;axes.grid&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;grid.color&quot;</span><span class="p">:</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="s2">&quot;grid.linestyle&quot;</span><span class="p">:</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)})</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-cathy-simulation-object">
+<h2>Create a CATHY simulation object<a class="headerlink" href="#create-a-cathy-simulation-object" title="Link to this heading">#</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initiate a CATHY model</span>
+<span class="c1"># ------------------------</span>
+<span class="n">Z_WRR_2024_scenarioCircular_50mmd</span> <span class="o">=</span> <span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="s1">&#39;./Zanetti_WRR_2024/circular_catchment/&#39;</span><span class="p">,</span>
+                                            <span class="n">prj_name</span><span class="o">=</span><span class="s1">&#39;50mmd&#39;</span>
+                                            <span class="p">)</span>
+</pre></div>
+</div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🏁 <span style="font-weight: bold">Initiate CATHY object</span>
+</pre><p>```{tip} Multiples scenario</p>
+<p>If you want to run multiple scenario and compare them it is recommanded
+to create a single CATHY object for each of the simulations. For
+instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">simu_scenario1</span> <span class="o">=</span> <span class="n">cathy_tools</span><span class="o">.</span><span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="n">ThePathToYourProject</span><span class="p">,</span> <span class="n">prj_name</span><span class="o">=</span><span class="s2">&quot;scenario1&quot;</span><span class="p">)</span>
+<span class="n">simu_scenario2</span> <span class="o">=</span> <span class="n">cathy_tools</span><span class="o">.</span><span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="n">ThePathToYourProject</span><span class="p">,</span> <span class="n">prj_name</span><span class="o">=</span><span class="s2">&quot;scenario2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Z_WRR_2024_scenarioCircular_20mmd</span> <span class="o">=</span> <span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="s1">&#39;./Zanetti_WRR_2024/circular_catchment/&#39;</span><span class="p">,</span>
+                                            <span class="n">prj_name</span><span class="o">=</span><span class="s1">&#39;20mmd&#39;</span>
+                                            <span class="p">)</span>
+</pre></div>
+</div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🏁 <span style="font-weight: bold">Initiate CATHY object</span>
+</pre><p>We repeat, and create a simulation object for the elongated catchement</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Z_WRR_2024_scenarioElongated_50mmd</span> <span class="o">=</span> <span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="s1">&#39;./Zanetti_WRR_2024/elongated_catchment/&#39;</span><span class="p">,</span>
+                                            <span class="n">prj_name</span><span class="o">=</span><span class="s1">&#39;50mmd&#39;</span>
+                                            <span class="p">)</span>
+</pre></div>
+</div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🏁 <span style="font-weight: bold">Initiate CATHY object</span>
+</pre><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Z_WRR_2024_scenarioElongated_5mmh</span> <span class="o">=</span> <span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="s1">&#39;./Zanetti_WRR_2024/elongated_catchment/&#39;</span><span class="p">,</span>
+                                            <span class="n">prj_name</span><span class="o">=</span><span class="s1">&#39;5mmh&#39;</span>
+                                            <span class="p">)</span>
+</pre></div>
+</div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🏁 <span style="font-weight: bold">Initiate CATHY object</span>
+</pre><section id="preprocessing-step">
+<h3>1. Preprocessing step<a class="headerlink" href="#preprocessing-step" title="Link to this heading">#</a></h3>
+<p>Starting from DEM data (dtm_13.val) and parameters (hap.in) files, the
+preprocessing produce a complete set of files describing physiographic
+features of a drainage system. Such files represent the preprocessing
+input files for CATHY simulation.</p>
+</section>
+</section>
+<section id="build-the-mesh">
+<h2>Build the mesh<a class="headerlink" href="#build-the-mesh" title="Link to this heading">#</a></h2>
+<div class="highlight-{tip} notranslate"><div class="highlight"><pre><span></span>Outside the region of interest the elevation are set to -9999
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DEM_circular</span><span class="p">,</span> <span class="n">header_DEM</span> <span class="o">=</span> <span class="n">Z_WRR_2024_scenarioCircular_50mmd</span><span class="o">.</span><span class="n">read_inputs</span><span class="p">(</span><span class="s1">&#39;dem&#39;</span><span class="p">)</span>
+<span class="n">DEM_elongated</span><span class="p">,</span> <span class="n">header_DEM</span> <span class="o">=</span> <span class="n">Z_WRR_2024_scenarioElongated_50mmd</span><span class="o">.</span><span class="n">read_inputs</span><span class="p">(</span><span class="s1">&#39;dem&#39;</span><span class="p">)</span>
+<span class="n">DEM_circular</span><span class="p">[</span><span class="n">DEM_circular</span><span class="o">==-</span><span class="mi">9999</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">DEM_elongated</span><span class="p">[</span><span class="n">DEM_elongated</span><span class="o">==-</span><span class="mi">9999</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cmcrameri.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cmc</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">DEM_circular</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmc</span><span class="o">.</span><span class="n">batlow</span><span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">shrink</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;m a.s.l&#39;</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">DEM_elongated</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmc</span><span class="o">.</span><span class="n">batlow</span><span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">shrink</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;m a.s.l&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../../_images/output_21_0.png" src="../../../_images/output_21_0.png" />
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+<span class="n">Z_WRR_2024_scenarioCircular_50mmd</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;dem&quot;</span><span class="p">,</span>
+                                             <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                                              <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span>
+                                            <span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">550</span><span class="p">,</span><span class="mi">800</span><span class="p">])</span>
+</pre></div>
+</div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🔄 <span style="font-weight: bold">Update hap.in file</span>
+</pre><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🔄 <span style="font-weight: bold">update dem_parameters file </span>
+</pre><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">🔄 <span style="font-weight: bold">update dem_parameters file </span>
+</pre><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mf">550.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../../_images/output_22_4.png" src="../../../_images/output_22_4.png" />
+</section>
+<section id="setting-the-atmospheric-boundary-conditions">
+<h2>Setting the atmospheric boundary conditions<a class="headerlink" href="#setting-the-atmospheric-boundary-conditions" title="Link to this heading">#</a></h2>
+<p><strong>Scenario 1</strong>, excludes irrigation from the reference simulation. This
+scenario serves primarily to assess the differences between an
+agricultural catchment and a natural one.</p>
+<p>In order to update the atmospheric boundary conditions we call the
+following function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">update_atmbc</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Remenber that the functions arguments details can be assessed via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">simu</span><span class="o">.</span><span class="n">update_atmbc</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># first we read and plot the current atmbc file</span>
+<span class="c1"># --------------------------------</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">df_atmbc_50mmd</span> <span class="o">=</span> <span class="n">Z_WRR_2024_scenarioCircular_50mmd</span><span class="o">.</span><span class="n">read_inputs</span><span class="p">(</span><span class="s1">&#39;atmbc&#39;</span><span class="p">)</span>
+<span class="n">df_atmbc_20mmd</span> <span class="o">=</span> <span class="n">Z_WRR_2024_scenarioCircular_20mmd</span><span class="o">.</span><span class="n">read_inputs</span><span class="p">(</span><span class="s1">&#39;atmbc&#39;</span><span class="p">)</span>
+
+<span class="n">Z_WRR_2024_scenarioCircular_50mmd</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="s1">&#39;atmbc&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;50mmd&#39;</span><span class="p">)</span>
+<span class="n">Z_WRR_2024_scenarioCircular_20mmd</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="s1">&#39;atmbc&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;20mmd&#39;</span><span class="p">)</span>
+
+<span class="n">df_atmbc_50mmd</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mf">5.786e-07</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<img alt="../../../_images/output_24_1.png" src="../../../_images/output_24_1.png" />
+<p>Given the fact that all the values are defined in net Q (m/s), and that
+all the values are &gt;0, here the scenario exclude the irrigation from the
+atmospheric boundary conditions.</p>
+<p>Let’s update the atmbc values without to with irrigation:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># help(Z_WRR_2024_scenarioCircular_50mmd.update_atmbc)</span>
+</pre></div>
+</div>
+<p>```{tip} I want to change my atmbc input to my simu object</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">update_atmbc</span><span class="p">(</span>
+                    <span class="n">HSPATM</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">IETO</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">432000.0</span><span class="p">,</span> <span class="mf">5000000.0</span><span class="p">],</span>
+                    <span class="n">netValue</span><span class="o">=</span><span class="p">[</span><span class="mf">5.786e-07</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">simu</span><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="s1">&#39;atmbc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="run-simulation">
+<h3>2. Run simulation<a class="headerlink" href="#run-simulation" title="Link to this heading">#</a></h3>
+<p>Once all the inputs files are updated according to the scenario, it is
+good practice to run first the preprocessor in verbose = True mode to
+check if the preprocessing step worked.</p>
+<p>Then we can run the processor. As the number of times and points are
+large in this example it is recommanded to execute it locally.</p>
+<p>```python simu.run_preprocessor(verbose=True) simu.run_processor(
+IPRT1=2, )</p>
+<p><code class="docutils literal notranslate"><span class="pre">{tip}</span> <span class="pre">Check</span> <span class="pre">before</span> <span class="pre">running</span> <span class="pre">the</span> <span class="pre">simulations</span> <span class="pre">Before</span> <span class="pre">running</span> <span class="pre">the</span> <span class="pre">simulation</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">recommanded</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">the</span> <span class="pre">parm</span> <span class="pre">file</span></code></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#simu.read_inputs(&#39;parm&#39;)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">parm_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Z_WRR_2024_scenarioElongated_50mmd</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
+                         <span class="n">Z_WRR_2024_scenarioElongated_50mmd</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span><span class="s1">&#39;input&#39;</span><span class="p">,</span><span class="s1">&#39;parm&#39;</span><span class="p">)</span>
+<span class="n">parm</span> <span class="o">=</span> <span class="n">in_CT</span><span class="o">.</span><span class="n">read_parm</span><span class="p">(</span><span class="n">parm_file</span><span class="p">)</span>
+<span class="c1">#print(parm)</span>
+</pre></div>
+</div>
+<p>Among all the parameters (check using parm.keys()) controlling the
+behavior of the simulation here is a selection of some important ones:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">IPRT1</span></code> Flag for output of input and coordinate data;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TRAFLAG</span></code> lag for the choice of the data assimilation scheme;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DTMIN</span></code> Minimum FLOW3D time step size allowed;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NPRT</span></code> Number of time values for detailed nodal output and element
+velocity output;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(TIMPRT(I),I=1,NPRT)</span></code> Time values for detailed output.</p></li>
+</ul>
+</section>
+<section id="plot-outputs">
+<h3>3. Plot outputs<a class="headerlink" href="#plot-outputs" title="Link to this heading">#</a></h3>
+</section>
+</section>
+<section id="plot-streamflow">
+<h2>Plot streamflow<a class="headerlink" href="#plot-streamflow" title="Link to this heading">#</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#%% Another interesting graph looking at the **streamflow = f(time)**</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">Z_WRR_2024_scenarioCircular_50mmd</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;hgraph&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">Z_WRR_2024_scenarioCircular_20mmd</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;hgraph&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;50mmd&#39;</span><span class="p">,</span><span class="s1">&#39;20mmd&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7fb8abbcce80</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="../../../_images/output_35_1.png" src="../../../_images/output_35_1.png" />
+<p>Plot stream network</p>
+<p>```{note} Method</p>
+<p>“To compute the dynamic active length (L) and to map the stream network
+spatial distribution, it was necessary to identify a threshold criterion
+to classify each catchment cell as wet or dry during the post-processing
+phase.”</p>
+<p><strong>Criteria</strong>: - a minimum channel water surface width as in <a class="reference external" href="https://doi.org/10.1029/2019WR025563">Durighetto
+et al. (2020)</a> - a minimum
+discharge as in <a class="reference external" href="https://doi.org/10.1007/s00267-005-0311-2">Jaeger et
+al. (2014)</a>.</p>
+<p><strong>Threshold discharge</strong> = 10 ls−1 for both the catchments</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">;</span>        <span class="c1"># m3/s = 10 l/s</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#%% read netris file</span>
+<span class="n">simu2plots</span> <span class="o">=</span> <span class="p">[</span><span class="n">Z_WRR_2024_scenarioElongated_5mmh</span><span class="p">,</span><span class="n">Z_WRR_2024_scenarioElongated_50mmd</span><span class="p">]</span>
+<span class="n">netris</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">simu2plots</span><span class="p">:</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
+                            <span class="n">si</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
+                            <span class="s1">&#39;output/net.ris&#39;</span><span class="p">)</span>
+    <span class="n">netris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_CT</span><span class="o">.</span><span class="n">read_netris</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#%% read cq file and apply threshold</span>
+<span class="n">Q2plot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">si</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">simu2plots</span><span class="p">):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
+                            <span class="n">si</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
+                            <span class="s1">&#39;output/cq&#39;</span><span class="p">)</span>
+    <span class="n">cell_discharge</span> <span class="o">=</span> <span class="n">out_CT</span><span class="o">.</span><span class="n">read_cq</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">cell_discharge_thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cell_discharge</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_discharge</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">cell_discharge</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="n">cell_discharge_thresh</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cell_discharge_thresh</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">QthresholdVAL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cell_discharge_thresh</span><span class="p">,</span>
+                               <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">netris</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]),</span>
+                                <span class="nb">len</span><span class="p">(</span><span class="n">netris</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">,:])),</span>
+                                <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span>
+                                <span class="p">)</span>
+    <span class="n">QthresholdVAL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">QthresholdVAL</span><span class="p">)</span>
+    <span class="n">QthresholdVAL</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">netris</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">QthresholdVAL</span><span class="p">[</span><span class="n">QthresholdVAL</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">Q2plot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QthresholdVAL</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create mask of valid</span>
+<span class="n">idx_Qvalid</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">idy_Qvalid</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">qi</span> <span class="ow">in</span> <span class="n">Q2plot</span><span class="p">:</span>
+    <span class="n">idx_Qvalid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">qi</span><span class="o">==</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">idy_Qvalid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">qi</span><span class="o">==</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Plot the result for scenario 5mm/h and 50mmd</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">DEM_elongated</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmc</span><span class="o">.</span><span class="n">batlow</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">DEM_elongated</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmc</span><span class="o">.</span><span class="n">batlow</span><span class="p">)</span>
+
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">shrink</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">shrink</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;m a.s.l&#39;</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">idx_Qvalid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+           <span class="n">idy_Qvalid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+           <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+           <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;5mm/h&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">idx_Qvalid</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+           <span class="n">idy_Qvalid</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+           <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+           <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;50mm/d&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;50mm/d&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../../_images/output_43_1.png" src="../../../_images/output_43_1.png" />
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/FromLiterature/Zanetti_WRR_2024_myst"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../LaCecilia2023_myst/LaCecilia2023_myst.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">D. La Cecilia and M. Camporese (2022)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../api/api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-the-required-datasets">Importing the required datasets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-the-required-packages">Importing the required packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-cathy-simulation-object">Create a CATHY simulation object</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocessing-step">1. Preprocessing step</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-mesh">Build the mesh</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-the-atmospheric-boundary-conditions">Setting the atmospheric boundary conditions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-simulation">2. Run simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-outputs">3. Plot outputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-streamflow">Plot streamflow</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 11, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

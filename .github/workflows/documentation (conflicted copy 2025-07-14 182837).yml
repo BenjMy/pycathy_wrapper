@@ -1,0 +1,48 @@
+# This is a basic workflow to publish pyCATHY doc
+name: Docs
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Set up Python 3.10
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install sphinx sphinx_book_theme
+          pip install -r env/requirements_doc.txt
+          pip install .
+
+      # Register ipykernel
+      - name: Register ipykernel
+        run: python -m ipykernel install --user --name pycathy_doc
+
+      # Build the documentation
+      - name: Sphinx build
+        run: |
+          # Install xvfb and run some commands to allow pyvista to run on
+          # a headless system.
+          sudo apt-get install xvfb
+          export DISPLAY=:99.0
+          export PYVISTA_OFF_SCREEN=true
+          export PYVISTA_USE_IPYVTK=true
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+          rm -rf doc/_build/
+          sphinx-build doc doc/_build || true
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3.5.9
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: doc/_build/
+          force_orphan: true
