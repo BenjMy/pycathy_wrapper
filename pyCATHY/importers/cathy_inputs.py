@@ -9,6 +9,13 @@ import pandas as pd
 
 from pyCATHY.plotters import cathy_plots as pltCT
 
+def get_case_insensitive(dict_obj, key):
+    """Get dictionary value with case-insensitive key lookup."""
+    for k, v in dict_obj.items():
+        if k.lower() == key.lower():
+            return v
+    raise KeyError(f"Key '{key}' not found in dictionary (case-insensitive)")
+
 
 def read_atmbc(filename, grid=[], show=False, **kwargs):
     """
@@ -384,10 +391,10 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     
     layer_id = []
     zone_id = []
-    for ds in range(int(dem_parm["nstr"])):
-        for dz in range(int(dem_parm["nzone"])):
+    for ds in range(int(get_case_insensitive(dem_parm, "nstr"))):
+        for dz in range(int(get_case_insensitive(dem_parm, "nzone"))):
             layer_id.append(ds)
-            zone_id.append(dz+1) # zone numbers starts from 1
+            zone_id.append(dz + 1)
 
     if len(soil) != len(layer_id): #*dem_parm['nzone']:
        print(

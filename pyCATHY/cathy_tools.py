@@ -50,6 +50,8 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.cathy_utils import dictObs_2pd
+from pyCATHY.config_manager import VersionConfigManager
+# from pyCATHY.version_config import CATHY_H_PARAMS as CATHY_DEFAULTS
 
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -71,6 +73,8 @@ from rich import print
 
 import matplotlib.pyplot as plt
 from scipy.interpolate import Rbf
+
+
 
 # -----------------------------------------------------------------------------
 def subprocess_run_multi(pathexe_list):
@@ -141,6 +145,7 @@ class CATHY:
             All file variable are self dictionnary objects; example: soil file is contained in self.soil
 
         """
+        self.version = version
         self.t0 = time.time()  # executation time estimate
         self.console = make_console(verbose)
         self.console.print(":checkered_flag: [b]Initiate CATHY object[/b]")
@@ -172,7 +177,12 @@ class CATHY:
         self.processor_name = "cathy"
         self.input_dirname = "input"
         self.output_dirname = "output"
+        self.prepro_input_dirname = 'prepro'
 
+        if  self.version == "withIrr":
+            self.input_dirname = 'input'
+            # self.input_dirname = 'other-dem'
+            self.prepro_input_dirname = 'prepro-dem'
 
 
         # dict related to CATHY inputs files
@@ -199,24 +209,6 @@ class CATHY:
         self.grid3d = {}
 
 
-        VERSION_CONFIG = {
-            "G. Manoli": {
-                "src_paths": [
-                    "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
-                ],
-                "input_dirname": ["input"],  # default
-                "has_prepro": False
-            },
-            "withIrr": {
-                "src_paths": [
-                    "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/"
-                ],
-                "prepro_src_path": "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/prepro/src",
-                "input_dirname": ["input", "prepro-dem", "other-dem"],
-                "has_prepro": True
-            }
-        }
-
 
         for key, value in kwargs.items():
             # clear src files if required
@@ -231,10 +223,10 @@ class CATHY:
                             os.path.join(self.workdir, self.project_name, "src")
                         )
                         shutil.rmtree(
-                            os.path.join(self.workdir, self.project_name, "input")
+                            os.path.join(self.workdir, self.project_name,  self.input_dirname)
                         )
                         shutil.rmtree(
-                            os.path.join(self.workdir, self.project_name, "prepro")
+                            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}")
                         )
 
         # fetch src files if not existing from Gitbucket repo
@@ -243,7 +235,7 @@ class CATHY:
             self.console.print(":worried_face: [b]src files not found[/b]")
             self.console.print("working directory is:" + str((self.workdir)))
 
-            if version == "1.0.0":
+            if self.version == "1.0.0":
                 try:
                     # Repo.clone_from(
                     #    "https://bitbucket.org/cathy1_0/cathy.git",
@@ -283,7 +275,7 @@ class CATHY:
                         )
                     
                     
-                    if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
+                    if not os.path.exists(os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}")):
                         self.console.print(
                             ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
                         )
@@ -293,11 +285,11 @@ class CATHY:
                                 self.project_name,
                                 "tmp_src/runs/weilletal/prepro",
                             ),
-                            os.path.join(self.workdir, self.project_name, "prepro"),
+                            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}"),
                         )
                         # os.remove(os.path.join(
-                        #      self.workdir, self.project_name, "prepro") + '/dem' )
-                    if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
+                        #      self.workdir, self.project_name,  f"{self.prepro_input_dirname}") + '/dem' )
+                    if not os.path.exists(os.path.join(self.workdir, self.project_name,  self.input_dirname)):
                         self.console.print(":inbox_tray: [b]Fetch cathy input files[/b]")
                         shutil.move(
                             os.path.join(
@@ -305,7 +297,7 @@ class CATHY:
                                 self.project_name,
                                 "tmp_src/runs/weilletal/input",
                             ),
-                            os.path.join(self.workdir, self.project_name, "input"),
+                            os.path.join(self.workdir, self.project_name,  self.input_dirname),
                         )
 
                     if not os.path.exists(os.path.join(self.workdir, self.project_name, "output")):
@@ -321,29 +313,41 @@ class CATHY:
                     sys.exit()
                     pass
                 
-            elif version == "G. Manoli":
+            elif self.version == "G. Manoli":
                 print("fetch cathy G. Manoli src files")
                 path_manoli = "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
                 shutil.copytree(
                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
                 )
-            elif version == "withIrr":
+            elif self.version == "withIrr":
                 print("adjust folder names")
              
                 path_local_src = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/"
+                path_local_dataset = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/dataset/"
                 path_local_prepro_src = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/prepro/src"
                 shutil.copytree(
                     path_local_src, os.path.join(self.workdir, self.project_name, "src")
                 )
                 shutil.copytree(
-                    path_local_prepro_src, os.path.join(self.workdir, self.project_name, "prepro/src")
+                    path_local_dataset, os.path.join(self.workdir, self.project_name),
+                    dirs_exist_ok=True  # Allows overwriting existing directory
                 )
-                self.input_dirname = ["input","prepro-dem","other-dem"]
-
-  
-
-       
-
+                shutil.copytree(
+                    path_local_prepro_src, os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/src")
+                )
+                         
+                source_dir = os.path.join(self.workdir, self.project_name, "other-dem")
+                dest_dir = os.path.join(self.workdir, self.project_name, self.input_dirname)
+                
+                os.makedirs(dest_dir, exist_ok=True)
+                
+                # Move all files and folders
+                for item in glob.glob(os.path.join(source_dir, "*")):
+                    shutil.move(item, dest_dir)
+                
+                # Remove empty source directory
+                os.rmdir(source_dir)
+      
 
         # clear output files if required
         # ---------------------------------------------------------------------
@@ -381,7 +385,7 @@ class CATHY:
 
         self.console.print(":cooking: [b]gfortran compilation[/b]")
         for loopi in range(2):  # run it twice (to avoid the first error)
-            os.chdir(os.path.join(self.workdir, self.project_name, "prepro/src/"))
+            os.chdir(os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/src/"))
 
             # clean all files compiled
             for file in glob.glob("*.o"):
@@ -400,18 +404,18 @@ class CATHY:
             os.chdir(self.workdir)
         # move to the directory where the source FORTRAN files are contained (cathy_main.f)
         # shutil.move(
-        #     os.path.join(self.workdir, self.project_name, "prepro/src/pycppp"),
-        #     os.path.join(self.workdir, self.project_name, "prepro/pycppp"),
+        #     os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/src/pycppp"),
+        #     os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/pycppp"),
         # )
-        src = Path(self.workdir) / self.project_name / "prepro/src/pycppp"
-        dst = Path(self.workdir) / self.project_name / "prepro/pycppp"
+        src = Path(self.workdir) / self.project_name / f"{self.prepro_input_dirname}/src/pycppp"
+        dst = Path(self.workdir) / self.project_name / f"{self.prepro_input_dirname}/pycppp"
 
         if dst.exists():
             dst.unlink()  # Delete the existing destination file
         src.rename(dst)
 
         self.console.print(":athletic_shoe: [b]Run preprocessor[/b]")
-        os.chdir(os.path.join(self.workdir, self.project_name, "prepro"))
+        os.chdir(os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}"))
 
         bashcmd = "./pycppp"
         my_data = "2\n0\n1\n"  # user input data
@@ -442,8 +446,8 @@ class CATHY:
         if hasattr(self, 'DEM') is False:
             
             DEM_mat, DEM_header = in_CT.read_dem(
-                                        os.path.join(self.workdir, self.project_name, "prepro/dem"),
-                                        os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+                                        os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dem"),
+                                        os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dtm_13.val"),
                                     )
             self.DEM = DEM_mat
         
@@ -498,7 +502,9 @@ class CATHY:
             
             # filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
             filepath = str(file)
-            bashCommand = "gfortran -c " + str(filepath)
+            # bashCommand = "gfortran -c " + str(filepath)
+            # bashCommand = "gfortran -c " + str('picard')
+            # bashCommand = "gfortran -c " + str('interp_irr.f')
             # gfortran -c *.f
             # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
             # print(bashCommand)
@@ -743,8 +749,84 @@ class CATHY:
     # --------------------------------------------------------------------------- #
     # update files
     # --------------------------------------------------------------------------- #
-
     def update_cathyH(self, verbose=False, **kwargs):
+        """
+        Update CATHY.H file based on versioned configuration and dynamic parameters.
+    
+        Parameters
+        ----------
+        version : str
+            Version of configuration (e.g., "default", "withIrr").
+        verbose : bool
+            Print status messages.
+        **kwargs : dict
+            Override any default parameter values.
+        """
+        
+        # Load versioned defaults
+        cfg = VersionConfigManager("cathy", "update_cathyH", self.version)
+        defaults = cfg.all()
+
+        # Ensure dependencies exist
+        if not hasattr(self, "hapin"):
+            self.update_prepo_inputs()
+        if not hasattr(self, "dem_parameters"):
+            self.update_dem_parameters()
+        if not hasattr(self, "veg_map"):
+            self.update_veg_map()
+        if "NR" not in getattr(self, "parm", {}):
+            self.update_parm()
+    
+        # Computed values
+        ROWMAX = self.hapin["M"]
+        COLMAX = self.hapin["N"]
+        DEMRES = defaults.get("DEMRES", 1)
+        nzone = get_ci(self.dem_parameters, "nzone")
+        nstr = get_ci(self.dem_parameters, "nstr")
+        n1 = get_ci(self.dem_parameters, "n1")
+    
+        # Merge defaults, computed, and kwargs
+        valid_kwargs = {k: v for k, v in kwargs.items() if k in defaults}
+        self.cathyH = {**defaults, **valid_kwargs}
+
+        self.cathyH.update({
+            "ROWMAX": ROWMAX,
+            "COLMAX": COLMAX,
+            "MAXCEL": ROWMAX * COLMAX,
+            "DEMRES": DEMRES,
+            "NODMAX": int((ROWMAX / DEMRES + 1) * (COLMAX / DEMRES + 1)),
+            "NTRMAX": int(2 * ROWMAX * COLMAX / (DEMRES ** 2)),
+            "MAXSTR": nstr,
+            "MAXTRM": ROWMAX * COLMAX * nstr * 30,
+            "MAXZON": nzone,
+            "N1MAX": n1,
+            "NFACEMAX": int((ROWMAX / DEMRES + 1) * (COLMAX / DEMRES + 1) * 3),
+        })
+    
+        cfg = VersionConfigManager("cathy", "header", self.version)
+        header = cfg.all()
+
+        if verbose:
+            self.console.print(f":arrows_counterclockwise: Updating CATHY.H for version '{self.version}'")
+    
+        # Write CATHY.H
+        cathyH_path = os.path.join(self.workdir, self.project_name, "src", "CATHY.H")
+        with open(cathyH_path, "w") as f:
+            # Write header
+            header_lines = header.splitlines()
+            for line in header_lines:
+                if line.strip() and not line.startswith("C"):
+                    f.write(f"      {line.strip()}\n")  # 6 spaces for fixed-format
+                else:
+                    f.write(line + "\n")
+            
+            # Write parameters
+            for k, v in self.cathyH.items():
+                f.write(f"      PARAMETER ({k}={v})\n")  # 6 spaces
+        
+
+
+    def DEPRECATED_update_cathyH(self, verbose=False, **kwargs):
         """
         Update CathyH file input based on **kwargs parameters.
 
@@ -798,7 +880,10 @@ class CATHY:
         DEMRES = 1                
         ROWMAX = self.hapin["M"]
         COLMAX = self.hapin["N"]
-        
+        nzone = get_ci(self.dem_parameters, "nzone")  
+        nstr = get_ci(self.dem_parameters, "nstr")   
+        n1 = get_ci(self.dem_parameters, "n1")   
+
         
         if len(self.cathyH) == 0:
 
@@ -814,7 +899,7 @@ class CATHY:
                 "NODMAX": (int(self.hapin["N"]) / DEMRES + 1) * (int(self.hapin["M"]) / DEMRES + 1),
                 "NTRMAX": 2* (int(self.hapin["N"]) * int(self.hapin["M"]))/ (DEMRES * DEMRES),
                 "NP2MAX": 1,
-                "MAXSTR": self.dem_parameters["nstr"],
+                "MAXSTR": nstr,
                 "NPMAX": 1,
                 "NQMAX": 1,
                 "NSFMAX": 1,
@@ -823,17 +908,15 @@ class CATHY:
                 "MAXNUDT": 1,
                 "MAXNUDC": 1,
                 # 'MAXNENS': ,
-                "MAXZON": self.dem_parameters["nzone"],  # maximum NZONE, with NZONE = number of material types in the porous medium
-                "MAXTRM": self.hapin["N"]*self.hapin["M"]*self.dem_parameters["nstr"]*30,
+                "MAXZON": nzone,  # maximum NZONE, with NZONE = number of material types in the porous medium
+                "MAXTRM": self.hapin["N"]*self.hapin["M"]*nstr*30,
                 "MAXIT": 30,
                 "NRMAX": self.parm["NR"]+1,
                 # maximum NPRT (ref. parm file), with NPRT = number of time values for detailed output
                 "MAXPRT": self.parm["NPRT"],
                 # maximum NUMVP (ref. parm input file), NUMVP = number of surface nodes for vertical profile output
                 "MAXVP": int(self.parm["NUMVP"]),
-                "N1MAX": self.dem_parameters[
-                    "n1"
-                ],  # maximum N1 (it is good to have N1 ≤ 20), N1 = maximum number of element connections to a node
+                "N1MAX":n1,  # maximum N1 (it is good to have N1 ≤ 20), N1 = maximum number of element connections to a node
                 "MAXBOT": 1,
                 "INTBOT": 1,
                 "NTAB": 100,
@@ -852,14 +935,10 @@ class CATHY:
         self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"])
         self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
         self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
-        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30      
+        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*nstr*30      
         self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*3
         # self.cathyH['MAXTRM'] = 1599000
         # MAXTRM=1599000
-        
-        
-        
-        
         # cathyH_laC = {
         #     # "ROWMAX": 247,  # maximum NROW, with NROW = number of rows in the DEM
         #     # "COLMAX": 221,  # maximum NCOL, with NCOL = number of columns in the DEM
@@ -1009,31 +1088,21 @@ class CATHY:
         # # write the new hap.in file
 
         hap_file = open(
-            os.path.join(self.workdir, self.project_name, "prepro/hap.in"), "w+"
+            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/hap.in"), "w+"
         )
         hap_file.writelines(L)
         hap_file.close()
 
+
     def update_prepo_inputs(self, DEM=None, verbose=False, show=False, **kwargs):
         """
-        Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs
-
-        Parameters
-        ----------
-        DEM : TYPE, optional
-            DESCRIPTION. The default is None.
-        verbose : TYPE, optional
-            DESCRIPTION. The default is False.
-        show : TYPE, optional
-            DESCRIPTION. The default is False.
-        **kwargs : TYPE
-            DESCRIPTION.
-
+        Update pre-processing inputs (hap.in, dtm_13.val) using versioned configuration.
         """
-
-        # print("update hap.in")
+    
         self.console.print(":arrows_counterclockwise: [b]Update hap.in file[/b]")
-
+    
+        cfg = VersionConfigManager("prepro", "update_prepo_inputs", self.version)
+    
         structural_parameter = [
             "delta_x",
             "delta_y",
@@ -1043,25 +1112,8 @@ class CATHY:
             "xllcorner",
             "yllcorner",
         ]
-
-        terrain_parameter = [
-            "pt",
-            "imethod",
-            "lambda",
-            "CC_threshold",
-            "ndcf",
-            "nchc",
-            "A_threshold",
-            "ASk_threshold",
-            "kas",
-            "DN_threshold",
-            "local_slope_t",
-            "p_outflow_vo",
-            "bcc",
-            "cqm",
-            "cqg",
-        ]
-
+    
+        terrain_parameter = cfg.get("terrain_parameter", [])
         # 'RIVULET NETWORK PARAMETERS (HYDRAULIC GEOMETRY OF THE SINGLE RIVULET)'
         rivulet_parameter = [
             "dr",
@@ -1071,7 +1123,7 @@ class CATHY:
             "(kSsf_rf,y1_rf,y2_rf)",
             "Qsi_rf",
         ]
-
+   
         channel_parameter = [
             "As_cf",
             "(Qsf_cf,w_cf)",
@@ -1079,23 +1131,27 @@ class CATHY:
             "(kSsf_cf,y1_cf,y2_cf)",
             "Qsi_cf",
         ]
-
-        # idhapin = np.ones(22) + [1,1,2,3,3,1] #+ [1,2,3,3,1]
+     
+        if verbose:
+            self.console.print(f"Version: [cyan]{self.version}[/cyan]")
+            self.console.print(f"Structural params: {structural_parameter}")
+            self.console.print(f"Terrain params: {terrain_parameter}")
+    
         hapin = (
             structural_parameter
             + terrain_parameter
             + rivulet_parameter
             + channel_parameter
         )
-
+       
         hap_file = open(
-            os.path.join(self.workdir, self.project_name, "prepro/hap.in"), "r"
+            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/hap.in"), "r"
         )
         Lines = hap_file.readlines()
         hap_file.close()
-
+       
         # read current values in hap.in
-
+       
         tmp_param_value = []
         tmp_lnb = []  # save line nb where values are existing
         count = 0
@@ -1110,9 +1166,9 @@ class CATHY:
                 tmp_param_value.append(l)
                 tmp_lnb.append(count)
                 count += 1
-
+       
         self.hapin = {}
-
+       
         for i in range(len(tmp_param_value)):
             if re.search("/t", tmp_param_value[i]) is None:
                 if tmp_param_value[i].isdigit():
@@ -1122,21 +1178,15 @@ class CATHY:
             else:
                 list_tmp = tmp_param_value[i].split("/t")
                 tmp_param_value[i] = [float(x) for x in list_tmp]
-
+       
             self.hapin[hapin[i]] = tmp_param_value[i]
-
-        # if self.hapin["dr"] != self.hapin["delta_x"]:
-        # if  self.hapin["dr"] % self.hapin["delta_x"] != 0:
-        #     print("adapt rivulet param to dem resolution")
-        #     self.hapin["dr"] = self.hapin["delta_x"]
-            # sys.exit()
-
+              
         for key, value in kwargs.items():
             self.hapin[key] = value
-
+       
         self.update_hapin(Lines, hapin, tmp_lnb, tmp_param_value)
-
-
+       
+       
         self.update_dem_parameters(**kwargs)
         # dtm_13.val
         # If we start with a DEM file ("dtm_13.val") for an already delineated
@@ -1144,18 +1194,19 @@ class CATHY:
         # only the last step in the above procedure (i.e., run "cppp" just once) is
         # needed (make sure that "Boundary channel construction" is set to 0 in
         # "hap.in").
+        nstr = self.dem_parameters.get("nstr".casefold())
 
         if DEM is not None:
             self.DEM = DEM
             self.hapin["N"] = np.shape(DEM)[1]
             self.hapin["M"] = np.shape(DEM)[0]
-
+       
             self.update_hapin(Lines,
                               hapin, 
                               tmp_lnb, 
                               tmp_param_value
                               )
-
+       
             # check presence of the outlet
             if len(np.unique(DEM)) == 1:
                 print("Error: outlet not defined")
@@ -1164,28 +1215,224 @@ class CATHY:
             self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
             self.update_dem(DEM)
             self.update_zone()
-
+       
             with open(
-                os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+"
+                os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dtm_13.val"), "w+"
             ) as f:
                 # use exponential notation
                 np.savetxt(f, DEM, fmt="%1.4e")
                 # np.shape(DEM)
-
+       
             self.update_cathyH(
                 ROWMAX=self.hapin["M"],
                 COLMAX=self.hapin["N"],
-                MAXSTR=self.dem_parameters['nstr'],
+                MAXSTR=nstr,
                 DEMRES=min([self.hapin["delta_x"], self.hapin["delta_y"]])
             )
-
+       
         self.update_dem_parameters(
                                    **kwargs)
-
+       
         if show == True:
             plt_CT.show_dem(DEM, self.hapin)
-
+       
         pass
+
+    # def DEPRECATED_update_prepo_inputs(self, DEM=None, verbose=False, show=False, **kwargs):
+    #     """
+    #     Update default prepro inputs i.e. hap.in and dtm_13.val files based on kwargs
+
+    #     Parameters
+    #     ----------
+    #     DEM : TYPE, optional
+    #         DESCRIPTION. The default is None.
+    #     verbose : TYPE, optional
+    #         DESCRIPTION. The default is False.
+    #     show : TYPE, optional
+    #         DESCRIPTION. The default is False.
+    #     **kwargs : TYPE
+    #         DESCRIPTION.
+
+    #     """
+
+    #     # print("update hap.in")
+    #     self.console.print(":arrows_counterclockwise: [b]Update hap.in file[/b]")
+
+    #     structural_parameter = [
+    #         "delta_x",
+    #         "delta_y",
+    #         "N",
+    #         "M",
+    #         "N_celle",
+    #         "xllcorner",
+    #         "yllcorner",
+    #     ]
+
+    #     terrain_parameter = [
+    #         "pt",
+    #         "imethod",
+    #         "lambda",
+    #         "CC_threshold",
+    #         "ndcf",
+    #         "nchc",
+    #         "A_threshold",
+    #         "ASk_threshold",
+    #         "kas",
+    #         "DN_threshold",
+    #         "local_slope_t",
+    #         "p_outflow_vo",
+    #         "bcc",
+    #         "cqm",
+    #         "cqg",
+    #     ]
+        
+    #     if self.version == 'withIrr':
+        
+    #         terrain_parameter = [
+    #             "pt",
+    #             "imethod",
+    #             "lambda",
+    #             "CC_threshold",
+    #             "ndcf",
+    #             "nchc",
+    #             "A_threshold",
+    #             "ASk_threshold",
+    #             "kas",
+    #             "DN_threshold",
+    #             "Strahler_threshold",
+    #             "local_slope_t",
+    #             "p_outflow_vo",
+    #             "bcc",
+    #             "cqm",
+    #             "cqg",
+    #         ]
+            
+        
+
+    #     # 'RIVULET NETWORK PARAMETERS (HYDRAULIC GEOMETRY OF THE SINGLE RIVULET)'
+    #     rivulet_parameter = [
+    #         "dr",
+    #         "As_rf",
+    #         "(Qsf_rf,w_rf)",
+    #         "(Wsf_rf,b1_rf,b2_rf)",
+    #         "(kSsf_rf,y1_rf,y2_rf)",
+    #         "Qsi_rf",
+    #     ]
+
+    #     channel_parameter = [
+    #         "As_cf",
+    #         "(Qsf_cf,w_cf)",
+    #         "(Wsf_cf,b1_cf,b2_cf)",
+    #         "(kSsf_cf,y1_cf,y2_cf)",
+    #         "Qsi_cf",
+    #     ]
+
+    #     # idhapin = np.ones(22) + [1,1,2,3,3,1] #+ [1,2,3,3,1]
+    #     hapin = (
+    #         structural_parameter
+    #         + terrain_parameter
+    #         + rivulet_parameter
+    #         + channel_parameter
+    #     )
+
+    #     hap_file = open(
+    #         os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/hap.in"), "r"
+    #     )
+    #     Lines = hap_file.readlines()
+    #     hap_file.close()
+
+    #     # read current values in hap.in
+
+    #     tmp_param_value = []
+    #     tmp_lnb = []  # save line nb where values are existing
+    #     count = 0
+    #     for line in Lines:
+    #         x = line.strip().split("=")
+    #         if len(x) > 1:  # skip lines with no =
+    #             xs = " ".join(x[1].split())
+    #             xsr = xs.replace(" ", ",")
+    #             l = xsr.split(",")
+    #             if isinstance(l, list):
+    #                 l = "/t".join(l)
+    #             tmp_param_value.append(l)
+    #             tmp_lnb.append(count)
+    #             count += 1
+
+    #     self.hapin = {}
+
+    #     for i in range(len(tmp_param_value)):
+    #         if re.search("/t", tmp_param_value[i]) is None:
+    #             if tmp_param_value[i].isdigit():
+    #                 tmp_param_value[i] = int(tmp_param_value[i])
+    #             else:
+    #                 tmp_param_value[i] = float(tmp_param_value[i])
+    #         else:
+    #             list_tmp = tmp_param_value[i].split("/t")
+    #             tmp_param_value[i] = [float(x) for x in list_tmp]
+
+    #         self.hapin[hapin[i]] = tmp_param_value[i]
+
+    #     # if self.hapin["dr"] != self.hapin["delta_x"]:
+    #     # if  self.hapin["dr"] % self.hapin["delta_x"] != 0:
+    #     #     print("adapt rivulet param to dem resolution")
+    #     #     self.hapin["dr"] = self.hapin["delta_x"]
+    #         # sys.exit()
+
+    #     for key, value in kwargs.items():
+    #         self.hapin[key] = value
+
+    #     self.update_hapin(Lines, hapin, tmp_lnb, tmp_param_value)
+
+
+    #     self.update_dem_parameters(**kwargs)
+    #     # dtm_13.val
+    #     # If we start with a DEM file ("dtm_13.val") for an already delineated
+    #     # catchment (i.e., a "catchment" DEM file instead of a "full" DEM file), then
+    #     # only the last step in the above procedure (i.e., run "cppp" just once) is
+    #     # needed (make sure that "Boundary channel construction" is set to 0 in
+    #     # "hap.in").
+
+    #     if DEM is not None:
+    #         self.DEM = DEM
+    #         self.hapin["N"] = np.shape(DEM)[1]
+    #         self.hapin["M"] = np.shape(DEM)[0]
+
+    #         self.update_hapin(Lines,
+    #                           hapin, 
+    #                           tmp_lnb, 
+    #                           tmp_param_value
+    #                           )
+
+    #         # check presence of the outlet
+    #         if len(np.unique(DEM)) == 1:
+    #             print("Error: outlet not defined")
+    #             DEM[0, 0] = 0
+                
+    #         self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
+    #         self.update_dem(DEM)
+    #         self.update_zone()
+
+    #         with open(
+    #             os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dtm_13.val"), "w+"
+    #         ) as f:
+    #             # use exponential notation
+    #             np.savetxt(f, DEM, fmt="%1.4e")
+    #             # np.shape(DEM)
+
+    #         self.update_cathyH(
+    #             ROWMAX=self.hapin["M"],
+    #             COLMAX=self.hapin["N"],
+    #             MAXSTR=self.dem_parameters['nstr'],
+    #             DEMRES=min([self.hapin["delta_x"], self.hapin["delta_y"]])
+    #         )
+
+    #     self.update_dem_parameters(
+    #                                **kwargs)
+
+    #     if show == True:
+    #         plt_CT.show_dem(DEM, self.hapin)
+
+    #     pass
 
     def update_dem_parameters(self, **kwargs):
         """
@@ -1275,7 +1522,6 @@ class CATHY:
         #         if (key +'_list') in self.dem_parameters.keys() is False:
         #             dem_parameters_tmp[key +'_list'] = value
 
-
         if 'zratio' in kwargs:
             self.dem_parameters['nstr'] = len(kwargs['zratio'])
         # self.dem_parameters = self.dem_parameters | dem_parameters_tmp
@@ -1347,7 +1593,7 @@ class CATHY:
             The default is []."""
 
         with open(
-            os.path.join(self.workdir, self.project_name, "prepro/lakes_map"), "w+"
+            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/lakes_map"), "w+"
         ) as lakesfile:
 
             lakesfile.write("north:     0" + "\n")
@@ -1376,7 +1622,7 @@ class CATHY:
             The default is []."""
 
         with open(
-            os.path.join(self.workdir, self.project_name, "prepro/dem"), "w+"
+            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dem"), "w+"
         ) as demfile:
 
             demfile.write("north:     0" + "\n")
@@ -1391,7 +1637,7 @@ class CATHY:
         demfile.close()
         
         with open(
-            os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+"
+            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dtm_13.val"), "w+"
         ) as f:
             np.savetxt(f, DEM, fmt="%1.4e")
                 
@@ -1424,7 +1670,7 @@ class CATHY:
         self.console.print(":arrows_counterclockwise: [b]update zone file [/b]")
 
         with open(
-            os.path.join(self.workdir, self.project_name, "prepro/zone"), "w+"
+            os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/zone"), "w+"
         ) as zonefile:
 
             zonefile.write("north:     0" + "\n")
@@ -2567,6 +2813,9 @@ class CATHY:
         #     # FP_map = self.soil_FP["FP_map"]
         #     FP_map = self.set_SOIL_defaults(FP_map_default=True)
 
+        nzone = get_ci(self.dem_parameters, "nzone")  
+        nstr = get_ci(self.dem_parameters, "nstr")   
+        
         # check size of the heteregeneity
         # -----------------------------------
         if len(zone3d) == 0:
@@ -2574,7 +2823,7 @@ class CATHY:
             # check size of soil properties map versus nb of zones/ nb of layers
             # --------------------------------------------------------------------
             if isinstance(SPP_map["PERMX"], float):
-                if self.dem_parameters["nzone"] != 1:
+                if nzone != 1:
                     raise ValueError("Wrong number of zones")
         
         else:
@@ -2616,7 +2865,7 @@ class CATHY:
         
                         df_SPP_map.loc[(slice(None), i + 1), c] = layersi_zones_prop
             else:
-                nzones, nstr = self.dem_parameters["nzone"], self.dem_parameters["nstr"]
+                nzones, nstr = nzone, self.dem_parameters["nstr"]
                 df_SPP_map = self.init_soil_SPP_map_df(nzones, nstr)
         
                 for key, values in SPP_map.items():
@@ -2815,7 +3064,9 @@ class CATHY:
             # # Replace these values with your actual number of zones and strings
             # nzones = self.dem_parameters["nzone"]
             # nstr = self.dem_parameters["nstr"]
-                    
+            nzone = get_ci(self.dem_parameters, "nzone")  
+            nstr = get_ci(self.dem_parameters, "nstr")   
+
             # SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
             
             # for c in SPP_map.columns:
@@ -2826,8 +3077,8 @@ class CATHY:
                         POROS=0.55, 
                         VGNCELL=1.46, VGRMCCELL=0.15, VGPSATCELL=0.03125
                         )
-            SPP_map = self.init_soil_SPP_map_df(self.dem_parameters["nzone"], 
-                                                self.dem_parameters["nstr"]
+            SPP_map = self.init_soil_SPP_map_df(nzone, 
+                                                nstr
                                                 )
             # SPP_map.loc[:, vals.keys()] = pd.DataFrame([vals] * len(SPP_map)
             #                                            )
@@ -2851,12 +3102,14 @@ class CATHY:
         np.array describing the SoilPhysProp with rows corresponding to the layer.
 
         """
+        nzone = get_ci(self.dem_parameters, "nzone")  
+        nstr = get_ci(self.dem_parameters, "nstr")   
 
         # check number of zones
-        if self.dem_parameters["nzone"] > 1 or len(zone3d) > 0:
+        if nzone > 1 or len(zone3d) > 0:
             if len(SPP["PERMX"]) <= 1:
                 for i, spp in enumerate(SPP):
-                    SPP[spp] = SPP[spp] * np.ones(self.dem_parameters["nzone"])
+                    SPP[spp] = SPP[spp] * np.ones(nzone)
             else:
                 pass
 
@@ -2871,11 +3124,11 @@ class CATHY:
             if len(zone3d) == 0:
                 # loop over strates
                 # -----------------------------------------------------------------
-                for istr in range(self.dem_parameters["nstr"]):
+                for istr in range(nstr):
                     #  loop over zones (defined in the zone file)
                     # --------------------------------------------------------------
-                    LayeriZonei = np.zeros([self.dem_parameters["nzone"], 8])
-                    for izone in range(self.dem_parameters["nzone"]):
+                    LayeriZonei = np.zeros([nzone, 8])
+                    for izone in range(nzone):
                         for i, spp in enumerate(SPP):
                             LayeriZonei[izone, i] = SPP[spp][izone]
                     SoilPhysProp.append(LayeriZonei)
@@ -2886,10 +3139,10 @@ class CATHY:
                 self.update_zone(zones3d_def)
                 # loop over strates
                 # -----------------------------------------------------------------
-                for istr in range(self.dem_parameters["nstr"]):
+                for istr in range(nstr):
                     #  loop over zones (defined in the zone file)
                     # --------------------------------------------------------------
-                    LayeriZonei = np.zeros([self.dem_parameters["nzone"], 8])
+                    LayeriZonei = np.zeros([nzone, 8])
                     for izone in range(self.hapin["N"] * self.hapin["M"]):
                         for i, spp in enumerate(SPP):
                             flag_zone = int(np.ravel(zone3d[istr])[izone])
@@ -2906,13 +3159,13 @@ class CATHY:
                 for spp in SPP:
                     izoneSoil.append(SPP[spp])
                 izoneSoil = np.hstack(izoneSoil)
-                SoilPhysProp = np.tile(izoneSoil, (self.dem_parameters["nstr"], 1))
+                SoilPhysProp = np.tile(izoneSoil, (nstr, 1))
 
             # case where it is heterogeneous in depth (z)
             # ------------------------------------------------------
             else:
                 izoneSoil_per_layer = []
-                for stri in range(self.dem_parameters["nstr"]):
+                for stri in range(nstr):
                     izoneSoil = []
                     for spp in SPP:
                         izoneSoil.append(SPP[spp][stri])
@@ -3091,12 +3344,17 @@ class CATHY:
 
         """
         
+        # --- Load version-dependent configuration ---
+        cfg = VersionConfigManager("prepro", "update_veg_map", self.version)
+        veg_file_name = cfg.get("file_name", "veg_map")  # default fallback
+    
+
         if indice_veg is None:
             indice_veg, str_hd_rootmap = in_CT.read_root_map(os.path.join(
                                                                              self.workdir, 
                                                                              self.project_name, 
                                                                              self.input_dirname, 
-                                                                             "root_map"
+                                                                             veg_file_name
                                                                              )
                                                             )
         self.veg_map = indice_veg
@@ -3106,7 +3364,7 @@ class CATHY:
 
         with open(
             os.path.join(
-                self.workdir, self.project_name, self.input_dirname, "root_map"
+                self.workdir, self.project_name, self.input_dirname, veg_file_name
             ),
             "w+",
         ) as rootmapfile:
@@ -3155,8 +3413,8 @@ class CATHY:
         
         if hasattr(self,'DEM') is False:
             DEM_mat, DEM_header = in_CT.read_dem(
-                                        os.path.join(self.workdir, self.project_name, "prepro/dem"),
-                                        os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+                                        os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dem"),
+                                        os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dtm_13.val"),
                                     )
             
             self.DEM = DEM_mat
@@ -3632,10 +3890,12 @@ class CATHY:
         # mt.add_attribute_2mesh(data, mesh, kwargs)
         if hasattr(self, 'zone3d'):
             zones_markers_3d = self.zone3d
-            
+        
+        nstr = self.dem_parameters.get("nstr".casefold())
+
         if zones_markers_3d is None:
             zones_markers_3d = []
-            for l in range(self.dem_parameters['nstr']):
+            for l in range(nstr):
                 zones_markers_3d.append(np.ones([self.hapin["M"], self.hapin["N"]])*l)
             
         mt.add_markers_zone3d_2_mesh(
@@ -3775,6 +4035,9 @@ class CATHY:
         None.
 
         """
+        nzone = get_ci(self.dem_parameters, "nzone")  
+        nstr = get_ci(self.dem_parameters, "nstr")   
+        
         try:    
             df = self.read_outputs(filename=prop)
         except:
@@ -3796,13 +4059,13 @@ class CATHY:
                                               )
             cmap = plt_CT.show_spatialET(df_fort777, **kwargs)
             return cmap
-            
+
         elif prop == "WTD": # water table depth
         
             xyz = self.read_outputs('xyz')
             df_psi = self.read_outputs('psi')
             grid3d = self.read_outputs('grid3d')
-            nstr = self.dem_parameters['nstr']+1
+            nstr = nstr+1
             nnod = int(grid3d['nnod'])
             NPRT = np.shape(df_psi.values)[0]
             XYZsurface= xyz[['x','y','z']].iloc[0:nnod].to_numpy()    
@@ -3897,7 +4160,7 @@ class CATHY:
                 # in 2 dimensions
                 # -------------
                 zone_mat = in_CT.read_zone(
-                    os.path.join(self.workdir, self.project_name, "prepro/zone")
+                    os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/zone")
                 )
     
                 layer_nb = 0
@@ -3936,7 +4199,7 @@ class CATHY:
 
         elif ("dtm_" in prop) | ("lakes_map" in prop):
             raster_mat, header_raster = in_CT.read_raster(
-                os.path.join(self.workdir, self.project_name, "prepro/" + prop)
+                os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/" + prop)
             )
             if hasattr(self, "hapin") is False:
                 self.update_prepo_inputs()
@@ -4038,7 +4301,7 @@ class CATHY:
                                                               'output', 'grid3d')
                                                  )
             df, HSPATM, IETO, = in_CT.read_atmbc(
-                os.path.join(self.workdir, self.project_name, "input", filename),
+                os.path.join(self.workdir, self.project_name,  self.input_dirname, filename),
                 grid=self.grid3d
             )
             self.atmbc = {"HSPATM": HSPATM, 
@@ -4051,18 +4314,18 @@ class CATHY:
             return df
         elif filename == "dem":
             df = in_CT.read_dem(
-                os.path.join(self.workdir, self.project_name, "prepro/dem"),
-                os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+                os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dem"),
+                os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/dtm_13.val"),
             )
             return df
         elif filename == "root_map":
             df = in_CT.read_root_map(
-                os.path.join(self.workdir, self.project_name, "input", filename)
+                os.path.join(self.workdir, self.project_name, self.input_dirname, filename)
             )
             return df
         elif filename == "soil":
             dem_parm = in_CT.read_dem_parameters(
-                os.path.join(self.workdir, self.project_name, "input", "dem_parameters")
+                os.path.join(self.workdir, self.project_name, self.input_dirname, "dem_parameters")
             )           
             if 'MAXVEG' in kwargs:
                 MAXVEG = kwargs['MAXVEG']
@@ -4070,7 +4333,7 @@ class CATHY:
                 MAXVEG = self.MAXVEG
                 
             df = in_CT.read_soil(
-                os.path.join(self.workdir, self.project_name, "input", filename),
+                os.path.join(self.workdir, self.project_name,  self.input_dirname, filename),
                 dem_parm,
                 MAXVEG=MAXVEG,
             )
@@ -4078,12 +4341,12 @@ class CATHY:
             return df
         elif filename == "zone":
             df = in_CT.read_zone(
-                os.path.join(self.workdir, self.project_name, "prepro/zone")
+                os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/zone")
             )
             return df
         elif ("dtm_" in filename) | ("lakes_map" in filename):
             raster_mat, header_raster = in_CT.read_raster(
-                os.path.join(self.workdir, self.project_name, "prepro/" + filename)
+                os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/" + filename)
             )
             return raster_mat, header_raster
         else:
@@ -4572,3 +4835,14 @@ class CATHY:
         dict_backup = {name: backup_list[i] for i, name in enumerate(names)}
         return dict_backup
     
+
+    
+def get_ci(d, key, default=None):
+    """
+    Case-insensitive dictionary access.
+    """
+    key_cf = key.casefold()
+    for k, v in d.items():
+        if k.casefold() == key_cf:
+            return v
+    return default
