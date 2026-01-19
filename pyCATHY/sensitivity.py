@@ -10,9 +10,20 @@ Herman, J. and Usher, W. (2017) SALib: An open-source Python library for sensiti
 import matplotlib.pyplot as plt
 import numpy as np
 # from SALib.analyze import morris as ma
-from SALib.plotting import morris as mp
-from SALib.sample import morris as ms
 
+
+# Try importing SALib; if not available, set as None
+try:
+    from SALib.plotting import morris as mp
+    from SALib.sample import morris as ms
+    SALib_available = True
+except ImportError:
+    SALib_available = False
+
+
+# if not SALib_available:
+#     print("Warning: SALib not installed, returning empty problem dictionary.")
+#     return {}
 
 def define_Morris():
     """

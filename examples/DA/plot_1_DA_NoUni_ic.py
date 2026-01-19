@@ -22,15 +22,20 @@ from pyCATHY.plotters import cathy_plots as CTp
 nlay = 6
 scenario = {
             'per_name':['ic'],
-            'per_type': [[None]*nlay],
+            # 'per_type': [[None]*nlay],
+            'per_type': [['multiplicative']*nlay],
             'per_nom':[[-15]*nlay],
-            'per_mean':[[-15]*nlay],
+            # 'per_mean':[[-15]*nlay],
+            'per_mean':[[1]*nlay],
             'per_sigma': [[3.75]*nlay],
             'per_bounds': [[None]*nlay],
             'sampling_type': [['normal']*nlay],
             'transf_type':[[None]*nlay],
-            'listUpdateParm': ['St. var.']
+            'listUpdateParm': ['St. var.'],
+            'pert_control_name': ['layers']*nlay
             }
+
+
 
 #%% Create a CATHY project
 # -----------------------
@@ -87,12 +92,12 @@ for dp in list_pert:
 #%% Update ensemble and plot/save ic vtk
 # This in normally directly called when using run_DA_sequential()
 
+simuWithDA.ens_valid =  list(np.arange(0, simuWithDA.NENS))
 simuWithDA._create_subfolders_ensemble()
-simuWithDA.update_ENS_files(var_per_dict_stacked,
-                            var_per_dict_stacked.keys(),
-                            cycle_nb=0
-                            )
-
+simuWithDA.apply_ensemble_updates(var_per_dict_stacked,
+                                  var_per_dict_stacked.keys(),
+                                  cycle_nb=0
+                                  )
 #%% Plot results
 # -----------------------
 

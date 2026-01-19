@@ -138,87 +138,64 @@ def Archie_rho2sat(rho, rFluid, porosity, a=1.0, m=2.0, n=2.0):
 
 def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     """
-    https://github.com/usda-ars-ussl/rosetta-soil
+    Predict Van Genuchten hydraulic parameters using Rosetta pedotransfer function
+    and convert them to CATHY-compatible parameters.
 
-    The Rosetta pedotransfer function predicts five parameters for
-    the van Genuchten model of unsaturated soil hydraulic properties
 
-    - theta_r : residual volumetric water content
-    - theta_s : saturated volumetric water content
-    - log10(alpha) : retention shape parameter [log10(1/cm)]
-    - log10(n) : retention shape parameter
-    - log10(ksat) : saturated hydraulic conductivity [log10(cm/d)]
-
-    Model Code
-
-    - 2	sa, si, cl (SSC)
-    - 3	SSC, bulk density (BD)
-    - 4	SSC, BD, th33
-    - 5	SSC, BD, th33, th1500
-
-    With
-
-    - sa, si, cl are percentages of sand, silt and clay
-    - BD is soil bulk density (g/cm3)
-    - th33 is the soil volumetric water content at 33 kPa
-    - th1500 is the soil volumetric water content at 1500 kPa
-
+        array  |
+        column | parameter
+        -----------------
+           0   | theta_r, residual water content
+           1   | theta_s, saturated water content
+           2   | log10(alpha), van Genuchten 'alpha' parameter (1/cm)
+           3   | log10(npar), van Genuchten 'n' parameter
+           4   | log10(Ksat), saturated hydraulic conductivity (cm/day)
+           
     Parameters
     ----------
-    data : TYPE, optional
-        Sand, silt, and clay %. The default is [[20,20,60]].
+    data : list of lists
+        Sand, silt, clay percentages (SSC). Default is [[20, 20, 60]].
 
     Returns
     -------
-    VGP_fit : TYPE
-        DESCRIPTION.
-
+    VGP_predict_CATHY : dict
+        Dictionary containing CATHY-compatible hydraulic parameters:
+        - POROS, VGNCELL (n), VGM, VGRMCCELL (theta_r), VGPSATCELL (-1/alpha),
+          PERMX, PERMY, PERMZ, ELSTOR
     """
     from rosetta import rosetta, SoilData
 
-    # data = [[20,20,60,1.45]] # Sand, silt, and clay
+    # Prepare soil data
     soildata = SoilData.from_array(data)
-    mean, stdev, codes = rosetta(3, soildata)  # rosetta version 3
+    mean, stdev, codes = rosetta(3, soildata)  # Rosetta version 3
 
-    VGP_predict_names = [
-        "theta_r",
-        "theta_s",
-        "log10(alpha)",
-        "log10(n)",
-        "log10(ksat)",
-    ]
-    VGP_predict = {}
-    for i, VGP in enumerate(VGP_predict_names):
-        # print(i,VGP,mean[:, i])
-        VGP_predict[VGP] = abs(float(mean[:, i]))
-        VGP_predict[VGP + "_stdev"] = float(stdev[:, i])
+    # Extract Rosetta outputs
+    theta_r = float(mean[:, 0])
+    theta_s = float(mean[:, 1])
+    alpha = 10 ** float(mean[:, 2])  # 1/cm
+    n = 10 ** float(mean[:, 3])
+    ksat = 10 ** float(mean[:, 4])  # cm/day
 
-        # array  |
-        # column | parameter
-        # -----------------
-        #    0   | theta_r, residual water content (cm3/cm3)
-        #    1   | theta_s, saturated water content (cm3/cm3)
-        #    2   | log10(alpha), van Genuchten 'alpha' parameter (1/cm)
-        #    3   | log10(npar), van Genuchten 'n' parameter
-        #    4   | log10(Ksat), saturated hydraulic conductivity (cm/day)
 
+    # Compute CATHY parameters
     VGP_predict_CATHY = {}
-    VGP_predict_CATHY["POROS"] = 1- VGP_predict["theta_s"]
-    VGP_predict_CATHY["VGNCELL"] =  10 ** VGP_predict["log10(n)"]
-    VGP_predict_CATHY["VGRMCCELL"] = VGP_predict["theta_r"]
-    # VGP_predict_CATHY["VGPSATCELL"] = VGP_predict["theta_s"] #(1 / (10 ** VGP_predict["log10(alpha)"])) # * 1e-3  #  1/alpha
-    VGP_predict_CATHY["VGPSATCELL"] = (1 / (10 ** VGP_predict["log10(alpha)"])) # * 1e-3  #  1/alpha
-    VGP_predict_CATHY["PERMX"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-2 / 86400)
-    VGP_predict_CATHY["PERMY"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-2 / 86400)
-    VGP_predict_CATHY["PERMZ"] = 10 ** (VGP_predict["log10(ksat)"]) * (1e-2 / 86400)
-    VGP_predict_CATHY["ELSTOR"] = 1e-5
+    VGP_predict_CATHY["VGNCELL"] = n              # Van Genuchten n
+    VGP_predict_CATHY["VGRMCCELL"] = theta_r         # residual water content
+    # VGP_predict_CATHY["VGPSATCELL"] = -1 / alpha / 100.0  # convert from cm to m
+    # VGP_predict_CATHY["VGPSATCELL"] = -1 / alpha / 100.0  # convert from cm to m
+    VGP_predict_CATHY["VGPSATCELL"] =  alpha*100.0  # convert from cm-1 to m-1
+    
+    VGP_predict_CATHY["POROS"] = theta_s          # use theta_s as effective porosity
+    # Convert Ksat from cm/day to m/s: 1 cm/day = 1e-2 m / 86400 s
+    VGP_predict_CATHY["PERMX"] = ksat * (1e-2 / 86400)
+    VGP_predict_CATHY["PERMY"] = ksat * (1e-2 / 86400)
+    VGP_predict_CATHY["PERMZ"] = ksat * (1e-2 / 86400)
+    VGP_predict_CATHY["ELSTOR"] = 1e-5                # typical value
 
-    # import numpy as np
-
-    # np.exp(1.169) * (1e-3 / 86400)
-    # np.exp(2.808) * (1e-3 / 86400)
+    # VGP_predict_CATHY["VGM"] = 1 - 1 / n        # Van Genuchten m
 
     return VGP_predict_CATHY
+
 
 
 def past_authors(selec=0):

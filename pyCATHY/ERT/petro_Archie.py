@@ -52,6 +52,8 @@ def get_Archie_ens_i(ArchieParms, Ens_nb):
             ArchieParms2parse[p] = [ArchieParms[p][Ens_nb]]
     else:
         ArchieParms2parse = ArchieParms
+    
+    print(ArchieParms2parse)
     return ArchieParms2parse
 
 def SW_2_ER0_DA(
@@ -317,7 +319,7 @@ def SW_2_ERT_ERa_DA(
     df_ERT_predicted = pd.DataFrame(data=d)
 
 
-    # savefig = True
+    # savefig = False
     if savefig:
         print('backup figures')
         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True
@@ -383,6 +385,103 @@ def SW_2_ERT_ERa_DA(
     return df_ERT_predicted, df_Archie, mesh_CATHY_new_attr
 
 
+
+# def Archie_rho_DA(
+#     rFluid_Archie,
+#     sat,
+#     porosity,
+#     a_Archie=None,
+#     m_Archie=None,
+#     n_Archie=None,
+#     pert_sigma_Archie=None,
+#     verbose=True
+# ):
+#     """
+#     Compute apparent electrical resistivity (rho) at each mesh node using Archie’s law.
+#     Optionally adds Gaussian noise for data assimilation.
+
+#     Returns a list of resistivity arrays per soil zone. If porosity[i] is None, the corresponding
+#     entry in rho_list is None.
+#     """
+#     console = rich.console.Console(stderr=True, quiet=not verbose)
+
+#     n_soil_units = len(rFluid_Archie)
+#     if a_Archie is None:
+#         a_Archie = [1.0] * n_soil_units
+#     if m_Archie is None:
+#         m_Archie = [2.0] * n_soil_units
+#     if n_Archie is None:
+#         n_Archie = [2.0] * n_soil_units
+#     if pert_sigma_Archie is None:
+#         pert_sigma_Archie = [0.0] * n_soil_units
+
+#     if verbose:
+#         console.rule("------------- Archie transformation -------------")
+#         console.print(f"Number of soil zones: {n_soil_units}")
+#         for i in range(n_soil_units):
+#             console.print(
+#                 f"Zone {i}: sat shape {sat[i].shape if sat[i] is not None else None}, "
+#                 f"porosity shape {porosity[i].shape if porosity[i] is not None else None}, "
+#                 f"rFluid {rFluid_Archie[i]}"
+#             )
+
+#     # rho_list = []
+
+#     for i in range(n_soil_units):
+#         if porosity[i] is None:
+#             # rho_list.append(None)
+#             sigma = None
+#             continue
+
+#         # Archie law
+#         rho = rFluid_Archie[i] * a_Archie[i] * porosity[i] ** (-m_Archie[i]) * sat[i] ** (-n_Archie[i])
+#         sigma = 1 / rho
+
+#         # Add Gaussian noise for DA
+#         if pert_sigma_Archie[i] > 0:
+#             try:
+#                 if sigma.ndim == 2:
+#                     for zonei in range(sigma.shape[0]):
+#                         noise = np.random.normal(
+#                             0,
+#                             pert_sigma_Archie[i] * sigma[zonei, :],
+#                             sigma.shape[1]
+#                         )
+#                         sigma[zonei, :] += noise
+#                 else:
+#                     noise = np.random.normal(
+#                         0,
+#                         pert_sigma_Archie[i] * sigma,
+#                         sigma.shape
+#                     )
+#                     sigma += noise
+#             except Exception:
+#                 noise = np.random.normal(
+#                     0,
+#                     pert_sigma_Archie[i] * sigma,
+#                     sigma.shape
+#                 )
+#                 sigma += noise
+
+#             if i == 0 and verbose:
+#                 console.rule(":octopus: Parameter perturbation :octopus:", style="green")
+#                 console.print(
+#                     f"Archie perturbation for fwd model\n"
+#                     f"rFluid_Archie: {rFluid_Archie}\n"
+#                     f"pert_sigma_Archie: {pert_sigma_Archie}\n"
+#                     f"Number of zones: {n_soil_units}",
+#                     style="green",
+#                 )
+#                 console.rule("", style="green")
+
+#         # rho_list.append(1 / sigma)
+
+#     # if verbose:
+#         # max_rho = max(np.max(rho) for rho in rho_list if rho is not None)
+#         # console.print(f"Max resistivity after Archie: {max_rho}")
+
+#     return 1 / sigma
+
 def Archie_rho_DA(
     rFluid_Archie=[],
     sat=[],
@@ -431,58 +530,63 @@ def Archie_rho_DA(
     # -----------------------------------------------
     for i in range(len(rFluid_Archie)):  # loop over Archie heterogeneity i.e. soil zones
         # print('!!! shortcut sat[:] is not valid for heteregeneous soil!')
-        rho = (
-            rFluid_Archie[i]
-            * a_Archie[i]
-            * porosity[i] ** (-m_Archie[i])
-            * sat[i] ** (-n_Archie[i])
-        )
-        sigma = 1 / rho
-        
-        print(f'min RHO converted SW nodes: {np.min(rho)}')
-        print(f'max RHO converted SW nodes: {np.max(rho)}')
-        print(f'nb of porosities in the soil: {len(np.unique(porosity))}')
-        print(f'sigma: {np.shape(sigma)}')
-        # sat[0]
-        try: # CASE WITH DATA ASSIMILATION
-            for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
-                for meas_nb in range(np.shape(sigma)[1]):  # Loop over mesh nodes
+        if porosity[i] is not None: #Case for an ensemble non valid
+            rho = (
+                rFluid_Archie[i]
+                * a_Archie[i]
+                * porosity[i] ** (-m_Archie[i])
+                * sat[i] ** (-n_Archie[i])
+            )
+            sigma = 1 / rho
+            
+            print(f'min RHO converted SW nodes: {np.min(rho)}')
+            print(f'max RHO converted SW nodes: {np.max(rho)}')
+            # print(f'nb of porosities in the soil: {len(np.unique(porosity))}')
+            if np.ndim(porosity) > 0:  # Check if it's array-like (has dimensions)
+                porosity_flat = np.array(porosity).flatten()
+                print(f'nb of porosities in the soil: {len(np.unique(porosity_flat))}')
+            else:
+                print(f'nb of porosities in the soil: 1 (single value: {porosity})')
+                
+            try: # CASE WITH DATA ASSIMILATION
+                for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
+                    for meas_nb in range(np.shape(sigma)[1]):  # Loop over mesh nodes
+                        # See eq. 4.4 thesis Isabelle p.97
+                        # ------------------------------------
+                        noise = np.random.normal(
+                            0,
+                            (pert_sigma_Archie[i] * (sigma[ti, meas_nb])) ** 2,
+                            len(sigma[ti, :]),
+                        )
+                    sigma[ti, :] = sigma[ti, :] + noise
+                    
+                if i == 0: # to avoid displaying this for all the soil layers
+                    console.rule(
+                        ":octopus: Parameter perturbation :octopus:", style="green"
+                    )
+                    console.print(
+                        """
+                                    Archie perturbation for fwd model \n
+                                    Archie rFluid: {} \n
+                                    Archie pert_sigma: {}  \n
+                                    Nb of zones (need to check this): {}
+                                    """.format(
+                            rFluid_Archie, pert_sigma_Archie, len(rFluid_Archie)
+                        ),
+                        style="green",
+                    )
+                    console.rule("", style="green")
+            except:
+                if i == 0:
+                    print('Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95')
+                for meas_nb in range(len(sigma)):  # Loop over mesh nodes
                     # See eq. 4.4 thesis Isabelle p.95
                     # ------------------------------------
                     noise = np.random.normal(
-                        0,
-                        (pert_sigma_Archie[i] * (sigma[ti, meas_nb])) ** 2,
-                        len(sigma[ti, :]),
-                    )
-                sigma[ti, :] = sigma[ti, :] + noise
-                
-            if i == 0: # to avoid displaying this for all the soil layers
-                console.rule(
-                    ":octopus: Parameter perturbation :octopus:", style="green"
-                )
-                console.print(
-                    """
-                                Archie perturbation for fwd model \n
-                                Archie rFluid: {} \n
-                                Archie pert_sigma: {}  \n
-                                Nb of zones (need to check this): {}
-                                """.format(
-                        rFluid_Archie, pert_sigma_Archie, len(rFluid_Archie)
-                    ),
-                    style="green",
-                )
-                console.rule("", style="green")
-        except:
-            if i == 0:
-                print('Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95')
-            for meas_nb in range(len(sigma)):  # Loop over mesh nodes
-                # See eq. 4.4 thesis Isabelle p.95
-                # ------------------------------------
-                noise = np.random.normal(
-                    0, (pert_sigma_Archie[i] * (sigma[meas_nb])) ** 2, 1
-                )  # See eq. 4.4 thesis Isabelle p.95
-                sigma[meas_nb] = sigma[meas_nb] + noise
-
-    # print('max res after Archie')
-    # print(np.max(1 / sigma))
+                        0, (pert_sigma_Archie[i] * (sigma[meas_nb])) ** 2, 1
+                    )  # See eq. 4.4 thesis Isabelle p.95
+                    sigma[meas_nb] = sigma[meas_nb] + noise
+    
+    print('max res after Archie')
+    print(np.max(1 / sigma))
     return 1 / sigma

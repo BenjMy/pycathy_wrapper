@@ -229,7 +229,7 @@ def perturbate(simu_DA, scenario, NENS,
         nzones = kwargs.pop('nlayers')
     else:
         nlayers = len(df_SPP.index.get_level_values(1).unique())
-        nlayers_PERMX = len(df_SPP['PERMX'].unique())
+        # nlayers_PERMX = len(df_SPP['PERMX'].unique())
 
     #%%
     list_pert = []
@@ -299,7 +299,8 @@ def perturbate(simu_DA, scenario, NENS,
                                 clip_min,clip_max,
                                 NENS,
                                 per_type=scenario_per_type,
-                                transf_type = transf_type
+                                transf_type = transf_type,
+                                pert_control_name=pert_control_name
                                 )
                     
                     list_pert.append(ic)
@@ -481,9 +482,9 @@ def perturbate(simu_DA, scenario, NENS,
         # archie_units = ["", "", "", ""]
         archie_units = {
             "porosity": "-",                   # dimensionless (volume fraction)
-            "a": "-",                          # tortuosity factor (dimensionless)
-            "m": "-",                          # cementation exponent (dimensionless)
-            "n": "-",                          # saturation exponent (dimensionless)
+            "a_Archie": "-",                          # tortuosity factor (dimensionless)
+            "m_Archie": "-",                          # cementation exponent (dimensionless)
+            "n_Archie": "-",                          # saturation exponent (dimensionless)
             "rFluid_Archie": "ohm.m",           # resistivity of water
         }
 
@@ -972,11 +973,11 @@ def Archie_pert_rules(
         )
     elif "m" in type_parm:
         parm_sampling = sampling_dist_trunc(
-            myclip_a=1.3, myclip_b=2.5, ensemble_size=ensemble_size, loc=mean, scale=sd
+            myclip_a=1.3, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
         )
     elif "n" in type_parm:
         parm_sampling = sampling_dist_trunc(
-            myclip_a=2.5, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
+            myclip_a=1.3, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
         )
     else:
         parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
@@ -1064,13 +1065,22 @@ def VG_pert_rules(
     #     **kwargs
     # )
 
-    parm_sampling = sampling_dist_trunc(
-        myclip_a=parm["clip_min"],
-        myclip_b=parm["clip_max"],
-        ensemble_size=ensemble_size,
-        loc= parm['mean'],
-        scale=sd,
-    )
+    if parm["clip_min"] is not None:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=parm["clip_min"],
+            myclip_b=parm["clip_max"],
+            ensemble_size=ensemble_size,
+            loc= parm['mean'],
+            scale=sd,
+        )
+    else:
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=-np.Inf,
+            myclip_b=np.Inf,
+            ensemble_size=ensemble_size,
+            loc= parm['mean'],
+            scale=sd,
+        )
             
     # --- Perturbation (physical space) ---
     v_array = perturbate_dist(
@@ -1268,13 +1278,14 @@ def build_dict_attributes_pert(
         # parm_per_array = np.tile(parm_per_array,nb_surf_zones)
         var_per_2add[type_parm]["surf_zones_param"] = kwargs["surf_zones_param"]
     return var_per_2add
-
-
+        
 def perturbate_parm_by_layers(type_parm,
                               ensemble_size,
                               nlayers,
                               mean=[],
                               sd=[],
+                              per_type=None,
+                              nominal=[]
                               ):
             
         # Define the number of layers and the size of the ensemble
@@ -1292,6 +1303,15 @@ def perturbate_parm_by_layers(type_parm,
                                           loc=mean, 
                                           scale=sd
                                           )
+        
+        parm_mat = np.ones(ensemble_size) * nominal
+        if per_type == None:
+            pressure_head_withLayers = pressure_head_withLayers
+        if per_type == "multiplicative":
+            pressure_head_withLayers = parm_mat * pressure_head_withLayers
+        elif per_type == "additive":
+            pressure_head_withLayers = parm_mat + pressure_head_withLayers
+
         return pressure_head_withLayers
 
         
@@ -1376,6 +1396,8 @@ def perturbate_parm(
                                                         nlayers,
                                                         mean,
                                                         sd,
+                                                        per_type=parm['per_type'],
+                                                        nominal=parm['nominal']     
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
@@ -1391,6 +1413,8 @@ def perturbate_parm(
                                                                   nlayers,
                                                                   mean,
                                                                   sd,
+                                                                  per_type=parm['per_type'],
+                                                                  nominal=parm['nominal']     
                                                                   )
             key_root = re.split("(\d+)", type_parm)
             parm_sampling = param_withLayers[parm_key_nb]
@@ -1433,17 +1457,33 @@ def perturbate_parm(
     # ----------------------------------------------------------------------
     # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
     elif "VG" in type_parm:  # van Genuchten retention curves
-        parm_sampling, parm_per_array = VG_pert_rules(
-                                                        var_per_2add,
-                                                        parm,
-                                                        type_parm,
+
+        if parm['pert_control_name']=='layers':
+            param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
+                                                        nlayers,
                                                         mean,
                                                         sd,
-                                                        per_type,
-                                                        sampling_type,
-                                                        **kwargs,
-                                                    )
+                                                        per_type=parm['per_type'],
+                                                        nominal=parm['nominal']     
+                                                        )
+            parm_sampling = param_withLayers[parm_key_nb]
+            parm_per_array = param_withLayers[parm_key_nb]
+            var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
+        else:
+            parm_sampling, parm_per_array = VG_pert_rules(
+                                                            var_per_2add,
+                                                            parm,
+                                                            type_parm,
+                                                            ensemble_size,
+                                                            mean,
+                                                            sd,
+                                                            per_type,
+                                                            sampling_type,
+                                                            **kwargs,
+                                                        )
+
+
 
     # Time dependant perturbation
     # --------------------------------------------------------------------
@@ -1466,11 +1506,13 @@ def perturbate_parm(
 
         if parm['pert_control_name']=='layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
-                                                                  ensemble_size,
-                                                                  nlayers,
-                                                                  mean,
-                                                                  sd,
-                                                                  )
+                                                        ensemble_size,
+                                                        nlayers,
+                                                        mean,
+                                                        sd,
+                                                        per_type=parm['per_type'],
+                                                        nominal=parm['nominal']
+                                                        )
             key_root = re.split("(\d+)", type_parm)
     
             parm_sampling = param_withLayers[parm_key_nb]
@@ -1496,17 +1538,33 @@ def perturbate_parm(
     # For all other types of perturbation
     # --------------------------------------------------------------------
     else:
-        if var_per_2add[type_parm]['clip_min'] is not None:
-            parm_sampling = sampling_dist_trunc(
-                myclip_a=var_per_2add[type_parm]["clip_min"],
-                myclip_b=var_per_2add[type_parm]["clip_max"],
-                ensemble_size=ensemble_size,
-                loc= parm['mean'],
-                scale=sd,
-            )
+        if parm['pert_control_name']=='layers':
+            param_withLayers = perturbate_parm_by_layers(type_parm,
+                                                        ensemble_size,
+                                                        nlayers,
+                                                        mean,
+                                                        sd,
+                                                        per_type=parm['per_type'],
+                                                        nominal=parm['nominal']                                                     
+                                                        )
+            parm_sampling = param_withLayers[parm_key_nb]
+            parm_per_array = param_withLayers[parm_key_nb]
+            var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
         else:
-            parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
-        parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+            if var_per_2add[type_parm]['clip_min'] is not None:
+                parm_sampling = sampling_dist_trunc(
+                    myclip_a=var_per_2add[type_parm]["clip_min"],
+                    myclip_b=var_per_2add[type_parm]["clip_max"],
+                    ensemble_size=ensemble_size,
+                    loc= parm['mean'],
+                    scale=sd,
+                )
+            else:
+                parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
+            parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
+    
+                
+            
 
     # build dictionnary of perturbated variable
     # --------------------------------------------------------------------

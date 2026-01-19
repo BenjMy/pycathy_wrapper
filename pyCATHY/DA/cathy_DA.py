@@ -119,6 +119,47 @@ def run_analysis(
         id_state = 1
 
 
+    Sakov = kwargs.pop('Sakov', True)
+    if Sakov is True:
+        warnings.warn("Sakov is True")
+        
+    L = kwargs.pop('localisationMatrix', None)
+    if L is None:
+        warnings.warn("L not provided. None as default.")
+
+    inflate_states = kwargs.pop('inflation', None)
+    if inflate_states is None:
+        inflate_states = 1.0
+        warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+
+    inflate_params = kwargs.pop('inflate_params', None)
+    if inflate_params is None:
+        inflate_params = 1.0
+        warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+
+    jitter_params = kwargs.pop('jitter_params', None)
+    if jitter_params is None:
+        jitter_params = 0.0
+        warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+            
+    if DA_type == "pf":       
+        Analysis = pf.particle_filter_analysis(
+                                                data, data_cov, param, 
+                                                ensembleX[id_state], 
+                                                prediction,
+                                                use_enkf_update=False,
+                                                resample_threshold=0.5,
+                                                jitter_std_param=0.01,
+                                                jitter_std_state=0.05
+                                            )
+        
+        print(f"Final N_eff: {Analysis['n_eff']:.1f}")
+        print(f"Resampled: {Analysis['resampled']}")
+        
+        return Analysis
+
+
+
     if DA_type == "enkf_Evensen2009":
         Analysis = enkf.enkf_analysis(data,
                                data_cov,
@@ -152,31 +193,6 @@ def run_analysis(
         return Analysis
 
     if DA_type == "enkf_analysis_localized_with_inflation":
-        
-        Sakov = kwargs.pop('Sakov', True)
-        if Sakov is True:
-            warnings.warn("Sakov is True")
-            
-        L = kwargs.pop('localisationMatrix', None)
-        if L is None:
-            warnings.warn("L not provided. None as default.")
-    
-        inflate_states = kwargs.pop('damping', None)
-        if inflate_states is None:
-            inflate_states = 1.0
-            warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
-    
-        inflate_params = kwargs.pop('inflate_params', None)
-        if inflate_params is None:
-            inflate_params = 1.0
-            warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
-    
-        jitter_params = kwargs.pop('jitter_params', None)
-        if jitter_params is None:
-            jitter_params = 0.0
-            warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
-
-
         Analysis = enkf.enkf_analysis_localized_with_inflation(data,
                                                                data_cov,
                                                                ensembleX[id_state],
@@ -357,7 +373,7 @@ class DA(CATHY):
                            **kwargs) # to create the processor exe
         callexe = "./" + self.processor_name
 
-        self.damping = kwargs.get("damping", 1)
+        self.inflation = kwargs.get("inflation", 1)
         self.localisation = kwargs.get("localisation", None)
         threshold_rejected = kwargs.get("threshold_rejected", 10)
         self.verbose = kwargs.get("verbose", False)
@@ -464,9 +480,9 @@ class DA(CATHY):
         self.console.print(
             r""":chart_with_upwards_trend: [b]Analysis[/b]:
                                - DA type: {}
-                               - Damping: {}
+                               - Inflation: {}
                            """.format(
-                DA_type, self.damping
+                DA_type, self.inflation
             )
         )
 
@@ -640,9 +656,9 @@ class DA(CATHY):
                 self.console.print(
                     r""":chart_with_upwards_trend: [b]Analysis[/b]:
                                        - DA type: {}
-                                       - Damping: {}
+                                       - Inflation: {}
                                    """.format(
-                        DA_type, self.damping
+                        DA_type, self.inflation
                     )
                 )
                 (
@@ -1208,24 +1224,11 @@ class DA(CATHY):
                                             list_update_parm,
                                             [ensemble_psi_valid, ensemble_sw_valid],
                                             prediction_valid_log,
-                                            alpha=self.damping,
+                                            alpha=self.inflation,
                                             localisationMatrix =localisationMatrix
                                         )
             
-            
-            # def run_analysis(
-            #     DA_type,
-            #     data,
-            #     data_cov,
-            #     param,
-            #     list_update_parm,
-            #     ensembleX,
-            #     prediction,
-            #     default_state="psi",
-            #     **kwargs,
-            # ):
-                
-                
+
 
         else:
             
@@ -1257,7 +1260,7 @@ class DA(CATHY):
                                             list_update_parm,
                                             [ensemble_psi_valid, ensemble_sw_valid],
                                             prediction_valid,
-                                            alpha=self.damping,
+                                            alpha=self.inflation,
                                             localisationMatrix =localisationMatrix
                                         )
                 
@@ -1269,7 +1272,8 @@ class DA(CATHY):
 
         # plot ensemble covariance matrices and changes (only for ENKF)
         # ---------------------------------------------------------------------
-        if len(result_analysis) > 2:
+        if hasattr(result_analysis, '__len__') and len(result_analysis) > 2 and DA_type != 'pf':
+        # if len(result_analysis) > 2 and (DA_type != 'pf'):
 
             [
                 A,
@@ -1313,7 +1317,11 @@ class DA(CATHY):
 
 
         else:
-            [analysis, analysis_param] = result_analysis
+            if DA_type != 'pf':
+                [analysis, analysis_param] = result_analysis
+            else:
+                [analysis, analysis_param] = result_analysis['Analysis'], result_analysis['Analysisparam'].T
+
 
         # Back-transformation of the parameters
         # ---------------------------------------------------------------------
@@ -1802,6 +1810,8 @@ class DA(CATHY):
         
         pert_control_name = dict_parm_pert[key]['pert_control_name']
         update_value = dict_parm_pert[key][update_key][ens_nb]
+        # update_value = dict_parm_pert['SATCELL_VG3'][update_key][ens_nb]
+        # update_value = dict_parm_pert['SATCELL_VG2'][update_key][ens_nb]
         param_name = key_root[0]
         index = int(key_root[1]) if len(key_root) > 1 else None
     
@@ -1884,6 +1894,46 @@ class DA(CATHY):
 
 
         return df_SPP_2fill
+
+
+                    
+                    
+    def update_archie_parameter(self,
+                                Archie_p_names,
+                                key_root,
+                                update_key,
+                                ens_nb,
+                                dict_parm_pert,
+                                key,
+    ):
+        """
+        Update a single Archie parameter for a given ensemble member.
+        """
+        self.console.print(
+            ":arrows_counterclockwise: [b]Update Archie parameters[/b]"
+        )
+
+        idArchie = Archie_p_names.index(key_root[0])
+
+        # pert_control_name = dict_parm_pert[key_root[0]]['pert_control_name']
+        # update_value = dict_parm_pert[key_root[0]][update_key][ens_nb]
+
+        if len(self.Archie_parms_mat_ens) == 0:
+            for p in Archie_p_names:
+                if len(self.Archie_parms[p]) != self.NENS:
+                    self.Archie_parms[p] = list(
+                        self.Archie_parms[p] * np.ones(self.NENS)
+                    )
+            self.Archie_parms_mat_ens = np.zeros([len(Archie_p_names), self.NENS])
+            self.Archie_parms_mat_ens[:] = np.nan
+       
+        self.Archie_parms_mat_ens[idArchie, ens_nb] = dict_parm_pert[key][update_key][ens_nb]
+
+        if np.isnan(self.Archie_parms_mat_ens[idArchie, :]).any() == False:
+            self.Archie_parms[key_root[0]] = list(self.Archie_parms_mat_ens[idArchie, :])
+            print(f'New Archie parm: {self.Archie_parms[key_root[0]]}ˇ')
+    
+        # return Archie_parms, Archie_parms_mat_ens
 
     def apply_ensemble_updates(self, dict_parm_pert, list_parm2update, **kwargs):
         """
@@ -1980,9 +2030,9 @@ class DA(CATHY):
         # Initialise matrice of ensemble
         # ------------------------------
         Feddes_withPertParam = []  # matrice of ensemble for Feddes parameters
-        VG_parms_mat_ens = []  # matrice of ensemble for VG parameters
+        # VG_parms_mat_ens = []  # matrice of ensemble for VG parameters
         VG_p_possible_names = ["n_VG", "thetar_VG", "alpha_VG", "SATCELL_VG"]
-        VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
+        # VG_p_possible_names_positions_in_soil_table = [5, 6, 7, 7]
 
         # SPP_possible_names = ["porosity", "ks"]
         ks_het_ens = []  # matrice of ensemble for heterogeneous SPP parameters
@@ -1991,7 +2041,7 @@ class DA(CATHY):
         
         # Archie
         # -------
-        Archie_parms_mat_ens = []  # matrice of ensemble for Archie parameters
+        self.Archie_parms_mat_ens = []  # matrice of ensemble for Archie parameters
         Archie_p_names = [
             "porosity",
             "rFluid_Archie",
@@ -2146,6 +2196,15 @@ class DA(CATHY):
                                                        ens_nb,
                                                        shellprint_update
                                                        )
+                    
+                    self.update_archie_parameter(Archie_p_names,
+                                                 key_root,
+                                                 update_key,
+                                                 ens_nb,
+                                                 dict_parm_pert,
+                                                 key,
+                                                 )
+                    
 
                 # VG parameters update
                 # --------------------------------------------------------------
@@ -2199,30 +2258,15 @@ class DA(CATHY):
                 # Archie_p update
                 # --------------------------------------------------------------
                 elif key_root[0] in Archie_p_names:
-                    self.console.print(
-                        ":arrows_counterclockwise: [b]Update Archie parameters[/b]"
-                    )
-
-                    idArchie = Archie_p_names.index(key_root[0])
-
-                    # pert_control_name = dict_parm_pert[key_root[0]]['pert_control_name']
-                    # update_value = dict_parm_pert[key_root[0]][update_key][ens_nb]
-
-                    if len(Archie_parms_mat_ens) == 0:
-                        for p in Archie_p_names:
-                            if len(self.Archie_parms[p]) != self.NENS:
-                                self.Archie_parms[p] = list(
-                                    self.Archie_parms[p] * np.ones(self.NENS)
-                                )
-                        Archie_parms_mat_ens = np.zeros([len(Archie_p_names), self.NENS])
-                        Archie_parms_mat_ens[:] = np.nan
-                   
-                    Archie_parms_mat_ens[idArchie, ens_nb] = dict_parm_pert[key][update_key][ens_nb]
-
-                    if np.isnan(Archie_parms_mat_ens[idArchie, :]).any() == False:
-                        self.Archie_parms[key_root[0]] = list(Archie_parms_mat_ens[idArchie, :])
-                        print(f'New Archie parm: self.Archie_parms[key_root[0]]')
-
+                    
+                    self.update_archie_parameter(Archie_p_names,
+                                                 key_root,
+                                                 update_key,
+                                                 ens_nb,
+                                                 dict_parm_pert,
+                                                 key,
+                                                 )
+                    
                 else:
                     # variable perturbated to ommit: state
                     var_pert_to_ommit = ["St. var."]
@@ -2281,9 +2325,9 @@ class DA(CATHY):
             return data2add
 
         if time_ass is None:
-            # time_ass = self.count_DA_cycle + 1  # + 1 since we compare the predicted observation at ti +1
+            time_ass = self.count_DA_cycle  # + 1 since we compare the predicted observation at ti +1
             print('!!!!Take care here not sure I am taking the right time!!!')
-            time_ass = self.count_DA_cycle   # + 1 since we compare the predicted observation at ti +1
+            # time_ass = self.count_DA_cycle + 1 # ince we compare the predicted observation at ti +1
 
         data = []
         # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
@@ -2397,14 +2441,14 @@ class DA(CATHY):
         Hx_ens = []  # matrice of predicted observation for each ensemble realisation
         for ens_nb in self.ens_valid:  # loop over ensemble files
         
-            path_fwd_CATHY_i = os.path.join(
+            forward_path_i = os.path.join(
                 self.workdir,
                 self.project_name,
                 f"DA_Ensemble/cathy_{ens_nb + 1}",
             )
                 
             SPP_ensi, _ = in_CT.read_soil(
-                os.path.join(path_fwd_CATHY_i, self.input_dirname, 'soil'),
+                os.path.join(forward_path_i, self.input_dirname, 'soil'),
                 self.dem_parameters,
                 self.cathyH["MAXVEG"]
             )
@@ -2415,7 +2459,8 @@ class DA(CATHY):
                           to_nodes=False,
               )
               
-            # print('ens nb:' + str(ens_nb))
+            print('ens nb:' + str(ens_nb))
+            print('mean porosity:' + str(np.mean(POROS_mesh_nodes_ensi)))
 
             path_fwd_CATHY = os.path.join(
                 self.workdir, self.project_name, "DA_Ensemble/cathy_" + str(ens_nb + 1)
@@ -2536,23 +2581,23 @@ class DA(CATHY):
         
         if parallel:
             if "ERT" in obs_key:
-                path_fwd_CATHY_list = []  # list of ensemble paths
-                POROS_mesh_nodes_ensi_list = np.empty(self.NENS, dtype=object)  # preallocate object array
-                # POROS_mesh_nodes_ensi_list = []
+                ensemble_fwd_paths = []  # list of ensemble paths
+                ensemble_porosity_arrays = np.ones(self.NENS, dtype=object)*self.Archie_parms['porosity']  # preallocate object array
+                # ensemble_porosity_arrays = []
                 print(self.ens_valid)
                 
                 for ens_nb in self.ens_valid:  # loop over ensemble files
                     # Build path to ensemble
-                    path_fwd_CATHY_i = os.path.join(
+                    forward_path_i = os.path.join(
                         self.workdir,
                         self.project_name,
                         f"DA_Ensemble/cathy_{ens_nb + 1}",
                     )
-                    path_fwd_CATHY_list.append(path_fwd_CATHY_i)
+                    ensemble_fwd_paths.append(forward_path_i)
             
                     # Read soil properties
                     SPP_ensi, _ = in_CT.read_soil(
-                        os.path.join(path_fwd_CATHY_i, self.input_dirname, 'soil'),
+                        os.path.join(forward_path_i, self.input_dirname, 'soil'),
                         self.dem_parameters,
                         self.cathyH["MAXVEG"]
                     )
@@ -2566,16 +2611,12 @@ class DA(CATHY):
                     )
             
                     # Store porosity array for this ensemble
-                    POROS_mesh_nodes_ensi_list[ens_nb] = POROS_mesh_nodes_ensi
-                    # POROS_mesh_nodes_ensi_list.append(POROS_mesh_nodes_ensi)
-                    
-                    # if POROS_mesh_nodes_ensi is None or len(POROS_mesh_nodes_ensi) == 0:
-                    #     print("Warning: first ensemble porosity is empty or None")
-                    # else:
-                    #     print("Nb of porosity used in Archie in the ensemble:", len(np.unique(POROS_mesh_nodes_ensi)))
+                    ensemble_porosity_arrays[ens_nb] = POROS_mesh_nodes_ensi
         
                 # Optional: check the first ensemble
-                print('Nb of porosity used in Archie (first ensemble):', len(np.unique(POROS_mesh_nodes_ensi_list[0])))
+                first_porosity = ensemble_porosity_arrays[0]
+                unique_count = 0 if first_porosity is None else len(np.unique(np.round(first_porosity)))
+                print("Dimension of porosity used in Archie (first ensemble):", unique_count)
 
 
         for i, obs_key in enumerate(obskey2map):
@@ -2609,13 +2650,8 @@ class DA(CATHY):
                     )
                     self.console.rule("", style="green")
 
-                # self.mesh_pv_attributes['POROS']
-                # self.mesh_pv_attributes["node_markers_layers"]
-                # SPP_ensi['POROS'].groupby('layer').mean().to_list()
-                # SPP_ensi['POROS'].groupby('zone').mean().to_list()
-                print("Shape of POROS_mesh_nodes_ensi_list:", np.shape(POROS_mesh_nodes_ensi_list))
-                print("Shape of path_fwd_CATHY_list:", np.shape(path_fwd_CATHY_list))
-
+                print("Shape of ensemble_porosity_arrays:", np.shape(ensemble_porosity_arrays))
+                print("Shape of ensemble_fwd_paths:", np.shape(ensemble_fwd_paths))
             
                 if parallel:
                     Hx_ens_ERT, df_Archie, mesh2test = mapper._map_ERT_parallel(
@@ -2623,8 +2659,8 @@ class DA(CATHY):
                                                                     self.count_DA_cycle,
                                                                     self.project_name,
                                                                     self.Archie_parms,
-                                                                    POROS_mesh_nodes_ensi_list,
-                                                                    path_fwd_CATHY_list,
+                                                                    ensemble_porosity_arrays,
+                                                                    ensemble_fwd_paths,
                                                                     list_assimilated_obs="all",
                                                                     default_state="psi",
                                                                     DA_cnb=self.count_DA_cycle,
@@ -2632,7 +2668,8 @@ class DA(CATHY):
                                                                     verbose=True,
                                                                     )
                     # mesh2test.array_names
-
+                    # df_Archie.columns
+                    # self.Archie_parms
                     df_Archie_new = mapper._add_2_ensemble_Archie(self.df_Archie,
                                                                   df_Archie
                                                                   )
@@ -2807,8 +2844,8 @@ class DA(CATHY):
                         int(df_atmbc.time.iloc[self.count_atmbc_cycle]),
                         int(df_atmbc.time.iloc[self.count_atmbc_cycle + 1]),
                     ]
-            else:
-                time_window_atmbc = [self.ENS_times[0], self.ENS_times[1]]
+            # else:
+            #     time_window_atmbc = [self.ENS_times[0], self.ENS_times[1]]
 
             df_atmbc_window = df_atmbc[
                 (df_atmbc["time"] >= time_window_atmbc[0])
