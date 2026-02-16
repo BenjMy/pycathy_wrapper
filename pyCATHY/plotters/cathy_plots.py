@@ -1042,7 +1042,7 @@ def show_raster(
     return pmesh
 
 
-def show_zone(zone_map, **kwargs):
+def show_zone(zone_map, ax=None, **kwargs):
     """
     View from top of the vegetation type (equivalent somehow to root map)
     Parameters
@@ -1057,7 +1057,9 @@ def show_zone(zone_map, **kwargs):
     if "cmap" in kwargs:
         cmap = kwargs["cmap"]
 
-    fig, ax = plt.subplots()
+    if ax is None:
+        fig, ax = plt.subplots()
+        
     cf = ax.pcolormesh(zone_map, edgecolors="black", cmap=cmap)
     # cbar = fig.colorbar(cf, ax=ax, label='indice of zones')
 

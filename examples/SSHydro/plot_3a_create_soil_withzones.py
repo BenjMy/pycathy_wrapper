@@ -51,15 +51,19 @@ zones[:,2:4] = 3
 zones[:,4:6] = 4
 
 simu.update_zone(zones)
-simu.show_input('zone')
+
+
+fig, ax = plt.subplots()
+simu.show_input('zone',ax=ax)
+
 
 #%% Create an empty dataframe of SPP and set default SPP properties 
 
 df_SPP_map = simu.init_soil_SPP_map_df(nzones=4,nstr=15)
-SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
+df_SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
 
 #%% Update soil file
 
-simu.update_soil(SPP_map=SPP_map)
+simu.update_soil(SPP_map=df_SPP_map)
 
-
+print(df_SPP_map.head())

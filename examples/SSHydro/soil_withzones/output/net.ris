@@ -451,7 +451,7 @@
 
      NNOD   (# OF NODES IN 2-D MESH)         =    441
      NTRI   (# OF TRIANGLES IN 2-D MESH)     =    800
-     NZONE  (NUMERO ZONE (MATERIAL TYPES))   =     20
+     NZONE  (NUMERO ZONE (MATERIAL TYPES))   =      4
      NVEG   (NUMERO ZONE VEG (VEG TYPES))    =      1
      NSTR   (NUMERO STRATI)                  =     15
      N1     (NUM. MAX CONTATTI NODALI)       =     25
