@@ -1,9 +1,9 @@
 """
-Update with spatially and temporally distributed atmospheric boundary conditions (bc)
-====================================================================================
+Update with spatially and temporally distributed atmospheric boundary conditions (bc) andwith no-data
+=====================================================================================================
 
 This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially
-and temporally distributed data in a hydrological model.
+and temporally distributed data in a hydrological model with nodata areas.
 
 Reference:
 Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface
@@ -35,7 +35,6 @@ from pyCATHY.plotters import cathy_plots as cplt
 # Define the project directory and model name. This example uses 'atmbc_spatially_from_weill'.
 path2prj = "../SSHydro/"  # Replace with your local project path
 simu = cathy_tools.CATHY(dirName=path2prj, prj_name="atmbc_spatially_from_weill_withnodata")
-figpath = "../results/DA_ET_test/"  # Path to store figures/results
 
 #%% Load and manipulate the DEM (Digital Elevation Model)
 # Read the DEM input file

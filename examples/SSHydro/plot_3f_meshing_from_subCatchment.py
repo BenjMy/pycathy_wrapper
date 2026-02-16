@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Meshing from a Digital Elevation Model (DEM)
-============================================
-
-GRwater project 
+Meshing from a Digital Elevation Model (DEM) .adf file
+======================================================
 
 *Estimated time to run the notebook = 5min*
 
@@ -34,7 +32,7 @@ import pyvista as pv
 #%% Init CATHY model
 # ------------------------
 path2prj = "../SSHydro/"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj, 
+simu = cathy_tools.CATHY(dirName=path2prj,
                          prj_name="meshing_from_subcachment"
                          )
 
@@ -42,7 +40,7 @@ rootpath = os.path.join(simu.workdir + simu.project_name)
 
 
 # Path to the directory containing the .adf file (not the file itself)
-adf_folder = "../data/dtmplot1/"
+adf_folder = "../../data/dtmplot1/"
 
 # Open the raster (typically named 'hdr.adf', but you only need the folder)
 raster_DEM = rioxarray.open_rasterio(adf_folder, masked=True).isel(band=0)
@@ -63,7 +61,7 @@ raster_DEM_masked = raster_DEM.where(
 ).where(
     (raster_DEM['y'] >= min_lat) & (raster_DEM['y'] <= max_lat), drop=True
 )
-       
+
 raster_DEM_masked = np.where(np.isnan(raster_DEM_masked), -9999, raster_DEM_masked)
 np.shape(raster_DEM_masked)
 np.shape(raster_DEM)
@@ -99,8 +97,8 @@ simu.create_mesh_vtk(verbose=True)
 # pl.show_bounds()
 
 # pl.show()
-# mesh2plot.plot(show_edges=True, 
-#                show_axes=True, 
+# mesh2plot.plot(show_edges=True,
+#                show_axes=True,
 #                show_bounds=True
 #                )
 
@@ -122,7 +120,7 @@ netValue[0] = v_atmbc_t_rain
 # ax.imshow(v_atmbc)
 
 
-#% Create an empty dataframe of SPP and set default SPP properties 
+#% Create an empty dataframe of SPP and set default SPP properties
 df_SPP_map = simu.init_soil_SPP_map_df(nzones=1,nstr=15)
 SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
 
@@ -181,5 +179,3 @@ int(grid3d['nnod'])
 #               )
 # # pl.show()
 # image = pl.screenshot('test.png')
-
-
