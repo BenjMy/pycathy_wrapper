@@ -94,13 +94,13 @@ def create_ERT_survey_pg(pathERT,
     except:
         pass
     
-    print('+'*20)
-    # print(sequence_file_extension)
-    # print(sequence)
-    print(scheme)
-    print(mesh3d)
-    print(fwdNoiseLevel)
-    print('+'*20)
+    # print('+'*20)
+    # # print(sequence_file_extension)
+    # # print(sequence)
+    # print(scheme)
+    # print(mesh3d)
+    # print(fwdNoiseLevel)
+    # print('+'*20)
 
     if np.isnan(res0).any():
         raise ValueError("⚠️ Error: res0 contains NaN values! Stopping execution.")

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Meshing from a Digital Elevation Model (DEM)
-============================================
+Mapping atmbc from Earth Observation xarray dataset
+===================================================
 
 GRwater project 
 

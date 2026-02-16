@@ -63,6 +63,7 @@ def CATHY_2_pg(mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwa
 
     """
 
+    mesh_OUT = ERT_meta_dict["forward_mesh_vtk_file"]
     if type(ERT_meta_dict["forward_mesh_vtk_file"]) is str:
         mesh_OUT = pv.read(ERT_meta_dict["forward_mesh_vtk_file"])
 
