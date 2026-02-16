@@ -43,6 +43,8 @@ Requires-Dist: nltk
 Requires-Dist: geopandas
 Requires-Dist: rioxarray
 Requires-Dist: pyyaml
+Requires-Dist: fastparquet
+Requires-Dist: pyarrow
 Requires-Dist: seaborn
 Dynamic: license-file
 

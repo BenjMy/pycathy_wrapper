@@ -17,4 +17,6 @@ nltk
 geopandas
 rioxarray
 pyyaml
+fastparquet
+pyarrow
 seaborn
