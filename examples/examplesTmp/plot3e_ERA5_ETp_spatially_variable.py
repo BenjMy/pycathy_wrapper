@@ -1,17 +1,6 @@
 """
-Weil et al example
-==================
-
-Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
-Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
-https://doi.org/10.1016/j.advwatres.2010.10.001.
-
-The CATHY gitbucket repository provides the Weill et al. dataset example to test the installation. On top of that, we provide a computational notebook code to reproduce the results using the **pyCATHY wrapper** (https://github.com/BenjMy/pycathy_wrapper). 
-
-The notebook illustrate how to work interactively: execute single cell, see partial results at different processing steps (preprocessing, processing, output)... You can share it to work collaboratively on it by sharing the link and execute it from another PC without any installation required.
-
-
-*Estimated time to run the notebook = 5min*
+ERA5 ETp spatially variable as atmbc read_inputs
+=================================================
 
 """
 
@@ -46,13 +35,13 @@ rootPath = Path(os.getcwd())
 #%% Init CATHY model
 # ------------------------
 # path2prj = rootPath / "../data/solution_ET/"  # add your local path here
-# simu = cathy_tools.CATHY(dirName=path2prj, 
+# simu = cathy_tools.CATHY(dirName=path2prj,
 #                          prj_name="ERA5_ETp_spatially_from_weill"
 #                          )
 
 
 path2prj = "../SSHydro/"  # add your local path here
-simu = cathy_tools.CATHY(dirName=path2prj, 
+simu = cathy_tools.CATHY(dirName=path2prj,
 			prj_name="ERA5_ETp_spatially_from_weill"
 			)
 
@@ -88,10 +77,10 @@ Rain_ds = Rain_ds.rename({"__xarray_dataarray_variable__": "Rain"})  # Rename th
 
 Rain_ds = Rain_ds.sel(time=slice(ETp_ds.time[0], None))
 
-ETa_aligned, ETp_aligned, Rain_aligned = xr.align(ETa_ds, 
+ETa_aligned, ETp_aligned, Rain_aligned = xr.align(ETa_ds,
                                                   ETp_ds,
-                                                  Rain_ds, 
-                                                  join='outer', 
+                                                  Rain_ds,
+                                                  join='outer',
                                                   fill_value=0
                                                   )
 
@@ -258,7 +247,7 @@ np.shape(ETp_3d_reshaped)
 #%%
 fig, ax= plt.subplots()
 simu.show_input('atmbc',ax=ax)
-fig.savefig(os.path.join(simu.workdir + "/ERA5_ZROOT_spatially_from_weill/", 'atmbc.png'), 
+fig.savefig(os.path.join(simu.workdir + "/ERA5_ZROOT_spatially_from_weill/", 'atmbc.png'),
             dpi=300)
 
 
@@ -267,7 +256,7 @@ fig.savefig(os.path.join(simu.workdir + "/ERA5_ZROOT_spatially_from_weill/", 'at
 indice_veg = np.ones((np.shape(simu.DEM)), dtype=int)
 raster_zone = np.ones((np.shape(simu.DEM)), dtype=int)
 indice_zones = utils.root_updownhill_zones(raster_zone)
-    
+
 simu.update_veg_map(indice_veg)
 simu.update_zone(indice_zones)
 
@@ -355,9 +344,9 @@ fig, axs = plt.subplots(4,4,
 axs = axs.ravel()
 for i in range(4*4):
     cmap = simu.show('spatialET',
-                ax=axs[i],   
-                ti=i+2, 
-                scatter=True, 
+                ax=axs[i],
+                ti=i+2,
+                scatter=True,
                 vmin=5e-8,
                 vmax=1e-7,
                 colorbar=False
@@ -365,14 +354,14 @@ for i in range(4*4):
     axs[i].set_ylabel('')
     axs[i].set_xlabel('')
     axs[i].set_title(f'#{i}')
-    
-cbar = fig.colorbar(cmap, ax=axs, 
+
+cbar = fig.colorbar(cmap, ax=axs,
                     orientation='vertical',
-                    fraction=0.02, 
+                    fraction=0.02,
                     pad=0.04
                     )
 cbar.set_label('ET (m/s)')
-    
+
 fig.savefig(os.path.join(simu.workdir,
                          simu.project_name,
                          simu.project_name+'spatialET.png'
@@ -391,7 +380,7 @@ cplt.show_vtk(
 )
 
 
-#%% Read outputs 
+#%% Read outputs
 sw, sw_times = simu.read_outputs('sw')
 df_psi = simu.read_outputs('psi')
 # df_psi.index
@@ -493,6 +482,3 @@ fig.savefig(os.path.join(simu.workdir,
                          simu.project_name+'psi.png'
                          )
             , dpi=300)
-
-
-
