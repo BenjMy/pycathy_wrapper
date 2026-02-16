@@ -148,7 +148,7 @@ intersphinx_mapping = {
 #autosummary_generate = True
 
 autosummary_generate = [
-                        'pygimli', 
+                        'pygimli',
                         'resipy'
 ]
 
@@ -182,12 +182,12 @@ jupyter_execute_notebooks_kernel = "pycathy_doc"
 sphinx_gallery_conf = {
     # path to your examples scripts
     #"examples_dirs": "../examples",
-    "examples_dirs": ["../examples/SSHydro","../examples/DA"],
+    "examples_dirs": ["../examples/SSHydro","../examples/EOdata","../examples/DA"],
     # path where to save gallery generated examples
     #"gallery_dirs": "gallery",
-    "gallery_dirs": ["content/SSHydro", "content/DA"],
+    "gallery_dirs": ["content/SSHydro","content/EOdata", "content/DA"],
     #"filename_pattern": "example_.+.ipynb",
-    #"filename_pattern": {'py'|'ipynb'}, 
+    #"filename_pattern": {'py'|'ipynb'},
     "example_extensions": {'.py'},
     #"dont_preprocess": [],
     # Remove the "Download all examples" button from the top level gallery
@@ -268,4 +268,3 @@ html_theme_options = {
     "use_download_button": True,
     "home_page_in_toc": False,
 }
-
