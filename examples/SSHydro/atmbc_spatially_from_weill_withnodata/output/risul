@@ -74375,21 +74375,21 @@
   TOTAL NUMBER OF LINEAR SOLVER FAILURES         :      0
 
 
-  TOT CPU FOR THE SIMULATION           =           88.31 SECONDS  100.00 %
-  TOT CPU FOR NONLINEAR SCHEME         =           82.69 SECONDS   93.64 %
-  TOT CPU FOR OVERHEAD (SEE CODE DESC.)=            5.62 SECONDS    6.36 %
+  TOT CPU FOR THE SIMULATION           =           87.25 SECONDS  100.00 %
+  TOT CPU FOR NONLINEAR SCHEME         =           81.61 SECONDS   93.53 %
+  TOT CPU FOR OVERHEAD (SEE CODE DESC.)=            5.64 SECONDS    6.47 %
 
-  TOT CPU FOR UNSAT CHARACTERISTICS    =            7.69 SECONDS    8.70 %
-  TOT CPU FOR INIT. OF SYSTEM MATRICES =            0.94 SECONDS    1.07 %
-  TOT CPU FOR LOCAL SYSTEM ASSEMBLY    =            8.79 SECONDS    9.95 %
-  TOT CPU FOR RHS CALCULATION W/O BC'S =            1.50 SECONDS    1.70 %
-  TOT CPU FOR GLOBAL LHS SYSTEM MATRIX =            0.39 SECONDS    0.44 %
-  TOT CPU FOR BC CONTRIBUTIONS TO RHS  =            1.80 SECONDS    2.04 %
-  TOT CPU FOR LINEAR SOLVER & RESIDUAL =           58.30 SECONDS   66.02 %
-  TOT CPU FOR DIR. RESETTING AND DIFMAX=            0.04 SECONDS    0.04 %
-  TOT CPU FOR B-FLX, M-BAL, SW, & EX-PT=            3.16 SECONDS    3.58 %
+  TOT CPU FOR UNSAT CHARACTERISTICS    =            7.62 SECONDS    8.74 %
+  TOT CPU FOR INIT. OF SYSTEM MATRICES =            0.94 SECONDS    1.08 %
+  TOT CPU FOR LOCAL SYSTEM ASSEMBLY    =            8.67 SECONDS    9.93 %
+  TOT CPU FOR RHS CALCULATION W/O BC'S =            1.48 SECONDS    1.70 %
+  TOT CPU FOR GLOBAL LHS SYSTEM MATRIX =            0.38 SECONDS    0.43 %
+  TOT CPU FOR BC CONTRIBUTIONS TO RHS  =            1.78 SECONDS    2.04 %
+  TOT CPU FOR LINEAR SOLVER & RESIDUAL =           57.52 SECONDS   65.92 %
+  TOT CPU FOR DIR. RESETTING AND DIFMAX=            0.03 SECONDS    0.04 %
+  TOT CPU FOR B-FLX, M-BAL, SW, & EX-PT=            3.12 SECONDS    3.57 %
                                          -----------         -------
-                                               82.61 SECONDS   93.54 %
+                                               81.53 SECONDS   93.45 %
 
   TOTAL NUMBER OF TIME STEPS           =     2581
   SMALLEST TIME STEP SIZE              =   1.562E-01  AT TIME   4.688E-01

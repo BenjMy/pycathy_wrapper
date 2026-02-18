@@ -771,7 +771,8 @@ class CATHY:
                 "MAXCEL": int(self.hapin["N"]) * int(self.hapin["M"]),
                 "MAXRES": 1,
                 "DEMRES": DEMRES,
-                "NODMAX": (int(self.hapin["N"]) / DEMRES + 1) * (int(self.hapin["M"]) / DEMRES + 1),
+                # "NODMAX": (int(self.hapin["N"]) / DEMRES + 1) * (int(self.hapin["M"]) / DEMRES + 1),
+                # "NODMAX": 1e6,
                 "NTRMAX": 2* (int(self.hapin["N"]) * int(self.hapin["M"]))/ (DEMRES * DEMRES),
                 "NP2MAX": 1,
                 "MAXSTR": self.dem_parameters["nstr"],
@@ -809,8 +810,9 @@ class CATHY:
             if kk in self.cathyH.keys():
                 self.cathyH[kk] = value
         
-        self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"])
+        # self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"]) 
         self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
+        # self.cathyH['NODMAX'] = int(1e6)
         self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
         self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30      
         self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*3

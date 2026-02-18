@@ -67,8 +67,6 @@ raster_DEM_masked = raster_DEM.where(
 )
        
 raster_DEM_masked = np.where(np.isnan(raster_DEM_masked), -9999, raster_DEM_masked)
-np.shape(raster_DEM_masked)
-np.shape(raster_DEM)
 
 #%% Fetch and show initial DEM
 
@@ -76,7 +74,6 @@ fig, ax = plt.subplots(1)
 img = ax.imshow(raster_DEM_masked)
 plt.colorbar(img)
 
-simu.show_input(prop="dem")
 
 simu.update_prepo_inputs(
     DEM=raster_DEM_masked,
@@ -189,23 +186,17 @@ y = y0 + (np.arange(M) + 0.5) * dy
 # # Create meshgrid for smooth patterns
 X, Y = np.meshgrid(x, y)
 
-# Example ETa / ETp arrays (replace with your actual values)
-# Example ETa / ETp 2D arrays
-ETa_2D = 3 + 2 * np.sin(np.pi * X / X.max()) * np.cos(np.pi * Y / Y.max())
-ETp_2D = 4 + 1.5 * np.sin(np.pi * X / X.max()) * np.cos(np.pi * Y / Y.max())
-
+ETp_2D = 9 + 2.5 * np.sin(np.pi * X / X.max()) * np.cos(np.pi * Y / Y.max())
 
 # Create daily time axis for a full month (30 days)
 time = pd.date_range("2026-02-01", periods=30, freq="D")
 
 # Expand 2D arrays to 3D (time, y, x)
-ETa_3D = np.tile(ETa_2D[None, :, :], (len(time), 1, 1))
 ETp_3D = np.tile(ETp_2D[None, :, :], (len(time), 1, 1))
 
 # Create xarray Dataset
 ds_et = xr.Dataset(
     data_vars={
-        "ETa": (("time", "y", "x"), ETa_3D),
         "ETp": (("time", "y", "x"), ETp_3D),
     },
     coords={
@@ -295,11 +286,14 @@ simu.update_atmbc(HSPATM=0,
                   netValue = -ETp_nodes_clean*0.001 / 86400
                   )
 
+#%%
+
+simu.show_input('atmbc')
 
 #%% Run processor
 
 
-simu.update_ic(INDP=0,pressure_head_ini=-10)
+simu.update_ic(INDP=4,WTPOSITION=2)
 
 simu.update_parm(TIMPRTi=ds_et.time_sec.values,
                  VTKF=2

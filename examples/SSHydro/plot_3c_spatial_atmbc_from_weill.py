@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Weil et al example with spatially heterogeneous atmbc
-=====================================================
+Spatially heterogeneous atmbc (Weil et al)
+==========================================
 
 Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».
 Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),

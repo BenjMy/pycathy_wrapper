@@ -1078,7 +1078,7 @@ def show_zone(zone_map, ax=None, **kwargs):
     ax.set_title("view from top (before extruding)")
     plt.show(block=False)
     plt.close()
-    return fig, ax
+    return ax
 
 
 def show_indice_veg(veg_map, ax=None, **kwargs):

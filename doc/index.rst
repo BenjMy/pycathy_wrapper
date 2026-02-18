@@ -97,6 +97,7 @@
    :caption: Gallery of examples
 
    content/SSHydro/index.rst   
+   content/EOdata/index.rst   
    content/DA/index.rst   
    
 .. toctree::
