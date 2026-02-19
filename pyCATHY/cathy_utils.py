@@ -10,6 +10,8 @@ import pandas as pd
 from shapely.geometry import mapping
 import json
 from datetime import datetime, timedelta
+import numpy as np
+import xarray as xr
 # from rosetta import rosetta, SoilData
 
 #%% ---------------------------------------------------------------------------
@@ -125,6 +127,77 @@ def change_x2date(time_in_sec, start_date,
 
 
     return dates
+
+
+def df_to_xarray_2d(df_nodes, grid3d_nodes, nnod=None, name="var"):
+    """
+    Convert a DataFrame (nodes × time) to a 2D xarray.DataArray (y, x, time)
+    using coordinates from grid3d_nodes.
+
+    Parameters
+    ----------
+    df_nodes : pd.DataFrame
+        DataFrame with shape (nodes, time)
+        Rows = nodes, Columns = times
+    grid3d_nodes : np.ndarray or pd.DataFrame
+        Array/DataFrame with columns [x, y, z] for each node
+    nnod : int, optional
+        Number of nodes to use (default: use all in grid3d_nodes)
+    name : str, optional
+        Name for the resulting DataArray
+
+    Returns
+    -------
+    xr.DataArray
+        DataArray with dims ("y", "x", "time") and coordinates "x", "y", "time"
+    """
+    
+    # Use all nodes if nnod not provided
+    if nnod is None:
+        nnod = len(grid3d_nodes)
+    
+    # Extract x and y coordinates
+    x_nodes = np.array(grid3d_nodes[:int(nnod), 0])
+    y_nodes = np.array(grid3d_nodes[:int(nnod), 1])
+    
+    n_nodes = len(x_nodes)
+    
+    # Time coordinate from DataFrame columns
+    time = df_nodes.columns.to_numpy().astype(float)
+    
+    # First, create 1D DataArray
+    da_1d = xr.DataArray(
+        df_nodes.values,
+        dims=["node", "time"],
+        coords={
+            "node": np.arange(n_nodes),
+            "x": ("node", x_nodes),
+            "y": ("node", y_nodes),
+            "time": time
+        },
+        name=name
+    )
+    
+    # Determine grid shape
+    nx = len(np.unique(x_nodes))
+    ny = len(np.unique(y_nodes))
+    assert nx * ny == n_nodes, "Grid shape mismatch: nx*ny != number of nodes"
+    
+    # Reshape to 2D grid
+    da_2d = da_1d.values.reshape(ny, nx, -1)
+    
+    da_2d_xr = xr.DataArray(
+        da_2d,
+        dims=["y", "x", "time"],
+        coords={
+            "x": np.unique(x_nodes),
+            "y": np.unique(y_nodes),
+            "time": time
+        },
+        name=name
+    )
+    
+    return da_2d_xr
 
 
 #%% ---------------------------------------------------------------------------

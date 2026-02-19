@@ -17,6 +17,7 @@ import pandas as pd
 
 from pyCATHY.plotters import cathy_plots as cplt
 from scipy.spatial import KDTree
+from scipy.interpolate import RegularGridInterpolator
 
 try:
     import pygimli as pg
@@ -1009,73 +1010,266 @@ def xarraytoDEM_pad(data_array):
     return padded_data_array
 
     
-def df_to_xarray_2d(df_nodes, grid3d_nodes, nnod=None, name="var"):
+# file: mesh_utils.py
+
+
+def build_mesh_dataset(simu, raster_DEM_masked=None, plot_grid=False):
     """
-    Convert a DataFrame (nodes × time) to a 2D xarray.DataArray (y, x, time)
-    using coordinates from grid3d_nodes.
+    Build an xarray.Dataset from a simulation object (simu) and optionally a DEM mask.
 
     Parameters
     ----------
-    df_nodes : pd.DataFrame
-        DataFrame with shape (nodes, time)
-        Rows = nodes, Columns = times
-    grid3d_nodes : np.ndarray or pd.DataFrame
-        Array/DataFrame with columns [x, y, z] for each node
-    nnod : int, optional
-        Number of nodes to use (default: use all in grid3d_nodes)
-    name : str, optional
-        Name for the resulting DataArray
+    simu : object
+        Simulation object containing mesh_pv_attributes and hapin attributes.
+    raster_DEM_masked : 2D numpy array, optional
+        Masked DEM raster (2D boolean or 0/1 mask). If None, mask variables are skipped.
+    plot_grid : bool, optional
+        If True, plots the structured 2D grid. Default is False.
 
     Returns
     -------
-    xr.DataArray
-        DataArray with dims ("y", "x", "time") and coordinates "x", "y", "time"
+    ds_mesh : xarray.Dataset
+        Dataset containing mesh coordinates, optional DEM mask, and node-level mask.
     """
-    
-    # Use all nodes if nnod not provided
-    if nnod is None:
-        nnod = len(grid3d_nodes)
-    
-    # Extract x and y coordinates
-    x_nodes = np.array(grid3d_nodes[:int(nnod), 0])
-    y_nodes = np.array(grid3d_nodes[:int(nnod), 1])
-    
-    n_nodes = len(x_nodes)
-    
-    # Time coordinate from DataFrame columns
-    time = df_nodes.columns.to_numpy().astype(float)
-    
-    # First, create 1D DataArray
-    da_1d = xr.DataArray(
-        df_nodes.values,
-        dims=["node", "time"],
+
+    # --- Create dataset with node coordinates ---
+    N_nodes = simu.mesh_pv_attributes.points.shape[0]
+    ds_mesh = xr.Dataset(
         coords={
-            "node": np.arange(n_nodes),
-            "x": ("node", x_nodes),
-            "y": ("node", y_nodes),
-            "time": time
+            "node": np.arange(N_nodes),
+            "x": ("node", simu.mesh_pv_attributes.points[:, 0]),
+            "y": ("node", simu.mesh_pv_attributes.points[:, 1]),
+            "z": ("node", simu.mesh_pv_attributes.points[:, 2])
         },
-        name=name
+        attrs={
+            "N_cells": getattr(simu, "N_cells", None)
+        }
     )
-    
-    # Determine grid shape
-    nx = len(np.unique(x_nodes))
-    ny = len(np.unique(y_nodes))
-    assert nx * ny == n_nodes, "Grid shape mismatch: nx*ny != number of nodes"
-    
-    # Reshape to 2D grid
-    da_2d = da_1d.values.reshape(ny, nx, -1)
-    
-    da_2d_xr = xr.DataArray(
-        da_2d,
-        dims=["y", "x", "time"],
-        coords={
-            "x": np.unique(x_nodes),
-            "y": np.unique(y_nodes),
-            "time": time
-        },
-        name=name
-    )
-    
-    return da_2d_xr
+
+    # --- Add raster DEM mask if provided ---
+    if raster_DEM_masked is not None:
+        ds_mesh["mask"] = (("y", "x"), raster_DEM_masked)
+
+        # --- Extract hapin grid info ---
+        dx = simu.hapin["delta_x"]
+        dy = simu.hapin["delta_y"]
+        x0 = simu.hapin["xllcorner"]
+        y0 = simu.hapin["yllcorner"]
+        Nx = simu.hapin["N"]
+        Ny = simu.hapin["M"]
+
+        # --- Convert node coordinates to raster indices ---
+        ix = ((ds_mesh.x.values - x0) / dx).astype(int)
+        iy = ((ds_mesh.y.values - y0) / dy).astype(int)
+
+        # Clip indices to raster bounds
+        ix = np.clip(ix, 0, Nx - 1)
+        iy = np.clip(iy, 0, Ny - 1)
+
+        # --- Build boolean mask per node ---
+        mask_array = raster_DEM_masked  # shape (Ny, Nx)
+        bool_mask_nodes = mask_array[iy, ix]
+
+        # Add node mask to dataset
+        ds_mesh["mask_node"] = (("node",), bool_mask_nodes)
+
+    # --- Optionally plot structured 2D grid ---
+    if plot_grid:
+        fig, ax = plt.subplots(figsize=(6, 5))
+        ax.set_title("Structured 2D grid (hapin)")
+        ax.set_aspect("equal")
+
+        for xval in ds_mesh.x.values:
+            ax.plot([xval, xval], [ds_mesh.y.values.min(), ds_mesh.y.values.max()],
+                    color="lightgrey", lw=0.5)
+        for yval in ds_mesh.y.values:
+            ax.plot([ds_mesh.x.values.min(), ds_mesh.x.values.max()],
+                    [yval, yval], color="lightgrey", lw=0.5)
+
+        ax.set_xlabel("X")
+        ax.set_ylabel("Y")
+        plt.show()
+
+        if raster_DEM_masked is not None:
+            ds_mesh["mask"].plot.imshow()
+
+    return ds_mesh
+
+
+def map_grid_to_mesh(
+    ds_grid: xr.Dataset,
+    ds_mesh: xr.Dataset,
+    variables: list[str] | None = None,
+    method: str = "nearest",
+    x_dim: str = "x",
+    y_dim: str = "y",
+    time_dim: str = "time",
+) -> xr.Dataset:
+    """
+    Map one or more variables from a regular grid dataset to unstructured mesh nodes.
+
+    This function supports any regular-grid xarray Dataset (e.g. ERA5, MODIS, 
+    custom model output) and any mesh Dataset built with `build_mesh_dataset`.
+    Interpolation is performed either by nearest-neighbor lookup (fast, no
+    dependencies beyond numpy) or bilinear interpolation via
+    `scipy.interpolate.RegularGridInterpolator`.
+
+    Parameters
+    ----------
+    ds_grid : xr.Dataset
+        Source dataset on a regular (y, x) grid, optionally with a time dimension.
+        Coordinates must include 1-D arrays for `x_dim` and `y_dim`.
+        Example sources: ERA5 reanalysis, MODIS EO products, custom model grids.
+    ds_mesh : xr.Dataset
+        Target unstructured mesh dataset built with `build_mesh_dataset`.
+        Must expose node-level coordinates named `x_dim` and `y_dim`
+        (both indexed by a `node` dimension) whose values fall within
+        the spatial extent of `ds_grid`.
+    variables : list of str, optional
+        Names of variables in `ds_grid` to map onto the mesh.
+        If None (default), all data variables are mapped.
+    method : {"nearest", "linear"}, default "nearest"
+        Interpolation method:
+        - "nearest" : fast argmin-based nearest-neighbor cell lookup.
+        - "linear"  : bilinear interpolation using
+          `scipy.interpolate.RegularGridInterpolator` (requires scipy).
+    x_dim : str, default "x"
+        Name of the x coordinate in both datasets.
+    y_dim : str, default "y"
+        Name of the y coordinate in both datasets.
+    time_dim : str, default "time"
+        Name of the time dimension in `ds_grid` (ignored if not present).
+
+    Returns
+    -------
+    xr.Dataset
+        Dataset with the same variables as requested, mapped onto mesh nodes.
+        Dimensions are `(time, node)` if a time axis is present, else `(node,)`.
+        Node coordinates `x`, `y` (and `z` if available) are preserved from
+        `ds_mesh`.
+
+    Raises
+    ------
+    ValueError
+        If `method` is not one of {"nearest", "linear"}.
+    KeyError
+        If any variable in `variables` is not found in `ds_grid`.
+
+    Examples
+    --------
+    >>> ds_mapped = map_grid_to_mesh(ds_et_coarse, ds_mesh, variables=["ETp", "ETa"])
+    >>> ds_mapped = map_grid_to_mesh(ds_era5, ds_mesh, method="linear")
+    >>> ds_mapped = map_grid_to_mesh(ds_modis, ds_mesh, variables=["NDVI"],
+    ...                              x_dim="lon", y_dim="lat")
+    """
+    if method not in {"nearest", "linear"}:
+        raise ValueError(f"method must be 'nearest' or 'linear', got '{method}'.")
+
+    if variables is None:
+        variables = list(ds_grid.data_vars)
+    else:
+        missing = [v for v in variables if v not in ds_grid]
+        if missing:
+            raise KeyError(f"Variables not found in ds_grid: {missing}")
+
+    # --- Grid coordinates (must be 1-D and monotonically increasing) ----------
+    grid_x = ds_grid[x_dim].values.astype(float)
+    grid_y = ds_grid[y_dim].values.astype(float)
+
+    # Ensure ascending order (required by RegularGridInterpolator)
+    flip_x = grid_x[-1] < grid_x[0]
+    flip_y = grid_y[-1] < grid_y[0]
+    if flip_x:
+        grid_x = grid_x[::-1]
+    if flip_y:
+        grid_y = grid_y[::-1]
+
+    # --- Mesh node coordinates ------------------------------------------------
+    node_x = ds_mesh[x_dim].values.astype(float)
+    node_y = ds_mesh[y_dim].values.astype(float)
+    n_nodes = node_x.shape[0]
+
+    # --- Pre-compute nearest indices (used by both methods) -------------------
+    if method == "nearest":
+        ix = np.argmin(np.abs(grid_x[None, :] - node_x[:, None]), axis=1)
+        iy = np.argmin(np.abs(grid_y[None, :] - node_y[:, None]), axis=1)
+
+    # --- Check for time dimension ---------------------------------------------
+    has_time = time_dim in ds_grid.dims
+
+    # --- Build node coordinate dict (preserve z if present) ------------------
+    node_coords = {
+        "node": ds_mesh["node"],
+        x_dim: (["node"], node_x.astype(np.float32)),
+        y_dim: (["node"], node_y.astype(np.float32)),
+    }
+    if "z" in ds_mesh.coords:
+        node_coords["z"] = (["node"], ds_mesh["z"].values)
+
+    data_arrays = {}
+
+    for var in variables:
+        da = ds_grid[var]
+
+        # Align flipped axes in the source array
+        if flip_x:
+            da = da.isel({x_dim: slice(None, None, -1)})
+        if flip_y:
+            da = da.isel({y_dim: slice(None, None, -1)})
+
+        values = da.values  # (time, y, x) or (y, x)
+
+        if method == "nearest":
+            if has_time:
+                mapped = values[:, iy, ix]          # (time, node)
+            else:
+                mapped = values[iy, ix]             # (node,)
+
+        else:  # bilinear
+            if has_time:
+                n_time = values.shape[0]
+                mapped = np.empty((n_time, n_nodes), dtype=np.float64)
+                points = np.column_stack([node_y, node_x])
+                for t in range(n_time):
+                    interp = RegularGridInterpolator(
+                        (grid_y, grid_x),
+                        values[t],
+                        method="linear",
+                        bounds_error=False,
+                        fill_value=np.nan,
+                    )
+                    mapped[t] = interp(points)
+            else:
+                interp = RegularGridInterpolator(
+                    (grid_y, grid_x),
+                    values,
+                    method="linear",
+                    bounds_error=False,
+                    fill_value=np.nan,
+                )
+                mapped = interp(np.column_stack([node_y, node_x]))
+
+        # Build coords for this variable
+        if has_time:
+            coords = {"time": ds_grid[time_dim], **node_coords}
+            dims = [time_dim, "node"]
+        else:
+            coords = node_coords
+            dims = ["node"]
+
+        data_arrays[var] = xr.DataArray(
+            mapped.astype(np.float32),
+            dims=dims,
+            coords=coords,
+            attrs={**da.attrs, "mapping_method": method, "mapped_from": "ds_grid"},
+        )
+
+    ds_out = xr.Dataset(data_arrays)
+    ds_out.attrs.update({
+        "mapping_method": method,
+        "source_x_dim": x_dim,
+        "source_y_dim": y_dim,
+        "n_nodes": n_nodes,
+    })
+    return ds_out
 
