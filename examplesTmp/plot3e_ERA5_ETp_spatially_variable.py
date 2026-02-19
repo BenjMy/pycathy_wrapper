@@ -32,6 +32,10 @@ import geopandas as gpd
 
 rootPath = Path(os.getcwd())
 
+
+# /media/nas/Ben/EOMAJI
+
+
 #%% Init CATHY model
 # ------------------------
 # path2prj = rootPath / "../data/solution_ET/"  # add your local path here
@@ -100,11 +104,12 @@ grid_xr_atmbc = xr.Dataset({
     'ETa': ETa_aligned['ETa']
 })
 grid_xr_atmbc = grid_xr_atmbc.isel(band=0)
+grid_xr_atmbc.rio.crs
 
 # grid_xr_atmbc = xr.merge([ETa_ds, ETp_ds, Rain_ds])
 # grid_xr_atmbc['net_atmbc'] = grid_xr_atmbc['Rain'] - grid_xr_atmbc['ETp']
 CLC = xr.load_dataset(Majadas_CLC_dataset)  # Load the CLC dataset
-
+CLC.crs
 
 t0 = ETp_ds.time[0]
 elapsed_sec = (ETp_ds.time - t0).astype('timedelta64[s]').values
@@ -146,8 +151,8 @@ DEM_new = DEM_new[0:100,0:50]
 
 DEM_new[-1,-1] = DEM_new[-1,-1] - 1e-3
 simu.update_prepo_inputs(DEM_new,
-                         # xllcorner=int(grid_xr_atmbc.x.min().values),
-                         # yllcorner=int(grid_xr_atmbc.y.min().values),
+                         xllcorner=int(grid_xr_atmbc.x.min().values),
+                         yllcorner=int(grid_xr_atmbc.y.min().values),
                          delta_x=1,
                          delta_y=1,
                          # ivert=1,
