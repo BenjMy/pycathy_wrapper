@@ -1,0 +1,1188 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mapping atmbc from coarse EO &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/EOdata/plot_4b_map_from_coarse_ET_EO';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Data Assimilation" href="../DA/index.html" />
+    <link rel="prev" title="Mapping atmbc from Earth Observation xarray dataset" href="plot_4_map_from_ET_EO.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Feb 20, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting Started</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../SSHydro/index.html">Surface subsurface hydrological model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_1_pyCATHY_weilletal.html">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_2_pyCATHY_inputs.html">Input plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3_meshing_from_Camporese.html">Meshing from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3_meshing_from_weill.html">Changing mesh properties (resolution, coordinates, …)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3a_create_soil_withzones.html">Create soil zones control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3b_soil3d_from_weill.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3c_spatial_atmbc_from_weill.html">Spatially heterogeneous atmbc (Weil et al)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.html">Atmbc update with no-data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_3f_meshing_from_subCatchment.html">Meshing from a Digital Elevation Model (DEM) .adf file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_4_pyCATHY_outputs.html">Output plots part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_4b_pyCATHY_outputs.html">Output plots part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_4b_waterTable_from_weill.html">Plot Water Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../SSHydro/plot_5a_infiltration_withBC.html">Update and show Boundary conditions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Working with Earth Observations datasets</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_4_map_from_ET_EO.html">Mapping atmbc from Earth Observation xarray dataset</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Mapping atmbc from coarse EO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../DA/index.html">Data Assimilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../FromLiterature/LaCecilia2023_myst/LaCecilia2023_myst.html">D. La Cecilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/cathy_tools.html">cathy_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/importers.cathy_outputs.html">importers.cathy_outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/importers.cathy_inputs.html">importers.cathy_inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/DA.cathy_DA.html">DA.cathy_DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/ERT.petro_Archie.html">ERT.petro_Archie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/plotters.cathy_plots.html">plotters.cathy_plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/edit/master/doc/content/EOdata/plot_4b_map_from_coarse_ET_EO.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fcontent/EOdata/plot_4b_map_from_coarse_ET_EO.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/EOdata/plot_4b_map_from_coarse_ET_EO.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Mapping atmbc from coarse EO</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-content-eodata-plot-4b-map-from-coarse-et-eo-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="mapping-atmbc-from-coarse-eo">
+<span id="sphx-glr-content-eodata-plot-4b-map-from-coarse-et-eo-py"></span><h1>Mapping atmbc from coarse EO<a class="headerlink" href="#mapping-atmbc-from-coarse-eo" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><ol class="arabic simple">
+<li><p>create a CATHY object</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="2">
+<li><p>create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="3">
+<li><p>wrap the mesh properties (from hapin file) to an xarray dataset</p></li>
+</ol>
+</li>
+</ul>
+<p><em>Estimated time to run the notebook = 5min</em></p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># !! run preprocessor change the DEM shape !</span>
+<span class="c1"># dtm_13 does not have the same shape anymore!</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyCATHY.meshtools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.importers</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_inputs</span> <span class="k">as</span> <span class="n">in_CT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.importers</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_outputs</span> <span class="k">as</span> <span class="n">out_CT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.plotters</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">cplt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">rioxarray</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">path2prj</span> <span class="o">=</span> <span class="s2">&quot;../EOdata/&quot;</span>  <span class="c1"># add your local path here</span>
+<span class="n">simu</span> <span class="o">=</span> <span class="n">cathy_tools</span><span class="o">.</span><span class="n">CATHY</span><span class="p">(</span><span class="n">dirName</span><span class="o">=</span><span class="n">path2prj</span><span class="p">,</span>
+                         <span class="n">prj_name</span><span class="o">=</span><span class="s2">&quot;mapping_atmbc_from_coarse_EO_dataset&quot;</span>
+                         <span class="p">)</span>
+
+<span class="n">rootpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simu</span><span class="o">.</span><span class="n">workdir</span> <span class="o">+</span> <span class="n">simu</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span>
+
+
+<span class="c1"># Path to the directory containing the .adf file (not the file itself)</span>
+<span class="n">adf_folder</span> <span class="o">=</span> <span class="s2">&quot;../../data/dtmplot1/&quot;</span>
+
+<span class="c1"># Open the raster (typically named &#39;hdr.adf&#39;, but you only need the folder)</span>
+<span class="n">raster_DEM</span> <span class="o">=</span> <span class="n">rioxarray</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">adf_folder</span><span class="p">,</span> <span class="n">masked</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Create a mask of valid (non-NaN) data</span>
+<span class="n">valid_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">raster_DEM</span><span class="p">)</span>
+
+<span class="c1"># Apply the mask to get valid coordinates</span>
+<span class="n">valid_x</span> <span class="o">=</span> <span class="n">raster_DEM</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_mask</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">valid_y</span> <span class="o">=</span> <span class="n">raster_DEM</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_mask</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get min and max valid coordinates</span>
+<span class="n">min_lon</span><span class="p">,</span> <span class="n">max_lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_x</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">min_lat</span><span class="p">,</span> <span class="n">max_lat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_y</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_y</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+<span class="n">raster_DEM_masked</span> <span class="o">=</span> <span class="n">raster_DEM</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">raster_DEM</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_lon</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">raster_DEM</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_lon</span><span class="p">),</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">raster_DEM</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_lat</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">raster_DEM</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_lat</span><span class="p">),</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">raster_DEM_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">raster_DEM_masked</span><span class="p">),</span> <span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">raster_DEM_masked</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">raster_DEM_masked</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">raster_DEM</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🏁 Initiate CATHY object
+
+(161, 283)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">raster_DEM_masked</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="n">simu</span><span class="o">.</span><span class="n">update_prepo_inputs</span><span class="p">(</span>
+    <span class="n">DEM</span><span class="o">=</span><span class="n">raster_DEM_masked</span><span class="p">,</span>
+    <span class="n">delta_x</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">delta_y</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">ivert</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_4b_map_from_coarse_ET_EO_001.png" srcset="../../_images/sphx_glr_plot_4b_map_from_coarse_ET_EO_001.png" alt="plot 4b map from coarse ET EO" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🔄 Update hap.in file
+🔄 Update dem_parameters file
+🔄 Update dtm_13 file
+🔄 update zone file
+🔄 Update dem_parameters file
+🔄 Update parm file
+🔄 Update dem_parameters file
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">create_mesh_vtk</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🍳 gfortran compilation
+👟 Run preprocessor
+
+ wbb...
+
+ searching the dtm_13.val input file...
+ assigned nodata value =  -9999.0000000000000
+
+ number of processed cells =        1174
+
+ ...wbb completed
+
+ rn...
+ csort I...
+ ...completed
+
+ depit...
+ dem modifications =            0
+ dem modifications =            0 (total)
+ ...completed
+
+ csort II...
+ ...completed
+
+ cca...
+
+ contour curvature threshold value =    9.99999996E+11
+ ...completed
+
+ smean...
+ mean (min,max) facet slope =  0.216937334 ( 0.012000000, 0.760631317)
+ ...completed
+
+ dsf...
+ weight w_1 less than 1.0E-06: set w_1 = 0 and w_2 = 1
+ weight w_1 less than 1.0E-06: set w_1 = 0 and w_2 = 1
+ the drainage direction of the outlet cell (           2 ) is used
+ ...completed
+
+ hg...
+ ...completed
+
+ saving the data in the basin_b/basin_i files...
+
+ ...rn completed
+
+ mrbb...
+
+
+ Select the header type:
+ 0) None
+ 1) ESRI ascii file
+ 2) GRASS ascii file
+ (Ctrl C to exit)
+
+ -&gt;
+ Select the nodata value:
+ (Ctrl C to exit)
+
+ -&gt;
+ Select the pointer system:
+ 1) HAP system
+ 2) Arc/Gis system
+ (Ctrl C to exit)
+
+ -&gt;  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dem file
+
+ min value = 0.567960E+03
+ max value = 0.628820E+03
+ number of cells =  1174
+ mean value = 0.592434E+03
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ lakes_map file
+
+ min value =     0
+ max value =     0
+ number of cells =  1174
+ mean value =     0.000000
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ zone file
+
+ min value =     1
+ max value =     1
+ number of cells =  1174
+ mean value =     1.000000
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_w_1 file
+
+ min value = 0.000000E+00
+ max value = 0.100000E+01
+ number of cells =  1174
+ mean value = 0.558963E+00
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_w_2 file
+
+ min value = 0.000000E+00
+ max value = 0.100000E+01
+ number of cells =  1174
+ mean value = 0.441037E+00
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_p_outflow_1 file
+
+ min value =     2
+ max value =     6
+ number of cells =  1174
+ mean value =     2.272573
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_p_outflow_2 file
+
+ min value =     0
+ max value =     9
+ number of cells =  1174
+ mean value =     1.447189
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ A_inflow file
+
+ min value = 0.000000000000E+00
+ max value = 0.293249992721E+05
+ number of cells =  1174
+ mean value = 0.770825256348E+03
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_local_slope_1 file
+
+ min value =-0.234000E+00
+ max value = 0.750000E+00
+ number of cells =  1174
+ mean value = 0.189089E+00
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_local_slope_2 file
+
+ min value =-0.189505E+00
+ max value = 0.692965E+00
+ number of cells =  1174
+ mean value = 0.173164E+00
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_epl_1 file
+
+ min value = 0.000000E+00
+ max value = 0.500000E+01
+ number of cells =  1174
+ mean value = 0.469762E+01
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_epl_2 file
+
+ min value = 0.000000E+00
+ max value = 0.707107E+01
+ number of cells =  1174
+ mean value = 0.637239E+01
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_kSs1_sf_1 file
+
+ min value = 0.000000E+00
+ max value = 0.665000E+02
+ number of cells =  1174
+ mean value = 0.288060E+02
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_kSs1_sf_2 file
+
+ min value = 0.000000E+00
+ max value = 0.665000E+02
+ number of cells =  1174
+ mean value = 0.274720E+02
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_Ws1_sf file
+
+ min value = 0.000000E+00
+ max value = 0.952684E+01
+ number of cells =  1174
+ mean value = 0.141419E+01
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_Ws1_sf_2 file
+
+ min value = 0.000000E+00
+ max value = 0.667605E+01
+ number of cells =  1174
+ mean value = 0.126586E+01
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_b1_sf file
+
+ min value = 0.000000E+00
+ max value = 0.260000E+00
+ number of cells =  1174
+ mean value = 0.538160E-01
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_y1_sf file
+
+ min value = 0.000000E+00
+ max value = 0.000000E+00
+ number of cells =  1174
+ mean value = 0.000000E+00
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_hcID file
+
+ min value =     0
+ max value =     1
+ number of cells =  1174
+ mean value =     0.206985
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_q_output file
+
+ min value =     0
+ max value =     0
+ number of cells =  1174
+ mean value =     0.000000
+
+ writing the output file...
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ dtm_nrc file
+
+ min value = 0.100000E+01
+ max value = 0.100000E+02
+ number of cells =  1174
+ mean value = 0.813714E+01
+
+ writing the output file...
+
+ ...mrbb completed
+
+ bb2shp...
+
+ writing file river_net.shp
+
+Note: The following floating-point exceptions are signalling:
+IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+
+🔄 Update parm file
+🛠  Recompile src files [7s]
+🍳 gfortran compilation [16s]
+❌ Linker error:
+/usr/bin/ld: cannot find -llapack: No such file or directory
+/usr/bin/ld: cannot find -lblas: No such file or directory
+collect2: error: ld returned 1 exit status
+
+👟 Run processor
+b&#39;&#39;
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ds_mesh</span> <span class="o">=</span> <span class="n">mt</span><span class="o">.</span><span class="n">build_mesh_dataset</span><span class="p">(</span><span class="n">simu</span><span class="p">,</span>
+                                <span class="n">raster_DEM_masked</span><span class="o">=</span><span class="n">raster_DEM_masked</span><span class="p">,</span>
+                                <span class="n">plot_grid</span><span class="o">=</span><span class="kc">True</span>
+                                <span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_4b_map_from_coarse_ET_EO_002.png" srcset="../../_images/sphx_glr_plot_4b_map_from_coarse_ET_EO_002.png" alt="plot 4b map from coarse ET EO" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_et_dataset</span><span class="p">(</span><span class="n">simu</span><span class="p">,</span> <span class="n">ETa_2D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ETp_2D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2026-02-01&quot;</span><span class="p">,</span> <span class="n">n_days</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a 3D xarray.Dataset of ETa and ETp from a simu.hapin grid.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    simu : object</span>
+<span class="sd">        Simulation object with hapin attributes (delta_x, delta_y, N, M, xllcorner, yllcorner).</span>
+<span class="sd">    ETa_2D : 2D numpy array, optional</span>
+<span class="sd">        Daily ETa pattern (shape M x N). If None, a synthetic pattern will be generated.</span>
+<span class="sd">    ETp_2D : 2D numpy array, optional</span>
+<span class="sd">        Daily ETp pattern (shape M x N). If None, a synthetic pattern will be generated.</span>
+<span class="sd">    start_date : str, optional</span>
+<span class="sd">        Start date for the time axis. Default &quot;2026-02-01&quot;.</span>
+<span class="sd">    n_days : int, optional</span>
+<span class="sd">        Number of days to generate. Default 30.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ds_et : xarray.Dataset</span>
+<span class="sd">        Dataset with variables &quot;ETa&quot; and &quot;ETp&quot; (time, y, x).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Use hapin grid</span>
+    <span class="n">hapin</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">hapin</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;M&quot;</span><span class="p">]</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_x&quot;</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;delta_y&quot;</span><span class="p">]</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;xllcorner&quot;</span><span class="p">]</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="n">hapin</span><span class="p">[</span><span class="s2">&quot;yllcorner&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Cell centers</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">dy</span>
+
+    <span class="c1"># Create meshgrid</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Synthetic patterns if none provided</span>
+    <span class="k">if</span> <span class="n">ETa_2D</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ETa_2D</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">X</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">/</span> <span class="n">Y</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">ETp_2D</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ETp_2D</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">X</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">/</span> <span class="n">Y</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+    <span class="c1"># Time axis</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">n_days</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Expand 2D arrays to 3D (time, y, x)</span>
+    <span class="n">ETa_3D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">ETa_2D</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">ETp_3D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">ETp_2D</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># Create xarray Dataset</span>
+    <span class="n">ds_et</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;ETa&quot;</span><span class="p">:</span> <span class="p">((</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span> <span class="n">ETa_3D</span><span class="p">),</span>
+            <span class="s2">&quot;ETp&quot;</span><span class="p">:</span> <span class="p">((</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span> <span class="n">ETp_3D</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;resolution_x&quot;</span><span class="p">:</span> <span class="n">dx</span><span class="p">,</span>
+            <span class="s2">&quot;resolution_y&quot;</span><span class="p">:</span> <span class="n">dy</span><span class="p">,</span>
+            <span class="s2">&quot;xllcorner&quot;</span><span class="p">:</span> <span class="n">x0</span><span class="p">,</span>
+            <span class="s2">&quot;yllcorner&quot;</span><span class="p">:</span> <span class="n">y0</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ds_et</span>
+
+<span class="n">ds_et</span> <span class="o">=</span> <span class="n">create_et_dataset</span><span class="p">(</span><span class="n">simu</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2026-02-01&quot;</span><span class="p">,</span> <span class="n">n_days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">ds_et</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">resolution</span><span class="p">()</span>
+<span class="c1"># ds_et.rio.crs</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(5.0, 5.0)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define coarsening factor</span>
+<span class="c1"># Example: make resolution 2x coarser in x and y</span>
+<span class="n">factor_x</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># combine 2 grid cells along x</span>
+<span class="n">factor_y</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># combine 2 grid cells along y</span>
+
+<span class="c1"># Coarsen and take mean</span>
+<span class="n">ds_et_coarse</span> <span class="o">=</span> <span class="n">ds_et</span><span class="o">.</span><span class="n">coarsen</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">factor_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">factor_y</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s1">&#39;trim&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># Update attributes to reflect new resolution</span>
+<span class="n">ds_et_coarse</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolution_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_et</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolution_x&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor_x</span>
+<span class="n">ds_et_coarse</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolution_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_et</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolution_y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor_y</span>
+
+<span class="c1"># print(ds_et_coarse)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ds_et_coarse</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">resolution</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(25.0, 25.0)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># ds_mapped = mt.map_grid_to_mesh(ds_et_coarse, ds_mesh, variables=[&quot;ETp&quot;, &quot;ETa&quot;])</span>
+<span class="n">ds_mapped</span> <span class="o">=</span> <span class="n">mt</span><span class="o">.</span><span class="n">map_grid_to_mesh</span><span class="p">(</span><span class="n">ds_et</span><span class="p">,</span> <span class="n">ds_mesh</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ETp&quot;</span><span class="p">,</span> <span class="s2">&quot;ETa&quot;</span><span class="p">])</span>
+<span class="c1"># ds_mapped = map_grid_to_mesh(ds_era5, ds_mesh, method=&quot;linear&quot;)</span>
+<span class="c1"># ds_mapped = map_grid_to_mesh(ds_modis, ds_mesh, variables=[&quot;NDVI&quot;],</span>
+<span class="c1">#                              x_dim=&quot;lon&quot;, y_dim=&quot;lat&quot;)</span>
+
+<span class="n">ds_mesh_surfacenodes</span> <span class="o">=</span> <span class="n">ds_mapped</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">simu</span><span class="o">.</span><span class="n">grid3d</span><span class="p">[</span><span class="s1">&#39;nnod&#39;</span><span class="p">])))</span>
+
+<span class="n">t0</span> <span class="o">=</span> <span class="n">ds_mesh_surfacenodes</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="s1">&#39;ETp&#39;</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ds_et_coarse</span><span class="p">[</span><span class="s1">&#39;ETp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">t0</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">t0</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">t0</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ETp&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t0</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">)[:</span><span class="mi">10</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_4b_map_from_coarse_ET_EO_003.png" srcset="../../_images/sphx_glr_plot_4b_map_from_coarse_ET_EO_003.png" alt="time = 2026-02-01, 2026-02-01" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert xarray DataArray to NumPy array</span>
+<span class="n">ETp_nodes</span> <span class="o">=</span> <span class="n">ds_mesh_surfacenodes</span><span class="p">[</span><span class="s2">&quot;ETp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># shape: (time, node)</span>
+
+
+<span class="nb">len</span><span class="p">(</span><span class="n">ETp_nodes</span><span class="p">)</span>
+<span class="c1"># Reference time: first time step</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">ds_et</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="c1"># Convert all times to seconds since t0</span>
+<span class="n">time_sec</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds_et</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1"># seconds</span>
+
+<span class="c1"># Add as a new coordinate if you want</span>
+<span class="n">ds_et</span> <span class="o">=</span> <span class="n">ds_et</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time_sec</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">time_sec</span><span class="p">))</span>
+
+
+<span class="n">simu</span><span class="o">.</span><span class="n">update_atmbc</span><span class="p">(</span><span class="n">HSPATM</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">IETO</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">time</span> <span class="o">=</span> <span class="n">ds_et</span><span class="o">.</span><span class="n">time_sec</span><span class="p">,</span>
+                  <span class="n">netValue</span> <span class="o">=</span> <span class="o">-</span><span class="n">ETp_nodes</span><span class="o">*</span><span class="mf">0.001</span> <span class="o">/</span> <span class="mi">86400</span>
+                  <span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🔄 Update atmbc
+🔄 Update parm file
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">simu</span><span class="o">.</span><span class="n">update_ic</span><span class="p">(</span><span class="n">INDP</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">pressure_head_ini</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">simu</span><span class="o">.</span><span class="n">update_parm</span><span class="p">(</span><span class="n">TIMPRTi</span><span class="o">=</span><span class="n">ds_et</span><span class="o">.</span><span class="n">time_sec</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                 <span class="n">VTKF</span><span class="o">=</span><span class="mi">2</span>
+                 <span class="p">)</span>
+
+<span class="n">simu</span><span class="o">.</span><span class="n">run_processor</span><span class="p">(</span><span class="n">IPRT1</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">DTMIN</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+                    <span class="n">DTMAX</span><span class="o">=</span><span class="mf">1e2</span><span class="p">,</span>
+                    <span class="n">DELTAT</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                    <span class="n">TRAFLAG</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🔄 Update ic
+Single value detected for ic ==&gt; assumming it homogeneous
+🔄 Update parm file
+────────────────────────── ⚠ warning messages above ⚠ ──────────────────────────
+[&#39;Adjusting NPRT with respect to time of interests requested\n&#39;]
+────────────────────────────────────────────────────────────────────────────────
+🔄 Update parm file
+🛠  Recompile src files [42s]
+🍳 gfortran compilation [51s]
+❌ Linker error:
+/usr/bin/ld: cannot find -llapack: No such file or directory
+/usr/bin/ld: cannot find -lblas: No such file or directory
+collect2: error: ld returned 1 exit status
+
+👟 Run processor
+b&#39;&#39;
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 51.960 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-eodata-plot-4b-map-from-coarse-et-eo-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/20d3a2b8fd18c9b45a003fa7aa385499/plot_4b_map_from_coarse_ET_EO.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_4b_map_from_coarse_ET_EO.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/a5f61d61ab09aa9b805bc4fc9d30dee8/plot_4b_map_from_coarse_ET_EO.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_4b_map_from_coarse_ET_EO.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/c1bcdcc841235b154a97e8ac7c25951f/plot_4b_map_from_coarse_ET_EO.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_4b_map_from_coarse_ET_EO.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/EOdata"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="plot_4_map_from_ET_EO.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Mapping atmbc from Earth Observation xarray dataset</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../DA/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data Assimilation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Feb 20, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

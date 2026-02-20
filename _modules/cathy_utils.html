@@ -1,0 +1,1278 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cathy_utils &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/cathy_utils';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Feb 20, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/gettingstarted.html">Getting Started</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../content/SSHydro/index.html">Surface subsurface hydrological model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_1_pyCATHY_weilletal.html">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_2_pyCATHY_inputs.html">Input plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3_meshing_from_Camporese.html">Meshing from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3_meshing_from_weill.html">Changing mesh properties (resolution, coordinates, …)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3a_create_soil_withzones.html">Create soil zones control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3b_soil3d_from_weill.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3c_spatial_atmbc_from_weill.html">Spatially heterogeneous atmbc (Weil et al)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.html">Atmbc update with no-data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_3f_meshing_from_subCatchment.html">Meshing from a Digital Elevation Model (DEM) .adf file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_4_pyCATHY_outputs.html">Output plots part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_4b_pyCATHY_outputs.html">Output plots part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_4b_waterTable_from_weill.html">Plot Water Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/SSHydro/plot_5a_infiltration_withBC.html">Update and show Boundary conditions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../content/EOdata/index.html">Working with Earth Observations datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../content/EOdata/plot_4_map_from_ET_EO.html">Mapping atmbc from Earth Observation xarray dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/EOdata/plot_4b_map_from_coarse_ET_EO.html">Mapping atmbc from coarse EO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../content/DA/index.html">Data Assimilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/FromLiterature/LaCecilia2023_myst/LaCecilia2023_myst.html">D. La Cecilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../content/api/api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/cathy_tools.html">cathy_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/importers.cathy_outputs.html">importers.cathy_outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/importers.cathy_inputs.html">importers.cathy_inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/DA.cathy_DA.html">DA.cathy_DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/ERT.petro_Archie.html">ERT.petro_Archie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/plotters.cathy_plots.html">plotters.cathy_plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../content/api/generated/pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../content/contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/cathy_utils.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for cathy_utils</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utilities for pyCATHY</span>
+<span class="sd">- Unit conversion and labelling</span>
+<span class="sd">- Others utilities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">mapping</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="c1"># from rosetta import rosetta, SoilData</span>
+
+<span class="c1">#%% ---------------------------------------------------------------------------</span>
+<span class="c1">#############    Unit conversion and label ####################################</span>
+<span class="c1">## ---------------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">MPa2m</span><span class="p">(</span><span class="n">mpa</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">mpa</span> <span class="o">*</span> <span class="mf">101.99773339984</span>
+
+<div class="viewcode-block" id="kPa2m">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.kPa2m.html#cathy_utils.kPa2m">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kPa2m</span><span class="p">(</span><span class="n">kpa</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">kpa</span> <span class="o">*</span> <span class="mf">0.101971621</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">m2kPa</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">m</span><span class="o">/</span><span class="mf">0.101971621</span>
+
+<div class="viewcode-block" id="kPa2cm">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.kPa2cm.html#cathy_utils.kPa2cm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kPa2cm</span><span class="p">(</span><span class="n">kpa</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">kpa</span> <span class="o">*</span> <span class="mf">0.101971621</span> <span class="o">*</span> <span class="mf">1e2</span></div>
+
+
+
+<div class="viewcode-block" id="transform2_time_delta">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.transform2_time_delta.html#cathy_utils.transform2_time_delta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform2_time_delta</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x_units</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Time to time delta</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">delta_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">x_units</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta_t</span></div>
+
+
+
+<div class="viewcode-block" id="convert_time_units">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.convert_time_units.html#cathy_utils.convert_time_units">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_time_units</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x_units</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert time units</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot; (s)&quot;</span>
+    <span class="k">if</span> <span class="n">x_units</span> <span class="o">==</span> <span class="s2">&quot;days&quot;</span><span class="p">:</span>
+        <span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot; (days)&quot;</span>
+        <span class="n">t_new</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t</span><span class="p">]</span>
+        <span class="n">t_new</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">t_new</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x_units</span> <span class="o">==</span> <span class="s2">&quot;hours&quot;</span><span class="p">:</span>
+        <span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot; (h)&quot;</span>
+        <span class="n">t_new</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t</span><span class="p">]</span>
+        <span class="n">t_new</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">t_new</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">t_new</span></div>
+
+
+
+<span class="c1"># Atmpot-vf (9) : Potential atmospheric forcing (rain +ve / evap -ve) as a volumetric flux [L^3/T]</span>
+<span class="c1"># Atmpot-v (10) : Potential atmospheric forcing volume [L^3] (See parm input file for units)</span>
+<span class="c1"># Atmpot-r (11) : Potential atmospheric forcing rate [L/T]</span>
+<span class="c1"># Atmpot-d (12) : Potential atmospheric forcing depth [L]</span>
+<span class="c1"># Atmact-vf(13) : Actual infiltration (+ve) or exfiltration (-ve) at atmospheric BC nodes as a volumetric flux [L^3/T]</span>
+<span class="c1"># Atmact-v (14) : Actual infiltration (+ve) or exfiltration (-ve) volume [L^3]</span>
+<span class="c1"># Atmact-r (15) : Actual infiltration (+ve) or exfiltration (-ve) rate [L/T]</span>
+<span class="c1"># Atmact-d (16) : Actual infiltration (+ve) or exfiltration (-ve) depth [L]</span>
+
+
+<div class="viewcode-block" id="label_units">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.label_units.html#cathy_utils.label_units">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">label_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    label units</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;SW&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Soil Water Content </span><span class="se">\n</span><span class="s2"> ($m^</span><span class="si">{3}</span><span class="s2">/m^</span><span class="si">{3}</span><span class="s2">$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;PH&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Pressure head (m)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;CKRW&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Relative hydraulic conductivity&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;QTRANIE&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Root‐zone water uptake&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-vf&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;ETp (rain +ve / evap -ve) </span><span class="se">\n</span><span class="s2"> ($[L^</span><span class="si">{3}</span><span class="s2">/T]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-v&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;ETp volume </span><span class="se">\n</span><span class="s2"> ($[L^</span><span class="si">{3}</span><span class="s2">]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-r&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;ETp rate </span><span class="se">\n</span><span class="s2"> ($[L/T]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmpot-d&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;ETp depth </span><span class="se">\n</span><span class="s2"> ($[L]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-vf&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Actual infiltration (+ve) or exfiltration (-ve) </span><span class="se">\n</span><span class="s2"> at atmospheric BC nodes </span><span class="se">\n</span><span class="s2"> as a volumetric flux  </span><span class="se">\n</span><span class="s2"> ($[L^3/T]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-v&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Actual infiltration (+ve) or exfiltration (-ve) volume </span><span class="se">\n</span><span class="s2"> ($[L^3]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-r&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Actual infiltration (+ve) or exfiltration (-ve) rate </span><span class="se">\n</span><span class="s2"> ($[L/T]$)&quot;</span>
+    <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;Atmact-d&quot;</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Actual infiltration (+ve) or exfiltration (-ve) depth </span><span class="se">\n</span><span class="s2"> ($[L]$)&quot;</span>
+
+    <span class="k">return</span> <span class="n">label</span></div>
+
+
+
+<div class="viewcode-block" id="change_x2date">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.change_x2date.html#cathy_utils.change_x2date">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">change_x2date</span><span class="p">(</span><span class="n">time_in_sec</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span>
+                  <span class="n">formatIn</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+                  <span class="n">formatOut</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+                  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;change x axis in sec to datetime&quot;&quot;&quot;</span>
+    
+    <span class="n">date0</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">formatIn</span><span class="p">)</span>
+    <span class="c1"># date0 = pd.to_datetime(start_date)</span>
+    <span class="c1"># date_label = [date0]</span>
+    <span class="n">date_label_str</span> <span class="o">=</span> <span class="p">[</span><span class="n">date0</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)]</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">time_in_sec</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="c1"># date_label.append(date0 + timedelta(seconds=int(d)))</span>
+        <span class="n">date_label_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">date0</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">)))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># dates.append((date0 + timedelta(seconds=int(d))).strftime(&quot;%Y-%m-%d %H:%M:%S&quot;), </span>
+        <span class="c1">#              format=formatOut)</span>
+
+
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date_label_str</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+    
+    
+    <span class="c1"># date0 = pd.to_datetime(start_date)</span>
+    <span class="c1"># Vectorized operation to add seconds directly to the start date</span>
+    <span class="c1"># dates = date0 + pd.to_timedelta(time_in_sec, unit=&#39;s&#39;)</span>
+
+
+    <span class="k">return</span> <span class="n">dates</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">df_to_xarray_2d</span><span class="p">(</span><span class="n">df_nodes</span><span class="p">,</span> <span class="n">grid3d_nodes</span><span class="p">,</span> <span class="n">nnod</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;var&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a DataFrame (nodes × time) to a 2D xarray.DataArray (y, x, time)</span>
+<span class="sd">    using coordinates from grid3d_nodes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_nodes : pd.DataFrame</span>
+<span class="sd">        DataFrame with shape (nodes, time)</span>
+<span class="sd">        Rows = nodes, Columns = times</span>
+<span class="sd">    grid3d_nodes : np.ndarray or pd.DataFrame</span>
+<span class="sd">        Array/DataFrame with columns [x, y, z] for each node</span>
+<span class="sd">    nnod : int, optional</span>
+<span class="sd">        Number of nodes to use (default: use all in grid3d_nodes)</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name for the resulting DataArray</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xr.DataArray</span>
+<span class="sd">        DataArray with dims (&quot;y&quot;, &quot;x&quot;, &quot;time&quot;) and coordinates &quot;x&quot;, &quot;y&quot;, &quot;time&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Use all nodes if nnod not provided</span>
+    <span class="k">if</span> <span class="n">nnod</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nnod</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid3d_nodes</span><span class="p">)</span>
+    
+    <span class="c1"># Extract x and y coordinates</span>
+    <span class="n">x_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid3d_nodes</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="n">nnod</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">y_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid3d_nodes</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="n">nnod</span><span class="p">),</span> <span class="mi">1</span><span class="p">])</span>
+    
+    <span class="n">n_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_nodes</span><span class="p">)</span>
+    
+    <span class="c1"># Time coordinate from DataFrame columns</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">df_nodes</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="c1"># First, create 1D DataArray</span>
+    <span class="n">da_1d</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">df_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;node&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">),</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="n">x_nodes</span><span class="p">),</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="n">y_nodes</span><span class="p">),</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span>
+        <span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Determine grid shape</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x_nodes</span><span class="p">))</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_nodes</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">nx</span> <span class="o">*</span> <span class="n">ny</span> <span class="o">==</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="s2">&quot;Grid shape mismatch: nx*ny != number of nodes&quot;</span>
+    
+    <span class="c1"># Reshape to 2D grid</span>
+    <span class="n">da_2d</span> <span class="o">=</span> <span class="n">da_1d</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">da_2d_xr</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">da_2d</span><span class="p">,</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x_nodes</span><span class="p">),</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_nodes</span><span class="p">),</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span>
+        <span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">da_2d_xr</span>
+
+
+<span class="c1">#%% ---------------------------------------------------------------------------</span>
+<span class="c1">#############  Other utils functions             #############################</span>
+<span class="c1">## ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">backup_simulog_DA</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;DAlog.csv&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get simulation arguments and save it to a csv file to keep track of the Data</span>
+<span class="sd">    Assimilation done.</span>
+<span class="sd">    Returns the index if the simulation is already existing</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">results_df_cols</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">results_df_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)])</span>
+    <span class="n">cols2check</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    
+    <span class="n">values</span> <span class="o">=</span> <span class="n">results_df_new</span><span class="p">[</span><span class="n">cols2check</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">matching_index</span> <span class="o">=</span> <span class="n">results_df</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">results_df</span><span class="p">[</span><span class="n">cols2check</span><span class="p">]</span> <span class="o">==</span> <span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">matching_index</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matching_index</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">now</span>
+        <span class="n">matching_index</span> <span class="o">=</span> <span class="n">matching_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results_df_new</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">now</span>
+        <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">results_df</span><span class="p">,</span><span class="n">results_df_new</span><span class="p">],</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">matching_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_df</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">results_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results_df</span><span class="p">,</span> <span class="n">matching_index</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">clip_ET_withLandCover</span><span class="p">(</span>
+    <span class="n">LCnames</span><span class="p">,</span>
+    <span class="n">gdf_AOI</span><span class="p">,</span>
+    <span class="n">ETxr</span><span class="p">,</span>
+    <span class="n">ETname</span><span class="o">=</span><span class="s1">&#39;ACT. ETRA&#39;</span><span class="p">,</span>
+    <span class="n">crs_ET</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clips an ET xarray dataset using land cover masks and returns the modified dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    LCnames : list of str</span>
+<span class="sd">        Names of the land cover classes to use as masks, corresponding to the &#39;POI/AOI&#39; column in `gdf_AOI`.</span>
+<span class="sd">    gdf_AOI : geopandas.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame containing the area of interest (AOI) polygons with a &#39;POI/AOI&#39; column for land cover types.</span>
+<span class="sd">    ETxr : xarray.Dataset</span>
+<span class="sd">        The xarray dataset containing the evapotranspiration (ET) data.</span>
+<span class="sd">    ETname : str, optional</span>
+<span class="sd">        Name of the ET variable in `ETxr`. Default is &#39;ACT. ETRA&#39;.</span>
+<span class="sd">    crs_ET : str, optional</span>
+<span class="sd">        Coordinate reference system of the ET dataset. If not provided, it is inferred from the dataset.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray.Dataset</span>
+<span class="sd">        The modified `ETxr` dataset with added layers for each land cover mask under the names &quot;&lt;LCname&gt;_CLCmask&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Each land cover mask is created using the geometry in `gdf_AOI` for the specified `LCnames`.</span>
+<span class="sd">    - The `clip` method uses the geometries to create masks applied to the ET dataset.</span>
+<span class="sd">    - The function returns the modified dataset without generating any plots.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ETxr_updated = clip_ET_withLandCover(</span>
+<span class="sd">    ...     LCnames=[&#39;Lake&#39;, &#39;Intensive Irrigation&#39;],</span>
+<span class="sd">    ...     gdf_AOI=gdf,</span>
+<span class="sd">    ...     ETxr=et_xr,</span>
+<span class="sd">    ...     ETname=&#39;ET&#39;,</span>
+<span class="sd">    ...     crs_ET=&#39;EPSG:4326&#39;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">lcn</span> <span class="ow">in</span> <span class="n">LCnames</span><span class="p">:</span>  <span class="c1"># axs is still included for flexibility</span>
+        <span class="n">CLC_mask</span> <span class="o">=</span> <span class="n">gdf_AOI</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;POI/AOI&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">lcn</span><span class="p">]</span><span class="o">.</span><span class="n">geometry</span>
+        <span class="n">ETxr</span> <span class="o">=</span> <span class="n">ETxr</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">crs_ET</span><span class="p">)</span>
+        <span class="n">mask_ETA</span> <span class="o">=</span> <span class="n">ETxr</span><span class="p">[</span><span class="n">ETname</span><span class="p">]</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+            <span class="n">CLC_mask</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">mapping</span><span class="p">),</span> 
+            <span class="n">crs_ET</span><span class="p">,</span> 
+            <span class="n">drop</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+        <span class="n">ETxr</span><span class="p">[</span><span class="n">lcn</span> <span class="o">+</span> <span class="s1">&#39;_CLCmask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_ETA</span>
+
+    <span class="k">return</span> <span class="n">ETxr</span>
+
+        
+
+<span class="c1"># utils observations</span>
+<span class="c1"># ------------------</span>
+
+
+<div class="viewcode-block" id="dictObs_2pd">
+<a class="viewcode-back" href="../content/api/generated/cathy_utils.dictObs_2pd.html#cathy_utils.dictObs_2pd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dictObs_2pd</span><span class="p">(</span><span class="n">dict_obs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;dict of observation to dataframe of observation&quot;&quot;&quot;</span>
+    <span class="n">df_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dict_obs</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+    <span class="n">df_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">df_obs</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">df_obs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sensorNameidx&quot;</span><span class="p">,</span> <span class="s2">&quot;assimilation time&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df_obs</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resynchronise_times</span><span class="p">(</span><span class="n">data_measure</span><span class="p">,</span> <span class="n">atmbc_df</span><span class="p">,</span> <span class="n">time_offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;resynchronise dict as old key is elapsed time in second from the first observation,</span>
+<span class="sd">    while new key is from the first atmbc time</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_measure_sync</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data_measure</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">new_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_measure_sync</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="n">items_dict</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_measure_sync</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="c1"># new_key = (</span>
+            <span class="c1">#     atmbc_df[&quot;diff&quot;]</span>
+            <span class="c1">#     .dt.total_seconds()</span>
+            <span class="c1">#     .unique()[d]</span>
+            <span class="c1"># )</span>
+
+            <span class="n">old_key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_measure_sync</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">d</span><span class="p">]</span>
+            <span class="n">new_key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_measure_sync</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">d</span><span class="p">]</span> <span class="o">-</span> <span class="n">time_offset</span>
+
+            <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">items_dict</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">data_measure_sync</span><span class="p">[</span><span class="n">old_key</span><span class="p">][</span><span class="n">sensor</span><span class="p">][</span><span class="s2">&quot;assimilation_times&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_key</span>
+            <span class="n">new_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_key</span><span class="p">)</span>
+        <span class="n">data_measure_sync</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">new_keys</span><span class="p">,</span> <span class="n">data_measure_sync</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;datetime first atmbc point&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">atmbc_df</span><span class="p">[</span><span class="s2">&quot;datetime&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;datetime first measurement&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data_measure</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">sensor</span><span class="p">][</span><span class="s2">&quot;datetime&quot;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cant synchronise times - continue without&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_measure_sync</span>
+
+
+
+<span class="c1">#%% ---------------------------------------------------------------------------</span>
+<span class="c1">#############  Data Assimilation utils functions          #####################</span>
+<span class="c1">## ---------------------------------------------------------------------------</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="n">COMMON_PARAM_VALUES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ic&quot;</span><span class="p">:</span>       <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span>    <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span>   <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="mf">1.75</span><span class="p">,</span> <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s2">&quot;sampling&quot;</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;transf&quot;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span> <span class="s2">&quot;St. var.&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;Ks&quot;</span><span class="p">:</span>       <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="mf">4e-4</span><span class="p">,</span>  <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>    <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;multiplicative&quot;</span><span class="p">,</span> <span class="s2">&quot;sampling&quot;</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;transf&quot;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span> <span class="s2">&quot;Ks&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;porosity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">,</span>  <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s2">&quot;sampling&quot;</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="s2">&quot;transf&quot;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span> <span class="s2">&quot;porosity&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_scenario_file_single_control</span><span class="p">(</span>
+    <span class="n">scenario_name</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>      <span class="c1"># List of parameters to include</span>
+    <span class="n">use_suggested</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>   <span class="c1"># If False, use placeholders</span>
+    <span class="n">control_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="c1"># &#39;layers&#39;, &#39;zone&#39;, &#39;root_map&#39;, or None</span>
+    <span class="n">nlay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">nzones</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">nveg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">filetype</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scenario_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">filetype</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">COMMON_PARAM_VALUES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;layers&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">*</span> <span class="n">nlay</span>
+        <span class="k">elif</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">*</span> <span class="n">nzones</span>
+        <span class="k">elif</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;root_map&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[[</span><span class="n">value</span><span class="p">]</span> <span class="o">*</span> <span class="n">nlay</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nveg</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+    <span class="n">per_name</span><span class="p">,</span> <span class="n">per_type</span><span class="p">,</span> <span class="n">per_nom</span><span class="p">,</span> <span class="n">per_mean</span><span class="p">,</span> <span class="n">per_sigma</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">per_bounds</span><span class="p">,</span> <span class="n">sampling_type</span><span class="p">,</span> <span class="n">transf_type</span><span class="p">,</span> <span class="n">listUpdateParm</span><span class="p">,</span> <span class="n">pert_control_name</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">pname</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_suggested</span> <span class="ow">and</span> <span class="n">pname</span> <span class="ow">in</span> <span class="n">COMMON_PARAM_VALUES</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">COMMON_PARAM_VALUES</span><span class="p">[</span><span class="n">pname</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Placeholder values</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;sampling&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;transf&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">:</span> <span class="n">pname</span><span class="p">}</span>
+
+        <span class="n">per_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pname</span><span class="p">)</span>
+        <span class="n">per_type</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]))</span>
+        <span class="n">per_nom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;nom&quot;</span><span class="p">]))</span>
+        <span class="n">per_mean</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]))</span>
+        <span class="n">per_sigma</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]))</span>
+        <span class="n">per_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;bounds&quot;</span><span class="p">]))</span>
+        <span class="n">sampling_type</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;sampling&quot;</span><span class="p">]))</span>
+        <span class="n">transf_type</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">generate_list</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;transf&quot;</span><span class="p">]))</span>
+        <span class="n">listUpdateParm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;update&quot;</span><span class="p">])</span>
+        <span class="n">pert_control_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">control_type</span> <span class="k">if</span> <span class="n">control_type</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">scenario_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">scenario_name</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;per_name&quot;</span><span class="p">:</span> <span class="n">per_name</span><span class="p">,</span>
+            <span class="s2">&quot;per_type&quot;</span><span class="p">:</span> <span class="n">per_type</span><span class="p">,</span>
+            <span class="s2">&quot;per_nom&quot;</span><span class="p">:</span> <span class="n">per_nom</span><span class="p">,</span>
+            <span class="s2">&quot;per_mean&quot;</span><span class="p">:</span> <span class="n">per_mean</span><span class="p">,</span>
+            <span class="s2">&quot;per_sigma&quot;</span><span class="p">:</span> <span class="n">per_sigma</span><span class="p">,</span>
+            <span class="s2">&quot;per_bounds&quot;</span><span class="p">:</span> <span class="n">per_bounds</span><span class="p">,</span>
+            <span class="s2">&quot;sampling_type&quot;</span><span class="p">:</span> <span class="n">sampling_type</span><span class="p">,</span>
+            <span class="s2">&quot;transf_type&quot;</span><span class="p">:</span> <span class="n">transf_type</span><span class="p">,</span>
+            <span class="s2">&quot;listUpdateParm&quot;</span><span class="p">:</span> <span class="n">listUpdateParm</span><span class="p">,</span>
+            <span class="s2">&quot;pert_control_name&quot;</span><span class="p">:</span> <span class="n">pert_control_name</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;_explanation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;per_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Parameter name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Perturbation type: None or multiplicative&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Nominal value&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_mean&quot;</span><span class="p">:</span> <span class="s2">&quot;Mean value for sampling&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_sigma&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deviation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_bounds&quot;</span><span class="p">:</span> <span class="s2">&quot;Bounds for parameter&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sampling_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Sampling method: normal, uniform&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;transf_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Transformation type: None, log, etc.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;listUpdateParm&quot;</span><span class="p">:</span> <span class="s2">&quot;Which parameters are updated&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pert_control_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Control type: &#39;layers&#39;, &#39;zone&#39;, &#39;root_map&#39; or None&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">scenario_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario file &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; created successfully with parameters </span><span class="si">{</span><span class="n">parameters</span><span class="si">}</span><span class="s2"> and control &#39;</span><span class="si">{</span><span class="n">control_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_scenario_file</span><span class="p">(</span>
+    <span class="n">scenario_name</span><span class="p">,</span>
+    <span class="n">param_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">control_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">filetype</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+    <span class="n">use_common_values</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a scenario file using optionally a set of common suggested values.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scenario_name : str</span>
+<span class="sd">        Name of the scenario.</span>
+<span class="sd">    param_names : list of str, optional</span>
+<span class="sd">        List of parameter names to include. Defaults to all keys in COMMON_PARAM_VALUES.</span>
+<span class="sd">    control_type : str or None</span>
+<span class="sd">        Optional control type for all parameters (&#39;layers&#39;, &#39;zones&#39;, &#39;root_map&#39;, or None).</span>
+<span class="sd">    filename : str, optional</span>
+<span class="sd">        Output file name.</span>
+<span class="sd">    filetype : str</span>
+<span class="sd">        &#39;json&#39; (default) or &#39;toml&#39;.</span>
+<span class="sd">    use_common_values : bool</span>
+<span class="sd">        If True, fill parameter values from COMMON_PARAM_VALUES table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">param_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">param_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">COMMON_PARAM_VALUES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_names</span><span class="p">)</span>
+    
+    <span class="c1"># Build placeholders</span>
+    <span class="n">placeholders</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;per_type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;type&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;per_nom&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;value&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;per_mean&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;mean&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;per_sigma&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;sigma&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;per_bounds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;bounds&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;sampling_type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;sampling&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;transf_type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;transf&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span>
+        <span class="s2">&quot;listUpdateParm&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;param&gt;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># Fill placeholders from common values</span>
+    <span class="k">if</span> <span class="n">use_common_values</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_names</span><span class="p">):</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">COMMON_PARAM_VALUES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nom&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_mean&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_sigma&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_bounds&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bounds&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;sampling_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampling&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;transf_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;transf&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;listUpdateParm&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;update&quot;</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+    
+    <span class="n">pert_control</span> <span class="o">=</span> <span class="p">[</span><span class="n">control_type</span><span class="p">]</span><span class="o">*</span><span class="n">n</span> <span class="k">if</span> <span class="n">control_type</span> <span class="k">else</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+    
+    <span class="n">scenario_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">scenario_name</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;per_name&quot;</span><span class="p">:</span> <span class="n">param_names</span><span class="p">,</span>
+            <span class="s2">&quot;per_type&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_type&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;per_nom&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;per_mean&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_mean&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;per_sigma&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_sigma&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;per_bounds&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;per_bounds&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;sampling_type&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;sampling_type&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;transf_type&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;transf_type&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;listUpdateParm&quot;</span><span class="p">:</span> <span class="n">placeholders</span><span class="p">[</span><span class="s2">&quot;listUpdateParm&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;pert_control_name&quot;</span><span class="p">:</span> <span class="n">pert_control</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">filetype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+        <span class="n">scenario_data</span><span class="p">[</span><span class="s2">&quot;_explanation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;per_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Type of parameter: None, multiplicative, etc.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Parameter name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Nominal value&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_mean&quot;</span><span class="p">:</span> <span class="s2">&quot;Mean for sampling&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_sigma&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deviation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;per_bounds&quot;</span><span class="p">:</span> <span class="s2">&quot;Bounds: [min,max] or None&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sampling_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Sampling method&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;transf_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Transformation: None, log, etc.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;listUpdateParm&quot;</span><span class="p">:</span> <span class="s2">&quot;Parameters updated in model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pert_control_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Control type: &#39;layers&#39;, &#39;zones&#39;, &#39;root_map&#39;, or None&quot;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scenario_name</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">scenario_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="n">filetype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;toml&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>  <span class="c1"># For writing</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TOML library (tomli_w) not installed. Use: pip install tomli_w&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Falling back to JSON format.&quot;</span><span class="p">)</span>
+            <span class="c1"># Fallback to JSON</span>
+            <span class="n">scenario_data</span><span class="p">[</span><span class="s2">&quot;_explanation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;per_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Type of parameter: None, multiplicative, etc.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Parameter name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_nom&quot;</span><span class="p">:</span> <span class="s2">&quot;Nominal value&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_mean&quot;</span><span class="p">:</span> <span class="s2">&quot;Mean for sampling&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_sigma&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deviation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_bounds&quot;</span><span class="p">:</span> <span class="s2">&quot;Bounds: [min,max] or None&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sampling_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Sampling method&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;transf_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Transformation: None, log, etc.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;listUpdateParm&quot;</span><span class="p">:</span> <span class="s2">&quot;Parameters updated in model&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pert_control_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Control type: &#39;layers&#39;, &#39;zones&#39;, &#39;root_map&#39;, or None&quot;</span>
+            <span class="p">}</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scenario_name</span><span class="si">}</span><span class="s2">.json&quot;</span> <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.toml&#39;</span><span class="p">,</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">scenario_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="k">return</span>
+        
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scenario_name</span><span class="si">}</span><span class="s2">.toml&quot;</span>
+        
+        <span class="c1"># TOML doesn&#39;t support None values, convert to empty string or remove</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">convert_none_values</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Recursively convert None values to empty strings for TOML compatibility.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">convert_none_values</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">convert_none_values</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Convert None to empty string</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obj</span>
+        
+        <span class="c1"># Convert the data for TOML</span>
+        <span class="n">toml_data</span> <span class="o">=</span> <span class="n">convert_none_values</span><span class="p">(</span><span class="n">scenario_data</span><span class="p">)</span>
+        
+        <span class="c1"># FIXED: Use binary mode &quot;wb&quot; for tomli_w</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">tomli_w</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">toml_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported filetype: </span><span class="si">{</span><span class="n">filetype</span><span class="si">}</span><span class="s2">. Use &#39;json&#39; or &#39;toml&#39;.&quot;</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario file &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; created successfully for parameters: </span><span class="si">{</span><span class="n">param_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span>
+
+<span class="c1"># def create_scenario_file(</span>
+<span class="c1">#     scenario_name,</span>
+<span class="c1">#     param_names=None,</span>
+<span class="c1">#     control_type=None,</span>
+<span class="c1">#     filename=None,</span>
+<span class="c1">#     filetype=&quot;json&quot;,</span>
+<span class="c1">#     use_common_values=True</span>
+<span class="c1"># ):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Create a scenario file using optionally a set of common suggested values.</span>
+    
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     scenario_name : str</span>
+<span class="c1">#         Name of the scenario.</span>
+<span class="c1">#     param_names : list of str, optional</span>
+<span class="c1">#         List of parameter names to include. Defaults to all keys in COMMON_PARAM_VALUES.</span>
+<span class="c1">#     control_type : str or None</span>
+<span class="c1">#         Optional control type for all parameters (&#39;layers&#39;, &#39;zones&#39;, &#39;root_map&#39;, or None).</span>
+<span class="c1">#     filename : str, optional</span>
+<span class="c1">#         Output file name.</span>
+<span class="c1">#     filetype : str</span>
+<span class="c1">#         &#39;json&#39; (default) or &#39;toml&#39;.</span>
+<span class="c1">#     use_common_values : bool</span>
+<span class="c1">#         If True, fill parameter values from COMMON_PARAM_VALUES table.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     if param_names is None:</span>
+<span class="c1">#         param_names = list(COMMON_PARAM_VALUES.keys())</span>
+
+<span class="c1">#     n = len(param_names)</span>
+
+<span class="c1">#     # Build placeholders</span>
+<span class="c1">#     placeholders = {</span>
+<span class="c1">#         &quot;per_type&quot;: [&quot;&lt;type&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;per_nom&quot;: [&quot;&lt;value&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;per_mean&quot;: [&quot;&lt;mean&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;per_sigma&quot;: [&quot;&lt;sigma&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;per_bounds&quot;: [&quot;&lt;bounds&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;sampling_type&quot;: [&quot;&lt;sampling&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;transf_type&quot;: [&quot;&lt;transf&gt;&quot;] * n,</span>
+<span class="c1">#         &quot;listUpdateParm&quot;: [&quot;&lt;param&gt;&quot;] * n</span>
+<span class="c1">#     }</span>
+
+<span class="c1">#     # Fill placeholders from common values</span>
+<span class="c1">#     if use_common_values:</span>
+<span class="c1">#         for i, pname in enumerate(param_names):</span>
+<span class="c1">#             vals = COMMON_PARAM_VALUES.get(pname, {})</span>
+<span class="c1">#             placeholders[&quot;per_type&quot;][i] = vals.get(&quot;type&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;per_nom&quot;][i] = vals.get(&quot;nom&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;per_mean&quot;][i] = vals.get(&quot;mean&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;per_sigma&quot;][i] = vals.get(&quot;sigma&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;per_bounds&quot;][i] = vals.get(&quot;bounds&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;sampling_type&quot;][i] = vals.get(&quot;sampling&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;transf_type&quot;][i] = vals.get(&quot;transf&quot;, None)</span>
+<span class="c1">#             placeholders[&quot;listUpdateParm&quot;][i] = vals.get(&quot;update&quot;, pname)</span>
+
+<span class="c1">#     pert_control = [control_type]*n if control_type else [None]*n</span>
+
+<span class="c1">#     scenario_data = {</span>
+<span class="c1">#         scenario_name: {</span>
+<span class="c1">#             &quot;per_name&quot;: param_names,</span>
+<span class="c1">#             &quot;per_type&quot;: placeholders[&quot;per_type&quot;],</span>
+<span class="c1">#             &quot;per_nom&quot;: placeholders[&quot;per_nom&quot;],</span>
+<span class="c1">#             &quot;per_mean&quot;: placeholders[&quot;per_mean&quot;],</span>
+<span class="c1">#             &quot;per_sigma&quot;: placeholders[&quot;per_sigma&quot;],</span>
+<span class="c1">#             &quot;per_bounds&quot;: placeholders[&quot;per_bounds&quot;],</span>
+<span class="c1">#             &quot;sampling_type&quot;: placeholders[&quot;sampling_type&quot;],</span>
+<span class="c1">#             &quot;transf_type&quot;: placeholders[&quot;transf_type&quot;],</span>
+<span class="c1">#             &quot;listUpdateParm&quot;: placeholders[&quot;listUpdateParm&quot;],</span>
+<span class="c1">#             &quot;pert_control_name&quot;: pert_control</span>
+<span class="c1">#         }</span>
+<span class="c1">#     }</span>
+
+<span class="c1">#     if filetype.lower() == &quot;json&quot;:</span>
+<span class="c1">#         scenario_data[&quot;_explanation&quot;] = {</span>
+<span class="c1">#             &quot;per_type&quot;: &quot;Type of parameter: None, multiplicative, etc.&quot;,</span>
+<span class="c1">#             &quot;per_name&quot;: &quot;Parameter name&quot;,</span>
+<span class="c1">#             &quot;per_nom&quot;: &quot;Nominal value&quot;,</span>
+<span class="c1">#             &quot;per_mean&quot;: &quot;Mean for sampling&quot;,</span>
+<span class="c1">#             &quot;per_sigma&quot;: &quot;Standard deviation&quot;,</span>
+<span class="c1">#             &quot;per_bounds&quot;: &quot;Bounds: [min,max] or None&quot;,</span>
+<span class="c1">#             &quot;sampling_type&quot;: &quot;Sampling method&quot;,</span>
+<span class="c1">#             &quot;transf_type&quot;: &quot;Transformation: None, log, etc.&quot;,</span>
+<span class="c1">#             &quot;listUpdateParm&quot;: &quot;Parameters updated in model&quot;,</span>
+<span class="c1">#             &quot;pert_control_name&quot;: &quot;Control type: &#39;layers&#39;, &#39;zones&#39;, &#39;root_map&#39;, or None&quot;</span>
+<span class="c1">#         }</span>
+<span class="c1">#         if filename is None:</span>
+<span class="c1">#             filename = f&quot;{scenario_name}.json&quot;</span>
+<span class="c1">#         with open(filename, &quot;w&quot;) as f:</span>
+<span class="c1">#             json.dump(scenario_data, f, indent=4)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         try:</span>
+<span class="c1">#             # import tomllib</span>
+<span class="c1">#             import tomli_w  # For writing</span>
+<span class="c1">#         except ImportError:</span>
+<span class="c1">#             print(&quot;TOML not installed. Use JSON instead.&quot;)</span>
+<span class="c1">#             return</span>
+<span class="c1">#         if filename is None:</span>
+<span class="c1">#             filename = f&quot;{scenario_name}.toml&quot;</span>
+<span class="c1">#         with open(filename, &quot;w&quot;) as f:</span>
+<span class="c1">#             tomli_w.dump(scenario_data, f)</span>
+
+<span class="c1">#     print(f&quot;Scenario file &#39;{filename}&#39; created successfully for parameters: {param_names}&quot;)</span>
+<span class="c1">#     return </span>
+
+
+
+    <span class="c1"># Save file</span>
+    <span class="c1"># if filetype.lower() == &quot;toml&quot;:</span>
+    <span class="c1">#     try:</span>
+    <span class="c1">#         import tomllib</span>
+    <span class="c1">#     except ImportError:</span>
+    <span class="c1">#         raise ImportError(&quot;Module &#39;toml&#39; not installed. Use JSON instead.&quot;)</span>
+    <span class="c1">#     with open(filename, &quot;w&quot;) as f:</span>
+    <span class="c1">#         tomllib.dump(scenario_data, f)</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     with open(filename, &quot;w&quot;) as f:</span>
+    <span class="c1">#         json.dump(scenario_data, f, indent=4)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario file &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; created successfully with control type &#39;</span><span class="si">{</span><span class="n">control_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_scenario_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a scenario file created by `create_scenario_file_single_control`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Path to the scenario file.</span>
+<span class="sd">    filetype : str or None</span>
+<span class="sd">        &quot;json&quot; or &quot;toml&quot;. If None, inferred from file extension.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary containing the scenario data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.toml&quot;</span><span class="p">):</span>
+            <span class="n">filetype</span> <span class="o">=</span> <span class="s2">&quot;toml&quot;</span>
+        <span class="k">elif</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="n">filetype</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot infer file type. Specify filetype=&#39;json&#39; or &#39;toml&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">filetype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;toml&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Module &#39;toml&#39; not installed. Use JSON instead.&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">scenario_dict_to_df_list</span><span class="p">(</span><span class="n">scenario_dict</span><span class="p">,</span> <span class="n">scenario_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a scenario dictionary to a DataFrame where each parameter</span>
+<span class="sd">    is a row and its attributes are stored as lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scenario</span> <span class="o">=</span> <span class="n">scenario_dict</span><span class="p">[</span><span class="n">scenario_name</span><span class="p">]</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_name&quot;</span><span class="p">]</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">pname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_mean&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_mean&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_mean&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_sigma&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_sigma&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_sigma&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_bounds&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_bounds&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_bounds&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;sampling&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;sampling_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;transf&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;transf_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;control&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pert_control_name&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">))[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">}</span>
+    
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">scenario_dict_to_multiindex_df</span><span class="p">(</span><span class="n">scenario_dict</span><span class="p">,</span> <span class="n">scenario_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a scenario dictionary to a MultiIndex DataFrame:</span>
+<span class="sd">    - Level 0: per_name</span>
+<span class="sd">    - Level 1: attributes (&#39;nom&#39;, &#39;mean&#39;, &#39;sigma&#39;, etc.)</span>
+<span class="sd">    Rows represent each instance (layer, zone, root_map element).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scenario</span> <span class="o">=</span> <span class="n">scenario_dict</span><span class="p">[</span><span class="n">scenario_name</span><span class="p">]</span>
+    
+    <span class="c1"># Determine number of rows</span>
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">])</span>
+    
+    <span class="c1"># Collect data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_name&quot;</span><span class="p">]):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;nom&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_nom&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_mean&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_sigma&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_bounds&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;sampling&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;sampling_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;transf&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;transf_type&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+            <span class="s2">&quot;control&quot;</span><span class="p">:</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pert_control_name&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;per_name&quot;</span><span class="p">]))[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># Expand lists to n_rows</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">val_expanded</span> <span class="o">=</span> <span class="n">val</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n_rows</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val_expanded</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">*</span><span class="n">n_rows</span>
+            <span class="n">data</span><span class="p">[(</span><span class="n">pname</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val_expanded</span>
+    
+    <span class="c1"># Create DataFrame with MultiIndex columns</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Feb 20, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

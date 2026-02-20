@@ -1,0 +1,839 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cathy_tools.Repo &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/api/generated/cathy_tools.Repo';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Feb 20, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../SSHydro/index.html">Surface subsurface hydrological model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_1_pyCATHY_weilletal.html">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_2_pyCATHY_inputs.html">Input plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3_meshing_from_Camporese.html">Meshing from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3_meshing_from_weill.html">Changing mesh properties (resolution, coordinates, …)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3a_create_soil_withzones.html">Create soil zones control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3b_soil3d_from_weill.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3c_spatial_atmbc_from_weill.html">Spatially heterogeneous atmbc (Weil et al)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.html">Atmbc update with no-data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_3f_meshing_from_subCatchment.html">Meshing from a Digital Elevation Model (DEM) .adf file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_4_pyCATHY_outputs.html">Output plots part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_4b_pyCATHY_outputs.html">Output plots part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_4b_waterTable_from_weill.html">Plot Water Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../SSHydro/plot_5a_infiltration_withBC.html">Update and show Boundary conditions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../EOdata/index.html">Working with Earth Observations datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../EOdata/plot_4_map_from_ET_EO.html">Mapping atmbc from Earth Observation xarray dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../EOdata/plot_4b_map_from_coarse_ET_EO.html">Mapping atmbc from coarse EO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../DA/index.html">Data Assimilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../FromLiterature/LaCecilia2023_myst/LaCecilia2023_myst.html">D. La Cecilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="cathy_tools.html">cathy_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="importers.cathy_outputs.html">importers.cathy_outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="importers.cathy_inputs.html">importers.cathy_inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DA.cathy_DA.html">DA.cathy_DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ERT.petro_Archie.html">ERT.petro_Archie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotters.cathy_plots.html">plotters.cathy_plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/edit/master/doc/content/api/generated/cathy_tools.Repo.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2Fcontent/api/generated/cathy_tools.Repo.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/content/api/generated/cathy_tools.Repo.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>cathy_tools.Repo</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo"><code class="docutils literal notranslate"><span class="pre">Repo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo.__init__"><code class="docutils literal notranslate"><span class="pre">Repo.__init__</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="cathy-tools-repo">
+<h1>cathy_tools.Repo<a class="headerlink" href="#cathy-tools-repo" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cathy_tools.Repo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cathy_tools.</span></span><span class="sig-name descname"><span class="pre">Repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~os.PathLike[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odbt:</span> <span class="pre">~typing.Type[~gitdb.db.loose.LooseObjectDB]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'git.db.GitCmdObjectDB'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_parent_directories:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo" title="Link to this definition">#</a></dt>
+<dd><p>Represents a git repository and allows you to query references, create commit
+information, generate diffs, create and clone repositories, and query the log.</p>
+<p>The following attributes are worth using:</p>
+<ul class="simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">working_dir</span></code> is the working directory of the git command, which is the
+working tree directory if available or the <code class="docutils literal notranslate"><span class="pre">.git</span></code> directory in case of bare
+repositories.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">working_tree_dir</span></code> is the working tree directory, but will return <code class="docutils literal notranslate"><span class="pre">None</span></code>
+if we are a bare repository.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">git_dir</span></code> is the <code class="docutils literal notranslate"><span class="pre">.git</span></code> repository directory, which is always set.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="cathy_tools.Repo.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~os.PathLike[str]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">odbt:</span> <span class="pre">~typing.Type[~gitdb.db.loose.LooseObjectDB]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'git.db.GitCmdObjectDB'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_parent_directories:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/git/repo/base.html#Repo.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cathy_tools.Repo.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Create a new <a class="reference internal" href="#cathy_tools.Repo" title="cathy_tools.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – <p>The path to either the worktree directory or the .git directory itself:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;/Users/mtrier/Development/git-python&quot;</span><span class="p">)</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;/Users/mtrier/Development/git-python.git&quot;</span><span class="p">)</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;~/Development/git-python.git&quot;</span><span class="p">)</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="s2">&quot;$REPOSITORIES/Development/git-python.git&quot;</span><span class="p">)</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="p">(</span><span class="sa">R</span><span class="s2">&quot;C:\Users\mtrier\Development\git-python\.git&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul>
+<li><p>In <em>Cygwin</em>, <cite>path</cite> may be a <code class="docutils literal notranslate"><span class="pre">cygdrive/...</span></code> prefixed path.</p></li>
+<li><p>If <cite>path</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code> or an empty string, <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">GIT_DIR</span></code> is used. If
+that environment variable is absent or empty, the current directory is
+used.</p></li>
+</ul>
+</p></li>
+<li><p><strong>odbt</strong> – Object DataBase type - a type which is constructed by providing the
+directory containing the database objects, i.e. <code class="docutils literal notranslate"><span class="pre">.git/objects</span></code>. It will be
+used to access all object data.</p></li>
+<li><p><strong>search_parent_directories</strong> – <p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, all parent directories will be searched for a valid repo as
+well.</p>
+<p>Please note that this was the default behaviour in older versions of
+GitPython, which is considered a bug though.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>git.exc.InvalidGitRepositoryError</strong> – </p></li>
+<li><p><strong>git.exc.NoSuchPathError</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cathy_tools.Repo" title="cathy_tools.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cathy_tools.Repo.__init__" title="cathy_tools.Repo.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([path, odbt, ...])</p></td>
+<td><p>Create a new <a class="reference internal" href="#cathy_tools.Repo" title="cathy_tools.Repo"><code class="xref py py-class docutils literal notranslate"><span class="pre">Repo</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">archive</span></code>(ostream[, treeish, prefix])</p></td>
+<td><p>Archive the tree at the given revision.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blame</span></code>(rev, file[, incremental, rev_opts])</p></td>
+<td><p>The blame information for the given file at the given revision.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blame_incremental</span></code>(rev, file, **kwargs)</p></td>
+<td><p>Iterator for blame information for the given file at the given revision.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code>(path[, progress, multi_options, ...])</p></td>
+<td><p>Create a clone from this repository.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone_from</span></code>(url, to_path[, progress, env, ...])</p></td>
+<td><p>Create a clone from the given URL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">commit</span></code>([rev])</p></td>
+<td><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Commit</span></code> object for the specified revision.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_reader</span></code>([config_level])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_writer</span></code>([config_level])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_head</span></code>(path[, commit, force, logmsg])</p></td>
+<td><p>Create a new head within the repository.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_remote</span></code>(name, url, **kwargs)</p></td>
+<td><p>Create a new remote.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_submodule</span></code>(*args, **kwargs)</p></td>
+<td><p>Create a new submodule.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_tag</span></code>(path[, ref, message, force])</p></td>
+<td><p>Create a new tag reference.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">currently_rebasing_on</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_head</span></code>(*heads, **kwargs)</p></td>
+<td><p>Delete the given heads.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_remote</span></code>(remote)</p></td>
+<td><p>Delete the given remote.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_tag</span></code>(*tags)</p></td>
+<td><p>Delete the given tag references.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_separate_working_tree</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ignored</span></code>(*paths)</p></td>
+<td><p>Checks if paths are ignored via <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code>([path, mkdir, odbt, expand_vars])</p></td>
+<td><p>Initialize a git repository at the given path if specified.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_ancestor</span></code>(ancestor_rev, rev)</p></td>
+<td><p>Check if a commit is an ancestor of another.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_dirty</span></code>([index, working_tree, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_valid_object</span></code>(sha[, object_type])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_commits</span></code>([rev, paths])</p></td>
+<td><p>An iterator of <code class="xref py py-class docutils literal notranslate"><span class="pre">Commit</span></code> objects representing the history of a given ref/commit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_submodules</span></code>(*args, **kwargs)</p></td>
+<td><p>An iterator yielding Submodule instances.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_trees</span></code>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_base</span></code>(*rev, **kwargs)</p></td>
+<td><p>Find the closest common ancestor for the given revision (<code class="xref py py-class docutils literal notranslate"><span class="pre">Commit</span></code>s, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code>s, <code class="xref py py-class docutils literal notranslate"><span class="pre">Reference</span></code>s, etc.).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">remote</span></code>([name])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rev_parse</span></code>(rev)</p></td>
+<td><p>Parse a revision string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodule</span></code>(name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodule_update</span></code>(*args, **kwargs)</p></td>
+<td><p>Update the submodules, keeping the repository consistent as it will take the previous state into consideration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tag</span></code>(path)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tree</span></code>([rev])</p></td>
+<td><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Tree</span></code> object for the given tree-ish revision.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DAEMON_EXPORT_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_branch</span></code></p></td>
+<td><p>The name of the currently active branch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">alternates</span></code></p></td>
+<td><p>Retrieve a list of alternates paths or set a list paths to be used as alternates</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bare</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the repository is bare</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">branches</span></code></p></td>
+<td><p>Alias for heads.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">common_dir</span></code></p></td>
+<td><p>return: The git dir that holds everything except possibly HEAD, FETCH_HEAD, ORIG_HEAD, COMMIT_EDITMSG, index, and logs/.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_level</span></code></p></td>
+<td><p>Represents the configuration level of a configuration file.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">daemon_export</span></code></p></td>
+<td><p>If True, git-daemon may export this repository</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>The project's description</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">git</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">head</span></code></p></td>
+<td><p>return: <code class="xref py py-class docutils literal notranslate"><span class="pre">HEAD</span></code> object pointing to the current head reference</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">heads</span></code></p></td>
+<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Head</span></code> objects representing the branch heads in this repo.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_author_committer_start</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_envvars</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_hexsha_only</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_hexsha_shortened</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_tab_full_line</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">re_whitespace</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">references</span></code></p></td>
+<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Reference</span></code> objects representing tags, heads and remote references.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">refs</span></code></p></td>
+<td><p>Alias for references.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">remotes</span></code></p></td>
+<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Remote</span></code> objects allowing to access and manipulate remotes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">submodules</span></code></p></td>
+<td><p>return: git.IterableList(Submodule, ...) of direct submodules available from the current head</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">TagReference</span></code> objects that are available in this repo.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_git_clone_options</span></code></p></td>
+<td><p>Options to <em class="manpage">git-clone(1)</em> that allow arbitrary commands to be executed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">untracked_files</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">working_tree_dir</span></code></p></td>
+<td><p>return: The working tree directory of our git repository.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">working_dir</span></code></p></td>
+<td><p>The working directory of the git command.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">git_dir</span></code></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">.git</span></code> repository directory.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content/api/generated"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo"><code class="docutils literal notranslate"><span class="pre">Repo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cathy_tools.Repo.__init__"><code class="docutils literal notranslate"><span class="pre">Repo.__init__</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Feb 20, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
