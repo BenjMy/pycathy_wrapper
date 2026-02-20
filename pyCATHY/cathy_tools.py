@@ -348,7 +348,9 @@ class CATHY:
                 os.remove(file)
 
             # if self.notebook==False:
-            bashCommand = "gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
+            # bashCommand = "gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
+            # bashCommand = "gfortran -O -mcmodel=large -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
+            bashCommand = "gfortran -O -mcmodel=large -fPIC -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
             try:
                 p = os.system(bashCommand + "> /dev/null 2>&1")
                 # run it twice (to avoid the first error)
@@ -428,83 +430,166 @@ class CATHY:
 
         pass
 
+    # def recompileSrc(self, verbose=False):
+    #     """
+    #     Other option is self.run_processor(runProcess=False)
+
+    #     """
+    #     ti = time.time()  # executation time estimate
+    #     self.console.print(
+    #         ":hammer_and_wrench: [b] Recompile src files[/b] ["
+    #         + str(int(abs(ti - self.t0)))
+    #         + "s]"
+    #     )
+        
+        
+    #     # gfortran_executable = 'gfortran.exe'
+
+    #     # # Execute the where command to find the path to gfortran
+    #     # where_command = ['where', gfortran_executable]
+    #     # result = subprocess.run(where_command, stdout=subprocess.PIPE, shell=True, check=True)
+        
+    #     # # Get the path to gfortran from the output of the where command
+    #     # gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
+
+    #     # clean all files previously compiled
+    #     for file in glob.glob("*.o"):
+    #         os.remove(file)
+    #     # list all the fortran files to compile and compile
+    #     for file in glob.glob("*.f"):
+            
+    #         # filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
+    #         filepath = str(file)
+    #         bashCommand = "gfortran -c " + str(filepath)
+    #         # gfortran -c *.f
+    #         # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
+    #         # print(bashCommand)
+    #         with warnings.catch_warnings():
+    #             warnings.simplefilter("ignore")
+    #             process = subprocess.Popen(
+    #                 bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    #             )
+    #             # if verbose==True:
+    #             #     output, error = process.communicate()
+    #             output, error = process.communicate()
+    #     # list all the fortran compiled files to compile and run
+    #     files = ""
+    #     for file in glob.glob("*.o"):
+    #         # files += " " + os.path.join(self.workdir, self.project_name, 'prepro/src/' + str(file))
+    #         files += " " + str(file)
+    #     # bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
+    #     bashCommand = "gfortran -mcmodel=large -fPIC" + files + " -llapack -lblas -o " + self.processor_name
+    #     ti = time.time()  # executation time estimate
+    #     self.console.print(
+    #         ":cooking: [b]gfortran compilation[/b] ["
+    #         + str(int(abs(ti - self.t0)))
+    #         + "s]"
+    #     )
+
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         process = subprocess.Popen(
+    #             bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    #         )
+    #         output, error = process.communicate()
+            
+    #     print(error)
+
+
+    #     try:
+    #         shutil.move(
+    #             os.path.join(
+    #                 self.workdir, self.project_name, "src", self.processor_name
+    #             ),
+    #             os.path.join(self.workdir, self.project_name, self.processor_name),
+    #         )
+    #     except:
+    #         self.console.print(":pensive_face: [b]Cannot find the new processsor[/b]")
+
+    #     pass
+
+
     def recompileSrc(self, verbose=False):
         """
         Other option is self.run_processor(runProcess=False)
-
         """
-        ti = time.time()  # executation time estimate
+        ti = time.time()
         self.console.print(
             ":hammer_and_wrench: [b] Recompile src files[/b] ["
             + str(int(abs(ti - self.t0)))
             + "s]"
         )
-        
-        
-        # gfortran_executable = 'gfortran.exe'
-
-        # # Execute the where command to find the path to gfortran
-        # where_command = ['where', gfortran_executable]
-        # result = subprocess.run(where_command, stdout=subprocess.PIPE, shell=True, check=True)
-        
-        # # Get the path to gfortran from the output of the where command
-        # gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
-
+    
         # clean all files previously compiled
         for file in glob.glob("*.o"):
             os.remove(file)
-        # list all the fortran files to compile and compile
+    
+        # Step 1: compile each .f file to .o WITH large memory model flags
+        compile_errors = []
         for file in glob.glob("*.f"):
-            
-            # filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
             filepath = str(file)
-            bashCommand = "gfortran -c " + str(filepath)
-            # gfortran -c *.f
-            # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
-            # print(bashCommand)
+            bashCommand = f"gfortran -O -mcmodel=large -fPIC -c {filepath}"
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 process = subprocess.Popen(
                     bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
-                # if verbose==True:
-                #     output, error = process.communicate()
                 output, error = process.communicate()
-        # list all the fortran compiled files to compile and run
-        files = ""
-        for file in glob.glob("*.o"):
-            # files += " " + os.path.join(self.workdir, self.project_name, 'prepro/src/' + str(file))
-            files += " " + str(file)
-        bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
-        ti = time.time()  # executation time estimate
+                if process.returncode != 0:
+                    compile_errors.append((filepath, error.decode()))
+                    if verbose:
+                        self.console.print(f":x: [red]Error compiling {filepath}[/red]")
+                        print(error.decode())
+    
+        if compile_errors:
+            self.console.print(
+                f":x: [red]{len(compile_errors)} file(s) failed to compile[/red]"
+            )
+            for fname, err in compile_errors:
+                self.console.print(f"  - {fname}: {err}")
+            return
+    
+        # Step 2: link all .o files WITH the same flags
+        files = " ".join(glob.glob("*.o"))
+        bashCommand = (
+            f"gfortran -mcmodel=large -fPIC {files} "
+            f"-llapack -lblas -o {self.processor_name}"
+        )
+    
+        ti = time.time()
         self.console.print(
             ":cooking: [b]gfortran compilation[/b] ["
             + str(int(abs(ti - self.t0)))
             + "s]"
         )
-
+    
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             process = subprocess.Popen(
                 bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             output, error = process.communicate()
-            
-        print(error)
-
-
+    
+        if process.returncode != 0:
+            self.console.print(":x: [red]Linker error:[/red]")
+            print(error.decode())
+            return
+        else:
+            self.console.print(":white_check_mark: [green]Compilation successful![/green]")
+            if verbose:
+                print(output.decode())
+    
         try:
             shutil.move(
-                os.path.join(
-                    self.workdir, self.project_name, "src", self.processor_name
-                ),
+                os.path.join(self.workdir, self.project_name, "src", self.processor_name),
                 os.path.join(self.workdir, self.project_name, self.processor_name),
             )
-        except:
-            self.console.print(":pensive_face: [b]Cannot find the new processsor[/b]")
-
-        pass
-
+        except Exception as e:
+            self.console.print(
+                f":pensive_face: [b]Cannot find the new processor[/b]: {e}"
+            )
+            
+            
     def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
         """
         Run cathy.exe
@@ -811,11 +896,22 @@ class CATHY:
                 self.cathyH[kk] = value
         
         # self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"]) 
-        self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
-        # self.cathyH['NODMAX'] = int(1e6)
-        self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
-        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30      
-        self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*3
+        # self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
+        # self.cathyH['NODMAX'] = int(300)
+        # NODMAX = (ROWMAX+1) * (COLMAX+1)  — number of nodes (corners), not cells
+        self.cathyH['NODMAX'] = int((self.cathyH["ROWMAX"] + 1) * (self.cathyH["COLMAX"] + 1))
+        # self.cathyH['NODMAX'] = 1e6
+
+        # MAXCEL = ROWMAX * COLMAX  — number of cells
+        self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"] * self.cathyH["COLMAX"])
+        # self.cathyH['MAXCEL'] = 1e6
+        
+        # NTRMAX = 2 * MAXCEL  — 2 triangles per cell
+        self.cathyH['NTRMAX'] = int(2 * self.cathyH['MAXCEL'])
+
+        # self.cathyH['NTRMAX'] =  int((2*self.cathyH['MAXCEL'])/ (DEMRES * DEMRES))
+        self.cathyH['MAXTRM'] = self.cathyH["ROWMAX"]*self.cathyH["COLMAX"]*self.dem_parameters["nstr"]*30
+        self.cathyH['NFACEMAX'] = self.cathyH['NODMAX']*5
         # self.cathyH['MAXTRM'] = 1599000
         # MAXTRM=1599000
         

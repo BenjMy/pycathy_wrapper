@@ -1273,3 +1273,160 @@ def map_grid_to_mesh(
     })
     return ds_out
 
+def assert_mask_consistency(ds, var=None, time_dim='time', figsize=(14, 4), plot=True):
+    """
+    Check whether NaN counts and spatial masks are consistent across time steps
+    for any regular-grid xarray Dataset (e.g. ERA5, MODIS, custom model output).
+
+    Parameters
+    ----------
+    ds       : xarray.Dataset or xarray.DataArray
+    var      : str or None
+                Variable name to check. If None and ds is a Dataset,
+                checks all data variables. If ds is a DataArray, uses it directly.
+    time_dim : str, name of the time dimension (default 'time')
+    figsize  : tuple, base figure size
+    plot     : bool, whether to produce plots (default True)
+
+    Returns
+    -------
+    dict (per variable) with keys:
+        'nan_count'        : DataArray of NaN count per time step
+        'mask_equal'       : DataArray of bool per time step
+        'n_unique_masks'   : int
+        'differing_times'  : array of time steps where mask differs from t=0
+        'all_counts_equal' : bool
+        'all_masks_equal'  : bool
+        'spatial_dims'     : list of spatial dimension names used
+    """
+
+    # ------------------------------------------------------------------ #
+    # 0. Normalise input → dict of {name: DataArray}                      #
+    # ------------------------------------------------------------------ #
+    if isinstance(ds, xr.DataArray):
+        variables = {ds.name or 'data': ds}
+    elif var is not None:
+        variables = {var: ds[var]}
+    else:
+        variables = {v: ds[v] for v in ds.data_vars}
+
+    all_results = {}
+
+    for vname, da in variables.items():
+
+        print("=" * 55)
+        print(f"Variable  : {vname}")
+        print(f"Shape     : {dict(zip(da.dims, da.shape))}")
+
+        # ------------------------------------------------------------------ #
+        # 1. Identify time and spatial dims                                   #
+        # ------------------------------------------------------------------ #
+        if time_dim not in da.dims:
+            print(f"  [SKIP] '{time_dim}' dimension not found.\n")
+            continue
+
+        spatial_dims = [d for d in da.dims if d != time_dim]
+        print(f"Time dim  : {time_dim}  ({da.sizes[time_dim]} steps)")
+        print(f"Space dims: {spatial_dims}")
+        print("-" * 55)
+
+        # ------------------------------------------------------------------ #
+        # 2. NaN count per time step                                          #
+        # ------------------------------------------------------------------ #
+        nan_count = da.isnull().sum(dim=spatial_dims)
+        total_cells = int(np.prod([da.sizes[d] for d in spatial_dims]))
+        all_counts_equal = bool(np.all(nan_count.values == nan_count.values[0]))
+
+        print("NaN count per time step:")
+        print(f"  Total cells : {total_cells}")
+        print(f"  Min  : {int(nan_count.values.min())}")
+        print(f"  Max  : {int(nan_count.values.max())}")
+        print(f"  Mean : {nan_count.values.mean():.1f}")
+        print(f"  Std  : {nan_count.values.std():.2f}")
+        print(f"  All equal   : {all_counts_equal}")
+
+        # ------------------------------------------------------------------ #
+        # 3. Spatial mask consistency                                         #
+        # ------------------------------------------------------------------ #
+        nan_mask        = da.isnull()
+        ref_mask        = nan_mask.isel({time_dim: 0})
+        mask_equal      = (nan_mask == ref_mask).all(dim=spatial_dims)
+        all_masks_equal = bool(mask_equal.all().values)
+        differing_times = da[time_dim].values[~mask_equal.values]
+
+        print("-" * 55)
+        print("Spatial mask consistency (vs. t=0):")
+        print(f"  All identical   : {all_masks_equal}")
+        print(f"  Differing steps : {len(differing_times)}")
+        if 0 < len(differing_times) <= 10:
+            print(f"  → {differing_times}")
+        elif len(differing_times) > 10:
+            print(f"  → first 10: {differing_times[:10]} ...")
+
+        # ------------------------------------------------------------------ #
+        # 4. Unique masks                                                     #
+        # ------------------------------------------------------------------ #
+        flat     = nan_mask.values.reshape(da.sizes[time_dim], -1)
+        n_unique = len(np.unique(flat, axis=0))
+        print(f"  Unique masks    : {n_unique}")
+        print("=" * 55)
+
+        # ------------------------------------------------------------------ #
+        # 5. Plots (optional)                                                 #
+        # ------------------------------------------------------------------ #
+        if plot:
+            fig, axes = plt.subplots(1, 3, figsize=figsize)
+            fig.suptitle(f"{vname}  —  NaN consistency check", fontweight='bold')
+
+            # (a) NaN count time series
+            nan_count.plot(ax=axes[0])
+            axes[0].axhline(nan_count.values[0], color='red',
+                            linestyle='--', linewidth=0.8, label='t=0 value')
+            axes[0].set_title("NaN count over time")
+            axes[0].set_xlabel(time_dim)
+            axes[0].set_ylabel("NaN count")
+            axes[0].legend(fontsize=8)
+
+            # (b) Time steps where mask differs from t=0
+            axes[1].imshow(
+                (~mask_equal.values).reshape(1, -1),
+                aspect='auto', cmap='Reds', interpolation='none',
+                extent=[0, da.sizes[time_dim], 0, 1]
+            )
+            axes[1].set_title("Mask differs from t=0\n(red = different)")
+            axes[1].set_xlabel("Time index")
+            axes[1].set_yticks([])
+
+            # (c) Reference NaN mask (first time step)
+            ref_slice = ref_mask
+            extra = [d for d in ref_slice.dims if d not in
+                     ['x', 'y', 'lon', 'lat', 'longitude', 'latitude']]
+            for d in extra:
+                ref_slice = ref_slice.isel({d: 0})
+
+            if ref_slice.ndim == 2:
+                axes[2].imshow(ref_slice.values, cmap='Greys', interpolation='none',
+                               origin='upper')
+                axes[2].set_title("Reference NaN mask (t=0)\n(black = NaN)")
+                axes[2].set_xlabel(ref_slice.dims[1])
+                axes[2].set_ylabel(ref_slice.dims[0])
+            else:
+                axes[2].text(0.5, 0.5, "Cannot plot\n(not 2-D after squeezing)",
+                             ha='center', va='center')
+                axes[2].set_title("Reference mask")
+
+            plt.tight_layout()
+            plt.show()
+
+        all_results[vname] = {
+            'nan_count'       : nan_count,
+            'mask_equal'      : mask_equal,
+            'n_unique_masks'  : n_unique,
+            'differing_times' : differing_times,
+            'all_counts_equal': all_counts_equal,
+            'all_masks_equal' : all_masks_equal,
+            'spatial_dims'    : spatial_dims,
+            'ref_mask'        : ref_mask,
+        }
+
+    return all_results if len(all_results) > 1 else next(iter(all_results.values()))

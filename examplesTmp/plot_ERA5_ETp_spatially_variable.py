@@ -21,7 +21,7 @@ data_dir = rootPath / "era5_data"
 data_dir.mkdir(exist_ok=True)
 
 # Optional: AOI shapefile
-aoi_shp = rootPath / "your_aoi.shp"  # set your AOI path
+aoi_shp = rootPath / "era5_data/agramon.geojson"  # set your AOI path
 
 # ----------------------------
 # Check if download exists
@@ -76,32 +76,39 @@ if len(nc_files) == 0:
 # ----------------------------
 ds = xr.open_dataset(nc_files[0])
 ds = ds.rio.write_crs("EPSG:4326")  # assign CRS
+ds.rio.resolution()
+
 
 # ----------------------------
 # Extract potential evaporation (ETp)
 # ----------------------------
-etp = ds["potential_evaporation"]
-
-# ERA5 units are m (water equivalent). Convert to mm
-etp_mm = etp * 1000
+etp = ds["pev"]
+etp.valid_time
 
 # Resample to daily sum
-etp_daily = etp_mm.resample(time="1D").sum()
+etp_daily = etp.resample(valid_time="1D").sum()
 
 # ----------------------------
 # Optional: clip to AOI
 # ----------------------------
 if aoi_shp.exists():
     shape = gpd.read_file(aoi_shp).to_crs("EPSG:4326")
-    etp_clip = etp_daily.isel(time=0).rio.clip(shape.geometry, shape.crs)
+    shape.geometry = shape.geometry.buffer(0.1)  # 0.01 deg ~ 1 km
+    etp_clip = etp_daily.isel(valid_time=0).rio.clip(shape.geometry, shape.crs)
 else:
-    etp_clip = etp_daily.isel(time=0)
+    etp_clip = etp_daily.isel(valid_time=0)
+
+
+print(etp_daily.rio.crs)   # raster CRS
+print(shape.crs)           # AOI CRS
+
 
 # ----------------------------
 # Plot
 # ----------------------------
 fig, ax = plt.subplots(figsize=(8,6))
-etp_clip.rio.plot(ax=ax, cmap="viridis")
+# etp_clip.rio.plot(ax=ax, cmap="viridis")
+etp_clip.plot.imshow(ax=ax, cmap="viridis")
 ax.set_title("ERA5 Potential Evaporation (ETp, mm/day)")
 plt.show()
 
@@ -111,3 +118,4 @@ plt.show()
 output_file = rootPath / "ETp_ERA5_2022_Q1.nc"
 etp_daily.to_netcdf(output_file)
 print(f"Daily ETp saved to {output_file}")
+etp_clip.rio.to_raster("etp_clip.tif")

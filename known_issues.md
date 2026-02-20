@@ -48,4 +48,12 @@ root depth is not an element of the mesh layer!
 
  ELEMENTO DIAGONALE DI L NULLO,I,J =    1      -0.32019E-08
 
+
+## Seepage faces
  
+ 👟 Run processor
+b'\n     nsf  (# of seepage faces)               =      0\n'
+
+This often means that the code cannot continue to run due to issue with memory allocation.
+Check **CATHY.H** file. And see check.f90
+
