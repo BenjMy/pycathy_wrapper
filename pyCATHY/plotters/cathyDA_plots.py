@@ -19,12 +19,15 @@ from pyCATHY.cathy_utils import (
     convert_time_units,
     label_units,
     transform2_time_delta,
+    get_UNIT_divisor
 )
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import pandas as pd
+import matplotlib.gridspec as gridspec
 
 # mpl.style.use('default')
 mpl.rcParams["grid.color"] = "k"
@@ -374,6 +377,121 @@ def DA_plot_ET_performance(ET_DA,
     axi.legend()
     axi.set_aspect('equal')
     
+
+
+
+def plot_stats_ensemble_ET(ds, var="ACT. ETRA", output_fig="ensemble_ET_stats.png",
+                           time_unit="hours", origin=None):
+    """
+    Plot ensemble ET statistics:
+      1. Ensemble mean ET over time (spatial mean ± std)
+      2. Spatial map of ensemble mean at last time step
+      3. Spatial map of ensemble std at last time step
+
+    Parameters
+    ----------
+    ds : xr.Dataset
+    var : str
+        Variable to plot. Default is 'ACT. ETRA'.
+    output_fig : str
+        Output figure path.
+    time_unit : str
+        Time unit for x-axis when no origin is given.
+        One of 'seconds', 'minutes', 'hours', 'days'. Default 'hours'.
+    origin : str or datetime-like, optional
+        If provided (e.g. '2023-06-01 06:00'), timedeltas are converted to
+        absolute datetimes and displayed as calendar dates. Overrides time_unit.
+    """
+    if time_unit not in get_UNIT_divisor():
+        raise ValueError(f"time_unit must be one of {list(get_UNIT_divisor().keys())}")
+
+    da = ds[var]
+    time_vals = da.time.values  # timedelta64[ns]
+    origin_ts = pd.Timestamp(origin) if origin is not None else None
+
+    use_datetime = origin_ts is not None
+    if use_datetime:
+        time_axis = [origin_ts + pd.to_timedelta(t) for t in time_vals]
+        xlabel = "Date / Time"
+        last_time_label = time_axis[-1].strftime("%Y-%m-%d %H:%M")
+    else:
+        time_axis = time_vals.astype("int64") / get_UNIT_divisor()[time_unit]
+        xlabel = f"Time ({time_unit})"
+        last_time_label = f"{time_axis[-1]:.2f} {time_unit}"
+
+    # Spatial mean across X, Y for each ensemble member and time
+    da_spatial_mean = da.mean(dim=["X", "Y"])      # (ensemble, time)
+    ens_mean = da_spatial_mean.mean("ensemble")     # (time,)
+    ens_std  = da_spatial_mean.std("ensemble")      # (time,)
+
+    # Last time step for spatial maps
+    last_time = time_vals[-1]
+    da_last  = da.sel(time=last_time)               # (ensemble, Y, X)
+    map_mean = da_last.mean("ensemble")             # (Y, X)
+    map_std  = da_last.std("ensemble")              # (Y, X)
+
+    fig = plt.figure(figsize=(14, 10))
+    gs = gridspec.GridSpec(2, 2, figure=fig, hspace=0.4, wspace=0.35)
+
+    # --- 1. Time series: ensemble mean ± std ---
+    ax1 = fig.add_subplot(gs[0, :])
+    ax1.plot(time_axis, ens_mean.values, "k-o", label="Ensemble mean", linewidth=2)
+    ax1.fill_between(
+        time_axis,
+        ens_mean.values - ens_std.values,
+        ens_mean.values + ens_std.values,
+        alpha=0.3, color="steelblue", label="±1 std"
+    )
+    if use_datetime:
+        fig.autofmt_xdate(rotation=30)
+    else:
+        plt.setp(ax1.get_xticklabels(), rotation=30, ha="right", fontsize=9)
+    ax1.set_xlabel(xlabel)
+    ax1.set_ylabel(var)
+    ax1.set_title(
+        f"Ensemble mean ± std of spatial-mean '{var}' over time\n"
+        f"(n={ds.dims['ensemble']} members)"
+    )
+    ax1.legend()
+    ax1.grid(True, linestyle="--", alpha=0.5)
+
+    # --- 2. Spatial map: ensemble mean at last time step ---
+    ax2 = fig.add_subplot(gs[1, 0])
+    im2 = ax2.pcolormesh(
+        ds.X.values, ds.Y.values, map_mean.values,
+        cmap="YlGn", shading="auto"
+    )
+    plt.colorbar(im2, ax=ax2, label=var)
+    ax2.set_title(f"Ensemble mean\n(t = {last_time_label})")
+    ax2.set_xlabel("X"); ax2.set_ylabel("Y")
+
+    # --- 3. Spatial map: ensemble std at last time step ---
+    ax3 = fig.add_subplot(gs[1, 1])
+    im3 = ax3.pcolormesh(
+        ds.X.values, ds.Y.values, map_std.values,
+        cmap="OrRd", shading="auto"
+    )
+    plt.colorbar(im3, ax=ax3, label=f"std({var})")
+    ax3.set_title(f"Ensemble spread (std)\n(t = {last_time_label})")
+    ax3.set_xlabel("X"); ax3.set_ylabel("Y")
+
+    plt.suptitle(f"Ensemble ET Statistics  —  '{var}'", fontsize=13, fontweight="bold")
+    plt.savefig(output_fig, dpi=150, bbox_inches="tight")
+    plt.show()
+    print(f"Figure saved to: {output_fig}")
+
+
+# --- Usage examples ---
+# Relative time in hours (default):
+#   plot_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="hours")
+#
+# Relative time in days:
+#   plot_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="days")
+#
+# Absolute datetime (origin = simulation start):
+#   plot_stats_ensemble_ET(ds, var="ACT. ETRA", origin="2023-06-01 06:00")
+
+
 
 #%% ---------------------------------------------------------------------------
 # -----------------Plot PARMS DA ----------------------------------------------

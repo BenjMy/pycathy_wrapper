@@ -18,6 +18,17 @@ import xarray as xr
 #############    Unit conversion and label ####################################
 ## ---------------------------------------------------------------------------
 
+def get_UNIT_divisor():
+    return {"seconds": 1e9, "minutes": 6e10, "hours": 3.6e12, "days": 8.64e13}
+
+def _fmt_time(t, time_unit, origin_ts):
+    """Format a single timedelta64 value as a string."""
+    if origin_ts is not None:
+        return (origin_ts + pd.to_timedelta(t)).strftime("%Y-%m-%d %H:%M")
+    val = int(t) / get_UNIT_divisor()[time_unit]
+    return f"{val:.4g} {time_unit}"
+
+
 def MPa2m(mpa):
     return mpa * 101.99773339984
 

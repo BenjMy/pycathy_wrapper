@@ -4,8 +4,14 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import xarray as xr
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import pandas as pd
 
-    
+from pyCATHY import cathy_utils
+
 def read_grid3d(grid3dfile, **kwargs):
     nnod, nnod3, nel = np.loadtxt(grid3dfile, max_rows=1)
     grid3d_file = open(grid3dfile, "r")
@@ -731,3 +737,165 @@ def read_cq(filename, **kwargs):
     cell_discharge = cell_discharge[:, :-1]
     
     return cell_discharge
+
+
+def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
+                          reference_datetime=None):
+    """
+    Read an ensemble of simulation ET results from fort.777 files and save to netCDF.
+
+    Parameters
+    ----------
+    pathexe_list : list of str or Path
+        List of paths to simulation execution directories, each containing a fort.777 file.
+    output_path : str or Path, optional
+        Path for the output netCDF file. Default is 'ensemble_et.nc'.
+    reference_datetime : str, pd.Timestamp, np.datetime64, or xr.DataArray
+        Reference date to anchor t=0 (e.g. '2023-06-01').
+        Required when time coordinate is timedelta64.
+
+    Returns
+    -------
+    ds_ensemble : xr.Dataset
+        Combined xarray Dataset with an 'ensemble' dimension.
+    """
+
+    # ── 0. Validate & normalise reference_datetime ────────────────────────────
+    def _parse_ref(ref):
+        """Accept str, Timestamp, datetime64, or xr.DataArray scalar."""
+        if ref is None:
+            return None
+        if isinstance(ref, xr.DataArray):
+            ref = ref.values
+        if isinstance(ref, np.ndarray):
+            ref = ref.item()                    # numpy scalar → python scalar
+        return pd.Timestamp(ref)
+
+    ref = _parse_ref(reference_datetime)
+
+    # ── 1. Read & stack ensemble ──────────────────────────────────────────────
+    ds_list = []
+    for i, ppl in enumerate(pathexe_list):
+        fort777_path = Path(ppl) / "fort.777"
+        df_fort777   = read_fort777(fort777_path)
+        ds           = df_fort777.set_index(["time", "Y", "X"]).to_xarray()
+
+        # drop band dim/coord if present
+        if "band" in ds.dims:
+            ds = ds.squeeze("band", drop=True)
+        if "band" in ds.coords:
+            ds = ds.drop_vars("band")
+
+        ds = ds.expand_dims({"ensemble": [i]})
+        ds_list.append(ds)
+
+    ds_ensemble = xr.concat(ds_list, dim="ensemble")
+
+    # store source paths as coordinate
+    ds_ensemble["ensemble_path"] = xr.DataArray(
+        [str(p) for p in pathexe_list], dims=["ensemble"]
+    )
+
+    # ── 2. Fix timedelta64 → datetime64 ──────────────────────────────────────
+    if "time" in ds_ensemble.coords:
+        time_vals = ds_ensemble["time"].values
+
+        if np.issubdtype(time_vals.dtype, np.timedelta64):
+            if ref is None:
+                raise ValueError(
+                    "reference_datetime is required when time is timedelta64.\n"
+                    "Provide the simulation start date, e.g.:\n"
+                    "  create_ensemble_ET_xr(..., reference_datetime='2023-06-01')"
+                )
+            dt_values = ref + pd.to_timedelta(time_vals)
+            ds_ensemble = ds_ensemble.assign_coords(time=dt_values)
+            print(f"  ✓ time converted: timedelta64 → datetime64  (ref: {ref.date()})")
+            print(f"    range: {dt_values[0]} → {dt_values[-1]}")
+
+        elif np.issubdtype(time_vals.dtype, np.datetime64):
+            print(f"  ✓ time is already datetime64")
+
+        else:
+            print(f"  ⚠ unexpected time dtype: {time_vals.dtype} — skipping conversion")
+
+    # ── 3. Clear encoding/attrs on all vars & coords ──────────────────────────
+    ENCODING_KEYS = {
+        'dtype', 'units', 'calendar', '_FillValue', 'missing_value',
+        'scale_factor', 'add_offset', 'source', 'original_shape',
+        'coordinates', 'chunksizes', 'contiguous',
+    }
+    for name in list(ds_ensemble.data_vars) + list(ds_ensemble.coords):
+        for key in list(ds_ensemble[name].attrs.keys()):
+            if key in ENCODING_KEYS:
+                ds_ensemble[name].attrs.pop(key)
+        ds_ensemble[name].encoding.clear()
+
+    # ── 4. Save with explicit safe time encoding ──────────────────────────────
+    ref_str  = str(ref.date()) if ref else "2000-01-01"
+    ds_ensemble.to_netcdf(
+        output_path,
+        encoding={"time": {
+            "dtype"   : "float64",
+            "units"   : f"hours since {ref_str}",
+            "calendar": "standard",
+        }}
+    )
+
+    print(f"\n  ✓ saved → {output_path}")
+    print(ds_ensemble)
+    return ds_ensemble
+
+
+def print_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="hours", origin=None):
+    """
+    Print summary statistics of the ensemble ET dataset.
+
+    Parameters
+    ----------
+    ds : xr.Dataset
+    var : str
+        Variable to summarise. Default is 'ACT. ETRA'.
+    time_unit : str
+        Time unit for display: 'seconds', 'minutes', 'hours', 'days'. Default 'hours'.
+    origin : str or datetime-like, optional
+        If provided (e.g. '2023-06-01 06:00'), time steps are shown as
+        absolute datetimes. Overrides time_unit display.
+    """
+    if time_unit not in UNIT_DIVISOR:
+        raise ValueError(f"time_unit must be one of {list(UNIT_DIVISOR.keys())}")
+
+    da = ds[var]
+    time_vals = da.time.values  # timedelta64[ns]
+    origin_ts = pd.Timestamp(origin) if origin is not None else None
+
+    print("=" * 60)
+    print(f"Variable: '{var}'")
+    print(f"Dimensions: {dict(da.sizes)}")
+    print("-" * 60)
+    print(f"  Global mean:   {float(da.mean()):.4f}")
+    print(f"  Global std:    {float(da.std()):.4f}")
+    print(f"  Global min:    {float(da.min()):.4f}")
+    print(f"  Global max:    {float(da.max()):.4f}")
+    print("-" * 60)
+    print("  Mean per time step:")
+    for t in time_vals:
+        val = float(da.sel(time=t).mean())
+        print(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {val:.4f}")
+    print("-" * 60)
+    print("  Ensemble spread (std) per time step:")
+    for t in time_vals:
+        spread = float(da.sel(time=t).std("ensemble").mean())
+        print(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {spread:.4f}")
+    print("=" * 60)
+
+# --- Usage examples ---
+# Relative time in hours (default):
+#   print_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="hours")
+#
+# Relative time in days:
+#   print_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="days")
+#
+# Absolute datetime (origin = simulation start):
+#   print_stats_ensemble_ET(ds, var="ACT. ETRA", origin="2023-06-01 06:00")
+
+
