@@ -780,21 +780,35 @@ def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
         df_fort777   = read_fort777(fort777_path)
         ds           = df_fort777.set_index(["time", "Y", "X"]).to_xarray()
 
+        # check that not all pixels are NaN (sum can legitimately be 0)
+        n_nan = int(ds['ACT. ETRA'].isnull().sum())
+        n_total = int(ds['ACT. ETRA'].size)
+        if n_nan == n_total:
+            raise ValueError(
+                f"ACT. ETRA is all-NaN in ensemble {i} ('{ppl}')\n"
+                f"  n_nan    : {n_nan} / {n_total} pixels\n"
+                f"  fort.777 : {fort777_path}"
+            )
+        print(f"  ensemble {i}: ACT. ETRA sum={float(ds['ACT. ETRA'].sum()):.4f}  "
+              f"NaNs={n_nan}/{n_total} ({100*n_nan/n_total:.1f}%)")
+
         # drop band dim/coord if present
         if "band" in ds.dims:
             ds = ds.squeeze("band", drop=True)
         if "band" in ds.coords:
             ds = ds.drop_vars("band")
-
         ds = ds.expand_dims({"ensemble": [i]})
         ds_list.append(ds)
 
-    ds_ensemble = xr.concat(ds_list, dim="ensemble")
-
+    # ds_ensemble = xr.concat(ds_list, dim="ensemble")
+    ds_ensemble = xr.concat(ds_list, dim="ensemble", join="outer")  # was "inner" by default
+    # ds_ensemble['ACT. ETRA'].isel(time=0,ensemble=0).plot.imshow()
+    # ds_ensemble['ACT. ETRA'].isel(time=0,ensemble=1).plot.imshow()
+    
     # store source paths as coordinate
-    ds_ensemble["ensemble_path"] = xr.DataArray(
-        [str(p) for p in pathexe_list], dims=["ensemble"]
-    )
+    # ds_ensemble["ensemble_path"] = xr.DataArray(
+    #     [str(p) for p in pathexe_list], dims=["ensemble"]
+    # )
 
     # ── 2. Fix timedelta64 → datetime64 ──────────────────────────────────────
     if "time" in ds_ensemble.coords:
@@ -831,15 +845,35 @@ def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
         ds_ensemble[name].encoding.clear()
 
     # ── 4. Save with explicit safe time encoding ──────────────────────────────
-    ref_str  = str(ref.date()) if ref else "2000-01-01"
-    ds_ensemble.to_netcdf(
-        output_path,
-        encoding={"time": {
-            "dtype"   : "float64",
-            "units"   : f"hours since {ref_str}",
-            "calendar": "standard",
-        }}
-    )
+        time_vals = ds_ensemble["time"].values
+        if np.issubdtype(time_vals.dtype, np.datetime64):
+            ref_str = str(pd.Timestamp(time_vals[0]).date())  # use actual first time as ref
+        else:
+            ref_str = str(ref.date()) if ref else "2000-01-01"
+    
+        # ds_ensemble.to_netcdf(
+        #     output_path,
+        #     encoding={"time": {
+        #         "dtype"   : "float64",
+        #         "units"   : f"hours since {ref_str}",
+        #         "calendar": "standard",
+        #     }}
+        # )
+        # add this just before to_netcdf in create_ensemble_ET_xr
+        print("About to save:")
+        print(f"  time length: {ds_ensemble.dims['time']}")
+        print(f"  time values: {ds_ensemble['time'].values}")
+        print(ds_ensemble)
+
+        ds_ensemble.to_netcdf(
+                output_path,
+                encoding={"time": {
+                    "dtype"   : "float64",
+                    "units"   : f"hours since {ref_str}",
+                    "calendar": "standard",
+                    "_FillValue": None,  # ← prevent NaN fill on time coordinate
+                }}
+            )
 
     print(f"\n  ✓ saved → {output_path}")
     print(ds_ensemble)

@@ -874,6 +874,43 @@ def _find_nearest_point2DEM(
         mesh_pv_attributes.save(saveMeshPath,binary=False)
 
 
+def map_param_to_layers(ltop, lbot, depth_ranges, layer_values):
+    """
+    Generic function to map any soil parameter values to layers based on depth ranges.
+    
+    Parameters:
+        ltop: list of layer top depths
+        lbot: list of layer bottom depths
+        depth_ranges: list of [top, bot] depth ranges
+        layer_values: list of values (scalar or list) for each depth range.
+                      If list, returns a 2D array (n_layers x n_params).
+                      If scalar, returns a 1D array (n_layers,).
+    
+    Returns:
+        numpy array of shape (n_layers,) or (n_layers, n_params)
+    """
+    n_layers = len(ltop)
+    
+    # Normalize values to always be lists
+    normalized_values = [
+        v if isinstance(v, (list, tuple, np.ndarray)) else [v]
+        for v in layer_values
+    ]
+    n_params = len(normalized_values[0])
+    
+    result = np.full((n_layers, n_params), np.nan)
+    
+    for i, (top, bot) in enumerate(zip(ltop, lbot)):
+        mid = (float(top) + float(bot)) / 2.0
+        
+        for depth_range, values in zip(depth_ranges, normalized_values):
+            if depth_range[0] <= mid <= depth_range[1]:
+                result[i] = values
+                break
+    
+    # Squeeze to 1D if only one parameter
+    return result.squeeze() if n_params == 1 else result
+
 def add_markers_zone3d_2_mesh(
     zones3d_layered,
     dem,
