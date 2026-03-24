@@ -895,6 +895,7 @@ class CATHY:
             if kk in self.cathyH.keys():
                 self.cathyH[kk] = value
         
+        # self.cathyH
         # self.cathyH['MAXCEL'] = int(self.cathyH["ROWMAX"]) * int(self.cathyH["COLMAX"]) 
         # self.cathyH['NODMAX'] = int((int(self.cathyH["ROWMAX"]) / DEMRES + 1) * (int(self.cathyH["COLMAX"]) / DEMRES + 1))
         # self.cathyH['NODMAX'] = int(300)
@@ -1505,6 +1506,7 @@ class CATHY:
 
         # update number of zone in the dem parameter file
         self.update_dem_parameters(nzone=len(np.unique(zone)))
+        # self.dem_parameters
         self.update_parm()
         self.update_cathyH(MAXZON=len(np.unique(zone)))
 
@@ -2700,6 +2702,7 @@ class CATHY:
         # Soil Physical Properties strat by strat
         # --------------------------------------------------------------------
         self.soil_SPP = {}
+        SPP_map = SPP_map.sort_values(by=['str', 'zone'])
         self.soil_SPP["SPP_map"] = SPP_map  # mapping with respect to zones
         if len(SPP) > 0:
             self.soil_SPP["SPP"] = SPP  # matrice with respect to zones
@@ -2729,7 +2732,6 @@ class CATHY:
 
         # write soil file
         # --------------------------------------------------------------------
-        # print('write soil')
         self._write_SOIL_file(self.soil_SPP["SPP"], 
                               FeddesParam, 
                               **kwargs
@@ -2805,7 +2807,8 @@ class CATHY:
         SPP_map = pd.DataFrame(index=multi_index, columns=columns)
         
         return SPP_map
-            
+    
+
             
     def set_SOIL_defaults(self, 
                           FP_map_default=False, 
