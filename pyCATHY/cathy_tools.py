@@ -3698,7 +3698,9 @@ class CATHY:
             zones_markers_3d = []
             for l in range(self.dem_parameters['nstr']):
                 zones_markers_3d.append(np.ones([self.hapin["M"], self.hapin["N"]])*l)
-            
+        
+        np.unique(zones_markers_3d)
+        
         mt.add_markers_zone3d_2_mesh(
                             zones_markers_3d,
                             self.DEM,
@@ -3722,10 +3724,14 @@ class CATHY:
         #         f"and unique mesh cell markers (len={len(unique_markers)}). "
         #         f"Markers: {unique_markers}"
         #     )
+        np.unique(self.mesh_pv_attributes["node_markers_zone3d"])
+        # np.unique(prop_mesh_nodes)
 
+        
         if to_nodes:
             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_zone3d"]))
             for m in range(len(prop_map)):
+                print(m, prop_map[m])               
                 prop_mesh_nodes[
                                 self.mesh_pv_attributes["node_markers_zone3d"] == m
                                 ] = prop_map[m]

@@ -135,13 +135,12 @@ def Archie_rho2sat(rho, rFluid, porosity, a=1.0, m=2.0, n=2.0):
 #############  predict soil physical properties from literature ###############
 ## ---------------------------------------------------------------------------
 
-
 def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     """
     Predict Van Genuchten hydraulic parameters using Rosetta pedotransfer function
     and convert them to CATHY-compatible parameters.
 
-
+    Rosetta output format:
         array  |
         column | parameter
         -----------------
@@ -150,7 +149,55 @@ def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
            2   | log10(alpha), van Genuchten 'alpha' parameter (1/cm)
            3   | log10(npar), van Genuchten 'n' parameter
            4   | log10(Ksat), saturated hydraulic conductivity (cm/day)
-           
+
+    -------------------------------------------------------------------------
+    🎯 Parameter sensitivity for saturation (Van Genuchten model)
+
+    Goal: increase soil saturation at a given pressure head (h)
+
+    1. VGPSATCELL (-1/alpha)  ⭐ MOST IMPORTANT
+        - Increasing VGPSATCELL ⇒ decreasing alpha
+        - Lower alpha ⇒ higher air-entry suction
+        - Soil retains water more strongly
+
+        ✅ Effect:
+        → Higher saturation at the same pressure head
+
+        ✔️ Primary parameter to tune
+
+    2. VGNCELL (n)
+        - Controls retention curve steepness
+        - Lower n ⇒ smoother, more gradual drainage
+        - Higher n ⇒ sharper desaturation
+
+        ✅ Effect:
+        → Decreasing n ⇒ higher saturation at intermediate suctions
+
+        ✔️ Secondary tuning parameter
+
+    3. VGRMCCELL (theta_r)
+        - Residual water content (lower bound of water content)
+
+        ⚠️ Important:
+        - Does not significantly change the shape of the retention curve
+        - Mainly affects absolute water content
+
+        ✅ Effect:
+        → Slight increase in apparent saturation (mainly in dry range)
+
+        ✔️ Minor tuning role
+
+    -------------------------------------------------------------------------
+    🧠 Practical tuning strategy
+
+        If soil is too dry at a given pressure head:
+
+        1. Increase VGPSATCELL   → strongest effect
+        2. Decrease VGNCELL      → smoother drainage
+        3. Increase VGRMCCELL    → fine adjustment
+
+    -------------------------------------------------------------------------
+
     Parameters
     ----------
     data : list of lists
@@ -160,9 +207,10 @@ def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     -------
     VGP_predict_CATHY : dict
         Dictionary containing CATHY-compatible hydraulic parameters:
-        - POROS, VGNCELL (n), VGM, VGRMCCELL (theta_r), VGPSATCELL (-1/alpha),
+        - POROS, VGNCELL (n), VGRMCCELL (theta_r), VGPSATCELL (-1/alpha),
           PERMX, PERMY, PERMZ, ELSTOR
     """
+
     from rosetta import rosetta, SoilData
 
     # Prepare soil data
