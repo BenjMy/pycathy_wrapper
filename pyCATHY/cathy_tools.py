@@ -4068,6 +4068,9 @@ class CATHY:
         elif filename == "xyz":
             df = out_CT.read_xyz(path)
             return df
+        elif filename == "recharge":
+            df = out_CT.read_recharge(path)
+            return df
         elif filename == "grid3d":
             df = out_CT.read_grid3d(path)
             return df
