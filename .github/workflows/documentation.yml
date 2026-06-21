@@ -30,7 +30,10 @@ jobs:
         run: |
           # Install xvfb and run some commands to allow pyvista to run on
           # a headless system.
-          sudo apt-get install xvfb
+          # Also install lapack/blas (and gfortran) so the CATHY Fortran
+          # source compiles/links correctly during the example builds.
+          sudo apt-get update
+          sudo apt-get install -y xvfb gfortran liblapack-dev libblas-dev
           export DISPLAY=:99.0
           export PYVISTA_OFF_SCREEN=true
           export PYVISTA_USE_IPYVTK=true
