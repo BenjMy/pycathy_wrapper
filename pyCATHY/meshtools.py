@@ -1310,6 +1310,135 @@ def map_grid_to_mesh(
     })
     return ds_out
 
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from sklearn.metrics import r2_score
+import xarray as xr
+
+def plot_mapping_quality(
+    ds_grid: xr.Dataset,
+    ds_mapped: xr.Dataset,
+    variable: str,
+    n_time_samples: int = 5,
+    time_dim: str = "time",
+    x_dim: str = "x",
+    y_dim: str = "y",
+    seed: int = 42,
+):
+    """
+    QC plot for map_grid_to_mesh output.
+
+    Panels (per sampled time step):
+      - Left:  scatter of original (grid, sampled at node coords) vs mapped values + R²
+      - Right: spatial map of absolute error per node (bubble plot)
+
+    The "reference" value at each node is obtained by the same nearest-neighbour
+    lookup used internally by map_grid_to_mesh, so for method='nearest' the
+    error is identically zero and you'll use this with method='linear' to see
+    where bilinear departs from nearest.
+
+    For a CRS-independent QC (useful when mesh coords are in local metres),
+    the function simply re-samples ds_grid at node (x, y) positions using
+    xarray .sel(method='nearest'), which is CRS-agnostic.
+    """
+    rng = np.random.default_rng(seed)
+    
+    grid_x = ds_grid[x_dim].values
+    grid_y = ds_grid[y_dim].values
+    node_x = ds_mapped[x_dim].values
+    node_y = ds_mapped[y_dim].values
+
+    # ── Clamp node coords to grid extent (handles offset CRS issues) ──────────
+    node_x_clamped = np.clip(node_x, grid_x.min(), grid_x.max())
+    node_y_clamped = np.clip(node_y, grid_y.min(), grid_y.max())
+
+    has_time = time_dim in ds_grid.dims
+    if has_time:
+        n_times = ds_grid.sizes[time_dim]
+        sample_idx = rng.choice(n_times, size=min(n_time_samples, n_times), replace=False)
+        sample_idx = np.sort(sample_idx)
+    else:
+        sample_idx = [None]
+
+    n_panels = len(sample_idx)
+    fig = plt.figure(figsize=(14, 4.5 * n_panels))
+    gs = gridspec.GridSpec(n_panels, 2, figure=fig, hspace=0.45, wspace=0.35)
+
+    all_r2 = []
+
+    for row, tidx in enumerate(sample_idx):
+
+        if has_time:
+            da_grid_t = ds_grid[variable].isel({time_dim: tidx})
+            da_mapped_t = ds_mapped[variable].isel({time_dim: tidx})
+            t_label = str(ds_grid[time_dim].values[tidx])[:10]
+        else:
+            da_grid_t = ds_grid[variable]
+            da_mapped_t = ds_mapped[variable]
+            t_label = "static"
+
+        # ── Reference: re-sample grid at (clamped) node positions ─────────────
+        ref_vals = np.array([
+            float(da_grid_t.sel(
+                {x_dim: nx, y_dim: ny}, method="nearest"
+            ))
+            for nx, ny in zip(node_x_clamped, node_y_clamped)
+        ])
+        mapped_vals = da_mapped_t.values.astype(float)
+
+        # ── R² and residuals ───────────────────────────────────────────────────
+        mask = np.isfinite(ref_vals) & np.isfinite(mapped_vals)
+        r2 = r2_score(ref_vals[mask], mapped_vals[mask])
+        all_r2.append(r2)
+        abs_err = np.abs(mapped_vals - ref_vals)
+        rmse = np.sqrt(np.nanmean((mapped_vals - ref_vals) ** 2))
+
+        # ── Left: scatter ──────────────────────────────────────────────────────
+        ax_sc = fig.add_subplot(gs[row, 0])
+        sc = ax_sc.scatter(
+            ref_vals, mapped_vals,
+            c=abs_err, cmap="YlOrRd", s=6, alpha=0.6, linewidths=0,
+            vmin=0, vmax=np.nanpercentile(abs_err, 95)
+        )
+        plt.colorbar(sc, ax=ax_sc, label="|error|", pad=0.02, shrink=0.85)
+
+        # 1:1 line
+        vmin = min(np.nanmin(ref_vals), np.nanmin(mapped_vals))
+        vmax = max(np.nanmax(ref_vals), np.nanmax(mapped_vals))
+        ax_sc.plot([vmin, vmax], [vmin, vmax], "k--", lw=1, label="1:1")
+
+        ax_sc.set_xlabel(f"Grid (reference) — {variable}")
+        ax_sc.set_ylabel(f"Mapped (mesh) — {variable}")
+        ax_sc.set_title(f"{t_label}   R²={r2:.4f}   RMSE={rmse:.4f}", fontsize=10)
+        ax_sc.legend(fontsize=8)
+
+        # ── Right: spatial error map ───────────────────────────────────────────
+        ax_sp = fig.add_subplot(gs[row, 1])
+        err_p95 = np.nanpercentile(abs_err, 95)
+        sp = ax_sp.scatter(
+            node_x, node_y,
+            c=abs_err, cmap="YlOrRd", s=8,
+            vmin=0, vmax=err_p95, alpha=0.8, linewidths=0
+        )
+        plt.colorbar(sp, ax=ax_sp, label="|error|", pad=0.02, shrink=0.85)
+        ax_sp.set_xlabel("x (mesh)")
+        ax_sp.set_ylabel("y (mesh)")
+        ax_sp.set_title(f"Spatial error  {t_label}", fontsize=10)
+        ax_sp.set_aspect("equal")
+
+    # ── Summary R² over all sampled time steps ─────────────────────────────────
+    fig.suptitle(
+        f"{variable} — mapping QC   "
+        f"mean R²={np.mean(all_r2):.4f}  "
+        f"[{np.min(all_r2):.4f} – {np.max(all_r2):.4f}]",
+        fontsize=12, y=1.01
+    )
+    plt.tight_layout()
+    return fig, all_r2
+
+
 def assert_mask_consistency(ds, var=None, time_dim='time', figsize=(14, 4), plot=True):
     """
     Check whether NaN counts and spatial masks are consistent across time steps

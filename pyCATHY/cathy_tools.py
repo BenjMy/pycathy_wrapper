@@ -2070,407 +2070,348 @@ class CATHY:
                     plt_CT.show_atmbc(time, VALUE, **kwargs)
         pass
 
+    def _record_bc_in_mesh_bounds_df(self, BCtypName, time, nodes, values, no_flow):
+        """
+        Keep self.mesh_bound_cond_df (consumed by show_bc()/plot_mesh_bounds)
+        in sync with what update_nansfdirbc/update_nansfneubc/update_sfbc
+        actually wrote to the BC file on disk.
+
+        Previously update_nansfdirbc/update_nansfneubc/update_sfbc only
+        wrote the raw BC file and never touched mesh_bound_cond_df, so
+        show_bc() either crashed with AttributeError (df never created)
+        or, if the df had been built by hand elsewhere via
+        create_mesh_bounds_df(), crashed with KeyError (that method never
+        actually populates a "nansfdirbc"/"nansfneubc"/"sfbc" column -
+        only the never-called-here assign_mesh_bc_df() did, and only for
+        its no_flow branch).
+
+        This builds mesh_bound_cond_df on first use and stores, per
+        (node, time), the value actually imposed - NaN where no BC is
+        imposed on that node at that time. plot_mesh_bounds() treats NaN
+        as "not applied" and colours applied nodes by their real value.
+        """
+        if no_flow or nodes is None:
+            # Nothing explicit imposed at any node/time for this BC type -
+            # leave the column as NaN ("not applied") rather than the old
+            # placeholder behaviour of flagging every mesh node (the
+            # noflow_bound mask in create_mesh_bounds_df is unconditionally
+            # True for all nodes, not just boundary ones, so reusing it
+            # here would mislabel the whole interior mesh as boundary BC).
+            # NOTE: this check now runs BEFORE the grid3d/mesh_bound_cond_df
+            # lookup below, since a pure no-flow call needs no grid info at
+            # all - previously it ran after, so a no_flow=True call (the
+            # common case, e.g. baseline runs) still tried to build the df
+            # and crashed if grid3d wasn't available yet.
+            if not hasattr(self, "mesh_bound_cond_df"):
+                return
+            if BCtypName not in self.mesh_bound_cond_df.columns:
+                self.mesh_bound_cond_df[BCtypName] = np.nan
+            return
+
+        if not hasattr(self, "mesh_bound_cond_df"):
+            # self.grid3d is set to {} in __init__, so it always exists as
+            # an attribute - hasattr() alone can't tell "not populated yet"
+            # from "populated". Check its content instead (as done
+            # elsewhere in this file, e.g. read_inputs()'s
+            # "if len(self.grid3d) == 0" check).
+            if len(self.grid3d) == 0 or "mesh3d_nodes" not in self.grid3d:
+                try:
+                    self.grid3d = self.read_outputs("grid3d")
+                except Exception as e:
+                    # update_nansfdirbc/neubc/sfbc are normally called
+                    # BEFORE run_processor(), while output/grid3d doesn't
+                    # exist on disk yet. This bookkeeping only feeds
+                    # show_bc()/plot_mesh_bounds() after a run - it is not
+                    # needed to write the BC file itself, so skip it
+                    # quietly instead of aborting the whole run. It will
+                    # be rebuilt lazily (successfully) once grid3d is
+                    # available, e.g. the first time show_bc() is called.
+                    print(
+                        f"[_record_bc_in_mesh_bounds_df] grid3d not available yet "
+                        f"({e!r}); skipping mesh_bound_cond_df bookkeeping for "
+                        f"'{BCtypName}' - this does not affect the BC file written "
+                        f"to disk."
+                    )
+                    return
+                if not self.grid3d or "mesh3d_nodes" not in self.grid3d:
+                    print(
+                        f"[_record_bc_in_mesh_bounds_df] grid3d has no 'mesh3d_nodes' "
+                        f"yet; skipping mesh_bound_cond_df bookkeeping for "
+                        f"'{BCtypName}' - this does not affect the BC file written "
+                        f"to disk."
+                    )
+                    return
+            self.create_mesh_bounds_df(
+                BCtypName, self.grid3d["mesh3d_nodes"], times=list(time)
+            )
+
+        if BCtypName not in self.mesh_bound_cond_df.columns:
+            self.mesh_bound_cond_df[BCtypName] = np.nan
+
+        for tt in time:
+            tt_nodes = nodes[tt] if isinstance(nodes, dict) else nodes
+            tt_nodes = np.atleast_1d(np.asarray(tt_nodes))
+
+            if isinstance(values, dict):
+                tt_values = np.atleast_1d(np.asarray(values[tt]))
+            elif np.isscalar(values):
+                tt_values = np.full(tt_nodes.shape, values, dtype=float)
+            else:
+                tt_values = np.atleast_1d(np.asarray(values))
+
+            value_by_node = dict(zip(tt_nodes.tolist(), tt_values.tolist()))
+            row_mask = (
+                (self.mesh_bound_cond_df["time"] == tt)
+                & self.mesh_bound_cond_df["id_node"].isin(tt_nodes)
+            )
+            self.mesh_bound_cond_df.loc[row_mask, BCtypName] = (
+                self.mesh_bound_cond_df.loc[row_mask, "id_node"].map(value_by_node)
+            )
+
     def update_nansfdirbc(
         self,
         time=[],
-        NDIR=0,
-        NDIRC=0,
-        NQ3=None,
-        no_flow=False,
-        pressure_head=[],
-        mesh_bc_df=None,
-    ):
-        """
-        Dirichlet Boundary conditions (or specified pressure) at time t
-
-        - To simulate the no-flow boundaries conditions for the bottom and
-          vertical sides of the domain it is necessary to set NDIR and NDIRC
-          equal to zero.
-        - To simulate different boundary conditions, it is necessary to
-          indicate the number of selected nodes through NDIR or NDIRC,
-          then to specify the node ID’s that you want to consider and
-          eventually the value of pressure head or flux that you want to assign.
-
-
-        ..note::
-            update_nansfdirbc use the grid3d to refer to mesh nodes
-
-        Parameters
-        ----------
-        time : np.array([]), optional
-            Absolute simulation time in sec.
-            The default is [].
-        NDIR : int, optional
-            Number of non-atmospheric, non‐seepage face Dirichlet
-            nodes in 2-d mesh. The BC's assigned to these surface nodes are replicated vertically.
-            The default is 0.
-        NDIRC : int, optional
-            Number of 'fixed' non-atmospheric, non-seepage face Dirichlet
-            nodes in 3‐d mesh ('fixed' in the sense that these BC's are not replicated to other nodes ‐
-            compare NDIR).
-            The default is 0.
-        NQ3 : int, optional
-            Number of non-atmospheric, non‐seepage face Neumann nodes in 3‐d
-            mesh.
-            The default is None.
-        noflow : Bool, optional
-            To simulate the no-flow boundaries conditions for the bottom and
-            # vertical sides of the domain. The default is True.
-        pressure_head : TYPE, optional
-            Specify a value of node pressure head to impose as Dirichlet boundary condition.
-            The default is [].
-
-
-        Returns
-        -------
-        None.
-
-        """
-
-        # check that the mesh exist
-        # --------------------------------------------------------------------
-        try:
-            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
-                                                          self.project_name, 
-                                                          'output', 'grid3d')
-                                             )
-        except OSError:
-            print("grid3d missing - need to run the processor with IPRT1=3 first")
-
-        # check that mesh_bound_cond_df exist
-        # --------------------------------------------------------------------
-        if not hasattr(self, "mesh_bound_cond_df"):
-            if len(time)>25:
-                print('Nb of times is too big to handle bc condition in the df')
-                # time = [0]
-            # self.init_boundary_conditions(
-            #                                 "nansfdirbc",
-            #                                 time,
-            #                                 NDIR=NDIR,
-            #                                 NDIRC=NDIRC,
-            #                                 pressure_head=pressure_head,
-            #                                 no_flow=no_flow,
-            #                             )
-            # self.assign_mesh_bc_df("nansfdirbc", time, 
-            #                        pressure_head=pressure_head,
-            #                        no_flow=no_flow
-            #                        )
-
-        else:         
-            # if len(time)>25:
-            #     print('Nb of times is too big to handle bc condition in the df')
-            #     time = 0
-            # self.update_mesh_boundary_cond(mesh_bc_df)
-            self.assign_mesh_bc_df("nansfdirbc", time, 
-                                   no_flow=no_flow
-                                   )
-        # apply BC
-        # --------------------------------------------------------------------
-        # if no_flow:  # Dirichlet  == 0
-        #     print("shortcut set_BC_laterals mesh dataframe")
-        #     # self.set_BC_laterals(time=time, BC_type='Dirichlet', val=0)
-        # else:
-        #     raise ValueError(
-        #         "Non homogeneous Dirichlet Boundary conditions Not yet implemented"
-        #     )
-
-        self.update_parm()
-        self.update_cathyH()
-
-        with open(
-            os.path.join(
-                self.workdir, self.project_name, self.input_dirname, "nansfdirbc"
-            ),
-            "w+",
-        ) as nansfdirbcfile:
-
-            # self.mesh_bound_cond_df
-
-            # To simulate the no-flow boundaries conditions for the bottom and
-            # vertical sides of the domain --> NDIR and NDIRC equal to zero
-            # -------------------------------------------------------------
-            if no_flow:  # Dirichlet
-                if len(time) == 0:
-                    time = self.atmbc["time"]
-                for tt in time:
-                    # nansfdirbcfile.write(str(tt) + "\t" + "time" + "\n")
-                    nansfdirbcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
-
-                    nansfdirbcfile.write(
-                        str(NDIR)
-                        + "\t"
-                        + str(NDIRC)
-                        + "\t"
-                        + "NDIR"
-                        + "\t"
-                        + "NDIRC"
-                        + "\n"
-                    )
-            else:
-                if len(time) == 0:
-                    time = self.atmbc["time"]
-                for tt in time:
-                    # nansfdirbcfile.write(str(tt) + "\t" + "time" + "\n")
-                    nansfdirbcfile.write("{:.d}".format(tt) + "\t" + "time" + "\n")
-
-                    nansfdirbcfile.write(
-                        str(NDIR)
-                        + "\t"
-                        + str(NDIRC)
-                        + "\t"
-                        + "NDIR"
-                        + "\t"
-                        + "NDIRC"
-                        + "\n"
-                    )                   
-                raise ValueError(
-                    "Non homogeneous Dirichlet Boundary conditions Not yet implemented"
-                )
-
-        nansfdirbcfile.close()
-
-        self.update_parm()
-        self.update_cathyH()
-
-
-        # exemple provided by Laura B.
-        # ----------------------------
-
-        # C     Write dirbc
-        #       write(33,*) 0.0, 'time'
-        #       write(33,*) '0', a
-        #       do i=1,nnod3
-        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
-        #      1       (y(i).eq.5))then
-        #          write(33,*) i
-        #          endif
-        #       enddo
-        #       do i=1,nnod3
-        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
-        #      1       (y(i).eq.5))then
-        #          write(33,*) -z(i)-WTdepth
-        #          endif
-        #       enddo
-
-        #       write(33,*) 2e+20, 'time'
-        #       write(33,*) '0', a
-        #       do i=1,nnod3
-        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
-        #      1       (y(i).eq.5))then
-        #          write(33,*) i
-        #          endif
-        #       enddo
-        #       do i=1,nnod3
-        #          if ((x(i).eq.0).or.(x(i).eq.5).or.(y(i).eq.0).or.
-        #      1       (y(i).eq.5))then
-        #          write(33,*) -z(i)-WTdepth
-        #          endif
-        #       enddo
-
-        # modicare il valore di NPMAX nel file 27 CATHY.H nel caso
-        # in cui si inseriscano dei NDIRC ed il valore di NP2MAX nel caso si inseriscano dei
-        # NDIR. I valori di NPMAX e NP2MAX corrispondono al numero massimo
-        # di nodi NDIRC e NDIR che si possono inserire.
-
-        pass
-
-    def update_nansfneubc(
-        self, time=[], 
-        ZERO=0, NQ=0, CONTQ=[],
-        fixed_flux=None, 
+        nodes=None,
+        pressure_head=None,
         no_flow=False,
         **kwargs,
     ):
         """
-        Neumann boundary conditions (or specifed flux) at time t
+        Write the nansfdirbc file (non-atmospheric, non-seepage-face
+        Dirichlet boundary conditions).
 
+        This mirrors exactly what the Fortran side (BCONE/BCNXT ->
+        RDNDBC/READBC) expects to read, one block per time step:
+
+            TIME
+            NODIN2  NODINF
+            [node id list]      <- only written if NODIN2*NODINF-derived NBC>0
+            [value list]
+
+        We always use the NODIN2=0 ("fixed node list") branch of
+        RDNDBC/READBC, i.e. NODIN2 is always written as 0 and NODINF is
+        the number of explicit nodes for that time step. This is the
+        most general form: it does not rely on CATHY auto-replicating
+        surface nodes down the mesh (NODIN2>0 branch), so any arbitrary
+        3-D node can be prescribed directly.
+
+        NOTE: Fortran node numbering is 1-based. The mesh dataframes
+        built elsewhere in this wrapper (id_node) are 0-based, so node
+        indices passed in here are assumed 0-based and are converted
+        (+1) when written to file.
 
         Parameters
         ----------
-        time : np.array([]), optional
-            Absolute simulation time in sec.
-            The default is [].
-        NQ : TYPE, optional
-            number of non-atmospheric, non seepage face Neumann nodes in
-            3-D mesh. The default is 0.
-        ZERO : TYPE, optional
-            DESCRIPTION. The default is 0.
-
-        Returns
-        -------
-        None.
-
+        time : list
+            Simulation times (s) at which a BC block is written. One
+            block is written per entry, in order.
+        nodes : array-like or dict, optional
+            - array-like of 0-based node indices: same nodes used for
+              every time step.
+            - dict {t: array-like}: time-varying node set, keyed by the
+              matching entries of `time`.
+            Required unless no_flow=True.
+        pressure_head : float, array-like or dict, optional
+            - scalar: same pressure head applied to every listed node,
+              every time step.
+            - array-like matching `nodes` (when `nodes` is array-like):
+              one value per node, same for every time step.
+            - dict {t: array-like matching nodes[t]}: time-varying
+              values.
+            Required unless no_flow=True.
+        no_flow : bool, optional
+            If True, write NODIN2=NODINF=0 for every time step (no
+            Dirichlet nodes imposed at all -> CATHY falls back to its
+            default no-flow/natural boundary). `nodes`/`pressure_head`
+            are ignored in this case.
         """
+        dirbcfile = open(os.path.join(self.workdir, self.project_name,
+                                       "input", "nansfdirbc"), "w+")
 
+        max_nodinf = 0
 
-        whereBC = None
-        val = fixed_flux
-        for k in kwargs:
-            # {'xmin_bound': 1.2e-07}
-            val = kwargs.get(k)
-            if type(k)==str:
-                whereBC = k
-                    
-        # check that the mesh existNeuma
-        # --------------------------------------------------------------------
-        try:
-            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
-                                                          self.project_name, 
-                                                          'output', 'grid3d')
-                                             )
-        except OSError:
-            print("grid3d missing - need to run the processor with IPRT1=3 first")
+        for tt in time:
 
-        # check that mesh_bound_cond_df exist
-        # --------------------------------------------------------------------
-        if hasattr(self, "mesh_bound_cond_df")==False:
-            if len(time)>25:
-                print('Nb of times is too big to handle bc condition in the df')
-            else:
-                self.create_mesh_bounds_df("nansfneubc", 
-                                           self.grid3d['mesh3d_nodes'], 
-                                           time
-                                           )
-                # self.init_boundary_conditions("nansfneubc", time, NQ=NQ, ZERO=ZERO)
-                # self.assign_mesh_bc_df("nansfneubc", 
-                #                        time, 
-                #                        no_flow=no_flow
-                #                        )
-        else:
+            dirbcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
+
             if no_flow:
-                self.assign_mesh_bc_df("nansfneubc", 
-                                       time, 
-                                       no_flow=no_flow
-                                       )
-                self.update_cathyH(NQMAX=1)
+                dirbcfile.write("0" + "\t" + "0" + "\n")
+                continue
 
-            elif whereBC is not None:
-                NQ = np.sum(self.mesh_bound_cond_df.set_index('time').loc[0,whereBC]==True)
-                CONTQ = list(np.where(self.mesh_bound_cond_df[whereBC]==True)[0])
-                nodes_id_CONTQ = list(self.mesh_bound_cond_df.loc[CONTQ,'id_node'].unique())
-                # len(nodes_id_CONTQ)
-                self.update_cathyH(NQMAX=NQ)
+            # --- resolve nodes/values for this time step ---
+            tt_nodes = nodes[tt] if isinstance(nodes, dict) else nodes
+            tt_nodes = np.atleast_1d(np.asarray(tt_nodes))
 
+            if isinstance(pressure_head, dict):
+                tt_values = np.atleast_1d(np.asarray(pressure_head[tt]))
+            elif np.isscalar(pressure_head):
+                tt_values = np.full(tt_nodes.shape, pressure_head, dtype=float)
             else:
-                raise ValueError('Not yet implemented')
-                
-            for tt in time:
-                self.update_mesh_boundary_cond(
-                                                tt,
-                                                BC_name='nansfneubc',
-                                                BC_val=val,
-                                                nodesId=CONTQ
-                                               )
-        # read existing input nansfneubc file
-        # --------------------------------------------------------------------
-        with open(os.path.join(self.workdir, 
-                               self.project_name, 
-                               self.input_dirname, 
-                               "nansfneubc"
-                               ),
-                  "w+",
-                  ) as nansfneubcfile:
-            if no_flow:  # Neumanm
-                print("shortcut set_BC_laterals mesh dataframe")   
-                if len(time) == 0:
-                    time = self.atmbc["time"]
-                for tt in time:
-                    nansfneubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
-                    nansfneubcfile.write(
-                        str(ZERO) + "\t" + str(NQ) + "\t" + "ZERO" + "\t" + "NQ" + "\n"
-                    )
-            elif whereBC:
-                print("Non homogeneous Neumanm Boundary conditions requested")
-                for tt in self.mesh_bound_cond_df.time.unique():
-                    nansfneubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
-                    nansfneubcfile.write(
-                                        str(ZERO) + "\t" + str(NQ) + "\t" + "ZERO" + "\t" + "NQ" + "\n"
-                                        )
-                    # write node numbers where Neumann BC applied
-                    # --------------------------------------------
-                    np.savetxt(nansfneubcfile, nodes_id_CONTQ, fmt="%i")
-                    # write values of flow rate (m3/s) for each node numbers where Neumann BC applied
-                    # --------------------------------------------
-                    values_nansfneubc = self.mesh_bound_cond_df.set_index('time').loc[tt,'nansfneubc'].values
-                    values_nansfneubc = list(values_nansfneubc[~np.isnan(values_nansfneubc)])
-                    np.savetxt(nansfneubcfile, values_nansfneubc, fmt="%.3e")
-                    
-                    
-        nansfneubcfile.close()    
+                tt_values = np.atleast_1d(np.asarray(pressure_head))
 
+            if len(tt_values) != len(tt_nodes):
+                raise ValueError(
+                    "nansfdirbc: pressure_head and nodes must have the "
+                    f"same length at time {tt} "
+                    f"({len(tt_values)} != {len(tt_nodes)})"
+                )
+
+            nodin2 = 0
+            nodinf = len(tt_nodes)
+            max_nodinf = max(max_nodinf, nodinf)
+
+            dirbcfile.write(f"{nodin2}\t{nodinf}\n")
+
+            if nodinf > 0:
+                # Fortran node numbering is 1-based
+                fortran_nodes = tt_nodes + 1
+                dirbcfile.write(
+                    " ".join(str(int(n)) for n in fortran_nodes) + "\n"
+                )
+                dirbcfile.write(
+                    " ".join(f"{v:.6e}" for v in tt_values) + "\n"
+                )
+
+        dirbcfile.close()
+
+        # CATHY.H's NPMAX bounds NDIRC (the fixed-node count we use via
+        # the NODIN2=0 branch) - keep it in sync so the compiled solver
+        # doesn't overflow the BCNOD/BCINP arrays.
+        if not no_flow and max_nodinf > 0:
+            self.update_cathyH(NPMAX=max(max_nodinf, 1), verbose=False)
+
+        self._record_bc_in_mesh_bounds_df(
+            "nansfdirbc", time, nodes, pressure_head, no_flow
+        )
 
         pass
 
-    def update_sfbc(self, time=[], sfbc=False, no_flow=False):
+    def update_nansfneubc(
+        self,
+        time=[],
+        nodes=None,
+        flux=None,
+        no_flow=False,
+        **kwargs,
+    ):
         """
-        Seepage face boundary conditions at time t
+        Write the nansfneubc file (non-atmospheric, non-seepage-face
+        Neumann boundary conditions). Same file grammar and same
+        NODIN2=0 explicit-node-list convention as update_nansfdirbc
+        (RDNDBC's ZERO/NQ header maps directly onto NODIN2/NODINF).
 
         Parameters
         ----------
-        time : np.array([]), optional
-            Absolute simulation time in sec.
-            The default is [].
-
-        Returns
-        -------
-        None.
-
+        time : list
+            Simulation times (s), one BC block written per entry.
+        nodes : array-like or dict, optional
+            0-based node indices with an imposed flux; same layout
+            rules as in update_nansfdirbc. Required unless no_flow=True.
+        flux : float, array-like or dict, optional
+            Imposed flux value(s); same layout rules as pressure_head
+            in update_nansfdirbc. Required unless no_flow=True.
+        no_flow : bool, optional
+            If True, write ZERO=NQ=0 for every time step (no Neumann
+            nodes imposed).
         """
+        neubcfile = open(os.path.join(self.workdir, self.project_name,
+                                       "input", "nansfneubc"), "w+")
 
-        # check that the mesh exist
-        # --------------------------------------------------------------------
-        try:
-            self.grid3d = out_CT.read_grid3d(os.path.join(self.workdir,
-                                                          self.project_name,
-                                                          'output', 'grid3d')
-                                             )
-        except OSError:
-            print("grid3d missing - need to run the processor with IPRT1=3 first")
+        max_nq = 0
 
-        # check that mesh_bound_cond_df exist
-        # --------------------------------------------------------------------
-        if hasattr(self, "mesh_bound_cond_df") is False:
-            if len(time)>25:
-                print('Nb of times is too big to handle bc condition in the df')
-                # time = [0]
-            # self.init_boundary_conditions("sfbc", time)
-            # self.assign_mesh_bc_df('sfbc', time, 
-            #                        no_flow=no_flow
-            #                        )
-        else:
-            # if len(time)>25:
-            #     print('Nb of times is too big to handle bc condition in the df')
-            #     time = 0
-            self.assign_mesh_bc_df('sfbc', time, 
-                                   no_flow=no_flow
-                                   )
-        #     self.update_mesh_boundary_cond()
+        for tt in time:
 
-        # apply BC
-        # --------------------------------------------------------------------
-        # if no_flow:
-        #     # if len(time) == 0:
-        #     #     time = self.atmbc["time"]
-        #     # self.set_BC_laterals(time=time, BC_type='sfbc', val=0)
-        #     print("shortcut set_BC_laterals mesh dataframe")
+            neubcfile.write("{:.0f}".format(tt) + "\t" + "time" + "\n")
 
-        # else:
-        #     raise ValueError(
-        #         "Non homogeneous Neumanm Boundary conditions Not yet implemented"
-        #     )
+            if no_flow:
+                neubcfile.write("0" + "\t" + "0" + "\n")
+                continue
 
-        with open(
-            os.path.join(self.workdir, self.project_name, self.input_dirname, "sfbc"),
-            "w+",
-        ) as sfbcfile:
+            tt_nodes = nodes[tt] if isinstance(nodes, dict) else nodes
+            tt_nodes = np.atleast_1d(np.asarray(tt_nodes))
 
-            if len(time) == 0:
-                time = self.atmbc["time"]
-            for tt in time:
-                sfbcfile.write("{:.0f}".format(tt) + "\n")
-                sfbcfile.write("0" + "\n")
+            if isinstance(flux, dict):
+                tt_values = np.atleast_1d(np.asarray(flux[tt]))
+            elif np.isscalar(flux):
+                tt_values = np.full(tt_nodes.shape, flux, dtype=float)
+            else:
+                tt_values = np.atleast_1d(np.asarray(flux))
+
+            if len(tt_values) != len(tt_nodes):
+                raise ValueError(
+                    "nansfneubc: flux and nodes must have the same "
+                    f"length at time {tt} "
+                    f"({len(tt_values)} != {len(tt_nodes)})"
+                )
+
+            zero = 0
+            nq = len(tt_nodes)
+            max_nq = max(max_nq, nq)
+
+            neubcfile.write(f"{zero}\t{nq}\n")
+
+            if nq > 0:
+                fortran_nodes = tt_nodes + 1
+                neubcfile.write(
+                    " ".join(str(int(n)) for n in fortran_nodes) + "\n"
+                )
+                neubcfile.write(
+                    " ".join(f"{v:.6e}" for v in tt_values) + "\n"
+                )
+
+        neubcfile.close()
+
+        # CATHY.H's NQMAX bounds NQ - keep it in sync.
+        if not no_flow and max_nq > 0:
+            self.update_cathyH(NQMAX=max(max_nq, 1), verbose=False)
+
+        self._record_bc_in_mesh_bounds_df(
+            "nansfneubc", time, nodes, flux, no_flow
+        )
+
+        pass
+
+    def update_sfbc(
+        self,
+        time=[],
+        no_flow=True,
+        **kwargs,
+    ):
+        """
+        Write the sfbc file (seepage face boundary conditions).
+
+        Only the no-flow / no-seepage-face case (NSF=0 at every time
+        step) is implemented here, matching the previous behaviour.
+        Writing non-trivial seepage faces requires knowing the exact
+        record layout expected by the Fortran seepage-face reader
+        (e.g. SFONE/SFNODE, analogous to RDNDBC/READBC for
+        nansfdirbc/nansfneubc) - that source isn't available yet, so
+        implementing it here would risk guessing a wrong file layout
+        and silently corrupting a run. Share that source and this can
+        be extended the same way update_nansfdirbc/update_nansfneubc
+        were.
+        """
+        if not no_flow:
+            raise NotImplementedError(
+                "update_sfbc: non-trivial seepage faces are not "
+                "implemented - the Fortran seepage-face reader "
+                "(SFONE/SFNODE or equivalent) hasn't been provided, "
+                "so the exact file layout for NSF>0 blocks is unknown. "
+                "Only no_flow=True (NSF=0) is currently supported."
+            )
+
+        sfbcfile = open(os.path.join(self.workdir, self.project_name,
+                                      "input", "sfbc"), "w+")
+
+        for tt in time:
+            sfbcfile.write("{:.0f}".format(tt) + "\n")
+            sfbcfile.write("0" + "\n")
 
         sfbcfile.close()
+
+        self._record_bc_in_mesh_bounds_df(
+            "sfbc", time, nodes=None, values=None, no_flow=True
+        )
 
         pass
 
@@ -2623,9 +2564,6 @@ class CATHY:
         if len(FP_map) == 0:
             FP_map = self.set_SOIL_defaults(FP_map_default=True)
             
-        # elif len(FP_map) == 0:
-        #     # FP_map = self.soil_FP["FP_map"]
-        #     FP_map = self.set_SOIL_defaults(FP_map_default=True)
 
         # check size of the heteregeneity
         # -----------------------------------
@@ -2812,7 +2750,8 @@ class CATHY:
             
     def set_SOIL_defaults(self, 
                           FP_map_default=False, 
-                          SPP_map_default=False
+                          SPP_map_default=False,
+                          nveg = None
                           ):
 
         self.soil = {
@@ -2844,19 +2783,18 @@ class CATHY:
 
         if FP_map_default:
 
-            # FP_map = {
-            #     # Feddes parameters default values
-            #     "PCANA": [0.0],
-            #     "PCREF": [-4.0],
-            #     "PCWLT": [-150],
-            #     "ZROOT": [1.0],
-            #     "PZ": [1.0],
-            #     "OMGC": [1.0],
-            # }
-            values = dict(PCANA=0.0, PCREF=-4.0, PCWLT=-150, ZROOT=1, PZ=1, OMGC=1)
-            nveg = len(np.unique(self.veg_map))
+            values = dict(PCANA=0.0, 
+                          PCREF=-4.0, 
+                          PCWLT=-150, 
+                          ZROOT=1, 
+                          PZ=1, 
+                          OMGC=1
+                          )
+            if nveg is None:
+                nveg = len(np.unique(self.veg_map))
+            
+            
             FP_map = self.init_soil_FP_map_df(nveg)
-            # FP_map.loc[:, values.keys()] = pd.DataFrame([values] * nveg)
             FP_map.update(pd.DataFrame([values]*len(FP_map), index=FP_map.index))
 
             return FP_map
@@ -2864,24 +2802,7 @@ class CATHY:
         # # set Soil Physical Properties defaults parameters
         # # --------------------------------------------------------------------
 
-        if SPP_map_default:
-
-            # PERMX = PERMY = PERMZ = 1.88e-04
-            # ELSTOR = 1.00e-05
-            # POROS = 0.55
-            # VGNCELL = 1.46
-            # VGRMCCELL = 0.15
-            # VGPSATCELL = 0.03125
-
-            # # Replace these values with your actual number of zones and strings
-            # nzones = self.dem_parameters["nzone"]
-            # nstr = self.dem_parameters["nstr"]
-                    
-            # SPP_map = self.init_soil_SPP_map_df(nzones,nstr)
-            
-            # for c in SPP_map.columns:
-            #     SPP_map[c] = eval(c)
-            
+        if SPP_map_default:            
             vals = dict(PERMX=1.88e-4, PERMY=1.88e-4, PERMZ=1.88e-4, 
                         ELSTOR=1e-5, 
                         POROS=0.55, 
@@ -3037,7 +2958,7 @@ class CATHY:
             for iveg in range(self.cathyH["MAXVEG"]):  # loop over veg zones within a strate
                 izoneVeg_tmp = []
                 for sfp in FP_map:
-                    izoneVeg_tmp.append(FP_map[sfp].loc[iveg+1])
+                    izoneVeg_tmp.append(FP_map[sfp].loc[iveg])
 
                 izoneVeg_tmp = np.hstack(izoneVeg_tmp)
                 FeddesParam[iveg, :] = izoneVeg_tmp
@@ -3151,7 +3072,6 @@ class CATHY:
             New vegetation distribution raster.
 
         """
-        
         if indice_veg is None:
             indice_veg, str_hd_rootmap = in_CT.read_root_map(os.path.join(
                                                                              self.workdir, 
@@ -3160,6 +3080,7 @@ class CATHY:
                                                                              "root_map"
                                                                              )
                                                             )
+        
         self.veg_map = indice_veg
 
         if hasattr(self, "hapin") is False:
@@ -3188,49 +3109,77 @@ class CATHY:
 
         rootmapfile.close()
 
+
+        unique_veg = np.sort(np.unique(indice_veg))
+
+        # Vegetation classes must be 1..N
+        expected = np.arange(1, len(unique_veg) + 1)
+
+        if not np.array_equal(unique_veg, expected):
+            print(
+                f"Vegetation classes must start at 1 and be consecutive.\n"
+                f"Found: {unique_veg.tolist()}\n"
+                f"Expected: {expected.tolist()}"
+            )
+            
+    
         # exclude vegetation label from number of vegetation if is it outside the DEM domain
         # i.e if DEM values are negative
         # ---------------------------------------------------------------------------------
         if len(np.unique(indice_veg))>1:
-            exclude_veg = self._check_outside_DEM(indice_veg)
-            self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
-            self.MAXVEG = len(np.unique(indice_veg))# - exclude_veg
-
-            if exclude_veg>0:
-                print('excluding outside DEM')
-                print('MAXVEG='+ str(self.MAXVEG))
-            
+           exclude_veg, _ = self._check_outside_DEM(indice_veg)
+           
+           # (exclude_out_ind, 
+           #  veg_valid, 
+           #  veg_mapping, 
+           #  raster2check_new) = self._check_outside_DEM(indice_veg)
+           
+           self.MAXVEG = len(np.unique(indice_veg)) - exclude_veg
+           # self.MAXVEG = len(np.unique(indice_veg))# - exclude_veg
+    
+           if exclude_veg>0:
+               print('excluding outside DEM')
+               print('MAXVEG='+ str(self.MAXVEG))
+           
         else:
-            self.MAXVEG = len(np.unique(indice_veg))
-
-
+           self.MAXVEG = len(np.unique(indice_veg))
+    
+    
         self.update_cathyH(MAXVEG=self.MAXVEG) # to uncomment
-
+        
         if show:
             ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
             return indice_veg, ax
         return indice_veg
 
 
-    def _check_outside_DEM(self,raster2check):
-        
-        if hasattr(self,'DEM') is False:
-            DEM_mat, DEM_header = in_CT.read_dem(
-                                        os.path.join(self.workdir, self.project_name, "prepro/dem"),
-                                        os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
-                                    )
-            
-            self.DEM = DEM_mat
-        # exclude vegetation label from number of vegetation if is it outside the DEM domain
-        # i.e if DEM values are negative
-
-        exclude_out_ind = 0
-        if np.min(self.DEM)<0:
-        # if len(raster2check[self.DEM<0]):
-            exclude_out_ind = 1
-            
-        return exclude_out_ind
+    def _check_outside_DEM(self, raster2check):
     
+        if not hasattr(self, "DEM"):
+            DEM_mat, DEM_header = in_CT.read_dem(
+                os.path.join(self.workdir, self.project_name, "prepro/dem"),
+                os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"),
+            )
+            self.DEM = DEM_mat
+    
+        valid_mask = self.DEM != -9999
+    
+        veg_all = np.unique(raster2check)
+        veg_valid = np.unique(raster2check[valid_mask])
+    
+        exclude_out_ind = int(len(veg_valid) < len(veg_all))
+    
+        # # Remap vegetation IDs to consecutive values starting at 1
+        # veg_mapping = {old: new for new, old in enumerate(sorted(veg_valid), start=1)}
+    
+        # raster2check_new = raster2check.copy()
+    
+        # for old_id, new_id in veg_mapping.items():
+        #     raster2check_new[raster2check == old_id] = new_id
+    
+        # return exclude_out_ind, veg_valid, veg_mapping, raster2check_new
+        return exclude_out_ind, veg_valid
+
         
     #%% Add inputs and outputs attributes to the mesh
 
@@ -3494,7 +3443,7 @@ class CATHY:
             self.mesh_bound_cond_df.loc[
                                         self.mesh_bound_cond_df["time"] == time, 
                                         BC_name
-                                        ] = None
+                                        ] = np.nan
         self.mesh_bound_cond_df.loc[
                                     (self.mesh_bound_cond_df["time"] == time) & 
                                     (self.mesh_bound_cond_df["id_node"].isin(nodesId)),
@@ -3889,7 +3838,19 @@ class CATHY:
 
     def show_bc(self, BCtypName=None, time=0, ax=None, **kwargs):
         """Show bc"""
-        
+
+        # mesh_bound_cond_df is normally populated as a side effect of
+        # update_nansfdirbc/update_nansfneubc/update_sfbc (see
+        # _record_bc_in_mesh_bounds_df). Fall back to building an empty
+        # skeleton here so show_bc() never raises AttributeError, e.g.
+        # when called on a project that was only ever loaded from disk.
+        if not hasattr(self, "mesh_bound_cond_df"):
+            if not hasattr(self, "grid3d"):
+                self.grid3d = self.read_outputs("grid3d")
+            self.create_mesh_bounds_df(
+                "nansfdirbc", self.grid3d["mesh3d_nodes"], times=[time]
+            )
+
         if BCtypName is None:
             fig = plt.figure()
             # Plot nansfdirbc
@@ -3976,7 +3937,9 @@ class CATHY:
     
                 soil_map_prop = zone_mat[0]
                 
-                exclude_zone = self._check_outside_DEM(zone_mat[0])
+
+                exclude_zone, _ = self._check_outside_DEM(zone_mat[0])
+
                 NZONES = len(np.unique(zone_mat[0])) - exclude_zone
     
                 if NZONES-1>1:

@@ -1244,16 +1244,31 @@ def show_dem(
 
 
 def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
-    mvalue = []
-    alpha = []
     mesh_bound_cond_df_selec = mesh_bound_cond_df[mesh_bound_cond_df['time']==time]
-    for bound_val in mesh_bound_cond_df_selec[BCtypName]:
-        if bound_val == 0:
-            mvalue.append(1)
-            alpha.append(1)
-        else:
-            mvalue.append(0)
-            alpha.append(0.1)
+
+    # BCtypName ("nansfdirbc"/"nansfneubc"/"sfbc") may legitimately be
+    # absent - e.g. a run that never imposed that BC type - so don't let
+    # a missing column turn into a KeyError; just treat it as "nothing
+    # imposed" (all NaN) instead.
+    if BCtypName in mesh_bound_cond_df_selec.columns:
+        bound_vals = mesh_bound_cond_df_selec[BCtypName]
+    else:
+        bound_vals = pd.Series(np.nan, index=mesh_bound_cond_df_selec.index)
+
+    # update_nansfdirbc/update_nansfneubc/update_sfbc record the actual
+    # imposed value (pressure head / flux) per node, with NaN meaning "no
+    # BC imposed on this node at this time" - so colour by that value
+    # directly (0-valued but genuinely-imposed BCs, e.g. a Neumann flux
+    # of exactly 0, are still real BCs and must not be treated the same
+    # as "not imposed").
+    applied = bound_vals.notna()
+    # NaNs in the *color* array make matplotlib silently mask those points
+    # out of the scatter (shrinking it below len(alpha)) - so fill with 0
+    # for colouring purposes and use alpha alone to fade out "not applied"
+    # nodes.
+    mvalue = bound_vals.fillna(0.0).to_numpy()
+    alpha = np.where(applied, 1.0, 0.1)
+
     if ax is None:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
@@ -1262,6 +1277,7 @@ def plot_mesh_bounds(BCtypName, mesh_bound_cond_df, time, ax=None):
         mesh_bound_cond_df_selec["y"],
         mesh_bound_cond_df_selec["z"],
         c=mvalue,
+        alpha=alpha,
     )
     ax.set_xlabel("X Label")
     ax.set_ylabel("Y Label")
