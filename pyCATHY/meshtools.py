@@ -516,9 +516,7 @@ def trace_mesh_pg(meshIN, meshOUT, method="spline", **kwargs):
 
 #%%
 
-
-def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
-
+def map_layers_2_DEM(layers, DEM, zone, dem_parameters, tol=1e-2):
     ltop, lbot = get_layer_depths(dem_parameters)
     zone3d_layers_top, zone3d_layer_bot = get_zone3d_layer_depths(zone, dem_parameters)
 
@@ -527,34 +525,28 @@ def map_layers_2_DEM(layers, DEM, zone, dem_parameters):
 
     zone3d_topflag = []
     for li in range(dem_parameters["nstr"]):
-        zone3d_topflag_li = np.ones(np.shape(dem_mat3d_layers_top[0]))
+        zone3d_topflag_li = np.full(np.shape(dem_mat3d_layers_top[0]), np.nan)
 
-        bool_top_lli = []
+        # elevation of the midpoint of mesh sub-layer li (same units/space as DEM)
+        mesh_mid_li = 0.5 * (dem_mat3d_layers_top[li] + dem_mat3d_layers_bot[li])
+
         for ll in layers.keys():
-            layers_adj_top = DEM - abs(layers[ll][0])
-            layers_adj_bot = DEM - abs(layers[ll][1])
+            target_top = abs(layers[ll][0])
+            target_bot = abs(layers[ll][1])
 
-            # differences between top of the layer i of the mesh and top of the desired layer
-            # -------------------------------------------------------------------------------
-            diff_top = dem_mat3d_layers_top[li] - layers_adj_top
-            cond1 = diff_top <= 1e-2
-            # -------------------------------------------------------------------------------
-            diff_bot = dem_mat3d_layers_bot[li] - layers_adj_bot
-            cond2 = diff_bot <= 1e-2
-            # print('lmeshi'+str(li),
-                  # ll,layers[ll],np.mean(diff_top),np.mean(diff_bot),cond1[0][0],cond2[0][0])
+            layers_adj_top = DEM - target_top   # elevation of zone top (shallower -> higher)
+            layers_adj_bot = DEM - target_bot   # elevation of zone bottom (deeper -> lower)
 
-            # if li<dem_parameters["nstr"]-1:
-            #     cond2 = abs(diff)<= abs(dem_mat3d_layers_top[li+1] - dem_mat3d_layers_top[li])
-            # else:
-            #     cond2 = np.ones(np.shape(diff),dtype=bool)
-            bool_top_lli = cond1 & cond2
-            zone3d_topflag_li[bool_top_lli] = ll
+            # mesh sub-layer li belongs to zone ll if its midpoint elevation
+            # falls between the zone's bottom and top elevation
+            cond = (mesh_mid_li <= layers_adj_top + tol) & (mesh_mid_li >= layers_adj_bot - tol)
+
+            zone3d_topflag_li[cond] = ll
+
         zone3d_topflag.append(zone3d_topflag_li)
+
     zone3d_topflag = np.array(zone3d_topflag)
-
     return zone3d_topflag
-
 
 def get_zone3d_layer_depths(zone_raster, dem_parameters):
     '''

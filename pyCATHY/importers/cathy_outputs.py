@@ -9,22 +9,48 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import pandas as pd
+import re
+import io
 
 from pyCATHY import cathy_utils
 
-def read_grid3d(grid3dfile, **kwargs):
-    nnod, nnod3, nel = np.loadtxt(grid3dfile, max_rows=1)
-    grid3d_file = open(grid3dfile, "r")
-    mesh_tetra = np.loadtxt(grid3d_file, skiprows=1, max_rows=int(nel))
-    grid3d_file.close()
+_FORTRAN_EXP_RE = re.compile(r'(?<=[0-9])([+-]\d{2,3})(?=[\s\n]|$)')
 
-    grid3d_file = open(grid3dfile, "r")
+
+def _fix_fortran_exponents(text: str) -> str:
+    """
+    Some Fortran writers drop the 'E' in scientific notation when the
+    exponent is 3 digits wide and the fixed-width number field can't
+    fit "E+ddd"/"E-ddd" (a well-known Fortran output quirk) — e.g.
+    writing "2.121996-314" instead of "2.121996E-314". These almost
+    always come from underflowed/garbage double-precision values (near
+    or below float64's denormal range, ~1e-308) rather than meaningful
+    data, but numpy can't parse them as-is and raises "could not
+    convert string '...' to float64". This reinserts the missing 'E' so
+    the value parses to (approximately) what it actually represents —
+    a number indistinguishable from zero at double precision.
+    """
+    return _FORTRAN_EXP_RE.sub(r'E\1', text)
+
+
+def read_grid3d(grid3dfile, **kwargs):
+    with open(grid3dfile, "r") as f:
+        raw = f.read()
+    fixed = _fix_fortran_exponents(raw)
+    buf = io.StringIO(fixed)
+
+    header = np.loadtxt(buf, max_rows=1)
+    nnod, nnod3, nel = header
+
+    buf.seek(0)
+    mesh_tetra = np.loadtxt(buf, skiprows=1, max_rows=int(nel))
+
+    buf.seek(0)
     mesh3d_nodes = np.loadtxt(
-        grid3d_file,
+        buf,
         skiprows=1 + int(nel),
         max_rows=1 + int(nel) + int(nnod3) - 1,
     )
-    grid3d_file.close()
     grid = {
         "nnod": nnod,  # number of surface nodes
         "nnod3": nnod3,  # number of volume nodes
@@ -33,6 +59,22 @@ def read_grid3d(grid3dfile, **kwargs):
         "mesh_tetra": mesh_tetra,
     }
     return grid
+
+
+def _to_timedelta_safe(series, unit="s"):
+    """
+    pd.to_timedelta(series, unit=unit), but safe to call on a series that
+    is already timedelta64-dtyped (e.g. a cached/re-processed dataframe,
+    or an output block whose column already went through this
+    conversion once). Passing an explicit `unit` to pd.to_timedelta when
+    the input is already Timedelta makes pandas attempt Timedelta+float
+    arithmetic internally and raise "unsupported operand type(s) for +:
+    'Timedelta' and 'float'". If it's already timedelta64, return as-is;
+    otherwise convert numerically as before.
+    """
+    if pd.api.types.is_timedelta64_dtype(series):
+        return series
+    return pd.to_timedelta(series.astype(float), unit=unit)
 
 
 def load_spatial_file_fast(filename: str | Path, prop: str) -> pd.DataFrame:
@@ -83,7 +125,7 @@ def load_spatial_file_fast(filename: str | Path, prop: str) -> pd.DataFrame:
     arr = np.vstack(blocks)
     cols = ["time_sec","SURFACE NODE","X","Y",prop]
     df = pd.DataFrame(arr, columns=cols)
-    df["time"] = pd.to_timedelta(df["time_sec"], unit="s")
+    df["time"] = _to_timedelta_safe(df["time_sec"])
     return df.drop_duplicates(subset=["time","X","Y"])
 
 
@@ -140,7 +182,7 @@ def read_spatial_format(filename,prop=None):
     df_spatial = pd.DataFrame(df_spatial_stack, 
                               columns=colsnames
                               )
-    df_spatial["time"] = pd.to_timedelta(df_spatial["time_sec"], unit="s")
+    df_spatial["time"] = _to_timedelta_safe(df_spatial["time_sec"])
     df_spatial_multiindex = df_spatial.set_index(['time', 'X', 'Y'])
     df_spatial_unique = df_spatial_multiindex[~df_spatial_multiindex.index.duplicated(keep='first')]
     df_spatial_unique = df_spatial_unique.reset_index()
@@ -329,7 +371,7 @@ def read_vp(filename):
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
     df_vp = pd.DataFrame(dvp_stack, columns=cols_vp)
-    df_vp["time"] = pd.to_timedelta(df_vp["time"], unit="s")
+    df_vp["time"] = _to_timedelta_safe(df_vp["time"])
 
     return df_vp
 
@@ -353,6 +395,12 @@ def read_hgraph(filename):
     hgraph_file = open(filename, "r")
     hgraph = np.loadtxt(hgraph_file, skiprows=2, usecols=range(5))
     hgraph_file.close()
+
+    # np.loadtxt collapses a single data row to a 1-D array of shape
+    # (5,) instead of (1, 5) — e.g. for a month whose run only wrote one
+    # output step. atleast_2d restores the row dimension so the
+    # DataFrame constructor below always sees (n_rows, 5), never (5,).
+    hgraph = np.atleast_2d(hgraph)
 
     # hgraph collumns information
     # -------------------------------------------------------------------------

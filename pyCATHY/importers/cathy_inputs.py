@@ -36,7 +36,7 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
     value = []
     tstep_idx = []
     # loop over lines
-    
+
     if HSPATM != 0:  # homogeneous on all surf mesh nodes
 
         for i, ll in enumerate(lines):
@@ -47,15 +47,15 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
                     tstep_idx.append(i)
                     splt = ll.split()
                     t.append(float(splt[0]))
-    
+
                 # two cases (according to file formatting):
                 # numerical values + flag of value
                 # -----------------------------------------------------------------
                 # 1/ value (numeric) + 'VALUE'
                 elif "VALUE".casefold() in ll.casefold() or "ATMINP".casefold() in ll.casefold():
                     value.append(float(ll.split()[0]))
-    
-                elif "\n" in ll:               
+
+                elif "\n" in ll:
                     if len(ll.split())>0:
                         if  (i % 2) == 0:
                             value.append(float(ll.split()[0]))
@@ -71,19 +71,19 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
                     # 2/ value (numeric)
                     # -----------------------------------------------------------------
                     value.append(float(ll.split()[0]))
-    
+
         if len(value) != len(t):
             raise ValueError(
                 "Number of values does not match number of times (check flags TIME, VALUE)"
             )
-    
+
         d_atmbc = []
         d_atmbc = np.vstack([t, value])
         cols_atmbc = ["time", "value"]
         df_atmbc = pd.DataFrame(d_atmbc.T, columns=cols_atmbc)
 
     else:  # heterogeneous on all surf mesh nodes
-        
+
         for i, ll in enumerate(lines):
             if i > 0:
                 # test_char = re.search('[a-zA-Z]', ll)
@@ -92,12 +92,12 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
                     tstep_idx.append(i)
                     splt = ll.split()
                     t.append(float(splt[0]))
-                    
-                    
+
+
         # Example numerical data
         # data_list = [1.0, 10, 15, 20, 1.5, 5, 8, 12, ...]  # Replace with your actual data
         # n = int(grid["nnod"])  # Number of values for each time
-        
+
         # Create a list of dictionaries with 'time' and 'values'
         data_dicts = []
         for i, j in enumerate(range(1, len(lines), int(grid["nnod"])+1)):
@@ -141,53 +141,53 @@ def read_parm(filename, **kwargs):
     #     "VGRMCCELL",
     #     "VGPSATCELL",
     # ]
-    
+
     parm_header = [
         "IPRT1",  # Flag for output of input and coordinate data
         "NCOUT",
         "TRAFLAG",  # Flag for transport
-        
+
         "ISIMGR",  # Flag for type of simulation and type of surface grid
         "PONDH_MIN",  # Minimum ponding head
         "VELREC",
-        
+
         "KSLOPE",
         "TOLKSL",
-        
+
         "PKRL",
         "PKRR",
         "PSEL",
         "PSER",
-        
+
         "PDSE1L",
         "PDSE1R",
         "PDSE2L",
         "PDSE2R",
-        
+
         "ISFONE",
         "ISFCVG",
         "DUPUIT",
-        
+
         "TETAF",
         "LUMP",
         "IOPT",
-        
+
         "NLRELX",
         "OMEGA",
-        
+
         "L2NORM",
         "TOLUNS",
         "TOLSWI",
         "ERNLMX",
-        
+
         "ITUNS",
         "ITUNS1",
         "ITUNS2",
-        
+
         "ISOLV",
         "ITMXCG",
         "TOLCG",
-        
+
         "DELTAT",
         "DTMIN",  # Minimum FLOW3D time step size allowed
         "DTMAX",  # Maximum FLOW3D time step size allowed
@@ -197,20 +197,20 @@ def read_parm(filename, **kwargs):
         "DTMAGM",
         "DTREDS",
         "DTREDM",
-        
+
         "IPRT",
         "VTKF",
         "NPRT",
         "(TIMPRT(I),I=1,NPRT)",
-        
+
         "NUMVP",
         "(NODVP(I),I=1,NUMVP)",  # should be positive (first node is 1)
-        
+
         "NR",
         "CONTR(I),I=1,NR",
         "NUM_QOUT",
         "(ID_QOUT(I),I=1,NUM_QOUT)",
-        
+
     ]
 
     dict_parm = {}
@@ -219,15 +219,15 @@ def read_parm(filename, **kwargs):
     lines = [ligne.strip() for ligne in lines] # avoid retour chariot
     parm_file.close()
     lines = [ll for ll in lines if len(ll)>0]
-    
+
     lines_s = [ll.split() for ll in lines]
     flat_lines_s = [item for sublist in lines_s for item in sublist]
     lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
-   
+
     ii = 0
     for lname in lines_s_names:
         # print(lname)
-        if lname in ["(TIMPRT(I),I=1,NPRT)","(TIMPRT(I)I=1NPRT)","(TIMPRT(I).I=1.NPRT)"]: 
+        if lname in ["(TIMPRT(I),I=1,NPRT)","(TIMPRT(I)I=1NPRT)","(TIMPRT(I).I=1.NPRT)"]:
             lines_s_num_TIMPRT = []
             for k in range(dict_parm['NPRT']):
                 lines_s_num_TIMPRT.append(lines_s_num[ii+k])
@@ -244,7 +244,7 @@ def read_parm(filename, **kwargs):
             if dict_parm['NUM_QOUT'] == 0:
                 dict_parm[lname] = 441
                 ii +=1
-            else:       
+            else:
                 for k in range(dict_parm['NUM_QOUT']):
                     lines_s_num_ID_QOUT.append(lines_s_num[ii+k])
                 dict_parm[lname] = lines_s_num_ID_QOUT
@@ -252,8 +252,8 @@ def read_parm(filename, **kwargs):
         else:
             dict_parm[lname] = lines_s_num[ii]
             ii +=1
-            
-    # workaound for NUM_QOUT  
+
+    # workaound for NUM_QOUT
     # -----------------------
     # dict_parm['NUM_QOUT'] = 441
 
@@ -276,23 +276,23 @@ def read_dem_parameters(dem_parametersfile):
         "base",
         "zratio(i),i=1,nstr",
     ]
-    
-    
+
+
     parm_file = open(dem_parametersfile, "r")
     lines = parm_file.readlines()
     lines = [ligne.strip() for ligne in lines] # avoid retour chariot
     parm_file.close()
     lines = [ll for ll in lines if len(ll)>0]
-    
+
     lines_s = [ll.split() for ll in lines]
     flat_lines_s = [item for sublist in lines_s for item in sublist]
     lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
-    
+
 
     dict_dem_parm = {}
     ii = 0
     for lname in lines_s_names:
-        if lname == "zratio(i),i=1,nstr" or lname == 'zratio(i).i=1.nstr': 
+        if lname == "zratio(i),i=1,nstr" or lname == 'zratio(i).i=1.nstr':
             lines_s_num_zratio = []
             for k in range(dict_dem_parm['nstr']):
                 # print(k)
@@ -302,11 +302,11 @@ def read_dem_parameters(dem_parametersfile):
         else:
             dict_dem_parm[lname] = lines_s_num[ii]
             ii +=1
-            
+
     return dict_dem_parm
 
 
-def read_soil(soilfile, dem_parm, MAXVEG):
+def read_soil(soilfile, dem_parm, MAXVEG, scf_per_veg=False):
     """
     Read soil file
 
@@ -328,6 +328,17 @@ def read_soil(soilfile, dem_parm, MAXVEG):
         filename (including abs path).
     dem_parm : dict
         dict of dem parameters (from read_dem_parameters)
+    MAXVEG : int
+        number of vegetation types.
+    scf_per_veg : bool, optional
+        SCF-VEG: must match the "scf_per_veg" flag the file was written
+        with (see cathy_tools.py's version_config.py / CATHY_SOIL_FORMAT,
+        keyed by version -- "SCF_variable" uses True, everything else
+        False). When True, expects an extra per-vegetation-type SCF
+        block of MAXVEG lines right after the 6-column Feddes table and
+        before IVGHU, and returns it as an 'SCF' column in df_FP. When
+        False (default), the file format -- and this function's
+        behavior -- is exactly what it was before SCF-VEG existed.
     Returns
     -------
     dataframe
@@ -340,7 +351,7 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     # Read FP parameters
     # ---------------------
     FP_header = ['PCANA','PCREF','PCWLT','ZROOT','PZ','OMGC']
-    
+
 
     # Read SPP parameters
     # ---------------------
@@ -356,19 +367,29 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     ]
 
     FP_soil = []
+    SCF_soil = []
     str_hd_soil = {}
+    # SCF-VEG: classic format has 8+MAXVEG header lines before the SPP
+    # table (3 fixed lines + MAXVEG Feddes lines + 5 fixed lines). The
+    # scf_per_veg format inserts one extra block of MAXVEG lines (the
+    # per-vegetation SCF values) between the Feddes table and IVGHU, so
+    # the SPP table starts MAXVEG lines later.
     nb_of_header_lines = 9 + MAXVEG - 1
+    if scf_per_veg:
+        nb_of_header_lines += MAXVEG
     with open(os.path.join(soilfile), "r") as f:  # open the file for reading
         count = 0
         for line in f:  # iterate over each line
             if count>2 and count<MAXVEG+3:
                 FP_soil.append(line.split('PCANA')[0].split(' '))
+            elif scf_per_veg and count>=MAXVEG+3 and count<2*MAXVEG+3:
+                SCF_soil.append(line.split('SCF')[0].split(' '))
             count += 1
 
 
     soil = np.loadtxt(
-                        soilfile, 
-                        skiprows=nb_of_header_lines, 
+                        soilfile,
+                        skiprows=nb_of_header_lines,
                         max_rows=count - nb_of_header_lines - 1
     )
     np.shape(soil)
@@ -381,7 +402,14 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     df_FP.columns = FP_header
     df_FP.index.name = 'Veg. Indice'
     df_FP.index =  df_FP.index + 1
-    
+
+    if scf_per_veg:
+        SCF_soil_mat = []
+        for scfline in SCF_soil:
+            SCF_soil_mat.append([float(v) for v in scfline if len(v)>0])
+        SCF_soil_mat = np.array(SCF_soil_mat).reshape(-1)
+        df_FP['SCF'] = SCF_soil_mat
+
     layer_id = []
     zone_id = []
     for ds in range(int(dem_parm["nstr"])):
@@ -392,14 +420,14 @@ def read_soil(soilfile, dem_parm, MAXVEG):
     if len(soil) != len(layer_id): #*dem_parm['nzone']:
        print(
             "Inconsistent number of zones/layers with respect to the number of soil lines: " +
-            str(len(soil)) + '/' + str(len(layer_id)) + 
+            str(len(soil)) + '/' + str(len(layer_id)) +
             "!Revise dem_parm file!"
 
         )
-        
+
     # name_str = np.sort(name_str)
     df_soil = pd.DataFrame(soil, [zone_id,
-                                  layer_id], 
+                                  layer_id],
                             soil_header)
     # df_soil.xs(1)
     df_soil.index.set_names("zone", level=0, inplace=True)
@@ -533,7 +561,7 @@ def read_root_map(rootmapfile):
 
 
 def _search_num_values_in_list(flat_lines_s):
-    
+
     lines_s_num = []
     lines_s_names = []
     for lli in flat_lines_s:
@@ -553,5 +581,5 @@ def _search_num_values_in_list(flat_lines_s):
             lines_s_num.append(float(lli))
         else:
             lines_s_names.append(lli)
-            
+
     return lines_s_num, lines_s_names

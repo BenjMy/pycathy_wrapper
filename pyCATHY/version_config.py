@@ -33,9 +33,32 @@ PREPRO_UPDATE_PREPO_INPUTS = {
 }
 
 
+
+# ---- SOIL FILE FORMAT (SCF-VEG) ----
+# Controls whether the "soil" input file's per-vegetation-type block
+# includes a separate trailing per-vegetation SCF section, written
+# right after the (unchanged) 6-column Feddes table and read back the
+# same way. See cathy_tools.py's _write_SOIL_file /
+# _prepare_SOIL_vegetation_tb / _get_soil_FP_columnsNames / set_SOIL_defaults,
+# and cathy_inputs.py's read_soil.
+#
+# "default" and "withIrr" keep the classic format completely unchanged
+# (SCF stays a single global scalar, written on the same line as
+# IPEAT) -- existing input decks and any external tooling that writes
+# this file for those versions keep working exactly as before.
+# "SCF_variable" is the only version that switches to the new format.
+CATHY_SOIL_FORMAT = {
+    "default": {"scf_per_veg": False},
+    "withIrr": {"scf_per_veg": False},
+    "SCF_variable": {"scf_per_veg": True},
+}
+
+
+
+
 # ---- CATHY CONFIGS ----
 CATHY_H_HEADER = {
-    "default": 
+    "default":
 """C
 C***************************  PARAMETER INCLUDE FILE CATHY.H ***********
 C
@@ -163,7 +186,7 @@ INTEGER   MAXFCONTONODE,MAXLKP
 C
 """
    ,
-    "withIrr": 
+    "withIrr":
 """C
 C***************************  PARAMETER INCLUDE FILE CATHY.H ***********
 C
@@ -289,11 +312,11 @@ INTEGER   MAXLKP
 INTEGER   MMM_MAX_NRC,MMM_MAX_NM,MMM_MAX_NBG,MMM_MAX_NCOMP
 C
 """
- 
+
 }
 
 
-      
+
 # ---- CATHY CONFIGS ----
 CATHY_H_PARAMS = {
     "default": {
@@ -404,26 +427,6 @@ CATHY_H_PARAMS = {
 #     "default": {"metrics": ["ETa", "ETp", "ETa/ETp"]},
 #     "extended": {"metrics": ["ETa", "ETp", "ETa/ETp", "WUE", "ETdeficit"]},
 # }
-
-
-# ---- SOIL FILE FORMAT (SCF-VEG) ----
-# Controls whether the "soil" input file's per-vegetation-type block
-# includes a separate trailing per-vegetation SCF section, written
-# right after the (unchanged) 6-column Feddes table and read back the
-# same way. See cathy_tools.py's _write_SOIL_file /
-# _prepare_SOIL_vegetation_tb / _get_soil_FP_columnsNames / set_SOIL_defaults,
-# and cathy_inputs.py's read_soil.
-#
-# "default" and "withIrr" keep the classic format completely unchanged
-# (SCF stays a single global scalar, written on the same line as
-# IPEAT) -- existing input decks and any external tooling that writes
-# this file for those versions keep working exactly as before.
-# "SCF_variable" is the only version that switches to the new format.
-CATHY_SOIL_FORMAT = {
-    "default": {"scf_per_veg": False},
-    "withIrr": {"scf_per_veg": False},
-    "SCF_variable": {"scf_per_veg": True},
-}
 
 
 # ---- CENTRAL MAPPING ----
