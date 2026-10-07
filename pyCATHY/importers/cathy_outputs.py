@@ -77,7 +77,29 @@ def _to_timedelta_safe(series, unit="s"):
     return pd.to_timedelta(series.astype(float), unit=unit)
 
 
-def load_spatial_file_fast(filename: str | Path, prop: str) -> pd.DataFrame:
+def load_spatial_file_fast(filename: str | Path, prop) -> pd.DataFrame:
+    """
+    Parameters
+    ----------
+    prop : str or list[str]
+        Requested name(s) for the value column(s) that follow SURFACE
+        NODE, X, Y on each data row. This does NOT dictate the block
+        width -- the actual number of value columns is auto-detected
+        per-file from (total tokens in a time-step block / nsurfnodes),
+        since detout.f's row width now differs by CATHY build:
+          - unpatched / v1.0.0 detout.f: 4 numbers/row
+            (SURFACE NODE, X, Y, ACT. ETRA)
+          - SCF-CAP patched detout.f: 6 numbers/row
+            (SURFACE NODE, X, Y, ACT. TRAN, ACT. EVAP, ACT. ETRA)
+        If the file has fewer value columns than len(prop), the tail of
+        `prop` is used (ACT. ETRA is always last in both formats), so a
+        caller can request the full patched name list and still get a
+        sane single-column result against an unpatched/classic file.
+        If the file has MORE value columns than len(prop), that's a
+        genuine caller/format mismatch and raises.
+    """
+    props_requested = [prop] if isinstance(prop, str) else list(prop)
+
     def is_number(s):
         try: float(s); return True
         except: return False
@@ -116,14 +138,46 @@ def load_spatial_file_fast(filename: str | Path, prop: str) -> pd.DataFrame:
 
     # Instead of np.loadtxt per block: parse directly from lines
     blocks = []
+    props = None
     for t, start in zip(time_nstep, surf_nodes):
         block_str = "\n".join(lines[start+1:start+1+nsurfnodes])
-        data = np.fromstring(block_str, sep=" ").reshape(-1, 4)
+        raw = np.fromstring(block_str, sep=" ")
+
+        if props is None:
+            # Detect row width once, from the actual file, rather than
+            # trusting the caller's `prop` list to match this build of
+            # detout.f.
+            if nsurfnodes == 0 or raw.size % nsurfnodes != 0:
+                raise ValueError(
+                    f"{filename}: {raw.size} values in a time-step block "
+                    f"don't divide evenly into {nsurfnodes} surface "
+                    "nodes -- check nsurfnodes detection or file "
+                    "corruption."
+                )
+            ncols = raw.size // nsurfnodes
+            nvalcols = ncols - 3
+            if nvalcols == len(props_requested):
+                props = props_requested
+            elif nvalcols < len(props_requested):
+                # e.g. reading a classic/unpatched fort.777 (1 value
+                # column) while the caller asked for the SCF-CAP
+                # patched 3-column name list -- keep the tail, since
+                # ACT. ETRA is always last in both formats.
+                props = props_requested[-nvalcols:]
+            else:
+                raise ValueError(
+                    f"{filename}: found {nvalcols} value column(s) per "
+                    f"row but only {len(props_requested)} name(s) were "
+                    f"given ({props_requested}); update the `prop` "
+                    "argument passed to load_spatial_file_fast."
+                )
+
+        data = raw.reshape(-1, 3 + len(props))
         tt = np.full((data.shape[0], 1), t)
         blocks.append(np.hstack([tt, data]))
 
     arr = np.vstack(blocks)
-    cols = ["time_sec","SURFACE NODE","X","Y",prop]
+    cols = ["time_sec","SURFACE NODE","X","Y"] + props
     df = pd.DataFrame(arr, columns=cols)
     df["time"] = _to_timedelta_safe(df["time_sec"])
     return df.drop_duplicates(subset=["time","X","Y"])
@@ -197,7 +251,13 @@ def read_recharge(filename, **kwargs):
 def read_fort777(filename, **kwargs):
     """
     0  0.00000000E+00     NSTEP   TIME
-    SURFACE NODE              X              Y      ACT. ETRA
+    SURFACE NODE              X              Y      ACT. TRAN      ACT. EVAP      ACT. ETRA
+
+    SCF-CAP fix (detout.f): fort.777 now writes three flux columns per
+    surface node -- ACT. TRAN (transpiration), ACT. EVAP (evaporation),
+    and ACT. ETRA (their sum, the combined actual ET) -- instead of the
+    old single ACT. ETRA column. Update this call (and the FORMAT/columns
+    above) together if detout.f's WRITE(777,...) list ever changes again.
 
     Parameters
     ----------
@@ -206,12 +266,14 @@ def read_fort777(filename, **kwargs):
     Returns
     -------
     xyz_df : pd.DataFrame()
-        Dataframe containing time_sec,SURFACE NODE,X,Y,ACT. ETRA.
+        Dataframe containing time_sec, SURFACE NODE, X, Y, ACT. TRAN,
+        ACT. EVAP, ACT. ETRA.
 
     """
-    
-    # df_fort777 = read_spatial_format(filename,prop='ACT. ETRA')
-    df_fort777 = load_spatial_file_fast(filename,prop='ACT. ETRA')
+
+    df_fort777 = load_spatial_file_fast(
+        filename, prop=['ACT. TRAN', 'ACT. EVAP', 'ACT. ETRA']
+    )
 
     return df_fort777
     

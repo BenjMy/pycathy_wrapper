@@ -11,7 +11,7 @@ natsort
 shapely
 seaborn
 rioxarray
-
+scikit-learn
 pypandoc
 # Optionnal packages
 # resipy

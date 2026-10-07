@@ -44,6 +44,7 @@ from pathlib import Path
 
 import numpy as np
 from git import Repo  # In order to fetch the file directly from the repo
+import tempfile
 
 import pyCATHY.meshtools as mt
 from pyCATHY.importers import cathy_inputs as in_CT
@@ -282,20 +283,37 @@ class CATHY:
                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
                 )
 
+
             if version == "SCF_variable":
                 print("fetch cathy SCF_variable src files")
-                path_SCF_variable = "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/CATHY-org/CATHY_src_SCF_variable"
-                shutil.copytree(
-                    path_SCF_variable, os.path.join(self.workdir, self.project_name),
-                    dirs_exist_ok=True,
-                )
-
-
+                dest = os.path.join(self.workdir, self.project_name)
+            
+                with tempfile.TemporaryDirectory() as tmp:
+                    Repo.clone_from(
+                        "https://github.com/CATHY-Org/CATHY_SCF_LAI.git",
+                        tmp,
+                        branch="main",
+                        depth=1,
+                    )
+                    shutil.copytree(
+                        tmp,
+                        dest,
+                        dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns(".git", ".gitattributes", ".gitignore"),
+                    )
+                            
+                #path_SCF_variable = "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/CATHY-org/CATHY_src_SCF_variable_dev"
+                #shutil.copytree(
+                #    path_SCF_variable,
+                #    os.path.join(self.workdir, self.project_name),
+                #    dirs_exist_ok=True,
+                #)
+                
+                
         if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
             self.console.print(
                 ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
             )
-            tests
             shutil.move(
                 os.path.join(
                     self.workdir,
