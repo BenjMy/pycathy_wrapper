@@ -18,6 +18,12 @@ jobs:
 
       # ... your install + ipykernel steps unchanged ...
 
+      - name: Debug environment
+        run: |
+          which python
+          python --version
+          python -m pip list | grep -i -E "sphinx|nbsphinx|ipykernel"
+          
       - name: Sphinx build
         run: |
           sudo apt-get update
@@ -28,8 +34,8 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 3
           rm -rf doc/_build/
-          sphinx-build doc doc/_build        # no "|| true"
-
+          python -m sphinx -b html doc doc/_build
+          
       - name: Check build output
         run: test -f doc/_build/index.html
 
