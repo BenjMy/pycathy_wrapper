@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Create soil zones control
+=========================
+*Estimated time to run the notebook = 5min*
+
+"""
+
+
+# !! run preprocessor change the DEM shape !
+# dtm_13 does not have the same shape anymore!
+
+import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+import pyCATHY.meshtools as mt
+from pyCATHY import cathy_tools
+from pyCATHY.importers import cathy_inputs as in_CT
+from pyCATHY.importers import cathy_outputs as out_CT
+from pyCATHY.plotters import cathy_plots as cplt
+
+#%% Init CATHY model
+# ------------------------
+path2prj = "../SSHydro/"  # add your local path here
+simu = cathy_tools.CATHY(dirName=path2prj,
+                         prj_name="soil_withzones",
+                         clear_src=False
+                         )
+
+rootpath = os.path.join(simu.workdir + simu.project_name)
+simu.run_preprocessor(verbose=False)
+simu.run_processor(IPRT1=3,verbose=True)
+
+#%% Define zones and create
+
+simu.DEM
+zones = np.ones(np.shape(simu.DEM))
+zones[:,0:2] = 2
+zones[:,2:4] = 3
+zones[:,4:6] = 4
+
+simu.update_zone(zones)
+
+
+fig, ax = plt.subplots()
+simu.show_input('zone',ax=ax)
+
+
+#%% Create an empty dataframe of SPP and set default SPP properties
+
+df_SPP_map = simu.init_soil_SPP_map_df(nzones=4,nstr=15)
+df_SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
+
+#%% Update soil file
+
+simu.update_soil(SPP_map=df_SPP_map)
+
+print(df_SPP_map.head())
