@@ -1,37 +1,25 @@
-# This is a basic workflow to publish pyCATHY doc
 name: Docs
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main]        # use your default branch name
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      # Set up Python 3.10
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          pip install sphinx sphinx_book_theme
-          pip install -r env/requirements_doc.txt
-          pip install .
+      # ... your install + ipykernel steps unchanged ...
 
-      # Register ipykernel
-      - name: Register ipykernel
-        run: python -m ipykernel install --user --name pycathy_doc
-
-      # Build the documentation
       - name: Sphinx build
         run: |
-          # Install xvfb and run some commands to allow pyvista to run on
-          # a headless system.
-          # Also install lapack/blas (and gfortran) so the CATHY Fortran
-          # source compiles/links correctly during the example builds.
           sudo apt-get update
           sudo apt-get install -y xvfb gfortran liblapack-dev libblas-dev
           export DISPLAY=:99.0
@@ -40,12 +28,14 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 3
           rm -rf doc/_build/
-          sphinx-build doc doc/_build || true
+          sphinx-build doc doc/_build        # no "|| true"
 
-      # Deploy to GitHub Pages
+      - name: Check build output
+        run: test -f doc/_build/index.html
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3.5.9
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: doc/_build/
-          force_orphan: true
