@@ -22,7 +22,7 @@ Examples using ``pyCATHY.CATHY.show_bc``
   .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_5a_infiltration_withBC_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_SSHydro_plot_5a_infiltration_withBC.py`
+  :doc:`/content/SSHydro/plot_5a_infiltration_withBC`
 
 .. raw:: html
 
@@ -32,7 +32,7 @@ Examples using ``pyCATHY.CATHY.show_bc``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_SSHydro_plot_5a_infiltration_withBC.py`
+ * :doc:`/content/SSHydro/plot_5a_infiltration_withBC`
 
 .. thumbnail-parent-div-close
 

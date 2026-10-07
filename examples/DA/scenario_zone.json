@@ -1,0 +1,104 @@
+{
+    "scenario_zone": {
+        "per_name": [
+            "ic",
+            "Ks"
+        ],
+        "per_type": [
+            [
+                "None",
+                "None"
+            ],
+            [
+                "multiplicative",
+                "multiplicative"
+            ]
+        ],
+        "per_nom": [
+            [
+                -5,
+                -5
+            ],
+            [
+                0.0004,
+                0.0004
+            ]
+        ],
+        "per_mean": [
+            [
+                -5,
+                -5
+            ],
+            [
+                1,
+                1
+            ]
+        ],
+        "per_sigma": [
+            [
+                1.75,
+                1.75
+            ],
+            [
+                0.5,
+                0.5
+            ]
+        ],
+        "per_bounds": [
+            [
+                "None",
+                "None"
+            ],
+            [
+                [
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    1
+                ]
+            ]
+        ],
+        "sampling_type": [
+            [
+                "normal",
+                "normal"
+            ],
+            [
+                "normal",
+                "normal"
+            ]
+        ],
+        "transf_type": [
+            [
+                "None",
+                "None"
+            ],
+            [
+                "None",
+                "None"
+            ]
+        ],
+        "listUpdateParm": [
+            "St. var.",
+            "Ks"
+        ],
+        "pert_control_name": [
+            "zone",
+            "zone"
+        ]
+    },
+    "_explanation": {
+        "per_name": "Parameter name",
+        "per_type": "Perturbation type: None or multiplicative",
+        "per_nom": "Nominal value",
+        "per_mean": "Mean value for sampling",
+        "per_sigma": "Standard deviation",
+        "per_bounds": "Bounds for parameter",
+        "sampling_type": "Sampling method: normal, uniform",
+        "transf_type": "Transformation type: None, log, etc.",
+        "listUpdateParm": "Which parameters are updated",
+        "pert_control_name": "Control type: 'layers', 'zone', 'root_map' or None"
+    }
+}

@@ -789,7 +789,7 @@ def show_vtk_TL(
             legend_entry = "Time=" + str(t_lgd) + xlabel
 
         # print(array_new)
-        plotter.update_scalars(array_new, render=True)
+        mesh.point_data[scalar_name] = array_new   # or mesh.cell_data[...] if it's cell data
         plotter.add_text(legend_entry, name="time-label")
 
         plotter.render()
@@ -1059,7 +1059,7 @@ def show_zone(zone_map, ax=None, **kwargs):
 
     if ax is None:
         fig, ax = plt.subplots()
-        
+
     cf = ax.pcolormesh(zone_map, edgecolors="black", cmap=cmap)
     # cbar = fig.colorbar(cf, ax=ax, label='indice of zones')
 
@@ -1110,8 +1110,8 @@ def show_indice_veg(veg_map, ax=None, **kwargs):
     if  kwargs.get('edgecolors', False):
         # Use pcolormesh instead of imshow
         cf = ax.pcolormesh(
-            veg_map, 
-            cmap=cmap, 
+            veg_map,
+            cmap=cmap,
             edgecolors='black',  # cell borders
             linewidth=0.5        # border thickness
         )
@@ -1350,9 +1350,9 @@ def plot_hist_perturbated_parm(parm, var_per, type_parm, parm_per_array, **kwarg
             )
     else:
         # plt.hist(parm_sampling, ensemble_size/2, alpha=0.5, label='sampling')
-        plt.hist(parm_per_array, 
+        plt.hist(parm_per_array,
                  bins=7,  # Increase the number of bins
-                 alpha=0.5, 
+                 alpha=0.5,
                  label="ini_perturbation"
                  )
         plt.axvline(x=parm["nominal"], linestyle="--", color="red")
@@ -1476,7 +1476,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     xlabel = "date" if start_date else "assimilation #"
 
     # Filter and cast necessary columns in one pass for efficiency
-    df_perf_plot = df_performance[["time", "ObsType", f"RMSE{sensorName}", 
+    df_perf_plot = df_performance[["time", "ObsType", f"RMSE{sensorName}",
                                    # f"NMRMSE_avg{sensorName}",
                                    "NMRMSE_avg",
                                    "OL"]].dropna()
@@ -1492,7 +1492,7 @@ def DA_RMS(df_performance, sensorName, **kwargs):
 
     # Pivot tables for RMSE and NMRMSE to prepare for plotting
     p0 = df_perf_plot.pivot(index=keytime, columns="OL", values=f"RMSE{sensorName}")
-    p1 = df_perf_plot.pivot(index=keytime, columns="OL", 
+    p1 = df_perf_plot.pivot(index=keytime, columns="OL",
                             values="NMRMSE_avg"
                             # values=f"NMRMSE{sensorName}"
                             )
@@ -1505,8 +1505,8 @@ def DA_RMS(df_performance, sensorName, **kwargs):
     # Plotting
     p0.plot(ax=ax[1 if start_date else 0], xlabel=xlabel, ylabel=f"RMSE{sensorName}", style=[".-"])
     p1.plot(ax=ax[2 if start_date else 1], xlabel=xlabel,
-            ylabel="NMRMSE_avg", 
-            # ylabel=f"NMRMSE{sensorName}", 
+            ylabel="NMRMSE_avg",
+            # ylabel=f"NMRMSE{sensorName}",
             style=[".-"])
 
     return ax, plt
@@ -1646,7 +1646,7 @@ def DA_plot_parm_dynamic_scatter(
     df = pd.DataFrame()
     df = pd.DataFrame(data=dict_parm_new)
     df.index.name = "Ensemble_nb"
-   
+
     color = 'k'
     if "color" in kwargs:
         color = kwargs["color"]
@@ -1664,7 +1664,7 @@ def DA_plot_parm_dynamic_scatter(
     #     df = df.iloc[:,nii]
     #     # dates = pd.to_datetime(list_assimilation_times[nii])
     #     list_assimilation_times = list_assimilation_times[nii]
-        
+
 
     df.columns = list_assimilation_times
     boxplot = seaborn.boxplot(
@@ -1672,20 +1672,20 @@ def DA_plot_parm_dynamic_scatter(
                             color='grey',
                             ax=ax
                          )
-    
+
     # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
     # if pd.api.types.is_datetime64_any_dtype(df.columns):
-    #     ax.set_xticklabels([pd.to_datetime(date).strftime('%d %b') for date in df.columns], 
+    #     ax.set_xticklabels([pd.to_datetime(date).strftime('%d %b') for date in df.columns],
     #                    rotation=45)
     # if pd.api.types.is_datetime64_any_dtype(df.columns):
-        # ax.set_xticklabels([pd.to_datetime(date).strftime('%d (%-I%p)') for date in df.columns], 
+        # ax.set_xticklabels([pd.to_datetime(date).strftime('%d (%-I%p)') for date in df.columns],
         #                rotation=45)
         # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b %-I %p'.lower()))
         # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b %H h'))
-        
+
         # Optional: control how often ticks appear
         # ax.xaxis.set_major_locator(mdates.AutoDateLocator(maxticks=6))
-        
+
         # Rotate labels for readability
         # plt.setp(ax.get_xticklabels(), rotation=45, ha='right')
 
@@ -1943,7 +1943,7 @@ def DA_plot_time_dynamic(
             columns=["idnode"],
             # columns=['idnode'],
             values=["mean(ENS)"],
-        ).plot(ax=ax, style=["--"], 
+        ).plot(ax=ax, style=["--"],
                color=colors_minmax,
                # alpha=0.2
                )
@@ -1958,8 +1958,8 @@ def DA_plot_time_dynamic(
             columns=["idnode"],
             # columns=['idnode'],
             values=["max(ENS)"],
-        ).plot(ax=ax, 
-               style=["-"], 
+        ).plot(ax=ax,
+               style=["-"],
                color=colors_minmax,
                alpha=0.1
                )
@@ -2041,12 +2041,12 @@ def DA_plot_time_dynamic(
 
 def calculate_rmse_nrmse(y_pred, y_obs, normalization="range"):
     """Calculate RMSE and NRMSE between two time series.
-    
+
     Args:
         y_pred (array-like): Predicted values.
         y_obs (array-like): Observed values.
         normalization (str): "mean", "range", or "std" for NRMSE normalization.
-    
+
     Returns:
         tuple: (RMSE, NRMSE)
     """
@@ -2062,7 +2062,3 @@ def calculate_rmse_nrmse(y_pred, y_obs, normalization="range"):
         raise ValueError("Invalid normalization method. Choose 'mean', 'range', or 'std'.")
 
     return rmse, nrmse
-
-
-
-

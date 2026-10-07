@@ -55,7 +55,7 @@ We also import `cathy_plots` to render the results
 
 if you add True to verbose, the processor log will be printed in the window shell
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-45
+.. GENERATED FROM PYTHON SOURCE LINES 27-38
 
 .. code-block:: Python
 
@@ -68,6 +68,56 @@ if you add True to verbose, the processor log will be printed in the window shel
     			)
 
     simu.run_preprocessor()
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    🏁 Initiate CATHY object
+    🍳 gfortran compilation
+    👟 Run preprocessor
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 39-57
+
+.. code-block:: Python
+
+
+    simu.read_inputs('atmbc')
+    # simu.create_mesh_bounds_df(
+    #     'nansfdirbc',
+    #     simu.grid3d["mesh3d_nodes"],
+    #     t_atmbc,
+    # )
+
+    # print(simu.mesh_bound_cond_df.head())
+    # print("BC columns:", list(simu.mesh_bound_cond_df.columns))
+
+    # Apply no-flow to all lateral/bottom boundaries
+    simu.update_nansfneubc(no_flow=True)
+    simu.update_nansfdirbc(no_flow=True)
+    simu.update_sfbc(no_flow=True)
+
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 58-67
+
+.. code-block:: Python
+
     simu.run_processor(IPRT1=2, 
                         DTMIN=1e-2,
                         DTMAX=1e2,
@@ -85,22 +135,19 @@ if you add True to verbose, the processor log will be printed in the window shel
 
  .. code-block:: none
 
-    🏁 Initiate CATHY object
-    🍳 gfortran compilation
-    👟 Run preprocessor
     🔄 Update parm file 
     🔄 Update hap.in file
     🔄 Update dem_parameters file 
     🔄 Update dem_parameters file 
-    🛠  Recompile src files [3s]
-    🍳 gfortran compilation [7s]
-    b''
+    🛠  Recompile src files [4s]
+    🍳 gfortran compilation [10s]
+    ✅ Compilation successful!
     👟 Run processor
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-48
+.. GENERATED FROM PYTHON SOURCE LINES 68-70
 
 .. code-block:: Python
 
@@ -118,7 +165,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-51
+.. GENERATED FROM PYTHON SOURCE LINES 71-73
 
 .. code-block:: Python
 
@@ -137,14 +184,14 @@ if you add True to verbose, the processor log will be printed in the window shel
 
  .. code-block:: none
 
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_outputs.py:322: UserWarning: Input line 3 contained no data and will not be counted towards `max_rows=236`.  This differs from the behaviour in NumPy <=1.22 which counted lines rather than rows.  If desired, the previous behaviour can be achieved by using `itertools.islice`.
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_outputs.py:495: UserWarning: Input line 3 contained no data and will not be counted towards `max_rows=236`.  This differs from the behaviour in NumPy <=1.22 which counted lines rather than rows.  If desired, the previous behaviour can be achieved by using `itertools.islice`.
     Please see the 1.23 release notes for an example on how to do this.  If you wish to ignore this warning, use `warnings.filterwarnings`.  This warning is expected to be removed in the future and is given only once per `loadtxt` call.
       dtcoupling = np.loadtxt(dtcoupling_file, skiprows=2, max_rows=2 + nstep)
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-54
+.. GENERATED FROM PYTHON SOURCE LINES 74-76
 
 .. code-block:: Python
 
@@ -162,7 +209,7 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-57
+.. GENERATED FROM PYTHON SOURCE LINES 77-79
 
 .. code-block:: Python
 
@@ -180,11 +227,11 @@ if you add True to verbose, the processor log will be printed in the window shel
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-59
+.. GENERATED FROM PYTHON SOURCE LINES 80-81
 
 To select another time step change the value in the function argument
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-66
+.. GENERATED FROM PYTHON SOURCE LINES 81-88
 
 .. code-block:: Python
 
@@ -216,7 +263,7 @@ To select another time step change the value in the function argument
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-73
+.. GENERATED FROM PYTHON SOURCE LINES 89-95
 
 cplt.show_vtk(
     unit="saturation",
@@ -225,10 +272,72 @@ cplt.show_vtk(
     path=simu.workdir + "/my_cathy_prj/vtk/",
 )
 
+.. GENERATED FROM PYTHON SOURCE LINES 97-101
+
+.. code-block:: Python
+
+
+    df_recharge = simu.read_outputs('recharge')
+    xr_recharge = df_recharge.set_index(['time','X','Y']).to_xarray()
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 102-115
+
+.. code-block:: Python
+
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()
+    xr_recharge['recharge'].isel(time=0).plot.imshow(ax=ax)
+
+
+    fig, ax = plt.subplots()
+    xr_recharge['recharge'].isel(time=1).plot.imshow(ax=ax)
+
+
+
+
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_4b_pyCATHY_outputs_006.png
+         :alt: time = 0 days 00:00:00
+         :srcset: /content/SSHydro/images/sphx_glr_plot_4b_pyCATHY_outputs_006.png
+         :class: sphx-glr-multi-img
+
+    *
+
+      .. image-sg:: /content/SSHydro/images/sphx_glr_plot_4b_pyCATHY_outputs_007.png
+         :alt: time = 0 days 00:31:35.115820
+         :srcset: /content/SSHydro/images/sphx_glr_plot_4b_pyCATHY_outputs_007.png
+         :class: sphx-glr-multi-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <matplotlib.image.AxesImage object at 0x7d50b6f69120>
+
+
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 23.141 seconds)
+   **Total running time of the script:** (0 minutes 16.470 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_4b_pyCATHY_outputs.py:

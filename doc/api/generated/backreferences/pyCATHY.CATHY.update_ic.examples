@@ -15,6 +15,27 @@ Examples using ``pyCATHY.CATHY.update_ic``
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Estimated time to run the notebook = 5min">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3f_meshing_from_subCatchment_thumb.png
+    :alt:
+
+  :doc:`/content/SSHydro/plot_3f_meshing_from_subCatchment`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Meshing from a Digital Elevation Model (DEM) .adf file</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/SSHydro/plot_3f_meshing_from_subCatchment`
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.">
 
 .. only:: html
@@ -22,7 +43,7 @@ Examples using ``pyCATHY.CATHY.update_ic``
   .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_5a_infiltration_withBC_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_SSHydro_plot_5a_infiltration_withBC.py`
+  :doc:`/content/SSHydro/plot_5a_infiltration_withBC`
 
 .. raw:: html
 
@@ -32,7 +53,49 @@ Examples using ``pyCATHY.CATHY.update_ic``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_SSHydro_plot_5a_infiltration_withBC.py`
+ * :doc:`/content/SSHydro/plot_5a_infiltration_withBC`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset">
+
+.. only:: html
+
+  .. image:: /content/EOdata/images/thumb/sphx_glr_plot_4_map_from_ET_EO_thumb.png
+    :alt:
+
+  :doc:`/content/EOdata/plot_4_map_from_ET_EO`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Mapping atmbc from Earth Observation xarray dataset</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/EOdata/plot_4_map_from_ET_EO`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset">
+
+.. only:: html
+
+  .. image:: /content/EOdata/images/thumb/sphx_glr_plot_4b_map_from_coarse_ET_EO_thumb.png
+    :alt:
+
+  :doc:`/content/EOdata/plot_4b_map_from_coarse_ET_EO`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Mapping atmbc from coarse EO</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/EOdata/plot_4b_map_from_coarse_ET_EO`
 
 .. thumbnail-parent-div-close
 

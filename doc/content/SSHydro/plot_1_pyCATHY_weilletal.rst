@@ -107,9 +107,9 @@ The notebook illustrate how to work interactively: execute single cell, see part
     🔄 Update dem_parameters file 
     🔄 Update dem_parameters file 
     🔄 Update parm file 
-    🛠  Recompile src files [3s]
-    🍳 gfortran compilation [7s]
-    b''
+    🛠  Recompile src files [4s]
+    🍳 gfortran compilation [10s]
+    ✅ Compilation successful!
     👟 Run processor
 
 
@@ -179,18 +179,15 @@ The notebook illustrate how to work interactively: execute single cell, see part
  .. code-block:: none
 
     plot pressure
-    /home/z0272571a@CAMPUS.CSIC.ES/miniconda3/envs/myenv/lib/python3.10/site-packages/pyvista/jupyter/notebook.py:36: UserWarning: Failed to use notebook backend: 
-
-    cannot import name 'vtk' from 'trame.widgets' (/home/z0272571a@CAMPUS.CSIC.ES/miniconda3/envs/myenv/lib/python3.10/site-packages/trame/widgets/__init__.py)
-
-    Falling back to a static output.
-      warnings.warn(
-    <PIL.Image.Image image mode=RGB size=2048x1536 at 0x7FAA18B5BF70>
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_1_pyCATHY_weilletal.py:75: UserWarning: Using static image for notebook display.
+    Install trame for interactive backends: pip install trame-pyvista
+      pl.show()
+    <PIL.Image.Image image mode=RGB size=2048x1536 at 0x7D51374B3B20>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-92
+.. GENERATED FROM PYTHON SOURCE LINES 78-91
 
 .. code-block:: Python
 
@@ -209,35 +206,18 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 
 
-
-
-
-.. image-sg:: /content/SSHydro/images/sphx_glr_plot_1_pyCATHY_weilletal_003.gif
-   :alt: plot 1 pyCATHY weilletal
-   :srcset: /content/SSHydro/images/sphx_glr_plot_1_pyCATHY_weilletal_003.gif
-   :class: sphx-glr-single-img
-
-
-
-
 .. rst-class:: sphx-glr-script-out
 
- .. code-block:: none
+.. code-block:: pytb
 
-    days
-    plot pressure
-    Time= [0.]
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/100.vtk
-    [0.]
-    /home/z0272571a@CAMPUS.CSIC.ES/miniconda3/envs/myenv/lib/python3.10/site-packages/pyvista/plotting/plotter.py:4814: PyVistaDeprecationWarning: This method is deprecated and will be removed in a future version of PyVista. Directly modify the scalars of a mesh in-place instead.
-      warnings.warn(
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/101.vtk
-    [1895.11582]
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/102.vtk
-    [7200.]
-    /home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/103.vtk
-    [7200.]
-    gif saved/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/pressure.gif
+    Traceback (most recent call last):
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_1_pyCATHY_weilletal.py", line 79, in <module>
+        cplt.show_vtk_TL(
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/plotters/cathy_plots.py", line 792, in show_vtk_TL
+        plotter.update_scalars(array_new, render=True)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pyvista/plotting/plotter.py", line 611, in __getattr__
+        return super().__getattribute__(item)
+    AttributeError: 'Plotter' object has no attribute 'update_scalars'
 
 
 
@@ -245,7 +225,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 26.127 seconds)
+   **Total running time of the script:** (0 minutes 16.791 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_1_pyCATHY_weilletal.py:

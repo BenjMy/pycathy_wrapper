@@ -22,7 +22,7 @@ Examples using ``pyCATHY.DA.find_nearest_node``
   .. image:: /content/DA/images/thumb/sphx_glr_plot_2_prepare_SMC_obs4DA_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py`
+  :doc:`/content/DA/plot_2_prepare_SMC_obs4DA`
 
 .. raw:: html
 
@@ -32,7 +32,7 @@ Examples using ``pyCATHY.DA.find_nearest_node``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py`
+ * :doc:`/content/DA/plot_2_prepare_SMC_obs4DA`
 
 .. thumbnail-parent-div-close
 

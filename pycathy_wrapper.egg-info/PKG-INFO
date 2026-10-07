@@ -46,6 +46,7 @@ Requires-Dist: pyyaml
 Requires-Dist: fastparquet
 Requires-Dist: pyarrow
 Requires-Dist: seaborn
+Requires-Dist: scikit-learn
 Dynamic: license-file
 
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://benjmy.github.io/pycathy_wrapper/)

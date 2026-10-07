@@ -33,6 +33,28 @@ simu = cathy_tools.CATHY(dirName=path2prj,
 			)
 
 simu.run_preprocessor()
+
+
+#%%
+
+simu.read_inputs('atmbc')
+# simu.create_mesh_bounds_df(
+#     'nansfdirbc',
+#     simu.grid3d["mesh3d_nodes"],
+#     t_atmbc,
+# )
+
+# print(simu.mesh_bound_cond_df.head())
+# print("BC columns:", list(simu.mesh_bound_cond_df.columns))
+
+# Apply no-flow to all lateral/bottom boundaries
+simu.update_nansfneubc(no_flow=True)
+simu.update_nansfdirbc(no_flow=True)
+simu.update_sfbc(no_flow=True)
+
+
+
+#%%
 simu.run_processor(IPRT1=2, 
                     DTMIN=1e-2,
                     DTMAX=1e2,
@@ -70,5 +92,23 @@ cplt.show_vtk(
 #     notebook=False,
 #     path=simu.workdir + "/my_cathy_prj/vtk/",
 # )
+
+#%%
+
+df_recharge = simu.read_outputs('recharge')
+xr_recharge = df_recharge.set_index(['time','X','Y']).to_xarray()
+
+#%%
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+xr_recharge['recharge'].isel(time=0).plot.imshow(ax=ax)
+
+
+fig, ax = plt.subplots()
+xr_recharge['recharge'].isel(time=1).plot.imshow(ax=ax)
+
+
+
 
 

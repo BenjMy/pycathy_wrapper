@@ -1,43 +1,1912 @@
 {
- "pyCATHY.cathy_tools.CATHY": [
+ "pyCATHY.CATHY": [
   [
-   "plot_3c_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
-   "Weil et al example with spatially heterogeneous atmbc"
+   "plot_1_pyCATHY_weilletal.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weill et al example"
   ],
   [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3_meshing_from_Camporese.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Meshing from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Spatially heterogeneous atmbc (Weil et al)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_4_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 1"
+  ],
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ],
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ],
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_4_EM_DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Read EM dataset observations & assimilate"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.CATHY._create_subfolders_ensemble": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.CATHY.apply_ensemble_updates": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.CATHY.create_mesh_bounds_df": [
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ]
+ ],
+ "pyCATHY.CATHY.create_mesh_vtk": [
+  [
+   "plot_3_meshing_from_Camporese.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Meshing from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Spatially heterogeneous atmbc (Weil et al)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ],
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.CATHY.find_nearest_node": [
+  [
+   "plot_4_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 1"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.CATHY.init_soil_FP_map_df": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ]
+ ],
+ "pyCATHY.CATHY.init_soil_SPP_map_df": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ]
+ ],
+ "pyCATHY.CATHY.read_inputs": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.CATHY.read_outputs": [
+  [
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Spatially heterogeneous atmbc (Weil et al)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_4_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 1"
+  ],
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.CATHY.run_preprocessor": [
+  [
+   "plot_1_pyCATHY_weilletal.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weill et al example"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_4_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 1"
+  ],
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.CATHY.run_processor": [
+  [
+   "plot_1_pyCATHY_weilletal.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weill et al example"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Spatially heterogeneous atmbc (Weil et al)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_4_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 1"
+  ],
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.CATHY.set_SOIL_defaults": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.CATHY.show": [
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ]
+ ],
+ "pyCATHY.CATHY.show_bc": [
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ]
+ ],
+ "pyCATHY.CATHY.show_input": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3_meshing_from_Camporese.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Meshing from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ]
+ ],
+ "pyCATHY.CATHY.update_atmbc": [
+  [
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Spatially heterogeneous atmbc (Weil et al)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.CATHY.update_dem_parameters": [
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.CATHY.update_ic": [
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ]
+ ],
+ "pyCATHY.CATHY.update_nansfdirbc": [
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ]
+ ],
+ "pyCATHY.CATHY.update_nansfneubc": [
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ]
+ ],
+ "pyCATHY.CATHY.update_parm": [
+  [
+   "plot_1_pyCATHY_weilletal.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weill et al example"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ]
+ ],
+ "pyCATHY.CATHY.update_prepo_inputs": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3_meshing_from_Camporese.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Meshing from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ],
+  [
+   "plot_4_map_from_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from Earth Observation xarray dataset"
+  ],
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ],
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.CATHY.update_sfbc": [
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ]
+ ],
+ "pyCATHY.CATHY.update_soil": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.CATHY.update_veg_map": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.CATHY.update_zone": [
+  [
+   "plot_2_pyCATHY_inputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Input plots"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ]
+ ],
+ "pyCATHY.DA": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ],
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_4_EM_DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Read EM dataset observations & assimilate"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.DA": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ],
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_4_EM_DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Read EM dataset observations & assimilate"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.DA._create_subfolders_ensemble": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.DA.apply_ensemble_updates": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.DA.create_mesh_vtk": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.DA.find_nearest_node": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.DA.read_inputs": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.DA.run_preprocessor": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.DA.run_processor": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.DA.update_atmbc": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.DA.update_dem_parameters": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.DA.update_prepo_inputs": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.DA.update_soil": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.DA.update_veg_map": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA._create_subfolders_ensemble": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.apply_ensemble_updates": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ],
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_4_EM_DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Read EM dataset observations & assimilate"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA._create_subfolders_ensemble": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.apply_ensemble_updates": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.create_mesh_vtk": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.find_nearest_node": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.read_inputs": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.run_preprocessor": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.run_processor": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.update_atmbc": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.update_dem_parameters": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.update_prepo_inputs": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.update_soil": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.update_veg_map": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.dictObs_2pd": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.localisation.build_localization_matrix": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.create_mesh_vtk": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.find_nearest_node": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.observations.make_data_cov": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.observations.read_observations": [
+  [
+   "plot_2_prepare_SMC_obs4DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ],
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.perturbate.perturbate": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.perturbate.perturbate_parm": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.read_inputs": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.run_preprocessor": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.run_processor": [
+  [
+   "plot_5_covariances.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.update_atmbc": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.update_dem_parameters": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.update_prepo_inputs": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.DA.update_soil": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.DA.update_veg_map": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ],
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Read SMC sensors observations to assimilate"
+  ]
+ ],
+ "pyCATHY.cathy_tools.CATHY._create_subfolders_ensemble": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.cathy_tools.CATHY.apply_ensemble_updates": [
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.cathy_tools.subprocess_run_multi": [
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Sensitivity analysis"
+  ]
+ ],
+ "pyCATHY.cathy_utils.create_scenario_file": [
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ]
+ ],
+ "pyCATHY.cathy_utils.create_scenario_file_single_control": [
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ]
+ ],
+ "pyCATHY.cathy_utils.read_scenario_file": [
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ]
+ ],
+ "pyCATHY.cathy_utils.scenario_dict_to_df_list": [
+  [
+   "plot_1a_perturbate.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.",
+   "Creating and Managing Parameter Perturbation Scenarios for Data Assimilation"
+  ]
+ ],
+ "pyCATHY.importers.read_dem": [
+  [
+   "plot_3_meshing_from_Camporese.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Meshing from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_3_meshing_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Changing mesh properties (resolution, coordinates, ...)"
+  ],
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ],
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
+  ]
+ ],
+ "pyCATHY.meshtools.build_mesh_dataset": [
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ]
+ ],
+ "pyCATHY.meshtools.get_layer_depths": [
+  [
+   "plot_4b_waterTable_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Plot Water Table"
+  ]
+ ],
+ "pyCATHY.meshtools.map_grid_to_mesh": [
+  [
+   "plot_4b_map_from_coarse_ET_EO.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/EOdata",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/EOdata",
+   "- 1. create a CATHY object  - 2. create a CATHY mesh from a catchment DEM from a file .adf containing no values -9999 - 3. wrap the mesh properties (from hapin file) to an xarray dataset",
+   "Mapping atmbc from coarse EO"
+  ]
+ ],
+ "pyCATHY.meshtools.map_layers_2_DEM": [
+  [
+   "plot_3b_soil3d_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Soil 3d from a Digital Elevation Model (DEM)"
+  ]
+ ],
+ "pyCATHY.plotters.cathy_plots.plot_mesh_bounds": [
+  [
+   "plot_5a_infiltration_withBC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This example shows how to use pyCATHY object to update a 3d BC properties from a DEM and run the hydrological model.",
+   "Update and show Boundary conditions"
   ]
  ],
  "pyCATHY.plotters.cathy_plots.show_vtk": [
   [
-   "plot_3c_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
-   "Weil et al example with spatially heterogeneous atmbc"
+   "plot_1_pyCATHY_weilletal.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weill et al example"
   ],
   [
-   "plot_3d_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
-   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model.",
-   "Update with spatially and temporally distributed atmospheric boundary conditions (bc)"
+   "plot_3c_spatial_atmbc_from_weill.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Spatially heterogeneous atmbc (Weil et al)"
+  ],
+  [
+   "plot_3d_spatial_atmbc_from_weill_withnonodes.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "This tutorial demonstrates how to update atmospheric boundary conditions (bc) using spatially and temporally distributed data in a hydrological model with nodata areas.",
+   "Atmbc update with no-data"
+  ],
+  [
+   "plot_4_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 1"
+  ],
+  [
+   "plot_4b_pyCATHY_outputs.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Output plots part 2"
+  ],
+  [
+   "plot_1_DA_NoUni_ic.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
+   "DA with Random Initial Conditions on Soil Layers"
   ]
  ],
  "pyCATHY.plotters.cathy_plots.show_vtk_TL": [
   [
+   "plot_1_pyCATHY_weilletal.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ».  Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref),  https://doi.org/10.1016/j.advwatres.2010.10.001.",
+   "Weill et al example"
+  ],
+  [
    "plot_3c_spatial_atmbc_from_weill.py",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
-   "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
    "Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), https://doi.org/10.1016/j.advwatres.2010.10.001.",
-   "Weil et al example with spatially heterogeneous atmbc"
+   "Spatially heterogeneous atmbc (Weil et al)"
   ]
  ]
 }

@@ -2836,7 +2836,7 @@ class CATHY:
         # Soil Physical Properties strat by strat
         # --------------------------------------------------------------------
         self.soil_SPP = {}
-        SPP_map = SPP_map.sort_values(by=['str', 'zone'])
+        SPP_map = SPP_map.sort_values(by=['layer', 'zone'])
         self.soil_SPP["SPP_map"] = SPP_map  # mapping with respect to zones
         if len(SPP) > 0:
             self.soil_SPP["SPP"] = SPP  # matrice with respect to zones
@@ -2955,7 +2955,7 @@ class CATHY:
 
         # Create multi-level index
         multi_index = pd.MultiIndex.from_product([zones, strings],
-                                                 names=['zone', 'str']
+                                                 names=['zone', 'layer']
                                                  )
         # Create an empty DataFrame with multi-level index and specified columns
         SPP_map = pd.DataFrame(index=multi_index, columns=columns)

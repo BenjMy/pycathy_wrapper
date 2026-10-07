@@ -130,6 +130,7 @@ SPP_map['PERMY'] = 6.88e-4
 SPP_map['PERMZ'] = 6.88e-4
 
 #% Update soil file
+simu.update_veg_map()
 simu.update_soil(SPP_map=SPP_map)
 
 

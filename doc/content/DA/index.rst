@@ -12,6 +12,10 @@ Refs:
 
 
 
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
 
 .. raw:: html
 
@@ -28,11 +32,28 @@ Refs:
   .. image:: /content/DA/images/thumb/sphx_glr_plot_1_DA_NoUni_ic_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py`
+  :doc:`/content/DA/plot_1_DA_NoUni_ic`
 
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">DA with Random Initial Conditions on Soil Layers</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_1a_perturbate_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_1a_perturbate`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</div>
     </div>
 
 
@@ -45,7 +66,7 @@ Refs:
   .. image:: /content/DA/images/thumb/sphx_glr_plot_2_prepare_SMC_obs4DA_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py`
+  :doc:`/content/DA/plot_2_prepare_SMC_obs4DA`
 
 .. raw:: html
 
@@ -62,11 +83,62 @@ Refs:
   .. image:: /content/DA/images/thumb/sphx_glr_plot_3_run_sequentialDA_SMC_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py`
+  :doc:`/content/DA/plot_3_run_sequentialDA_SMC`
 
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Read SMC sensors observations to assimilate</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrate how to read EM sensors dataset to be prepare for DA">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_4_EM_DA_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_4_EM_DA`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Read EM dataset observations & assimilate</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrate how to read EM sensors dataset to be prepare for DA">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_5_covariances_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_5_covariances`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Observations covariances, Localisation matrix</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_Weilletal_sensitivityAnalysis`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Sensitivity analysis</div>
     </div>
 
 
@@ -81,8 +153,12 @@ Refs:
    :hidden:
 
    /content/DA/plot_1_DA_NoUni_ic
+   /content/DA/plot_1a_perturbate
    /content/DA/plot_2_prepare_SMC_obs4DA
    /content/DA/plot_3_run_sequentialDA_SMC
+   /content/DA/plot_4_EM_DA
+   /content/DA/plot_5_covariances
+   /content/DA/plot_Weilletal_sensitivityAnalysis
 
 
 

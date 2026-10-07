@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.cathy_utils.read_scenario_file``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This notebook illustrates how to create, read, and prepare parameter perturbation scenarios (using placeholders or suggested values) for Data Assimilation (DA) in pyCATHY.">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_1a_perturbate_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_1a_perturbate`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/DA/plot_1a_perturbate`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

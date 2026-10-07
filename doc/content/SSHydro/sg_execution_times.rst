@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.324** total execution time for 12 files **from content/SSHydro**:
+**02:26.027** total execution time for 13 files **from content/SSHydro**:
 
 .. container::
 
@@ -32,14 +32,23 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``plot_3c_spatial_atmbc_from_weill.py``)
-     - 00:01.303
+   * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill_withnonodes.py` (``plot_3d_spatial_atmbc_from_weill_withnonodes.py``)
+     - 00:53.827
      - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py` (``plot_3d_spatial_atmbc_from_weill.py``)
-     - 00:00.020
+   * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``plot_3c_spatial_atmbc_from_weill.py``)
+     - 00:32.393
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``plot_1_pyCATHY_weilletal.py``)
-     - 00:00.000
+     - 00:16.791
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_4b_pyCATHY_outputs.py` (``plot_4b_pyCATHY_outputs.py``)
+     - 00:16.470
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3f_meshing_from_subCatchment.py` (``plot_3f_meshing_from_subCatchment.py``)
+     - 00:16.016
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``plot_3a_create_soil_withzones.py``)
+     - 00:10.532
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``plot_2_pyCATHY_inputs.py``)
      - 00:00.000
@@ -50,16 +59,10 @@ Computation times
    * - :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weill.py` (``plot_3_meshing_from_weill.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``plot_3a_create_soil_withzones.py``)
-     - 00:00.000
-     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weill.py` (``plot_3b_soil3d_from_weill.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``plot_4_pyCATHY_outputs.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_4b_pyCATHY_outputs.py` (``plot_4b_pyCATHY_outputs.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py` (``plot_4b_waterTable_from_weill.py``)

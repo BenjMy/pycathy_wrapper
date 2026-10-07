@@ -111,6 +111,34 @@
   {
    "is_class": false,
    "is_explicit": false,
+   "module": "pyvista.core.utilities.misc",
+   "module_short": "pyvista.core.utilities.misc",
+   "name": "_NoNewAttrMixin.show"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core.utilities",
+   "module_short": "pyvista.core.utilities",
+   "name": "_NoNewAttrMixin.show"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "_NoNewAttrMixin.show"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "_NoNewAttrMixin.show"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
    "module": "pyvista.plotting.plotter",
    "module_short": "pyvista.plotting.plotter",
    "name": "BasePlotter.show"
@@ -132,86 +160,30 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "pyvista.plotting.picking",
-   "module_short": "pyvista.plotting.picking",
-   "name": "PickingHelper.show"
+   "module": "pyvista.core.utilities.misc",
+   "module_short": "pyvista.core.utilities.misc",
+   "name": "_BoundsSizeMixin.show"
   },
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista.plotting",
-   "name": "PickingHelper.show"
+   "module": "pyvista.core.utilities",
+   "module_short": "pyvista.core.utilities",
+   "name": "_BoundsSizeMixin.show"
   },
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "pyvista",
-   "module_short": "pyvista",
-   "name": "PickingHelper.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista.plotting.widgets",
-   "module_short": "pyvista.plotting.widgets",
-   "name": "WidgetHelper.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista.plotting",
-   "name": "WidgetHelper.show"
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "_BoundsSizeMixin.show"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "pyvista",
    "module_short": "pyvista",
-   "name": "WidgetHelper.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista.plotting.picking",
-   "module_short": "pyvista.plotting.picking",
-   "name": "PickingMethods.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista.plotting",
-   "name": "PickingMethods.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista",
-   "module_short": "pyvista",
-   "name": "PickingMethods.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista.plotting.picking",
-   "module_short": "pyvista.plotting.picking",
-   "name": "PickingInterface.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista.plotting",
-   "name": "PickingInterface.show"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyvista",
-   "module_short": "pyvista",
-   "name": "PickingInterface.show"
+   "name": "_BoundsSizeMixin.show"
   }
  ],
  "pv.Plotter": [
@@ -239,6 +211,34 @@
   {
    "is_class": true,
    "is_explicit": false,
+   "module": "pyvista.core.utilities.misc",
+   "module_short": "pyvista.core.utilities.misc",
+   "name": "_NoNewAttrMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyvista.core.utilities",
+   "module_short": "pyvista.core.utilities",
+   "name": "_NoNewAttrMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "_NoNewAttrMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyvista",
+   "module_short": "pyvista",
+   "name": "_NoNewAttrMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
    "module": "pyvista.plotting.plotter",
    "module_short": "pyvista",
    "name": "BasePlotter"
@@ -260,86 +260,30 @@
   {
    "is_class": true,
    "is_explicit": false,
-   "module": "pyvista.plotting.picking",
-   "module_short": "pyvista",
-   "name": "PickingHelper"
+   "module": "pyvista.core.utilities.misc",
+   "module_short": "pyvista.core.utilities.misc",
+   "name": "_BoundsSizeMixin"
   },
   {
    "is_class": true,
    "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista",
-   "name": "PickingHelper"
+   "module": "pyvista.core.utilities",
+   "module_short": "pyvista.core.utilities",
+   "name": "_BoundsSizeMixin"
   },
   {
    "is_class": true,
    "is_explicit": false,
-   "module": "pyvista",
-   "module_short": "pyvista",
-   "name": "PickingHelper"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista.plotting.widgets",
-   "module_short": "pyvista",
-   "name": "WidgetHelper"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista",
-   "name": "WidgetHelper"
+   "module": "pyvista.core",
+   "module_short": "pyvista.core",
+   "name": "_BoundsSizeMixin"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "pyvista",
    "module_short": "pyvista",
-   "name": "WidgetHelper"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista.plotting.picking",
-   "module_short": "pyvista.plotting.picking",
-   "name": "PickingMethods"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista.plotting",
-   "name": "PickingMethods"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista",
-   "module_short": "pyvista",
-   "name": "PickingMethods"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista.plotting.picking",
-   "module_short": "pyvista.plotting.picking",
-   "name": "PickingInterface"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista.plotting",
-   "module_short": "pyvista.plotting",
-   "name": "PickingInterface"
-  },
-  {
-   "is_class": true,
-   "is_explicit": false,
-   "module": "pyvista",
-   "module_short": "pyvista",
-   "name": "PickingInterface"
+   "name": "_BoundsSizeMixin"
   },
   {
    "is_class": false,

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.324** total execution time for 15 files **from all galleries**:
+**11:43.692** total execution time for 22 files **from all galleries**:
 
 .. container::
 
@@ -32,22 +32,49 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py``)
-     - 00:01.303
+   * - :ref:`sphx_glr_content_EOdata_plot_4_map_from_ET_EO.py` (``../examples/EOdata/plot_4_map_from_ET_EO.py``)
+     - 05:21.587
      - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3d_spatial_atmbc_from_weill.py``)
-     - 00:00.020
+   * - :ref:`sphx_glr_content_EOdata_plot_4b_map_from_coarse_ET_EO.py` (``../examples/EOdata/plot_4b_map_from_coarse_ET_EO.py``)
+     - 03:13.087
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill_withnonodes.py` (``../examples/SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.py``)
+     - 00:53.827
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py``)
+     - 00:32.393
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py` (``../examples/DA/plot_Weilletal_sensitivityAnalysis.py``)
+     - 00:18.904
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``../examples/SSHydro/plot_1_pyCATHY_weilletal.py``)
+     - 00:16.791
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_4b_pyCATHY_outputs.py` (``../examples/SSHydro/plot_4b_pyCATHY_outputs.py``)
+     - 00:16.470
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3f_meshing_from_subCatchment.py` (``../examples/SSHydro/plot_3f_meshing_from_subCatchment.py``)
+     - 00:16.016
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py` (``../examples/DA/plot_1_DA_NoUni_ic.py``)
-     - 00:00.000
+     - 00:11.812
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``../examples/SSHydro/plot_3a_create_soil_withzones.py``)
+     - 00:10.532
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``../examples/DA/plot_5_covariances.py``)
+     - 00:10.400
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_1a_perturbate.py` (``../examples/DA/plot_1a_perturbate.py``)
+     - 00:01.871
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_4_EM_DA.py` (``../examples/DA/plot_4_EM_DA.py``)
+     - 00:00.003
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``../examples/DA/plot_2_prepare_SMC_obs4DA.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py` (``../examples/DA/plot_3_run_sequentialDA_SMC.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``../examples/SSHydro/plot_1_pyCATHY_weilletal.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``../examples/SSHydro/plot_2_pyCATHY_inputs.py``)
@@ -59,16 +86,10 @@ Computation times
    * - :ref:`sphx_glr_content_SSHydro_plot_3_meshing_from_weill.py` (``../examples/SSHydro/plot_3_meshing_from_weill.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``../examples/SSHydro/plot_3a_create_soil_withzones.py``)
-     - 00:00.000
-     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3b_soil3d_from_weill.py` (``../examples/SSHydro/plot_3b_soil3d_from_weill.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4_pyCATHY_outputs.py` (``../examples/SSHydro/plot_4_pyCATHY_outputs.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_4b_pyCATHY_outputs.py` (``../examples/SSHydro/plot_4b_pyCATHY_outputs.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4b_waterTable_from_weill.py` (``../examples/SSHydro/plot_4b_waterTable_from_weill.py``)

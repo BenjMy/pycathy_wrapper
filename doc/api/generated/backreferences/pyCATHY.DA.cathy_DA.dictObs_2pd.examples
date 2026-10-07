@@ -22,7 +22,7 @@ Examples using ``pyCATHY.DA.cathy_DA.dictObs_2pd``
   .. image:: /content/DA/images/thumb/sphx_glr_plot_2_prepare_SMC_obs4DA_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py`
+  :doc:`/content/DA/plot_2_prepare_SMC_obs4DA`
 
 .. raw:: html
 
@@ -32,7 +32,7 @@ Examples using ``pyCATHY.DA.cathy_DA.dictObs_2pd``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py`
+ * :doc:`/content/DA/plot_2_prepare_SMC_obs4DA`
 
 .. raw:: html
 
@@ -43,7 +43,7 @@ Examples using ``pyCATHY.DA.cathy_DA.dictObs_2pd``
   .. image:: /content/DA/images/thumb/sphx_glr_plot_3_run_sequentialDA_SMC_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py`
+  :doc:`/content/DA/plot_3_run_sequentialDA_SMC`
 
 .. raw:: html
 
@@ -53,7 +53,28 @@ Examples using ``pyCATHY.DA.cathy_DA.dictObs_2pd``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py`
+ * :doc:`/content/DA/plot_3_run_sequentialDA_SMC`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrate how to read EM sensors dataset to be prepare for DA">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_5_covariances_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_5_covariances`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Observations covariances, Localisation matrix</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/DA/plot_5_covariances`
 
 .. thumbnail-parent-div-close
 

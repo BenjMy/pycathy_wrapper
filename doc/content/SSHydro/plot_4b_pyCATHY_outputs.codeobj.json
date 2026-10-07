@@ -1,4 +1,27 @@
 {
+ "ax": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes"
+  }
+ ],
  "cathy_tools.CATHY": [
   {
    "is_class": true,
@@ -38,6 +61,173 @@
    "name": "show_vtk"
   }
  ],
+ "df_recharge": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.frame",
+   "module_short": "pandas.core.frame",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame"
+  }
+ ],
+ "df_recharge.set_index": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.frame",
+   "module_short": "pandas.core.frame",
+   "name": "DataFrame.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DataFrame.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.generic",
+   "module_short": "pandas.core.generic",
+   "name": "NDFrame.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "NDFrame.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "NDFrame.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.arraylike",
+   "module_short": "pandas.core.arraylike",
+   "name": "OpsMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "OpsMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "OpsMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.base",
+   "module_short": "pandas.core.base",
+   "name": "PandasObject.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "PandasObject.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "PandasObject.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.indexing",
+   "module_short": "pandas.core.indexing",
+   "name": "IndexingMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "IndexingMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "IndexingMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.accessor",
+   "module_short": "pandas.core.accessor",
+   "name": "DirNamesMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DirNamesMixin.set_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DirNamesMixin.set_index"
+  }
+ ],
+ "fig": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "Figure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Figure"
+  }
+ ],
  "path2prj": [
   {
    "is_class": false,
@@ -45,6 +235,22 @@
    "module": "builtins",
    "module_short": "builtins",
    "name": "str"
+  }
+ ],
+ "plt.subplots": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplots"
   }
  ],
  "simu": [
@@ -61,6 +267,38 @@
    "module": "pyCATHY",
    "module_short": "pyCATHY",
    "name": "CATHY"
+  }
+ ],
+ "simu.read_inputs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.read_inputs"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.read_inputs"
+  }
+ ],
+ "simu.read_outputs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.read_outputs"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.read_outputs"
   }
  ],
  "simu.run_preprocessor": [
@@ -111,6 +349,54 @@
    "name": "CATHY.show"
   }
  ],
+ "simu.update_nansfdirbc": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_nansfdirbc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_nansfdirbc"
+  }
+ ],
+ "simu.update_nansfneubc": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_nansfneubc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_nansfneubc"
+  }
+ ],
+ "simu.update_sfbc": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_sfbc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_sfbc"
+  }
+ ],
  "simu.workdir": [
   {
    "is_class": false,
@@ -118,6 +404,29 @@
    "module": "builtins",
    "module_short": "builtins",
    "name": "str"
+  }
+ ],
+ "xr_recharge": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "xarray.core.dataset",
+   "module_short": "xarray.core.dataset",
+   "name": "Dataset"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "xarray.core",
+   "module_short": "xarray.core",
+   "name": "Dataset"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "xarray",
+   "module_short": "xarray",
+   "name": "Dataset"
   }
  ]
 }

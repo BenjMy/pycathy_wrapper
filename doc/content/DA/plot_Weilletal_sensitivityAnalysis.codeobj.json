@@ -1,0 +1,610 @@
+{
+ "SPP_map": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.frame",
+   "module_short": "pandas.core.frame",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame"
+  }
+ ],
+ "cathy_tools.CATHY": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  }
+ ],
+ "ma.analyze": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SALib.analyze.morris",
+   "module_short": "SALib.analyze.morris",
+   "name": "analyze"
+  }
+ ],
+ "mp.covariance_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SALib.plotting.morris",
+   "module_short": "SALib.plotting.morris",
+   "name": "covariance_plot"
+  }
+ ],
+ "mp.sample_histograms": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SALib.plotting.morris",
+   "module_short": "SALib.plotting.morris",
+   "name": "sample_histograms"
+  }
+ ],
+ "ms.sample": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SALib.sample.morris",
+   "module_short": "SALib.sample.morris",
+   "name": "sample"
+  }
+ ],
+ "multiprocessing.Pool": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "module.Pool"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "multiprocessing",
+   "module_short": "multiprocessing",
+   "name": "Pool"
+  }
+ ],
+ "multiprocessing.cpu_count": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "module.cpu_count"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "multiprocessing",
+   "module_short": "multiprocessing",
+   "name": "cpu_count"
+  }
+ ],
+ "np.divide": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "divide"
+  }
+ ],
+ "np.hstack": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "hstack"
+  }
+ ],
+ "np.inner": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "inner"
+  }
+ ],
+ "np.sqrt": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "sqrt"
+  }
+ ],
+ "np.zeros": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "zeros"
+  }
+ ],
+ "os.path.exists": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "os.path",
+   "module_short": "os.path",
+   "name": "exists"
+  }
+ ],
+ "os.path.join": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "os.path",
+   "module_short": "os.path",
+   "name": "join"
+  }
+ ],
+ "path2prj": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "pd.DataFrame": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core.frame",
+   "module_short": "pandas.core.frame",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core.generic",
+   "module_short": "pandas.core.generic",
+   "name": "NDFrame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "NDFrame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "NDFrame"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core.arraylike",
+   "module_short": "pandas.core.arraylike",
+   "name": "OpsMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "OpsMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "OpsMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core.base",
+   "module_short": "pandas.core.base",
+   "name": "PandasObject"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "PandasObject"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "PandasObject"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core.indexing",
+   "module_short": "pandas.core.indexing",
+   "name": "IndexingMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "IndexingMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "IndexingMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core.accessor",
+   "module_short": "pandas.core.accessor",
+   "name": "DirNamesMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DirNamesMixin"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DirNamesMixin"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DataFrame"
+  }
+ ],
+ "plt.subplots": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplots"
+  }
+ ],
+ "plt.title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "title"
+  }
+ ],
+ "plt.xlabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "xlabel"
+  }
+ ],
+ "plt.ylabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "ylabel"
+  }
+ ],
+ "prj_name": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "shutil.copytree": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "shutil",
+   "module_short": "shutil",
+   "name": "copytree"
+  }
+ ],
+ "simu": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  }
+ ],
+ "simu.read_outputs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.read_outputs"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.read_outputs"
+  }
+ ],
+ "simu.run_preprocessor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_preprocessor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_preprocessor"
+  }
+ ],
+ "simu.run_processor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_processor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_processor"
+  }
+ ],
+ "simu.set_SOIL_defaults": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.set_SOIL_defaults"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.set_SOIL_defaults"
+  }
+ ],
+ "simu.update_soil": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_soil"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_soil"
+  }
+ ],
+ "simu.workdir": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "subprocess_run_multi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY.cathy_tools",
+   "name": "subprocess_run_multi"
+  }
+ ]
+}

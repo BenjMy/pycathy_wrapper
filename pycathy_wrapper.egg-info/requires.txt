@@ -20,3 +20,4 @@ pyyaml
 fastparquet
 pyarrow
 seaborn
+scikit-learn

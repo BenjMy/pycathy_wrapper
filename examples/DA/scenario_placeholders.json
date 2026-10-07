@@ -1,0 +1,56 @@
+{
+    "scenario_placeholders": {
+        "per_name": [
+            "ic",
+            "Ks"
+        ],
+        "per_type": [
+            "<type>",
+            "<type>"
+        ],
+        "per_nom": [
+            "<value>",
+            "<value>"
+        ],
+        "per_mean": [
+            "<mean>",
+            "<mean>"
+        ],
+        "per_sigma": [
+            "<sigma>",
+            "<sigma>"
+        ],
+        "per_bounds": [
+            "<bounds>",
+            "<bounds>"
+        ],
+        "sampling_type": [
+            "<sampling>",
+            "<sampling>"
+        ],
+        "transf_type": [
+            "<transf>",
+            "<transf>"
+        ],
+        "listUpdateParm": [
+            "<param>",
+            "<param>"
+        ],
+        "pert_control_name": [
+            null,
+            null
+        ]
+    },
+    "_explanation": {
+        "per_type": "Type of parameter: None, multiplicative, etc.",
+        "per_name": "Parameter name",
+        "per_nom": "Nominal value",
+        "per_mean": "Mean for sampling",
+        "per_sigma": "Standard deviation",
+        "per_bounds": "Bounds: [min,max] or None",
+        "sampling_type": "Sampling method",
+        "transf_type": "Transformation: None, log, etc.",
+        "listUpdateParm": "Parameters updated in model",
+        "pert_control_name": "Control type: 'layers', 'zones', 'root_map', or None"
+    }
+}

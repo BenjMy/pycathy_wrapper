@@ -598,7 +598,8 @@ class DA(CATHY):
         # Run hydrological model sequentially
         # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
-        for t_atmbc in self.all_atmbc_times:  # atmbc times MUST include assimilation observation times
+        # for t_atmbc in self.all_atmbc_times:  # atmbc times MUST include assimilation observation times
+        for t_atmbc in self.all_atmbc_times[:-1]:   # N times -> N-1 windows
 
             self._run_ensemble_hydrological_model(parallel, callexe)
             os.chdir(os.path.join(self.workdir))

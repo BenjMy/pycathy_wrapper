@@ -18,18 +18,11 @@
 .. _sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py:
 
 
-Soil 3d from a Digital Elevation Model (DEM)
-============================================
-
-Weill, S., et al. « Coupling Water Flow and Solute Transport into a Physically-Based Surface–Subsurface Hydrological Model ». 
-Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (Crossref), 
-https://doi.org/10.1016/j.advwatres.2010.10.001.
-
-This example shows how to use pyCATHY object to build a 3d soil properties from a DEM and run the hydrological model.
-
+Create soil zones control
+=========================
 *Estimated time to run the notebook = 5min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-33
+.. GENERATED FROM PYTHON SOURCE LINES 9-26
 
 .. code-block:: Python
 
@@ -57,17 +50,17 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-35
+.. GENERATED FROM PYTHON SOURCE LINES 27-28
 
 ------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-45
+.. GENERATED FROM PYTHON SOURCE LINES 28-38
 
 .. code-block:: Python
 
     path2prj = "../SSHydro/"  # add your local path here
-    simu = cathy_tools.CATHY(dirName=path2prj, 
-                             prj_name="soil_withzones", 
+    simu = cathy_tools.CATHY(dirName=path2prj,
+                             prj_name="soil_withzones",
                              clear_src=False
                              )
 
@@ -90,16 +83,16 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
     🔄 Update hap.in file
     🔄 Update dem_parameters file 
     🔄 Update dem_parameters file 
-    🛠  Recompile src files [3s]
-    🍳 gfortran compilation [8s]
-    b''
+    🛠  Recompile src files [4s]
+    🍳 gfortran compilation [10s]
+    ✅ Compilation successful!
     👟 Run processor
     b''
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-56
+.. GENERATED FROM PYTHON SOURCE LINES 39-53
 
 .. code-block:: Python
 
@@ -111,7 +104,11 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
     zones[:,4:6] = 4
 
     simu.update_zone(zones)
-    simu.show_input('zone')
+
+
+    fig, ax = plt.subplots()
+    simu.show_input('zone',ax=ax)
+
 
 
 
@@ -128,13 +125,13 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-61
+.. GENERATED FROM PYTHON SOURCE LINES 54-58
 
 .. code-block:: Python
 
 
     df_SPP_map = simu.init_soil_SPP_map_df(nzones=4,nstr=15)
-    SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
+    df_SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
 
 
 
@@ -143,24 +140,28 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-66
+.. GENERATED FROM PYTHON SOURCE LINES 59-63
 
 .. code-block:: Python
 
 
-    simu.update_soil(SPP_map=SPP_map)
+    simu.update_soil(SPP_map=df_SPP_map)
 
-
-
-
+    print(df_SPP_map.head())
 
 
 .. rst-class:: sphx-glr-script-out
 
- .. code-block:: none
+.. code-block:: pytb
 
-    🔄 Update soil
-    homogeneous soil
+    Traceback (most recent call last):
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3a_create_soil_withzones.py", line 60, in <module>
+        simu.update_soil(SPP_map=df_SPP_map)
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 2761, in update_soil
+        FP_map = self.set_SOIL_defaults(FP_map_default=True)
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 3032, in set_SOIL_defaults
+        nveg = len(np.unique(self.veg_map))
+    AttributeError: 'CATHY' object has no attribute 'veg_map'
 
 
 
@@ -168,7 +169,7 @@ This example shows how to use pyCATHY object to build a 3d soil properties from 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 8.929 seconds)
+   **Total running time of the script:** (0 minutes 10.532 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3a_create_soil_withzones.py:

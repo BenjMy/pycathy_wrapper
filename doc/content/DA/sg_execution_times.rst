@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:10.622** total execution time for 3 files **from content/DA**:
+**00:42.991** total execution time for 7 files **from content/DA**:
 
 .. container::
 
@@ -32,8 +32,20 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py` (``plot_Weilletal_sensitivityAnalysis.py``)
+     - 00:18.904
+     - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py` (``plot_1_DA_NoUni_ic.py``)
-     - 00:10.622
+     - 00:11.812
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``plot_5_covariances.py``)
+     - 00:10.400
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_1a_perturbate.py` (``plot_1a_perturbate.py``)
+     - 00:01.871
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_4_EM_DA.py` (``plot_4_EM_DA.py``)
+     - 00:00.003
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``plot_2_prepare_SMC_obs4DA.py``)
      - 00:00.000

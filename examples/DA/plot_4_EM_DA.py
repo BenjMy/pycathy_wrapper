@@ -15,6 +15,8 @@ from pyCATHY.DA.cathy_DA import DA, dictObs_2pd
 from pyCATHY.DA.observations import read_observations, prepare_observations, make_data_cov
 from pathlib import Path
 import pyvista as pv
+from pyCATHY.DA.cathy_DA import mapper
+
 
 #%% Create a CATHY project
 # -----------------------
@@ -28,7 +30,7 @@ simuWithDA = DA(
 
 
 
-ER_converted_ti, df_Archie, sw_nodes =   Archie.SW_2_ER0_DA(
+ER_converted_ti, df_Archie, sw_nodes =  Archie.SW_2_ER0_DA(
                                         project_name,
                                         Archie_parms,
                                         POROS_mesh_nodes_ensi,
@@ -47,7 +49,7 @@ print(f"  min = {EC_converted_ti_mS_m.min():.2f} mS/m")
 print(f"  max = {EC_converted_ti_mS_m.max():.2f} mS/m")
 
 print('Build forward EM model')
-depths, conds, xy_coords = build_forward_profiles(EC_converted_ti_mS_m,
+depths, conds, xy_coords = mapper.build_forward_profiles(EC_converted_ti_mS_m,
                                                   grid3d['mesh3d_nodes'],
                                                   var="EC")
 

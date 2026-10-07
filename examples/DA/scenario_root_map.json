@@ -1,0 +1,98 @@
+{
+    "scenario_root_map": {
+        "per_name": [
+            "ic",
+            "porosity"
+        ],
+        "per_type": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "per_nom": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "per_mean": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "per_sigma": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "per_bounds": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "sampling_type": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "transf_type": [
+            [
+                [],
+                []
+            ],
+            [
+                [],
+                []
+            ]
+        ],
+        "listUpdateParm": [
+            "ic",
+            "porosity"
+        ],
+        "pert_control_name": [
+            "root_map",
+            "root_map"
+        ]
+    },
+    "_explanation": {
+        "per_name": "Parameter name",
+        "per_type": "Perturbation type: None or multiplicative",
+        "per_nom": "Nominal value",
+        "per_mean": "Mean value for sampling",
+        "per_sigma": "Standard deviation",
+        "per_bounds": "Bounds for parameter",
+        "sampling_type": "Sampling method: normal, uniform",
+        "transf_type": "Transformation type: None, log, etc.",
+        "listUpdateParm": "Which parameters are updated",
+        "pert_control_name": "Control type: 'layers', 'zone', 'root_map' or None"
+    }
+}

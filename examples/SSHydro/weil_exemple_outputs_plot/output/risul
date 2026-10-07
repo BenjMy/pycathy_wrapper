@@ -9387,21 +9387,21 @@
   TOTAL NUMBER OF LINEAR SOLVER FAILURES         :      0
 
 
-  TOT CPU FOR THE SIMULATION           =            5.66 SECONDS  100.00 %
-  TOT CPU FOR NONLINEAR SCHEME         =            4.46 SECONDS   78.90 %
-  TOT CPU FOR OVERHEAD (SEE CODE DESC.)=            1.19 SECONDS   21.10 %
+  TOT CPU FOR THE SIMULATION           =            5.37 SECONDS  100.00 %
+  TOT CPU FOR NONLINEAR SCHEME         =            4.28 SECONDS   79.79 %
+  TOT CPU FOR OVERHEAD (SEE CODE DESC.)=            1.09 SECONDS   20.21 %
 
-  TOT CPU FOR UNSAT CHARACTERISTICS    =            0.32 SECONDS    5.73 %
-  TOT CPU FOR INIT. OF SYSTEM MATRICES =            0.04 SECONDS    0.63 %
-  TOT CPU FOR LOCAL SYSTEM ASSEMBLY    =            0.49 SECONDS    8.62 %
-  TOT CPU FOR RHS CALCULATION W/O BC'S =            0.09 SECONDS    1.64 %
+  TOT CPU FOR UNSAT CHARACTERISTICS    =            0.32 SECONDS    5.87 %
+  TOT CPU FOR INIT. OF SYSTEM MATRICES =            0.04 SECONDS    0.65 %
+  TOT CPU FOR LOCAL SYSTEM ASSEMBLY    =            0.40 SECONDS    7.43 %
+  TOT CPU FOR RHS CALCULATION W/O BC'S =            0.08 SECONDS    1.46 %
   TOT CPU FOR GLOBAL LHS SYSTEM MATRIX =            0.03 SECONDS    0.55 %
-  TOT CPU FOR BC CONTRIBUTIONS TO RHS  =            0.09 SECONDS    1.65 %
-  TOT CPU FOR LINEAR SOLVER & RESIDUAL =            3.20 SECONDS   56.59 %
+  TOT CPU FOR BC CONTRIBUTIONS TO RHS  =            0.09 SECONDS    1.68 %
+  TOT CPU FOR LINEAR SOLVER & RESIDUAL =            3.15 SECONDS   58.60 %
   TOT CPU FOR DIR. RESETTING AND DIFMAX=            0.00 SECONDS    0.06 %
-  TOT CPU FOR B-FLX, M-BAL, SW, & EX-PT=            0.18 SECONDS    3.26 %
+  TOT CPU FOR B-FLX, M-BAL, SW, & EX-PT=            0.18 SECONDS    3.31 %
                                          -----------         -------
-                                                4.45 SECONDS   78.73 %
+                                                4.27 SECONDS   79.61 %
 
   TOTAL NUMBER OF TIME STEPS           =      235
   SMALLEST TIME STEP SIZE              =   1.000E-02  AT TIME   2.953E-02

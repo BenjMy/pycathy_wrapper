@@ -1,0 +1,42 @@
+
+
+Examples using ``pyCATHY.DA.cathy_DA.localisation.build_localization_matrix``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrate how to read EM sensors dataset to be prepare for DA">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_5_covariances_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_5_covariances`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Observations covariances, Localisation matrix</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/DA/plot_5_covariances`
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+

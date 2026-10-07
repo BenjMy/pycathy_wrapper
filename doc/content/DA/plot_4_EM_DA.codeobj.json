@@ -1,0 +1,126 @@
+{
+ "DA": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  }
+ ],
+ "Problem": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "emagpy",
+   "module_short": "emagpy",
+   "name": "Problem"
+  }
+ ],
+ "np.hstack": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "hstack"
+  }
+ ],
+ "np.ones": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ones"
+  }
+ ],
+ "np.vstack": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "vstack"
+  }
+ ],
+ "simuWithDA": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA"
+  }
+ ]
+}

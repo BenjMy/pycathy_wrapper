@@ -49,6 +49,7 @@ simu.update_zone(zones)
 fig, ax = plt.subplots()
 simu.show_input('zone',ax=ax)
 
+simu.update_veg_map()
 
 #%% Create an empty dataframe of SPP and set default SPP properties
 

@@ -1,0 +1,484 @@
+{
+ "DA": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  }
+ ],
+ "Path": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PurePath"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  }
+ ],
+ "date_string0": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "datetime_EM": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.indexes.datetimes",
+   "module_short": "pandas.core.indexes.datetimes",
+   "name": "DatetimeIndex"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.indexes",
+   "module_short": "pandas.core.indexes",
+   "name": "DatetimeIndex"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "DatetimeIndex"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "DatetimeIndex"
+  }
+ ],
+ "dictObs_2pd": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "dictObs_2pd"
+  }
+ ],
+ "dict_obs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "elapsed_seconds": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.indexes.base",
+   "module_short": "pandas.core.indexes.base",
+   "name": "Index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core.indexes",
+   "module_short": "pandas.core.indexes",
+   "name": "Index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas.core",
+   "module_short": "pandas.core",
+   "name": "Index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "Index"
+  }
+ ],
+ "localisation.build_localization_matrix": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA.localisation",
+   "module_short": "pyCATHY.DA.cathy_DA.localisation",
+   "name": "build_localization_matrix"
+  }
+ ],
+ "metadata_EM": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "os.getcwd": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "os",
+   "module_short": "os",
+   "name": "getcwd"
+  }
+ ],
+ "pd.date_range": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "date_range"
+  }
+ ],
+ "pd.to_datetime": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "to_datetime"
+  }
+ ],
+ "plt.colorbar": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "colorbar"
+  }
+ ],
+ "plt.figure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "figure"
+  }
+ ],
+ "plt.imshow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "imshow"
+  }
+ ],
+ "plt.title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "title"
+  }
+ ],
+ "read_observations": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.observations",
+   "module_short": "pyCATHY.DA.observations",
+   "name": "read_observations"
+  }
+ ],
+ "rootpath": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "simuWithDA": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA"
+  }
+ ],
+ "simuWithDA.grid3d": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "simuWithDA.localisationMatrix": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA"
+  }
+ ],
+ "simuWithDA.run_preprocessor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA.run_preprocessor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA.run_preprocessor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA.run_preprocessor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_preprocessor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_preprocessor"
+  }
+ ],
+ "simuWithDA.run_processor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA.run_processor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA.run_processor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA.run_processor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_processor"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_processor"
+  }
+ ],
+ "start_date": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas._libs.tslibs.timestamps",
+   "module_short": "pandas",
+   "name": "Timestamp"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas._libs.tslibs",
+   "module_short": "pandas",
+   "name": "Timestamp"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas._libs",
+   "module_short": "pandas",
+   "name": "Timestamp"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "Timestamp"
+  }
+ ]
+}

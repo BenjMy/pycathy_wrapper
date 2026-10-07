@@ -22,7 +22,7 @@ Examples using ``pyCATHY.CATHY._create_subfolders_ensemble``
   .. image:: /content/DA/images/thumb/sphx_glr_plot_1_DA_NoUni_ic_thumb.png
     :alt:
 
-  :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py`
+  :doc:`/content/DA/plot_1_DA_NoUni_ic`
 
 .. raw:: html
 
@@ -32,7 +32,7 @@ Examples using ``pyCATHY.CATHY._create_subfolders_ensemble``
 
 .. only:: not html
 
- * :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py`
+ * :doc:`/content/DA/plot_1_DA_NoUni_ic`
 
 .. thumbnail-parent-div-close
 
