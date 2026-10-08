@@ -131,7 +131,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ],
   [
    "plot_4_EM_DA.py",
@@ -144,7 +144,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ],
   [
@@ -343,7 +343,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.CATHY.read_outputs": [
@@ -404,6 +404,15 @@
    "Sensitivity analysis"
   ]
  ],
+ "pyCATHY.CATHY.run_DA_sequential": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Assimilate SMC sensors observations"
+  ]
+ ],
  "pyCATHY.CATHY.run_preprocessor": [
   [
    "plot_1_pyCATHY_weilletal.py",
@@ -458,7 +467,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ],
   [
@@ -551,7 +560,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ],
   [
@@ -730,7 +739,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.CATHY.update_dem_parameters": [
@@ -753,7 +762,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.CATHY.update_ic": [
@@ -1012,7 +1021,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ],
   [
    "plot_Weilletal_sensitivityAnalysis.py",
@@ -1038,6 +1047,20 @@
    "Changing mesh properties (resolution, coordinates, ...)"
   ],
   [
+   "plot_3a_create_soil_withzones.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Create soil zones control",
+   "Create soil zones control"
+  ],
+  [
+   "plot_3f_meshing_from_subCatchment.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/SSHydro",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/SSHydro",
+   "Estimated time to run the notebook = 5min",
+   "Meshing from a Digital Elevation Model (DEM) .adf file"
+  ],
+  [
    "plot_1_DA_NoUni_ic.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
@@ -1049,7 +1072,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.CATHY.update_zone": [
@@ -1109,7 +1132,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ],
   [
    "plot_4_EM_DA.py",
@@ -1122,7 +1145,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1153,7 +1176,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ],
   [
    "plot_4_EM_DA.py",
@@ -1166,7 +1189,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1212,7 +1235,16 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
+  ]
+ ],
+ "pyCATHY.DA.DA.run_DA_sequential": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.DA.run_preprocessor": [
@@ -1220,7 +1252,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1229,7 +1261,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1239,7 +1271,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.DA.update_dem_parameters": [
@@ -1255,7 +1287,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.DA.update_prepo_inputs": [
@@ -1280,7 +1312,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.DA.update_veg_map": [
@@ -1296,7 +1328,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA._create_subfolders_ensemble": [
@@ -1344,7 +1376,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ],
   [
    "plot_4_EM_DA.py",
@@ -1357,7 +1389,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1403,7 +1435,16 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.DA.run_DA_sequential": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.cathy_DA.DA.run_preprocessor": [
@@ -1411,7 +1452,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1420,7 +1461,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1430,7 +1471,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.cathy_DA.DA.update_dem_parameters": [
@@ -1446,7 +1487,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.cathy_DA.DA.update_prepo_inputs": [
@@ -1471,7 +1512,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.cathy_DA.DA.update_veg_map": [
@@ -1487,7 +1528,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.cathy_DA.dictObs_2pd": [
@@ -1503,13 +1544,13 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ],
   [
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1518,8 +1559,17 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
+  ]
+ ],
+ "pyCATHY.DA.cathy_DA.mapper.build_forward_profiles": [
+  [
+   "plot_4_EM_DA.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "Read EM dataset observations & assimilate"
   ]
  ],
  "pyCATHY.DA.create_mesh_vtk": [
@@ -1553,7 +1603,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.observations.read_observations": [
@@ -1568,7 +1618,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1592,7 +1642,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.perturbate.perturbate_parm": [
@@ -1615,7 +1665,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.read_inputs": [
@@ -1624,7 +1674,16 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
+  ]
+ ],
+ "pyCATHY.DA.run_DA_sequential": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.run_preprocessor": [
@@ -1632,7 +1691,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1641,7 +1700,7 @@
    "plot_5_covariances.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "The notebook illustrate how to read EM sensors dataset to be prepare for DA",
+   "The notebook illustrates how to read an EM sensors dataset to prepare it for DA.",
    "Observations covariances, Localisation matrix"
   ]
  ],
@@ -1651,7 +1710,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.update_dem_parameters": [
@@ -1667,7 +1726,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.update_prepo_inputs": [
@@ -1692,7 +1751,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.DA.update_veg_map": [
@@ -1708,7 +1767,7 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
-   "Read SMC sensors observations to assimilate"
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.cathy_tools.CATHY._create_subfolders_ensemble": [
@@ -1727,6 +1786,15 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.",
    "DA with Random Initial Conditions on Soil Layers"
+  ]
+ ],
+ "pyCATHY.cathy_tools.CATHY.run_DA_sequential": [
+  [
+   "plot_3_run_sequentialDA_SMC.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
+   "Assimilate SMC sensors observations"
   ]
  ],
  "pyCATHY.cathy_tools.subprocess_run_multi": [

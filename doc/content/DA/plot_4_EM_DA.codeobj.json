@@ -52,6 +52,22 @@
    "name": "Problem"
   }
  ],
+ "mapper.build_forward_profiles": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA.mapper",
+   "module_short": "pyCATHY.DA.cathy_DA.mapper",
+   "name": "build_forward_profiles"
+  }
+ ],
  "np.hstack": [
   {
    "is_class": false,

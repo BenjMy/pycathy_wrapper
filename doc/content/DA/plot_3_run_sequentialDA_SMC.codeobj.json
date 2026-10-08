@@ -542,6 +542,43 @@
    "name": "CATHY.read_inputs"
   }
  ],
+ "simuWithDA.run_DA_sequential": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA.cathy_DA",
+   "module_short": "pyCATHY.DA.cathy_DA",
+   "name": "DA.run_DA_sequential"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.DA",
+   "module_short": "pyCATHY.DA",
+   "name": "DA.run_DA_sequential"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "DA.run_DA_sequential"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY.cathy_tools",
+   "name": "CATHY.run_DA_sequential"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.run_DA_sequential"
+  }
+ ],
  "simuWithDA.stacked_data_cov": [
   {
    "is_class": false,

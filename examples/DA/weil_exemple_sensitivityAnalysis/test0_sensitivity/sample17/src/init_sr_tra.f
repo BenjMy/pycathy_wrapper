@@ -1,0 +1,37 @@
+C
+C**************************  INIT_SR_TRA ***********************************
+C
+C  initialization for surface transport when coupled flaw and transport
+C
+C***********************************************************************
+C
+      SUBROUTINE INIT_SR_TRA(NNOD,TRAFLNOD,TRAFLP,CONCNOD)
+C
+      IMPLICIT NONE
+      INCLUDE 'CATHY.H'
+      INCLUDE 'TRANSPSURF.H'
+      INTEGER  NNOD
+      REAL*8   TRAFLNOD(*),TRAFLP(*),CONCNOD(*)
+
+      AK_MAX_TRA = 0.0d0
+      AK_MAX_TRA_P = 0.0d0
+    
+      CALL INIT0R(NNOD,TRAFLNOD)
+      CALL INIT0R(NNOD,TRAFLP)
+      CALL INIT0R(NNOD,CONCNOD)
+C
+      CALL INIT0R(MAXCEL,MASS_KK_SN)
+      CALL INIT0R(MAXCEL,MASS_KKP1_SN)
+      CALL INIT0R(MAXCEL,MASS_KK_SN_P)
+      CALL INIT0R(MAXCEL,QMASS_IN_KK_SN)
+      CALL INIT0R(MAXCEL,QMASS_IN_KK_SN_P)
+      CALL INIT0R(MAXCEL,QMASS_IN_KKP1_SN)
+      CALL INIT0R(MAXCEL,QMASS_OUT_KK_SN_1)
+      CALL INIT0R(MAXCEL,QMASS_OUT_KK_SN_2)
+      CALL INIT0R(MAXCEL,QMASS_OUT_KK_SN_1_P)
+      CALL INIT0R(MAXCEL,QMASS_OUT_KK_SN_2_P)
+      CALL INIT0R(MAXCEL,QMASS_OUT_KKP1_SN_1)
+      CALL INIT0R(MAXCEL,QMASS_OUT_KKP1_SN_2)
+C
+      RETURN
+      END

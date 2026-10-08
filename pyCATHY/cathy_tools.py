@@ -4412,13 +4412,13 @@ class CATHY:
         unique_markers = np.unique(self.mesh_pv_attributes["cell_markers_zone3d"])
 
         # Check that the number of properties matches the number of unique markers
-        print('Skip Error Temporary!')
-        # if len(prop_map) != len(unique_markers):
-        #     raise ValueError(
-        #         f"Mismatch between property map (len={len(prop_map)}) "
-        #         f"and unique mesh cell markers (len={len(unique_markers)}). "
-        #         f"Markers: {unique_markers}"
-        #     )
+        # print('Skip Error Temporary!')
+        if len(prop_map) != len(unique_markers):
+            raise ValueError(
+                f"Mismatch between property map (len={len(prop_map)}) "
+                f"and unique mesh cell markers (len={len(unique_markers)}). "
+                f"Markers: {unique_markers}"
+            )
         np.unique(self.mesh_pv_attributes["node_markers_zone3d"])
         # np.unique(prop_mesh_nodes)
 

@@ -24,11 +24,14 @@ def swc_mapper(state,obs2map_node,grid3d,dem_parameters,
                SPP_ensi,console): 
     # find porosity associated to mesh node position
     # ----------------------------------------------
-    xyz_swc = grid3d[obs2map_node]
+    xyz_swc = grid3d[obs2map_node[0]]
     ltop, lbot = mt.get_layer_depths(dem_parameters)
     idlayer_swc = np.where(abs(xyz_swc[2])>ltop)[0]
+    
     porosity_swc = SPP_ensi.xs((1,idlayer_swc[0]),
-                               level=('zone', 'layer'))['POROS'].values
+                               level=('zone', 'layer')
+                               )['POROS'].values
+    
     console.print(f"Transform sat to SWC with porosity=' {str(porosity_swc)}")
     console.rule(
         ":warning: warning messages above :warning:", style="yellow"

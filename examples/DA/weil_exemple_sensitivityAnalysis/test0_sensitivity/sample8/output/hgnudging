@@ -1,0 +1,2 @@
+                  #***** Detailed nudging "hydrograph" ***** 
+#nstep    deltat      time   in flux  out flux  in+out f  in volum  out volu  in+out v  invol/dt   outv/dt  iv+ov/dt   cum vol

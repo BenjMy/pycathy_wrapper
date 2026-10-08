@@ -888,6 +888,22 @@
    "name": "CATHY.update_soil"
   }
  ],
+ "simu.update_veg_map": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY.cathy_tools",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_veg_map"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pyCATHY",
+   "module_short": "pyCATHY",
+   "name": "CATHY.update_veg_map"
+  }
+ ],
  "simu.workdir": [
   {
    "is_class": false,

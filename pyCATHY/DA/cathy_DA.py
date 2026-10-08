@@ -598,7 +598,6 @@ class DA(CATHY):
         # Run hydrological model sequentially
         # = Loop over atmbc times (including assimilation observation times)
         # -----------------------------------
-        # for t_atmbc in self.all_atmbc_times:  # atmbc times MUST include assimilation observation times
         for t_atmbc in self.all_atmbc_times[:-1]:   # N times -> N-1 windows
 
             self._run_ensemble_hydrological_model(parallel, callexe)
@@ -1126,7 +1125,9 @@ class DA(CATHY):
         # # ---------------------------------------------------------------------
         # This is implemented particulary for DA with localisation
 
+        data = np.asarray(data, dtype=float)
         data_valid = data[obs_valid]
+        
         data_cov_valid = data_cov[obs_valid,:][:,obs_valid]
         prediction_valid = prediction[obs_valid, :]
         ensemble_psi_valid = ensemble_psi_valid[obs_mesh_nodes_valid, :]
@@ -2331,9 +2332,13 @@ class DA(CATHY):
             # time_ass = self.count_DA_cycle + 1 # ince we compare the predicted observation at ti +1
 
         data = []
-        # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
-        # -----------------------------------------------------------------
         items_dict = list(self.dict_obs.items())
+        
+        # rebuild obskey2map from zero only if match is True (and not in the "all" case)
+        rebuild_obskey = match and "all" not in list_assimilated_obs
+        if rebuild_obskey:
+            obskey2map = []
+        
         for sensor in items_dict[time_ass][1].keys():
             if "all" in list_assimilated_obs:
                 data2add = extract_data(sensor, time_ass, data)
@@ -2343,12 +2348,13 @@ class DA(CATHY):
                     if sensor in list_assimilated_obs:
                         data2add = extract_data(sensor, time_ass, data)
                         data.append(data2add)
+                        obskey2map.append(sensor)
                 else:
                     str_sensor_rootname = re.sub(r'\d', '', sensor)
                     if str_sensor_rootname in list_assimilated_obs:
                         data2add = extract_data(sensor, time_ass, data)
                         data.append(data2add)
-
+        
         return np.squeeze(data), obskey2map
 
     def _obs_key_select(self, list_assimilated_obs):
@@ -3149,13 +3155,13 @@ class DA(CATHY):
         }
         pass
 
-    def _compute_diff_matrix(self,data, prediction):
-        """Computes the difference matrix between data and prediction."""
-        diff_mat = np.zeros_like(prediction)
-        for i in range(len(data)):
-            for j in range(prediction.shape[1]):  # Loop over ensemble columns
-                diff_mat[i, j] = abs(data[i] - prediction[i, j])
-        return diff_mat
+    def _compute_diff_matrix(self, data, prediction):
+        """Absolute difference between data (n_obs,) and prediction (n_obs, n_ens)."""
+        data = np.atleast_1d(np.asarray(data, dtype=float))               # () -> (1,)
+        prediction = np.asarray(prediction, dtype=float)
+        if prediction.ndim == 1:                                          # (n_ens,) -> (1, n_ens)
+            prediction = prediction.reshape(len(data), -1)
+        return np.abs(data[:, None] - prediction)                         # broadcast, no loops
 
     def _compute_rmse(self,diff_matrix, num_predictions):
         """Computes RMSE from difference matrix."""
@@ -3231,8 +3237,9 @@ class DA(CATHY):
         start_line_obs = 0
 
         for name_sensor in obs2eval_key:
-            obs2eval = self._get_data2assimilate([name_sensor], match=True)[0]
-            n_obs = len(obs2eval)
+            obs2eval, sensors2eval = self._get_data2assimilate([name_sensor], 
+                                                               match=True)
+            n_obs = len(sensors2eval)
             prediction2eval = prediction[start_line_obs:start_line_obs + n_obs]
 
             rmse_sensor = self._get_rmse_for_sensor(obs2eval, prediction2eval, num_predictions)

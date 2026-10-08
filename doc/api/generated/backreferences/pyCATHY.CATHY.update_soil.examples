@@ -131,7 +131,7 @@ Examples using ``pyCATHY.CATHY.update_soil``
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Read SMC sensors observations to assimilate</div>
+      <div class="sphx-glr-thumbnail-title">Assimilate SMC sensors observations</div>
     </div>
 
 

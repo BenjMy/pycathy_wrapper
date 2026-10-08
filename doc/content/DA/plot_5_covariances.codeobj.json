@@ -66,13 +66,22 @@
    "name": "Path"
   }
  ],
- "date_string0": [
+ "SolfwdName": [
   {
    "is_class": false,
    "is_explicit": false,
    "module": "builtins",
    "module_short": "builtins",
    "name": "str"
+  }
+ ],
+ "data_err": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
   }
  ],
  "datetime_EM": [
@@ -158,6 +167,33 @@
    "module": "pandas",
    "module_short": "pandas",
    "name": "Index"
+  }
+ ],
+ "filename": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "fwdEM_path": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "i": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
   }
  ],
  "localisation.build_localization_matrix": [
@@ -281,6 +317,22 @@
    "name": "imshow"
   }
  ],
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
+  }
+ ],
  "plt.title": [
   {
    "is_class": false,
@@ -320,6 +372,15 @@
    "module": "pathlib",
    "module_short": "pathlib",
    "name": "PosixPath"
+  }
+ ],
+ "selected_indices": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
   }
  ],
  "simuWithDA": [
@@ -479,6 +540,15 @@
    "module": "pandas",
    "module_short": "pandas",
    "name": "Timestamp"
+  }
+ ],
+ "tt": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
   }
  ]
 }

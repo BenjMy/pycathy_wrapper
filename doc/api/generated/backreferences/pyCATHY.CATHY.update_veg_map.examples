@@ -57,6 +57,48 @@ Examples using ``pyCATHY.CATHY.update_veg_map``
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Create soil zones control">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3a_create_soil_withzones_thumb.png
+    :alt:
+
+  :doc:`/content/SSHydro/plot_3a_create_soil_withzones`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create soil zones control</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/SSHydro/plot_3a_create_soil_withzones`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Estimated time to run the notebook = 5min">
+
+.. only:: html
+
+  .. image:: /content/SSHydro/images/thumb/sphx_glr_plot_3f_meshing_from_subCatchment_thumb.png
+    :alt:
+
+  :doc:`/content/SSHydro/plot_3f_meshing_from_subCatchment`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Meshing from a Digital Elevation Model (DEM) .adf file</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/SSHydro/plot_3f_meshing_from_subCatchment`
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This notebook demonstrates how to create an ensemble of models with varying initial conditions for different soil layers. By introducing randomness into the initial conditions, we can better simulate the natural variability in soil properties and improve the robustness of data assimilation (DA) processes.">
 
 .. only:: html
@@ -89,7 +131,7 @@ Examples using ``pyCATHY.CATHY.update_veg_map``
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Read SMC sensors observations to assimilate</div>
+      <div class="sphx-glr-thumbnail-title">Assimilate SMC sensors observations</div>
     </div>
 
 
