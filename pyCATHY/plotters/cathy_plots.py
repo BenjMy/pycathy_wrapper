@@ -789,7 +789,7 @@ def show_vtk_TL(
             legend_entry = "Time=" + str(t_lgd) + xlabel
 
         # print(array_new)
-        mesh.point_data[scalar_name] = array_new   # or mesh.cell_data[...] if it's cell data
+        mesh.point_data[unit] = array_new   # or mesh.cell_data[...] if it's cell data
         plotter.add_text(legend_entry, name="time-label")
 
         plotter.render()
