@@ -4812,13 +4812,13 @@ document.write(`
         <span class="n">unique_markers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">"cell_markers_zone3d"</span><span class="p">])</span>
 
         <span class="c1"># Check that the number of properties matches the number of unique markers</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">'Skip Error Temporary!'</span><span class="p">)</span>
-        <span class="c1"># if len(prop_map) != len(unique_markers):</span>
-        <span class="c1">#     raise ValueError(</span>
-        <span class="c1">#         f"Mismatch between property map (len={len(prop_map)}) "</span>
-        <span class="c1">#         f"and unique mesh cell markers (len={len(unique_markers)}). "</span>
-        <span class="c1">#         f"Markers: {unique_markers}"</span>
-        <span class="c1">#     )</span>
+        <span class="c1"># print('Skip Error Temporary!')</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prop_map</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_markers</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Mismatch between property map (len=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">prop_map</span><span class="p">)</span><span class="si">}</span><span class="s2">) "</span>
+                <span class="sa">f</span><span class="s2">"and unique mesh cell markers (len=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_markers</span><span class="p">)</span><span class="si">}</span><span class="s2">). "</span>
+                <span class="sa">f</span><span class="s2">"Markers: </span><span class="si">{</span><span class="n">unique_markers</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">"node_markers_zone3d"</span><span class="p">])</span>
         <span class="c1"># np.unique(prop_mesh_nodes)</span>
 

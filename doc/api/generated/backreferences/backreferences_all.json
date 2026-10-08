@@ -151,7 +151,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],
@@ -400,7 +400,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],
@@ -474,7 +474,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],
@@ -567,7 +567,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],
@@ -597,7 +597,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],
@@ -1027,7 +1027,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],
@@ -1073,6 +1073,13 @@
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
    "The notebook illustrate how to read SMC sensors dataset to be prepare for DA",
    "Assimilate SMC sensors observations"
+  ],
+  [
+   "plot_Weilletal_sensitivityAnalysis.py",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
+   "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
+   "Sensitivity analysis"
   ]
  ],
  "pyCATHY.CATHY.update_zone": [
@@ -1802,7 +1809,7 @@
    "plot_Weilletal_sensitivityAnalysis.py",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/../examples/DA",
    "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/doc/content/DA",
-   "Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min",
+   "Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).",
    "Sensitivity analysis"
   ]
  ],

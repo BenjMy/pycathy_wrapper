@@ -5357,7 +5357,7 @@ class CATHY:
             filename = os.path.join(
                 self.workdir,
                 self.project_name,
-                self.project_name + "_df.parquet"
+                self.project_name + ".parquet"
             )
 
         backup_list = []
@@ -5365,7 +5365,7 @@ class CATHY:
             "meta_DA",
             "dict_parm_pert",
             "df_DA",
-            "dict_obs",
+            "df_obs",
             "df_performance",
             "ET_DA_xr",
             "df_Archie",

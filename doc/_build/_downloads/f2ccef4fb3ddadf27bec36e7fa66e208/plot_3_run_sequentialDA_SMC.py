@@ -13,6 +13,7 @@ from pyCATHY.DA.observations import make_data_cov
 from pyCATHY.DA.cathy_DA import dictObs_2pd
 from pyCATHY.DA import perturbate
 import pickle
+import os
 
 #%% Create a CATHY project
 # -----------------------
@@ -82,8 +83,6 @@ list_pert = perturbate.perturbate(simuWithDA,
                                   )
 
 #%% Parameters perturbation
-# stop
-import os
 
 var_per_dict_stacked = {}
 for dp in list_pert:
@@ -108,34 +107,14 @@ for dp in list_pert:
                                                     )
 
 
-#%% Run assimilation
-# f
-# simuWithDA.parm
-# simuWithDA.read_inputs('atmbc')
 atmbc_times = data_measure_df.index.get_level_values(1).unique().to_list()
 simuWithDA.update_atmbc(HSPATM=1,IETO=0,
                         time=atmbc_times,
                         netValue=[0]*len(atmbc_times)
                         )
 
-# simuWithDA.update_parm()
-# simuWithDA.read_inputs('atmbc')
 
-
-#%%
-# simuWithDA.atmbc
-
-# simuWithDA.run_DA_smooth(
-#                           VTKF=2,
-#                           TRAFLAG=0,
-#                           dict_obs= dict_obs,
-#                           list_assimilated_obs='all', # default
-#                           list_parm2update= ['St. var.', 'ZROOT0'],
-#                           DA_type='enkf_Evensen2009',
-#                           dict_parm_pert=var_per_dict_stacked,
-#                         )
-
-#%%
+#%% Run assimilation
 
 simuWithDA.run_DA_sequential(
                               VTKF=2,

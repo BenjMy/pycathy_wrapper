@@ -78,7 +78,7 @@ Examples using ``pyCATHY.CATHY.set_SOIL_defaults``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Before run a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. In this example, we use the Weil et al dataset and generate 24 possible trajectories varying PERMX and POROS parameters respectively the hydraulic conductivity and the porosity of the soil.    Estimated time to run the notebook = 5min">
+    <div class="sphx-glr-thumbcontainer" tooltip="Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).">
 
 .. only:: html
 

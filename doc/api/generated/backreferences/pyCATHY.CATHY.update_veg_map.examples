@@ -139,6 +139,27 @@ Examples using ``pyCATHY.CATHY.update_veg_map``
 
  * :doc:`/content/DA/plot_3_run_sequentialDA_SMC`
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Before running a Data Assimilation it is often necessary to evaluate the sensitivity of the model parameters with respect to a given scenario. Here we use the Weil et al dataset and generate 24 trajectories varying PERMX and POROS (hydraulic conductivity and porosity of the soil).">
+
+.. only:: html
+
+  .. image:: /content/DA/images/thumb/sphx_glr_plot_Weilletal_sensitivityAnalysis_thumb.png
+    :alt:
+
+  :doc:`/content/DA/plot_Weilletal_sensitivityAnalysis`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Sensitivity analysis</div>
+    </div>
+
+
+.. only:: not html
+
+ * :doc:`/content/DA/plot_Weilletal_sensitivityAnalysis`
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
