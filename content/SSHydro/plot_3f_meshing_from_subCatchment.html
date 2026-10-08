@@ -67,7 +67,7 @@
     <link rel="prev" title="Atmbc update with no-data" href="plot_3d_spatial_atmbc_from_weill_withnonodes.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 07, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
   </head>
   
   
@@ -204,7 +204,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Assimilate SMC sensors observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
@@ -904,6 +904,7 @@ b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
 </span><a class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame"><span class="n">SPP_map</span></a><span class="p">[</span><span class="s1">'</span><span class="s1">PERMZ</span><span class="s1">'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">6.88e-4</span><span class="w">
 </span><span class="w">
 </span><span class="c1">#% Update soil file</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">simu</span></a><span class="o">.</span><span class="n">update_veg_map</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">simu</span></a><span class="o">.</span><span class="n">update_soil</span><span class="p">(</span><a class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame"><span class="n">SPP_map</span></a><span class="o">=</span><a class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame"><span class="n">SPP_map</span></a><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="w">
@@ -925,14 +926,16 @@ b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
 </span>                        <span class="n">VTKF</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="c1"># dont write vtk files</span><span class="w">
 </span>                        <span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3f_meshing_from_subCatchment.py"</span>, line <span class="m">133</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="n">simu</span><span class="o">.</span><span class="n">update_soil</span><span class="p">(</span><span class="n">SPP_map</span><span class="o">=</span><span class="n">SPP_map</span><span class="p">)</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py"</span>, line <span class="m">2761</span>, in <span class="n">update_soil</span>
-<span class="w">    </span><span class="n">FP_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_SOIL_defaults</span><span class="p">(</span><span class="n">FP_map_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py"</span>, line <span class="m">3032</span>, in <span class="n">set_SOIL_defaults</span>
-<span class="w">    </span><span class="n">nveg</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">veg_map</span><span class="p">))</span>
-<span class="gr">AttributeError</span>: <span class="n">'CATHY' object has no attribute 'veg_map'</span>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🍳 gfortran compilation
+👟 Run preprocessor
+🔄 Update parm file
+🔄 Update soil
+homogeneous soil
+🔄 Update ic
+Single value detected for ic ==&gt; assumming it homogeneous
+🔄 Update atmbc
+🔄 Update parm file
+🔄 Update parm file
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nb">int</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">grid3d</span></a><span class="p">[</span><span class="s1">'</span><span class="s1">nnod</span><span class="s1">'</span><span class="p">]</span><span class="p">)</span><span class="w">
@@ -946,6 +949,9 @@ b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
 </span><span class="c1">#                     verbose=True</span><span class="w">
 </span><span class="c1">#                     )</span><span class="w">
 </span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>1271
+</pre></div>
+</div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="c1"># # pl = pv.Plotter(notebook=True)</span><span class="w">
 </span><span class="c1"># pl = pv.Plotter(off_screen=True)</span><span class="w">
 </span><span class="w">
@@ -959,7 +965,7 @@ b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
 </span><span class="c1"># # pl.show()</span><span class="w">
 </span><span class="c1"># image = pl.screenshot('test.png')</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 16.016 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 16.419 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-sshydro-plot-3f-meshing-from-subcatchment-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/b792ca38bb2e11563b34930bcf4ebb0d/plot_3f_meshing_from_subCatchment.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_3f_meshing_from_subCatchment.ipynb</span></code></a></p>
@@ -1057,7 +1063,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 07, 2026.
+  Last updated on Oct 08, 2026.
   <br/>
 </p>
   </div>

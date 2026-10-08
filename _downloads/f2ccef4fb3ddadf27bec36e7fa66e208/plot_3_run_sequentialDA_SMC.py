@@ -1,6 +1,6 @@
 """
-Read SMC sensors observations to assimilate
-===========================================
+Assimilate SMC sensors observations 
+====================================
 
 The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 
@@ -10,7 +10,7 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 import numpy as np
 from pyCATHY.DA.cathy_DA import DA
 from pyCATHY.DA.observations import make_data_cov
-from pyCATHY.DA.cathy_DA import DA, dictObs_2pd
+from pyCATHY.DA.cathy_DA import dictObs_2pd
 from pyCATHY.DA import perturbate
 import pickle
 
@@ -137,12 +137,12 @@ simuWithDA.update_atmbc(HSPATM=1,IETO=0,
 
 #%%
 
-# simuWithDA.run_DA_sequential(
-#                               VTKF=2,
-#                               TRAFLAG=0,
-#                               dict_obs= dict_obs,
-#                               list_assimilated_obs='all', # default
-#                               list_parm2update= ['St. var.', 'ZROOT0'],
-#                               DA_type='enkf_Evensen2009',
-#                               dict_parm_pert=var_per_dict_stacked,
-#                             )
+simuWithDA.run_DA_sequential(
+                              VTKF=2,
+                              TRAFLAG=0,
+                              dict_obs= dict_obs,
+                              list_assimilated_obs='all', # default
+                              list_parm2update= ['St. var.', 'ZROOT0'],
+                              DA_type='enkf_Evensen2009',
+                              dict_parm_pert=var_per_dict_stacked,
+                            )

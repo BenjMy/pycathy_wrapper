@@ -26,13 +26,29 @@ from pyCATHY.cathy_tools import subprocess_run_multi
 #%% Create an observation scenario  and run the hydrological modelling
 prj_name = "test0"
 path2prj = "weil_exemple_sensitivityAnalysis"  # add your local path here
+
 simu = cathy_tools.CATHY(
-    dirName=path2prj, prj_name=prj_name, clear_src=False, clear_outputs=True
+    dirName=path2prj, prj_name=prj_name, 
 )
+
+
 simu.run_preprocessor(verbose=False)
-simu.run_processor(verbose=True)
+
+# simu.update_parm(TIMPRTi=[1800,7200],
+#                  VTKF=2
+#                  )
+
+simu.run_processor(IPRT1=2, 
+                    DTMIN=1e-2,
+                    DTMAX=1e2,
+                    DELTAT=5,
+                    TRAFLAG=0,
+                    verbose=False
+                    )
+
 
 SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
+
 dpsi = simu.read_outputs("psi")
 dsw, _ = simu.read_outputs("sw")
 

@@ -67,7 +67,7 @@
     <link rel="prev" title="Surface subsurface hydrological model" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 07, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
   </head>
   
   
@@ -204,7 +204,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Assimilate SMC sensors observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
@@ -511,7 +511,7 @@ Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (
 🔄 Update dem_parameters file
 🔄 Update parm file
 🛠  Recompile src files [4s]
-🍳 gfortran compilation [10s]
+🍳 gfortran compilation [11s]
 ✅ Compilation successful!
 👟 Run processor
 </pre></div>
@@ -539,7 +539,7 @@ Advances in Water Resources, vol. 34, no 1, janvier 2011, p. 128‑36. DOI.org (
 /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_1_pyCATHY_weilletal.py:75: UserWarning: Using static image for notebook display.
 Install trame for interactive backends: pip install trame-pyvista
   pl.show()
-&lt;PIL.Image.Image image mode=RGB size=2048x1536 at 0x7D51374B3B20&gt;
+&lt;PIL.Image.Image image mode=RGB size=2048x1536 at 0x7A4E2827BC10&gt;
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">cplt</span><span class="o">.</span><span class="n">show_vtk_TL</span><span class="p">(</span><span class="w">
@@ -552,17 +552,29 @@ Install trame for interactive backends: pip install trame-pyvista
 </span>                <span class="n">savefig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="w">
 </span>            <span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_1_pyCATHY_weilletal.py"</span>, line <span class="m">79</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="n">cplt</span><span class="o">.</span><span class="n">show_vtk_TL</span><span class="p">(</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/plotters/cathy_plots.py"</span>, line <span class="m">792</span>, in <span class="n">show_vtk_TL</span>
-<span class="w">    </span><span class="n">plotter</span><span class="o">.</span><span class="n">update_scalars</span><span class="p">(</span><span class="n">array_new</span><span class="p">,</span> <span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pyvista/plotting/plotter.py"</span>, line <span class="m">611</span>, in <span class="n">__getattr__</span>
-<span class="w">    </span><span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-<span class="gr">AttributeError</span>: <span class="n">'Plotter' object has no attribute 'update_scalars'</span>
+<img src="../../_images/sphx_glr_plot_1_pyCATHY_weilletal_003.gif" srcset="../../_images/sphx_glr_plot_1_pyCATHY_weilletal_003.gif" alt="plot 1 pyCATHY weilletal" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>days
+plot pressure
+Time= [0.]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/100 (conflicted copy 2026-09-07 154107).vtk
+[0.]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/100.vtk
+[0.]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/101 (conflicted copy 2026-09-07 154116).vtk
+[1802.31163]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/101.vtk
+[1895.11582]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/102 (conflicted copy 2026-09-07 154122).vtk
+[7200.]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/102.vtk
+[7200.]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/103 (conflicted copy 2026-09-07 154122).vtk
+[7200.]
+/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/103.vtk
+[7200.]
+gif saved/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/pressure.gif
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 16.791 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 19.527 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-sshydro-plot-1-pycathy-weilletal-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/b83505b5c0c5e063e7533c5929f8f1c8/plot_1_pyCATHY_weilletal.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_1_pyCATHY_weilletal.ipynb</span></code></a></p>
@@ -660,7 +672,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 07, 2026.
+  Last updated on Oct 08, 2026.
   <br/>
 </p>
   </div>

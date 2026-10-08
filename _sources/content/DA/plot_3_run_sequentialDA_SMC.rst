@@ -18,8 +18,8 @@
 .. _sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py:
 
 
-Read SMC sensors observations to assimilate
-===========================================
+Assimilate SMC sensors observations 
+====================================
 
 The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 
@@ -32,7 +32,7 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
     import numpy as np
     from pyCATHY.DA.cathy_DA import DA
     from pyCATHY.DA.observations import make_data_cov
-    from pyCATHY.DA.cathy_DA import DA, dictObs_2pd
+    from pyCATHY.DA.cathy_DA import dictObs_2pd
     from pyCATHY.DA import perturbate
     import pickle
 
@@ -173,13 +173,13 @@ Therefore, the covariance matrices are diagonal with the error values on the dia
     🔄 Update hap.in file
     🔄 Update dem_parameters file 
     🔄 Update dem_parameters file 
-    ─────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ───────────────────────────────────────────────────────────────────────────────
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
 
                                 The parm dictionnary is empty
                                 Falling back to defaults to update CATHYH
                                 This can have consequences !!
                             
-    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     🔄 Update parm file 
     🔄 Update soil
     homogeneous soil
@@ -297,18 +297,33 @@ simuWithDA.atmbc
 .. code-block:: Python
 
 
-    # simuWithDA.run_DA_sequential(
-    #                               VTKF=2,
-    #                               TRAFLAG=0,
-    #                               dict_obs= dict_obs,
-    #                               list_assimilated_obs='all', # default
-    #                               list_parm2update= ['St. var.', 'ZROOT0'],
-    #                               DA_type='enkf_Evensen2009',
-    #                               dict_parm_pert=var_per_dict_stacked,
-    #                             )
+    simuWithDA.run_DA_sequential(
+                                  VTKF=2,
+                                  TRAFLAG=0,
+                                  dict_obs= dict_obs,
+                                  list_assimilated_obs='all', # default
+                                  list_parm2update= ['St. var.', 'ZROOT0'],
+                                  DA_type='enkf_Evensen2009',
+                                  dict_parm_pert=var_per_dict_stacked,
+                                )
 
 
+.. rst-class:: sphx-glr-script-out
 
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_3_run_sequentialDA_SMC.py", line 140, in <module>
+        simuWithDA.run_DA_sequential(
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py", line 630, in run_DA_sequential
+        prediction = self.map_states2Observations(
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py", line 2484, in map_states2Observations
+        df_psi = self.read_outputs(
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 4792, in read_outputs
+        df = out_CT.read_psi(path)
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_outputs.py", line 617, in read_psi
+        if (idx[-1]-idx[-2])==len(lines):
+    IndexError: list index out of range
 
 
 
@@ -316,7 +331,7 @@ simuWithDA.atmbc
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.184 seconds)
+   **Total running time of the script:** (0 minutes 39.380 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_3_run_sequentialDA_SMC.py:

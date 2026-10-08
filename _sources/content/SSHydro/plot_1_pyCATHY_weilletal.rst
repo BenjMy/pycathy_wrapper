@@ -108,7 +108,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
     🔄 Update dem_parameters file 
     🔄 Update parm file 
     🛠  Recompile src files [4s]
-    🍳 gfortran compilation [10s]
+    🍳 gfortran compilation [11s]
     ✅ Compilation successful!
     👟 Run processor
 
@@ -182,7 +182,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
     /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_1_pyCATHY_weilletal.py:75: UserWarning: Using static image for notebook display.
     Install trame for interactive backends: pip install trame-pyvista
       pl.show()
-    <PIL.Image.Image image mode=RGB size=2048x1536 at 0x7D51374B3B20>
+    <PIL.Image.Image image mode=RGB size=2048x1536 at 0x7A4E2827BC10>
 
 
 
@@ -206,18 +206,40 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 
 
+
+
+.. image-sg:: /content/SSHydro/images/sphx_glr_plot_1_pyCATHY_weilletal_003.gif
+   :alt: plot 1 pyCATHY weilletal
+   :srcset: /content/SSHydro/images/sphx_glr_plot_1_pyCATHY_weilletal_003.gif
+   :class: sphx-glr-single-img
+
+
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_1_pyCATHY_weilletal.py", line 79, in <module>
-        cplt.show_vtk_TL(
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/plotters/cathy_plots.py", line 792, in show_vtk_TL
-        plotter.update_scalars(array_new, render=True)
-      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pyvista/plotting/plotter.py", line 611, in __getattr__
-        return super().__getattribute__(item)
-    AttributeError: 'Plotter' object has no attribute 'update_scalars'
+    days
+    plot pressure
+    Time= [0.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/100 (conflicted copy 2026-09-07 154107).vtk
+    [0.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/100.vtk
+    [0.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/101 (conflicted copy 2026-09-07 154116).vtk
+    [1802.31163]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/101.vtk
+    [1895.11582]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/102 (conflicted copy 2026-09-07 154122).vtk
+    [7200.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/102.vtk
+    [7200.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/103 (conflicted copy 2026-09-07 154122).vtk
+    [7200.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/103.vtk
+    [7200.]
+    gif saved/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro//weill_exemple/vtk/pressure.gif
 
 
 
@@ -225,7 +247,7 @@ The notebook illustrate how to work interactively: execute single cell, see part
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 16.791 seconds)
+   **Total running time of the script:** (0 minutes 19.527 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_1_pyCATHY_weilletal.py:

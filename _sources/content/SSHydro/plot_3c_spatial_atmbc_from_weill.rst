@@ -527,18 +527,32 @@ This example shows how to use pyCATHY object to create spatially and temporally 
                 )
 
 
+
+
+.. image-sg:: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_003.gif
+   :alt: plot 3c spatial atmbc from weill
+   :srcset: /content/SSHydro/images/sphx_glr_plot_3c_spatial_atmbc_from_weill_003.gif
+   :class: sphx-glr-single-img
+
+
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py", line 92, in <module>
-        cplt.show_vtk_TL(
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/plotters/cathy_plots.py", line 792, in show_vtk_TL
-        plotter.update_scalars(array_new, render=True)
-      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pyvista/plotting/plotter.py", line 611, in __getattr__
-        return super().__getattribute__(item)
-    AttributeError: 'Plotter' object has no attribute 'update_scalars'
+    days
+    plot pressure
+    Time= [0.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/100.vtk
+    [0.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/101.vtk
+    [0.01953]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/102.vtk
+    [86400.]
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/103.vtk
+    [86400.]
+    gif saved/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/../SSHydro/atmbc_spatially_from_weill/vtk/pressure.gif
 
 
 
@@ -546,7 +560,7 @@ This example shows how to use pyCATHY object to create spatially and temporally 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 32.393 seconds)
+   **Total running time of the script:** (0 minutes 33.132 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py:

@@ -92,7 +92,7 @@ Create soil zones control
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-53
+.. GENERATED FROM PYTHON SOURCE LINES 39-54
 
 .. code-block:: Python
 
@@ -109,6 +109,7 @@ Create soil zones control
     fig, ax = plt.subplots()
     simu.show_input('zone',ax=ax)
 
+    simu.update_veg_map()
 
 
 
@@ -122,10 +123,50 @@ Create soil zones control
     🔄 Update dem_parameters file 
     🔄 Update parm file 
 
+    array([[1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.],
+           [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+            1., 1., 1., 1.]])
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-58
+.. GENERATED FROM PYTHON SOURCE LINES 55-59
 
 .. code-block:: Python
 
@@ -140,7 +181,7 @@ Create soil zones control
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-63
+.. GENERATED FROM PYTHON SOURCE LINES 60-64
 
 .. code-block:: Python
 
@@ -150,18 +191,23 @@ Create soil zones control
     print(df_SPP_map.head())
 
 
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3a_create_soil_withzones.py", line 60, in <module>
-        simu.update_soil(SPP_map=df_SPP_map)
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 2761, in update_soil
-        FP_map = self.set_SOIL_defaults(FP_map_default=True)
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 3032, in set_SOIL_defaults
-        nveg = len(np.unique(self.veg_map))
-    AttributeError: 'CATHY' object has no attribute 'veg_map'
+    🔄 Update soil
+    homogeneous soil
+                   PERMX     PERMY     PERMZ  ... VGNCELL VGRMCCELL VGPSATCELL
+    zone layer                                ...                             
+    1    1      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+         2      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+         3      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+         4      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+         5      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+
+    [5 rows x 8 columns]
 
 
 
@@ -169,7 +215,7 @@ Create soil zones control
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 10.532 seconds)
+   **Total running time of the script:** (0 minutes 10.901 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3a_create_soil_withzones.py:

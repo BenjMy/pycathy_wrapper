@@ -87,7 +87,7 @@ Refs:
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Read SMC sensors observations to assimilate</div>
+      <div class="sphx-glr-thumbnail-title">Assimilate SMC sensors observations</div>
     </div>
 
 
@@ -110,7 +110,7 @@ Refs:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrate how to read EM sensors dataset to be prepare for DA">
+    <div class="sphx-glr-thumbcontainer" tooltip="The notebook illustrates how to read an EM sensors dataset to prepare it for DA.">
 
 .. only:: html
 

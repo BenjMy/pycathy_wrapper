@@ -25,7 +25,7 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
 
 *Estimated time to run the notebook = 2min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-19
+.. GENERATED FROM PYTHON SOURCE LINES 10-21
 
 .. code-block:: Python
 
@@ -37,6 +37,7 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
     from pyCATHY.DA.observations import read_observations, prepare_observations, make_data_cov
     from pathlib import Path
     import pyvista as pv
+    from pyCATHY.DA.cathy_DA import mapper
 
 
 
@@ -45,11 +46,12 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-21
+
+.. GENERATED FROM PYTHON SOURCE LINES 22-23
 
 -----------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-27
+.. GENERATED FROM PYTHON SOURCE LINES 23-29
 
 .. code-block:: Python
 
@@ -72,14 +74,14 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-67
+.. GENERATED FROM PYTHON SOURCE LINES 30-69
 
 .. code-block:: Python
 
 
 
 
-    ER_converted_ti, df_Archie, sw_nodes =   Archie.SW_2_ER0_DA(
+    ER_converted_ti, df_Archie, sw_nodes =  Archie.SW_2_ER0_DA(
                                             project_name,
                                             Archie_parms,
                                             POROS_mesh_nodes_ensi,
@@ -98,7 +100,7 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
     print(f"  max = {EC_converted_ti_mS_m.max():.2f} mS/m")
 
     print('Build forward EM model')
-    depths, conds, xy_coords = build_forward_profiles(EC_converted_ti_mS_m,
+    depths, conds, xy_coords = mapper.build_forward_profiles(EC_converted_ti_mS_m,
                                                       grid3d['mesh3d_nodes'],
                                                       var="EC")
 
@@ -122,8 +124,8 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
 .. code-block:: pytb
 
     Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_4_EM_DA.py", line 31, in <module>
-        ER_converted_ti, df_Archie, sw_nodes =   Archie.SW_2_ER0_DA(
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_4_EM_DA.py", line 33, in <module>
+        ER_converted_ti, df_Archie, sw_nodes =  Archie.SW_2_ER0_DA(
     NameError: name 'Archie' is not defined
 
 
@@ -132,7 +134,7 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.003 seconds)
+   **Total running time of the script:** (0 minutes 0.001 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_4_EM_DA.py:

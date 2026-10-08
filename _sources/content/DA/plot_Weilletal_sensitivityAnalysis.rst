@@ -52,19 +52,35 @@ conductivity and the porosity of the soil.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-42
+.. GENERATED FROM PYTHON SOURCE LINES 27-58
 
 .. code-block:: Python
 
     prj_name = "test0"
     path2prj = "weil_exemple_sensitivityAnalysis"  # add your local path here
+
     simu = cathy_tools.CATHY(
-        dirName=path2prj, prj_name=prj_name, clear_src=False, clear_outputs=True
+        dirName=path2prj, prj_name=prj_name, 
     )
+
+
     simu.run_preprocessor(verbose=False)
-    simu.run_processor(verbose=True)
+
+    # simu.update_parm(TIMPRTi=[1800,7200],
+    #                  VTKF=2
+    #                  )
+
+    simu.run_processor(IPRT1=2, 
+                        DTMIN=1e-2,
+                        DTMAX=1e2,
+                        DELTAT=5,
+                        TRAFLAG=0,
+                        verbose=False
+                        )
+
 
     SPP_map = simu.set_SOIL_defaults(SPP_map_default=True)
+
     dpsi = simu.read_outputs("psi")
     dsw, _ = simu.read_outputs("sw")
 
@@ -73,27 +89,33 @@ conductivity and the porosity of the soil.
 
 
 
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_Weilletal_sensitivityAnalysis.py", line 36, in <module>
-        dpsi = simu.read_outputs("psi")
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 4792, in read_outputs
-        df = out_CT.read_psi(path)
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_outputs.py", line 617, in read_psi
-        if (idx[-1]-idx[-2])==len(lines):
-    IndexError: list index out of range
+    🏁 Initiate CATHY object
+    🍳 gfortran compilation
+    👟 Run preprocessor
+    🔄 Update parm file 
+    🔄 Update hap.in file
+    🔄 Update dem_parameters file 
+    🔄 Update dem_parameters file 
+    🛠  Recompile src files [4s]
+    🍳 gfortran compilation [11s]
+    ✅ Compilation successful!
+    👟 Run processor
+
+    7056
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 43-44
+.. GENERATED FROM PYTHON SOURCE LINES 59-60
 
 number of variables, their names, plausible range and if you want to group or not the variable
 
-.. GENERATED FROM PYTHON SOURCE LINES 44-59
+.. GENERATED FROM PYTHON SOURCE LINES 60-75
 
 .. code-block:: Python
 
@@ -113,7 +135,13 @@ number of variables, their names, plausible range and if you want to group or no
     }
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-72
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 76-88
 
 .. code-block:: Python
 
@@ -130,7 +158,38 @@ number of variables, their names, plausible range and if you want to group or no
     mp.sample_histograms(fig, sample, morris_problem)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-92
+
+.. rst-class:: sphx-glr-script-out
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_Weilletal_sensitivityAnalysis.py", line 84, in <module>
+        df_sample["dev_" + p] = 1e2 * (df_sample[p] - SPP_map[p]) / SPP_map[p]
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/ops/common.py", line 76, in new_method
+        return method(self, other)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/arraylike.py", line 194, in __sub__
+        return self._arith_method(other, operator.sub)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/series.py", line 6153, in _arith_method
+        self, other = self._align_for_op(other)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/series.py", line 6185, in _align_for_op
+        left, right = left.align(right, copy=False)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/generic.py", line 10510, in align
+        left, _right, join_index = self._align_series(
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/generic.py", line 10627, in _align_series
+        join_index, lidx, ridx = self.index.join(
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 279, in join
+        join_index, lidx, ridx = meth(self, other, how=how, level=level, sort=sort)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 4622, in join
+        return self._join_multi(other, how=how)
+      File "/home/z0272571a@campus.csic.es/.local/share/mamba/envs/pycathy_doc/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 4746, in _join_multi
+        raise ValueError("cannot join with no overlapping index names")
+    ValueError: cannot join with no overlapping index names
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 89-108
 
 .. code-block:: Python
 
@@ -154,7 +213,7 @@ number of variables, their names, plausible range and if you want to group or no
                 ),
             )
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-110
+.. GENERATED FROM PYTHON SOURCE LINES 109-126
 
 .. code-block:: Python
 
@@ -176,7 +235,7 @@ number of variables, their names, plausible range and if you want to group or no
         simu.update_soil(SPP_map=SoilPhysProp, path=pathexe_list[ii] + "/input/")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-115
+.. GENERATED FROM PYTHON SOURCE LINES 127-131
 
 .. code-block:: Python
 
@@ -185,7 +244,7 @@ number of variables, their names, plausible range and if you want to group or no
         result = pool.map(subprocess_run_multi, pathexe_list)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-151
+.. GENERATED FROM PYTHON SOURCE LINES 132-167
 
 .. code-block:: Python
 
@@ -225,7 +284,7 @@ number of variables, their names, plausible range and if you want to group or no
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-160
+.. GENERATED FROM PYTHON SOURCE LINES 168-176
 
 .. code-block:: Python
 
@@ -238,7 +297,7 @@ number of variables, their names, plausible range and if you want to group or no
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 161-167
+.. GENERATED FROM PYTHON SOURCE LINES 177-183
 
 .. code-block:: Python
 
@@ -249,7 +308,7 @@ number of variables, their names, plausible range and if you want to group or no
         )  # assume 2.5% noise in the data
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-177
+.. GENERATED FROM PYTHON SOURCE LINES 184-193
 
 .. code-block:: Python
 
@@ -263,7 +322,7 @@ number of variables, their names, plausible range and if you want to group or no
 
     # total_Si, first_Si, second_Si = Si.to_df()
 
-.. GENERATED FROM PYTHON SOURCE LINES 178-182
+.. GENERATED FROM PYTHON SOURCE LINES 194-198
 
 .. code-block:: Python
 
@@ -272,12 +331,12 @@ number of variables, their names, plausible range and if you want to group or no
     mp.covariance_plot(ax, Si)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-185
+.. GENERATED FROM PYTHON SOURCE LINES 199-201
 
 The higher mean |EE|, the more important factor
 line within the dashed envelope means nonlinear or interaction effects dominant
 
-.. GENERATED FROM PYTHON SOURCE LINES 185-196
+.. GENERATED FROM PYTHON SOURCE LINES 201-212
 
 .. code-block:: Python
 
@@ -296,7 +355,7 @@ line within the dashed envelope means nonlinear or interaction effects dominant
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 18.904 seconds)
+   **Total running time of the script:** (0 minutes 26.832 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_Weilletal_sensitivityAnalysis.py:

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**11:43.692** total execution time for 22 files **from all galleries**:
+**12:36.395** total execution time for 22 files **from all galleries**:
 
 .. container::
 
@@ -41,40 +41,40 @@ Computation times
    * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill_withnonodes.py` (``../examples/SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.py``)
      - 00:53.827
      - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py` (``../examples/DA/plot_3_run_sequentialDA_SMC.py``)
+     - 00:39.380
+     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py``)
-     - 00:32.393
+     - 00:33.132
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py` (``../examples/DA/plot_Weilletal_sensitivityAnalysis.py``)
-     - 00:18.904
+     - 00:26.832
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``../examples/SSHydro/plot_1_pyCATHY_weilletal.py``)
-     - 00:16.791
+     - 00:19.527
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4b_pyCATHY_outputs.py` (``../examples/SSHydro/plot_4b_pyCATHY_outputs.py``)
      - 00:16.470
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3f_meshing_from_subCatchment.py` (``../examples/SSHydro/plot_3f_meshing_from_subCatchment.py``)
-     - 00:16.016
+     - 00:16.419
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py` (``../examples/DA/plot_1_DA_NoUni_ic.py``)
      - 00:11.812
      - 0.0
-   * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``../examples/SSHydro/plot_3a_create_soil_withzones.py``)
-     - 00:10.532
-     - 0.0
    * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``../examples/DA/plot_5_covariances.py``)
-     - 00:10.400
+     - 00:11.550
+     - 0.0
+   * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``../examples/SSHydro/plot_3a_create_soil_withzones.py``)
+     - 00:10.901
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1a_perturbate.py` (``../examples/DA/plot_1a_perturbate.py``)
      - 00:01.871
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_4_EM_DA.py` (``../examples/DA/plot_4_EM_DA.py``)
-     - 00:00.003
+     - 00:00.001
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``../examples/DA/plot_2_prepare_SMC_obs4DA.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py` (``../examples/DA/plot_3_run_sequentialDA_SMC.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``../examples/SSHydro/plot_2_pyCATHY_inputs.py``)

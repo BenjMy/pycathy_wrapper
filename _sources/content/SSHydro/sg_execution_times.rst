@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**02:26.027** total execution time for 13 files **from content/SSHydro**:
+**02:30.276** total execution time for 13 files **from content/SSHydro**:
 
 .. container::
 
@@ -36,19 +36,19 @@ Computation times
      - 00:53.827
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``plot_3c_spatial_atmbc_from_weill.py``)
-     - 00:32.393
+     - 00:33.132
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``plot_1_pyCATHY_weilletal.py``)
-     - 00:16.791
+     - 00:19.527
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_4b_pyCATHY_outputs.py` (``plot_4b_pyCATHY_outputs.py``)
      - 00:16.470
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3f_meshing_from_subCatchment.py` (``plot_3f_meshing_from_subCatchment.py``)
-     - 00:16.016
+     - 00:16.419
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``plot_3a_create_soil_withzones.py``)
-     - 00:10.532
+     - 00:10.901
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_2_pyCATHY_inputs.py` (``plot_2_pyCATHY_inputs.py``)
      - 00:00.000

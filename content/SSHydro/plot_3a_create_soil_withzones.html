@@ -67,7 +67,7 @@
     <link rel="prev" title="Changing mesh properties (resolution, coordinates, …)" href="plot_3_meshing_from_weill.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 07, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
   </head>
   
   
@@ -204,7 +204,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DA/plot_3_run_sequentialDA_SMC.html">Assimilate SMC sensors observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
@@ -511,10 +511,53 @@ b''
 </span><span class="w">
 </span><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">simu</span></a><span class="o">.</span><span class="n">show_input</span><span class="p">(</span><span class="s1">'</span><span class="s1">zone</span><span class="s1">'</span><span class="p">,</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a><span class="o">=</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">simu</span></a><span class="o">.</span><span class="n">update_veg_map</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🔄 update zone file
 🔄 Update dem_parameters file
 🔄 Update parm file
+
+array([[1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+        1., 1., 1., 1.]])
 </pre></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame"><span class="n">df_SPP_map</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">simu</span></a><span class="o">.</span><span class="n">init_soil_SPP_map_df</span><span class="p">(</span><span class="n">nzones</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">nstr</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span><span class="w">
@@ -524,17 +567,20 @@ b''
 </span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><a class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-method reference external" href="http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.head.html#pandas.DataFrame.head" title="pandas.DataFrame.head"><span class="n">df_SPP_map</span><span class="o">.</span><span class="n">head</span></a><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3a_create_soil_withzones.py"</span>, line <span class="m">60</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="n">simu</span><span class="o">.</span><span class="n">update_soil</span><span class="p">(</span><span class="n">SPP_map</span><span class="o">=</span><span class="n">df_SPP_map</span><span class="p">)</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py"</span>, line <span class="m">2761</span>, in <span class="n">update_soil</span>
-<span class="w">    </span><span class="n">FP_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_SOIL_defaults</span><span class="p">(</span><span class="n">FP_map_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py"</span>, line <span class="m">3032</span>, in <span class="n">set_SOIL_defaults</span>
-<span class="w">    </span><span class="n">nveg</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">veg_map</span><span class="p">))</span>
-<span class="gr">AttributeError</span>: <span class="n">'CATHY' object has no attribute 'veg_map'</span>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🔄 Update soil
+homogeneous soil
+               PERMX     PERMY     PERMZ  ... VGNCELL VGRMCCELL VGPSATCELL
+zone layer                                ...
+1    1      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+     2      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+     3      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+     4      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+     5      0.000188  0.000188  0.000188  ...    1.46      0.15    0.03125
+
+[5 rows x 8 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.532 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.901 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-sshydro-plot-3a-create-soil-withzones-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/8cbfdc1d8d35ea31990f7da9813c98da/plot_3a_create_soil_withzones.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_3a_create_soil_withzones.ipynb</span></code></a></p>
@@ -632,7 +678,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 07, 2026.
+  Last updated on Oct 08, 2026.
   <br/>
 </p>
   </div>

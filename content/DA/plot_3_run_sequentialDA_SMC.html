@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Read SMC sensors observations to assimilate &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+    <title>Assimilate SMC sensors observations &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
   
   
   
@@ -67,7 +67,7 @@
     <link rel="prev" title="Read SMC sensors observations to assimilate" href="plot_2_prepare_SMC_obs4DA.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 07, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
   </head>
   
   
@@ -204,7 +204,7 @@
 <li class="toctree-l2"><a class="reference internal" href="plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Assimilate SMC sensors observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
@@ -438,7 +438,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Read SMC sensors observations to assimilate</h1>
+    <h1>Assimilate SMC sensors observations</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -457,14 +457,14 @@ document.write(`
 <p><a class="reference internal" href="#sphx-glr-download-content-da-plot-3-run-sequentialda-smc-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="read-smc-sensors-observations-to-assimilate">
-<span id="sphx-glr-content-da-plot-3-run-sequentialda-smc-py"></span><h1>Read SMC sensors observations to assimilate<a class="headerlink" href="#read-smc-sensors-observations-to-assimilate" title="Link to this heading">#</a></h1>
+<section class="sphx-glr-example-title" id="assimilate-smc-sensors-observations">
+<span id="sphx-glr-content-da-plot-3-run-sequentialda-smc-py"></span><h1>Assimilate SMC sensors observations<a class="headerlink" href="#assimilate-smc-sensors-observations" title="Link to this heading">#</a></h1>
 <p>The notebook illustrate how to read SMC sensors dataset to be prepare for DA</p>
 <p><em>Estimated time to run the notebook = 2min</em></p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="nn">.</span><span class="nn">cathy_DA</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">DA</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="nn">.</span><span class="nn">observations</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_data_cov</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="nn">.</span><span class="nn">cathy_DA</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">DA</span></a><span class="p">,</span> <span class="n">dictObs_2pd</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="nn">.</span><span class="nn">cathy_DA</span><span class="w"> </span><span class="kn">import</span> <span class="n">dictObs_2pd</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="w"> </span><span class="kn">import</span> <span class="n">perturbate</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span><span class="w">
 </span></pre></div></div>
@@ -540,13 +540,13 @@ Therefore, the covariance matrices are diagonal with the error values on the dia
 🔄 Update hap.in file
 🔄 Update dem_parameters file
 🔄 Update dem_parameters file
-─────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ───────────────────────────────────────────────────────────────────────────────
+───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
 
                             The parm dictionnary is empty
                             Falling back to defaults to update CATHYH
                             This can have consequences !!
 
-──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 🔄 Update parm file
 🔄 Update soil
 homogeneous soil
@@ -604,17 +604,31 @@ simuWithDA.read_inputs(‘atmbc’)</p>
 </span><span class="c1">#                           dict_parm_pert=var_per_dict_stacked,</span><span class="w">
 </span><span class="c1">#                         )</span><span class="w">
 </span></pre></div></div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="c1"># simuWithDA.run_DA_sequential(</span><span class="w">
-</span><span class="c1">#                               VTKF=2,</span><span class="w">
-</span><span class="c1">#                               TRAFLAG=0,</span><span class="w">
-</span><span class="c1">#                               dict_obs= dict_obs,</span><span class="w">
-</span><span class="c1">#                               list_assimilated_obs='all', # default</span><span class="w">
-</span><span class="c1">#                               list_parm2update= ['St. var.', 'ZROOT0'],</span><span class="w">
-</span><span class="c1">#                               DA_type='enkf_Evensen2009',</span><span class="w">
-</span><span class="c1">#                               dict_parm_pert=var_per_dict_stacked,</span><span class="w">
-</span><span class="c1">#                             )</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">simuWithDA</span><span class="o">.</span><span class="n">run_DA_sequential</span><span class="p">(</span><span class="w">
+</span>                              <span class="n">VTKF</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>                              <span class="n">TRAFLAG</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w">
+</span>                              <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">dict_obs</span></a><span class="o">=</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">dict_obs</span></a><span class="p">,</span><span class="w">
+</span>                              <span class="n">list_assimilated_obs</span><span class="o">=</span><span class="s1">'</span><span class="s1">all</span><span class="s1">'</span><span class="p">,</span> <span class="c1"># default</span><span class="w">
+</span>                              <span class="n">list_parm2update</span><span class="o">=</span> <span class="p">[</span><span class="s1">'</span><span class="s1">St. var.</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'</span><span class="s1">ZROOT0</span><span class="s1">'</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>                              <span class="n">DA_type</span><span class="o">=</span><span class="s1">'</span><span class="s1">enkf_Evensen2009</span><span class="s1">'</span><span class="p">,</span><span class="w">
+</span>                              <span class="n">dict_parm_pert</span><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">var_per_dict_stacked</span></a><span class="p">,</span><span class="w">
+</span>                            <span class="p">)</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.184 seconds)</p>
+<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_3_run_sequentialDA_SMC.py"</span>, line <span class="m">140</span>, in <span class="n">&lt;module&gt;</span>
+<span class="w">    </span><span class="n">simuWithDA</span><span class="o">.</span><span class="n">run_DA_sequential</span><span class="p">(</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py"</span>, line <span class="m">630</span>, in <span class="n">run_DA_sequential</span>
+<span class="w">    </span><span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_states2Observations</span><span class="p">(</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py"</span>, line <span class="m">2484</span>, in <span class="n">map_states2Observations</span>
+<span class="w">    </span><span class="n">df_psi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_outputs</span><span class="p">(</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py"</span>, line <span class="m">4792</span>, in <span class="n">read_outputs</span>
+<span class="w">    </span><span class="n">df</span> <span class="o">=</span> <span class="n">out_CT</span><span class="o">.</span><span class="n">read_psi</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_outputs.py"</span>, line <span class="m">617</span>, in <span class="n">read_psi</span>
+<span class="w">    </span><span class="k">if</span> <span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+<span class="gr">IndexError</span>: <span class="n">list index out of range</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 39.380 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-da-plot-3-run-sequentialda-smc-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/81632c37edd68a2a51d124e454b1b5c6/plot_3_run_sequentialDA_SMC.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_3_run_sequentialDA_SMC.ipynb</span></code></a></p>
@@ -712,7 +726,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 07, 2026.
+  Last updated on Oct 08, 2026.
   <br/>
 </p>
   </div>

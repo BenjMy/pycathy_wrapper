@@ -64,10 +64,10 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Observations covariances, Localisation matrix" href="plot_5_covariances.html" />
-    <link rel="prev" title="Read SMC sensors observations to assimilate" href="plot_3_run_sequentialDA_SMC.html" />
+    <link rel="prev" title="Assimilate SMC sensors observations" href="plot_3_run_sequentialDA_SMC.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 07, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
   </head>
   
   
@@ -204,7 +204,7 @@
 <li class="toctree-l2"><a class="reference internal" href="plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_3_run_sequentialDA_SMC.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_3_run_sequentialDA_SMC.html">Assimilate SMC sensors observations</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Read EM dataset observations &amp; assimilate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
@@ -469,6 +469,7 @@ to download the full example code.</p>
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="nn">.</span><span class="nn">observations</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_observations</span><span class="p">,</span> <span class="n">prepare_observations</span><span class="p">,</span> <span class="n">make_data_cov</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="nn">.</span><a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="nn">DA</span></a><span class="nn">.</span><span class="nn">cathy_DA</span><span class="w"> </span><span class="kn">import</span> <span class="n">mapper</span><span class="w">
 </span></pre></div></div>
 <hr class="docutils" />
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">simuWithDA</span> <span class="o">=</span> <a class="sphx-glr-backref-module-pyCATHY sphx-glr-backref-type-py-class reference internal" href="../api/generated/DA.cathy_DA.CATHY.html#DA.cathy_DA.CATHY" title="pyCATHY.CATHY"><span class="n">DA</span></a><span class="p">(</span><span class="w">
@@ -480,7 +481,7 @@ to download the full example code.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🏁 Initiate CATHY object
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">ER_converted_ti</span><span class="p">,</span> <span class="n">df_Archie</span><span class="p">,</span> <span class="n">sw_nodes</span> <span class="o">=</span>   <span class="n">Archie</span><span class="o">.</span><span class="n">SW_2_ER0_DA</span><span class="p">(</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">ER_converted_ti</span><span class="p">,</span> <span class="n">df_Archie</span><span class="p">,</span> <span class="n">sw_nodes</span> <span class="o">=</span>  <span class="n">Archie</span><span class="o">.</span><span class="n">SW_2_ER0_DA</span><span class="p">(</span><span class="w">
 </span>                                        <span class="n">project_name</span><span class="p">,</span><span class="w">
 </span>                                        <span class="n">Archie_parms</span><span class="p">,</span><span class="w">
 </span>                                        <span class="n">POROS_mesh_nodes_ensi</span><span class="p">,</span><span class="w">
@@ -499,7 +500,7 @@ to download the full example code.</p>
 </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">  max = </span><span class="si">{</span><span class="n">EC_converted_ti_mS_m</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> mS/m</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="s1">Build forward EM model</span><span class="s1">'</span><span class="p">)</span><span class="w">
-</span><span class="n">depths</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">xy_coords</span> <span class="o">=</span> <span class="n">build_forward_profiles</span><span class="p">(</span><span class="n">EC_converted_ti_mS_m</span><span class="p">,</span><span class="w">
+</span><span class="n">depths</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">xy_coords</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">build_forward_profiles</span><span class="p">(</span><span class="n">EC_converted_ti_mS_m</span><span class="p">,</span><span class="w">
 </span>                                                  <span class="n">grid3d</span><span class="p">[</span><span class="s1">'</span><span class="s1">mesh3d_nodes</span><span class="s1">'</span><span class="p">]</span><span class="p">,</span><span class="w">
 </span>                                                  <span class="n">var</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">EC</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
@@ -518,12 +519,12 @@ to download the full example code.</p>
 </span><span class="n">EM_fwd_model_1darray</span> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.hstack.html#numpy.hstack" title="numpy.hstack"><span class="n">np</span><span class="o">.</span><span class="n">hstack</span></a><span class="p">(</span><span class="n">EM_fwd_model_2darray</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_4_EM_DA.py"</span>, line <span class="m">31</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="n">ER_converted_ti</span><span class="p">,</span> <span class="n">df_Archie</span><span class="p">,</span> <span class="n">sw_nodes</span> <span class="o">=</span>   <span class="n">Archie</span><span class="o">.</span><span class="n">SW_2_ER0_DA</span><span class="p">(</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_4_EM_DA.py"</span>, line <span class="m">33</span>, in <span class="n">&lt;module&gt;</span>
+<span class="w">    </span><span class="n">ER_converted_ti</span><span class="p">,</span> <span class="n">df_Archie</span><span class="p">,</span> <span class="n">sw_nodes</span> <span class="o">=</span>  <span class="n">Archie</span><span class="o">.</span><span class="n">SW_2_ER0_DA</span><span class="p">(</span>
 <span class="gr">NameError</span>: <span class="n">name 'Archie' is not defined</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.003 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.001 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-da-plot-4-em-da-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/dd7e386fa3cfdcfdce5b7a75f36e321a/plot_4_EM_DA.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_4_EM_DA.ipynb</span></code></a></p>
@@ -574,7 +575,7 @@ to download the full example code.</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Read SMC sensors observations to assimilate</p>
+        <p class="prev-next-title">Assimilate SMC sensors observations</p>
       </div>
     </a>
     <a class="right-next"
@@ -621,7 +622,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 07, 2026.
+  Last updated on Oct 08, 2026.
   <br/>
 </p>
   </div>

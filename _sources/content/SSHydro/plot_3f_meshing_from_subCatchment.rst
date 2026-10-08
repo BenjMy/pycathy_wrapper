@@ -521,7 +521,7 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-154
+.. GENERATED FROM PYTHON SOURCE LINES 106-155
 
 .. code-block:: Python
 
@@ -552,6 +552,7 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     SPP_map['PERMZ'] = 6.88e-4
 
     #% Update soil file
+    simu.update_veg_map()
     simu.update_soil(SPP_map=SPP_map)
 
 
@@ -575,23 +576,27 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
 
 
 
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/SSHydro/plot_3f_meshing_from_subCatchment.py", line 133, in <module>
-        simu.update_soil(SPP_map=SPP_map)
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 2761, in update_soil
-        FP_map = self.set_SOIL_defaults(FP_map_default=True)
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 3032, in set_SOIL_defaults
-        nveg = len(np.unique(self.veg_map))
-    AttributeError: 'CATHY' object has no attribute 'veg_map'
+    🍳 gfortran compilation
+    👟 Run preprocessor
+    🔄 Update parm file 
+    🔄 Update soil
+    homogeneous soil
+    🔄 Update ic
+    Single value detected for ic ==> assumming it homogeneous
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-167
+.. GENERATED FROM PYTHON SOURCE LINES 156-168
 
 .. code-block:: Python
 
@@ -608,7 +613,19 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     #                     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-182
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    1271
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 169-183
 
 .. code-block:: Python
 
@@ -628,9 +645,15 @@ meshfile = rootpath + "/vtk/" + simu.project_name + ".vtk"
     # image = pl.screenshot('test.png')
 
 
+
+
+
+
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 16.016 seconds)
+   **Total running time of the script:** (0 minutes 16.419 seconds)
 
 
 .. _sphx_glr_download_content_SSHydro_plot_3f_meshing_from_subCatchment.py:
