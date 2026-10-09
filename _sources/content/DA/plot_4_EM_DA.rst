@@ -134,7 +134,7 @@ The notebook illustrate how to read EM sensors dataset to be prepare for DA
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.001 seconds)
+   **Total running time of the script:** (0 minutes 0.505 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_4_EM_DA.py:

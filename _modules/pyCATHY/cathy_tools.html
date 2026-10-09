@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
   </head>
   
   
@@ -4809,13 +4809,13 @@ document.write(`
         <span class="n">unique_markers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">"cell_markers_zone3d"</span><span class="p">])</span>
 
         <span class="c1"># Check that the number of properties matches the number of unique markers</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">'Skip Error Temporary!'</span><span class="p">)</span>
-        <span class="c1"># if len(prop_map) != len(unique_markers):</span>
-        <span class="c1">#     raise ValueError(</span>
-        <span class="c1">#         f"Mismatch between property map (len={len(prop_map)}) "</span>
-        <span class="c1">#         f"and unique mesh cell markers (len={len(unique_markers)}). "</span>
-        <span class="c1">#         f"Markers: {unique_markers}"</span>
-        <span class="c1">#     )</span>
+        <span class="c1"># print('Skip Error Temporary!')</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prop_map</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_markers</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Mismatch between property map (len=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">prop_map</span><span class="p">)</span><span class="si">}</span><span class="s2">) "</span>
+                <span class="sa">f</span><span class="s2">"and unique mesh cell markers (len=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_markers</span><span class="p">)</span><span class="si">}</span><span class="s2">). "</span>
+                <span class="sa">f</span><span class="s2">"Markers: </span><span class="si">{</span><span class="n">unique_markers</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s2">"node_markers_zone3d"</span><span class="p">])</span>
         <span class="c1"># np.unique(prop_mesh_nodes)</span>
 
@@ -5754,7 +5754,7 @@ document.write(`
             <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span> <span class="o">+</span> <span class="s2">"_df.parquet"</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span> <span class="o">+</span> <span class="s2">".parquet"</span>
             <span class="p">)</span>
 
         <span class="n">backup_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5762,7 +5762,7 @@ document.write(`
             <span class="s2">"meta_DA"</span><span class="p">,</span>
             <span class="s2">"dict_parm_pert"</span><span class="p">,</span>
             <span class="s2">"df_DA"</span><span class="p">,</span>
-            <span class="s2">"dict_obs"</span><span class="p">,</span>
+            <span class="s2">"df_obs"</span><span class="p">,</span>
             <span class="s2">"df_performance"</span><span class="p">,</span>
             <span class="s2">"ET_DA_xr"</span><span class="p">,</span>
             <span class="s2">"df_Archie"</span><span class="p">,</span>
@@ -5832,7 +5832,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 08, 2026.
+  Last updated on Oct 09, 2026.
   <br/>
 </p>
   </div>

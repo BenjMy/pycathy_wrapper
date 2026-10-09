@@ -205,7 +205,7 @@ Adapt them to your own dataset.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 11.550 seconds)
+   **Total running time of the script:** (0 minutes 11.212 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_5_covariances.py:

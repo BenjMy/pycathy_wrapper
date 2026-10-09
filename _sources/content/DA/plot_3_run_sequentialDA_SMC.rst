@@ -25,7 +25,7 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 
 *Estimated time to run the notebook = 2min*
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-17
+.. GENERATED FROM PYTHON SOURCE LINES 10-18
 
 .. code-block:: Python
 
@@ -35,6 +35,7 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
     from pyCATHY.DA.cathy_DA import dictObs_2pd
     from pyCATHY.DA import perturbate
     import pickle
+    import os
 
 
 
@@ -43,11 +44,11 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-19
+.. GENERATED FROM PYTHON SOURCE LINES 19-20
 
 -----------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-26
+.. GENERATED FROM PYTHON SOURCE LINES 20-27
 
 .. code-block:: Python
 
@@ -71,7 +72,7 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-34
+.. GENERATED FROM PYTHON SOURCE LINES 28-35
 
 .. code-block:: Python
 
@@ -89,12 +90,12 @@ The notebook illustrate how to read SMC sensors dataset to be prepare for DA
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-37
+.. GENERATED FROM PYTHON SOURCE LINES 36-38
 
 By default, there is no correlation between sensors
 Therefore, the covariance matrices are diagonal with the error values on the diagonals
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-47
+.. GENERATED FROM PYTHON SOURCE LINES 38-48
 
 .. code-block:: Python
 
@@ -116,12 +117,12 @@ Therefore, the covariance matrices are diagonal with the error values on the dia
 
  .. code-block:: none
 
-    (49, 3, 3)
+    (10, 5, 5)
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-84
+.. GENERATED FROM PYTHON SOURCE LINES 49-85
 
 .. code-block:: Python
 
@@ -187,15 +188,10 @@ Therefore, the covariance matrices are diagonal with the error values on the dia
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-86
-
-stop
-
-.. GENERATED FROM PYTHON SOURCE LINES 86-111
+.. GENERATED FROM PYTHON SOURCE LINES 86-117
 
 .. code-block:: Python
 
-    import os
 
     var_per_dict_stacked = {}
     for dp in list_pert:
@@ -220,6 +216,13 @@ stop
                                                         )
 
 
+    atmbc_times = data_measure_df.index.get_level_values(1).unique().to_list()
+    simuWithDA.update_atmbc(HSPATM=1,IETO=0,
+                            time=atmbc_times,
+                            netValue=[0]*len(atmbc_times)
+                            )
+
+
 
 
 
@@ -227,33 +230,6 @@ stop
    :alt: Histogram of ZROOT0
    :srcset: /content/DA/images/sphx_glr_plot_3_run_sequentialDA_SMC_001.png
    :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 112-115
-
-f
-simuWithDA.parm
-simuWithDA.read_inputs('atmbc')
-
-.. GENERATED FROM PYTHON SOURCE LINES 115-125
-
-.. code-block:: Python
-
-    atmbc_times = data_measure_df.index.get_level_values(1).unique().to_list()
-    simuWithDA.update_atmbc(HSPATM=1,IETO=0,
-                            time=atmbc_times,
-                            netValue=[0]*len(atmbc_times)
-                            )
-
-    # simuWithDA.update_parm()
-    # simuWithDA.read_inputs('atmbc')
-
-
-
-
 
 
 .. rst-class:: sphx-glr-script-out
@@ -266,33 +242,7 @@ simuWithDA.read_inputs('atmbc')
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 126-127
-
-simuWithDA.atmbc
-
-.. GENERATED FROM PYTHON SOURCE LINES 127-138
-
-.. code-block:: Python
-
-
-    # simuWithDA.run_DA_smooth(
-    #                           VTKF=2,
-    #                           TRAFLAG=0,
-    #                           dict_obs= dict_obs,
-    #                           list_assimilated_obs='all', # default
-    #                           list_parm2update= ['St. var.', 'ZROOT0'],
-    #                           DA_type='enkf_Evensen2009',
-    #                           dict_parm_pert=var_per_dict_stacked,
-    #                         )
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 139-149
+.. GENERATED FROM PYTHON SOURCE LINES 118-128
 
 .. code-block:: Python
 
@@ -308,22 +258,2411 @@ simuWithDA.atmbc
                                 )
 
 
+
+
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ .. code-block:: none
 
-    Traceback (most recent call last):
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_3_run_sequentialDA_SMC.py", line 140, in <module>
-        simuWithDA.run_DA_sequential(
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py", line 630, in run_DA_sequential
-        prediction = self.map_states2Observations(
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py", line 2484, in map_states2Observations
-        df_psi = self.read_outputs(
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/cathy_tools.py", line 4792, in read_outputs
-        df = out_CT.read_psi(path)
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/cathy_outputs.py", line 617, in read_psi
-        if (idx[-1]-idx[-2])==len(lines):
-    IndexError: list index out of range
+    🔄 Update parm file 
+    🛠  Recompile src files [0s]
+    🍳 gfortran compilation [7s]
+    ✅ Compilation successful!
+    😟 processor exe not found
+    Archie parameters not defined set defaults
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Archie parameters not defined - Falling back to defaults
+    VGN parameters not defined - Falling back to defaults
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🛠  Recompile src files [7s]
+    🍳 gfortran compilation [14s]
+    ✅ Compilation successful!
+    👟 Run processor
+    b'\n\n IPRT1=3: Program terminating after output of X, Y, Z coordinate values\n'
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    🍳 gfortran compilation
+    👟 Run preprocessor
+    🔄 Update parm file 
+    🛠  Recompile src files [26s]
+    🍳 gfortran compilation [33s]
+    ✅ Compilation successful!
+    👟 Run processor
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1920, Std=0.1024
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0105
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=6.56e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0131
+      Off-diagonal mean: 0.0105
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ───────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 0/86400 📍 ─────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 1/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 1/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1778, Std=0.1110
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0101
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=6.33e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0126
+      Off-diagonal mean: 0.0101
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 9600/86400 📍 ────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 2/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 2/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1728, Std=0.1019
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0098
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=6.11e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0122
+      Off-diagonal mean: 0.0098
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: 0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 19200/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 3/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 3/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1691, Std=0.1006
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0095
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=5.94e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0119
+      Off-diagonal mean: 0.0095
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 28800/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 4/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 4/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1612, Std=0.0975
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0093
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=5.81e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0116
+      Off-diagonal mean: 0.0093
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 38400/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 5/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 5/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1685, Std=0.0966
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0091
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=5.72e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0114
+      Off-diagonal mean: 0.0091
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 48000/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 6/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 6/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1644, Std=0.0972
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0090
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=5.64e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0113
+      Off-diagonal mean: 0.0090
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 57600/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 7/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 7/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1633, Std=0.0968
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0089
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=5.60e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0112
+      Off-diagonal mean: 0.0089
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: -0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 67200/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 8/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    🧽 update input ensemble
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update parm file 
+    🔄 Update atmbc
+    🔄 Update parm file 
+    🔄 Update ensemble
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:2247: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
+    You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
+    A typical example is when you are setting values in a column of a DataFrame, like:
+
+    df["col"][row_indexer] = value
+
+    Use `df.loc[row_indexer, "col"] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+      Feddes_withPertParam[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    homogeneous soil
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 8/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
+    👟 Run hydrological model
+    ✅ check scenarii before analysis
+    🗺  map states to observations 
+    ens nb:0
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:1
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:2
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:3
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    ens nb:4
+    mean porosity:0.55
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    Transform sat to SWC with porosity=' [0.55]
+    ───────────────────────────────────────────────────────────────────────────────── ⚠ warning messages above ⚠ ─────────────────────────────────────────────────────────────────────────────────
+    Current implementation does not support different porosity zones! 
+                Only layers porosity is considered - Taking zone 1 as default
+        
+    📈 Analysis:
+                                           - DA type: enkf_Evensen2009
+                                           - Inflation: 1
+                                   
+    Assimilated Observations are: all
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    :
+                                   - Data size: (5,)
+                                     --> Observations --> all
+                           
+    parm size: 1
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:124: UserWarning: Sakov is True
+      warnings.warn("Sakov is True")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:133: UserWarning: inflate_states not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_states not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:138: UserWarning: inflate_params not provided. Using default: 1.0 (no inflation).
+      warnings.warn("inflate_params not provided. Using default: 1.0 (no inflation).")
+    /home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/cathy_DA.py:143: UserWarning: jitter_params not provided. Using default: 0.0 (no additive noise).
+      warnings.warn("jitter_params not provided. Using default: 0.0 (no additive noise).")
+
+    [INIT] Starting EnKF analysis (Sakov=False)
+    [INFO] Ensemble size N_ens=5
+    [INFO] Number of state variables N_state=7056
+    [INFO] Number of observations N_obs=5
+    [STEP 1] Computed state ensemble mean
+    [STEP 1b] Computed parameter ensemble mean
+    [STEP 1c] Constructed augmented state 
+    [STEP 2] Computed state+param perturbations. Var=0.0000
+    [STEP 3] Computed innovation (obs - pred). Mean=-0.1613, Std=0.0947
+    [STEP 4] Computed predicted obs mean and perturbations. Obs spread Var=0.0089
+    [WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)
+    [STEP 5] Computed full covariance matrix COV = SS^T + R
+    [INFO] COV shape=(5, 5), cond#=5.56e+02
+    [STEP 6] Computed state-observation cross covariance. Norm=0.0000
+    [STEP 7] Applied analysis update
+    [STEP 8] Separated updated states and parameters → DONE.
+
+    [COV-ANALYSIS] Measurement error covariance R:
+      Shape: (5, 5)
+      Diagonal? True
+      → Assumes independent measurement errors (no correlation).
+
+    [COV-ANALYSIS] Ensemble obs covariance (HPH^T):
+      Shape: (5, 5)
+      Diagonal mean: 0.0111
+      Off-diagonal mean: 0.0089
+      → Represents uncertainty in predicted observations,
+        includes correlations between observation points due to model physics.
+
+    [COV-ANALYSIS] Forecast state covariance P^f:
+      Shape: (7057, 7057)
+      Diagonal mean: 0.0000
+      Off-diagonal mean: 0.0000
+      → Encodes ensemble uncertainty in state space.
+      → Off-diagonal terms = spatial correlations between state variables.
+
+    [COV-ANALYSIS] Cross-covariance P_xo:
+      Shape: (7057, 5)
+      → Links state errors with observation errors.
+      → High values mean that changing this state strongly affects certain observations.
+      → This is what determines how much each observation updates each state.
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Plotting COV matrices
+    🧐 check analysis performance
+    Assimilated Observations are: all
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc1']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc2']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc3']
+    !!!!Take care here not sure I am taking the right time!!!
+    Assimilated Observations are: ['swc4']
+    !!!!Take care here not sure I am taking the right time!!!
+    !positive pressure heads observed!
+    ✅ check scenarii post update
+    **************************
+    [1. 1. 1. 1. 1.]
+    2.665
+    ❌ unfeasible root depth:[], ens_nb:[]
+    ─────────────────────────────────────────────────────────────────────────── 📍 end of time step (s) 76800/86400 📍 ───────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 📍 end of atmbc update # 9/10 📍 ──────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────── Back up DA step ───────────────────────────────────────────────────────────────────────────────────────
+    Parameters to update are: ['St. var.', 'ZROOT0']
+    ─────────────────────────────────────────────────────────────────────────────────────── 🔴 end of DA🔴 ───────────────────────────────────────────────────────────────────────────────────────
+    ['St. var.', 'ZROOT0']
+    ──────────────────────────────────────────────────────────────────────────────── 🔴 end of DA update 9/10 🔴 ─────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────── 🎯 % of valid ensemble: 100.0🎯 ───────────────────────────────────────────────────────────────────────────────
 
 
 
@@ -331,7 +2670,7 @@ simuWithDA.atmbc
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 39.380 seconds)
+   **Total running time of the script:** (2 minutes 34.696 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_3_run_sequentialDA_SMC.py:

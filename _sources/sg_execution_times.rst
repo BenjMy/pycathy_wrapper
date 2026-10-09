@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**12:36.395** total execution time for 22 files **from all galleries**:
+**14:58.969** total execution time for 22 files **from all galleries**:
 
 .. container::
 
@@ -38,17 +38,17 @@ Computation times
    * - :ref:`sphx_glr_content_EOdata_plot_4b_map_from_coarse_ET_EO.py` (``../examples/EOdata/plot_4b_map_from_coarse_ET_EO.py``)
      - 03:13.087
      - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py` (``../examples/DA/plot_3_run_sequentialDA_SMC.py``)
+     - 02:34.696
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py` (``../examples/DA/plot_Weilletal_sensitivityAnalysis.py``)
+     - 00:53.924
+     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3d_spatial_atmbc_from_weill_withnonodes.py` (``../examples/SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.py``)
      - 00:53.827
      - 0.0
-   * - :ref:`sphx_glr_content_DA_plot_3_run_sequentialDA_SMC.py` (``../examples/DA/plot_3_run_sequentialDA_SMC.py``)
-     - 00:39.380
-     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3c_spatial_atmbc_from_weill.py` (``../examples/SSHydro/plot_3c_spatial_atmbc_from_weill.py``)
      - 00:33.132
-     - 0.0
-   * - :ref:`sphx_glr_content_DA_plot_Weilletal_sensitivityAnalysis.py` (``../examples/DA/plot_Weilletal_sensitivityAnalysis.py``)
-     - 00:26.832
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_1_pyCATHY_weilletal.py` (``../examples/SSHydro/plot_1_pyCATHY_weilletal.py``)
      - 00:19.527
@@ -63,7 +63,7 @@ Computation times
      - 00:11.812
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``../examples/DA/plot_5_covariances.py``)
-     - 00:11.550
+     - 00:11.212
      - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``../examples/SSHydro/plot_3a_create_soil_withzones.py``)
      - 00:10.901
@@ -72,7 +72,7 @@ Computation times
      - 00:01.871
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_4_EM_DA.py` (``../examples/DA/plot_4_EM_DA.py``)
-     - 00:00.001
+     - 00:00.505
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``../examples/DA/plot_2_prepare_SMC_obs4DA.py``)
      - 00:00.000
