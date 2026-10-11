@@ -67,7 +67,7 @@
     <link rel="prev" title="Creating and Managing Parameter Perturbation Scenarios for Data Assimilation" href="plot_1a_perturbate.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 08, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
   </head>
   
   
@@ -520,20 +520,20 @@ to download the full example code.</p>
 </span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">SMC_XYZ</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.vstack.html#numpy.vstack" title="numpy.vstack"><span class="n">np</span><span class="o">.</span><span class="n">vstack</span></a><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="list"><span class="n">closestPos</span></a><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="w">
-</span><span class="n">pl</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
-</span><span class="n">mesh</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.html#pyvista.Plotter" title="pyvista.Plotter"><span class="n">pl</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-class reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.html#pyvista.Plotter" title="pyvista.Plotter"><span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span></a><span class="p">(</span><span class="n">notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.UnstructuredGrid.html#pyvista.UnstructuredGrid" title="pyvista.UnstructuredGrid"><span class="n">mesh</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-function reference external" href="https://docs.pyvista.org/api/readers/_autosummary/pyvista.read.html#pyvista.read" title="pyvista.read"><span class="n">pv</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path"><span class="n">Path</span></a><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">simuWithDA</span><span class="o">.</span><span class="n">workdir</span></a><span class="p">)</span> <span class="o">/</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">simuWithDA</span><span class="o">.</span><span class="n">project_name</span></a> <span class="o">/</span><span class="w">
 </span>    <span class="sa">f</span><span class="s1">'</span><span class="s1">vtk/</span><span class="si">{</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="str"><span class="n">simuWithDA</span><span class="o">.</span><span class="n">project_name</span></a><span class="si">}</span><span class="s1">.vtk</span><span class="s1">'</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="n">pl</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-method reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.add_mesh.html#pyvista.Plotter.add_mesh" title="pyvista.Plotter.add_mesh"><span class="n">pl</span><span class="o">.</span><span class="n">add_mesh</span></a><span class="p">(</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.UnstructuredGrid.html#pyvista.UnstructuredGrid" title="pyvista.UnstructuredGrid"><span class="n">mesh</span></a><span class="p">,</span><span class="w">
 </span>           <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="w">
 </span>           <span class="p">)</span><span class="w">
-</span><span class="n">pl</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">SMC_XYZ</span></a><span class="p">,</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-method reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.add_points.html#pyvista.Plotter.add_points" title="pyvista.Plotter.add_points"><span class="n">pl</span><span class="o">.</span><span class="n">add_points</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">SMC_XYZ</span></a><span class="p">,</span><span class="w">
 </span>             <span class="n">color</span><span class="o">=</span><span class="s1">'</span><span class="s1">red</span><span class="s1">'</span><span class="w">
 </span>             <span class="p">)</span><span class="w">
-</span><span class="n">pl</span><span class="o">.</span><span class="n">show_grid</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span><span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-method reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.show_grid.html#pyvista.Plotter.show_grid" title="pyvista.Plotter.show_grid"><span class="n">pl</span><span class="o">.</span><span class="n">show_grid</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-pyvista sphx-glr-backref-type-py-method reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.show.html#pyvista.Plotter.show" title="pyvista.Plotter.show"><span class="n">pl</span><span class="o">.</span><span class="n">show</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_2_prepare_SMC_obs4DA_002.png" srcset="../../_images/sphx_glr_plot_2_prepare_SMC_obs4DA_002.png" alt="plot 2 prepare SMC obs4DA" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>🍳 gfortran compilation
 👟 Run preprocessor
@@ -1000,7 +1000,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 08, 2026.
+  Last updated on Oct 09, 2026.
   <br/>
 </p>
   </div>
