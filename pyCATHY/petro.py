@@ -134,7 +134,6 @@ def Archie_rho2sat(rho, rFluid, porosity, a=1.0, m=2.0, n=2.0):
 #%% ---------------------------------------------------------------------------
 #############  predict soil physical properties from literature ###############
 ## ---------------------------------------------------------------------------
-
 def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     """
     Predict Van Genuchten hydraulic parameters using Rosetta pedotransfer function
@@ -217,12 +216,15 @@ def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     soildata = SoilData.from_array(data)
     mean, stdev, codes = rosetta(3, soildata)  # Rosetta version 3
 
+    if mean.shape[0] > 1:
+        print(f"Warning: Rosetta returned {mean.shape[0]} rows. Only the first sample will be used.")
+    
     # Extract Rosetta outputs
-    theta_r = float(mean[:, 0])
-    theta_s = float(mean[:, 1])
-    alpha = 10 ** float(mean[:, 2])  # 1/cm
-    n = 10 ** float(mean[:, 3])
-    ksat = 10 ** float(mean[:, 4])  # cm/day
+    theta_r = float(mean[0, 0])
+    theta_s = float(mean[0, 1])
+    alpha = 10 ** float(mean[0, 2])  # 1/cm
+    n = 10 ** float(mean[0, 3])
+    ksat = 10 ** float(mean[0, 4])  # cm/day
 
 
     # Compute CATHY parameters
@@ -243,6 +245,7 @@ def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     # VGP_predict_CATHY["VGM"] = 1 - 1 / n        # Van Genuchten m
 
     return VGP_predict_CATHY
+
 
 
 

@@ -11,7 +11,7 @@ import numpy as np
 
 from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.importers import sensors_measures as in_meas
-from pyCATHY.DA.cathy_DA import dictObs_2pd
+from pyCATHY.cathy_utils import dictObs_2pd
 
 
 def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, 

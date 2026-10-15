@@ -579,13 +579,12 @@ def Archie_rho_DA(
             except:
                 if i == 0:
                     print('Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95')
-                for meas_nb in range(len(sigma)):  # Loop over mesh nodes
-                    # See eq. 4.4 thesis Isabelle p.95
-                    # ------------------------------------
-                    noise = np.random.normal(
-                        0, (pert_sigma_Archie[i] * (sigma[meas_nb])) ** 2, 1
-                    )  # See eq. 4.4 thesis Isabelle p.95
-                    sigma[meas_nb] = sigma[meas_nb] + noise
+                # one normal draw per mesh node (vectorised: same random stream as a loop of
+                # single draws; assigning a size-1 array to a scalar element fails with NumPy >= 2.4)
+                # See eq. 4.4 thesis Isabelle p.95
+                # ------------------------------------
+                noise = np.random.normal(0, (pert_sigma_Archie[i] * sigma) ** 2)
+                sigma = sigma + noise
     
     print('max res after Archie')
     print(np.max(1 / sigma))

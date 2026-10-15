@@ -53,6 +53,23 @@ from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.cathy_utils import dictObs_2pd
 from pyCATHY.config_manager import VersionConfigManager
 
+# Fortran sources of the CATHY processor, fetched on first use of a project.
+# Pinned to a commit so that two projects created on different days run the same
+# code (the `main` branch moves). To upgrade: pick a new commit of
+# https://github.com/CATHY-Org/CATHY_src_org, check the results again, change the hash.
+CATHY_SRC_URL = "https://github.com/CATHY-Org/CATHY_src_org.git"
+CATHY_SRC_COMMIT = "ef54607df776dbb6f7d974329e5f72a276403d5c"
+
+
+def _clone_cathy_src(dest, url=CATHY_SRC_URL, commit=CATHY_SRC_COMMIT):
+    """Fetch exactly ``commit`` of the CATHY sources into ``dest`` (shallow, no history)."""
+    repo = Repo.init(dest)
+    repo.create_remote("origin", url)
+    repo.git.fetch("--depth", "1", "origin", commit)
+    repo.git.checkout("FETCH_HEAD")
+    return repo.head.commit.hexsha
+
+
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -240,10 +257,8 @@ class CATHY:
                     #    branch="master",
                     #)
 
-                    Repo.clone_from(
-                        "https://github.com/CATHY-Org/CATHY_src_org.git",
-                        os.path.join(self.workdir, self.project_name, "tmp_src"),
-                        branch="main",
+                    _clone_cathy_src(
+                        os.path.join(self.workdir, self.project_name, "tmp_src")
                     )
 
 
@@ -271,10 +286,9 @@ class CATHY:
                             os.path.join(self.workdir, self.project_name, file),
                         )
 
-                except:
-                    print("no internet connection to fetch the files")
+                except Exception as exc:
+                    print(f"could not fetch the CATHY source files ({exc})")
                     sys.exit()
-                    pass
 
             if version == "G. Manoli":
                 print("fetch cathy G. Manoli src files")
@@ -699,6 +713,16 @@ class CATHY:
             self.console.print(":athletic_shoe: [b]Run processor[/b]")
             callexe = "./" + self.processor_name
 
+            # A mesh-building run (IPRT1=3) must never be followed by reading
+            # a leftover output/grid3d (e.g. the 20x20 one shipped with the
+            # project template). Remove it first so that, if the processor
+            # fails, the failure is visible instead of silently reusing it.
+            _grid_file = os.path.join(
+                self.workdir, self.project_name, "output", "grid3d"
+            )
+            if kwargs.get("IPRT1") == 3 and os.path.exists(_grid_file):
+                os.remove(_grid_file)
+
             # case of simple simulation
             # ----------------------------------------------------------------
             with warnings.catch_warnings():
@@ -754,9 +778,27 @@ class CATHY:
             if verbose:
                 # stdout, stderr = p.communicate()  # This will block until the process finishes
                 # print(result)
-                print(p.stdout)
-                # print(p.stderr)
+                print(p.stdout.decode(errors="replace"))
+                print(p.stderr.decode(errors="replace"))
             os.chdir(os.path.join(self.workdir))
+
+            # Fortran runtime errors (e.g. "End of file", array overflows)
+            # go to stderr with a non-zero exit status. For the mesh-building
+            # run, fail loudly with the real message instead of continuing.
+            if p.returncode != 0:
+                _err = p.stderr.decode(errors="replace")[-2000:]
+                if kwargs.get("IPRT1") == 3:
+                    raise RuntimeError(
+                        "CATHY processor failed while building the mesh "
+                        "(IPRT1=3). Check that DEM, root_map, soil and "
+                        "dem_parameters are consistent with CATHY.H.\n" + _err
+                    )
+                else:
+                    warnings.warn(
+                        "CATHY processor exited with code {}:\n{}".format(
+                            p.returncode, _err
+                        )
+                    )
 
 
             try:
@@ -789,6 +831,7 @@ class CATHY:
                 self.run_processor(IPRT1=3)
             else:
                 self._grid3d_read_retried = False
+                self._check_grid3d_vs_dem(strict=(kwargs.get("IPRT1") == 3))
 
             # if not "nnod3" in self.grid3d.keys():
             #     self.run_processor(IPRT1=3)
@@ -800,6 +843,37 @@ class CATHY:
             # self.total_computation_time = t1 - t0
 
         return
+
+    def _check_grid3d_vs_dem(self, strict=True):
+        """
+        Verify that the grid3d just read from output/ matches the DEM / layer
+        definition held in memory (hapin, dem_parameters). A mismatch means
+        output/grid3d is stale or the preprocessor used another DEM.
+        """
+        try:
+            nrow, ncol = int(self.hapin["M"]), int(self.hapin["N"])
+            nstr = int(self.dem_parameters["nstr"])
+            nnod = int(self.grid3d["nnod"])
+            nnod3 = int(self.grid3d["nnod3"])
+        except (AttributeError, KeyError, TypeError):
+            return  # project loaded from disk without in-memory DEM info
+        try:
+            if float(self.dem_parameters.get("factor", 1.0)) != 1.0:
+                return  # coarsened mesh: node count legitimately differs from the DEM
+        except (TypeError, ValueError):
+            pass
+        exp_nnod = (nrow + 1) * (ncol + 1)
+        exp_nnod3 = exp_nnod * (nstr + 1)
+        if nnod != exp_nnod or nnod3 != exp_nnod3:
+            msg = (
+                "grid3d does not match the DEM: found nnod={}, nnod3={} but a "
+                "{}x{} DEM with nstr={} needs nnod={}, nnod3={}. "
+                "output/grid3d is stale, or the preprocessor / processor "
+                "used different inputs (root_map, hap.in, CATHY.H)."
+            ).format(nnod, nnod3, nrow, ncol, nstr, exp_nnod, exp_nnod3)
+            if strict:
+                raise RuntimeError(msg)
+            warnings.warn(msg)
 
     def create_output(self, output_dirname="output"):
         """
@@ -1243,6 +1317,7 @@ class CATHY:
 
         # print("update hap.in")
         self.console.print(":arrows_counterclockwise: [b]Update hap.in file[/b]")
+        self._mesh_dirty = True  # DEM / layers / spacing may change -> mesh must be rebuilt
 
         structural_parameter = [
             "delta_x",
@@ -1374,6 +1449,17 @@ class CATHY:
             self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
             self.update_dem(DEM)
             self.update_zone()
+
+            # The project template ships a 20x20 root_map. If it is left as is,
+            # the processor cannot build the mesh for a different DEM size.
+            # Write a placeholder matching the DEM, WITHOUT setting
+            # self.veg_map (so MAXVEG is not made "sticky" at 1; a real map
+            # given later through update_veg_map() still takes over).
+            _vm = getattr(self, "veg_map", None)
+            if _vm is None or np.shape(_vm) != np.shape(DEM):
+                self._write_root_map(np.ones(np.shape(DEM), dtype=int))
+
+            self._mesh_dirty = True
 
             with open(
                 os.path.join(self.workdir, self.project_name, "prepro/dtm_13.val"), "w+"
@@ -3470,6 +3556,8 @@ class CATHY:
 
         self.MAXVEG = self._resolve_maxveg(indice_veg, maxveg)
         self.update_cathyH(MAXVEG=self.MAXVEG)
+        if getattr(self, "_mesh_built_maxveg", None) not in (None, self.MAXVEG):
+            self._mesh_dirty = True  # CATHY.H changed -> processor must be rebuilt
 
         if show:
             ax = plt_CT.show_indice_veg(self.veg_map, **kwargs)
@@ -4294,6 +4382,12 @@ class CATHY:
 
         pass
 
+    def _mesh_is_stale(self):
+        """True if the cached mesh is missing or inputs changed since it was built."""
+        return (not hasattr(self, "mesh_pv_attributes")) or getattr(
+            self, "_mesh_dirty", False
+        )
+
     def create_mesh_vtk(self, verbose=False):
         """
         Create custum mesh
@@ -4315,6 +4409,8 @@ class CATHY:
             ),
             binary=False,
         )
+        self._mesh_dirty = False
+        self._mesh_built_maxveg = getattr(self, "MAXVEG", 1)
 
         # THIS IS A TEMPORARY IMPLEMENTATION OF THE PYVISTA MESH
         #  https://docs.pyvista.org/examples/00-load/create-structured-surface.html
@@ -4378,7 +4474,7 @@ class CATHY:
             Updated pyvista mesh with new property.
         """
 
-        if hasattr(self, "mesh_pv_attributes") == False:
+        if self._mesh_is_stale():
             self.create_mesh_vtk()
 
         saveMeshPath = None
@@ -4474,7 +4570,7 @@ class CATHY:
         """
         Add a given physical property to the CATHY mesh
         """
-        if hasattr(self, "mesh_pv_attributes") == False:
+        if self._mesh_is_stale():
             self.create_mesh_vtk()
 
         # Guard against a stale cached mesh: if the CATHY grid has been

@@ -10,22 +10,17 @@ import pandas as pd
 from pyCATHY.plotters import cathy_plots as pltCT
 
 
-def read_atmbc(filename, grid=[], show=False, **kwargs):
+def read_atmbc(filename, grid=None, show=False, **kwargs):
     """
     read atmbc file
 
-
     Returns
     -------
-    atmbc dataframe.
-
+    atmbc dataframe, HSPATM, IETO
     """
 
-    # filename = './input/atmbc'
-    atmbc_file = open(filename, "r")
-    lines = atmbc_file.readlines()
-    # lines = [ligne.strip() for ligne in lines] # avoid retour chariot
-    atmbc_file.close()
+    with open(filename, "r") as atmbc_file:
+        lines = atmbc_file.readlines()
 
     # read header flags
     Line0_header = [int(word) for word in lines[0].split() if word.isdigit()]
@@ -34,42 +29,25 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
 
     t = []
     value = []
-    tstep_idx = []
-    # loop over lines
 
     if HSPATM != 0:  # homogeneous on all surf mesh nodes
 
         for i, ll in enumerate(lines):
             if i > 0:
-                # test_char = re.search('[a-zA-Z]', ll)
-                # if test_char is not None:
                 if "TIME".casefold() in ll.casefold():
-                    tstep_idx.append(i)
-                    splt = ll.split()
-                    t.append(float(splt[0]))
+                    t.append(float(ll.split()[0]))
 
-                # two cases (according to file formatting):
-                # numerical values + flag of value
-                # -----------------------------------------------------------------
-                # 1/ value (numeric) + 'VALUE'
                 elif "VALUE".casefold() in ll.casefold() or "ATMINP".casefold() in ll.casefold():
                     value.append(float(ll.split()[0]))
 
                 elif "\n" in ll:
-                    if len(ll.split())>0:
-                        if  (i % 2) == 0:
+                    if len(ll.split()) > 0:
+                        if (i % 2) == 0:
                             value.append(float(ll.split()[0]))
                         else:
                             t.append(float(ll.split()[0]))
-                    else:
-                        pass
-                        # take care of the additionnal empty lines (retour chariot)
-                        # in the end of the file
-                        # pass
+                    # else: skip additional empty lines at the end of the file
                 else:
-                    # only numerical values
-                    # 2/ value (numeric)
-                    # -----------------------------------------------------------------
                     value.append(float(ll.split()[0]))
 
         if len(value) != len(t):
@@ -77,46 +55,50 @@ def read_atmbc(filename, grid=[], show=False, **kwargs):
                 "Number of values does not match number of times (check flags TIME, VALUE)"
             )
 
-        d_atmbc = []
         d_atmbc = np.vstack([t, value])
         cols_atmbc = ["time", "value"]
         df_atmbc = pd.DataFrame(d_atmbc.T, columns=cols_atmbc)
 
     else:  # heterogeneous on all surf mesh nodes
 
-        for i, ll in enumerate(lines):
-            if i > 0:
-                # test_char = re.search('[a-zA-Z]', ll)
-                # if test_char is not None:
-                if "TIME".casefold() in ll.casefold():
-                    tstep_idx.append(i)
-                    splt = ll.split()
-                    t.append(float(splt[0]))
+        # parse by "time" flag; values may be spread over any number of
+        # lines / columns (np.savetxt writes a 2D array as rows)
+        t, blocks = [], []
+        for ll in lines[1:]:
+            if not ll.strip():
+                continue  # skip empty lines
+            if "time" in ll.lower():
+                t.append(float(ll.split()[0]))
+                blocks.append([])
+            else:
+                blocks[-1].extend(float(x) for x in ll.split())
 
+        sizes = {len(b) for b in blocks}
+        if len(sizes) != 1:
+            raise ValueError(
+                f"Inconsistent number of values per time step: {sorted(sizes)}"
+            )
+        n = sizes.pop()
+        if grid is not None and "nnod" in grid and n != int(grid["nnod"]):
+            raise ValueError(
+                f"atmbc has {n} values per time step but grid['nnod'] = {int(grid['nnod'])}"
+            )
 
-        # Example numerical data
-        # data_list = [1.0, 10, 15, 20, 1.5, 5, 8, 12, ...]  # Replace with your actual data
-        # n = int(grid["nnod"])  # Number of values for each time
+        df_atmbc = pd.DataFrame(
+            {"time": np.repeat(t, n), "value": np.concatenate(blocks)}
+        )
 
-        # Create a list of dictionaries with 'time' and 'values'
-        data_dicts = []
-        for i, j in enumerate(range(1, len(lines), int(grid["nnod"])+1)):
-            values = lines[j+1:j+int(grid["nnod"])+1]
-            for value in values:
-                # print(i,j)
-                # print(t[i])
-                data_dicts.append({'time': t[i], 'value': float(value.split()[0])})
-        df_atmbc = pd.DataFrame(data_dicts)
-
-    if show == True:
-        pltCT.show_atmbc(t, value, IETO=IETO)
-
-        try:
-            pltCT.show_atmbc_3d(df_atmbc)
-        except:
-            print("no vtk file found")
+    if show:
+        if HSPATM != 0:
+            pltCT.show_atmbc(t, value, IETO=IETO)
+        else:
+            try:
+                pltCT.show_atmbc_3d(df_atmbc)
+            except Exception:
+                print("no vtk file found")
 
     return df_atmbc, HSPATM, IETO
+
 
 
 def read_parm(filename, **kwargs):

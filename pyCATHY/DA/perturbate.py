@@ -1075,8 +1075,8 @@ def VG_pert_rules(
         )
     else:
         parm_sampling = sampling_dist_trunc(
-            myclip_a=-np.Inf,
-            myclip_b=np.Inf,
+            myclip_a=-np.inf,
+            myclip_b=np.inf,
             ensemble_size=ensemble_size,
             loc= parm['mean'],
             scale=sd,
@@ -1390,7 +1390,7 @@ def perturbate_parm(
     # Contrainsted perturbation (bounded)
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
-        if parm['pert_control_name']=='layers':
+        if parm.get('pert_control_name') == 'layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
@@ -1407,7 +1407,7 @@ def perturbate_parm(
                 parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
             )
     elif "porosity" in type_parm:
-        if parm['pert_control_name']=='layers':
+        if parm.get('pert_control_name') == 'layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                                   ensemble_size,
                                                                   nlayers,
@@ -1458,7 +1458,7 @@ def perturbate_parm(
     # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
     elif "VG" in type_parm:  # van Genuchten retention curves
 
-        if parm['pert_control_name']=='layers':
+        if parm.get('pert_control_name') == 'layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
@@ -1504,7 +1504,7 @@ def perturbate_parm(
 
     elif "ic" in type_parm:
 
-        if parm['pert_control_name']=='layers':
+        if parm.get('pert_control_name') == 'layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
@@ -1538,7 +1538,7 @@ def perturbate_parm(
     # For all other types of perturbation
     # --------------------------------------------------------------------
     else:
-        if parm['pert_control_name']=='layers':
+        if parm.get('pert_control_name') == 'layers':
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,

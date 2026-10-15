@@ -7,6 +7,7 @@
 #
 # The script activates the micromamba environment ENV_NAME and saves everything
 # printed to the terminal in logs/publish_docs_<timestamp>.log
+# python -m ghp_import -n -p -f -r origin -b gh-pages doc/_build
 
 set -euo pipefail
 
