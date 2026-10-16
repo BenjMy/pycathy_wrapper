@@ -9,6 +9,9 @@ Herman, J. and Usher, W. (2017) SALib: An open-source Python library for sensiti
 
 import matplotlib.pyplot as plt
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
 # from SALib.analyze import morris as ma
 
 
@@ -80,8 +83,8 @@ def _prepare_CATHY_folders(prj_name):
 def _update_CATHY_inputs(samples):
 
     for ii in range(0, len(samples)):
-        print(str(ii + 1) + "/" + str(len(samples)))
-        print(os.getcwd())
+        logger.debug(str(ii + 1) + "/" + str(len(samples)))
+        logger.debug(os.getcwd())
 
     PERMX = PERMY = PERMZ = sample[ii, 0]
     POROS = sample[ii, 1]
@@ -132,15 +135,13 @@ def analysis_Morris(morris_problem, obs_data, simu_ensemble, samples, err=0.025)
 
 def print_Morris_out(morris_problem):
 
-    print(
-        "{:20s} {:>7s} {:>7s} {:>7s}".format(
+    logger.info("{:20s} {:>7s} {:>7s} {:>7s}".format(
             "Name", "mean(EE)", "mean(|EE|)", "std(EE)"
-        )
-    )
+        ))
     for name, s1, st, mean in zip(
         morris_problem["names"], Si["mu"], Si["mu_star"], Si["sigma"]
     ):
-        print("{:20s} {:=7.3f} {:=7.3f} {:=7.3f}".format(name, s1, st, mean))
+        logger.info("{:20s} {:=7.3f} {:=7.3f} {:=7.3f}".format(name, s1, st, mean))
 
     pass
 

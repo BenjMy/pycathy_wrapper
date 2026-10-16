@@ -1,0 +1,3837 @@
+--- a/cathy_DA.py
++++ b/cathy_DA.py
+@@ -73,6 +73,7 @@
+ from pyCATHY.cathy_utils import dictObs_2pd  # noqa: F401  (re-exported, see __all__)
+ from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
+ from pyCATHY.DA import enkf, pf, mapper, localisation
++from pyCATHY.ERT import ERT_checks
+ from pyCATHY.importers import cathy_inputs as in_CT
+ from pyCATHY.importers import cathy_outputs as out_CT
+ from pyCATHY.plotters import cathy_plots as plt_CT
+@@ -167,6 +168,32 @@
+     logger.debug(f"  Cov diag range:    {cov_diag.min():.2e} – {cov_diag.max():.2e}")
+ 
+ 
++_LOG_EPS = 1e-3  # offset added before log10 (same as in _log_transform_obs)
++
++
++def _log10_cov(data_valid: np.ndarray, data_cov_valid: np.ndarray, eps: float = _LOG_EPS):
++    """Data covariance in the log10 domain (first-order propagation).
++
++    R_log = J R J with J = diag(1 / (ln(10) (d + eps))). Non-positive d + eps
++    (which cannot be log-transformed) get J = 0 and a warning.
++    """
++    # non-positive observations are clipped to 0 first (as in _log_transform_obs),
++    # so that the Jacobian is defined: log10(max(d, 0) + eps)
++    d = np.clip(np.asarray(data_valid, dtype=float), 0.0, None) + eps
++    jac = 1.0 / (np.log(10.0) * d)
++    return np.asarray(data_cov_valid, dtype=float) * np.outer(jac, jac)
++
++
++def _has_name_token(key: str, token: str) -> bool:
++    """True if `token` appears in the (casefolded) parameter name `key` at the start
++    of the name or after a non-alphanumeric character.
++
++    Keeps the suffixes added per zone / layer ("Ks1", "porosity_zone2") but no longer
++    matches inside another word: "a_Archie" used to match "pert_sigma_Archie".
++    """
++    return re.search(r"(?<![a-z0-9])" + re.escape(token.casefold()), key) is not None
++
++
+ def _nonphysical_values(
+     name: str, values: np.ndarray, root_depth_limit: Callable[[], float]
+ ) -> Optional[Tuple[np.ndarray, str]]:
+@@ -178,17 +205,17 @@
+     flagged. ``root_depth_limit`` is only called for a root depth.
+     """
+     key = name.casefold()
+-    if "rFluid".casefold() in key:
++    if _has_name_token(key, "rFluid"):
+         return values < 0, "negative"
+-    if "porosity".casefold() in key:  # a volume fraction
++    if _has_name_token(key, "porosity"):  # a volume fraction
+         return (values < 0) | (values > 1), "out of range"
+-    if "a_Archie".casefold() in key:
++    if _has_name_token(key, "a_Archie"):
+         return (values < 0) | (values > 3), "out of range"
+-    if "Ks".casefold() in key:
++    if _has_name_token(key, "Ks"):
+         return values < 0, "negative Ks"
+-    if "PCREF".casefold() in key:  # a pressure head: must be negative
++    if _has_name_token(key, "PCREF"):  # a pressure head: must be negative
+         return values > 0, "positive PCREF"
+-    if "Zroot".casefold() in key:
++    if _has_name_token(key, "Zroot"):
+         return values > root_depth_limit(), "unfeasible root depth"
+     return None
+ 
+@@ -232,22 +259,29 @@
+ 
+ logger = logging.getLogger(__name__)
+ 
++# format of the default handler (same layout as the pyGIMLi log lines)
++_LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
++_LOG_DATEFMT = "%d/%m/%y - %H:%M:%S"
++
+ 
+ def _configure_logging(verbose: bool) -> None:
+     """Set the verbosity of this module's logger (called when a DA run starts).
+ 
+     INFO (progress, what is being assimilated) by default, DEBUG (diagnostic
+     dumps of ranges, shapes, dictionaries) when ``verbose``; warnings and errors
+-    are always shown. A plain stdout handler is attached only when the
++    are always shown. A stdout handler (timestamp, logger, level) is attached only when the
+     application has not configured logging itself, so the messages still appear
+     for scripts and notebooks that never call ``logging.basicConfig``.
+     """
+-    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+-    if not logger.handlers and not logging.getLogger().handlers:
++    level = logging.DEBUG if verbose else logging.INFO
++    package_logger = logging.getLogger("pyCATHY")  # parent of every pyCATHY module logger
++    package_logger.setLevel(level)
++    logger.setLevel(level)
++    if not package_logger.handlers and not logger.handlers and not logging.getLogger().handlers:
+         handler = logging.StreamHandler(sys.stdout)
+-        handler.setFormatter(logging.Formatter("%(message)s"))
+-        logger.addHandler(handler)
+-        logger.propagate = False
++        handler.setFormatter(logging.Formatter(_LOG_FORMAT, _LOG_DATEFMT))
++        package_logger.addHandler(handler)
++        package_logger.propagate = False
+ 
+ 
+ def _warn_once(key: str, message: str) -> None:
+@@ -257,6 +291,13 @@
+         warnings.warn(message)
+ 
+ 
++def _log_once(key: str, message: str, level: int = logging.WARNING) -> None:
++    """Log a message only the first time `key` is seen (once per process, not once per cycle)."""
++    if key not in _WARNED_ONCE:
++        _WARNED_ONCE.add(key)
++        logger.log(level, message)
++
++
+ def _check_positive_pressure_heads(ensemble_psi):
+     """Print a notice if any ensemble member has a positive pressure head."""
+     if np.any(ensemble_psi > 0):
+@@ -387,6 +428,7 @@
+     "localisation",
+     "threshold_rejected",
+     "use_log_transformed_obs",
++    "log_transform_cov",
+     "cleanup_vtk",
+     "backup_fort777",
+     "seed",
+@@ -413,6 +455,11 @@
+     use_log_transformed_obs : bool
+         Assimilate log-transformed observations (useful for ERT data: the Archie
+         operator makes their distribution non Gaussian).
++    log_transform_cov : bool
++        With ``use_log_transformed_obs``: propagate the data covariance to the
++        log10 domain (first-order, R_log = J R J, J = diag(1/(ln10 (d+eps)))).
++        False reproduces the old behaviour (linear-domain R applied to log data,
++        which makes the observations effectively ignored). Default True.
+     cleanup_vtk : {False, 'converted', 'all'}
+         Delete VTK files produced in ``<workdir>/<project>/DA_Ensemble`` after the run.
+     backup_fort777 : bool
+@@ -436,6 +483,7 @@
+     localisation: Optional[str] = None
+     threshold_rejected: int = 10
+     use_log_transformed_obs: bool = False
++    log_transform_cov: bool = True
+     cleanup_vtk: object = False
+     backup_fort777: bool = False
+     analysis: Optional[AnalysisConfig] = None
+@@ -801,6 +849,7 @@
+         self.ET_DA_xr = None
+         self.isET = False
+         self.localisationBool = False
++        self.ert_check_reports: List[dict] = []  # ERT checks (see ERT_checks), saved every cycle
+         self.Archie_parms_mat_ens: Any = []  # list, then an array (n_param, n_members)
+         self.count_atmbc_cycle = 0
+ 
+@@ -853,6 +902,8 @@
+         self.ET_DA_xr = None
+         self.isET = False
+         self.localisationBool = False
++        self.ert_check_reports = []
++        mapper.pop_ert_reports()  # drop reports of a previous run
+ 
+         # Infer ensemble size NENS from perturbated parameter dictionnary
+         # -------------------------------------------------------------------
+@@ -920,6 +971,7 @@
+         self.verbose = config.verbose
+         _configure_logging(config.verbose)
+         self.use_log_transformed_obs = config.use_log_transformed_obs
++        self.log_transform_cov = config.log_transform_cov
+         # backup all spatial ET iterations (the ET files are large!)
+         self.backupfort777 = config.backup_fort777
+ 
+@@ -1012,10 +1064,7 @@
+ 
+         # DA analysis
+         # ----------------------------------------------------------------
+-        self.console.print(r""":chart_with_upwards_trend: [b]Analysis[/b]:
+-                               - DA type: {}
+-                               - Inflation: {}
+-                           """.format(DA_type, self.inflation))
++        logger.info("Analysis: DA type=%s, inflation=%s", DA_type, self.inflation)
+ 
+         (
+             ensemble_psi_valid_bef_update,
+@@ -1208,7 +1257,7 @@
+                 options.list_parm2update, analysis=analysis_valid
+             )
+         else:
+-            self.console.rule(":red_circle: end of DA" ":red_circle:", style="yellow")
++            logger.info("End of DA")
+ 
+         self._log_end_of_da_update()
+         plt.close("all")
+@@ -1229,7 +1278,7 @@
+             ``[psi, sw]`` of the ensemble before the update, and the valid
+             analysed ensemble (states, plus parameters when updated).
+         """
+-        self.console.print(":world_map: [b] map states to observations [/b]")
++        logger.info("Map states to observations")
+         # H operator applied to the state variable
+         prediction = self.map_states2Observations(
+             list_assimilated_obs,
+@@ -1238,10 +1287,7 @@
+         )
+         self._validate_prediction(prediction, list_assimilated_obs)
+ 
+-        self.console.print(r""":chart_with_upwards_trend: [b]Analysis[/b]:
+-                               - DA type: {}
+-                               - Inflation: {}
+-                           """.format(DA_type, self.inflation))
++        logger.info("Analysis: DA type=%s, inflation=%s", DA_type, self.inflation)
+         psi_bef_update, sw_bef_update, _, _ = self._read_state_ensemble()
+ 
+         # global or domain-localised analysis
+@@ -1264,7 +1310,7 @@
+             analysis_param,
+         )
+ 
+-        self.console.print(":face_with_monocle: [b]check analysis performance[/b]")
++        logger.info("Check analysis performance")
+         self._performance_assessment_pq(
+             list_assimilated_obs,
+             data,
+@@ -1283,9 +1329,7 @@
+         Returns the same pair as `_analysis_cycle`; the ensemble is not
+         validated and the "analysis" is the unchanged pressure-head ensemble.
+         """
+-        self.console.print(
+-            ":confused: No observation for this time - run hydrological model only"
+-        )
++        logger.info("No observation at this time: running the hydrological model only")
+         psi, sw, _, _ = self._read_state_ensemble()
+         return [psi, sw], psi
+ 
+@@ -1330,39 +1374,13 @@
+ 
+     def _log_end_of_time_step(self, t_atmbc):
+         """Console progress after a time step of the loop."""
+-        self.console.rule(
+-            ":round_pushpin: end of time step (s) "
+-            + str(int(t_atmbc))
+-            + "/"
+-            + str(int(self.all_atmbc_times[-1]))
+-            + " :round_pushpin:",
+-            style="yellow",
+-        )
+-        self.console.rule(
+-            ":round_pushpin: end of atmbc update # "
+-            + str(self.count_atmbc_cycle)
+-            + "/"
+-            + str(len(self.all_atmbc_times))
+-            + " :round_pushpin:",
+-            style="yellow",
+-        )
++        logger.info("End of time step %d/%d s", int(t_atmbc), int(self.all_atmbc_times[-1]))
++        logger.info("End of atmbc update %d/%d", self.count_atmbc_cycle, len(self.all_atmbc_times))
+ 
+     def _log_end_of_da_update(self):
+         """Console progress after a DA update."""
+-        self.console.rule(
+-            ":red_circle: end of DA update "
+-            + str(self.count_DA_cycle)
+-            + "/"
+-            + str(len(self.ENS_times))
+-            + " :red_circle:",
+-            style="yellow",
+-        )
+-        self.console.rule(
+-            ":dart: % of valid ensemble: "
+-            + str((len(self.ens_valid) * 100) / (self.NENS))
+-            + ":dart:",
+-            style="yellow",
+-        )
++        logger.info("End of DA update %d/%d", self.count_DA_cycle, len(self.ENS_times))
++        logger.info("Valid ensemble members: %d/%d (%.0f%%)", len(self.ens_valid), self.NENS, 100 * len(self.ens_valid) / self.NENS)
+ 
+     def _save_step_outputs(
+         self,
+@@ -1373,7 +1391,7 @@
+         list_parm2update,
+     ):
+         """Store the results of the current step (dataframes, ET, backups)."""
+-        self.console.rule("Back up DA step")
++        logger.debug("Back up DA step")
+         self._DA_df(
+             state=state,
+             state_analysis=state_analysis,
+@@ -1391,9 +1409,22 @@
+             self.backup_fort777()
+         self.backup_results_DA(meta_DA)
+         self.backup_simu()
++        self._save_ert_check_reports()
+         if self.config.save_results:
+             self._save_results_to_disk()
+ 
++    def _save_ert_check_reports(self):
++        """Write the ERT check reports next to the project and log how many failed."""
++        if not self.ert_check_reports:
++            return
++        path = os.path.join(
++            self.workdir, self.project_name, self.project_name + "_ERT_checks.json"
++        )
++        ERT_checks.save_reports(self.ert_check_reports, path)
++        n_failed = ERT_checks.count_failed(self.ert_check_reports)
++        if n_failed:
++            logger.warning(f"{n_failed} ERT check report(s) failed - see {path}")
++
+     def _save_results_to_disk(self):
+         """Write the in-memory results of the DA (``df_DA``, ``ET_DA_xr``) next to the project."""
+         out_dir = os.path.join(self.workdir, self.project_name)
+@@ -1480,9 +1511,7 @@
+         self, prediction, DA_type, list_parm2update, list_assimilated_obs
+     ):
+         """Domain localisation: one analysis per zone, assembled on the whole mesh."""
+-        self.console.print(
+-            f":carpentry_saw: [b] Domain localisation: {self.localisation} [/b]"
+-        )
++        logger.info("Domain localisation: %s", self.localisation)
+ 
+         if getattr(self, "zone", None) is None:
+             zone, _ = self.read_inputs("zone")
+@@ -1534,14 +1563,8 @@
+                 continue
+ 
+             selected_parm2update = self._zone_parameters(list_parm2update, loci)
+-            self.console.print(f"""[b]
+-                               SHORTCUT: ALL PARAMS ARE UPDATED but
+-                               are not necessaraly associated
+-                               with observation localisation [/b]
+-                               """)
+-            self.console.print(
+-                f"[b] Params to update (domain loc): {selected_parm2update} [/b]"
+-            )
++            _log_once("loc_shortcut", "Domain localisation: all the parameters are updated, whether or not they are associated with the observation localisation")
++            logger.debug("Params to update (domain loc): %s", selected_parm2update)
+ 
+             # Perform DA analysis for each mask of localisation
+             (
+@@ -1610,10 +1633,7 @@
+         if len(analysis_with_localisation) == len(ensemble_psi):
+             return analysis_with_localisation[:, 1:]
+ 
+-        self.console.print(f"""
+-                               [b] !! All the mesh nodes havent been analysed with DA !! [/b]
+-                               Taking state values where missing analysis nodes
+-                           """)
++        logger.warning("Not all the mesh nodes were analysed with DA: taking the state values where the analysis is missing")
+         analysis, _, _, _ = self._read_state_ensemble()
+         indice_nodes_with_analysis = [
+             int(ii) for ii in analysis_with_localisation[:, 0]
+@@ -1672,10 +1692,7 @@
+ 
+         # select ONLY the data to assimilate
+         data, _ = self._get_data2assimilate(list_assimilated_obs)
+-        self.console.print(r""":
+-                               - Data size: {}
+-                                 --> Observations --> {}
+-                           """.format(str(np.shape(data)), list_assimilated_obs))
++        logger.info("Assimilating %s: %d data", list_assimilated_obs, np.size(data))
+         data_cov = self._data_cov_of_cycle(len(data))
+         analysis_config = self._analysis_config_of_cycle()
+ 
+@@ -1710,11 +1727,42 @@
+         ensemble_psi_valid = ensemble_psi_valid[obs_mesh_nodes_valid, :]
+         ensemble_sw_valid = ensemble_sw_valid[obs_mesh_nodes_valid, :]
+ 
++        # ERT: data covariance, predictions and innovation as they enter the filter
++        if any("ERT" in key for key in obskey2map):
++            # the check transforms data/predictions itself: give it the R the filter will use
++            cov_checked = (
++                _log10_cov(data_valid, data_cov_valid)
++                if self.use_log_transformed_obs and getattr(self, "log_transform_cov", True)
++                else data_cov_valid
++            )
++            ert_report = ERT_checks.check_assimilation_inputs(
++                data_valid,
++                prediction_valid,
++                cov_checked,
++                use_log=self.use_log_transformed_obs,
++                ens_ids=[int(i) + 1 for i in ens_valid],
++                name=f"ERT analysis cycle {self.count_DA_cycle}",
++            ).warn()
++            self.ert_check_reports.append(
++                {
++                    "stage": "analysis",
++                    "cycle": self.count_DA_cycle,
++                    "report": ert_report.to_dict(),
++                }
++            )
++
+         # observations and predictions as seen by the filter
+         if self.use_log_transformed_obs:
+             data_in, prediction_in = self._log_transform_obs(
+                 data_valid, prediction_valid, data_cov_valid
+             )
++            if getattr(self, "log_transform_cov", True):
++                data_cov_valid = _log10_cov(data_valid, data_cov_valid)
++                logger.debug(
++                    "R propagated to log10: diag %.2e-%.2e",
++                    np.diag(data_cov_valid).min(),
++                    np.diag(data_cov_valid).max(),
++                )
+         else:
+             self._save_obs_pred_boxplot(data_valid, prediction_valid)
+             data_in, prediction_in = data_valid, prediction_valid
+@@ -1744,8 +1792,11 @@
+ 
+         # Back-transformation of the parameters
+         # ---------------------------------------------------------------------
+-        self.transform_parameters(
+-            list_update_parm, param=np.hstack(analysis_param), back=True
++        # (the result used to be discarded: parameters with a transf_type were
++        # stored, and then transformed again at the next cycle, in the
++        # transformed space)
++        analysis_param = self._back_transform_analysis_param(
++            list_update_parm, analysis_param
+         )
+         return (ensemble_psi, ensemble_sw, data_valid, analysis, analysis_param)
+ 
+@@ -1811,8 +1862,10 @@
+                           {np.sum(np.isnan(prediction_valid))}  nan"
+                         """)
+ 
+-        data_valid_log = np.log10(data_valid + eps)
+-        prediction_valid_log = np.log10(prediction_valid + eps)
++        # non-positive values (already warned about above) are clipped to 0: they get
++        # log10(eps) = -3 instead of NaN / -inf
++        data_valid_log = np.log10(np.clip(data_valid, 0.0, None) + eps)
++        prediction_valid_log = np.log10(np.clip(prediction_valid, 0.0, None) + eps)
+ 
+         logger.debug("\nAfter log-transform:")
+         logger.debug(
+@@ -1825,14 +1878,14 @@
+ 
+         fig, ax = plt.subplots()
+         ax.hist(
+-            np.log10(data_valid + 1e-3),
++            data_valid_log,
+             bins=30,
+             alpha=0.5,
+             label="Observed",
+             density=True,
+         )
+         ax.hist(
+-            np.log10(prediction_valid + 1e-3).flatten(),
++            prediction_valid_log.flatten(),
+             bins=30,
+             alpha=0.5,
+             label="Predicted",
+@@ -1878,7 +1931,7 @@
+         obskey2map: Sequence[str],
+     ) -> None:
+         """Plot the ensemble covariance matrices and their change (diagnostic only)."""
+-        self.console.print("[b]Plotting COV matrices[/b]")
++        logger.debug("Plotting COV matrices")
+         try:
+             if np.shape(diag["COV"])[0] < 1e9:
+                 plt_CT.show_DA_process_ens(
+@@ -1894,11 +1947,9 @@
+                     label_sensor=str([*obskey2map]),
+                 )
+             else:
+-                self.console.print("[b]Impossible to plot matrices[/b]")
++                logger.warning("Impossible to plot the COV matrices (too large)")
+         except Exception as exc:  # plotting is diagnostic only: never abort the DA run
+-            self.console.print(
+-                f"[b]Impossible to plot matrices[/b] ({type(exc).__name__}: {exc})"
+-            )
++            logger.warning("Impossible to plot matrices (%s: %s)", type(exc).__name__, exc)
+ 
+     def _mark_invalid_ensemble(
+         self, ens_valid, prediction, ensemble_psi, ensemble_sw, analysis, analysis_param
+@@ -1940,7 +1991,7 @@
+     def _run_ensemble_hydrological_model(self, parallel, callexe):
+         """multi run CATHY hydrological model from the independant folders composing the ensemble"""
+ 
+-        self.console.print(":athletic_shoe: [b]Run hydrological model[/b]")
++        logger.info("Run hydrological model (%s)", "parallel" if parallel else "sequential")
+         # ----------------------------------------------------------------
+         if parallel == True:
+             pathexe_list = []
+@@ -1959,7 +2010,7 @@
+                 result = pool.map(subprocess_run_multi, pathexe_list)
+ 
+                 if self.verbose:
+-                    self.console.print(result)
++                    logger.debug("%s", result)
+         # process each ensemble folder one by one
+         # ----------------------------------------------------------------
+         else:
+@@ -1969,12 +2020,7 @@
+                 range(self.NENS), description="Run hydrological fwd model..."
+             ):
+ 
+-                self.console.print(
+-                    ":keycap_number_sign: [b]ensemble nb:[/b]"
+-                    + str(ens_i + 1)
+-                    + "/"
+-                    + str(self.NENS)
+-                )
++                logger.debug("Run ensemble member %d/%d", ens_i + 1, self.NENS)
+                 member_dir = os.path.join(
+                     self.workdir,
+                     self.project_name,
+@@ -1985,8 +2031,8 @@
+                 )
+ 
+                 if self.verbose:
+-                    self.console.print(p.stdout)
+-                    self.console.print(p.stderr)
++                    logger.debug("%s", p.stdout)
++                    logger.debug("%s", p.stderr)
+ 
+         pass
+ 
+@@ -2009,7 +2055,7 @@
+         if ens_valid is None:
+             ens_valid = []
+ 
+-        self.console.print(":white_check_mark: [b]check scenarii before analysis[/b]")
++        logger.debug("Check scenarii before analysis")
+ 
+         ###CHECK which scenarios are OK and which are to be rejected and then create and applied the filter
+         ###only on the selected scenarios which are to be considered.
+@@ -2028,7 +2074,7 @@
+                 )
+                 continue
+             if reason is not None:
+-                self.console.print(f":x: [b]{reason}[/b], ens_nb:{n + 1}")
++                logger.warning("Ensemble member %d rejected: %s", n + 1, reason)
+             rejected_ens_new.append(reason is not None)
+ 
+         self._raise_if_too_many_rejected(rejected_ens_new, threshold_rejected)
+@@ -2087,7 +2133,7 @@
+             list of updated model parameters (after analysis).
+         """
+ 
+-        self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
++        logger.debug("Check scenarii post update")
+ 
+         id_nonvalid = set()
+         for name in list_update_parm:
+@@ -2100,9 +2146,7 @@
+             mask, label = rule
+             bad = np.where(mask)[0]
+             if len(bad):
+-                self.console.print(
+-                    f":x: [b]{label} {name}:[/b]{values[bad]}, ens_nb:{list(bad)}"
+-                )
++                logger.warning("%s %s: %s (members %s)", label, name, values[bad], [int(i) + 1 for i in bad])
+             id_nonvalid.update(bad.tolist())
+         return set(np.arange(self.NENS)).difference(id_nonvalid)
+ 
+@@ -2112,6 +2156,29 @@
+         logger.debug("deepest feasible root depth: %s", depth)
+         return depth
+ 
++    def _back_transform_analysis_param(self, list_update_parm, analysis_param):
++        """Back-transform the analysed parameters, one column per parameter.
++
++        ``analysis_param`` is (n_members, n_param) with the "St. var." entries
++        of ``list_update_parm`` excluded. Returned with the same shape.
++        """
++        names = [pp for pp in list_update_parm if "St. var." not in pp]
++        ap = np.asarray(analysis_param, dtype=float)
++        if ap.size == 0 or not names:
++            return analysis_param
++        if ap.ndim != 2 or ap.shape[1] != len(names):
++            logger.warning(
++                "analysed parameters have shape %s for %d parameter(s): "
++                "back-transformation skipped",
++                ap.shape,
++                len(names),
++            )
++            return analysis_param
++        out = ap.copy()
++        for j, name in enumerate(names):
++            out[:, j] = self.transform_parameters([name], param=ap[:, j], back=True)[0]
++        return out
++
+     def transform_parameters(
+         self, list_update_parm, update_key=None, back=False, param=None
+     ):
+@@ -2142,19 +2209,18 @@
+                     A = range_tr["A"]  # min range
+                     B = range_tr["B"]  # max range
+                     if back:
+-                        param_trans = np.exp((param - A) / (B - param))
++                        # inverse of y = log((p - A) / (B - p))
++                        param_trans = (A + B * np.exp(param)) / (1.0 + np.exp(param))
+                     else:
+                         param_trans = np.log((param - A) / (B - param))
+                 elif self.dict_parm_pert[pp[1]]["transf_type"] == "hyperbolic":
+                     logger.debug("hyperbolic transformation")
+-                    # Y = sinh−1(U )
+-                    param_trans = np.log(self.dict_parm_pert[pp[1]][update_key])
++                    # Y = arcsinh(U); back-transformation U = sinh(Y)
++                    param_trans = np.sinh(param) if back else np.arcsinh(param)
+ 
+                 else:
+                     param_trans = param
+                 param_new.append(param_trans)
+-            if len(param_new) > 0:
+-                np.vstack(param_new)
+ 
+         return np.array(param_new)
+ 
+@@ -2199,10 +2265,8 @@
+             )
+             self.VGN_parms = {}
+ 
+-        self.console.rule(":warning: warning messages above :warning:", style="yellow")
+         for ww in warnings_petro:
+-            self.console.print(ww, style="yellow")
+-        self.console.rule("", style="yellow")
++            logger.warning(ww)
+ 
+         pass
+ 
+@@ -2342,7 +2406,7 @@
+         """
+         Update a single Archie parameter for a given ensemble member.
+         """
+-        self.console.print(":arrows_counterclockwise: [b]Update Archie parameters[/b]")
++        logger.debug("Update Archie parameters")
+ 
+         idArchie = Archie_p_names.index(key_root[0])
+ 
+@@ -2458,7 +2522,7 @@
+         -------
+         None
+         """
+-        self.console.print(":arrows_counterclockwise: [b]Update ensemble[/b]")
++        logger.debug("Update ensemble")
+ 
+         # replace dictionnary key with cycle nb
+         # -------------------------------------
+@@ -2647,7 +2711,7 @@
+         # find the method to map for this time step
+         # --------------------------------------------------------
+         obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
+-        logger.info(f"Assimilated Observations are: {list_assimilated_obs}")
++        logger.debug("Assimilated Observations are: %s", list_assimilated_obs)
+ 
+         def extract_data(sensor, time_ass, data):
+             data2add = []
+@@ -2678,7 +2742,10 @@
+             time_ass = (
+                 self.count_DA_cycle
+             )  # + 1 since we compare the predicted observation at ti +1
+-            logger.warning("!!!!Take care here not sure I am taking the right time!!!")
++            _log_once(
++                "da_time_default",
++                "No assimilation time given: selecting the observations of the current DA cycle",
++            )
+ 
+         data = []
+         items_dict = list(self.dict_obs.items())
+@@ -2947,31 +3014,17 @@
+     ) -> np.ndarray:
+         """Append the ERT predictions of the ensemble to ``Hx_ens`` (rows = observations)."""
+         if write2shell_map:
+-            self.console.print(":zap: Mapping to ERT prediction")
+-            self.console.print(
+-                r"""
+-                                    Fwd modelling ERT
+-                                    Noise level: {??}
+-                                    """,
+-                style="green",
+-            )
+-            self.console.rule(
+-                ":octopus: Parameter perturbation :octopus:", style="green"
+-            )
+-            self.console.print(
+-                r"""
+-                                    Archie perturbation for DA analysis
+-                                    Archie rFluid: {}
+-                                    Pert. Sigma Archie: {}
+-                                    Nb of zones (?): {}
+-                                    """.format(
+-                    self.Archie_parms["rFluid_Archie"],
+-                    self.Archie_parms["pert_sigma_Archie"],
+-                    len(self.Archie_parms["rFluid_Archie"]),
+-                ),
+-                style="green",
++            ert_obs = list(self.dict_obs.values())[self.count_DA_cycle].get("ERT", {})
++            logger.info(
++                "Mapping states to ERT apparent resistivities (fwd noise level: %s%%)",
++                ert_obs.get("fwdNoiseLevel", "n/a"),
++            )
++            logger.debug(
++                "Archie perturbation for DA analysis: rFluid=%s, pert_sigma=%s, nb of zones=%d",
++                self.Archie_parms["rFluid_Archie"],
++                self.Archie_parms["pert_sigma_Archie"],
++                len(self.Archie_parms["rFluid_Archie"]),
+             )
+-            self.console.rule("", style="green")
+ 
+         if not parallel:
+             raise NotImplementedError(
+@@ -2993,6 +3046,8 @@
+             verbose=True,
+         )
+         self.df_Archie = mapper._add_2_ensemble_Archie(self.df_Archie, df_Archie)
++        for rep in mapper.pop_ert_reports():
++            self.ert_check_reports.append({"stage": "forward", **rep})
+         if len(Hx_ens) > 0:
+             return np.vstack([Hx_ens, Hx_ens_ERT])
+         return Hx_ens_ERT
+@@ -3063,18 +3118,19 @@
+     def update_pert_parm_dict(self, update_key, list_update_parm, analysis_param_valid):
+         """update dict of perturbated parameters i.e. add a new entry with new params"""
+ 
+-        index_update = 0
+         if self.count_DA_cycle > 0:
++            # one row of analysis_param_valid per parameter, "St. var." excluded
++            # (the previous counter also counted "St. var." and so read row -1
++            # for the first parameter when no "St. var." entry came first)
++            index_update = 0
+             for pp in list_update_parm:
+                 if "St. var." in pp:
+-                    index_update = index_update + 1
+-                    pass
+-                else:
+-                    update_key = _update_key(self.count_DA_cycle)
+-                    self.dict_parm_pert[pp][update_key] = analysis_param_valid[
+-                        index_update - 1
+-                    ]
+-                    index_update = index_update + 1
++                    continue
++                update_key = _update_key(self.count_DA_cycle)
++                self.dict_parm_pert[pp][update_key] = analysis_param_valid[
++                    index_update
++                ]
++                index_update = index_update + 1
+ 
+             # check after analysis
+             # ----------------------------------------------------------------
+@@ -3106,7 +3162,7 @@
+         if analysis is None:
+             analysis = []
+ 
+-        self.console.print(":sponge: [b]update input ensemble[/b]")
++        logger.debug("Update input ensemble")
+ 
+         # resample atmbc file for the given DA window
+         # ---------------------------------------------------------------------
+@@ -3152,7 +3208,7 @@
+                     times = self.dict_parm_pert["atmbc0"]["data2perturbate"]["time"]
+                     df_atmbc = pd.DataFrame(np.c_[times, VALUE], columns=["time", "value"])
+                 else:
+-                    print("atmbc perturbation not supported for spatially variable atmbc: ignored")
++                    logger.warning("atmbc perturbation not supported for spatially variable atmbc: ignored")
+ 
+             times_all = df_atmbc.time.unique()
+             i = self.count_atmbc_cycle
+@@ -3409,9 +3465,7 @@
+             )
+ 
+         except OSError as exc:  # FileNotFoundError, FileExistsError, shutil.Error
+-            self.console.print(
+-                f":worried_face: [b]could not copy processor files into cathy_origin[/b] ({type(exc).__name__}: {exc})"
+-            )
++            logger.warning("Could not copy processor files into cathy_origin (%s: %s)", type(exc).__name__, exc)
+ 
+         path_origin = os.path.join(
+             self.workdir, self.project_name, "DA_Ensemble/cathy_origin"
+--- a/mapper.py
++++ b/mapper.py
+@@ -3,13 +3,27 @@
+ import pyCATHY.meshtools as mt
+ import numpy as np
+ import os 
++from pyCATHY.ERT import ERT_checks
+ from pyCATHY.ERT import petro_Archie as Archie
+ from pyCATHY.importers import cathy_outputs as out_CT
+ import multiprocessing
+ from functools import partial
+ REMOVE_CPU = 1
++
++# ERT check reports of the last mapping(s), collected by `pop_ert_reports`
++ERT_REPORTS = []
++
++
++def pop_ert_reports():
++    """Return and clear the ERT check reports accumulated since the last call."""
++    reports = list(ERT_REPORTS)
++    ERT_REPORTS.clear()
++    return reports
+ from pyCATHY.cathy_tools import CATHY
+ import pandas as pd
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ #%%
+ 
+@@ -32,15 +46,10 @@
+                                level=('zone', 'layer')
+                                )['POROS'].values
+     
+-    console.print(f"Transform sat to SWC with porosity=' {str(porosity_swc)}")
+-    console.rule(
+-        ":warning: warning messages above :warning:", style="yellow"
+-    )
+-    console.print(
+-        r"""Current implementation does not support different porosity zones! 
+-            Only layers porosity is considered - Taking zone 1 as default
+-        """,
+-        style="yellow",
++    logger.debug("Transform sat to SWC with porosity=%s", porosity_swc)
++    logger.debug(
++        "swc_mapper: different porosity zones are not supported, "
++        "only the layer porosity of zone 1 is considered"
+     )
+     Hx_SW = state[1][obs2map_node] * porosity_swc
+     return Hx_SW
+@@ -73,7 +82,7 @@
+     """
+     try:
+         Hx.append(Hx_2add)
+-    except:
++    except AttributeError:  # e.g. a numpy array has no append
+         Hx = list(Hx)
+         Hx.append(Hx_2add)
+     return Hx
+@@ -195,26 +204,31 @@
+     # print(f"  min = {ER_converted_ti.min():.2f} Ohm.m")
+     # print(f"  max = {ER_converted_ti.max():.2f} Ohm.m")
+       
+-    print("EC_converted_ti_mS_m stats:")
+-    print(f"  min = {EC_converted_ti_mS_m.min():.2f} mS/m")
+-    print(f"  max = {EC_converted_ti_mS_m.max():.2f} mS/m")
++    logger.debug(
++        "EC converted: min = %.2f mS/m, max = %.2f mS/m",
++        EC_converted_ti_mS_m.min(),
++        EC_converted_ti_mS_m.max(),
++    )
+ 
+ 
+-    print('Build forward EM model')
++    logger.debug("Build forward EM model")
+     depths, conds, xy_coords = build_forward_profiles(EC_converted_ti_mS_m, 
+                                                       grid3d['mesh3d_nodes'],
+                                                       var="EC")
+     
+-    print("depths stats:")
+-    print(f"  min = {np.array(depths).min():.2f} m")
+-    print(f"  max = {np.array(depths).max():.2f} m")
++    if logger.isEnabledFor(logging.DEBUG):
++        logger.debug(
++            "depths: min = %.2f m, max = %.2f m",
++            np.array(depths).min(),
++            np.array(depths).max(),
++        )
+     
+ 
+     from emagpy import Problem
+     k = Problem()
+     k.setModels(depths,conds)
+     
+-    print('Forward EM model')
++    logger.debug("Forward EM model")
+     # dfsFSeq = k.forward(forwardModel='FSeq', coils=coils, noise=5)
+     EM_fwd_model_array = k.forward(forwardModel='FSlin',
+                          coils=EM_meta_dict["coils"],
+@@ -259,6 +273,12 @@
+     # print("POROS_nodes_ensi shape:", np.shape(POROS_nodes_ensi))
+     # print("fwd_path shape:", np.shape(path_fwd_CATHY_list))
+ 
++    # forward noise settings stored with the observations (otherwise the
++    # forward model silently falls back to its own default of 5 %)
++    _ert_cfg = key_time[1]["ERT"]
++    _fwd_noise = {k: _ert_cfg[k] for k in ("fwdNoiseLevel", "fwdNoiseAbs") if k in _ert_cfg}
++    logger.debug("ERT forward noise settings passed to simulate_ERT: %s", _fwd_noise)
++
+     ERTmapping_args = partial(
+                                 Archie.SW_2_ERT_ERa_DA,
+                                 project_name,
+@@ -269,6 +289,7 @@
+                                 savefig=False,
+                                 noise_level=ERT_meta_dict["data_err"],  # kwargs
+                                 dict_ERT=key_time[1]["ERT"],  #  kwargs
++                                **_fwd_noise,
+                             )
+ 
+     # // run using ensemble subfolders path as a list
+@@ -293,6 +314,31 @@
+         else:
+             Hx_ERT_ens = _add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["resist"])
+ 
++    # checks: member reports (from the workers) + consistency of the whole ensemble
++    ens_ids = [int(os.path.split(p)[-1].split("_", 1)[1]) for p in path_fwd_CATHY_list]
++    preds = [res[0] for res in results_mapping]
++    ens_report = ERT_checks.check_ensemble_forward(
++        preds,
++        obs_df=ERT_meta_dict.get("data"),
++        ens_ids=ens_ids,
++        name=f"ERT ensemble DA cycle {DA_cnb}",
++    ).warn()
++    logger.info(
++        "ERT forward ensemble, DA cycle %s: %d members | checks: %s",
++        DA_cnb,
++        len(preds),
++        ens_report.summary(),
++    )
++    ERT_REPORTS.append(
++        {
++            "cycle": DA_cnb,
++            "members": {
++                ens_id: pred.attrs.get("ert_check") for ens_id, pred in zip(ens_ids, preds)
++            },
++            "ensemble": ens_report.to_dict(),
++        }
++    )
++
+     return Hx_ERT_ens, Archie_df, mesh2test
+ 
+ 
+--- a/observations.py
++++ b/observations.py
+@@ -4,15 +4,19 @@
+     Prepare for DA class
+ """
+ 
++import logging
+ import re
+ from collections import OrderedDict
+ 
+ import numpy as np
+ 
+ from pyCATHY import cathy_utils as utils_CT
++from pyCATHY.ERT import ERT_checks
+ from pyCATHY.importers import sensors_measures as in_meas
+ from pyCATHY.cathy_utils import dictObs_2pd
+ 
++logger = logging.getLogger(__name__)
++
+ 
+ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, 
+                       **kwargs):
+@@ -210,10 +214,11 @@
+             elecs = kwargs.pop('elecs')
+ 
+         df, dict_ERT = in_meas.read_ERT(obs_2_add, data_format)
++        ERT_checks.check_observations(df, name=f"ERT obs {obs_2_add}").warn()
+         filename = obs_2_add
+         dict_obs_2add.update(sequenceERT=filename)
+ 
+-        units = "$\Omega$"
++        units = r"$\Omega$"
+ 
+         if "elecs" in dict_ERT.keys():
+             elecs = dict_ERT["elecs"]
+@@ -237,7 +242,7 @@
+     # no file specified (raise error)
+     # ---------------------------------------------------------------------
+     else:
+-        print("no file specified")
++        logger.warning("read_observations: unknown data_type %r, no file read", data_type)
+ 
+     dict_obs_2add.update(
+         filename=filename,
+@@ -274,7 +279,7 @@
+     sensor_name = data_type
+ 
+     if tA in dict_obs.keys():
+-        print("already existing assimilation time")
++        logger.debug("assimilation time %s already exists: adding a sensor to it", tA)
+         for k in dict_obs[tA]:
+             k
+         if data_type in k:
+@@ -391,6 +396,10 @@
+         # Flatten and build diagonal covariance
+         data_flat = np.hstack(all_values)
+         cov_flat = np.hstack(all_cov)
++        if any("ERT" in s for s in selected_sensors):
++            ERT_checks.check_data_cov(
++                cov_flat, values=data_flat, name=f"ERT data cov tA={tA}"
++            ).warn()
+ 
+         cov_diag = np.zeros((len(cov_flat), len(cov_flat)))
+         np.fill_diagonal(cov_diag, cov_flat)
+@@ -564,7 +573,7 @@
+ 
+ 
+ def prepare_observations(
+-    dict_obs=[], perturbate=False, obs_cov_type=None, Bishop=False, **kwargs
++    dict_obs=None, perturbate=False, obs_cov_type=None, Bishop=False, **kwargs
+ ):
+     """
+     prepare observations before DA
+@@ -586,6 +595,9 @@
+ 
+     """
+ 
++    if dict_obs is None:
++        dict_obs = {}
++
+     # merged data covariance matrice of all the observation data and all times
+     stacked_data_cov = []
+ 
+@@ -673,14 +685,16 @@
+     if obs_cov_type == "reciprocal_err":
+         # print(dict_obs)
+         # data_cov = np.diag(1 / abs(dict_obs["data"]["rec_err"].to_numpy()))
+-        data_cov = np.diag(abs(dict_obs["data"]["rec_err"].to_numpy()))
++        # variance = rec_err**2, rec_err being an absolute error in the units of the data
++        # (Ohm.m for rhoa), as in make_data_cov (the DA path); it used to be rec_err itself
++        data_cov = np.diag(dict_obs["data"]["rec_err"].to_numpy() ** 2)
+     elif obs_cov_type == "data_err":
+         # resipy format
+         try:
+             err_arr = np.tile(dict_obs["data_err"], len(dict_obs["data"]))
+-            data_cov = np.diag(err_arr)
++            data_cov = np.diag(err_arr**2)
+         # pygimli format
+-        except:
++        except Exception:  # pygimli container: no len() and no dict access
+             err_arr = np.tile(dict_obs["data_err"], len(dict_obs["data"]["a"]))
+-            data_cov = np.diag(err_arr)
++            data_cov = np.diag(err_arr**2)
+     return data_cov
+--- a/petro_Archie.py
++++ b/petro_Archie.py
+@@ -6,14 +6,16 @@
+ import numpy as np
+ import pandas as pd
+ import pyvista as pv
+-import rich.console
+-from rich import print
++import logging
+ 
+ from pyCATHY import meshtools as mt
++from pyCATHY.ERT import ERT_checks
+ from pyCATHY.ERT import simulate_ERT as simuERT
+ from pyCATHY.importers import cathy_outputs as out_CT
+ from pyCATHY.meshtools import CATHY_2_pg, CATHY_2_Resipy
+ 
++logger = logging.getLogger(__name__)
++
+ 
+ def get_sw_ens_i(path_fwd_CATHY, **kwargs):
+     """Return sw array for a given ensemble (if ensemble exist)"""
+@@ -28,7 +30,6 @@
+         if "time_ass" in kwargs:
+             time_ass = kwargs["time_ass"]
+             df_sw = df_sw.iloc[time_ass, :]
+-            DA_cnb = time_ass
+         # case of sequential assimilation
+         # -------------------------------------------------------------------
+         else:
+@@ -53,7 +54,7 @@
+     else:
+         ArchieParms2parse = ArchieParms
+     
+-    print(ArchieParms2parse)
++    logger.debug("Archie parameters: %s", ArchieParms2parse)
+     return ArchieParms2parse
+ 
+ def SW_2_ER0_DA(
+@@ -64,12 +65,40 @@
+                 path_fwd_CATHY, 
+                 **kwargs
+                 ):
+-    
+-    if "DA_cnb" in kwargs:
+-        DA_cnb = kwargs["DA_cnb"]
+-    if "Ens_nbi" in kwargs:
+-        Ens_nbi = kwargs["Ens_nbi"]
+-        
++    """Convert the saturation of one ensemble member to nodal resistivity (Archie).
++
++    Parameters
++    ----------
++    project_name : str
++    ArchieParms : dict
++        Archie parameters; per-member lists are indexed with the member number.
++    porosity : array-like
++        Nodal porosity (one array per member, or a single array shared by all).
++    meta_dict : dict
++        ERT metadata (unused here, kept for API symmetry).
++    path_fwd_CATHY : str
++        Folder of the member simulation ("<prefix>_<n>").
++    **kwargs
++        ``DA_cnb`` (cycle number), ``Ens_nbi`` (0-based member index),
++        ``df_sw`` / ``time_ass`` (see `get_sw_ens_i`).
++
++    Returns
++    -------
++    ER_converted_ti : np.ndarray
++        Resistivity (Ohm.m) at the mesh nodes.
++    df_Archie : pandas.DataFrame
++        time, ens_nbi, sw, ER_converted, porosity.
++    df_sw : np.ndarray
++        Saturation used.
++    """
++
++    # DA cycle number (None outside a DA run) and member index (0-based; by
++    # default read from the ensemble folder name "<prefix>_<n>")
++    DA_cnb = kwargs.get("DA_cnb")
++    Ens_nbi = kwargs.get("Ens_nbi")
++    if Ens_nbi is None:
++        Ens_nbi = int(os.path.split(path_fwd_CATHY)[-1].split("_", 1)[1]) - 1
++
+     # Get sw array for a given ensemble
+     # ------------------------------------
+     df_sw = get_sw_ens_i(path_fwd_CATHY, **kwargs)
+@@ -80,7 +109,6 @@
+     
+     # Convert to SW to ER values
+     # --------------------------------------------------------------------
+-    print("****")
+  
+ 
+     
+@@ -91,11 +119,16 @@
+         
+     # print(f"porosity_ensi: {porosity_ensi}")
+     # print(f"porosity_ensi: {porosity_ensi}")
+-    print(f"Ens_nbi indices: {Ens_nbi}")
+-    print(f"Porosity shape: {np.shape(porosity)}")
+-    print(f"Porosity statistics (selected indices): min={np.min(porosity[Ens_nbi]):.3f}, "
+-          f"mean={np.mean(porosity[Ens_nbi]):.3f}, max={np.max(porosity[Ens_nbi]):.3f}")
+-    print("****")
++    # (statistics over all the nodes: the former print indexed the nodal porosity
++    # with the member number, hence always showed a single value)
++    logger.debug(
++        "member %d: porosity %s, min=%.3f mean=%.3f max=%.3f",
++        Ens_nbi + 1,
++        np.shape(porosity),
++        np.min(porosity),
++        np.mean(porosity),
++        np.max(porosity),
++    )
+ 
+     
+     ER_converted_ti = Archie_rho_DA(
+@@ -108,6 +141,13 @@
+                                     pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
+                                 )
+ 
++    ERT_checks.check_archie_inputs(
++        df_sw,
++        porosity,
++        ArchieParms2parse,
++        name=f"Archie member {Ens_nbi + 1}",
++    ).warn()
++
+     # build df Archie df
+     df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
+     df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
+@@ -119,16 +159,6 @@
+     )
+     return ER_converted_ti, df_Archie, df_sw
+ 
+-# def ER0_to_EM_ECa_DA(ER_converted_ti,EM_meta_dict):
+-    
+-#     # ------------------------------------------------------------------------
+-#     print('----fwd ER data-----')
+-#     from emagpy import Problem
+-#     k= Problem()
+-#     k.createSurvey(EM_meta_dict['filename'])
+-    
+-    
+-    
+ def SW_2_ERT_ERa_DA(
+                 project_name, 
+                 ArchieParms, 
+@@ -199,8 +229,7 @@
+                                             porosity, 
+                                             ERT_meta_dict, 
+                                             path_fwd_CATHY, 
+-                                            Ens_nbi=Ens_nbi,
+-                                            **kwargs
++                                            **{**kwargs, "Ens_nbi": Ens_nbi}  # no duplicate keyword
+                                             )
+     
+     # Read the input mesh using pyvista
+@@ -249,7 +278,7 @@
+     res0 = mesh_geophy_new_attr.get_array(scalar_new)
+ 
+     # ------------------------------------------------------------------------
+-    print('----fwd ER data-----')
++    logger.debug("forward ERT: member %d, DA cycle %s", Ens_nbi + 1, DA_cnb)
+     # print(scalar_new)
+     # print("Shape:", res0.shape)
+     # print("ERT_meta_dict:", ERT_meta_dict)
+@@ -258,12 +287,6 @@
+     # res0 = list(res0)
+     # res0 = [int(round(x)) for x in res0]
+ 
+-    # --- Ens_nbi check ---
+-    if 'Ens_nbi' in locals():
+-        print(f"Ens_nbi: {Ens_nbi}")
+-    else:
+-        print("Warning: Ens_nbi variable not found in scope.")
+-    
+     # --- res0 checks ---
+     res0 = np.array(res0, dtype=float)
+     
+@@ -277,9 +300,9 @@
+             try:
+                 poro_value = porosity[Ens_nbi]
+                 if np.any(np.isnan(poro_value)):
+-                    print("Porosity contains NaN values!")
++                    logger.error("porosity of member %d contains NaN values", Ens_nbi + 1)
+             except IndexError:
+-                print("Ens_nbi index out of bounds for porosity.")
++                logger.error("member index %d out of bounds for porosity", Ens_nbi)
+         raise ValueError("res0 contains NaN values. Please clean or replace them before proceeding.")
+     
+     # Check for negative values
+@@ -318,10 +341,24 @@
+     }
+     df_ERT_predicted = pd.DataFrame(data=d)
+ 
++    # checks: forward run (raw data) and forward vs observed quadrupoles / k
++    member = f"member {Ens_nbi + 1}"
++    check_report = simuERT.get_last_check_report() if "pygimli" in ERT_meta_dict["data_format"] else None
++    if check_report is None:
++        check_report = ERT_checks.check_forward_data(df_ERT_predicted, res0=res0, name="fwd ERT data")
++        check_report.warn()
++    check_report.name = f"fwd ERT {member}"
++    vs_obs = ERT_checks.check_forward_vs_obs(
++        df_ERT_predicted, ERT_meta_dict.get("data"), name=f"fwd vs obs {member}"
++    ).warn()
++    df_ERT_predicted.attrs["ert_check"] = ERT_checks.ERTCheckReport(
++        check_report.name, list(check_report.issues), dict(check_report.stats)
++    ).merge(vs_obs).to_dict()
++
+ 
+     # savefig = False
+     if savefig:
+-        print('backup figures')
++        logger.debug("saving ERT backup figures")
+         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True
+         plotter.subplot(0, 0)
+         mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(
+@@ -380,7 +417,17 @@
+         )
+ 
+         plotter.close()
+-    print('end of ER prediction')
++    ert_check = df_ERT_predicted.attrs["ert_check"]
++    logger.info(
++        "ERT forward, member %d (DA cycle %s): res0 %.1f-%.1f Ohm.m -> rhoa %.3g to %.3g Ohm.m | checks: %s",
++        Ens_nbi + 1,
++        DA_cnb,
++        res0.min(),
++        res0.max(),
++        ert_check["stats"].get("rhoa_min", np.nan),
++        ert_check["stats"].get("rhoa_max", np.nan),
++        ERT_checks.issues_summary(ert_check["issues"]),
++    )
+ 
+     return df_ERT_predicted, df_Archie, mesh_CATHY_new_attr
+ 
+@@ -518,13 +565,12 @@
+     rho: Converted Apparent Electrical Resistivity (Ohm.m).
+ 
+     """
+-    verbose = True
+-    console = rich.console.Console(stderr=True, quiet=not verbose)
+-    
+-    print('------------- Archie transformation -------------')
+-    print(f'Shape Saturation predicted: {np.shape(sat)}')
+-    print(f'Shape Porosity nodes: {np.shape(porosity)}')
+-    print(f'Shape rFluid_Archie: {np.shape(rFluid_Archie)}')
++    logger.debug(
++        "Archie transformation: sat %s, porosity %s, rFluid %s",
++        np.shape(sat),
++        np.shape(porosity),
++        np.shape(rFluid_Archie),
++    )
+ 
+     # Loop over soil type (as many soil type than a_Archie list length)
+     # -----------------------------------------------
+@@ -538,54 +584,34 @@
+                 * sat[i] ** (-n_Archie[i])
+             )
+             sigma = 1 / rho
+-            
+-            print(f'min RHO converted SW nodes: {np.min(rho)}')
+-            print(f'max RHO converted SW nodes: {np.max(rho)}')
+-            # print(f'nb of porosities in the soil: {len(np.unique(porosity))}')
+-            if np.ndim(porosity) > 0:  # Check if it's array-like (has dimensions)
+-                porosity_flat = np.array(porosity).flatten()
+-                print(f'nb of porosities in the soil: {len(np.unique(porosity_flat))}')
+-            else:
+-                print(f'nb of porosities in the soil: 1 (single value: {porosity})')
+-                
+-            try: # CASE WITH DATA ASSIMILATION
+-                for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
+-                    for meas_nb in range(np.shape(sigma)[1]):  # Loop over mesh nodes
+-                        # See eq. 4.4 thesis Isabelle p.97
+-                        # ------------------------------------
+-                        noise = np.random.normal(
+-                            0,
+-                            (pert_sigma_Archie[i] * (sigma[ti, meas_nb])) ** 2,
+-                            len(sigma[ti, :]),
+-                        )
+-                    sigma[ti, :] = sigma[ti, :] + noise
+-                    
+-                if i == 0: # to avoid displaying this for all the soil layers
+-                    console.rule(
+-                        ":octopus: Parameter perturbation :octopus:", style="green"
+-                    )
+-                    console.print(
+-                        """
+-                                    Archie perturbation for fwd model \n
+-                                    Archie rFluid: {} \n
+-                                    Archie pert_sigma: {}  \n
+-                                    Nb of zones (need to check this): {}
+-                                    """.format(
+-                            rFluid_Archie, pert_sigma_Archie, len(rFluid_Archie)
+-                        ),
+-                        style="green",
+-                    )
+-                    console.rule("", style="green")
+-            except:
+-                if i == 0:
+-                    print('Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95')
+-                # one normal draw per mesh node (vectorised: same random stream as a loop of
+-                # single draws; assigning a size-1 array to a scalar element fails with NumPy >= 2.4)
+-                # See eq. 4.4 thesis Isabelle p.95
+-                # ------------------------------------
+-                noise = np.random.normal(0, (pert_sigma_Archie[i] * sigma) ** 2)
+-                sigma = sigma + noise
+-    
+-    print('max res after Archie')
+-    print(np.max(1 / sigma))
++
++            logger.debug(
++                "Archie zone %d: rho from sw nodes min=%.4g max=%.4g (%d distinct porosities)",
++                i,
++                np.min(rho),
++                np.max(rho),
++                np.unique(np.asarray(porosity).flatten()).size,
++            )
++
++            # Gaussian noise on the conductivity with a standard deviation proportional
++            # to the conductivity: std = pert_sigma_Archie[i] * sigma (relative noise, e.g.
++            # 0.05 = 5 %). It used to be (pert * sigma)**2 (a variance passed as numpy's
++            # scale, i.e. ~1e-6 relative noise for pert=0.05), and the DA branch applied
++            # the draw of the last node to the whole row. The perturbed conductivity is
++            # kept positive (>= 1 % of the noise-free value).
++            pert = pert_sigma_Archie[i]
++            if i == 0:  # to avoid displaying this for all the soil layers
++                logger.debug(
++                    "Archie perturbation for fwd model: rFluid=%s, pert_sigma=%s, nb of zones=%d",
++                    rFluid_Archie,
++                    pert_sigma_Archie,
++                    len(rFluid_Archie),
++                )
++            if pert:
++                sigma_ref = np.asarray(sigma, dtype=float)
++                # same code for 1-D (one value per node) and 2-D (assimilation time x node)
++                noise = np.random.normal(0.0, 1.0, size=sigma_ref.shape) * pert * np.abs(sigma_ref)
++                sigma = np.maximum(sigma_ref + noise, 0.01 * sigma_ref)
++
++    logger.debug("max resistivity after Archie: %.4g", np.max(1 / sigma))
+     return 1 / sigma
+--- a/simulate_ERT.py
++++ b/simulate_ERT.py
+@@ -2,6 +2,9 @@
+ """
+ 
+ 
++import contextlib
++import io
++import logging
+ import os
+ import sys
+ 
+@@ -11,6 +14,8 @@
+ import pandas as pd
+ import pyvista as pv  # if not installed : pip install with conda install pyvista (in a conda terminal)
+ 
++from pyCATHY.ERT import ERT_checks
++
+ try:
+     import pygimli as pg
+     import pygimli.meshtools as mt
+@@ -24,6 +29,51 @@
+ except ImportError:
+     resipy = None
+ 
++logger = logging.getLogger(__name__)
++
++
++@contextlib.contextmanager
++def _captured_stdout(verbose):
++    """Keep pyGIMLi/BERT stdout out of the console: it is sent to the logger (DEBUG).
++
++    Python-level prints are captured, and (when stdout is a real file descriptor,
++    i.e. not in a notebook) the C-level output is muted. stdout is always restored,
++    even if the block raises. ``verbose=True`` lets everything through.
++    """
++    if verbose:
++        yield
++        return
++    buf = io.StringIO()
++    saved_fd = devnull_fd = None
++    try:
++        sys.stdout.flush()
++        saved_fd = os.dup(sys.stdout.fileno())
++        devnull_fd = os.open(os.devnull, os.O_WRONLY)
++        os.dup2(devnull_fd, sys.stdout.fileno())
++        fd = sys.stdout.fileno()
++    except (AttributeError, OSError, ValueError):  # no real fd (notebook, pytest capture)
++        fd = None
++    try:
++        with contextlib.redirect_stdout(buf):
++            yield
++    finally:
++        if fd is not None:
++            os.dup2(saved_fd, fd)
++        for handle in (saved_fd, devnull_fd):
++            if handle is not None:
++                os.close(handle)
++        text = buf.getvalue().strip()
++        if text:
++            logger.debug("pyGIMLi output:\n%s", text)
++
++# report of the last `create_ERT_survey_pg` call of this process (read by petro_Archie)
++_STATE = {"last_report": None}
++
++
++def get_last_check_report():
++    """ERTCheckReport of the last forward run done in this process (None if none)."""
++    return _STATE["last_report"]
++
+ 
+ def create_ERT_survey_pg(pathERT, 
+                          sequence, 
+@@ -38,23 +88,26 @@
+     fwdNoiseLevel = 5
+     if "fwdNoiseLevel" in kwargs:
+         fwdNoiseLevel = kwargs["fwdNoiseLevel"]
+-    print(f"fwd ERT Noise Level: {fwdNoiseLevel}")
++    logger.debug("fwd ERT noise level: %s%%", fwdNoiseLevel)
+     pre, ext = os.path.splitext(mesh)
+-    print(pre, ext)
++    logger.debug("forward mesh: %s%s", pre, ext)
+ 
+-    try:
+-        mesh3d = mt.readGmsh(pre + ".msh", verbose=verbose)
+-    except:
++    mesh3d = None
++    for reader, ext_try in (
++        (lambda f: mt.readGmsh(f, verbose=verbose), ".msh"),
++        (lambda f: pg.load(f, verbose=verbose), ".bms"),
++        (lambda f: pg.load(f, verbose=verbose), ".vtk"),
++    ):
+         try:
+-            mesh3d = pg.load(pre + ".bms", verbose=verbose)
+-        except:
+-            try:
+-                print('read the VTK!')
+-                mesh3d = pg.load(pre + ".vtk", verbose=verbose)
+-            except:
+-                raise ValueError(
+-                    "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
+-                )
++            mesh3d = reader(pre + ext_try)
++            logger.debug("forward mesh read from %s%s", pre, ext_try)
++            break
++        except Exception as err:  # missing file or unreadable format: try the next one
++            logger.debug("cannot read %s%s: %s", pre, ext_try, err)
++    if mesh3d is None:
++        raise ValueError(
++            "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
++        )
+     
+     sequence_file_extension = os.path.splitext(sequence)[1]
+ 
+@@ -76,23 +129,25 @@
+             "Sequence file format not recognized use .shm or .txt as a list of quadrupoles"
+         )
+     
+-    res0 = 1
+-    if "res0" in kwargs:
+-        res0 = kwargs["res0"]
++    n_elec = scheme.sensorCount() if hasattr(scheme, "sensorCount") else None
++    ERT_checks.check_scheme(
++        scheme["a"], scheme["b"], scheme["m"], scheme["n"],
++        n_elec=n_elec, name="fwd ERT scheme",
++    ).warn()
++
++    if "res0" not in kwargs:
++        raise ValueError("create_ERT_survey_pg needs res0 (one resistivity per mesh cell)")
++    res0 = np.asarray(kwargs["res0"], dtype=float)
+ 
+-    if len(res0) != len(mesh3d.cells()):
+-        raise ValueError("wrong initial resistivity input")
++    if res0.ndim != 1 or len(res0) != len(mesh3d.cells()):
++        raise ValueError(
++            f"wrong initial resistivity input: shape {res0.shape} for "
++            f"{len(mesh3d.cells())} mesh cells"
++        )
+     # Check for negative values
+     if np.any(res0 < 0):
+         raise ValueError("res0 contains negative values. Resistivity must be positive.")
+         
+-    try:
+-        if not verbose:
+-            devnull = open("/dev/null", "w")
+-            oldstdout_fno = os.dup(sys.stdout.fileno())
+-            os.dup2(devnull.fileno(), 1)
+-    except:
+-        pass
+     
+     # print('+'*20)
+     # # print(sequence_file_extension)
+@@ -110,26 +165,47 @@
+         
+         
+ 
+-    het = ert.simulate(
+-        mesh3d,
+-        res=res0,
+-        scheme=scheme,
+-        calcOnly=False,
+-        verbose=False,
+-        noiseLevel=fwdNoiseLevel,
+-    )
++    # optional absolute voltage noise of the simulation (pyGIMLi default if not given)
++    sim_kwargs = {}
++    if "fwdNoiseAbs" in kwargs:
++        sim_kwargs["noiseAbs"] = kwargs["fwdNoiseAbs"]
++
++    with _captured_stdout(verbose):
++        het = ert.simulate(
++            mesh3d,
++            res=res0,
++            scheme=scheme,
++            calcOnly=False,
++            verbose=False,
++            noiseLevel=fwdNoiseLevel,
++            **sim_kwargs,
++        )
+     # pg.show(mesh3d)
+     # pg.show(het)
+     # het.exportVTK('testmeshpg.vtk')
+     # het.saveResult('testpg')
+     
+-    try:
+-        if not verbose:
+-            os.dup2(oldstdout_fno, 1)
+-    except:
+-        pass
+-    pg.info('Filtered rhoa (min/max)', min(het['rhoa']), max(het['rhoa']))
+-    print('Correction of rhoa <= 0 to 1e-3')
++    logger.debug("fwd rhoa (raw) min/max: %.4g / %.4g", min(het['rhoa']), max(het['rhoa']))
++    # checks on the raw forward data (before the rhoa <= 0 correction below)
++    # 1e-4 V is the assumed pyGIMLi default of `noiseAbs` when not set explicitly
++    report = ERT_checks.check_forward_data(
++        het,
++        res0=res0,
++        noise_abs=kwargs.get("fwdNoiseAbs", 1e-4),
++        name="fwd ERT data",
++    )
++    report.warn()
++    _STATE["last_report"] = report
++    n_fixed = int(np.sum(np.asarray(het['rhoa']) <= 0))
++    if n_fixed:
++        logger.warning(
++            "fwd ERT: %d of %d apparent resistivities are <= 0 (min %.3g Ohm.m): "
++            "set to 1e-3 Ohm.m so that they can be log-transformed; check the "
++            "quadrupoles / noise level (see the ERT check report)",
++            n_fixed,
++            len(het['rhoa']),
++            float(np.min(np.asarray(het['rhoa']))),
++        )
+     # het.loc[het['rhoa'] <= 0, 'rhoa'] = 1e-3
+     het['rhoa'][het['rhoa'] <= 0] = 1e-3
+ 
+@@ -182,7 +258,7 @@
+     return ERT
+ 
+ 
+-def fwd_ERT_survey(ERT, noise, show=False, dump=[]):
++def fwd_ERT_survey(ERT, noise, show=False, dump=None):
+     """
+     Fwd ERT model
+ 
+@@ -206,6 +282,8 @@
+     # fwd modelling
+     # ---------------------------------------------------------#
+ 
++    if dump is None:
++        dump = []
+     ERT.forward(
+         noise=0.05, iplot=show, dump=dump
+     )  # forward modelling with 5 % noise added to the output
+--- a/sensors_measures.py
++++ b/sensors_measures.py
+@@ -95,7 +95,7 @@
+             for hh in header:
+                 try:
+                     dict_ERT_new[hh] = df_ERT[hh]
+-                except:
++                except Exception:
+                     pass
+ 
+             df_ERT_new = pd.DataFrame(dict_ERT_new)
+@@ -136,10 +136,10 @@
+ 
+     """
+ 
+-    tensio_file = open(filename, "r")
+-    tensio_file.close()
+-
+-    return df_tensio
++    raise NotImplementedError(
++        "read_tensiometers is not implemented (it used to fail with an "
++        "UnboundLocalError on `df_tensio`). Provide a sample file to implement it."
++    )
+ 
+ 
+ def read_TDR_prob(filename, **kwargs):
+@@ -151,8 +151,7 @@
+ 
+     """
+ 
+-    TDR_file = open(filename, "r")
+-
+-    TDR_file.close()
+-
+-    return df_TDR
++    raise NotImplementedError(
++        "read_TDR_prob is not implemented (it used to fail with an "
++        "UnboundLocalError on `df_TDR`). Provide a sample file to implement it."
++    )
+--- a/enkf.py
++++ b/enkf.py
+@@ -2,16 +2,17 @@
+ """
+ # Credit to:     https://github.com/hickmank/pyda/blob/7a2f04bd752e9c75bc8dcd2a45b21ff549736fa6/pyda/analysis_generator/kf/enkf1.py
+ 
++import logging
+ import os
+ import shutil
+ 
+ import matplotlib.pyplot as plt
+ import numpy as np
+-import rich.console
+ from matplotlib import pyplot
+-from rich import print
+ from rich.progress import track
+ 
++logger = logging.getLogger(__name__)
++
+ 
+ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
+     """
+@@ -62,16 +63,16 @@
+ 
+     # --- Options ---
+     Sakov = kwargs.pop('Sakov', False)
+-    print(f"\n[INIT] Starting EnKF analysis (Sakov={Sakov})")
+ 
+     # --- Sizes ---
+     ens_size = ensemble.shape[1]   # number of ensemble members
+     sim_size = ensemble.shape[0]   # number of state variables
+     meas_size = data.shape[0]      # number of observations
+ 
+-    print(f"[INFO] Ensemble size N_ens={ens_size}")
+-    print(f"[INFO] Number of state variables N_state={sim_size}")
+-    print(f"[INFO] Number of observations N_obs={meas_size}")
++    logger.info(
++        "EnKF analysis (Sakov=%s): N_ens=%d, N_state=%d, N_obs=%d",
++        Sakov, ens_size, sim_size, meas_size,
++    )
+ 
+     # ============================================================
+     # Step 1: Ensemble mean
+@@ -81,12 +82,10 @@
+     # ============================================================
+     ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
+     ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
+-    print("[STEP 1] Computed state ensemble mean")
+ 
+     if len(param) > 0:
+         param_mean = np.mean(param, axis=1, keepdims=True)
+         param_mean = np.tile(param_mean, (1, ens_size))
+-        print("[STEP 1b] Computed parameter ensemble mean")
+ 
+     if len(param) > 0:
+         augm_state_mean = np.vstack([ensemble_mean, param_mean])
+@@ -94,7 +93,6 @@
+     else:
+         augm_state_mean = ensemble_mean
+         augm_state      = ensemble
+-    print("[STEP 1c] Constructed augmented state [x; θ]")
+ 
+     # ============================================================
+     # Step 2: Perturbations
+@@ -104,8 +102,7 @@
+     # Spread = measure of uncertainty.
+     # ============================================================
+     augm_state_pert = augm_state - augm_state_mean
+-    print(f"[STEP 2] Computed state+param perturbations. "
+-          f"Var={np.var(augm_state_pert):.4f}")
++    logger.debug("state+param perturbations: var=%.4g", np.var(augm_state_pert))
+ 
+     # ============================================================
+     # Step 3: Innovation
+@@ -124,13 +121,17 @@
+         data_pert = (data.T - predict_obs.T).T
+     else:
+         data_pert = (data - predict_obs.T).T
+-    print(f"[STEP 3] Computed innovation (obs - pred). "
+-          f"Mean={np.mean(data_pert):.4f}, Std={np.std(data_pert):.4f}")
++    logger.debug(
++        "innovation (obs - pred): mean=%.4g, std=%.4g",
++        np.mean(data_pert), np.std(data_pert),
++    )
+ 
+     max_residual = 1e2
+     if np.max(abs(data_pert)) > max_residual:
+-        print("[WARNING] Very large innovations! "
+-              "Check model bias or obs errors.")
++        logger.warning(
++            "Very large innovations (max |d| = %.3g > %g): check model bias or obs errors",
++            np.max(abs(data_pert)), max_residual,
++        )
+ 
+     # ============================================================
+     # Step 4: Predicted observation mean and perturbations
+@@ -145,11 +146,12 @@
+         predict_obs.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
+     ).T
+     obs_pert = predict_obs - obs_avg
+-    print(f"[STEP 4] Computed predicted obs mean and perturbations. "
+-          f"Obs spread Var={np.var(obs_pert):.4f}")
++    logger.debug("predicted obs perturbations: var=%.4g", np.var(obs_pert))
+ 
+-    if np.allclose(obs_pert.mean(), 0):
+-        print("[WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)")
++    # (the mean of perturbations around the ensemble mean is 0 by construction:
++    # the spread is what tells about a collapse)
++    if np.std(obs_pert) <= 1e-12 * max(1.0, float(np.max(np.abs(obs_avg)))):
++        logger.warning("Obs perturbations ~0 (low ensemble spread: risk of collapse)")
+ 
+     # ============================================================
+     # Step 5: Observation covariance
+@@ -161,13 +163,14 @@
+     if Sakov:
+         COV = data_cov.T
+         inv_data_pert = data_pert / np.diag(COV)[:, None]
+-        print("[STEP 5] Used Sakov simplified covariance form")
++        logger.debug("Sakov simplified covariance form")
+     else:
+         COV = (1.0 / (ens_size - 1)) * (obs_pert @ obs_pert.T) + data_cov.T
+         inv_data_pert = np.linalg.solve(COV, data_pert)
+-        print("[STEP 5] Computed full covariance matrix COV = SS^T + R")
++        logger.debug("full covariance matrix COV = SS^T + R")
+ 
+-    print(f"[INFO] COV shape={COV.shape}, cond#={np.linalg.cond(COV):.2e}")
++    if logger.isEnabledFor(logging.DEBUG):  # the condition number is an SVD of COV
++        logger.debug("COV shape=%s, cond#=%.2e", COV.shape, np.linalg.cond(COV))
+ 
+     # ============================================================
+     # Step 6: Cross-covariance (state vs obs)
+@@ -178,8 +181,7 @@
+     # This drives how much each state is corrected by each observation.
+     # ============================================================
+     ensemble_pert = (1.0 / (ens_size - 1)) * (augm_state_pert @ obs_pert.T)
+-    print(f"[STEP 6] Computed state-observation cross covariance. "
+-          f"Norm={np.linalg.norm(ensemble_pert):.4f}")
++    logger.debug("state-observation cross covariance: norm=%.4g", np.linalg.norm(ensemble_pert))
+ #     ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
+ #                                                 obs_pert.T
+ #                                                 )
+@@ -194,7 +196,7 @@
+     # If weakly correlated → weak update.
+     # ============================================================
+     analysis = augm_state + (ensemble_pert @ inv_data_pert)
+-    print("[STEP 7] Applied analysis update")
++    logger.debug("analysis update applied")
+ 
+     # ============================================================
+     # Step 8: Split results
+@@ -203,11 +205,11 @@
+     # ============================================================
+     analysis_param = analysis[sim_size:, :].T
+     analysis       = analysis[0:sim_size, :]
+-    print("[STEP 8] Separated updated states and parameters → DONE.")
+ 
+ 
+-    # Analyze covariances
+-    summary = analyze_covariances(data_cov, obs_pert, augm_state_pert)
++    # covariance diagnostics (result not used here): only when debugging
++    if logger.isEnabledFor(logging.DEBUG):
++        analyze_covariances(data_cov, obs_pert, augm_state_pert)
+ 
+     return [
+         augm_state,
+@@ -396,7 +398,7 @@
+     Sakov = False
+     if 'Sakov' in kwargs:
+         Sakov = kwargs.pop('Sakov')
+-    print('Sakov' + str(Sakov))
++    logger.debug('Sakov=%s', Sakov)
+     
+     
+     alpha = 1  # <alpha> = (scalar) covariance inflation parameter. Usually alpha >= 1.
+@@ -586,7 +588,7 @@
+     Sakov = False
+     if 'Sakov' in kwargs:
+         Sakov = kwargs.pop('Sakov')
+-    print('Sakov: ' + str(Sakov))
++    logger.debug('Sakov=%s', Sakov)
+ 
+     # Collect data sizes.
+     # -------------------------------
+@@ -623,8 +625,9 @@
+         if len(observation) == 1:
+             observation = np.array(observation[0])
+         else:
+-            print(observation)
+-            print("observation is a list? Should be a numpy array")
++            logger.warning(
++                "observation is a list of %d arrays: should be a numpy array", len(observation)
++            )
+             
+     if data.ndim > 0:
+         # Case of dual analysis where data is within an ensemble
+@@ -633,9 +636,12 @@
+         data_pert = (data - observation.T).T
+ 
+     if np.max(abs(data_pert)) > 1e3:
+-        print(f'data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
+-        print(f'data obs: {np.mean(observation)}, min: {np.min(observation)}, max: {np.max(observation)}')
+-        print('!Predictions are too far from observations!')
++        logger.warning(
++            "Predictions are too far from observations: data mean/min/max = %.4g/%.4g/%.4g, "
++            "predictions mean/min/max = %.4g/%.4g/%.4g",
++            np.mean(data), np.min(data), np.max(data),
++            np.mean(observation), np.min(observation), np.max(observation),
++        )
+ 
+     # Calculate S = ensemble observation perturbation from ensemble observation mean
+     # -------------------------------------------------------------------------
+@@ -644,11 +650,11 @@
+     ).transpose()
+     obs_pert = observation - obs_avg
+ 
+-    if obs_pert.mean() == 0:
+-        print("Ensemble observations perturbation from ensemble "
+-              "measurement mean is too small (=0):"
+-              "- Increase perturbation!"
+-              "- Check if the system is not in steady state")
++    if np.std(obs_pert) == 0:
++        logger.warning(
++            "Ensemble observation perturbations from the ensemble mean are 0: "
++            "increase the perturbation / check that the system is not in steady state"
++        )
+ 
+     # Define the parameter covariance matrix P_param (example values)
+     # -------------------------------------------------------------------------
+@@ -803,7 +809,7 @@
+     Analysisparam = Analysis[sim_size:, :].transpose()
+     Analysis = Analysis[0:sim_size, :]
+ 
+-    print(np.shape(Analysisparam))
++    logger.debug('Analysisparam shape: %s', np.shape(Analysisparam))
+ 
+     return [A, Amean, dA, dD, MeasAvg, S, COV_combined, B, dAS, Analysis, Analysisparam]
+ 
+@@ -817,6 +823,20 @@
+ # results = enkf_analysis_inflation(data, data_cov, param, ensemble, observation, param_cov=param_cov)
+ 
+ 
++def _cov_diag_offdiag_means(pert):
++    """Mean of the diagonal and of (C - diag(C)) for C = P P^T / (N-1), P = ``pert``.
++
++    Equal to ``np.mean(np.diag(C))`` and ``np.mean(C - np.diag(np.diag(C)))`` but
++    computed from P without building C (O(n N) memory instead of O(n^2)):
++    sum(C) = ||P^T 1||^2 / (N-1) and diag(C)_i = ||P_i||^2 / (N-1).
++    """
++    pert = np.asarray(pert, dtype=float)
++    n, n_ens = pert.shape
++    sum_diag = np.sum(pert**2) / (n_ens - 1)
++    sum_all = np.sum(pert.sum(axis=0) ** 2) / (n_ens - 1)
++    return sum_diag / n, (sum_all - sum_diag) / n**2
++
++
+ def analyze_covariances(data_cov, obs_pert, augm_state_pert):
+     """
+     Analyze the structure and meaning of covariances used in EnKF.
+@@ -836,56 +856,35 @@
+         Dictionary summarizing covariance types and diagnostics.
+     """
+ 
+-    # --------------------------------------------------------
+-    # 1. Measurement error covariance R
+-    # --------------------------------------------------------
++    n_ens = obs_pert.shape[1]
+     diag_R = np.allclose(data_cov, np.diag(np.diag(data_cov)))
+-    print("\n[COV-ANALYSIS] Measurement error covariance R:")
+-    print(f"  Shape: {data_cov.shape}")
+-    print(f"  Diagonal? {diag_R}")
+-    if diag_R:
+-        print("  → Assumes independent measurement errors (no correlation).")
+-    else:
+-        print("  → Allows correlated measurement errors (e.g. sensor drift, spatial correlation).")
+-
+-    # --------------------------------------------------------
+-    # 2. Ensemble-based obs covariance (HPH^T)
+-    # --------------------------------------------------------
+-    obs_cov = (1.0 / (obs_pert.shape[1] - 1)) * (obs_pert @ obs_pert.T)
+-    print("\n[COV-ANALYSIS] Ensemble obs covariance (HPH^T):")
+-    print(f"  Shape: {obs_cov.shape}")
+-    print(f"  Diagonal mean: {np.mean(np.diag(obs_cov)):.4f}")
+-    print(f"  Off-diagonal mean: {np.mean(obs_cov - np.diag(np.diag(obs_cov))):.4f}")
+-    print("  → Represents uncertainty in predicted observations,")
+-    print("    includes correlations between observation points due to model physics.")
+-
+-    # --------------------------------------------------------
+-    # 3. Forecast state covariance P^f
+-    # --------------------------------------------------------
+-    state_cov = (1.0 / (augm_state_pert.shape[1] - 1)) * (augm_state_pert @ augm_state_pert.T)
+-    print("\n[COV-ANALYSIS] Forecast state covariance P^f:")
+-    print(f"  Shape: {state_cov.shape}")
+-    print(f"  Diagonal mean: {np.mean(np.diag(state_cov)):.4f}")
+-    print(f"  Off-diagonal mean: {np.mean(state_cov - np.diag(np.diag(state_cov))):.4f}")
+-    print("  → Encodes ensemble uncertainty in state space.")
+-    print("  → Off-diagonal terms = spatial correlations between state variables.")
+-
+-    # --------------------------------------------------------
+-    # 4. Cross-covariance P_xo
+-    # --------------------------------------------------------
+-    cross_cov = (1.0 / (obs_pert.shape[1] - 1)) * (augm_state_pert @ obs_pert.T)
+-    print("\n[COV-ANALYSIS] Cross-covariance P_xo:")
+-    print(f"  Shape: {cross_cov.shape}")
+-    print("  → Links state errors with observation errors.")
+-    print("  → High values mean that changing this state strongly affects certain observations.")
+-    print("  → This is what determines how much each observation updates each state.")
++    logger.debug(
++        "R: shape=%s, %s", data_cov.shape,
++        "diagonal (independent measurement errors)" if diag_R
++        else "full (correlated measurement errors)",
++    )
++
++    # means of the diagonal / off-diagonal of P P^T/(N-1), without forming the
++    # (n x n) matrix (n_state can be ~4e4, i.e. ~14 GB)
++    obs_diag, obs_off = _cov_diag_offdiag_means(obs_pert)
++    logger.debug(
++        "HPH^T: shape=(%d, %d), diagonal mean=%.4g, off-diagonal mean=%.4g",
++        obs_pert.shape[0], obs_pert.shape[0], obs_diag, obs_off,
++    )
++    st_diag, st_off = _cov_diag_offdiag_means(augm_state_pert)
++    logger.debug(
++        "P^f: shape=(%d, %d), diagonal mean=%.4g, off-diagonal mean=%.4g",
++        augm_state_pert.shape[0], augm_state_pert.shape[0], st_diag, st_off,
++    )
++    cross_cov_shape = (augm_state_pert.shape[0], obs_pert.shape[0])
++    logger.debug("P_xo: shape=%s", cross_cov_shape)
+ 
+     # Return a structured summary for later inspection
+     return {
+         "data_cov_diag": diag_R,
+-        "obs_cov_diag_mean": np.mean(np.diag(obs_cov)),
+-        "obs_cov_offdiag_mean": np.mean(obs_cov - np.diag(np.diag(obs_cov))),
+-        "state_cov_diag_mean": np.mean(np.diag(state_cov)),
+-        "state_cov_offdiag_mean": np.mean(state_cov - np.diag(np.diag(state_cov))),
+-        "cross_cov_shape": cross_cov.shape,
++        "obs_cov_diag_mean": obs_diag,
++        "obs_cov_offdiag_mean": obs_off,
++        "state_cov_diag_mean": st_diag,
++        "state_cov_offdiag_mean": st_off,
++        "cross_cov_shape": cross_cov_shape,
+     }
+--- a/cathy_tools.py
++++ b/cathy_tools.py
+@@ -37,6 +37,7 @@
+ 
+ """
+ import json
++import logging
+ import os
+ import sys
+ import warnings
+@@ -53,6 +54,8 @@
+ from pyCATHY.cathy_utils import dictObs_2pd
+ from pyCATHY.config_manager import VersionConfigManager
+ 
++logger = logging.getLogger(__name__)
++
+ # Fortran sources of the CATHY processor, fetched on first use of a project.
+ # Pinned to a commit so that two projects created on different days run the same
+ # code (the `main` branch moves). To upgrade: pick a new commit of
+@@ -86,7 +89,6 @@
+ import pandas as pd
+ import pyvista as pv  # read .vtk files
+ import rich.console
+-from rich import print
+ 
+ import matplotlib.pyplot as plt
+ from scipy.interpolate import Rbf
+@@ -101,7 +103,7 @@
+     # https://stackoverflow.com/questions/44144584/typeerror-cant-pickle-thread-lock-objects
+     """
+ 
+-    print(f"x= {pathexe_list}, PID = {os.getpid()}")
++    logger.debug(f"x= {pathexe_list}, PID = {os.getpid()}")
+     os.chdir(pathexe_list)
+     callexe = "./" + "cathy"
+ 
+@@ -118,6 +120,29 @@
+     return p
+ 
+ 
++def _configure_package_logging(verbose):
++    """Show the INFO messages of pyCATHY on stdout when ``verbose`` (the default).
++
++    Replaces the quiet/verbose rich console: nothing is changed when the
++    application already configured logging (handlers on the root or package
++    logger), and ``verbose=False`` leaves the logging configuration alone.
++    """
++    if not verbose:
++        return
++    package_logger = logging.getLogger("pyCATHY")
++    if package_logger.level == logging.NOTSET:
++        package_logger.setLevel(logging.INFO)
++    if not package_logger.handlers and not logging.getLogger().handlers:
++        handler = logging.StreamHandler(sys.stdout)
++        handler.setFormatter(
++            logging.Formatter(
++                "%(asctime)s - %(name)s - %(levelname)s - %(message)s", "%d/%m/%y - %H:%M:%S"
++            )
++        )
++        package_logger.addHandler(handler)
++        package_logger.propagate = False
++
++
+ def make_console(verbose):
+     """
+     Start up the :class:`rich.console.Console` instance we'll use.
+@@ -162,9 +187,10 @@
+ 
+         """
+         self.t0 = time.time()  # executation time estimate
+-        self.console = make_console(verbose)
+-        self.console.print(":checkered_flag: [b]Initiate CATHY object[/b]")
+-        self.verbose = False
++        self.console = make_console(verbose)  # kept for API compatibility (rich_display)
++        _configure_package_logging(verbose)
++        logger.info("Initiate CATHY object")
++        self.verbose = verbose
+ 
+         # flag for notebook execution
+         # ---------------------------------------------------------------------
+@@ -232,7 +258,7 @@
+                     if os.path.exists(
+                         os.path.join(self.workdir, self.project_name, "src")
+                     ):
+-                        print("clear src files")
++                        logger.info("clear src files")
+                         shutil.rmtree(
+                             os.path.join(self.workdir, self.project_name, "src")
+                         )
+@@ -246,8 +272,8 @@
+         # fetch src files if not existing from Gitbucket repo
+         # ---------------------------------------------------------------------
+         if not os.path.exists(os.path.join(self.workdir, self.project_name, "src")):
+-            self.console.print(":worried_face: [b]src files not found[/b]")
+-            self.console.print("working directory is:" + str((self.workdir)))
++            logger.warning("src files not found")
++            logger.debug("working directory is:" + str((self.workdir)))
+ 
+             if version == "1.0.0":
+                 try:
+@@ -262,7 +288,7 @@
+                     )
+ 
+ 
+-                    self.console.print(":inbox_tray: [b]Fetch cathy src files[/b]")
++                    logger.info("Fetch cathy src files")
+                     shutil.move(
+                         os.path.join(self.workdir, self.project_name, "tmp_src/src"),
+                         os.path.join(self.workdir, self.project_name, "src"),
+@@ -287,11 +313,11 @@
+                         )
+ 
+                 except Exception as exc:
+-                    print(f"could not fetch the CATHY source files ({exc})")
++                    logger.warning(f"could not fetch the CATHY source files ({exc})")
+                     sys.exit()
+ 
+             if version == "G. Manoli":
+-                print("fetch cathy G. Manoli src files")
++                logger.info("fetch cathy G. Manoli src files")
+                 path_manoli = "/home/ben/Documents/CATHY/CathyGitbucket/Test_Gabriele/1_Gabriele_Piante_NON_modificato/CATHY_RWU_ABL_1D/"
+                 shutil.copytree(
+                     path_manoli, os.path.join(self.workdir, self.project_name, "src")
+@@ -299,7 +325,7 @@
+ 
+ 
+             if version == "SCF_variable":
+-                print("fetch cathy SCF_variable src files")
++                logger.info("fetch cathy SCF_variable src files")
+                 dest = os.path.join(self.workdir, self.project_name)
+             
+                 with tempfile.TemporaryDirectory() as tmp:
+@@ -325,9 +351,7 @@
+                 
+                 
+         if not os.path.exists(os.path.join(self.workdir, self.project_name, "prepro")):
+-            self.console.print(
+-                ":inbox_tray: [b]Fetch cathy prepro src files[/b]"
+-            )
++            logger.info("Fetch cathy prepro src files")
+             shutil.move(
+                 os.path.join(
+                     self.workdir,
+@@ -339,7 +363,7 @@
+             # os.remove(os.path.join(
+             #      self.workdir, self.project_name, "prepro") + '/dem' )
+         if not os.path.exists(os.path.join(self.workdir, self.project_name, "input")):
+-            self.console.print(":inbox_tray: [b]Fetch cathy input files[/b]")
++            logger.info("Fetch cathy input files")
+             shutil.move(
+                 os.path.join(
+                     self.workdir,
+@@ -391,7 +415,7 @@
+         files describing physiographic features of the drainage system, as shown in Table 2.
+         """
+ 
+-        self.console.print(":cooking: [b]gfortran compilation[/b]")
++        logger.info("gfortran compilation")
+         for loopi in range(2):  # run it twice (to avoid the first error)
+             os.chdir(os.path.join(self.workdir, self.project_name, "prepro/src/"))
+ 
+@@ -408,8 +432,8 @@
+                 # run it twice (to avoid the first error)
+                 p = os.system(bashCommand + "> /dev/null 2>&1")
+ 
+-            except:
+-                print("bash cmd not recognized")
++            except Exception:
++                logger.warning("bash cmd not recognized")
+ 
+             os.chdir(self.workdir)
+         # move to the directory where the source FORTRAN files are contained (cathy_main.f)
+@@ -424,7 +448,7 @@
+             dst.unlink()  # Delete the existing destination file
+         src.rename(dst)
+ 
+-        self.console.print(":athletic_shoe: [b]Run preprocessor[/b]")
++        logger.info("Run preprocessor")
+         os.chdir(os.path.join(self.workdir, self.project_name, "prepro"))
+ 
+         bashcmd = "./pycppp"
+@@ -440,16 +464,16 @@
+                 stderr=subprocess.PIPE,
+             )
+         if verbose:
+-            print(p.stdout)
+-            print(p.stderr)
++            logger.debug(p.stdout)
++            logger.debug(p.stderr)
+         if "DEM resolution is not a multiple of the rivulet spacing!" in p.stdout:
+-            print("DEM resolution is not a multiple of the rivulet spacing!")
++            logger.warning("DEM resolution is not a multiple of the rivulet spacing!")
+             sys.exit()
+         if "catchment with more than one outlet cell!" in p.stdout:
+-            print("catchment with more than one outlet cell!")
++            logger.warning("catchment with more than one outlet cell!")
+             sys.exit()
+         if KeepOutlet == False:
+-            print("remove outlet")
++            logger.debug("remove outlet")
+             idoutlet = np.where(self.DEM == min(np.unique(self.DEM)))
+             self.DEM[idoutlet[0], idoutlet[1]] = max(np.unique(self.DEM))
+ 
+@@ -566,11 +590,9 @@
+         Other option is self.run_processor(runProcess=False)
+         """
+         ti = time.time()
+-        self.console.print(
+-            ":hammer_and_wrench: [b] Recompile src files[/b] ["
++        logger.info(" Recompile src files ["
+             + str(int(abs(ti - self.t0)))
+-            + "s]"
+-        )
++            + "s]")
+ 
+         # clean all files previously compiled
+         for file in glob.glob("*.o"):
+@@ -590,15 +612,13 @@
+                 if process.returncode != 0:
+                     compile_errors.append((filepath, error.decode()))
+                     if verbose:
+-                        self.console.print(f":x: [red]Error compiling {filepath}[/red]")
+-                        print(error.decode())
++                        logger.error(f"Error compiling {filepath}")
++                        logger.error(error.decode())
+ 
+         if compile_errors:
+-            self.console.print(
+-                f":x: [red]{len(compile_errors)} file(s) failed to compile[/red]"
+-            )
++            logger.error(f"{len(compile_errors)} file(s) failed to compile")
+             for fname, err in compile_errors:
+-                self.console.print(f"  - {fname}: {err}")
++                logger.debug(f"  - {fname}: {err}")
+             return
+ 
+         # Step 2: link all .o files WITH the same flags
+@@ -609,11 +629,9 @@
+         )
+ 
+         ti = time.time()
+-        self.console.print(
+-            ":cooking: [b]gfortran compilation[/b] ["
++        logger.info("gfortran compilation ["
+             + str(int(abs(ti - self.t0)))
+-            + "s]"
+-        )
++            + "s]")
+ 
+         with warnings.catch_warnings():
+             warnings.simplefilter("ignore")
+@@ -623,13 +641,13 @@
+             output, error = process.communicate()
+ 
+         if process.returncode != 0:
+-            self.console.print(":x: [red]Linker error:[/red]")
+-            print(error.decode())
++            logger.error("Linker error:")
++            logger.error(error.decode())
+             return
+         else:
+-            self.console.print(":white_check_mark: [green]Compilation successful![/green]")
++            logger.info("Compilation successful!")
+             if verbose:
+-                print(output.decode())
++                logger.debug(output.decode())
+ 
+         try:
+             shutil.move(
+@@ -637,9 +655,7 @@
+                 os.path.join(self.workdir, self.project_name, self.processor_name),
+             )
+         except Exception as e:
+-            self.console.print(
+-                f":pensive_face: [b]Cannot find the new processor[/b]: {e}"
+-            )
++            logger.warning(f"Cannot find the new processor: {e}")
+ 
+ 
+     def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
+@@ -692,7 +708,7 @@
+         try:
+             os.path.exists(os.path.join("inputs"))
+         except OSError:
+-            print("input folder missing")
++            logger.warning("input folder missing")
+             sys.exit()
+ 
+         # check if output folder
+@@ -710,7 +726,7 @@
+         if runProcess:
+ 
+             # t0 = time.time()  # executation time estimate
+-            self.console.print(":athletic_shoe: [b]Run processor[/b]")
++            logger.info("Run processor")
+             callexe = "./" + self.processor_name
+ 
+             # A mesh-building run (IPRT1=3) must never be followed by reading
+@@ -778,8 +794,8 @@
+             if verbose:
+                 # stdout, stderr = p.communicate()  # This will block until the process finishes
+                 # print(result)
+-                print(p.stdout.decode(errors="replace"))
+-                print(p.stderr.decode(errors="replace"))
++                logger.debug(p.stdout.decode(errors="replace"))
++                logger.debug(p.stderr.decode(errors="replace"))
+             os.chdir(os.path.join(self.workdir))
+ 
+             # Fortran runtime errors (e.g. "End of file", array overflows)
+@@ -915,9 +931,7 @@
+         # try:
+         if hasattr(self, "veg_map"):
+             if np.shape(self.veg_map) != np.shape(self.DEM):
+-                self.console.print(
+-                   f"Inconsistent shapes between vegetation map {np.shape(self.veg_map) } and DEM {np.shape(self.DEM)} - need to update veg first"
+-                )
++                logger.warning(f"Inconsistent shapes between vegetation map {np.shape(self.veg_map) } and DEM {np.shape(self.DEM)} - need to update veg first")
+                 # Previously this always fell back to a fabricated
+                 # single-class (all-ones) raster here — which, on a fresh
+                 # session where self.MAXVEG hadn't been set yet, silently
+@@ -930,18 +944,14 @@
+                     self.workdir, self.project_name, self.input_dirname, "root_map"
+                 )
+                 if os.path.exists(root_map_path):
+-                    self.console.print(
+-                        "Reloading existing root_map from disk instead of "
+-                        "fabricating a placeholder vegetation map."
+-                    )
++                    logger.debug("Reloading existing root_map from disk instead of "
++                        "fabricating a placeholder vegetation map.")
+                     self.update_veg_map()
+                 else:
+-                    self.console.print(
+-                        "[yellow]No root_map found on disk either — "
++                    logger.warning("No root_map found on disk either — "
+                         "falling back to a single placeholder vegetation "
+                         "class. MAXVEG will be 1 until a real vegetation "
+-                        "map is supplied via update_veg_map().[/yellow]"
+-                    )
++                        "map is supplied via update_veg_map().")
+                     self.update_veg_map(indice_veg=np.ones(np.shape(self.DEM)))
+ 
+     #%%
+@@ -966,9 +976,7 @@
+                 indent = value
+ 
+         if verbose:
+-            self.console.print(
+-                indent + ":arrows_counterclockwise: [b]Update cathyH files[/b]"
+-            )
++            logger.debug(indent + "Update cathyH files")
+ 
+         CATHYH_file = open(
+             os.path.join(self.workdir, self.project_name, "src", "CATHY.H"), "r"
+@@ -1008,18 +1016,12 @@
+ 
+ 
+         if "NR" not in self.parm:
+-            self.console.rule(
+-                ":warning: warning messages above :warning:", style="yellow"
+-            )
+-            self.console.print(
+-                r"""
+-                            The parm dictionnary is empty
+-                            Falling back to defaults to update CATHYH
+-                            This can have consequences !!
+-                            """,
+-                style="yellow",
++            pass
++            logger.warning(
++                "The parm dictionnary is empty: falling back to defaults to update "
++                "CATHYH. This can have consequences!"
+             )
+-            self.console.rule("", style="yellow")
++            pass
+             self.update_parm()
+ 
+         DEMRES = 1
+@@ -1316,7 +1318,7 @@
+         """
+ 
+         # print("update hap.in")
+-        self.console.print(":arrows_counterclockwise: [b]Update hap.in file[/b]")
++        logger.debug("Update hap.in file")
+         self._mesh_dirty = True  # DEM / layers / spacing may change -> mesh must be rebuilt
+ 
+         structural_parameter = [
+@@ -1443,10 +1445,10 @@
+ 
+             # check presence of the outlet
+             if len(np.unique(DEM)) == 1:
+-                print("Error: outlet not defined")
++                logger.error("Error: outlet not defined")
+                 DEM[0, 0] = 0
+ 
+-            self.console.print(":arrows_counterclockwise: [b]Update dtm_13 file[/b]")
++            logger.debug("Update dtm_13 file")
+             self.update_dem(DEM)
+             self.update_zone()
+ 
+@@ -1518,9 +1520,7 @@
+ 
+         """
+ 
+-        self.console.print(
+-            ":arrows_counterclockwise: [b]Update dem_parameters file [/b]"
+-        )
++        logger.debug("Update dem_parameters file ")
+ 
+         if hasattr(self, "dem_parameters") == False:
+             dem_parameters_dict = in_CT.read_dem_parameters(
+@@ -1543,23 +1543,18 @@
+                 key = "zratio(i),i=1,nstr"
+                 value = list(value)
+                 if (abs(float(sum(value))-float(1)))>1e-3:
+-                    self.console.rule(
+-                        ":warning: warning messages above :warning:", style="yellow"
+-                    )
+-                    self.console.print(
+-                        r"The sum of all the layers is not equal to 1 but to {}".format(
++                    pass
++                    logger.warning(r"The sum of all the layers is not equal to 1 but to {}".format(
+                             np.round(sum(value), 2)
+-                        ),
+-                        style="yellow",
+-                    )
+-                    self.console.rule("", style="yellow")
++                        ))
++                    pass
+             else:
+                 key = keykwargs
+ 
+             try:
+                 self.dem_parameters[key]
+                 self.dem_parameters[key] = value
+-            except:
++            except Exception:
+                 pass
+ 
+         dem_parameters_tmp = {}
+@@ -1717,7 +1712,7 @@
+             - Update vtk mesh file.
+ 
+         """
+-        self.console.print(":arrows_counterclockwise: [b]update zone file [/b]")
++        logger.debug("update zone file ")
+ 
+         with open(
+             os.path.join(self.workdir, self.project_name, "prepro/zone"), "w+"
+@@ -1757,7 +1752,7 @@
+             - Updated CATHYH file (NPRT and NUMVP).
+         """
+ 
+-        self.console.print(":arrows_counterclockwise: [b]Update parm file [/b]")
++        logger.debug("Update parm file ")
+         warnings_parm = []
+ 
+ 
+@@ -1782,7 +1777,7 @@
+         for kk, value in kwargs.items():
+             if kk in self.parm.keys():
+                 if self.verbose == True:
+-                    print(f"key: {kk} | value: {value}")
++                    logger.debug(f"key: {kk} | value: {value}")
+ 
+             # times of interest TIMPRTi
+             # ----------------------------------------------------------------
+@@ -1890,12 +1885,10 @@
+             self.parm["TMAX"] = int(max(self.parm["(TIMPRT(I),I=1,NPRT)"]))
+ 
+         if len(warnings_parm) > 0:
+-            self.console.rule(
+-                ":warning: warning messages above :warning:", style="yellow"
+-            )
+-            for ww in warnings_parm:
+-                self.console.print(warnings_parm, style="yellow")
+-            self.console.rule("", style="yellow")
++            pass
++            for ww in warnings_parm:  # (used to print the whole list once per entry)
++                logger.warning(ww)
++            pass
+ 
+         # transform array args to list
+         # --------------------------------------------------------------------
+@@ -1950,7 +1943,7 @@
+             header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 1, 1]
+             try:
+                 del self.parm["CONTR(I),I=1,NR"]
+-            except:
++            except Exception:
+                 pass
+         else:
+             header_fmt_parm = [3, 3, 2, 4, 4, 3, 3, 2, 4, 3, 3, 4, 4, 4, 2, 1, 1, 1, 1]
+@@ -2042,7 +2035,7 @@
+             if kwargs["shellprint_update"] is False:
+                 pass
+         else:
+-            self.console.print(":arrows_counterclockwise: [b]Update ic[/b]")
++            logger.debug("Update ic")
+ 
+         #  check value of WTPOSITION
+         # --------------------------------------------------------------------
+@@ -2212,7 +2205,7 @@
+             if kwargs["shellprint_update"] is False:
+                 pass
+         else:
+-            self.console.print(":arrows_counterclockwise: [b]Update atmbc[/b]")
++            logger.debug("Update atmbc")
+ 
+         # type(netValue)
+         if len(netValue) > 0:
+@@ -2225,10 +2218,10 @@
+                     v_atmbc = VALUE[0] - abs(VALUE[1])
+                 else: # Assume it is already the net
+                     v_atmbc = VALUE
+-                    print('Assuming it is already the net')
++                    logger.debug('Assuming it is already the net')
+ 
+             else:
+-                print('spatial v_atmbc must be provided as net between Precipitation and EvapoTranspiration')
++                logger.warning('spatial v_atmbc must be provided as net between Precipitation and EvapoTranspiration')
+ 
+ 
+         # set default parameters
+@@ -2265,7 +2258,7 @@
+             if HSPATM == 1:
+                 for t, v in zip(time, v_atmbc):
+                     if verbose:
+-                        print(t, v)
++                        logger.debug(" ".join(str(a) for a in (t, v,)))
+                     # atmbcfile.write("{:.0f}".format(t) + "\t" + "time" + "\n")
+                     atmbcfile.write("%i\t%s\n" % (t, "time"))
+                     # atmbcfile.close()
+@@ -2294,7 +2287,7 @@
+ 
+         if show:
+             if HSPATM ==0:
+-                print('impossible to plot for non homogeneous atmbc')
++                logger.warning('impossible to plot for non homogeneous atmbc')
+             #     # sys.exit()
+             else:
+             # x_units = "sec"
+@@ -2363,20 +2356,16 @@
+                     # quietly instead of aborting the whole run. It will
+                     # be rebuilt lazily (successfully) once grid3d is
+                     # available, e.g. the first time show_bc() is called.
+-                    print(
+-                        f"[_record_bc_in_mesh_bounds_df] grid3d not available yet "
++                    logger.debug(f"[_record_bc_in_mesh_bounds_df] grid3d not available yet "
+                         f"({e!r}); skipping mesh_bound_cond_df bookkeeping for "
+                         f"'{BCtypName}' - this does not affect the BC file written "
+-                        f"to disk."
+-                    )
++                        f"to disk.")
+                     return
+                 if not self.grid3d or "mesh3d_nodes" not in self.grid3d:
+-                    print(
+-                        f"[_record_bc_in_mesh_bounds_df] grid3d has no 'mesh3d_nodes' "
++                    logger.debug(f"[_record_bc_in_mesh_bounds_df] grid3d has no 'mesh3d_nodes' "
+                         f"yet; skipping mesh_bound_cond_df bookkeeping for "
+                         f"'{BCtypName}' - this does not affect the BC file written "
+-                        f"to disk."
+-                    )
++                        f"to disk.")
+                     return
+             self.create_mesh_bounds_df(
+                 BCtypName, self.grid3d["mesh3d_nodes"], times=list(time)
+@@ -2823,7 +2812,7 @@
+             if kwargs["shellprint_update"] is False:
+                 pass
+         else:
+-            self.console.print(":arrows_counterclockwise: [b]Update soil[/b]")
++            logger.debug("Update soil")
+ 
+ 
+         # set default parameters if SPP and/or FP args are not existing yet
+@@ -2837,7 +2826,7 @@
+                 if len(FP_map)==0:
+                     # FP_map = df[1].reset_index(drop=True).to_dict(orient='list')
+                     FP_map = df[1] #.reset_index(drop=True).to_dict(orient='list')
+-            except:
++            except Exception:
+                 pass
+ 
+         if len(SPP_map) == 0:
+@@ -2850,7 +2839,7 @@
+         # check size of the heteregeneity
+         # -----------------------------------
+         if len(zone3d) == 0:
+-            print("homogeneous soil")
++            logger.debug("homogeneous soil")
+             # check size of soil properties map versus nb of zones/ nb of layers
+             # --------------------------------------------------------------------
+             if isinstance(SPP_map["PERMX"], float):
+@@ -2902,17 +2891,13 @@
+                 for key, values in SPP_map.items():
+                     if len(values) == 1:
+                         values_all_layers = values*nstr
+-                        self.console.rule(
+-                            ":warning: Assuming that soil is homogeneous with depth :warning:", style="yellow"
+-                        )
++                        logger.warning("Assuming that soil is homogeneous with depth ")
+                     df_SPP_map[key] = values_all_layers
+ 
+             SPP_map = df_SPP_map
+ 
+         if (SPP_map["VGRMCCELL"] >= SPP_map["POROS"]).any():
+-            self.console.rule(
+-                ":warning: residual water content is > porosity :warning:", style="yellow"
+-            )
++            logger.warning("residual water content is > porosity ")
+ 
+         # create prepro inputs if not existing (containing info about the DEM)
+         # --------------------------------------------------------------------
+@@ -3643,21 +3628,17 @@
+             # Fall back to the raw valid mask if the domain is too small/
+             # thin for any cell to be `margin` pixels from a novalue cell —
+             # still better than raising outright, but flag it clearly.
+-            print(
+-                f"WARNING: no DEM cell is >{margin} pixels from a novalue "
++            logger.warning(f"WARNING: no DEM cell is >{margin} pixels from a novalue "
+                 f"cell — falling back to the valid-mask boundary to inject "
+                 f"missing vegetation class(es) {missing}. Placeholders may "
+                 f"still be lost by mesh-generation boundary handling; "
+-                f"consider lowering `margin`."
+-            )
++                f"consider lowering `margin`.")
+             interior_rows, interior_cols = np.where(valid_mask)
+ 
+         if len(interior_rows) == 0:
+-            print(
+-                f"WARNING: no valid DEM cells at all — cannot inject "
++            logger.warning(f"WARNING: no valid DEM cells at all — cannot inject "
+                 f"missing vegetation class(es) {missing}. root_map/SOIL "
+-                f"NVEG mismatch is still possible for this raster."
+-            )
++                f"NVEG mismatch is still possible for this raster.")
+             return indice_veg
+ 
+         # Spread placeholder blocks evenly across the interior candidates
+@@ -3674,12 +3655,10 @@
+             r0, r1 = r, min(r + patch_size, n_rows)
+             c0, c1 = c, min(c + patch_size, n_cols)
+             indice_veg[r0:r1, c0:c1] = cls
+-        print(
+-            f"    → injected {patch_size}x{patch_size} placeholder block(s) "
++        logger.debug(f"    → injected {patch_size}x{patch_size} placeholder block(s) "
+             f"for vegetation class(es) {missing} (absent this raster), "
+             f"{margin}+ pixels inside the DEM interior, so root_map keeps "
+-            f"NVEG == MAXVEG == {maxveg}"
+-        )
++            f"NVEG == MAXVEG == {maxveg}")
+         return indice_veg
+ 
+     def _write_root_map(self, indice_veg):
+@@ -3711,18 +3690,14 @@
+ 
+         if maxveg is not None:
+             if unique_veg.min() < 1 or unique_veg.max() > maxveg:
+-                print(
+-                    f"Vegetation classes must be within 1..{maxveg} (maxveg).\n"
+-                    f"Found: {unique_veg.tolist()}"
+-                )
++                logger.warning(f"Vegetation classes must be within 1..{maxveg} (maxveg).\n"
++                    f"Found: {unique_veg.tolist()}")
+         else:
+             expected = np.arange(1, len(unique_veg) + 1)
+             if not np.array_equal(unique_veg, expected):
+-                print(
+-                    f"Vegetation classes must start at 1 and be consecutive.\n"
++                logger.warning(f"Vegetation classes must start at 1 and be consecutive.\n"
+                     f"Found: {unique_veg.tolist()}\n"
+-                    f"Expected: {expected.tolist()}"
+-                )
++                    f"Expected: {expected.tolist()}")
+ 
+     def _resolve_maxveg(self, indice_veg, maxveg):
+         """
+@@ -3824,9 +3799,7 @@
+         # self.update_sfbc()
+ 
+         try:
+-            self.console.print(
+-                ":orange_square: [b] init boundary condition dataframe [/b]"
+-            )
++            logger.debug(" init boundary condition dataframe ")
+ 
+             # self.create_mesh_vtk()
+             if not "nnod3" in self.grid3d.keys():
+@@ -3838,7 +3811,7 @@
+                                             time,
+                                             **kwargs
+                 )
+-        except:
++        except Exception:
+             raise ValueError("cannot init boundary conditions dataframe")
+             pass
+ 
+@@ -4061,7 +4034,7 @@
+ 
+         resolved = min(means, key=means.get)
+         others = ", ".join(f"{s}={z:.3f}" for s, z in means.items() if s != resolved)
+-        print(f"  Outlet side auto-detected: '{resolved}' "
++        logger.debug(f"  Outlet side auto-detected: '{resolved}' "
+               f"(mean top elevation {means[resolved]:.3f} m"
+               + (f"; other sides: {others}" if others else "") + ")")
+         return resolved
+@@ -4215,12 +4188,12 @@
+                 pass
+ 
+         if ks is None:
+-            print(f"  NOTE: could not determine Ks (PERMX) to sanity-check "
++            logger.warning(f"  NOTE: could not determine Ks (PERMX) to sanity-check "
+                   f"{label}={flux:.2e} m/s against - skipping check.")
+             return
+ 
+         if abs(flux) > ks:
+-            print(f"  WARNING: |{label}| = {abs(flux):.2e} m/s exceeds soil "
++            logger.warning(f"  WARNING: |{label}| = {abs(flux):.2e} m/s exceeds soil "
+                   f"Ks (PERMX max = {ks:.2e} m/s) - this Neumann flux may "
+                   f"be physically unrealistic. Not blocking the run.")
+ 
+@@ -4271,7 +4244,7 @@
+         bound_bool : TYPE
+             Boolean for bound cond.
+         """
+-        self.console.print(":sponge: [b]update boundary condition dataframe[/b]")
++        logger.debug("update boundary condition dataframe")
+ 
+         if 'BC_type' not in self.mesh_bound_cond_df.columns:
+             self.mesh_bound_cond_df.loc[
+@@ -4522,7 +4495,7 @@
+         if to_nodes:
+             prop_mesh_nodes = np.zeros(len(self.mesh_pv_attributes["node_markers_zone3d"]))
+             for m in range(len(prop_map)):
+-                print(m, prop_map[m])
++                logger.debug(" ".join(str(a) for a in (m, prop_map[m],)))
+                 prop_mesh_nodes[
+                                 self.mesh_pv_attributes["node_markers_zone3d"] == m
+                                 ] = prop_map[m]
+@@ -4594,11 +4567,9 @@
+             # arrays (e.g. psi_ini), and broadcast them as if they were a
+             # single scalar value. Use an actual scalar check instead.
+             if np.isscalar(dict_props[dp]):
+-                print(
+-                    "Single value detected for "
++                logger.debug("Single value detected for "
+                     + str(dp)
+-                    + " ==> assumming it homogeneous"
+-                )
++                    + " ==> assumming it homogeneous")
+                 self.update_mesh_vtk(
+                     prop=dp,
+                     prop_value=np.ones(len(self.mesh_pv_attributes.points))
+@@ -4664,7 +4635,7 @@
+         """
+         try:
+             df = self.read_outputs(filename=prop)
+-        except:
++        except Exception:
+             pass
+         if prop == "hgsfdet":
+             plt_CT.show_hgsfdet(df, **kwargs)
+@@ -4699,7 +4670,7 @@
+ 
+ 
+         else:
+-            print("no proxy to plot")
++            logger.warning("no proxy to plot")
+         # elif filename == 'psi':
+         #     plt_CT.show_psi(path)
+         # elif filename == 'sw':
+@@ -4847,7 +4818,7 @@
+             )
+ 
+         else:
+-            print("no proxy to plot")
++            logger.warning("no proxy to plot")
+ 
+         pass
+ 
+@@ -4915,7 +4886,7 @@
+             df = out_CT.read_fort777(path)
+             return df
+         else:
+-            print("no file specified")
++            logger.warning("no file specified")
+         pass
+ 
+     def read_inputs(self, filename, **kwargs):
+@@ -4999,7 +4970,7 @@
+             )
+             return raster_mat, header_raster
+         else:
+-            print("unknown file requested")
++            logger.warning("unknown file requested")
+         pass
+ 
+     # -------------------------------------------------------------------#
+@@ -5101,9 +5072,7 @@
+             closest.append(grid3d["mesh3d_nodes"][closest_idx[i],:])
+             threshold = 5e-1
+             if d[np.argmin(d)] > threshold:
+-                self.console.print(
+-                    ":warning: [b]No node close to the required points![/b]"
+-                )
++                logger.warning("No node close to the required points!")
+ 
+         return closest_idx, closest
+ 
+@@ -5166,14 +5135,14 @@
+                         try:
+                             data.to_parquet(f"{save_path}.parquet",
+                                             engine="pyarrow")
+-                        except:
++                        except Exception:
+                             with open(f"{save_path}.pkl", "wb") as f:
+                                 pickle.dump(data, f)
+                     else:
+                         with open(f"{save_path}.pkl", "wb") as f:
+                             pickle.dump(data, f)
+         except Exception as e:
+-            print(f"Error saving results: {e}")
++            logger.error(f"Error saving results: {e}")
+ 
+     def serialize(self,obj):
+         return json.dumps(obj.tolist() if isinstance(obj, (list, np.ndarray)) else obj)
+@@ -5182,7 +5151,7 @@
+         try:
+             # Check if the object is a JSON string and convert back to list or np.ndarray
+             return json.loads(obj) if isinstance(obj, str) else obj
+-        except:
++        except Exception:
+             return obj
+ 
+     def load_backup(self, filename="",**kwargs):
+@@ -5218,10 +5187,10 @@
+                         break
+ 
+                 if file_path is None:
+-                    print(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")
++                    logger.warning(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")
+                     continue
+                 else:
+-                    print(f"Reading File {name}: {file_base_path}")
++                    logger.debug(f"Reading File {name}: {file_base_path}")
+ 
+ 
+                 # Load based on file extension
+@@ -5238,7 +5207,7 @@
+ 
+                             dict_backup[name] = obj
+                     except Exception as e:
+-                        print(f"Error loading pickle file for {name}: {e}")
++                        logger.error(f"Error loading pickle file for {name}: {e}")
+ 
+                 elif file_path.endswith(".parquet"):
+                     # Load from parquet file
+@@ -5253,10 +5222,10 @@
+ 
+                         dict_backup[name] = df
+                     except Exception as e:
+-                        print(f"Error loading parquet file for {name}: {e}")
++                        logger.error(f"Error loading parquet file for {name}: {e}")
+ 
+                 else:
+-                    print(f"Unsupported file type for {name}: {file_path}")
++                    logger.warning(f"Unsupported file type for {name}: {file_path}")
+                     continue
+ 
+         return dict_backup
+@@ -5293,7 +5262,7 @@
+                     obj = pickle.load(f)
+                     backup_list.append(obj)
+                     names.append(name)
+-                except:
++                except Exception:
+                     pass
+                 #     break
+ 
+@@ -5477,7 +5446,7 @@
+                 backup_list.append(obj)
+                 names.append(name)
+             except Exception as e:
+-                print(f"Failed to load {name} from {file_path}: {e}")
++                logger.error(f"Failed to load {name} from {file_path}: {e}")
+                 pass
+ 
+         # Create a dictionary mapping names to loaded objects
+--- a/perturbate.py
++++ b/perturbate.py
+@@ -14,6 +14,9 @@
+ from pyCATHY.plotters import cathy_plots as plt_CT
+ import re 
+ import os
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ #%%
+ def check_distribution(parm2check):
+@@ -23,7 +26,7 @@
+ 
+     if parm2check["type_parm"] == "thetar_VG":
+         if parm2check["nominal"] > 1:
+-            print("! warming value to high for residual water VG")
++            logger.debug("! warming value to high for residual water VG")
+ 
+     # References for Archie paarmeters range
+     # https://www.sciencedirect.com/science/article/pii/S1018363918306123
+@@ -44,7 +47,7 @@
+             sc_bounds = scenario["per_bounds"][index][het_nb]
+         clip_min = sc_bounds["min"]
+         clip_max = sc_bounds["max"]
+-    except:
++    except Exception:
+         pass
+ 
+     return clip_min, clip_max
+@@ -919,8 +922,9 @@
+ 
+ 
+ def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
+-    # sampling
+-    np.random.seed(1)
++    # sampling (no reseeding here: a fixed seed per call gave every parameter the
++    # same standard-normal draws, i.e. a rank-1 parameter ensemble; use
++    # DAConfig.seed / np.random.seed once, before the perturbation, to reproduce a run)
+     if sampling_type == "lognormal":
+         parm_sampling = np.random.lognormal(np.log(mean), sigma=sd, size=ensemble_size)       
+     elif sampling_type == "normal":
+@@ -1038,13 +1042,10 @@
+     - y_array: (ensemble_size,) ndarray of transformed (Gaussian) samples
+     """
+     
+-    print(
+-        "(NOT YET IMPLEMENTED - The parameters of the van Genuchten retention curves α,"
++    logger.debug("(NOT YET IMPLEMENTED - The parameters of the van Genuchten retention curves α,"
+         + "n, and θ r are perturbed taking into account their mutual cor-"
+-        + "relation according to Carsel and Parrish (1988)"
+-    )
++        + "relation according to Carsel and Parrish (1988)")
+     
+-    np.random.seed(seed=1)
+ 
+     # --- Sampling ---
+     sampling_type = parm["sampling_type"]
+@@ -1381,7 +1382,7 @@
+     key = "per_type"
+     var_per_2add[type_parm][key] = per_type
+ 
+-    key_root = re.split("(\d+)", type_parm)
++    key_root = re.split(r"(\d+)", type_parm)
+     parm_key_nb = 0
+     if len(key_root)>1:
+         parm_key_nb = int(key_root[1])
+@@ -1416,7 +1417,7 @@
+                                                                   per_type=parm['per_type'],
+                                                                   nominal=parm['nominal']     
+                                                                   )
+-            key_root = re.split("(\d+)", type_parm)
++            key_root = re.split(r"(\d+)", type_parm)
+             parm_sampling = param_withLayers[parm_key_nb]
+             parm_per_array = param_withLayers[parm_key_nb]
+             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
+@@ -1513,7 +1514,7 @@
+                                                         per_type=parm['per_type'],
+                                                         nominal=parm['nominal']
+                                                         )
+-            key_root = re.split("(\d+)", type_parm)
++            key_root = re.split(r"(\d+)", type_parm)
+     
+             parm_sampling = param_withLayers[parm_key_nb]
+             parm_per_array = param_withLayers[parm_key_nb]
+--- a/localisation.py
++++ b/localisation.py
+@@ -7,6 +7,9 @@
+ import numpy as np 
+ import pyCATHY.meshtools as mt
+ from scipy.spatial.distance import cdist
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ 
+ def create_mask_localisation(localisation,veg_map,zones,hapin,grid3d,DEM):
+@@ -24,8 +27,8 @@
+             map_surface_nodes = np.arange(grid3d['nnod']).reshape([hapin['M'] + 1,
+                                                                     hapin['N'] + 1]
+                                                                 )  # Treat each node individually   
+-        except:
+-            print('Issue here when the mesh contains nan values (boundaries)')
++        except Exception:
++            logger.warning('Issue here when the mesh contains nan values (boundaries)')
+             # # Mask out-of-bound DEM cells
+             # mask_out_bound = DEM == -9999
+             
+@@ -63,10 +66,10 @@
+     mesh_nodes_valid : list of np.ndarray
+         Each element is the list of 3D node IDs corresponding to one surface node.
+     """
+-    print("""[b]
++    logger.debug("""
+     Extrude surface valid nodes to 3D == Assuming an observation at the surface 
+     will influence all the depths!
+-    [/b]""")
++    """)
+ 
+     # Extract **3D grid nodes** from the mesh data
+     grid3d = grid3d['mesh3d_nodes']
+--- a/pf.py
++++ b/pf.py
+@@ -1,4 +1,7 @@
+ import numpy as np
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwargs):
+     """
+@@ -54,8 +57,8 @@
+     else:
+         obs_std = np.sqrt(data_cov)
+     
+-    print(f"Particle Filter Analysis: ens_size={ens_size}, meas_size={meas_size}, par_size={par_size}")
+-    print(f"  param shape: {param.shape}, ensemble shape: {ensemble.shape}")
++    logger.debug(f"Particle Filter Analysis: ens_size={ens_size}, meas_size={meas_size}, par_size={par_size}")
++    logger.debug(f"  param shape: {param.shape}, ensemble shape: {ensemble.shape}")
+     
+     # =========================================================================
+     # STEP 1: Compute particle weights using exact likelihood
+@@ -79,14 +82,14 @@
+     
+     # Compute effective sample size
+     n_eff = 1.0 / np.sum(weights ** 2)
+-    print(f"  Effective sample size: N_eff = {n_eff:.1f} / {ens_size}")
+-    print(f"  Weight range: [{weights.min():.3e}, {weights.max():.3e}]")
+-    print(f"  Max/Min weight ratio: {weights.max()/weights.min():.3e}")
++    logger.debug(f"  Effective sample size: N_eff = {n_eff:.1f} / {ens_size}")
++    logger.debug(f"  Weight range: [{weights.min():.3e}, {weights.max():.3e}]")
++    logger.debug(f"  Max/Min weight ratio: {weights.max()/weights.min():.3e}")
+     
+     # Diagnose issues
+     diag = diagnose_particle_filter_issues(param, weights, observation, data)
+     for warning in diag['warnings']:
+-        print(f"  ⚠️  {warning}")
++        logger.warning(f"  ⚠️  {warning}")
+     
+     # =========================================================================
+     # STEP 2: Resample if needed (when particle degeneracy occurs)
+@@ -94,7 +97,7 @@
+     
+     resampled = False
+     if n_eff < resample_threshold * ens_size:
+-        print(f"  Resampling (N_eff < {resample_threshold * ens_size:.1f})...")
++        logger.debug(f"  Resampling (N_eff < {resample_threshold * ens_size:.1f})...")
+         resampled = True
+         
+         # Systematic resampling
+@@ -113,7 +116,7 @@
+     # =========================================================================
+     
+     if use_enkf_update:
+-        print("  Applying weighted EnKF update...")
++        logger.debug("  Applying weighted EnKF update...")
+         ensemble, param = weighted_enkf_update(
+             data, data_cov, param, ensemble, observation, weights, alpha
+         )
+@@ -123,7 +126,7 @@
+     # =========================================================================
+     
+     if resampled or jitter_std_param > 0:  # Can apply jitter even without resampling
+-        print("  Adding jitter to maintain diversity...")
++        logger.debug("  Adding jitter to maintain diversity...")
+         
+         # Jitter for states (ensemble)
+         if jitter_std_state > 0:
+@@ -146,7 +149,7 @@
+                 # Additive jitter for all parameters
+                 param += np.random.randn(*param.shape) * jitter_std_param
+         
+-        print(f"  param range AFTER jitter: [{param.min():.3e}, {param.max():.3e}]")
++        logger.debug(f"  param range AFTER jitter: [{param.min():.3e}, {param.max():.3e}]")
+     
+     # =========================================================================
+     # STEP 5: Enforce parameter bounds
+@@ -288,7 +291,7 @@
+     meas_size = data.shape[0]
+     par_size = param.shape[0]
+     
+-    print(f"    Weighted EnKF: gain_factor={gain_factor}, alpha={alpha}")
++    logger.debug(f"    Weighted EnKF: gain_factor={gain_factor}, alpha={alpha}")
+     
+     # Combine ensemble and parameters (both are already column-wise)
+     A = np.vstack([ensemble, param])  # (sim_size + par_size, ens_size)
+@@ -342,10 +345,10 @@
+     param_change = np.abs(param_updated - param)
+     max_change = param_change.max()
+     mean_change = param_change.mean()
+-    print(f"    Max param change: {max_change:.3e}, Mean change: {mean_change:.3e}")
++    logger.debug(f"    Max param change: {max_change:.3e}, Mean change: {mean_change:.3e}")
+     
+     if max_change > 10 * param.std():
+-        print(f"    WARNING: Large parameter update detected! Consider reducing gain_factor or alpha")
++        logger.warning(f"    WARNING: Large parameter update detected! Consider reducing gain_factor or alpha")
+     
+     return ensemble_updated, param_updated
+ 
+--- a/cathy_utils.py
++++ b/cathy_utils.py
+@@ -12,6 +12,9 @@
+ from datetime import datetime, timedelta
+ import numpy as np
+ import xarray as xr
++import logging
++
++logger = logging.getLogger(__name__)
+ # from rosetta import rosetta, SoilData
+ 
+ #%% ---------------------------------------------------------------------------
+@@ -336,12 +339,12 @@
+             new_keys.append(new_key)
+         data_measure_sync = dict(zip(new_keys, data_measure_sync.values()))
+ 
+-    except:
+-        print("datetime first atmbc point")
+-        print(atmbc_df["datetime"][0])
+-        print("datetime first measurement")
+-        print(data_measure[0][sensor]["datetime"])
+-        print("cant synchronise times - continue without")
++    except Exception:
++        logger.debug("datetime first atmbc point")
++        logger.debug(atmbc_df["datetime"][0])
++        logger.debug("datetime first measurement")
++        logger.debug(data_measure[0][sensor]["datetime"])
++        logger.warning("cant synchronise times - continue without")
+     return data_measure_sync
+ 
+ 
+@@ -438,7 +441,7 @@
+     with open(filename, "w") as f:
+         json.dump(scenario_data, f, indent=4)
+ 
+-    print(f"Scenario file '{filename}' created successfully with parameters {parameters} and control '{control_type}'.")
++    logger.info(f"Scenario file '{filename}' created successfully with parameters {parameters} and control '{control_type}'.")
+     return 
+ 
+ def create_scenario_file(
+@@ -535,8 +538,8 @@
+         try:
+             import tomli_w  # For writing
+         except ImportError:
+-            print("TOML library (tomli_w) not installed. Use: pip install tomli_w")
+-            print("Falling back to JSON format.")
++            logger.warning("TOML library (tomli_w) not installed. Use: pip install tomli_w")
++            logger.warning("Falling back to JSON format.")
+             # Fallback to JSON
+             scenario_data["_explanation"] = {
+                 "per_type": "Type of parameter: None, multiplicative, etc.",
+@@ -580,7 +583,7 @@
+     else:
+         raise ValueError(f"Unsupported filetype: {filetype}. Use 'json' or 'toml'.")
+     
+-    print(f"Scenario file '{filename}' created successfully for parameters: {param_names}")
++    logger.info(f"Scenario file '{filename}' created successfully for parameters: {param_names}")
+     return filename
+ 
+ # def create_scenario_file(
+@@ -702,7 +705,7 @@
+     #     with open(filename, "w") as f:
+     #         json.dump(scenario_data, f, indent=4)
+ 
+-    print(f"Scenario file '{filename}' created successfully with control type '{control_type}'.")
++    logger.info(f"Scenario file '{filename}' created successfully with control type '{control_type}'.")
+ 
+ 
+ 
+--- a/meshtools.py
++++ b/meshtools.py
+@@ -27,6 +27,9 @@
+ 
+ import matplotlib.pylab as plt
+ import xarray as xr
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ def CATHY_2_Simpeg(
+     mesh_CATHY, ERT_meta_dict, scalar="saturation", show=False, **kwargs
+@@ -76,10 +79,10 @@
+ 
+     # mesh_nodes_modif = None
+     if 'mesh_nodes_modif' in ERT_meta_dict:
+-        print('mesh transformation before interpolation')
++        logger.debug('mesh transformation before interpolation')
+         in_nodes_mod_m = ERT_meta_dict['mesh_nodes_modif']
+     else:
+-        print('no mesh transformation before interpolation')
++        logger.debug('no mesh transformation before interpolation')
+         in_nodes_mod_m = in_nodes_mod[:, :]
+ 
+     path = os.getcwd()
+@@ -88,7 +91,7 @@
+ 
+     meshCATHY_tmp = mesh_CATHY.copy()
+     
+-    print('Tracing mesh')
++    logger.debug('Tracing mesh')
+ 
+     # print(meshCATHY_tmp)
+     # print(mesh_OUT)
+@@ -103,9 +106,9 @@
+ 
+ 
+     if len(warm_0) > 0:
+-        print(warm_0)
++        logger.debug(warm_0)
+ 
+-    print('add new attribute to pg mesh')
++    logger.debug('add new attribute to pg mesh')
+ 
+     scalar_new = scalar + "_nearIntrp2_pg_msh"
+     if "time" in kwargs:
+@@ -120,7 +123,7 @@
+ 
+ 
+     # print(mesh_new_attr)
+-    print('end of CATHY_2_pg')
++    logger.debug('end of CATHY_2_pg')
+ 
+     show = False
+     if show:
+@@ -178,7 +181,7 @@
+ 
+     # print(len(data_OUT))
+     scalar_new = scalar + "_nearIntrp2Resipymsh"
+-    print('Add new attribute to mesh')
++    logger.debug('Add new attribute to mesh')
+     # get_array(mesh, name, preference='cell'
+ 
+     if "time" in kwargs:
+@@ -476,7 +479,7 @@
+ 
+     try:
+         mesh.point_data[name] = data
+-    except:
++    except Exception:
+         mesh.cell_data[name] = data
+ 
+     meshname = name + ".vtk"
+@@ -493,7 +496,7 @@
+             mesh.save(path + meshname, binary=False)
+         else:
+             mesh.save(path + meshname, binary=False)
+-        print(path + meshname)
++        logger.debug(path + meshname)
+ 
+         # if overwrite==True:
+         #     mesh.save(full_path)
+@@ -652,7 +655,7 @@
+         # layer_str = '[' + str(layeri_top) + '-' + str(layeri_bottom) + ']'
+ 
+         for zi in range(len(layers_names)):
+-            print("layers %i analysis" % zi)
++            logger.debug("layers %i analysis" % zi)
+             # print(layers_depths[zi][0])
+             # print(layeri_top)
+             # print(layers_depths[zi][1])
+@@ -667,26 +670,24 @@
+                 layers_depths[zi][1] >= layeri_bottom
+             ):
+                 # if (depths_ordered[zi][1]>=layeri_bottom):
+-                print("conds ok --> zi:" + str(zi))
+-                print(layers_depths[zi])
+-                print(layeri_top, layeri_bottom)
++                logger.debug("conds ok --> zi:" + str(zi))
++                logger.debug(layers_depths[zi])
++                logger.debug(" ".join(str(a) for a in (layeri_top, layeri_bottom,)))
+ 
+                 zones3d_layered[li][zones3d[li] == zi + 1] = zi + 2
+-                print(
+-                    "replacing "
++                logger.debug("replacing "
+                     + str(np.sum(zones3d[li] == zi + 1))
+                     + " values by"
+-                    + str(zi + 1)
+-                )
++                    + str(zi + 1))
+ 
+                 if 10.5 * layers_depths[zi][1] < layeri_bottom:
+                     raise ValueError(
+                         "Required layer is finer than mesh layers - refine mesh"
+                     )
+             else:
+-                print("conds not ok")
+-                print(layers_depths[zi])
+-                print(layeri_top, layeri_bottom)
++                logger.debug("conds not ok")
++                logger.debug(layers_depths[zi])
++                logger.debug(" ".join(str(a) for a in (layeri_top, layeri_bottom,)))
+ 
+     return zones3d_layered
+ 
+@@ -1472,21 +1473,21 @@
+ 
+     for vname, da in variables.items():
+ 
+-        print("=" * 55)
+-        print(f"Variable  : {vname}")
+-        print(f"Shape     : {dict(zip(da.dims, da.shape))}")
++        logger.debug("=" * 55)
++        logger.debug(f"Variable  : {vname}")
++        logger.debug(f"Shape     : {dict(zip(da.dims, da.shape))}")
+ 
+         # ------------------------------------------------------------------ #
+         # 1. Identify time and spatial dims                                   #
+         # ------------------------------------------------------------------ #
+         if time_dim not in da.dims:
+-            print(f"  [SKIP] '{time_dim}' dimension not found.\n")
++            logger.warning(f"  [SKIP] '{time_dim}' dimension not found.\n")
+             continue
+ 
+         spatial_dims = [d for d in da.dims if d != time_dim]
+-        print(f"Time dim  : {time_dim}  ({da.sizes[time_dim]} steps)")
+-        print(f"Space dims: {spatial_dims}")
+-        print("-" * 55)
++        logger.debug(f"Time dim  : {time_dim}  ({da.sizes[time_dim]} steps)")
++        logger.debug(f"Space dims: {spatial_dims}")
++        logger.debug("-" * 55)
+ 
+         # ------------------------------------------------------------------ #
+         # 2. NaN count per time step                                          #
+@@ -1495,13 +1496,13 @@
+         total_cells = int(np.prod([da.sizes[d] for d in spatial_dims]))
+         all_counts_equal = bool(np.all(nan_count.values == nan_count.values[0]))
+ 
+-        print("NaN count per time step:")
+-        print(f"  Total cells : {total_cells}")
+-        print(f"  Min  : {int(nan_count.values.min())}")
+-        print(f"  Max  : {int(nan_count.values.max())}")
+-        print(f"  Mean : {nan_count.values.mean():.1f}")
+-        print(f"  Std  : {nan_count.values.std():.2f}")
+-        print(f"  All equal   : {all_counts_equal}")
++        logger.debug("NaN count per time step:")
++        logger.debug(f"  Total cells : {total_cells}")
++        logger.debug(f"  Min  : {int(nan_count.values.min())}")
++        logger.debug(f"  Max  : {int(nan_count.values.max())}")
++        logger.debug(f"  Mean : {nan_count.values.mean():.1f}")
++        logger.debug(f"  Std  : {nan_count.values.std():.2f}")
++        logger.debug(f"  All equal   : {all_counts_equal}")
+ 
+         # ------------------------------------------------------------------ #
+         # 3. Spatial mask consistency                                         #
+@@ -1512,22 +1513,22 @@
+         all_masks_equal = bool(mask_equal.all().values)
+         differing_times = da[time_dim].values[~mask_equal.values]
+ 
+-        print("-" * 55)
+-        print("Spatial mask consistency (vs. t=0):")
+-        print(f"  All identical   : {all_masks_equal}")
+-        print(f"  Differing steps : {len(differing_times)}")
++        logger.debug("-" * 55)
++        logger.debug("Spatial mask consistency (vs. t=0):")
++        logger.debug(f"  All identical   : {all_masks_equal}")
++        logger.debug(f"  Differing steps : {len(differing_times)}")
+         if 0 < len(differing_times) <= 10:
+-            print(f"  → {differing_times}")
++            logger.debug(f"  → {differing_times}")
+         elif len(differing_times) > 10:
+-            print(f"  → first 10: {differing_times[:10]} ...")
++            logger.debug(f"  → first 10: {differing_times[:10]} ...")
+ 
+         # ------------------------------------------------------------------ #
+         # 4. Unique masks                                                     #
+         # ------------------------------------------------------------------ #
+         flat     = nan_mask.values.reshape(da.sizes[time_dim], -1)
+         n_unique = len(np.unique(flat, axis=0))
+-        print(f"  Unique masks    : {n_unique}")
+-        print("=" * 55)
++        logger.debug(f"  Unique masks    : {n_unique}")
++        logger.debug("=" * 55)
+ 
+         # ------------------------------------------------------------------ #
+         # 5. Plots (optional)                                                 #
+--- a/cathy_outputs.py
++++ b/cathy_outputs.py
+@@ -13,6 +13,9 @@
+ import io
+ 
+ from pyCATHY import cathy_utils
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ _FORTRAN_EXP_RE = re.compile(r'(?<=[0-9])([+-]\d{2,3})(?=[\s\n]|$)')
+ 
+@@ -102,7 +105,7 @@
+ 
+     def is_number(s):
+         try: float(s); return True
+-        except: return False
++        except Exception: return False
+ 
+     lines = Path(filename).read_text().splitlines()
+ 
+@@ -899,7 +902,7 @@
+                 f"  n_nan    : {n_nan} / {n_total} pixels\n"
+                 f"  fort.777 : {fort777_path}"
+             )
+-        print(f"  ensemble {i}: ACT. ETRA sum={float(ds['ACT. ETRA'].sum()):.4f}  "
++        logger.debug(f"  ensemble {i}: ACT. ETRA sum={float(ds['ACT. ETRA'].sum()):.4f}  "
+               f"NaNs={n_nan}/{n_total} ({100*n_nan/n_total:.1f}%)")
+ 
+         # drop band dim/coord if present
+@@ -933,14 +936,14 @@
+                 )
+             dt_values = ref + pd.to_timedelta(time_vals)
+             ds_ensemble = ds_ensemble.assign_coords(time=dt_values)
+-            print(f"  ✓ time converted: timedelta64 → datetime64  (ref: {ref.date()})")
+-            print(f"    range: {dt_values[0]} → {dt_values[-1]}")
++            logger.debug(f"  ✓ time converted: timedelta64 → datetime64  (ref: {ref.date()})")
++            logger.debug(f"    range: {dt_values[0]} → {dt_values[-1]}")
+ 
+         elif np.issubdtype(time_vals.dtype, np.datetime64):
+-            print(f"  ✓ time is already datetime64")
++            logger.debug(f"  ✓ time is already datetime64")
+ 
+         else:
+-            print(f"  ⚠ unexpected time dtype: {time_vals.dtype} — skipping conversion")
++            logger.warning(f"  ⚠ unexpected time dtype: {time_vals.dtype} — skipping conversion")
+ 
+     # ── 3. Clear encoding/attrs on all vars & coords ──────────────────────────
+     ENCODING_KEYS = {
+@@ -970,10 +973,10 @@
+         #     }}
+         # )
+         # add this just before to_netcdf in create_ensemble_ET_xr
+-        print("About to save:")
+-        print(f"  time length: {ds_ensemble.dims['time']}")
+-        print(f"  time values: {ds_ensemble['time'].values}")
+-        print(ds_ensemble)
++        logger.debug("About to save:")
++        logger.debug(f"  time length: {ds_ensemble.dims['time']}")
++        logger.debug(f"  time values: {ds_ensemble['time'].values}")
++        logger.debug(ds_ensemble)
+ 
+         ds_ensemble.to_netcdf(
+                 output_path,
+@@ -985,8 +988,8 @@
+                 }}
+             )
+ 
+-    print(f"\n  ✓ saved → {output_path}")
+-    print(ds_ensemble)
++    logger.info(f"\n  ✓ saved → {output_path}")
++    logger.debug(ds_ensemble)
+     return ds_ensemble
+ 
+ 
+@@ -1012,25 +1015,25 @@
+     time_vals = da.time.values  # timedelta64[ns]
+     origin_ts = pd.Timestamp(origin) if origin is not None else None
+ 
+-    print("=" * 60)
+-    print(f"Variable: '{var}'")
+-    print(f"Dimensions: {dict(da.sizes)}")
+-    print("-" * 60)
+-    print(f"  Global mean:   {float(da.mean()):.4f}")
+-    print(f"  Global std:    {float(da.std()):.4f}")
+-    print(f"  Global min:    {float(da.min()):.4f}")
+-    print(f"  Global max:    {float(da.max()):.4f}")
+-    print("-" * 60)
+-    print("  Mean per time step:")
++    logger.debug("=" * 60)
++    logger.debug(f"Variable: '{var}'")
++    logger.debug(f"Dimensions: {dict(da.sizes)}")
++    logger.debug("-" * 60)
++    logger.debug(f"  Global mean:   {float(da.mean()):.4f}")
++    logger.debug(f"  Global std:    {float(da.std()):.4f}")
++    logger.debug(f"  Global min:    {float(da.min()):.4f}")
++    logger.debug(f"  Global max:    {float(da.max()):.4f}")
++    logger.debug("-" * 60)
++    logger.debug("  Mean per time step:")
+     for t in time_vals:
+         val = float(da.sel(time=t).mean())
+-        print(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {val:.4f}")
+-    print("-" * 60)
+-    print("  Ensemble spread (std) per time step:")
++        logger.debug(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {val:.4f}")
++    logger.debug("-" * 60)
++    logger.debug("  Ensemble spread (std) per time step:")
+     for t in time_vals:
+         spread = float(da.sel(time=t).std("ensemble").mean())
+-        print(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {spread:.4f}")
+-    print("=" * 60)
++        logger.debug(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {spread:.4f}")
++    logger.debug("=" * 60)
+ 
+ # --- Usage examples ---
+ # Relative time in hours (default):
+--- a/cathy_plots.py
++++ b/cathy_plots.py
+@@ -55,6 +55,9 @@
+ import rioxarray as rio
+ import scipy.stats as stats
+ import seaborn
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ 
+ # mpl.style.use('default')
+@@ -542,8 +545,8 @@
+ 
+     if unit == 'PERMX':
+         my_colormap = None
+-        print('No colormap')
+-        print(my_colormap)
++        logger.debug('No colormap')
++        logger.debug(my_colormap)
+ 
+     if 'cmap' in kwargs:
+         my_colormap = kwargs.pop('cmap')
+@@ -556,9 +559,9 @@
+ 
+     mesh = pv.read(os.path.join(path, filename))
+     if unit in list(mesh.array_names):
+-        print("plot " + str(unit))
++        logger.debug("plot " + str(unit))
+     else:
+-        print("physcial property not existing")
++        logger.warning("physcial property not existing")
+ 
+     # notebook = activate widgets
+     # -------------------------------------------------------------------------
+@@ -659,7 +662,7 @@
+     if savefig is True:
+         ax.view_xz()
+         cpos = ax.show(screenshot= os.path.join(path, filename + unit + ".png"))
+-        print("figure saved" + os.path.join(path, filename + unit + ".png"))
++        logger.info("figure saved" + os.path.join(path, filename + unit + ".png"))
+         ax.close()
+ 
+ 
+@@ -703,7 +706,7 @@
+     # for key, value in kwargs.items():
+     if "x_units" in kwargs:
+         x_units = kwargs.pop('x_units')
+-        print(x_units)
++        logger.debug(x_units)
+ 
+     if path is None:
+         path = os.getcwd()
+@@ -724,9 +727,9 @@
+     mesh = pv.read(os.path.join(path, filename0))
+ 
+     if unit in list(mesh.array_names):
+-        print("plot " + str(unit))
++        logger.debug("plot " + str(unit))
+     else:
+-        print("physcial property not existing")
++        logger.warning("physcial property not existing")
+ 
+     offscreen = True
+     if show == False:
+@@ -764,7 +767,7 @@
+                                         )
+ 
+     legend_entry = "Time= " + str(mesh["TIME"])
+-    print(legend_entry)
++    logger.debug(legend_entry)
+     if x_units is not None:
+         xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
+         legend_entry = "Time=" + str(t_lgd) + xlabel
+@@ -779,10 +782,10 @@
+         files.append(file)
+ 
+     for ff in natsort.natsorted(files, reverse=False):
+-        print(ff)
++        logger.debug(ff)
+         mesh = pv.read(ff)
+         array_new = mesh.get_array(unit)
+-        print(mesh["TIME"])
++        logger.debug(mesh["TIME"])
+ 
+         if x_units is not None:
+             xlabel, t_lgd = convert_time_units(mesh["TIME"], x_units)
+@@ -808,7 +811,7 @@
+         gif_speed_down = os.path.join(path + unit + "_slow.gif")
+         gif = imageio.mimread(gif_original)
+         imageio.mimsave(gif_speed_down, gif, duration=1800)
+-        print("gif saved" + os.path.join(path, gif_original))
++        logger.info("gif saved" + os.path.join(path, gif_original))
+ 
+     return
+ 
+@@ -859,7 +862,7 @@
+             v_atmbc_p = v_atmbc[1]  # positif
+             v_atmbc_n = v_atmbc[0]  # negatif
+             v_atmbc = v_atmbc[0] - v_atmbc[1]
+-        except:
++        except Exception:
+             pass
+ 
+     # if np.shape(t_atmbc) != np.shape(v_atmbc):
+@@ -1377,15 +1380,15 @@
+     cax = ax1.matshow(EnsembleX, aspect="auto")  # ,
+     # cmap=cm.rainbow, norm=colors.LogNorm())
+     ax1.set_title("Prior")
+-    ax1.set_ylabel("$\psi$ params #")
++    ax1.set_ylabel(r"$\psi$ params #")
+     ax1.set_xlabel("Members #")
+     cbar = fig.colorbar(cax, location="bottom")
+ 
+     ax = fig.add_subplot(2, 5, 6)
+     cax = ax.matshow(np.cov(EnsembleX), aspect="auto", cmap="gray", norm=LogNorm())
+     ax.set_title("cov(Prior)")
+-    ax.set_xlabel("$\psi$ params #")
+-    ax.set_ylabel("$\psi$ params #")
++    ax.set_xlabel(r"$\psi$ params #")
++    ax.set_ylabel(r"$\psi$ params #")
+     # cbar = fig.colorbar(cax, location='bottom')
+     cbar = fig.colorbar(cax, format="$%.1f$", location="bottom")
+ 
+@@ -1421,7 +1424,7 @@
+     ax = fig.add_subplot(2, 5, 4, sharey=ax1)
+     cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="seismic")
+     ax.set_title("Correction")
+-    ax.set_ylabel("$\psi$ params #")
++    ax.set_ylabel(r"$\psi$ params #")
+     ax.set_xlabel("Members #")
+     cbar = fig.colorbar(cax, location="bottom")
+     ax.set_yticks([])
+@@ -1429,7 +1432,7 @@
+     ax = fig.add_subplot(2, 5, 5, sharey=ax1)
+     cax = ax.matshow(Analysis, aspect="auto")
+     ax.set_title("Posterior")
+-    ax.set_ylabel("$\psi$ params #")
++    ax.set_ylabel(r"$\psi$ params #")
+     ax.set_xlabel("Members #")
+     cbar = fig.colorbar(cax, location="bottom")
+     ax.set_yticks([])
+@@ -1598,7 +1601,7 @@
+                 alpha=0.5,
+                 label="update nb" + str(int(nt + 1)),
+             )
+-        except:
++        except Exception:
+             pass
+         ax.legend(loc="upper right")
+         ax.set_ylabel("Probability")
+@@ -1632,7 +1635,7 @@
+             cloud_t[:, int(nt + 1)] = np.hstack(
+                 dict_parm_pert[parm]["update_nb" + str(int(nt))]
+             )
+-    except:
++    except Exception:
+         pass
+ 
+     dict_parm_new = {}
+@@ -1764,7 +1767,7 @@
+             test = len(isOL) / nb_of_nodes
+             try:
+                 int(test)
+-            except:
++            except Exception:
+                 ValueError("inconsistent nb of OL data - no plot")
+                 pass
+             else:
+@@ -1975,7 +1978,7 @@
+             style=["-"],
+             color=colors_minmax,
+             xlabel="(assimilation) time - (h)",
+-            ylabel="pressure head $\psi$ (m)",
++            ylabel=r"pressure head $\psi$ (m)",
+             alpha=0.1
+         )
+ 
+@@ -2000,7 +2003,7 @@
+             style=["-"],
+             color="grey",
+             label=False,
+-            ylabel="pressure head $\psi$ (m)",
++            ylabel=r"pressure head $\psi$ (m)",
+         )  # water saturation (-)
+         prep_DA["ens_min_isOL_time"].pivot(
+             index=keytime,
+--- a/sensitivity.py
++++ b/sensitivity.py
+@@ -9,6 +9,9 @@
+ 
+ import matplotlib.pyplot as plt
+ import numpy as np
++import logging
++
++logger = logging.getLogger(__name__)
+ # from SALib.analyze import morris as ma
+ 
+ 
+@@ -80,8 +83,8 @@
+ def _update_CATHY_inputs(samples):
+ 
+     for ii in range(0, len(samples)):
+-        print(str(ii + 1) + "/" + str(len(samples)))
+-        print(os.getcwd())
++        logger.debug(str(ii + 1) + "/" + str(len(samples)))
++        logger.debug(os.getcwd())
+ 
+     PERMX = PERMY = PERMZ = sample[ii, 0]
+     POROS = sample[ii, 1]
+@@ -132,15 +135,13 @@
+ 
+ def print_Morris_out(morris_problem):
+ 
+-    print(
+-        "{:20s} {:>7s} {:>7s} {:>7s}".format(
++    logger.info("{:20s} {:>7s} {:>7s} {:>7s}".format(
+             "Name", "mean(EE)", "mean(|EE|)", "std(EE)"
+-        )
+-    )
++        ))
+     for name, s1, st, mean in zip(
+         morris_problem["names"], Si["mu"], Si["mu_star"], Si["sigma"]
+     ):
+-        print("{:20s} {:=7.3f} {:=7.3f} {:=7.3f}".format(name, s1, st, mean))
++        logger.info("{:20s} {:=7.3f} {:=7.3f} {:=7.3f}".format(name, s1, st, mean))
+ 
+     pass
+ 
+--- a/petro.py
++++ b/petro.py
+@@ -11,6 +11,9 @@
+ from scipy.optimize import curve_fit
+ 
+ from pyCATHY.plotters import cathy_plots as pltCT
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ 
+ def fit_VGP(sai, teta, SWRfunc, solver="lm", bvals=[(0, 0, 1, 0), (1, 1, 100, 100)]):
+@@ -107,7 +110,7 @@
+ 
+ 
+ def Archie_sat2rho(eff_sat, rho_sat, n):
+-    print(rho_sat, n)
++    logger.debug(" ".join(str(a) for a in (rho_sat, n,)))
+     rho = rho_sat * eff_sat ** (-n)
+     # plt.plot(eff_sat, rho, 'o')
+     # plt.pause(1)
+@@ -217,7 +220,7 @@
+     mean, stdev, codes = rosetta(3, soildata)  # Rosetta version 3
+ 
+     if mean.shape[0] > 1:
+-        print(f"Warning: Rosetta returned {mean.shape[0]} rows. Only the first sample will be used.")
++        logger.warning(f"Warning: Rosetta returned {mean.shape[0]} rows. Only the first sample will be used.")
+     
+     # Extract Rosetta outputs
+     theta_r = float(mean[0, 0])
+@@ -385,7 +388,7 @@
+ 
+     if soilTexture is not None:
+         if soilTexture not in soil_texture:
+-            print("soil texture non existing")
++            logger.warning("soil texture non existing")
+ 
+     table = [
+         [
+@@ -464,7 +467,7 @@
+ 
+     if soilTexture is not None:
+         if soilTexture not in soil_texture:
+-            print("soil texture non existing")
++            logger.warning("soil texture non existing")
+ 
+     A = [
+         [0, 0, 0, 0.9],
+--- a/cathyDA_plots.py
++++ b/cathyDA_plots.py
+@@ -28,6 +28,9 @@
+ import scipy.stats as stats
+ import pandas as pd
+ import matplotlib.gridspec as gridspec
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ # mpl.style.use('default')
+ mpl.rcParams["grid.color"] = "k"
+@@ -137,7 +140,7 @@
+             style=[".-"],
+             color=colors_minmax,
+             xlabel="(assimilation) time - (h)",
+-            ylabel="pressure head $\psi$ (m)",
++            ylabel=r"pressure head $\psi$ (m)",
+         )
+ 
+         lgd = ax.fill_between(
+@@ -167,7 +170,7 @@
+             style=["-"],
+             color="grey",
+             label=False,
+-            ylabel="pressure head $\psi$ (m)",
++            ylabel=r"pressure head $\psi$ (m)",
+         )  # water saturation (-)
+         prep_DA["ens_min_isOL_time"].pivot(
+             index=keytime,
+@@ -328,8 +331,8 @@
+         if unit=='mm/day':
+             obs2plot = obs2plot*(1e3*86400)
+ 
+-        print(len(obs2plot))
+-        print(len(ET_DA_act_etra_ensi.values[:]))
++        logger.debug(len(obs2plot))
++        logger.debug(len(ET_DA_act_etra_ensi.values[:]))
+ 
+         axi.scatter(
+             ET_DA_act_etra_ensi.values[:],
+@@ -478,7 +481,7 @@
+     plt.suptitle(f"Ensemble ET Statistics  —  '{var}'", fontsize=13, fontweight="bold")
+     plt.savefig(output_fig, dpi=150, bbox_inches="tight")
+     plt.show()
+-    print(f"Figure saved to: {output_fig}")
++    logger.info(f"Figure saved to: {output_fig}")
+ 
+ 
+ # --- Usage examples ---
+--- a/cathy_inputs.py
++++ b/cathy_inputs.py
+@@ -8,6 +8,9 @@
+ import pandas as pd
+ 
+ from pyCATHY.plotters import cathy_plots as pltCT
++import logging
++
++logger = logging.getLogger(__name__)
+ 
+ 
+ def read_atmbc(filename, grid=None, show=False, **kwargs):
+@@ -95,7 +98,7 @@
+             try:
+                 pltCT.show_atmbc_3d(df_atmbc)
+             except Exception:
+-                print("no vtk file found")
++                logger.debug("no vtk file found")
+ 
+     return df_atmbc, HSPATM, IETO
+ 
+@@ -400,12 +403,9 @@
+             zone_id.append(dz+1) # zone numbers starts from 1
+ 
+     if len(soil) != len(layer_id): #*dem_parm['nzone']:
+-       print(
+-            "Inconsistent number of zones/layers with respect to the number of soil lines: " +
++       logger.warning("Inconsistent number of zones/layers with respect to the number of soil lines: " +
+             str(len(soil)) + '/' + str(len(layer_id)) +
+-            "!Revise dem_parm file!"
+-
+-        )
++            "!Revise dem_parm file!")
+ 
+     # name_str = np.sort(name_str)
+     df_soil = pd.DataFrame(soil, [zone_id,

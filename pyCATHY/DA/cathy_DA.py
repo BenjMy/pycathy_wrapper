@@ -73,6 +73,7 @@ from rich.progress import track
 from pyCATHY.cathy_utils import dictObs_2pd  # noqa: F401  (re-exported, see __all__)
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
 from pyCATHY.DA import enkf, pf, mapper, localisation
+from pyCATHY.ERT import ERT_checks
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
@@ -167,6 +168,32 @@ def _log_domain_check(
     logger.debug(f"  Cov diag range:    {cov_diag.min():.2e} – {cov_diag.max():.2e}")
 
 
+_LOG_EPS = 1e-3  # offset added before log10 (same as in _log_transform_obs)
+
+
+def _log10_cov(data_valid: np.ndarray, data_cov_valid: np.ndarray, eps: float = _LOG_EPS):
+    """Data covariance in the log10 domain (first-order propagation).
+
+    R_log = J R J with J = diag(1 / (ln(10) (d + eps))). Non-positive d + eps
+    (which cannot be log-transformed) get J = 0 and a warning.
+    """
+    # non-positive observations are clipped to 0 first (as in _log_transform_obs),
+    # so that the Jacobian is defined: log10(max(d, 0) + eps)
+    d = np.clip(np.asarray(data_valid, dtype=float), 0.0, None) + eps
+    jac = 1.0 / (np.log(10.0) * d)
+    return np.asarray(data_cov_valid, dtype=float) * np.outer(jac, jac)
+
+
+def _has_name_token(key: str, token: str) -> bool:
+    """True if `token` appears in the (casefolded) parameter name `key` at the start
+    of the name or after a non-alphanumeric character.
+
+    Keeps the suffixes added per zone / layer ("Ks1", "porosity_zone2") but no longer
+    matches inside another word: "a_Archie" used to match "pert_sigma_Archie".
+    """
+    return re.search(r"(?<![a-z0-9])" + re.escape(token.casefold()), key) is not None
+
+
 def _nonphysical_values(
     name: str, values: np.ndarray, root_depth_limit: Callable[[], float]
 ) -> Optional[Tuple[np.ndarray, str]]:
@@ -178,17 +205,17 @@ def _nonphysical_values(
     flagged. ``root_depth_limit`` is only called for a root depth.
     """
     key = name.casefold()
-    if "rFluid".casefold() in key:
+    if _has_name_token(key, "rFluid"):
         return values < 0, "negative"
-    if "porosity".casefold() in key:  # a volume fraction
+    if _has_name_token(key, "porosity"):  # a volume fraction
         return (values < 0) | (values > 1), "out of range"
-    if "a_Archie".casefold() in key:
+    if _has_name_token(key, "a_Archie"):
         return (values < 0) | (values > 3), "out of range"
-    if "Ks".casefold() in key:
+    if _has_name_token(key, "Ks"):
         return values < 0, "negative Ks"
-    if "PCREF".casefold() in key:  # a pressure head: must be negative
+    if _has_name_token(key, "PCREF"):  # a pressure head: must be negative
         return values > 0, "positive PCREF"
-    if "Zroot".casefold() in key:
+    if _has_name_token(key, "Zroot"):
         return values > root_depth_limit(), "unfeasible root depth"
     return None
 
@@ -232,22 +259,29 @@ _WARNED_ONCE: set = set()
 
 logger = logging.getLogger(__name__)
 
+# format of the default handler (same layout as the pyGIMLi log lines)
+_LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+_LOG_DATEFMT = "%d/%m/%y - %H:%M:%S"
+
 
 def _configure_logging(verbose: bool) -> None:
     """Set the verbosity of this module's logger (called when a DA run starts).
 
     INFO (progress, what is being assimilated) by default, DEBUG (diagnostic
     dumps of ranges, shapes, dictionaries) when ``verbose``; warnings and errors
-    are always shown. A plain stdout handler is attached only when the
+    are always shown. A stdout handler (timestamp, logger, level) is attached only when the
     application has not configured logging itself, so the messages still appear
     for scripts and notebooks that never call ``logging.basicConfig``.
     """
-    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
-    if not logger.handlers and not logging.getLogger().handlers:
+    level = logging.DEBUG if verbose else logging.INFO
+    package_logger = logging.getLogger("pyCATHY")  # parent of every pyCATHY module logger
+    package_logger.setLevel(level)
+    logger.setLevel(level)
+    if not package_logger.handlers and not logger.handlers and not logging.getLogger().handlers:
         handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter("%(message)s"))
-        logger.addHandler(handler)
-        logger.propagate = False
+        handler.setFormatter(logging.Formatter(_LOG_FORMAT, _LOG_DATEFMT))
+        package_logger.addHandler(handler)
+        package_logger.propagate = False
 
 
 def _warn_once(key: str, message: str) -> None:
@@ -255,6 +289,13 @@ def _warn_once(key: str, message: str) -> None:
     if key not in _WARNED_ONCE:
         _WARNED_ONCE.add(key)
         warnings.warn(message)
+
+
+def _log_once(key: str, message: str, level: int = logging.WARNING) -> None:
+    """Log a message only the first time `key` is seen (once per process, not once per cycle)."""
+    if key not in _WARNED_ONCE:
+        _WARNED_ONCE.add(key)
+        logger.log(level, message)
 
 
 def _check_positive_pressure_heads(ensemble_psi):
@@ -387,6 +428,7 @@ _LEGACY_DA_KEYS = (
     "localisation",
     "threshold_rejected",
     "use_log_transformed_obs",
+    "log_transform_cov",
     "cleanup_vtk",
     "backup_fort777",
     "seed",
@@ -413,6 +455,11 @@ class DAConfig:
     use_log_transformed_obs : bool
         Assimilate log-transformed observations (useful for ERT data: the Archie
         operator makes their distribution non Gaussian).
+    log_transform_cov : bool
+        With ``use_log_transformed_obs``: propagate the data covariance to the
+        log10 domain (first-order, R_log = J R J, J = diag(1/(ln10 (d+eps)))).
+        False reproduces the old behaviour (linear-domain R applied to log data,
+        which makes the observations effectively ignored). Default True.
     cleanup_vtk : {False, 'converted', 'all'}
         Delete VTK files produced in ``<workdir>/<project>/DA_Ensemble`` after the run.
     backup_fort777 : bool
@@ -436,6 +483,7 @@ class DAConfig:
     localisation: Optional[str] = None
     threshold_rejected: int = 10
     use_log_transformed_obs: bool = False
+    log_transform_cov: bool = True
     cleanup_vtk: object = False
     backup_fort777: bool = False
     analysis: Optional[AnalysisConfig] = None
@@ -613,6 +661,96 @@ def run_analysis(
 # ---------------------------------------------------------------------------
 # SMALL HELPERS (pure functions, no `self`)
 # ---------------------------------------------------------------------------
+
+
+class _Tee:
+    """File-like object writing to several streams (live, line flushed)."""
+
+    def __init__(self, *streams):
+        self.streams = streams
+
+    def write(self, data):
+        for s in self.streams:
+            try:
+                s.write(data)
+                s.flush()
+            except Exception:  # a broken stream must never stop the run
+                pass
+        return len(data)
+
+    def flush(self):
+        for s in self.streams:
+            try:
+                s.flush()
+            except Exception:
+                pass
+
+    def isatty(self):
+        return False
+
+    def __getattr__(self, name):  # encoding, fileno, ... of the first stream
+        return getattr(self.streams[0], name)
+
+
+@contextlib.contextmanager
+def _tee_run_output(path: str, console=None) -> Iterator[None]:
+    """Duplicate everything printed during the block into the log file ``path``.
+
+    Captured live (the file is line buffered):
+
+    - ``print`` and ``rich.print`` (``sys.stdout`` / ``sys.stderr``),
+    - ``logging`` messages of handlers that write to stdout/stderr,
+    - the rich ``console`` of the CATHY object. When it is not verbose it writes to
+      ``os.devnull``: it is temporarily redirected to the log file only, so nothing
+      new is displayed on screen.
+
+    Not captured: output written by compiled code directly to the OS file
+    descriptors (the Fortran processor) and rich output inside Jupyter.
+    """
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    logf = open(path, "a", encoding="utf-8", buffering=1)
+    logf.write(
+        "\n===== run started {} =====\n".format(
+            __import__("datetime").datetime.now().strftime("%d/%m/%y %H:%M:%S")
+        )
+    )
+    out, err = sys.stdout, sys.stderr
+    tee_out, tee_err = _Tee(out, logf), _Tee(err, logf)
+    sys.stdout, sys.stderr = tee_out, tee_err
+
+    # logging handlers created before the tee still hold the original streams
+    rebound = []
+    seen = set()
+    for lg in (logging.getLogger("pyCATHY"), logging.getLogger(), logger):
+        for h in lg.handlers:
+            if id(h) in seen or not isinstance(h, logging.StreamHandler):
+                continue
+            seen.add(id(h))
+            if isinstance(h, logging.FileHandler):
+                continue
+            if h.stream is out:
+                h.setStream(tee_out)
+                rebound.append((h, out))
+            elif h.stream is err:
+                h.setStream(tee_err)
+                rebound.append((h, err))
+
+    # non-verbose rich console: devnull -> log file only
+    old_console_file = None
+    if console is not None and getattr(console.file, "name", None) == os.devnull:
+        old_console_file = console.file
+        console.file = logf
+
+    try:
+        yield
+    finally:
+        if old_console_file is not None:
+            console.file = old_console_file
+        for h, stream in rebound:
+            h.setStream(stream)
+        sys.stdout, sys.stderr = out, err
+        logf.write("===== run ended =====\n")
+        logf.close()
 
 
 @contextlib.contextmanager
@@ -801,6 +939,7 @@ class DA(CATHY):
         self.ET_DA_xr = None
         self.isET = False
         self.localisationBool = False
+        self.ert_check_reports: List[dict] = []  # ERT checks (see ERT_checks), saved every cycle
         self.Archie_parms_mat_ens: Any = []  # list, then an array (n_param, n_members)
         self.count_atmbc_cycle = 0
 
@@ -853,6 +992,8 @@ class DA(CATHY):
         self.ET_DA_xr = None
         self.isET = False
         self.localisationBool = False
+        self.ert_check_reports = []
+        mapper.pop_ert_reports()  # drop reports of a previous run
 
         # Infer ensemble size NENS from perturbated parameter dictionnary
         # -------------------------------------------------------------------
@@ -920,6 +1061,7 @@ class DA(CATHY):
         self.verbose = config.verbose
         _configure_logging(config.verbose)
         self.use_log_transformed_obs = config.use_log_transformed_obs
+        self.log_transform_cov = config.log_transform_cov
         # backup all spatial ET iterations (the ET files are large!)
         self.backupfort777 = config.backup_fort777
 
@@ -1012,10 +1154,7 @@ class DA(CATHY):
 
         # DA analysis
         # ----------------------------------------------------------------
-        self.console.print(r""":chart_with_upwards_trend: [b]Analysis[/b]:
-                               - DA type: {}
-                               - Inflation: {}
-                           """.format(DA_type, self.inflation))
+        logger.info("Analysis: DA type=%s, inflation=%s", DA_type, self.inflation)
 
         (
             ensemble_psi_valid_bef_update,
@@ -1060,7 +1199,7 @@ class DA(CATHY):
         return mesh_nodes_observed, mesh_mask_nodes_observed
 
     @_restores_cwd
-    def run_DA_sequential(
+    def _run_DA_sequential_impl(
         self,
         DA_type,
         dict_obs,
@@ -1154,6 +1293,20 @@ class DA(CATHY):
 
         self._cleanup_vtk_files(config.cleanup_vtk)
 
+    def run_DA_sequential(self, *args, **kwargs):
+        """Run the sequential Data Assimilation (see ``_run_DA_sequential_impl``).
+
+        Everything printed during the run is also written, live, to
+        ``<workdir>/<project_name>/console_log.txt``.
+        """
+        log_path = os.path.join(self.workdir, self.project_name, "console_log.txt")
+        with _tee_run_output(log_path, getattr(self, "console", None)):
+            return self._run_DA_sequential_impl(*args, **kwargs)
+
+    run_DA_sequential.__doc__ = (run_DA_sequential.__doc__ or "") + (
+        "\n" + (_run_DA_sequential_impl.__doc__ or "")
+    )
+
     def _run_window(self, t_atmbc: float, options: _RunOptions) -> None:
         """One time window of the sequential DA: run the ensemble, analyse, update the inputs.
 
@@ -1208,7 +1361,7 @@ class DA(CATHY):
                 options.list_parm2update, analysis=analysis_valid
             )
         else:
-            self.console.rule(":red_circle: end of DA" ":red_circle:", style="yellow")
+            logger.info("End of DA")
 
         self._log_end_of_da_update()
         plt.close("all")
@@ -1229,7 +1382,7 @@ class DA(CATHY):
             ``[psi, sw]`` of the ensemble before the update, and the valid
             analysed ensemble (states, plus parameters when updated).
         """
-        self.console.print(":world_map: [b] map states to observations [/b]")
+        logger.info("Map states to observations")
         # H operator applied to the state variable
         prediction = self.map_states2Observations(
             list_assimilated_obs,
@@ -1238,10 +1391,7 @@ class DA(CATHY):
         )
         self._validate_prediction(prediction, list_assimilated_obs)
 
-        self.console.print(r""":chart_with_upwards_trend: [b]Analysis[/b]:
-                               - DA type: {}
-                               - Inflation: {}
-                           """.format(DA_type, self.inflation))
+        logger.info("Analysis: DA type=%s, inflation=%s", DA_type, self.inflation)
         psi_bef_update, sw_bef_update, _, _ = self._read_state_ensemble()
 
         # global or domain-localised analysis
@@ -1264,7 +1414,7 @@ class DA(CATHY):
             analysis_param,
         )
 
-        self.console.print(":face_with_monocle: [b]check analysis performance[/b]")
+        logger.info("Check analysis performance")
         self._performance_assessment_pq(
             list_assimilated_obs,
             data,
@@ -1283,9 +1433,7 @@ class DA(CATHY):
         Returns the same pair as `_analysis_cycle`; the ensemble is not
         validated and the "analysis" is the unchanged pressure-head ensemble.
         """
-        self.console.print(
-            ":confused: No observation for this time - run hydrological model only"
-        )
+        logger.info("No observation at this time: running the hydrological model only")
         psi, sw, _, _ = self._read_state_ensemble()
         return [psi, sw], psi
 
@@ -1330,39 +1478,13 @@ class DA(CATHY):
 
     def _log_end_of_time_step(self, t_atmbc):
         """Console progress after a time step of the loop."""
-        self.console.rule(
-            ":round_pushpin: end of time step (s) "
-            + str(int(t_atmbc))
-            + "/"
-            + str(int(self.all_atmbc_times[-1]))
-            + " :round_pushpin:",
-            style="yellow",
-        )
-        self.console.rule(
-            ":round_pushpin: end of atmbc update # "
-            + str(self.count_atmbc_cycle)
-            + "/"
-            + str(len(self.all_atmbc_times))
-            + " :round_pushpin:",
-            style="yellow",
-        )
+        logger.info("End of time step %d/%d s", int(t_atmbc), int(self.all_atmbc_times[-1]))
+        logger.info("End of atmbc update %d/%d", self.count_atmbc_cycle, len(self.all_atmbc_times))
 
     def _log_end_of_da_update(self):
         """Console progress after a DA update."""
-        self.console.rule(
-            ":red_circle: end of DA update "
-            + str(self.count_DA_cycle)
-            + "/"
-            + str(len(self.ENS_times))
-            + " :red_circle:",
-            style="yellow",
-        )
-        self.console.rule(
-            ":dart: % of valid ensemble: "
-            + str((len(self.ens_valid) * 100) / (self.NENS))
-            + ":dart:",
-            style="yellow",
-        )
+        logger.info("End of DA update %d/%d", self.count_DA_cycle, len(self.ENS_times))
+        logger.info("Valid ensemble members: %d/%d (%.0f%%)", len(self.ens_valid), self.NENS, 100 * len(self.ens_valid) / self.NENS)
 
     def _save_step_outputs(
         self,
@@ -1373,7 +1495,7 @@ class DA(CATHY):
         list_parm2update,
     ):
         """Store the results of the current step (dataframes, ET, backups)."""
-        self.console.rule("Back up DA step")
+        logger.debug("Back up DA step")
         self._DA_df(
             state=state,
             state_analysis=state_analysis,
@@ -1391,8 +1513,21 @@ class DA(CATHY):
             self.backup_fort777()
         self.backup_results_DA(meta_DA)
         self.backup_simu()
+        self._save_ert_check_reports()
         if self.config.save_results:
             self._save_results_to_disk()
+
+    def _save_ert_check_reports(self):
+        """Write the ERT check reports next to the project and log how many failed."""
+        if not self.ert_check_reports:
+            return
+        path = os.path.join(
+            self.workdir, self.project_name, self.project_name + "_ERT_checks.json"
+        )
+        ERT_checks.save_reports(self.ert_check_reports, path)
+        n_failed = ERT_checks.count_failed(self.ert_check_reports)
+        if n_failed:
+            logger.warning(f"{n_failed} ERT check report(s) failed - see {path}")
 
     def _save_results_to_disk(self):
         """Write the in-memory results of the DA (``df_DA``, ``ET_DA_xr``) next to the project."""
@@ -1480,9 +1615,7 @@ class DA(CATHY):
         self, prediction, DA_type, list_parm2update, list_assimilated_obs
     ):
         """Domain localisation: one analysis per zone, assembled on the whole mesh."""
-        self.console.print(
-            f":carpentry_saw: [b] Domain localisation: {self.localisation} [/b]"
-        )
+        logger.info("Domain localisation: %s", self.localisation)
 
         if getattr(self, "zone", None) is None:
             zone, _ = self.read_inputs("zone")
@@ -1534,14 +1667,8 @@ class DA(CATHY):
                 continue
 
             selected_parm2update = self._zone_parameters(list_parm2update, loci)
-            self.console.print(f"""[b]
-                               SHORTCUT: ALL PARAMS ARE UPDATED but
-                               are not necessaraly associated
-                               with observation localisation [/b]
-                               """)
-            self.console.print(
-                f"[b] Params to update (domain loc): {selected_parm2update} [/b]"
-            )
+            _log_once("loc_shortcut", "Domain localisation: all the parameters are updated, whether or not they are associated with the observation localisation")
+            logger.debug("Params to update (domain loc): %s", selected_parm2update)
 
             # Perform DA analysis for each mask of localisation
             (
@@ -1610,10 +1737,7 @@ class DA(CATHY):
         if len(analysis_with_localisation) == len(ensemble_psi):
             return analysis_with_localisation[:, 1:]
 
-        self.console.print(f"""
-                               [b] !! All the mesh nodes havent been analysed with DA !! [/b]
-                               Taking state values where missing analysis nodes
-                           """)
+        logger.warning("Not all the mesh nodes were analysed with DA: taking the state values where the analysis is missing")
         analysis, _, _, _ = self._read_state_ensemble()
         indice_nodes_with_analysis = [
             int(ii) for ii in analysis_with_localisation[:, 0]
@@ -1672,10 +1796,7 @@ class DA(CATHY):
 
         # select ONLY the data to assimilate
         data, _ = self._get_data2assimilate(list_assimilated_obs)
-        self.console.print(r""":
-                               - Data size: {}
-                                 --> Observations --> {}
-                           """.format(str(np.shape(data)), list_assimilated_obs))
+        logger.info("Assimilating %s: %d data", list_assimilated_obs, np.size(data))
         data_cov = self._data_cov_of_cycle(len(data))
         analysis_config = self._analysis_config_of_cycle()
 
@@ -1710,11 +1831,42 @@ class DA(CATHY):
         ensemble_psi_valid = ensemble_psi_valid[obs_mesh_nodes_valid, :]
         ensemble_sw_valid = ensemble_sw_valid[obs_mesh_nodes_valid, :]
 
+        # ERT: data covariance, predictions and innovation as they enter the filter
+        if any("ERT" in key for key in obskey2map):
+            # the check transforms data/predictions itself: give it the R the filter will use
+            cov_checked = (
+                _log10_cov(data_valid, data_cov_valid)
+                if self.use_log_transformed_obs and getattr(self, "log_transform_cov", True)
+                else data_cov_valid
+            )
+            ert_report = ERT_checks.check_assimilation_inputs(
+                data_valid,
+                prediction_valid,
+                cov_checked,
+                use_log=self.use_log_transformed_obs,
+                ens_ids=[int(i) + 1 for i in ens_valid],
+                name=f"ERT analysis cycle {self.count_DA_cycle}",
+            ).warn()
+            self.ert_check_reports.append(
+                {
+                    "stage": "analysis",
+                    "cycle": self.count_DA_cycle,
+                    "report": ert_report.to_dict(),
+                }
+            )
+
         # observations and predictions as seen by the filter
         if self.use_log_transformed_obs:
             data_in, prediction_in = self._log_transform_obs(
                 data_valid, prediction_valid, data_cov_valid
             )
+            if getattr(self, "log_transform_cov", True):
+                data_cov_valid = _log10_cov(data_valid, data_cov_valid)
+                logger.debug(
+                    "R propagated to log10: diag %.2e-%.2e",
+                    np.diag(data_cov_valid).min(),
+                    np.diag(data_cov_valid).max(),
+                )
         else:
             self._save_obs_pred_boxplot(data_valid, prediction_valid)
             data_in, prediction_in = data_valid, prediction_valid
@@ -1744,8 +1896,11 @@ class DA(CATHY):
 
         # Back-transformation of the parameters
         # ---------------------------------------------------------------------
-        self.transform_parameters(
-            list_update_parm, param=np.hstack(analysis_param), back=True
+        # (the result used to be discarded: parameters with a transf_type were
+        # stored, and then transformed again at the next cycle, in the
+        # transformed space)
+        analysis_param = self._back_transform_analysis_param(
+            list_update_parm, analysis_param
         )
         return (ensemble_psi, ensemble_sw, data_valid, analysis, analysis_param)
 
@@ -1811,8 +1966,10 @@ class DA(CATHY):
                           {np.sum(np.isnan(prediction_valid))}  nan"
                         """)
 
-        data_valid_log = np.log10(data_valid + eps)
-        prediction_valid_log = np.log10(prediction_valid + eps)
+        # non-positive values (already warned about above) are clipped to 0: they get
+        # log10(eps) = -3 instead of NaN / -inf
+        data_valid_log = np.log10(np.clip(data_valid, 0.0, None) + eps)
+        prediction_valid_log = np.log10(np.clip(prediction_valid, 0.0, None) + eps)
 
         logger.debug("\nAfter log-transform:")
         logger.debug(
@@ -1825,14 +1982,14 @@ class DA(CATHY):
 
         fig, ax = plt.subplots()
         ax.hist(
-            np.log10(data_valid + 1e-3),
+            data_valid_log,
             bins=30,
             alpha=0.5,
             label="Observed",
             density=True,
         )
         ax.hist(
-            np.log10(prediction_valid + 1e-3).flatten(),
+            prediction_valid_log.flatten(),
             bins=30,
             alpha=0.5,
             label="Predicted",
@@ -1878,7 +2035,7 @@ class DA(CATHY):
         obskey2map: Sequence[str],
     ) -> None:
         """Plot the ensemble covariance matrices and their change (diagnostic only)."""
-        self.console.print("[b]Plotting COV matrices[/b]")
+        logger.debug("Plotting COV matrices")
         try:
             if np.shape(diag["COV"])[0] < 1e9:
                 plt_CT.show_DA_process_ens(
@@ -1894,11 +2051,9 @@ class DA(CATHY):
                     label_sensor=str([*obskey2map]),
                 )
             else:
-                self.console.print("[b]Impossible to plot matrices[/b]")
+                logger.warning("Impossible to plot the COV matrices (too large)")
         except Exception as exc:  # plotting is diagnostic only: never abort the DA run
-            self.console.print(
-                f"[b]Impossible to plot matrices[/b] ({type(exc).__name__}: {exc})"
-            )
+            logger.warning("Impossible to plot matrices (%s: %s)", type(exc).__name__, exc)
 
     def _mark_invalid_ensemble(
         self, ens_valid, prediction, ensemble_psi, ensemble_sw, analysis, analysis_param
@@ -1940,7 +2095,7 @@ class DA(CATHY):
     def _run_ensemble_hydrological_model(self, parallel, callexe):
         """multi run CATHY hydrological model from the independant folders composing the ensemble"""
 
-        self.console.print(":athletic_shoe: [b]Run hydrological model[/b]")
+        logger.info("Run hydrological model (%s)", "parallel" if parallel else "sequential")
         # ----------------------------------------------------------------
         if parallel == True:
             pathexe_list = []
@@ -1959,7 +2114,7 @@ class DA(CATHY):
                 result = pool.map(subprocess_run_multi, pathexe_list)
 
                 if self.verbose:
-                    self.console.print(result)
+                    logger.debug("%s", result)
         # process each ensemble folder one by one
         # ----------------------------------------------------------------
         else:
@@ -1969,12 +2124,7 @@ class DA(CATHY):
                 range(self.NENS), description="Run hydrological fwd model..."
             ):
 
-                self.console.print(
-                    ":keycap_number_sign: [b]ensemble nb:[/b]"
-                    + str(ens_i + 1)
-                    + "/"
-                    + str(self.NENS)
-                )
+                logger.debug("Run ensemble member %d/%d", ens_i + 1, self.NENS)
                 member_dir = os.path.join(
                     self.workdir,
                     self.project_name,
@@ -1985,8 +2135,8 @@ class DA(CATHY):
                 )
 
                 if self.verbose:
-                    self.console.print(p.stdout)
-                    self.console.print(p.stderr)
+                    logger.debug("%s", p.stdout)
+                    logger.debug("%s", p.stderr)
 
         pass
 
@@ -2009,7 +2159,7 @@ class DA(CATHY):
         if ens_valid is None:
             ens_valid = []
 
-        self.console.print(":white_check_mark: [b]check scenarii before analysis[/b]")
+        logger.debug("Check scenarii before analysis")
 
         ###CHECK which scenarios are OK and which are to be rejected and then create and applied the filter
         ###only on the selected scenarios which are to be considered.
@@ -2028,7 +2178,7 @@ class DA(CATHY):
                 )
                 continue
             if reason is not None:
-                self.console.print(f":x: [b]{reason}[/b], ens_nb:{n + 1}")
+                logger.warning("Ensemble member %d rejected: %s", n + 1, reason)
             rejected_ens_new.append(reason is not None)
 
         self._raise_if_too_many_rejected(rejected_ens_new, threshold_rejected)
@@ -2087,7 +2237,7 @@ class DA(CATHY):
             list of updated model parameters (after analysis).
         """
 
-        self.console.print(":white_check_mark: [b]check scenarii post update[/b]")
+        logger.debug("Check scenarii post update")
 
         id_nonvalid = set()
         for name in list_update_parm:
@@ -2100,9 +2250,7 @@ class DA(CATHY):
             mask, label = rule
             bad = np.where(mask)[0]
             if len(bad):
-                self.console.print(
-                    f":x: [b]{label} {name}:[/b]{values[bad]}, ens_nb:{list(bad)}"
-                )
+                logger.warning("%s %s: %s (members %s)", label, name, values[bad], [int(i) + 1 for i in bad])
             id_nonvalid.update(bad.tolist())
         return set(np.arange(self.NENS)).difference(id_nonvalid)
 
@@ -2111,6 +2259,29 @@ class DA(CATHY):
         depth = abs(min(self.grid3d["mesh3d_nodes"][:, -1]))
         logger.debug("deepest feasible root depth: %s", depth)
         return depth
+
+    def _back_transform_analysis_param(self, list_update_parm, analysis_param):
+        """Back-transform the analysed parameters, one column per parameter.
+
+        ``analysis_param`` is (n_members, n_param) with the "St. var." entries
+        of ``list_update_parm`` excluded. Returned with the same shape.
+        """
+        names = [pp for pp in list_update_parm if "St. var." not in pp]
+        ap = np.asarray(analysis_param, dtype=float)
+        if ap.size == 0 or not names:
+            return analysis_param
+        if ap.ndim != 2 or ap.shape[1] != len(names):
+            logger.warning(
+                "analysed parameters have shape %s for %d parameter(s): "
+                "back-transformation skipped",
+                ap.shape,
+                len(names),
+            )
+            return analysis_param
+        out = ap.copy()
+        for j, name in enumerate(names):
+            out[:, j] = self.transform_parameters([name], param=ap[:, j], back=True)[0]
+        return out
 
     def transform_parameters(
         self, list_update_parm, update_key=None, back=False, param=None
@@ -2142,19 +2313,18 @@ class DA(CATHY):
                     A = range_tr["A"]  # min range
                     B = range_tr["B"]  # max range
                     if back:
-                        param_trans = np.exp((param - A) / (B - param))
+                        # inverse of y = log((p - A) / (B - p))
+                        param_trans = (A + B * np.exp(param)) / (1.0 + np.exp(param))
                     else:
                         param_trans = np.log((param - A) / (B - param))
                 elif self.dict_parm_pert[pp[1]]["transf_type"] == "hyperbolic":
                     logger.debug("hyperbolic transformation")
-                    # Y = sinh−1(U )
-                    param_trans = np.log(self.dict_parm_pert[pp[1]][update_key])
+                    # Y = arcsinh(U); back-transformation U = sinh(Y)
+                    param_trans = np.sinh(param) if back else np.arcsinh(param)
 
                 else:
                     param_trans = param
                 param_new.append(param_trans)
-            if len(param_new) > 0:
-                np.vstack(param_new)
 
         return np.array(param_new)
 
@@ -2199,10 +2369,8 @@ class DA(CATHY):
             )
             self.VGN_parms = {}
 
-        self.console.rule(":warning: warning messages above :warning:", style="yellow")
         for ww in warnings_petro:
-            self.console.print(ww, style="yellow")
-        self.console.rule("", style="yellow")
+            logger.warning(ww)
 
         pass
 
@@ -2342,7 +2510,7 @@ class DA(CATHY):
         """
         Update a single Archie parameter for a given ensemble member.
         """
-        self.console.print(":arrows_counterclockwise: [b]Update Archie parameters[/b]")
+        logger.debug("Update Archie parameters")
 
         idArchie = Archie_p_names.index(key_root[0])
 
@@ -2377,6 +2545,7 @@ class DA(CATHY):
                 netValue=VALUE,
                 filename=os.path.join(os.getcwd(), "input/atmbc"),
                 verbose=self.verbose,
+                shellprint_update=False,
             )
 
         else:
@@ -2458,7 +2627,7 @@ class DA(CATHY):
         -------
         None
         """
-        self.console.print(":arrows_counterclockwise: [b]Update ensemble[/b]")
+        logger.debug("Update ensemble")
 
         # replace dictionnary key with cycle nb
         # -------------------------------------
@@ -2554,22 +2723,22 @@ class DA(CATHY):
         # ic update (i.e. water table position update)
         elif name.casefold() in "WTPOSITION".casefold():
             self._update_wtposition_member(
-                ctx.cycle_nb, dict_parm_pert, ens_nb, key, True
+                ctx.cycle_nb, dict_parm_pert, ens_nb, key, False
             )
 
         # ic update (i.e. initial pressure head update)
         elif name.casefold() in "ic".casefold():
-            self._update_ic_member(ctx.cycle_nb, dict_parm_pert, ens_nb, key, True)
+            self._update_ic_member(ctx.cycle_nb, dict_parm_pert, ens_nb, key, False)
 
         # saturated hydraulic conductivity update
         elif name.casefold() in "ks":
             ctx.ks = self._update_soil_params_from_perturbations(
-                dict_parm_pert, ctx.ks, key_root, key, update_key, ens_nb, True
+                dict_parm_pert, ctx.ks, key_root, key, update_key, ens_nb, False
             )
 
         elif name.casefold() in "porosity":
             ctx.porosity = self._update_soil_params_from_perturbations(
-                dict_parm_pert, ctx.porosity, key_root, key, update_key, ens_nb, True
+                dict_parm_pert, ctx.porosity, key_root, key, update_key, ens_nb, False
             )
             self.update_archie_parameter(
                 _ARCHIE_PARM_NAMES, key_root, update_key, ens_nb, dict_parm_pert, key
@@ -2578,7 +2747,7 @@ class DA(CATHY):
         # VG parameters update
         elif name in _VG_PARM_NAMES:
             ctx.vg = self._update_soil_params_from_perturbations(
-                dict_parm_pert, ctx.vg, key_root, key, update_key, ens_nb, True
+                dict_parm_pert, ctx.vg, key_root, key, update_key, ens_nb, False
             )
 
         # Feddes parameters update
@@ -2625,7 +2794,7 @@ class DA(CATHY):
             zone3d=ctx.zone3d,
             verbose=self.verbose,
             filename=os.path.join(os.getcwd(), "input/soil"),
-            shellprint_update=True,
+            shellprint_update=False,
             backup=True,
         )
 
@@ -2647,7 +2816,7 @@ class DA(CATHY):
         # find the method to map for this time step
         # --------------------------------------------------------
         obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)
-        logger.info(f"Assimilated Observations are: {list_assimilated_obs}")
+        logger.debug("Assimilated Observations are: %s", list_assimilated_obs)
 
         def extract_data(sensor, time_ass, data):
             data2add = []
@@ -2678,7 +2847,10 @@ class DA(CATHY):
             time_ass = (
                 self.count_DA_cycle
             )  # + 1 since we compare the predicted observation at ti +1
-            logger.warning("!!!!Take care here not sure I am taking the right time!!!")
+            _log_once(
+                "da_time_default",
+                "No assimilation time given: selecting the observations of the current DA cycle",
+            )
 
         data = []
         items_dict = list(self.dict_obs.items())
@@ -2947,31 +3119,17 @@ class DA(CATHY):
     ) -> np.ndarray:
         """Append the ERT predictions of the ensemble to ``Hx_ens`` (rows = observations)."""
         if write2shell_map:
-            self.console.print(":zap: Mapping to ERT prediction")
-            self.console.print(
-                r"""
-                                    Fwd modelling ERT
-                                    Noise level: {??}
-                                    """,
-                style="green",
+            ert_obs = list(self.dict_obs.values())[self.count_DA_cycle].get("ERT", {})
+            logger.info(
+                "Mapping states to ERT apparent resistivities (fwd noise level: %s%%)",
+                ert_obs.get("fwdNoiseLevel", "n/a"),
             )
-            self.console.rule(
-                ":octopus: Parameter perturbation :octopus:", style="green"
+            logger.debug(
+                "Archie perturbation for DA analysis: rFluid=%s, pert_sigma=%s, nb of zones=%d",
+                self.Archie_parms["rFluid_Archie"],
+                self.Archie_parms["pert_sigma_Archie"],
+                len(self.Archie_parms["rFluid_Archie"]),
             )
-            self.console.print(
-                r"""
-                                    Archie perturbation for DA analysis
-                                    Archie rFluid: {}
-                                    Pert. Sigma Archie: {}
-                                    Nb of zones (?): {}
-                                    """.format(
-                    self.Archie_parms["rFluid_Archie"],
-                    self.Archie_parms["pert_sigma_Archie"],
-                    len(self.Archie_parms["rFluid_Archie"]),
-                ),
-                style="green",
-            )
-            self.console.rule("", style="green")
 
         if not parallel:
             raise NotImplementedError(
@@ -2993,6 +3151,8 @@ class DA(CATHY):
             verbose=True,
         )
         self.df_Archie = mapper._add_2_ensemble_Archie(self.df_Archie, df_Archie)
+        for rep in mapper.pop_ert_reports():
+            self.ert_check_reports.append({"stage": "forward", **rep})
         if len(Hx_ens) > 0:
             return np.vstack([Hx_ens, Hx_ens_ERT])
         return Hx_ens_ERT
@@ -3063,18 +3223,19 @@ class DA(CATHY):
     def update_pert_parm_dict(self, update_key, list_update_parm, analysis_param_valid):
         """update dict of perturbated parameters i.e. add a new entry with new params"""
 
-        index_update = 0
         if self.count_DA_cycle > 0:
+            # one row of analysis_param_valid per parameter, "St. var." excluded
+            # (the previous counter also counted "St. var." and so read row -1
+            # for the first parameter when no "St. var." entry came first)
+            index_update = 0
             for pp in list_update_parm:
                 if "St. var." in pp:
-                    index_update = index_update + 1
-                    pass
-                else:
-                    update_key = _update_key(self.count_DA_cycle)
-                    self.dict_parm_pert[pp][update_key] = analysis_param_valid[
-                        index_update - 1
-                    ]
-                    index_update = index_update + 1
+                    continue
+                update_key = _update_key(self.count_DA_cycle)
+                self.dict_parm_pert[pp][update_key] = analysis_param_valid[
+                    index_update
+                ]
+                index_update = index_update + 1
 
             # check after analysis
             # ----------------------------------------------------------------
@@ -3106,7 +3267,7 @@ class DA(CATHY):
         if analysis is None:
             analysis = []
 
-        self.console.print(":sponge: [b]update input ensemble[/b]")
+        logger.debug("Update input ensemble")
 
         # resample atmbc file for the given DA window
         # ---------------------------------------------------------------------
@@ -3152,7 +3313,7 @@ class DA(CATHY):
                     times = self.dict_parm_pert["atmbc0"]["data2perturbate"]["time"]
                     df_atmbc = pd.DataFrame(np.c_[times, VALUE], columns=["time", "value"])
                 else:
-                    print("atmbc perturbation not supported for spatially variable atmbc: ignored")
+                    logger.warning("atmbc perturbation not supported for spatially variable atmbc: ignored")
 
             times_all = df_atmbc.time.unique()
             i = self.count_atmbc_cycle
@@ -3172,6 +3333,7 @@ class DA(CATHY):
                 filename=os.path.join(cwd, "input/parm"),
                 IPRT1=2,
                 backup=True,
+                shellprint_update=False,
             )
 
             VALUE = []
@@ -3185,6 +3347,7 @@ class DA(CATHY):
                 time=[0, diff_time],
                 netValue=VALUE,
                 filename=os.path.join(cwd, "input/atmbc"),
+                shellprint_update=False,
             )
 
         pass
@@ -3409,9 +3572,7 @@ class DA(CATHY):
             )
 
         except OSError as exc:  # FileNotFoundError, FileExistsError, shutil.Error
-            self.console.print(
-                f":worried_face: [b]could not copy processor files into cathy_origin[/b] ({type(exc).__name__}: {exc})"
-            )
+            logger.warning("Could not copy processor files into cathy_origin (%s: %s)", type(exc).__name__, exc)
 
         path_origin = os.path.join(
             self.workdir, self.project_name, "DA_Ensemble/cathy_origin"

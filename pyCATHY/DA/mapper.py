@@ -3,13 +3,27 @@
 import pyCATHY.meshtools as mt
 import numpy as np
 import os 
+from pyCATHY.ERT import ERT_checks
 from pyCATHY.ERT import petro_Archie as Archie
 from pyCATHY.importers import cathy_outputs as out_CT
 import multiprocessing
 from functools import partial
 REMOVE_CPU = 1
+
+# ERT check reports of the last mapping(s), collected by `pop_ert_reports`
+ERT_REPORTS = []
+
+
+def pop_ert_reports():
+    """Return and clear the ERT check reports accumulated since the last call."""
+    reports = list(ERT_REPORTS)
+    ERT_REPORTS.clear()
+    return reports
 from pyCATHY.cathy_tools import CATHY
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 #%%
 
@@ -32,15 +46,10 @@ def swc_mapper(state,obs2map_node,grid3d,dem_parameters,
                                level=('zone', 'layer')
                                )['POROS'].values
     
-    console.print(f"Transform sat to SWC with porosity=' {str(porosity_swc)}")
-    console.rule(
-        ":warning: warning messages above :warning:", style="yellow"
-    )
-    console.print(
-        r"""Current implementation does not support different porosity zones! 
-            Only layers porosity is considered - Taking zone 1 as default
-        """,
-        style="yellow",
+    logger.debug("Transform sat to SWC with porosity=%s", porosity_swc)
+    logger.debug(
+        "swc_mapper: different porosity zones are not supported, "
+        "only the layer porosity of zone 1 is considered"
     )
     Hx_SW = state[1][obs2map_node] * porosity_swc
     return Hx_SW
@@ -73,7 +82,7 @@ def _add_2_ensemble_Hx(Hx, Hx_2add):
     """
     try:
         Hx.append(Hx_2add)
-    except:
+    except AttributeError:  # e.g. a numpy array has no append
         Hx = list(Hx)
         Hx.append(Hx_2add)
     return Hx
@@ -195,26 +204,31 @@ def _map_EM(
     # print(f"  min = {ER_converted_ti.min():.2f} Ohm.m")
     # print(f"  max = {ER_converted_ti.max():.2f} Ohm.m")
       
-    print("EC_converted_ti_mS_m stats:")
-    print(f"  min = {EC_converted_ti_mS_m.min():.2f} mS/m")
-    print(f"  max = {EC_converted_ti_mS_m.max():.2f} mS/m")
+    logger.debug(
+        "EC converted: min = %.2f mS/m, max = %.2f mS/m",
+        EC_converted_ti_mS_m.min(),
+        EC_converted_ti_mS_m.max(),
+    )
 
 
-    print('Build forward EM model')
+    logger.debug("Build forward EM model")
     depths, conds, xy_coords = build_forward_profiles(EC_converted_ti_mS_m, 
                                                       grid3d['mesh3d_nodes'],
                                                       var="EC")
     
-    print("depths stats:")
-    print(f"  min = {np.array(depths).min():.2f} m")
-    print(f"  max = {np.array(depths).max():.2f} m")
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(
+            "depths: min = %.2f m, max = %.2f m",
+            np.array(depths).min(),
+            np.array(depths).max(),
+        )
     
 
     from emagpy import Problem
     k = Problem()
     k.setModels(depths,conds)
     
-    print('Forward EM model')
+    logger.debug("Forward EM model")
     # dfsFSeq = k.forward(forwardModel='FSeq', coils=coils, noise=5)
     EM_fwd_model_array = k.forward(forwardModel='FSlin',
                          coils=EM_meta_dict["coils"],
@@ -259,6 +273,12 @@ def _map_ERT_parallel_DA(
     # print("POROS_nodes_ensi shape:", np.shape(POROS_nodes_ensi))
     # print("fwd_path shape:", np.shape(path_fwd_CATHY_list))
 
+    # forward noise settings stored with the observations (otherwise the
+    # forward model silently falls back to its own default of 5 %)
+    _ert_cfg = key_time[1]["ERT"]
+    _fwd_noise = {k: _ert_cfg[k] for k in ("fwdNoiseLevel", "fwdNoiseAbs") if k in _ert_cfg}
+    logger.debug("ERT forward noise settings passed to simulate_ERT: %s", _fwd_noise)
+
     ERTmapping_args = partial(
                                 Archie.SW_2_ERT_ERa_DA,
                                 project_name,
@@ -269,6 +289,7 @@ def _map_ERT_parallel_DA(
                                 savefig=False,
                                 noise_level=ERT_meta_dict["data_err"],  # kwargs
                                 dict_ERT=key_time[1]["ERT"],  #  kwargs
+                                **_fwd_noise,
                             )
 
     # // run using ensemble subfolders path as a list
@@ -292,6 +313,31 @@ def _map_ERT_parallel_DA(
             Hx_ERT_ens = _add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["rhoa"])
         else:
             Hx_ERT_ens = _add_2_ensemble_Hx(Hx_ERT_ens, Hx_ERT_ens_i["resist"])
+
+    # checks: member reports (from the workers) + consistency of the whole ensemble
+    ens_ids = [int(os.path.split(p)[-1].split("_", 1)[1]) for p in path_fwd_CATHY_list]
+    preds = [res[0] for res in results_mapping]
+    ens_report = ERT_checks.check_ensemble_forward(
+        preds,
+        obs_df=ERT_meta_dict.get("data"),
+        ens_ids=ens_ids,
+        name=f"ERT ensemble DA cycle {DA_cnb}",
+    ).warn()
+    logger.info(
+        "ERT forward ensemble, DA cycle %s: %d members | checks: %s",
+        DA_cnb,
+        len(preds),
+        ens_report.summary(),
+    )
+    ERT_REPORTS.append(
+        {
+            "cycle": DA_cnb,
+            "members": {
+                ens_id: pred.attrs.get("ert_check") for ens_id, pred in zip(ens_ids, preds)
+            },
+            "ensemble": ens_report.to_dict(),
+        }
+    )
 
     return Hx_ERT_ens, Archie_df, mesh2test
 

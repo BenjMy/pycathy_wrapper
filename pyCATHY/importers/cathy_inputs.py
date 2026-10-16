@@ -8,6 +8,9 @@ import numpy as np
 import pandas as pd
 
 from pyCATHY.plotters import cathy_plots as pltCT
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def read_atmbc(filename, grid=None, show=False, **kwargs):
@@ -95,7 +98,7 @@ def read_atmbc(filename, grid=None, show=False, **kwargs):
             try:
                 pltCT.show_atmbc_3d(df_atmbc)
             except Exception:
-                print("no vtk file found")
+                logger.debug("no vtk file found")
 
     return df_atmbc, HSPATM, IETO
 
@@ -400,12 +403,9 @@ def read_soil(soilfile, dem_parm, MAXVEG, scf_per_veg=False):
             zone_id.append(dz+1) # zone numbers starts from 1
 
     if len(soil) != len(layer_id): #*dem_parm['nzone']:
-       print(
-            "Inconsistent number of zones/layers with respect to the number of soil lines: " +
+       logger.warning("Inconsistent number of zones/layers with respect to the number of soil lines: " +
             str(len(soil)) + '/' + str(len(layer_id)) +
-            "!Revise dem_parm file!"
-
-        )
+            "!Revise dem_parm file!")
 
     # name_str = np.sort(name_str)
     df_soil = pd.DataFrame(soil, [zone_id,

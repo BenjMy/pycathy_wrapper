@@ -13,6 +13,9 @@ import re
 import io
 
 from pyCATHY import cathy_utils
+import logging
+
+logger = logging.getLogger(__name__)
 
 _FORTRAN_EXP_RE = re.compile(r'(?<=[0-9])([+-]\d{2,3})(?=[\s\n]|$)')
 
@@ -102,7 +105,7 @@ def load_spatial_file_fast(filename: str | Path, prop) -> pd.DataFrame:
 
     def is_number(s):
         try: float(s); return True
-        except: return False
+        except Exception: return False
 
     lines = Path(filename).read_text().splitlines()
 
@@ -899,7 +902,7 @@ def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
                 f"  n_nan    : {n_nan} / {n_total} pixels\n"
                 f"  fort.777 : {fort777_path}"
             )
-        print(f"  ensemble {i}: ACT. ETRA sum={float(ds['ACT. ETRA'].sum()):.4f}  "
+        logger.debug(f"  ensemble {i}: ACT. ETRA sum={float(ds['ACT. ETRA'].sum()):.4f}  "
               f"NaNs={n_nan}/{n_total} ({100*n_nan/n_total:.1f}%)")
 
         # drop band dim/coord if present
@@ -933,14 +936,14 @@ def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
                 )
             dt_values = ref + pd.to_timedelta(time_vals)
             ds_ensemble = ds_ensemble.assign_coords(time=dt_values)
-            print(f"  ✓ time converted: timedelta64 → datetime64  (ref: {ref.date()})")
-            print(f"    range: {dt_values[0]} → {dt_values[-1]}")
+            logger.debug(f"  ✓ time converted: timedelta64 → datetime64  (ref: {ref.date()})")
+            logger.debug(f"    range: {dt_values[0]} → {dt_values[-1]}")
 
         elif np.issubdtype(time_vals.dtype, np.datetime64):
-            print(f"  ✓ time is already datetime64")
+            logger.debug(f"  ✓ time is already datetime64")
 
         else:
-            print(f"  ⚠ unexpected time dtype: {time_vals.dtype} — skipping conversion")
+            logger.warning(f"  ⚠ unexpected time dtype: {time_vals.dtype} — skipping conversion")
 
     # ── 3. Clear encoding/attrs on all vars & coords ──────────────────────────
     ENCODING_KEYS = {
@@ -970,10 +973,10 @@ def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
         #     }}
         # )
         # add this just before to_netcdf in create_ensemble_ET_xr
-        print("About to save:")
-        print(f"  time length: {ds_ensemble.dims['time']}")
-        print(f"  time values: {ds_ensemble['time'].values}")
-        print(ds_ensemble)
+        logger.debug("About to save:")
+        logger.debug(f"  time length: {ds_ensemble.dims['time']}")
+        logger.debug(f"  time values: {ds_ensemble['time'].values}")
+        logger.debug(ds_ensemble)
 
         ds_ensemble.to_netcdf(
                 output_path,
@@ -985,8 +988,8 @@ def create_ensemble_ET_xr(pathexe_list, output_path="ensemble_et.nc",
                 }}
             )
 
-    print(f"\n  ✓ saved → {output_path}")
-    print(ds_ensemble)
+    logger.info(f"\n  ✓ saved → {output_path}")
+    logger.debug(ds_ensemble)
     return ds_ensemble
 
 
@@ -1012,25 +1015,25 @@ def print_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="hours", origin=None)
     time_vals = da.time.values  # timedelta64[ns]
     origin_ts = pd.Timestamp(origin) if origin is not None else None
 
-    print("=" * 60)
-    print(f"Variable: '{var}'")
-    print(f"Dimensions: {dict(da.sizes)}")
-    print("-" * 60)
-    print(f"  Global mean:   {float(da.mean()):.4f}")
-    print(f"  Global std:    {float(da.std()):.4f}")
-    print(f"  Global min:    {float(da.min()):.4f}")
-    print(f"  Global max:    {float(da.max()):.4f}")
-    print("-" * 60)
-    print("  Mean per time step:")
+    logger.debug("=" * 60)
+    logger.debug(f"Variable: '{var}'")
+    logger.debug(f"Dimensions: {dict(da.sizes)}")
+    logger.debug("-" * 60)
+    logger.debug(f"  Global mean:   {float(da.mean()):.4f}")
+    logger.debug(f"  Global std:    {float(da.std()):.4f}")
+    logger.debug(f"  Global min:    {float(da.min()):.4f}")
+    logger.debug(f"  Global max:    {float(da.max()):.4f}")
+    logger.debug("-" * 60)
+    logger.debug("  Mean per time step:")
     for t in time_vals:
         val = float(da.sel(time=t).mean())
-        print(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {val:.4f}")
-    print("-" * 60)
-    print("  Ensemble spread (std) per time step:")
+        logger.debug(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {val:.4f}")
+    logger.debug("-" * 60)
+    logger.debug("  Ensemble spread (std) per time step:")
     for t in time_vals:
         spread = float(da.sel(time=t).std("ensemble").mean())
-        print(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {spread:.4f}")
-    print("=" * 60)
+        logger.debug(f"    {cathy_utils._fmt_time(t, time_unit, origin_ts):>25s} -> {spread:.4f}")
+    logger.debug("=" * 60)
 
 # --- Usage examples ---
 # Relative time in hours (default):

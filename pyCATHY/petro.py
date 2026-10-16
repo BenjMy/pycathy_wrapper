@@ -11,6 +11,9 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 from pyCATHY.plotters import cathy_plots as pltCT
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def fit_VGP(sai, teta, SWRfunc, solver="lm", bvals=[(0, 0, 1, 0), (1, 1, 100, 100)]):
@@ -107,7 +110,7 @@ def SW2PH_VG_model(SW):
 
 
 def Archie_sat2rho(eff_sat, rho_sat, n):
-    print(rho_sat, n)
+    logger.debug(" ".join(str(a) for a in (rho_sat, n,)))
     rho = rho_sat * eff_sat ** (-n)
     # plt.plot(eff_sat, rho, 'o')
     # plt.pause(1)
@@ -217,7 +220,7 @@ def predict_unsat_soil_hydr_param(data=[[20, 20, 60]]):
     mean, stdev, codes = rosetta(3, soildata)  # Rosetta version 3
 
     if mean.shape[0] > 1:
-        print(f"Warning: Rosetta returned {mean.shape[0]} rows. Only the first sample will be used.")
+        logger.warning(f"Warning: Rosetta returned {mean.shape[0]} rows. Only the first sample will be used.")
     
     # Extract Rosetta outputs
     theta_r = float(mean[0, 0])
@@ -385,7 +388,7 @@ def Carsel_Parrish_1988(soilTexture=None):
 
     if soilTexture is not None:
         if soilTexture not in soil_texture:
-            print("soil texture non existing")
+            logger.warning("soil texture non existing")
 
     table = [
         [
@@ -464,7 +467,7 @@ def Carsel_Parrish_1988(soilTexture=None):
 
     if soilTexture is not None:
         if soilTexture not in soil_texture:
-            print("soil texture non existing")
+            logger.warning("soil texture non existing")
 
     A = [
         [0, 0, 0, 0.9],

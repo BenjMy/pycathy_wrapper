@@ -4,14 +4,18 @@
     Prepare for DA class
 """
 
+import logging
 import re
 from collections import OrderedDict
 
 import numpy as np
 
 from pyCATHY import cathy_utils as utils_CT
+from pyCATHY.ERT import ERT_checks
 from pyCATHY.importers import sensors_measures as in_meas
 from pyCATHY.cathy_utils import dictObs_2pd
+
+logger = logging.getLogger(__name__)
 
 
 def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, 
@@ -210,10 +214,11 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
             elecs = kwargs.pop('elecs')
 
         df, dict_ERT = in_meas.read_ERT(obs_2_add, data_format)
+        ERT_checks.check_observations(df, name=f"ERT obs {obs_2_add}").warn()
         filename = obs_2_add
         dict_obs_2add.update(sequenceERT=filename)
 
-        units = "$\Omega$"
+        units = r"$\Omega$"
 
         if "elecs" in dict_ERT.keys():
             elecs = dict_ERT["elecs"]
@@ -237,7 +242,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
     # no file specified (raise error)
     # ---------------------------------------------------------------------
     else:
-        print("no file specified")
+        logger.warning("read_observations: unknown data_type %r, no file read", data_type)
 
     dict_obs_2add.update(
         filename=filename,
@@ -274,7 +279,7 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
     sensor_name = data_type
 
     if tA in dict_obs.keys():
-        print("already existing assimilation time")
+        logger.debug("assimilation time %s already exists: adding a sensor to it", tA)
         for k in dict_obs[tA]:
             k
         if data_type in k:
@@ -391,6 +396,10 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
         # Flatten and build diagonal covariance
         data_flat = np.hstack(all_values)
         cov_flat = np.hstack(all_cov)
+        if any("ERT" in s for s in selected_sensors):
+            ERT_checks.check_data_cov(
+                cov_flat, values=data_flat, name=f"ERT data cov tA={tA}"
+            ).warn()
 
         cov_diag = np.zeros((len(cov_flat), len(cov_flat)))
         np.fill_diagonal(cov_diag, cov_flat)
@@ -564,7 +573,7 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
 
 
 def prepare_observations(
-    dict_obs=[], perturbate=False, obs_cov_type=None, Bishop=False, **kwargs
+    dict_obs=None, perturbate=False, obs_cov_type=None, Bishop=False, **kwargs
 ):
     """
     prepare observations before DA
@@ -585,6 +594,9 @@ def prepare_observations(
         data_cov, DataPert, stacked_data_cov
 
     """
+
+    if dict_obs is None:
+        dict_obs = {}
 
     # merged data covariance matrice of all the observation data and all times
     stacked_data_cov = []
@@ -673,14 +685,16 @@ def init_obs_cov_matrice(dict_obs, obs_cov_type):
     if obs_cov_type == "reciprocal_err":
         # print(dict_obs)
         # data_cov = np.diag(1 / abs(dict_obs["data"]["rec_err"].to_numpy()))
-        data_cov = np.diag(abs(dict_obs["data"]["rec_err"].to_numpy()))
+        # variance = rec_err**2, rec_err being an absolute error in the units of the data
+        # (Ohm.m for rhoa), as in make_data_cov (the DA path); it used to be rec_err itself
+        data_cov = np.diag(dict_obs["data"]["rec_err"].to_numpy() ** 2)
     elif obs_cov_type == "data_err":
         # resipy format
         try:
             err_arr = np.tile(dict_obs["data_err"], len(dict_obs["data"]))
-            data_cov = np.diag(err_arr)
+            data_cov = np.diag(err_arr**2)
         # pygimli format
-        except:
+        except Exception:  # pygimli container: no len() and no dict access
             err_arr = np.tile(dict_obs["data_err"], len(dict_obs["data"]["a"]))
-            data_cov = np.diag(err_arr)
+            data_cov = np.diag(err_arr**2)
     return data_cov

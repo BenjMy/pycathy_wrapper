@@ -127,7 +127,16 @@ def make_console(verbose):
     verbose : bool
         Whether or not to print status messages to stderr.
     """
-    return rich.console.Console(stderr=True, quiet=not verbose)
+    if verbose:
+        return rich.console.Console(stderr=True, record=True)
+    # ``quiet=True`` also disables recording in rich, so a non-verbose console
+    # writes to os.devnull instead: nothing is displayed but everything printed
+    # is still recorded and can be saved with ``CATHY.save_console_log``.
+    return rich.console.Console(
+        file=open(os.devnull, "w", encoding="utf-8"),
+        force_jupyter=False,
+        record=True,
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -1747,6 +1756,33 @@ class CATHY:
         self.update_parm()
         self.update_cathyH(MAXZON=len(np.unique(zone)))
 
+    # %% CONSOLE LOG
+
+    def save_console_log(self, filename=None, clear=False, styles=False):
+        """
+        Save everything printed through ``self.console`` (rich recording).
+
+        Parameters
+        ----------
+        filename : str, optional
+            Output path. Default: ``<workdir>/<project_name>/console_log.txt``.
+        clear : bool, optional
+            Empty the recording buffer after saving. The default (False) keeps
+            accumulating, so the file can be rewritten at any time with the
+            full history.
+        styles : bool, optional
+            Keep ANSI styles in the file. Default is plain text.
+
+        Returns
+        -------
+        str
+            Path of the written file.
+        """
+        if filename is None:
+            filename = os.path.join(self.workdir, self.project_name, "console_log.txt")
+        self.console.save_text(filename, clear=clear, styles=styles)
+        return filename
+
     # %% INPUT FILES
 
     def update_parm(self, **kwargs):
@@ -1757,7 +1793,9 @@ class CATHY:
             - Updated CATHYH file (NPRT and NUMVP).
         """
 
-        self.console.print(":arrows_counterclockwise: [b]Update parm file [/b]")
+        shellprint_update = kwargs.pop("shellprint_update", True)
+        if shellprint_update is not False:
+            self.console.print(":arrows_counterclockwise: [b]Update parm file [/b]")
         warnings_parm = []
 
 
@@ -2038,10 +2076,7 @@ class CATHY:
 
         """
 
-        if "shellprint_update" in kwargs:
-            if kwargs["shellprint_update"] is False:
-                pass
-        else:
+        if kwargs.get("shellprint_update", True) is not False:
             self.console.print(":arrows_counterclockwise: [b]Update ic[/b]")
 
         #  check value of WTPOSITION
@@ -2083,20 +2118,18 @@ class CATHY:
                 dst_dir = filename + str(self.count_DA_cycle - 1)
                 shutil.copy(filename, dst_dir)
 
+        pressure_head_for_mesh = None
+
         with open(filename, "w+") as icfile:
 
             if INDP == 0:
                 icfile.write(str(INDP) + "\t" + str(IPOND) + "\t" + "INDP \n")
                 if "pressure_head_ini" in kwargs:
                     np.savetxt(icfile, [kwargs["pressure_head_ini"]], fmt="%1.3e")
-
-                    # try:
-                    self.map_prop2mesh({"ic": kwargs["pressure_head_ini"]})
-                    # except:
-                    #     print('Impossible to map pressure head to mesh')
-
+                    pressure_head_for_mesh = kwargs["pressure_head_ini"]
                 else:
                     raise ValueError("Missing initial pressure value")
+
             elif INDP == 1:
                 pressure_head_ini = kwargs["pressure_head_ini"]
                 icfile.write(
@@ -2110,9 +2143,9 @@ class CATHY:
                     + "\n"
                 )
                 np.savetxt(icfile, pressure_head_ini, fmt="%1.3e")
-                self.map_prop2mesh({"ic": kwargs["pressure_head_ini"]})
+                pressure_head_for_mesh = pressure_head_ini
 
-            elif INDP==2:
+            elif INDP == 2:
                 icfile.write(
                     str(INDP)
                     + "\t"
@@ -2137,7 +2170,14 @@ class CATHY:
                 )
                 icfile.write(str(WTPOSITION) + "\t" + "WTPOSITION" + "\n")
 
-        icfile.close()
+        # The file is now closed and flushed to disk, so it is safe to run
+        # the preprocessor/processor (called inside map_prop2mesh), which
+        # read the ic file.
+        if pressure_head_for_mesh is not None:
+            self.map_prop2mesh(
+                {"ic": pressure_head_for_mesh},
+                shellprint_update=kwargs.get("shellprint_update", True),
+            )
 
         pass
 
@@ -2208,10 +2248,7 @@ class CATHY:
 
         """
 
-        if "shellprint_update" in kwargs:
-            if kwargs["shellprint_update"] is False:
-                pass
-        else:
+        if kwargs.get("shellprint_update", True) is not False:
             self.console.print(":arrows_counterclockwise: [b]Update atmbc[/b]")
 
         # type(netValue)
@@ -2284,7 +2321,12 @@ class CATHY:
 
         atmbcfile.close()
 
-        self.update_parm(TIMPRTi=[time[0],time[-1]], NPRT=2, TMAX=int(max(time)))
+        self.update_parm(
+            TIMPRTi=[time[0], time[-1]],
+            NPRT=2,
+            TMAX=int(max(time)),
+            shellprint_update=kwargs.get("shellprint_update", True),
+        )
         # self.update_parm(TIMPRTi=time, NPRT=len(time), TMAX=max(time))
 
         # don't need to update if sequential DA as the cathy.exe is already created
@@ -2819,10 +2861,7 @@ class CATHY:
         - update mesh vtk file
 
         """
-        if "shellprint_update" in kwargs:
-            if kwargs["shellprint_update"] is False:
-                pass
-        else:
+        if kwargs.get("shellprint_update", True) is not False:
             self.console.print(":arrows_counterclockwise: [b]Update soil[/b]")
 
 
@@ -4566,7 +4605,7 @@ class CATHY:
             self.mesh_pv_attributes['POROS_cells']
             return list(prop_mesh_cells), list(self.mesh_pv_attributes[f'{prop_name}_nodes'])
 
-    def map_prop2mesh(self, dict_props):
+    def map_prop2mesh(self, dict_props, shellprint_update=True):
         """
         Add a given physical property to the CATHY mesh
         """
@@ -4594,11 +4633,12 @@ class CATHY:
             # arrays (e.g. psi_ini), and broadcast them as if they were a
             # single scalar value. Use an actual scalar check instead.
             if np.isscalar(dict_props[dp]):
-                print(
-                    "Single value detected for "
-                    + str(dp)
-                    + " ==> assumming it homogeneous"
-                )
+                if shellprint_update is not False:
+                    self.console.print(
+                        "Single value detected for "
+                        + str(dp)
+                        + " ==> assumming it homogeneous"
+                    )
                 self.update_mesh_vtk(
                     prop=dp,
                     prop_value=np.ones(len(self.mesh_pv_attributes.points))

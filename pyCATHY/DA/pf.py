@@ -1,4 +1,7 @@
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
 
 def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwargs):
     """
@@ -54,8 +57,8 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     else:
         obs_std = np.sqrt(data_cov)
     
-    print(f"Particle Filter Analysis: ens_size={ens_size}, meas_size={meas_size}, par_size={par_size}")
-    print(f"  param shape: {param.shape}, ensemble shape: {ensemble.shape}")
+    logger.debug(f"Particle Filter Analysis: ens_size={ens_size}, meas_size={meas_size}, par_size={par_size}")
+    logger.debug(f"  param shape: {param.shape}, ensemble shape: {ensemble.shape}")
     
     # =========================================================================
     # STEP 1: Compute particle weights using exact likelihood
@@ -79,14 +82,14 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     
     # Compute effective sample size
     n_eff = 1.0 / np.sum(weights ** 2)
-    print(f"  Effective sample size: N_eff = {n_eff:.1f} / {ens_size}")
-    print(f"  Weight range: [{weights.min():.3e}, {weights.max():.3e}]")
-    print(f"  Max/Min weight ratio: {weights.max()/weights.min():.3e}")
+    logger.debug(f"  Effective sample size: N_eff = {n_eff:.1f} / {ens_size}")
+    logger.debug(f"  Weight range: [{weights.min():.3e}, {weights.max():.3e}]")
+    logger.debug(f"  Max/Min weight ratio: {weights.max()/weights.min():.3e}")
     
     # Diagnose issues
     diag = diagnose_particle_filter_issues(param, weights, observation, data)
     for warning in diag['warnings']:
-        print(f"  ⚠️  {warning}")
+        logger.warning(f"  ⚠️  {warning}")
     
     # =========================================================================
     # STEP 2: Resample if needed (when particle degeneracy occurs)
@@ -94,7 +97,7 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     
     resampled = False
     if n_eff < resample_threshold * ens_size:
-        print(f"  Resampling (N_eff < {resample_threshold * ens_size:.1f})...")
+        logger.debug(f"  Resampling (N_eff < {resample_threshold * ens_size:.1f})...")
         resampled = True
         
         # Systematic resampling
@@ -113,7 +116,7 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     # =========================================================================
     
     if use_enkf_update:
-        print("  Applying weighted EnKF update...")
+        logger.debug("  Applying weighted EnKF update...")
         ensemble, param = weighted_enkf_update(
             data, data_cov, param, ensemble, observation, weights, alpha
         )
@@ -123,7 +126,7 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     # =========================================================================
     
     if resampled or jitter_std_param > 0:  # Can apply jitter even without resampling
-        print("  Adding jitter to maintain diversity...")
+        logger.debug("  Adding jitter to maintain diversity...")
         
         # Jitter for states (ensemble)
         if jitter_std_state > 0:
@@ -146,7 +149,7 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
                 # Additive jitter for all parameters
                 param += np.random.randn(*param.shape) * jitter_std_param
         
-        print(f"  param range AFTER jitter: [{param.min():.3e}, {param.max():.3e}]")
+        logger.debug(f"  param range AFTER jitter: [{param.min():.3e}, {param.max():.3e}]")
     
     # =========================================================================
     # STEP 5: Enforce parameter bounds
@@ -288,7 +291,7 @@ def weighted_enkf_update(data, data_cov, param, ensemble, observation,
     meas_size = data.shape[0]
     par_size = param.shape[0]
     
-    print(f"    Weighted EnKF: gain_factor={gain_factor}, alpha={alpha}")
+    logger.debug(f"    Weighted EnKF: gain_factor={gain_factor}, alpha={alpha}")
     
     # Combine ensemble and parameters (both are already column-wise)
     A = np.vstack([ensemble, param])  # (sim_size + par_size, ens_size)
@@ -342,10 +345,10 @@ def weighted_enkf_update(data, data_cov, param, ensemble, observation,
     param_change = np.abs(param_updated - param)
     max_change = param_change.max()
     mean_change = param_change.mean()
-    print(f"    Max param change: {max_change:.3e}, Mean change: {mean_change:.3e}")
+    logger.debug(f"    Max param change: {max_change:.3e}, Mean change: {mean_change:.3e}")
     
     if max_change > 10 * param.std():
-        print(f"    WARNING: Large parameter update detected! Consider reducing gain_factor or alpha")
+        logger.warning(f"    WARNING: Large parameter update detected! Consider reducing gain_factor or alpha")
     
     return ensemble_updated, param_updated
 

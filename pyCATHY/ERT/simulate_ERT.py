@@ -2,6 +2,9 @@
 """
 
 
+import contextlib
+import io
+import logging
 import os
 import sys
 
@@ -10,6 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pyvista as pv  # if not installed : pip install with conda install pyvista (in a conda terminal)
+
+from pyCATHY.ERT import ERT_checks
 
 try:
     import pygimli as pg
@@ -23,6 +28,51 @@ try:
     #from resipy import R2  # geophysics tools
 except ImportError:
     resipy = None
+
+logger = logging.getLogger(__name__)
+
+
+@contextlib.contextmanager
+def _captured_stdout(verbose):
+    """Keep pyGIMLi/BERT stdout out of the console: it is sent to the logger (DEBUG).
+
+    Python-level prints are captured, and (when stdout is a real file descriptor,
+    i.e. not in a notebook) the C-level output is muted. stdout is always restored,
+    even if the block raises. ``verbose=True`` lets everything through.
+    """
+    if verbose:
+        yield
+        return
+    buf = io.StringIO()
+    saved_fd = devnull_fd = None
+    try:
+        sys.stdout.flush()
+        saved_fd = os.dup(sys.stdout.fileno())
+        devnull_fd = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull_fd, sys.stdout.fileno())
+        fd = sys.stdout.fileno()
+    except (AttributeError, OSError, ValueError):  # no real fd (notebook, pytest capture)
+        fd = None
+    try:
+        with contextlib.redirect_stdout(buf):
+            yield
+    finally:
+        if fd is not None:
+            os.dup2(saved_fd, fd)
+        for handle in (saved_fd, devnull_fd):
+            if handle is not None:
+                os.close(handle)
+        text = buf.getvalue().strip()
+        if text:
+            logger.debug("pyGIMLi output:\n%s", text)
+
+# report of the last `create_ERT_survey_pg` call of this process (read by petro_Archie)
+_STATE = {"last_report": None}
+
+
+def get_last_check_report():
+    """ERTCheckReport of the last forward run done in this process (None if none)."""
+    return _STATE["last_report"]
 
 
 def create_ERT_survey_pg(pathERT, 
@@ -38,23 +88,26 @@ def create_ERT_survey_pg(pathERT,
     fwdNoiseLevel = 5
     if "fwdNoiseLevel" in kwargs:
         fwdNoiseLevel = kwargs["fwdNoiseLevel"]
-    print(f"fwd ERT Noise Level: {fwdNoiseLevel}")
+    logger.debug("fwd ERT noise level: %s%%", fwdNoiseLevel)
     pre, ext = os.path.splitext(mesh)
-    print(pre, ext)
+    logger.debug("forward mesh: %s%s", pre, ext)
 
-    try:
-        mesh3d = mt.readGmsh(pre + ".msh", verbose=verbose)
-    except:
+    mesh3d = None
+    for reader, ext_try in (
+        (lambda f: mt.readGmsh(f, verbose=verbose), ".msh"),
+        (lambda f: pg.load(f, verbose=verbose), ".bms"),
+        (lambda f: pg.load(f, verbose=verbose), ".vtk"),
+    ):
         try:
-            mesh3d = pg.load(pre + ".bms", verbose=verbose)
-        except:
-            try:
-                print('read the VTK!')
-                mesh3d = pg.load(pre + ".vtk", verbose=verbose)
-            except:
-                raise ValueError(
-                    "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
-                )
+            mesh3d = reader(pre + ext_try)
+            logger.debug("forward mesh read from %s%s", pre, ext_try)
+            break
+        except Exception as err:  # missing file or unreadable format: try the next one
+            logger.debug("cannot read %s%s: %s", pre, ext_try, err)
+    if mesh3d is None:
+        raise ValueError(
+            "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
+        )
     
     sequence_file_extension = os.path.splitext(sequence)[1]
 
@@ -76,23 +129,25 @@ def create_ERT_survey_pg(pathERT,
             "Sequence file format not recognized use .shm or .txt as a list of quadrupoles"
         )
     
-    res0 = 1
-    if "res0" in kwargs:
-        res0 = kwargs["res0"]
+    n_elec = scheme.sensorCount() if hasattr(scheme, "sensorCount") else None
+    ERT_checks.check_scheme(
+        scheme["a"], scheme["b"], scheme["m"], scheme["n"],
+        n_elec=n_elec, name="fwd ERT scheme",
+    ).warn()
 
-    if len(res0) != len(mesh3d.cells()):
-        raise ValueError("wrong initial resistivity input")
+    if "res0" not in kwargs:
+        raise ValueError("create_ERT_survey_pg needs res0 (one resistivity per mesh cell)")
+    res0 = np.asarray(kwargs["res0"], dtype=float)
+
+    if res0.ndim != 1 or len(res0) != len(mesh3d.cells()):
+        raise ValueError(
+            f"wrong initial resistivity input: shape {res0.shape} for "
+            f"{len(mesh3d.cells())} mesh cells"
+        )
     # Check for negative values
     if np.any(res0 < 0):
         raise ValueError("res0 contains negative values. Resistivity must be positive.")
         
-    try:
-        if not verbose:
-            devnull = open("/dev/null", "w")
-            oldstdout_fno = os.dup(sys.stdout.fileno())
-            os.dup2(devnull.fileno(), 1)
-    except:
-        pass
     
     # print('+'*20)
     # # print(sequence_file_extension)
@@ -110,26 +165,47 @@ def create_ERT_survey_pg(pathERT,
         
         
 
-    het = ert.simulate(
-        mesh3d,
-        res=res0,
-        scheme=scheme,
-        calcOnly=False,
-        verbose=False,
-        noiseLevel=fwdNoiseLevel,
-    )
+    # optional absolute voltage noise of the simulation (pyGIMLi default if not given)
+    sim_kwargs = {}
+    if "fwdNoiseAbs" in kwargs:
+        sim_kwargs["noiseAbs"] = kwargs["fwdNoiseAbs"]
+
+    with _captured_stdout(verbose):
+        het = ert.simulate(
+            mesh3d,
+            res=res0,
+            scheme=scheme,
+            calcOnly=False,
+            verbose=False,
+            noiseLevel=fwdNoiseLevel,
+            **sim_kwargs,
+        )
     # pg.show(mesh3d)
     # pg.show(het)
     # het.exportVTK('testmeshpg.vtk')
     # het.saveResult('testpg')
     
-    try:
-        if not verbose:
-            os.dup2(oldstdout_fno, 1)
-    except:
-        pass
-    pg.info('Filtered rhoa (min/max)', min(het['rhoa']), max(het['rhoa']))
-    print('Correction of rhoa <= 0 to 1e-3')
+    logger.debug("fwd rhoa (raw) min/max: %.4g / %.4g", min(het['rhoa']), max(het['rhoa']))
+    # checks on the raw forward data (before the rhoa <= 0 correction below)
+    # 1e-4 V is the assumed pyGIMLi default of `noiseAbs` when not set explicitly
+    report = ERT_checks.check_forward_data(
+        het,
+        res0=res0,
+        noise_abs=kwargs.get("fwdNoiseAbs", 1e-4),
+        name="fwd ERT data",
+    )
+    report.warn()
+    _STATE["last_report"] = report
+    n_fixed = int(np.sum(np.asarray(het['rhoa']) <= 0))
+    if n_fixed:
+        logger.warning(
+            "fwd ERT: %d of %d apparent resistivities are <= 0 (min %.3g Ohm.m): "
+            "set to 1e-3 Ohm.m so that they can be log-transformed; check the "
+            "quadrupoles / noise level (see the ERT check report)",
+            n_fixed,
+            len(het['rhoa']),
+            float(np.min(np.asarray(het['rhoa']))),
+        )
     # het.loc[het['rhoa'] <= 0, 'rhoa'] = 1e-3
     het['rhoa'][het['rhoa'] <= 0] = 1e-3
 
@@ -182,7 +258,7 @@ def create_ERT_survey_Resipy(pathERT, elecsXYZ, sequence, mesh, **kwargs):
     return ERT
 
 
-def fwd_ERT_survey(ERT, noise, show=False, dump=[]):
+def fwd_ERT_survey(ERT, noise, show=False, dump=None):
     """
     Fwd ERT model
 
@@ -206,6 +282,8 @@ def fwd_ERT_survey(ERT, noise, show=False, dump=[]):
     # fwd modelling
     # ---------------------------------------------------------#
 
+    if dump is None:
+        dump = []
     ERT.forward(
         noise=0.05, iplot=show, dump=dump
     )  # forward modelling with 5 % noise added to the output

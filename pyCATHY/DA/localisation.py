@@ -7,6 +7,9 @@ from pyCATHY.cathy_tools import CATHY
 import numpy as np 
 import pyCATHY.meshtools as mt
 from scipy.spatial.distance import cdist
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_mask_localisation(localisation,veg_map,zones,hapin,grid3d,DEM):
@@ -24,8 +27,8 @@ def create_mask_localisation(localisation,veg_map,zones,hapin,grid3d,DEM):
             map_surface_nodes = np.arange(grid3d['nnod']).reshape([hapin['M'] + 1,
                                                                     hapin['N'] + 1]
                                                                 )  # Treat each node individually   
-        except:
-            print('Issue here when the mesh contains nan values (boundaries)')
+        except Exception:
+            logger.warning('Issue here when the mesh contains nan values (boundaries)')
             # # Mask out-of-bound DEM cells
             # mask_out_bound = DEM == -9999
             
@@ -63,10 +66,10 @@ def mesh_nodes_local_valid(raster_local, grid3d):
     mesh_nodes_valid : list of np.ndarray
         Each element is the list of 3D node IDs corresponding to one surface node.
     """
-    print("""[b]
+    logger.debug("""
     Extrude surface valid nodes to 3D == Assuming an observation at the surface 
     will influence all the depths!
-    [/b]""")
+    """)
 
     # Extract **3D grid nodes** from the mesh data
     grid3d = grid3d['mesh3d_nodes']

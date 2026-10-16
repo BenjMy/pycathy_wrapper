@@ -6,13 +6,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pyvista as pv
-import rich.console
-from rich import print
+import logging
 
 from pyCATHY import meshtools as mt
+from pyCATHY.ERT import ERT_checks
 from pyCATHY.ERT import simulate_ERT as simuERT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.meshtools import CATHY_2_pg, CATHY_2_Resipy
+
+logger = logging.getLogger(__name__)
 
 
 def get_sw_ens_i(path_fwd_CATHY, **kwargs):
@@ -28,7 +30,6 @@ def get_sw_ens_i(path_fwd_CATHY, **kwargs):
         if "time_ass" in kwargs:
             time_ass = kwargs["time_ass"]
             df_sw = df_sw.iloc[time_ass, :]
-            DA_cnb = time_ass
         # case of sequential assimilation
         # -------------------------------------------------------------------
         else:
@@ -53,7 +54,7 @@ def get_Archie_ens_i(ArchieParms, Ens_nb):
     else:
         ArchieParms2parse = ArchieParms
     
-    print(ArchieParms2parse)
+    logger.debug("Archie parameters: %s", ArchieParms2parse)
     return ArchieParms2parse
 
 def SW_2_ER0_DA(
@@ -64,12 +65,40 @@ def SW_2_ER0_DA(
                 path_fwd_CATHY, 
                 **kwargs
                 ):
-    
-    if "DA_cnb" in kwargs:
-        DA_cnb = kwargs["DA_cnb"]
-    if "Ens_nbi" in kwargs:
-        Ens_nbi = kwargs["Ens_nbi"]
-        
+    """Convert the saturation of one ensemble member to nodal resistivity (Archie).
+
+    Parameters
+    ----------
+    project_name : str
+    ArchieParms : dict
+        Archie parameters; per-member lists are indexed with the member number.
+    porosity : array-like
+        Nodal porosity (one array per member, or a single array shared by all).
+    meta_dict : dict
+        ERT metadata (unused here, kept for API symmetry).
+    path_fwd_CATHY : str
+        Folder of the member simulation ("<prefix>_<n>").
+    **kwargs
+        ``DA_cnb`` (cycle number), ``Ens_nbi`` (0-based member index),
+        ``df_sw`` / ``time_ass`` (see `get_sw_ens_i`).
+
+    Returns
+    -------
+    ER_converted_ti : np.ndarray
+        Resistivity (Ohm.m) at the mesh nodes.
+    df_Archie : pandas.DataFrame
+        time, ens_nbi, sw, ER_converted, porosity.
+    df_sw : np.ndarray
+        Saturation used.
+    """
+
+    # DA cycle number (None outside a DA run) and member index (0-based; by
+    # default read from the ensemble folder name "<prefix>_<n>")
+    DA_cnb = kwargs.get("DA_cnb")
+    Ens_nbi = kwargs.get("Ens_nbi")
+    if Ens_nbi is None:
+        Ens_nbi = int(os.path.split(path_fwd_CATHY)[-1].split("_", 1)[1]) - 1
+
     # Get sw array for a given ensemble
     # ------------------------------------
     df_sw = get_sw_ens_i(path_fwd_CATHY, **kwargs)
@@ -80,7 +109,6 @@ def SW_2_ER0_DA(
     
     # Convert to SW to ER values
     # --------------------------------------------------------------------
-    print("****")
  
 
     
@@ -91,11 +119,16 @@ def SW_2_ER0_DA(
         
     # print(f"porosity_ensi: {porosity_ensi}")
     # print(f"porosity_ensi: {porosity_ensi}")
-    print(f"Ens_nbi indices: {Ens_nbi}")
-    print(f"Porosity shape: {np.shape(porosity)}")
-    print(f"Porosity statistics (selected indices): min={np.min(porosity[Ens_nbi]):.3f}, "
-          f"mean={np.mean(porosity[Ens_nbi]):.3f}, max={np.max(porosity[Ens_nbi]):.3f}")
-    print("****")
+    # (statistics over all the nodes: the former print indexed the nodal porosity
+    # with the member number, hence always showed a single value)
+    logger.debug(
+        "member %d: porosity %s, min=%.3f mean=%.3f max=%.3f",
+        Ens_nbi + 1,
+        np.shape(porosity),
+        np.min(porosity),
+        np.mean(porosity),
+        np.max(porosity),
+    )
 
     
     ER_converted_ti = Archie_rho_DA(
@@ -108,6 +141,13 @@ def SW_2_ER0_DA(
                                     pert_sigma_Archie=ArchieParms2parse["pert_sigma_Archie"],
                                 )
 
+    ERT_checks.check_archie_inputs(
+        df_sw,
+        porosity,
+        ArchieParms2parse,
+        name=f"Archie member {Ens_nbi + 1}",
+    ).warn()
+
     # build df Archie df
     df_Archie = pd.DataFrame(columns=["time", "ens_nb", "sw", "ER_converted"])
     df_Archie["time"] = DA_cnb * np.ones(len(ER_converted_ti))
@@ -119,16 +159,6 @@ def SW_2_ER0_DA(
     )
     return ER_converted_ti, df_Archie, df_sw
 
-# def ER0_to_EM_ECa_DA(ER_converted_ti,EM_meta_dict):
-    
-#     # ------------------------------------------------------------------------
-#     print('----fwd ER data-----')
-#     from emagpy import Problem
-#     k= Problem()
-#     k.createSurvey(EM_meta_dict['filename'])
-    
-    
-    
 def SW_2_ERT_ERa_DA(
                 project_name, 
                 ArchieParms, 
@@ -199,8 +229,7 @@ def SW_2_ERT_ERa_DA(
                                             porosity, 
                                             ERT_meta_dict, 
                                             path_fwd_CATHY, 
-                                            Ens_nbi=Ens_nbi,
-                                            **kwargs
+                                            **{**kwargs, "Ens_nbi": Ens_nbi}  # no duplicate keyword
                                             )
     
     # Read the input mesh using pyvista
@@ -249,7 +278,7 @@ def SW_2_ERT_ERa_DA(
     res0 = mesh_geophy_new_attr.get_array(scalar_new)
 
     # ------------------------------------------------------------------------
-    print('----fwd ER data-----')
+    logger.debug("forward ERT: member %d, DA cycle %s", Ens_nbi + 1, DA_cnb)
     # print(scalar_new)
     # print("Shape:", res0.shape)
     # print("ERT_meta_dict:", ERT_meta_dict)
@@ -258,12 +287,6 @@ def SW_2_ERT_ERa_DA(
     # res0 = list(res0)
     # res0 = [int(round(x)) for x in res0]
 
-    # --- Ens_nbi check ---
-    if 'Ens_nbi' in locals():
-        print(f"Ens_nbi: {Ens_nbi}")
-    else:
-        print("Warning: Ens_nbi variable not found in scope.")
-    
     # --- res0 checks ---
     res0 = np.array(res0, dtype=float)
     
@@ -277,9 +300,9 @@ def SW_2_ERT_ERa_DA(
             try:
                 poro_value = porosity[Ens_nbi]
                 if np.any(np.isnan(poro_value)):
-                    print("Porosity contains NaN values!")
+                    logger.error("porosity of member %d contains NaN values", Ens_nbi + 1)
             except IndexError:
-                print("Ens_nbi index out of bounds for porosity.")
+                logger.error("member index %d out of bounds for porosity", Ens_nbi)
         raise ValueError("res0 contains NaN values. Please clean or replace them before proceeding.")
     
     # Check for negative values
@@ -318,10 +341,24 @@ def SW_2_ERT_ERa_DA(
     }
     df_ERT_predicted = pd.DataFrame(data=d)
 
+    # checks: forward run (raw data) and forward vs observed quadrupoles / k
+    member = f"member {Ens_nbi + 1}"
+    check_report = simuERT.get_last_check_report() if "pygimli" in ERT_meta_dict["data_format"] else None
+    if check_report is None:
+        check_report = ERT_checks.check_forward_data(df_ERT_predicted, res0=res0, name="fwd ERT data")
+        check_report.warn()
+    check_report.name = f"fwd ERT {member}"
+    vs_obs = ERT_checks.check_forward_vs_obs(
+        df_ERT_predicted, ERT_meta_dict.get("data"), name=f"fwd vs obs {member}"
+    ).warn()
+    df_ERT_predicted.attrs["ert_check"] = ERT_checks.ERTCheckReport(
+        check_report.name, list(check_report.issues), dict(check_report.stats)
+    ).merge(vs_obs).to_dict()
+
 
     # savefig = False
     if savefig:
-        print('backup figures')
+        logger.debug("saving ERT backup figures")
         plotter = pv.Plotter(shape=(3, 1), off_screen=True)  # notebook = True
         plotter.subplot(0, 0)
         mesh_CATHY_df, name_new_attr_CATHY = mt.add_attribute_2mesh(
@@ -380,7 +417,17 @@ def SW_2_ERT_ERa_DA(
         )
 
         plotter.close()
-    print('end of ER prediction')
+    ert_check = df_ERT_predicted.attrs["ert_check"]
+    logger.info(
+        "ERT forward, member %d (DA cycle %s): res0 %.1f-%.1f Ohm.m -> rhoa %.3g to %.3g Ohm.m | checks: %s",
+        Ens_nbi + 1,
+        DA_cnb,
+        res0.min(),
+        res0.max(),
+        ert_check["stats"].get("rhoa_min", np.nan),
+        ert_check["stats"].get("rhoa_max", np.nan),
+        ERT_checks.issues_summary(ert_check["issues"]),
+    )
 
     return df_ERT_predicted, df_Archie, mesh_CATHY_new_attr
 
@@ -518,13 +565,12 @@ def Archie_rho_DA(
     rho: Converted Apparent Electrical Resistivity (Ohm.m).
 
     """
-    verbose = True
-    console = rich.console.Console(stderr=True, quiet=not verbose)
-    
-    print('------------- Archie transformation -------------')
-    print(f'Shape Saturation predicted: {np.shape(sat)}')
-    print(f'Shape Porosity nodes: {np.shape(porosity)}')
-    print(f'Shape rFluid_Archie: {np.shape(rFluid_Archie)}')
+    logger.debug(
+        "Archie transformation: sat %s, porosity %s, rFluid %s",
+        np.shape(sat),
+        np.shape(porosity),
+        np.shape(rFluid_Archie),
+    )
 
     # Loop over soil type (as many soil type than a_Archie list length)
     # -----------------------------------------------
@@ -538,54 +584,34 @@ def Archie_rho_DA(
                 * sat[i] ** (-n_Archie[i])
             )
             sigma = 1 / rho
-            
-            print(f'min RHO converted SW nodes: {np.min(rho)}')
-            print(f'max RHO converted SW nodes: {np.max(rho)}')
-            # print(f'nb of porosities in the soil: {len(np.unique(porosity))}')
-            if np.ndim(porosity) > 0:  # Check if it's array-like (has dimensions)
-                porosity_flat = np.array(porosity).flatten()
-                print(f'nb of porosities in the soil: {len(np.unique(porosity_flat))}')
-            else:
-                print(f'nb of porosities in the soil: 1 (single value: {porosity})')
-                
-            try: # CASE WITH DATA ASSIMILATION
-                for ti in range(np.shape(sigma)[0]):  # Loop over assimilation times
-                    for meas_nb in range(np.shape(sigma)[1]):  # Loop over mesh nodes
-                        # See eq. 4.4 thesis Isabelle p.97
-                        # ------------------------------------
-                        noise = np.random.normal(
-                            0,
-                            (pert_sigma_Archie[i] * (sigma[ti, meas_nb])) ** 2,
-                            len(sigma[ti, :]),
-                        )
-                    sigma[ti, :] = sigma[ti, :] + noise
-                    
-                if i == 0: # to avoid displaying this for all the soil layers
-                    console.rule(
-                        ":octopus: Parameter perturbation :octopus:", style="green"
-                    )
-                    console.print(
-                        """
-                                    Archie perturbation for fwd model \n
-                                    Archie rFluid: {} \n
-                                    Archie pert_sigma: {}  \n
-                                    Nb of zones (need to check this): {}
-                                    """.format(
-                            rFluid_Archie, pert_sigma_Archie, len(rFluid_Archie)
-                        ),
-                        style="green",
-                    )
-                    console.rule("", style="green")
-            except:
-                if i == 0:
-                    print('Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95')
-                # one normal draw per mesh node (vectorised: same random stream as a loop of
-                # single draws; assigning a size-1 array to a scalar element fails with NumPy >= 2.4)
-                # See eq. 4.4 thesis Isabelle p.95
-                # ------------------------------------
-                noise = np.random.normal(0, (pert_sigma_Archie[i] * sigma) ** 2)
-                sigma = sigma + noise
-    
-    print('max res after Archie')
-    print(np.max(1 / sigma))
+
+            logger.debug(
+                "Archie zone %d: rho from sw nodes min=%.4g max=%.4g (%d distinct porosities)",
+                i,
+                np.min(rho),
+                np.max(rho),
+                np.unique(np.asarray(porosity).flatten()).size,
+            )
+
+            # Gaussian noise on the conductivity with a standard deviation proportional
+            # to the conductivity: std = pert_sigma_Archie[i] * sigma (relative noise, e.g.
+            # 0.05 = 5 %). It used to be (pert * sigma)**2 (a variance passed as numpy's
+            # scale, i.e. ~1e-6 relative noise for pert=0.05), and the DA branch applied
+            # the draw of the last node to the whole row. The perturbed conductivity is
+            # kept positive (>= 1 % of the noise-free value).
+            pert = pert_sigma_Archie[i]
+            if i == 0:  # to avoid displaying this for all the soil layers
+                logger.debug(
+                    "Archie perturbation for fwd model: rFluid=%s, pert_sigma=%s, nb of zones=%d",
+                    rFluid_Archie,
+                    pert_sigma_Archie,
+                    len(rFluid_Archie),
+                )
+            if pert:
+                sigma_ref = np.asarray(sigma, dtype=float)
+                # same code for 1-D (one value per node) and 2-D (assimilation time x node)
+                noise = np.random.normal(0.0, 1.0, size=sigma_ref.shape) * pert * np.abs(sigma_ref)
+                sigma = np.maximum(sigma_ref + noise, 0.01 * sigma_ref)
+
+    logger.debug("max resistivity after Archie: %.4g", np.max(1 / sigma))
     return 1 / sigma

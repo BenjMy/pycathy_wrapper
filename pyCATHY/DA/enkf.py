@@ -2,15 +2,16 @@
 """
 # Credit to:     https://github.com/hickmank/pyda/blob/7a2f04bd752e9c75bc8dcd2a45b21ff549736fa6/pyda/analysis_generator/kf/enkf1.py
 
+import logging
 import os
 import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
-import rich.console
 from matplotlib import pyplot
-from rich import print
 from rich.progress import track
+
+logger = logging.getLogger(__name__)
 
 
 def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
@@ -62,16 +63,16 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
 
     # --- Options ---
     Sakov = kwargs.pop('Sakov', False)
-    print(f"\n[INIT] Starting EnKF analysis (Sakov={Sakov})")
 
     # --- Sizes ---
     ens_size = ensemble.shape[1]   # number of ensemble members
     sim_size = ensemble.shape[0]   # number of state variables
     meas_size = data.shape[0]      # number of observations
 
-    print(f"[INFO] Ensemble size N_ens={ens_size}")
-    print(f"[INFO] Number of state variables N_state={sim_size}")
-    print(f"[INFO] Number of observations N_obs={meas_size}")
+    logger.info(
+        "EnKF analysis (Sakov=%s): N_ens=%d, N_state=%d, N_obs=%d",
+        Sakov, ens_size, sim_size, meas_size,
+    )
 
     # ============================================================
     # Step 1: Ensemble mean
@@ -81,12 +82,10 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # ============================================================
     ensemble_mean = np.mean(ensemble, axis=1, keepdims=True)
     ensemble_mean = np.tile(ensemble_mean, (1, ens_size))
-    print("[STEP 1] Computed state ensemble mean")
 
     if len(param) > 0:
         param_mean = np.mean(param, axis=1, keepdims=True)
         param_mean = np.tile(param_mean, (1, ens_size))
-        print("[STEP 1b] Computed parameter ensemble mean")
 
     if len(param) > 0:
         augm_state_mean = np.vstack([ensemble_mean, param_mean])
@@ -94,7 +93,6 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     else:
         augm_state_mean = ensemble_mean
         augm_state      = ensemble
-    print("[STEP 1c] Constructed augmented state [x; θ]")
 
     # ============================================================
     # Step 2: Perturbations
@@ -104,8 +102,7 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # Spread = measure of uncertainty.
     # ============================================================
     augm_state_pert = augm_state - augm_state_mean
-    print(f"[STEP 2] Computed state+param perturbations. "
-          f"Var={np.var(augm_state_pert):.4f}")
+    logger.debug("state+param perturbations: var=%.4g", np.var(augm_state_pert))
 
     # ============================================================
     # Step 3: Innovation
@@ -124,13 +121,17 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
         data_pert = (data.T - predict_obs.T).T
     else:
         data_pert = (data - predict_obs.T).T
-    print(f"[STEP 3] Computed innovation (obs - pred). "
-          f"Mean={np.mean(data_pert):.4f}, Std={np.std(data_pert):.4f}")
+    logger.debug(
+        "innovation (obs - pred): mean=%.4g, std=%.4g",
+        np.mean(data_pert), np.std(data_pert),
+    )
 
     max_residual = 1e2
     if np.max(abs(data_pert)) > max_residual:
-        print("[WARNING] Very large innovations! "
-              "Check model bias or obs errors.")
+        logger.warning(
+            "Very large innovations (max |d| = %.3g > %g): check model bias or obs errors",
+            np.max(abs(data_pert)), max_residual,
+        )
 
     # ============================================================
     # Step 4: Predicted observation mean and perturbations
@@ -145,11 +146,12 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
         predict_obs.reshape(meas_size, ens_size).sum(1), (ens_size, 1)
     ).T
     obs_pert = predict_obs - obs_avg
-    print(f"[STEP 4] Computed predicted obs mean and perturbations. "
-          f"Obs spread Var={np.var(obs_pert):.4f}")
+    logger.debug("predicted obs perturbations: var=%.4g", np.var(obs_pert))
 
-    if np.allclose(obs_pert.mean(), 0):
-        print("[WARNING] Obs perturbations ~0 (low ensemble spread → risk of collapse)")
+    # (the mean of perturbations around the ensemble mean is 0 by construction:
+    # the spread is what tells about a collapse)
+    if np.std(obs_pert) <= 1e-12 * max(1.0, float(np.max(np.abs(obs_avg)))):
+        logger.warning("Obs perturbations ~0 (low ensemble spread: risk of collapse)")
 
     # ============================================================
     # Step 5: Observation covariance
@@ -161,13 +163,14 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     if Sakov:
         COV = data_cov.T
         inv_data_pert = data_pert / np.diag(COV)[:, None]
-        print("[STEP 5] Used Sakov simplified covariance form")
+        logger.debug("Sakov simplified covariance form")
     else:
         COV = (1.0 / (ens_size - 1)) * (obs_pert @ obs_pert.T) + data_cov.T
         inv_data_pert = np.linalg.solve(COV, data_pert)
-        print("[STEP 5] Computed full covariance matrix COV = SS^T + R")
+        logger.debug("full covariance matrix COV = SS^T + R")
 
-    print(f"[INFO] COV shape={COV.shape}, cond#={np.linalg.cond(COV):.2e}")
+    if logger.isEnabledFor(logging.DEBUG):  # the condition number is an SVD of COV
+        logger.debug("COV shape=%s, cond#=%.2e", COV.shape, np.linalg.cond(COV))
 
     # ============================================================
     # Step 6: Cross-covariance (state vs obs)
@@ -178,8 +181,7 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # This drives how much each state is corrected by each observation.
     # ============================================================
     ensemble_pert = (1.0 / (ens_size - 1)) * (augm_state_pert @ obs_pert.T)
-    print(f"[STEP 6] Computed state-observation cross covariance. "
-          f"Norm={np.linalg.norm(ensemble_pert):.4f}")
+    logger.debug("state-observation cross covariance: norm=%.4g", np.linalg.norm(ensemble_pert))
 #     ensemble_pert = (1.0 / float(ens_size - 1)) * np.dot(augm_state_pert, 
 #                                                 obs_pert.T
 #                                                 )
@@ -194,7 +196,7 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # If weakly correlated → weak update.
     # ============================================================
     analysis = augm_state + (ensemble_pert @ inv_data_pert)
-    print("[STEP 7] Applied analysis update")
+    logger.debug("analysis update applied")
 
     # ============================================================
     # Step 8: Split results
@@ -203,11 +205,11 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # ============================================================
     analysis_param = analysis[sim_size:, :].T
     analysis       = analysis[0:sim_size, :]
-    print("[STEP 8] Separated updated states and parameters → DONE.")
 
 
-    # Analyze covariances
-    summary = analyze_covariances(data_cov, obs_pert, augm_state_pert)
+    # covariance diagnostics (result not used here): only when debugging
+    if logger.isEnabledFor(logging.DEBUG):
+        analyze_covariances(data_cov, obs_pert, augm_state_pert)
 
     return [
         augm_state,
@@ -396,7 +398,7 @@ def enkf_analysis_inflation(data, data_cov, param, ensemble, observation, **kwar
     Sakov = False
     if 'Sakov' in kwargs:
         Sakov = kwargs.pop('Sakov')
-    print('Sakov' + str(Sakov))
+    logger.debug('Sakov=%s', Sakov)
     
     
     alpha = 1  # <alpha> = (scalar) covariance inflation parameter. Usually alpha >= 1.
@@ -586,7 +588,7 @@ def enkf_assimilation_with_parm_cov(ensemble, param, data, observation, data_cov
     Sakov = False
     if 'Sakov' in kwargs:
         Sakov = kwargs.pop('Sakov')
-    print('Sakov: ' + str(Sakov))
+    logger.debug('Sakov=%s', Sakov)
 
     # Collect data sizes.
     # -------------------------------
@@ -623,8 +625,9 @@ def enkf_assimilation_with_parm_cov(ensemble, param, data, observation, data_cov
         if len(observation) == 1:
             observation = np.array(observation[0])
         else:
-            print(observation)
-            print("observation is a list? Should be a numpy array")
+            logger.warning(
+                "observation is a list of %d arrays: should be a numpy array", len(observation)
+            )
             
     if data.ndim > 0:
         # Case of dual analysis where data is within an ensemble
@@ -633,9 +636,12 @@ def enkf_assimilation_with_parm_cov(ensemble, param, data, observation, data_cov
         data_pert = (data - observation.T).T
 
     if np.max(abs(data_pert)) > 1e3:
-        print(f'data mean: {np.mean(data)}, min: {np.min(data)}, max: {np.max(data)}')
-        print(f'data obs: {np.mean(observation)}, min: {np.min(observation)}, max: {np.max(observation)}')
-        print('!Predictions are too far from observations!')
+        logger.warning(
+            "Predictions are too far from observations: data mean/min/max = %.4g/%.4g/%.4g, "
+            "predictions mean/min/max = %.4g/%.4g/%.4g",
+            np.mean(data), np.min(data), np.max(data),
+            np.mean(observation), np.min(observation), np.max(observation),
+        )
 
     # Calculate S = ensemble observation perturbation from ensemble observation mean
     # -------------------------------------------------------------------------
@@ -644,11 +650,11 @@ def enkf_assimilation_with_parm_cov(ensemble, param, data, observation, data_cov
     ).transpose()
     obs_pert = observation - obs_avg
 
-    if obs_pert.mean() == 0:
-        print("Ensemble observations perturbation from ensemble "
-              "measurement mean is too small (=0):"
-              "- Increase perturbation!"
-              "- Check if the system is not in steady state")
+    if np.std(obs_pert) == 0:
+        logger.warning(
+            "Ensemble observation perturbations from the ensemble mean are 0: "
+            "increase the perturbation / check that the system is not in steady state"
+        )
 
     # Define the parameter covariance matrix P_param (example values)
     # -------------------------------------------------------------------------
@@ -803,7 +809,7 @@ def enkf_analysis_inflation_with_parm_cov(data, data_cov, param, ensemble, obser
     Analysisparam = Analysis[sim_size:, :].transpose()
     Analysis = Analysis[0:sim_size, :]
 
-    print(np.shape(Analysisparam))
+    logger.debug('Analysisparam shape: %s', np.shape(Analysisparam))
 
     return [A, Amean, dA, dD, MeasAvg, S, COV_combined, B, dAS, Analysis, Analysisparam]
 
@@ -815,6 +821,20 @@ def enkf_analysis_inflation_with_parm_cov(data, data_cov, param, ensemble, obser
 # observation = np.random.rand(meas_size, ens_size)  # Replace with actual observations
 # param_cov = np.random.rand(param_size, param_size)  # Define your own parameter covariance
 # results = enkf_analysis_inflation(data, data_cov, param, ensemble, observation, param_cov=param_cov)
+
+
+def _cov_diag_offdiag_means(pert):
+    """Mean of the diagonal and of (C - diag(C)) for C = P P^T / (N-1), P = ``pert``.
+
+    Equal to ``np.mean(np.diag(C))`` and ``np.mean(C - np.diag(np.diag(C)))`` but
+    computed from P without building C (O(n N) memory instead of O(n^2)):
+    sum(C) = ||P^T 1||^2 / (N-1) and diag(C)_i = ||P_i||^2 / (N-1).
+    """
+    pert = np.asarray(pert, dtype=float)
+    n, n_ens = pert.shape
+    sum_diag = np.sum(pert**2) / (n_ens - 1)
+    sum_all = np.sum(pert.sum(axis=0) ** 2) / (n_ens - 1)
+    return sum_diag / n, (sum_all - sum_diag) / n**2
 
 
 def analyze_covariances(data_cov, obs_pert, augm_state_pert):
@@ -836,56 +856,35 @@ def analyze_covariances(data_cov, obs_pert, augm_state_pert):
         Dictionary summarizing covariance types and diagnostics.
     """
 
-    # --------------------------------------------------------
-    # 1. Measurement error covariance R
-    # --------------------------------------------------------
+    n_ens = obs_pert.shape[1]
     diag_R = np.allclose(data_cov, np.diag(np.diag(data_cov)))
-    print("\n[COV-ANALYSIS] Measurement error covariance R:")
-    print(f"  Shape: {data_cov.shape}")
-    print(f"  Diagonal? {diag_R}")
-    if diag_R:
-        print("  → Assumes independent measurement errors (no correlation).")
-    else:
-        print("  → Allows correlated measurement errors (e.g. sensor drift, spatial correlation).")
+    logger.debug(
+        "R: shape=%s, %s", data_cov.shape,
+        "diagonal (independent measurement errors)" if diag_R
+        else "full (correlated measurement errors)",
+    )
 
-    # --------------------------------------------------------
-    # 2. Ensemble-based obs covariance (HPH^T)
-    # --------------------------------------------------------
-    obs_cov = (1.0 / (obs_pert.shape[1] - 1)) * (obs_pert @ obs_pert.T)
-    print("\n[COV-ANALYSIS] Ensemble obs covariance (HPH^T):")
-    print(f"  Shape: {obs_cov.shape}")
-    print(f"  Diagonal mean: {np.mean(np.diag(obs_cov)):.4f}")
-    print(f"  Off-diagonal mean: {np.mean(obs_cov - np.diag(np.diag(obs_cov))):.4f}")
-    print("  → Represents uncertainty in predicted observations,")
-    print("    includes correlations between observation points due to model physics.")
-
-    # --------------------------------------------------------
-    # 3. Forecast state covariance P^f
-    # --------------------------------------------------------
-    state_cov = (1.0 / (augm_state_pert.shape[1] - 1)) * (augm_state_pert @ augm_state_pert.T)
-    print("\n[COV-ANALYSIS] Forecast state covariance P^f:")
-    print(f"  Shape: {state_cov.shape}")
-    print(f"  Diagonal mean: {np.mean(np.diag(state_cov)):.4f}")
-    print(f"  Off-diagonal mean: {np.mean(state_cov - np.diag(np.diag(state_cov))):.4f}")
-    print("  → Encodes ensemble uncertainty in state space.")
-    print("  → Off-diagonal terms = spatial correlations between state variables.")
-
-    # --------------------------------------------------------
-    # 4. Cross-covariance P_xo
-    # --------------------------------------------------------
-    cross_cov = (1.0 / (obs_pert.shape[1] - 1)) * (augm_state_pert @ obs_pert.T)
-    print("\n[COV-ANALYSIS] Cross-covariance P_xo:")
-    print(f"  Shape: {cross_cov.shape}")
-    print("  → Links state errors with observation errors.")
-    print("  → High values mean that changing this state strongly affects certain observations.")
-    print("  → This is what determines how much each observation updates each state.")
+    # means of the diagonal / off-diagonal of P P^T/(N-1), without forming the
+    # (n x n) matrix (n_state can be ~4e4, i.e. ~14 GB)
+    obs_diag, obs_off = _cov_diag_offdiag_means(obs_pert)
+    logger.debug(
+        "HPH^T: shape=(%d, %d), diagonal mean=%.4g, off-diagonal mean=%.4g",
+        obs_pert.shape[0], obs_pert.shape[0], obs_diag, obs_off,
+    )
+    st_diag, st_off = _cov_diag_offdiag_means(augm_state_pert)
+    logger.debug(
+        "P^f: shape=(%d, %d), diagonal mean=%.4g, off-diagonal mean=%.4g",
+        augm_state_pert.shape[0], augm_state_pert.shape[0], st_diag, st_off,
+    )
+    cross_cov_shape = (augm_state_pert.shape[0], obs_pert.shape[0])
+    logger.debug("P_xo: shape=%s", cross_cov_shape)
 
     # Return a structured summary for later inspection
     return {
         "data_cov_diag": diag_R,
-        "obs_cov_diag_mean": np.mean(np.diag(obs_cov)),
-        "obs_cov_offdiag_mean": np.mean(obs_cov - np.diag(np.diag(obs_cov))),
-        "state_cov_diag_mean": np.mean(np.diag(state_cov)),
-        "state_cov_offdiag_mean": np.mean(state_cov - np.diag(np.diag(state_cov))),
-        "cross_cov_shape": cross_cov.shape,
+        "obs_cov_diag_mean": obs_diag,
+        "obs_cov_offdiag_mean": obs_off,
+        "state_cov_diag_mean": st_diag,
+        "state_cov_offdiag_mean": st_off,
+        "cross_cov_shape": cross_cov_shape,
     }
