@@ -824,7 +824,8 @@ class DA(CATHY):
         self.ens_valid = list(np.arange(0, self.NENS)[id_valid])
         # check if there is an observation at the given atmbc time
         # --------------------------------------------------------
-        if t_atmbc in self.ENS_times:
+        t_end = self.all_atmbc_times[self.count_atmbc_cycle + 1]
+        if t_end in self.ENS_times:          # was: if t_atmbc in self.ENS_times   
             state_bef_update, analysis_valid = self._analysis_cycle(
                 options.DA_type,
                 options.list_parm2update,

@@ -305,8 +305,10 @@ def _particle_filter(data, data_cov, param, state, prediction, config):
 
 
 ANALYSES = {
-    "enkf_Evensen2009": _enkf(enkf.enkf_analysis, forward_perturb=True),
-    "enkf_Evensen2009_Sakov": _enkf(enkf.enkf_analysis, forward_perturb=True, Sakov=True),
+    "enkf_Evensen2009": _enkf(enkf.enkf_analysis, forward_alpha=True, forward_perturb=True),
+    "enkf_Evensen2009_Sakov": _enkf(
+        enkf.enkf_analysis, forward_alpha=True, forward_perturb=True, Sakov=True
+    ),
     "enkf_analysis_localized_with_inflation": _enkf_localized_with_inflation,
     "enkf_analysis_inflation": _enkf(enkf.enkf_analysis_inflation, forward_alpha=True),
     "enkf_analysis_inflation_multiparm": _enkf(

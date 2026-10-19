@@ -153,6 +153,10 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # stochastic EnKF (Evensen 2003): each member assimilates d + eps_i, eps_i ~ N(0, R).
     # Without it the analysis spread is smaller than the posterior by K R K^T.
     perturb_obs = kwargs.pop('perturb_obs', False)
+    # multiplicative covariance inflation (alpha >= 1): the anomalies of the augmented
+    # (state + parameters) ensemble and of the predicted data are multiplied by sqrt(alpha)
+    # before the analysis, means unchanged. alpha = 1 (default) is a no-op.
+    alpha = float(kwargs.pop('alpha', 1.0))
 
     # --- Sizes ---
     ens_size = ensemble.shape[1]   # number of ensemble members
@@ -191,6 +195,9 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # Physical meaning: deviations around the mean, encode ensemble spread.
     # Spread = measure of uncertainty.
     # ============================================================
+    if alpha != 1.0:
+        augmented_state = augmented_mean + np.sqrt(alpha) * (augmented_state - augmented_mean)
+        logger.info("EnKF: multiplicative inflation alpha=%g applied to states and parameters", alpha)
     augmented_anomalies = augmented_state - augmented_mean
     logger.debug("state+param perturbations: var=%.4g", np.var(augmented_anomalies))
 
@@ -206,6 +213,10 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
             predict_obs = np.array(predict_obs[0])
         else:
             raise ValueError("predict_obs should be numpy array")
+
+    if alpha != 1.0:
+        _pm = predict_obs.mean(axis=1, keepdims=True)
+        predict_obs = _pm + np.sqrt(alpha) * (predict_obs - _pm)
 
     if data.ndim > 0:
         innovations = (data.T - predict_obs.T).T

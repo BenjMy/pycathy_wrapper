@@ -16,6 +16,10 @@ import numpy as np
 KNOWN_PARAMETERS = (
     "ic", "WTPOSITION", "atmbc", "ZROOT", "PCREF", "PCWLT", "OMGC", "PZ",
     "Ks", "porosity", "n_VG", "alpha_VG", "thetar_VG", "SATCELL_VG",
+    # Archie parameters: built by perturbate() (any per_name containing "Archie") and
+    # updated by DA.update_archie_parameter, but were missing here, so the validator
+    # rejected them as "unknown parameter".
+    "rFluid_Archie", "a_Archie", "m_Archie", "n_Archie",
 )
 # named in the scenario format but not built: perturbate() would silently ignore them
 NOT_IMPLEMENTED = {
