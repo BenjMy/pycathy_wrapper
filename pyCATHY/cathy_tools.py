@@ -872,6 +872,18 @@ class CATHY:
         except (TypeError, ValueError):
             pass
         exp_nnod = (nrow + 1) * (ncol + 1)
+        # Masked DEMs (-9999 outside the catchment): CATHY only meshes the
+        # corner nodes of valid cells, so the full (nrow+1)*(ncol+1) grid
+        # over-counts. Count the nodes touched by at least one valid cell.
+        dem = getattr(self, "DEM", None)
+        if dem is not None and np.shape(dem) == (nrow, ncol):
+            valid = np.asarray(dem) != -9999
+            if not valid.all():
+                touched = np.zeros((nrow + 1, ncol + 1), dtype=bool)
+                for di in (0, 1):
+                    for dj in (0, 1):
+                        touched[di:di + nrow, dj:dj + ncol] |= valid
+                exp_nnod = int(touched.sum())
         exp_nnod3 = exp_nnod * (nstr + 1)
         if nnod != exp_nnod or nnod3 != exp_nnod3:
             msg = (
