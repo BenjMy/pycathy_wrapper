@@ -2739,6 +2739,234 @@ class CATHY:
 
         pass
 
+    def get_outlet_side(self, outlet_side=None):
+        """
+        Identify which lateral mesh side is topographically the outlet:
+        the side whose *top-surface* nodes have the lowest mean
+        elevation, using ``self.mesh_bound_cond_df`` (columns
+        xmin_bound/xmax_bound/ymin_bound/ymax_bound, top_bound, z).
+
+        Requires ``create_mesh_bounds_df`` to have been called first.
+
+        Parameters
+        ----------
+        outlet_side : str, optional
+            If given ("xmin_bound"/"xmax_bound"/"ymin_bound"/"ymax_bound"),
+            skip auto-detection and return this side as-is.
+
+        Returns
+        -------
+        str
+            Name of the resolved side column.
+        """
+        if outlet_side is not None:
+            return outlet_side
+
+        df = self.mesh_bound_cond_df
+        df0 = df[df["time"] == df["time"].iloc[0]] if "time" in df else df
+        top = df0[df0["top_bound"]]
+
+        side_cols = ["xmin_bound", "xmax_bound", "ymin_bound", "ymax_bound"]
+        mean_z = {s: top.loc[top[s], "z"].mean() for s in side_cols if top[s].any()}
+        if not mean_z:
+            raise RuntimeError(
+                "No lateral side flagged in mesh_bound_cond_df - check "
+                "create_mesh_bounds_df ran correctly on this mesh."
+            )
+        detected = min(mean_z, key=mean_z.get)
+        others = {k: round(float(v), 2) for k, v in mean_z.items() if k != detected}
+        print(f"  Auto-detected outlet side: {detected} "
+              f"(mean elev {mean_z[detected]:.2f} m; other sides: {others})")
+        return detected
+
+    def get_outlet_node(self):
+        """
+        Single lowest-elevation *top-surface* node id — useful as a
+        diagnostic point (e.g. tracking psi across a spin-up) independent
+        of which whole mesh side a lateral Neumann BC is applied to,
+        since the Neumann mechanism can only target a full side, not an
+        arbitrary interior node.
+
+        Requires ``create_mesh_bounds_df`` to have been called first.
+
+        Returns
+        -------
+        int
+            id_node of the lowest top-surface node.
+        """
+        df = self.mesh_bound_cond_df
+        df0 = df[df["time"] == df["time"].iloc[0]] if "time" in df else df
+        top = df0[df0["top_bound"]]
+        outlet_row = top.loc[top["z"].idxmin()]
+        return int(outlet_row["id_node"])
+
+    @staticmethod
+    def _tributary_widths(coords_sorted):
+        """
+        Tributary width per point along a 1-D line of coordinates, using
+        the standard "half distance to each neighbour" rule (Fig. 5.1 in
+        Primer_CATHY.pdf, applied along a mesh edge instead of over a
+        horizontal surface). Widths sum exactly to
+        (coords[-1] - coords[0]).
+        """
+        n = len(coords_sorted)
+        widths = np.zeros(n)
+        if n == 1:
+            return np.array([1.0])
+        widths[0] = (coords_sorted[1] - coords_sorted[0]) / 2
+        widths[-1] = (coords_sorted[-1] - coords_sorted[-2]) / 2
+        if n > 2:
+            widths[1:-1] = (coords_sorted[2:] - coords_sorted[:-2]) / 2
+        return widths
+
+    def compute_nodal_face_areas(self, side):
+        """
+        Per-node lateral face area [m^2] for every node on mesh side
+        ``side`` (one of xmin_bound/xmax_bound/ymin_bound/ymax_bound).
+
+        Why this is needed: CATHY's ``nansfneubc`` file requires a
+        volumetric flow rate Q [L^3/T] at each node, *unlike* ``atmbc``
+        which takes a flux density [L/T] (Primer_CATHY.pdf, Ch. 5).
+        There is no built-in nodal-area accessor for lateral mesh sides
+        (fort.111/ARENOD only covers the horizontal top surface used by
+        atmbc), so this approximates it directly from mesh node
+        coordinates: nodes on the side form a vertical "wall" made of
+        columns (one column per along-boundary position, one node per
+        vertical mesh layer within a column); each node's area is its
+        column's tributary width along the boundary times its own
+        vertical tributary height within that column. This reproduces
+        the true per-node area exactly for a structured extruded mesh,
+        and is a much closer approximation on an irregular sloped
+        boundary than assigning every node the side's *average* area
+        (see ``compute_lateral_face_area`` for the total/average
+        version, still provided for convenience/back-compat).
+
+        Requires ``create_mesh_bounds_df`` to have been called first.
+
+        Parameters
+        ----------
+        side : str
+            One of "xmin_bound", "xmax_bound", "ymin_bound", "ymax_bound".
+
+        Returns
+        -------
+        dict[int, float]
+            Maps id_node -> face area [m^2] for every node on that side.
+        """
+        df = self.mesh_bound_cond_df
+        df0 = df[df["time"] == df["time"].iloc[0]] if "time" in df else df
+        side_df = df0[df0[side]]
+
+        if side in ("xmin_bound", "xmax_bound"):
+            along_col = "y"
+        elif side in ("ymin_bound", "ymax_bound"):
+            along_col = "x"
+        else:
+            raise ValueError(f"Unrecognised side '{side}'")
+
+        coords = np.round(side_df[along_col].values.astype(float), 6)
+        unique_coords = np.sort(np.unique(coords))
+        widths = self._tributary_widths(unique_coords)
+        width_by_coord = dict(zip(unique_coords, widths))
+
+        areas = {}
+        for coord in unique_coords:
+            col_nodes = side_df[np.isclose(
+                side_df[along_col].astype(float), coord, atol=1e-6
+            )].sort_values("z")
+            z = col_nodes["z"].values
+            node_ids = col_nodes["id_node"].values
+            col_width = width_by_coord[coord]
+            if len(z) == 1:
+                heights = np.array([1.0])  # degenerate single-layer column
+            else:
+                heights = self._tributary_widths(z)
+            for nid, h in zip(node_ids, heights):
+                areas[int(nid)] = float(col_width * h)
+
+        return areas
+
+    def compute_lateral_face_area(self, side):
+        """
+        Total lateral face area [m^2] of mesh side ``side`` (sum of
+        ``compute_nodal_face_areas(side)``). Kept for convenience when
+        only the total (or the side-wide average) is needed - e.g. to
+        sanity-print an outflow rate - rather than a full per-node dict.
+
+        Parameters
+        ----------
+        side : str
+            One of "xmin_bound", "xmax_bound", "ymin_bound", "ymax_bound".
+
+        Returns
+        -------
+        float
+            Total face area [m^2] of that side.
+        """
+        return float(sum(self.compute_nodal_face_areas(side).values()))
+
+    @staticmethod
+    def compute_bottom_face_area(res_x, res_y):
+        """
+        Horizontal nodal area [m^2] for a bottom-layer mesh node.
+
+        Unlike the lateral outlet side (an irregular vertical "wall"
+        needing per-column tributary integration), the mesh bottom
+        mirrors the DEM footprint exactly: one bottom node per DEM
+        pixel/mesh column. So the nodal area is simply the DEM pixel
+        area ``|res_x * res_y|`` - exact per node, not an average.
+        """
+        return abs(res_x * res_y)
+
+    def check_neumann_flux_vs_ks(self, flux_m_s, zone_ids=None, label=""):
+        """
+        Warn (does not raise) if a prescribed Neumann flux density
+        [m/s] exceeds the saturated hydraulic conductivity (Ks,
+        PERMX) of the relevant soil zone(s) - a flux larger than Ks
+        is drawing water out faster than the soil can physically
+        transmit it, which tends to show up as convergence trouble or
+        unphysical suction at the boundary nodes.
+
+        No-ops quietly if soil parameters haven't been set yet
+        (``self.soil_SPP`` missing) rather than raising, since BCs are
+        often configured before or independently of soil setup.
+
+        Parameters
+        ----------
+        flux_m_s : float
+            The prescribed flux density [m/s] (sign ignored - only
+            magnitude is compared against Ks).
+        zone_ids : iterable[int], optional
+            Soil zone id(s) touching the BC (1-based, matching
+            SPP_map/PERMX indexing). If None, checks against every
+            zone's PERMX and warns using the *minimum* Ks found (the
+            most conservative/likely-to-trigger case).
+        label : str, optional
+            Short description used in the printed warning (e.g.
+            "outlet_flux", "bottom_flux").
+        """
+        try:
+            permx = np.atleast_1d(np.asarray(self.soil_SPP["SPP_map"]["PERMX"]))
+        except (AttributeError, KeyError):
+            return  # soil not configured yet - nothing to check against
+
+        if zone_ids is not None:
+            zone_idx = np.asarray(list(zone_ids), dtype=int) - 1
+            zone_idx = zone_idx[(zone_idx >= 0) & (zone_idx < len(permx))]
+            ks_relevant = permx[zone_idx] if len(zone_idx) else permx
+        else:
+            ks_relevant = permx
+
+        ks_min = float(np.min(ks_relevant))
+        if abs(flux_m_s) > ks_min:
+            print(f"  WARNING: {label or 'Neumann flux'} magnitude "
+                  f"({abs(flux_m_s):.2e} m/s) exceeds the minimum "
+                  f"relevant soil Ks ({ks_min:.2e} m/s) - this BC is "
+                  f"asking for more outflow than the soil can "
+                  f"physically transmit; expect convergence trouble or "
+                  f"unphysical suction at the boundary. Consider "
+                  f"reducing its magnitude.")
+
     def update_soil(
         self,
         IVGHU=[],

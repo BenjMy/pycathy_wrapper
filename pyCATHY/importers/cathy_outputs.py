@@ -36,6 +36,72 @@ def _fix_fortran_exponents(text: str) -> str:
     return _FORTRAN_EXP_RE.sub(r'E\1', text)
 
 
+def _read_fixed_width_block(filename, skiprows, ncols, max_rows=None):
+    """
+    Read a whitespace-delimited numeric block, tolerant of a run that
+    crashed mid-write.
+
+    Several CATHY output readers (hgraph, hgsfdet, mbeconv) used to call
+    ``np.loadtxt(..., skiprows=N, usecols=range(ncols))`` directly. That
+    is fine for a healthy file, but a run that dies mid-timestep can
+    leave a truncated final line (fewer than ``ncols`` fields), which
+    makes ``np.loadtxt`` fail outright — turning one bad run into a
+    crash for every reader/caller downstream instead of just missing
+    the last (partial) row.
+
+    This reads the block line by line, keeps any row with exactly
+    ``ncols`` numeric fields, and skips/warns on anything else (a
+    truncated last line, a stray blank line, etc.) rather than raising.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the output file.
+    skiprows : int
+        Number of header lines to skip before the data block starts.
+    ncols : int
+        Expected number of whitespace-separated fields per data row.
+    max_rows : int, optional
+        Only read up to this many data lines after skiprows (mirrors
+        ``np.loadtxt``'s ``max_rows``). If None, reads to EOF.
+
+    Returns
+    -------
+    np.ndarray
+        Shape (n_valid_rows, ncols). Shape (0, ncols) if no valid rows
+        were found (an empty-but-well-formed array, never raises).
+    """
+    with open(filename, "r") as f:
+        lines = f.readlines()
+
+    data_lines = lines[skiprows:]
+    if max_rows is not None:
+        data_lines = data_lines[:max_rows]
+
+    rows, n_bad = [], 0
+    for line in data_lines:
+        parts = line.split()
+        if len(parts) != ncols:
+            if parts:  # don't warn on genuinely blank trailing lines
+                n_bad += 1
+            continue
+        try:
+            rows.append([float(x) for x in parts])
+        except ValueError:
+            n_bad += 1
+
+    if n_bad:
+        logger.warning(f"{filename}: {n_bad} malformed row(s) skipped "
+                       f"(run likely crashed mid-write / output truncated).")
+
+    if not rows:
+        logger.warning(f"{filename}: no valid data rows found "
+                       f"(run likely produced no usable output for this file).")
+        return np.empty((0, ncols))
+
+    return np.array(rows)
+
+
 def read_grid3d(grid3dfile, **kwargs):
     with open(grid3dfile, "r") as f:
         raw = f.read()
@@ -445,31 +511,23 @@ def read_hgraph(filename):
     """
     IOUT41 hgraph Surface runoff hydrograph: plot the computed discharge at the outlet (streamflow)
 
+    Tolerant of a run that crashed mid-write (see ``_read_fixed_width_block``):
+    returns an empty-but-valid DataFrame instead of raising if the file has
+    no usable rows, so callers can detect "run produced no timesteps" the
+    same way whether the file is empty or malformed. A single data row is
+    returned as a (1, 5) frame.
+
     Returns
     -------
-    hgraph data numpy array.
+    hgraph data as a pandas DataFrame.
 
     """
-
-    hgraph_file = open(filename, "r")
-    lines = hgraph_file.readlines()
-    hgraph_file.close()
-
-    nstep = len(lines) - 2
-
-    hgraph_file = open(filename, "r")
-    hgraph = np.loadtxt(hgraph_file, skiprows=2, usecols=range(5))
-    hgraph_file.close()
-
-    # np.loadtxt collapses a single data row to a 1-D array of shape
-    # (5,) instead of (1, 5) — e.g. for a month whose run only wrote one
-    # output step. atleast_2d restores the row dimension so the
-    # DataFrame constructor below always sees (n_rows, 5), never (5,).
-    hgraph = np.atleast_2d(hgraph)
 
     # hgraph collumns information
     # -------------------------------------------------------------------------
     cols_hgraph = ["time", "streamflow", "Unnamed0", "Unnamed1", "Unnamed2"]
+
+    hgraph = _read_fixed_width_block(filename, skiprows=2, ncols=len(cols_hgraph))
 
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
@@ -663,25 +721,19 @@ def read_hgsfdet(filename):
     """
     Detailed seepage face hydrograph output (Incoming and outgoing flows at the seepage face)
 
+    Tolerant of a run that crashed mid-write (see ``_read_fixed_width_block``).
+
     Returns
     -------
     None.
 
     """
 
-    # hgsfdet_file = open(filename, "r")
-    # lines = hgsfdet_file.readlines()
-    # hgsfdet_file.close()
-
-    # nstep = len(lines)-2
-
-    hgsfdet_file = open(filename, "r")
-    hgsfdet = np.loadtxt(hgsfdet_file, skiprows=5, usecols=range(5))
-    hgsfdet_file.close()
-
     # hgraph collumns information
     # -------------------------------------------------------------------------
     cols_hgsfdet = ["NSTEP", "DELTAT", "time", "NET SEEPFACE VOL", "NET SEEPFACE FLX"]
+
+    hgsfdet = _read_fixed_width_block(filename, skiprows=5, ncols=len(cols_hgsfdet))
 
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
@@ -727,16 +779,6 @@ def read_mbeconv(filename):
     None.
 
     """
-    with open(filename, "r") as mbeconv_file:
-        mbeconv = np.loadtxt(mbeconv_file, skiprows=2, usecols=range(19))
-    if mbeconv.size == 0:
-        raise ValueError(
-            f"{filename} has no time step: the run stopped before writing its first one"
-        )
-    # one single time step comes back 1-D: that crashed the DataFrame below with an obscure
-    # "Shape of passed values is (19, 1), indices imply (19, 19)" (a run stopped after step 1)
-    mbeconv = np.atleast_2d(mbeconv)
-
     # hgraph collumns information
     # -------------------------------------------------------------------------
     cols_mbeconv = [
@@ -760,6 +802,15 @@ def read_mbeconv(filename):
         "CUM. MBE",
         "CUM.",
     ]
+
+    mbeconv = _read_fixed_width_block(filename, skiprows=2, ncols=len(cols_mbeconv))
+    if mbeconv.shape[0] == 0:
+        # kept from the previous behaviour: a run that stopped before writing
+        # its first time step is an error for this reader (not an empty frame)
+        raise ValueError(
+            f"{filename} has no time step: the run stopped before writing its first one"
+        )
+
     # transform a numpy array into panda df
     # ------------------------------------------------------------------------
     df_mbeconv = pd.DataFrame(mbeconv, columns=cols_mbeconv)
