@@ -449,6 +449,67 @@ def check_forward_vs_obs(
 # ---------------------------------------------------------------------------
 
 
+def quadrupole_quality_mask(
+    df,
+    cfg: Optional[ERTCheckConfig] = None,
+    res0=None,
+    noise_abs: Optional[float] = None,
+):
+    """Boolean mask (True = keep) of the quadrupoles usable for assimilation.
+
+    Applies the same criteria as the checks, but returns the *full* mask instead of
+    the first few indices: non-finite or non-positive rhoa, ``valid == 0``, and,
+    when ``k`` is available, ``k`` non-finite / zero / far from the median (decades)
+    / larger than ``k_abs_max`` (these near-singular quadrupoles blow up rhoa).
+    ``res0`` (optional model resistivities) also drops implausible rhoa, and
+    ``noise_abs`` (V, optional) drops ``|rhoa/k| < snr_min * noise_abs``.
+    Returns ``(keep, reasons)`` with ``reasons`` a dict code -> number of data.
+    """
+    cfg = cfg or DEFAULT_CONFIG
+    rhoa = _get(df, "rhoa")
+    if rhoa is None:
+        return np.array([], dtype=bool), {}
+    rhoa = np.asarray(rhoa, dtype=float).ravel()
+    bad = {}
+    bad["rhoa_invalid"] = ~np.isfinite(rhoa) | (rhoa <= 0)
+
+    valid = _get(df, "valid")
+    if valid is not None and np.size(valid) == rhoa.size:
+        bad["flagged_invalid"] = np.asarray(valid).ravel() == 0
+
+    k = _get(df, "k", "K")
+    if k is not None and np.size(k) == rhoa.size:
+        k = np.asarray(k, dtype=float).ravel()
+        fin = np.isfinite(k)
+        bad["k_invalid"] = ~fin | (k == 0)
+        good = fin & (k != 0)
+        out = np.zeros(k.size, dtype=bool)
+        if good.sum() >= 3:
+            lk = np.log10(np.abs(k[good]))
+            med = np.median(lk)
+            spread = max(1.4826 * np.median(np.abs(lk - med)), cfg.k_min_spread_decades)
+            out[good] = np.abs(lk - med) > cfg.k_mad_factor * spread
+        bad["k_outlier"] = out
+        bad["k_too_large"] = fin & (np.abs(k) > cfg.k_abs_max)
+        if noise_abs is not None:
+            with np.errstate(divide="ignore", invalid="ignore"):
+                r = np.where(good, rhoa / np.where(k == 0, np.nan, k), np.nan)
+            bad["signal_below_noise"] = np.isfinite(r) & (np.abs(r) < cfg.snr_min * noise_abs)
+
+    if res0 is not None:
+        r0 = np.asarray(res0, dtype=float).ravel()
+        r0 = r0[np.isfinite(r0) & (r0 > 0)]
+        if r0.size:
+            lo, hi = r0.min() / cfg.rhoa_factor, r0.max() * cfg.rhoa_factor
+            bad["rhoa_implausible"] = np.isfinite(rhoa) & ((np.abs(rhoa) > hi) | ((rhoa > 0) & (rhoa < lo)))
+
+    drop = np.zeros(rhoa.size, dtype=bool)
+    for m in bad.values():
+        drop |= m
+    reasons = {code: int(m.sum()) for code, m in bad.items() if m.any()}
+    return ~drop, reasons
+
+
 def check_observations(df, cfg: Optional[ERTCheckConfig] = None, name: str = "ERT obs"):
     """Observed ERT data container: rhoa, k, r, error model, validity, scheme."""
     cfg = cfg or DEFAULT_CONFIG

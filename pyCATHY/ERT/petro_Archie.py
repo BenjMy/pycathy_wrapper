@@ -530,13 +530,13 @@ def SW_2_ERT_ERa_DA(
 #     return 1 / sigma
 
 def Archie_rho_DA(
-    rFluid_Archie=[],
-    sat=[],
-    porosity=[],
-    a_Archie=[1.0],
-    m_Archie=[2.0],
-    n_Archie=[2.0],
-    pert_sigma_Archie=[0],
+    rFluid_Archie=None,
+    sat=None,
+    porosity=None,
+    a_Archie=None,
+    m_Archie=None,
+    n_Archie=None,
+    pert_sigma_Archie=None,
 ):
     #     This should be moved to DA Class
     """
@@ -565,6 +565,21 @@ def Archie_rho_DA(
     rho: Converted Apparent Electrical Resistivity (Ohm.m).
 
     """
+    # mutable defaults are created per call (a shared default list is a latent bug)
+    if rFluid_Archie is None:
+        rFluid_Archie = []
+    if sat is None:
+        sat = []
+    if porosity is None:
+        porosity = []
+    if a_Archie is None:
+        a_Archie = [1.0]
+    if m_Archie is None:
+        m_Archie = [2.0]
+    if n_Archie is None:
+        n_Archie = [2.0]
+    if pert_sigma_Archie is None:
+        pert_sigma_Archie = [0]
     logger.debug(
         "Archie transformation: sat %s, porosity %s, rFluid %s",
         np.shape(sat),

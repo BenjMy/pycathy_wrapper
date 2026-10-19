@@ -727,13 +727,15 @@ def read_mbeconv(filename):
     None.
 
     """
-    mbeconv_file = open(filename, "r")
-    lines = mbeconv_file.readlines()
-    mbeconv_file.close()
-    nstep = len(lines) - 2
-    mbeconv_file = open(filename, "r")
-    mbeconv = np.loadtxt(mbeconv_file, skiprows=2, usecols=range(19))
-    mbeconv_file.close()
+    with open(filename, "r") as mbeconv_file:
+        mbeconv = np.loadtxt(mbeconv_file, skiprows=2, usecols=range(19))
+    if mbeconv.size == 0:
+        raise ValueError(
+            f"{filename} has no time step: the run stopped before writing its first one"
+        )
+    # one single time step comes back 1-D: that crashed the DataFrame below with an obscure
+    # "Shape of passed values is (19, 1), indices imply (19, 19)" (a run stopped after step 1)
+    mbeconv = np.atleast_2d(mbeconv)
 
     # hgraph collumns information
     # -------------------------------------------------------------------------
@@ -1008,8 +1010,9 @@ def print_stats_ensemble_ET(ds, var="ACT. ETRA", time_unit="hours", origin=None)
         If provided (e.g. '2023-06-01 06:00'), time steps are shown as
         absolute datetimes. Overrides time_unit display.
     """
-    if time_unit not in UNIT_DIVISOR:
-        raise ValueError(f"time_unit must be one of {list(UNIT_DIVISOR.keys())}")
+    unit_divisor = cathy_utils.get_UNIT_divisor()  # was an undefined global (NameError)
+    if time_unit not in unit_divisor:
+        raise ValueError(f"time_unit must be one of {list(unit_divisor.keys())}")
 
     da = ds[var]
     time_vals = da.time.values  # timedelta64[ns]

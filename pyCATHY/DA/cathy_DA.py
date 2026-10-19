@@ -48,16 +48,14 @@ Class managing Data Assimilation process i.e.:
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Any, Callable, Iterator, List, Optional, Sequence, Tuple, Union
-import contextlib
-import functools
+from typing import Any, List, Optional, Sequence, Tuple, Union
 import glob
 
 import multiprocessing
 
 import logging
+import json
 import os
-import sys
 import re
 import shutil
 import subprocess
@@ -72,11 +70,54 @@ from rich.progress import track
 
 from pyCATHY.cathy_utils import dictObs_2pd  # noqa: F401  (re-exported, see __all__)
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
-from pyCATHY.DA import enkf, pf, mapper, localisation
+from pyCATHY.DA import mapper, localisation
 from pyCATHY.ERT import ERT_checks
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
+from pyCATHY.DA.analysis import (  # noqa: F401  (re-exported: the code moved to its own module)
+    ANALYSES,
+    _ENKF_DIAGNOSTICS,
+    _LEGACY_DA_KEYS,
+    AnalysisConfig,
+    AnalysisResult,
+    DAConfig,
+    _enkf,
+    _enkf_localized_with_inflation,
+    _from_enkf,
+    _particle_filter,
+    run_analysis,
+)
+from pyCATHY.DA.param_tables import (  # noqa: F401
+    _ARCHIE_PARM_NAMES,
+    _FEDDES_PARM_NAMES,
+    _SOIL_PARM_COLUMNS,
+    _VG_PARM_NAMES,
+    _assign_soil_value,
+    _check_positive_pressure_heads,
+    _has_name_token,
+    _nonphysical_values,
+    _set_feddes_value,
+    _update_key,
+    _valid_zone_values,
+)
+from pyCATHY.DA.performance_tables import (  # noqa: F401
+    _append_to_performance_df,
+    _compute_diff_matrix,
+    _compute_rmse,
+    _get_rmse_for_sensor,
+    _load_performance_from_parquet,
+    _save_performance_to_parquet,
+)
+from pyCATHY.DA.runtime import (  # noqa: F401
+    _LOG_DATEFMT,
+    _LOG_FORMAT,
+    _Tee,
+    _configure_logging,
+    _restores_cwd,
+    _tee_run_output,
+    _working_directory,
+)
 
 # Number of CPU cores left free when running the ensemble in parallel.
 RESERVED_CPUS = 5
@@ -95,55 +136,10 @@ __all__ = [
     "localisation",
 ]
 
-# Names of the perturbed variables, by family (the digits of the zone / layer
-# are stripped first: "Ks0" -> "Ks", "ZROOT1" -> "ZROOT").
-_VG_PARM_NAMES = ("n_VG", "thetar_VG", "alpha_VG", "SATCELL_VG")
-_ARCHIE_PARM_NAMES = (
-    "porosity",
-    "rFluid_Archie",
-    "a_Archie",
-    "m_Archie",
-    "n_Archie",
-    "pert_sigma_Archie",
-)
-_FEDDES_PARM_NAMES = ("PCANA", "PCREF", "PCWLT", "ZROOT", "PZ", "OMGC")
 
 
-# Columns of the soil table (`SPP_map`) set by each perturbed soil parameter.
-_SOIL_PARM_COLUMNS = {
-    "Ks": ["PERMX", "PERMY", "PERMZ"],
-    "porosity": ["POROS"],
-    "n_VG": ["VGNCELL"],
-    "thetar_VG": ["VGRMCCELL"],
-    "SATCELL_VG": ["VGPSATCELL"],
-}
 
 
-def _assign_soil_value(
-    df: pd.DataFrame,
-    pert_control_name: str,
-    index: Optional[int],
-    update_cols: List[str],
-    value: Any,
-    veg_map: Optional[np.ndarray] = None,
-    zone: Optional[np.ndarray] = None,
-) -> None:
-    """Set ``value`` in the columns ``update_cols`` of the soil table ``df`` (in place).
-
-    ``df`` is indexed by (zone, layer). Where the value goes depends on how the
-    perturbation was built: ``"zone"`` (zone number ``index + 1``), ``"layers"``
-    (layer ``index``), ``"root_map"`` (the zones of vegetation ``index + 1``,
-    from ``veg_map`` and ``zone``); anything else, or no ``index``: every row.
-    """
-    if pert_control_name == "zone" and index is not None:
-        df.loc[(index + 1, slice(None)), update_cols] = value
-    elif pert_control_name == "layers" and index is not None:
-        df.loc[(slice(None), index), update_cols] = value
-    elif pert_control_name == "root_map" and index is not None:
-        zones_in_vegi = zone[index + 1 == veg_map]
-        df.loc[zones_in_vegi, update_cols] = value
-    else:
-        df.loc[:, update_cols] = value
 
 
 def _log_domain_check(
@@ -184,40 +180,8 @@ def _log10_cov(data_valid: np.ndarray, data_cov_valid: np.ndarray, eps: float = 
     return np.asarray(data_cov_valid, dtype=float) * np.outer(jac, jac)
 
 
-def _has_name_token(key: str, token: str) -> bool:
-    """True if `token` appears in the (casefolded) parameter name `key` at the start
-    of the name or after a non-alphanumeric character.
-
-    Keeps the suffixes added per zone / layer ("Ks1", "porosity_zone2") but no longer
-    matches inside another word: "a_Archie" used to match "pert_sigma_Archie".
-    """
-    return re.search(r"(?<![a-z0-9])" + re.escape(token.casefold()), key) is not None
 
 
-def _nonphysical_values(
-    name: str, values: np.ndarray, root_depth_limit: Callable[[], float]
-) -> Optional[Tuple[np.ndarray, str]]:
-    """Test the updated values of one parameter against its physical bounds.
-
-    Returns ``(mask, label)``, ``mask`` being True for the members whose value
-    is not physical, or ``None`` when no bound is known for the parameter. The
-    comparisons are strict (a value on a bound is accepted) and NaN is not
-    flagged. ``root_depth_limit`` is only called for a root depth.
-    """
-    key = name.casefold()
-    if _has_name_token(key, "rFluid"):
-        return values < 0, "negative"
-    if _has_name_token(key, "porosity"):  # a volume fraction
-        return (values < 0) | (values > 1), "out of range"
-    if _has_name_token(key, "a_Archie"):
-        return (values < 0) | (values > 3), "out of range"
-    if _has_name_token(key, "Ks"):
-        return values < 0, "negative Ks"
-    if _has_name_token(key, "PCREF"):  # a pressure head: must be negative
-        return values > 0, "positive PCREF"
-    if _has_name_token(key, "Zroot"):
-        return values > root_depth_limit(), "unfeasible root depth"
-    return None
 
 
 @dataclass
@@ -259,29 +223,8 @@ _WARNED_ONCE: set = set()
 
 logger = logging.getLogger(__name__)
 
-# format of the default handler (same layout as the pyGIMLi log lines)
-_LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-_LOG_DATEFMT = "%d/%m/%y - %H:%M:%S"
 
 
-def _configure_logging(verbose: bool) -> None:
-    """Set the verbosity of this module's logger (called when a DA run starts).
-
-    INFO (progress, what is being assimilated) by default, DEBUG (diagnostic
-    dumps of ranges, shapes, dictionaries) when ``verbose``; warnings and errors
-    are always shown. A stdout handler (timestamp, logger, level) is attached only when the
-    application has not configured logging itself, so the messages still appear
-    for scripts and notebooks that never call ``logging.basicConfig``.
-    """
-    level = logging.DEBUG if verbose else logging.INFO
-    package_logger = logging.getLogger("pyCATHY")  # parent of every pyCATHY module logger
-    package_logger.setLevel(level)
-    logger.setLevel(level)
-    if not package_logger.handlers and not logger.handlers and not logging.getLogger().handlers:
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter(_LOG_FORMAT, _LOG_DATEFMT))
-        package_logger.addHandler(handler)
-        package_logger.propagate = False
 
 
 def _warn_once(key: str, message: str) -> None:
@@ -291,6 +234,10 @@ def _warn_once(key: str, message: str) -> None:
         warnings.warn(message)
 
 
+
+
+
+
 def _log_once(key: str, message: str, level: int = logging.WARNING) -> None:
     """Log a message only the first time `key` is seen (once per process, not once per cycle)."""
     if key not in _WARNED_ONCE:
@@ -298,10 +245,6 @@ def _log_once(key: str, message: str, level: int = logging.WARNING) -> None:
         logger.log(level, message)
 
 
-def _check_positive_pressure_heads(ensemble_psi):
-    """Print a notice if any ensemble member has a positive pressure head."""
-    if np.any(ensemble_psi > 0):
-        logger.warning("!positive pressure heads observed!")
 
 
 # ---------------------------------------------------------------------------
@@ -314,348 +257,26 @@ def _check_positive_pressure_heads(ensemble_psi):
 # The adapters hide the differences between the filters' return values.
 
 
-@dataclass
-class AnalysisResult:
-    """Common output of every analysis (EnKF variants and particle filter).
-
-    Attributes
-    ----------
-    analysis : np.ndarray, shape (n_state, n_members)
-        Updated state ensemble.
-    analysis_param : np.ndarray, shape (n_members, n_param)
-        Updated parameter ensemble (n_param may be 0 for a state-only update).
-    diagnostics : dict or None
-        EnKF matrices (A, Amean, dA, dD, MeasAvg, S, COV, B, dAS) used for the
-        diagnostic plots; None for filters that do not provide them.
-    extra : dict
-        Filter specific outputs (particle filter: weights, n_eff, resampled, observation).
-    """
-
-    analysis: np.ndarray
-    analysis_param: np.ndarray
-    diagnostics: Optional[dict] = None
-    extra: dict = field(default_factory=dict)
 
 
-_ENKF_DIAGNOSTICS = ("A", "Amean", "dA", "dD", "MeasAvg", "S", "COV", "B", "dAS")
 
 
-def _from_enkf(result, transpose_param=False):
-    """Convert the list returned by an ``enkf.*`` filter into an AnalysisResult.
-
-    The filters return [*diagnostics, analysis, analysis_param]. ``transpose_param``
-    is needed for the filters that return the parameters as (n_param, n_members).
-    """
-    *diagnostics, analysis, analysis_param = result
-    if transpose_param:
-        analysis_param = analysis_param.T
-    return AnalysisResult(
-        analysis=analysis,
-        analysis_param=analysis_param,
-        diagnostics=dict(zip(_ENKF_DIAGNOSTICS, diagnostics)) or None,
-    )
 
 
-@dataclass
-class AnalysisConfig:
-    """Options of one analysis step (see ``run_analysis``).
-
-    Attributes
-    ----------
-    sakov : bool
-        Use the simplified (Sakov) covariance form where the filter supports it.
-    inflation_states : float
-        Multiplicative inflation of the ensemble. Legacy names: ``inflation``
-        and ``alpha``.
-    inflation_params : float
-        Multiplicative inflation of the parameter ensemble (localized filter).
-    jitter_params : float
-        Std of the additive noise on the parameters (localized filter).
-    localisation_matrix : np.ndarray or None
-        Localisation matrix (n_state x n_obs) of the localized filter; an empty
-        list/array means "no localisation" and is stored as None.
-    pf_resample_threshold, pf_jitter_std_param, pf_jitter_std_state : float
-        Particle filter settings.
-    """
-
-    sakov: bool = True
-    inflation_states: float = 1.0
-    inflation_params: float = 1.0
-    jitter_params: float = 0.0
-    localisation_matrix: Optional[np.ndarray] = None
-    pf_resample_threshold: float = 0.5
-    pf_jitter_std_param: float = 0.01
-    pf_jitter_std_state: float = 0.05
-
-    def __post_init__(self):
-        if self.localisation_matrix is not None:
-            self.localisation_matrix = np.asarray(self.localisation_matrix)
-            if self.localisation_matrix.size == 0:
-                self.localisation_matrix = None
-
-    @classmethod
-    def from_legacy_kwargs(cls, kwargs):
-        """Build a config from the historical ``run_analysis(**kwargs)`` options.
-
-        The recognised keys are popped from ``kwargs``; any key left over is an
-        error for the caller to report.
-        """
-        renamed = {
-            "Sakov": "sakov",
-            "localisationMatrix": "localisation_matrix",
-            "inflate_params": "inflation_params",
-        }
-        values = {new: kwargs.pop(old) for old, new in renamed.items() if old in kwargs}
-        for name in (
-            "jitter_params",
-            "pf_resample_threshold",
-            "pf_jitter_std_param",
-            "pf_jitter_std_state",
-        ):
-            if name in kwargs:
-                values[name] = kwargs.pop(name)
-        # `inflation` and `alpha` are two historical names of the same option
-        inflation, alpha = kwargs.pop("inflation", None), kwargs.pop("alpha", None)
-        if inflation is not None or alpha is not None:
-            values["inflation_states"] = inflation if inflation is not None else alpha
-        return cls(**values)
 
 
-# DA-only options historically passed as **kwargs to run_DA_sequential / prepare_DA
-# (every other keyword, e.g. IPRT1 or TRAFLAG, belongs to the CATHY processor)
-_LEGACY_DA_KEYS = (
-    "inflation",
-    "localisation",
-    "threshold_rejected",
-    "use_log_transformed_obs",
-    "log_transform_cov",
-    "cleanup_vtk",
-    "backup_fort777",
-    "seed",
-    "save_results",
-)
 
 
-@dataclass
-class DAConfig:
-    """Options of a sequential DA run (see ``DA.run_DA_sequential``).
-
-    Attributes
-    ----------
-    inflation : float
-        Multiplicative inflation passed to the analysis (``AnalysisConfig.inflation_states``).
-    localisation : str or None
-        Domain localisation: one of ``"veg_map"``, ``"zones"``, ``"nodes"``. A
-        list with a single entry is accepted and converted to that string
-        (``localisation.create_mask_localisation`` compares it to a string).
-        Currently the observations must be defined on every surface node (maps
-        such as ET or EM); point sensors fail in ``_DA_analysis`` (see README).
-    threshold_rejected : int
-        Ensemble members whose water-balance error exceeds it are rejected.
-    use_log_transformed_obs : bool
-        Assimilate log-transformed observations (useful for ERT data: the Archie
-        operator makes their distribution non Gaussian).
-    log_transform_cov : bool
-        With ``use_log_transformed_obs``: propagate the data covariance to the
-        log10 domain (first-order, R_log = J R J, J = diag(1/(ln10 (d+eps)))).
-        False reproduces the old behaviour (linear-domain R applied to log data,
-        which makes the observations effectively ignored). Default True.
-    cleanup_vtk : {False, 'converted', 'all'}
-        Delete VTK files produced in ``<workdir>/<project>/DA_Ensemble`` after the run.
-    backup_fort777 : bool
-        Keep a copy of the ``fort.777`` (ET) file of every DA cycle.
-    analysis : AnalysisConfig or None
-        Options of the analysis step (Sakov form, inflation of states and parameters,
-        jitter, particle filter settings). None: defaults, with ``inflation`` of this
-        config. When given it is used as is, except that the localisation matrix of
-        the current cycle (``self.localisationMatrix``) is used when there is one.
-    seed : int or None
-        Seed of the global numpy random generator, set at the start of the run (the
-        filters draw their random numbers from it). None: do not touch the generator.
-    save_results : bool
-        Write ``df_DA`` and ``ET_DA_xr`` to ``<workdir>/<project>/`` at every cycle,
-        so that a crash does not lose the results of the finished cycles.
-    verbose : bool
-        Print the processor output of every member.
-    """
-
-    inflation: float = 1.0
-    localisation: Optional[str] = None
-    threshold_rejected: int = 10
-    use_log_transformed_obs: bool = False
-    log_transform_cov: bool = True
-    cleanup_vtk: object = False
-    backup_fort777: bool = False
-    analysis: Optional[AnalysisConfig] = None
-    seed: Optional[int] = None
-    save_results: bool = False
-    verbose: bool = False
-
-    def __post_init__(self):
-        if isinstance(self.localisation, (list, tuple)):
-            if len(self.localisation) > 1:
-                raise ValueError(
-                    "Only one localisation type at a time is supported, got "
-                    f"{list(self.localisation)}."
-                )
-            self.localisation = self.localisation[0] if self.localisation else None
-        if self.localisation not in (None, "veg_map", "zones", "nodes"):
-            raise ValueError(
-                "localisation must be None, 'veg_map', 'zones' or 'nodes', got "
-                f"{self.localisation!r}."
-            )
-        if self.cleanup_vtk not in (False, "converted", "all"):
-            raise ValueError(
-                f"cleanup_vtk must be False, 'converted' or 'all', got {self.cleanup_vtk!r}."
-            )
-
-    @classmethod
-    def from_legacy_kwargs(cls, kwargs):
-        """Build a config from the historical ``**kwargs`` of ``run_DA_sequential``.
-
-        The DA-only keys are popped from ``kwargs`` (the rest belongs to the CATHY
-        processor). ``verbose`` is read but left in ``kwargs`` because the processor
-        uses it too.
-        """
-        values = {name: kwargs.pop(name) for name in _LEGACY_DA_KEYS if name in kwargs}
-        if values:
-            warnings.warn(
-                f"Passing {sorted(values)} as keyword arguments is deprecated: "
-                "use config=DAConfig(...).",
-                DeprecationWarning,
-                stacklevel=3,
-            )
-        if "verbose" in kwargs:
-            values["verbose"] = kwargs["verbose"]
-        return cls(**values)
 
 
-def _enkf(filter_function, forward_alpha=False, **fixed):
-    """Adapter for the filters called as f(data, cov, param, state, prediction, **kw)."""
-
-    def adapter(data, data_cov, param, state, prediction, config):
-        kwargs = dict(fixed)
-        if forward_alpha:
-            kwargs["alpha"] = config.inflation_states
-        return _from_enkf(
-            filter_function(data, data_cov, param, state, prediction, **kwargs)
-        )
-
-    return adapter
 
 
-def _enkf_localized_with_inflation(data, data_cov, param, state, prediction, config):
-    result = enkf.enkf_analysis_localized_with_inflation(
-        data,
-        data_cov,
-        state,  # NB: ensemble before param in this filter's signature
-        param,
-        prediction,
-        config.localisation_matrix,  # (state x obs), None = no localisation
-        Sakov=config.sakov,
-        inflate_states=config.inflation_states,
-        inflate_params=config.inflation_params,
-        jitter_params=config.jitter_params,
-    )
-    # this filter returns the parameters as (n_param, n_members), all others as (n_members, n_param)
-    return _from_enkf(result, transpose_param=True)
 
 
-def _particle_filter(data, data_cov, param, state, prediction, config):
-    analysis = pf.particle_filter_analysis(
-        data,
-        data_cov,
-        param,
-        state,
-        prediction,
-        use_enkf_update=False,
-        resample_threshold=config.pf_resample_threshold,
-        jitter_std_param=config.pf_jitter_std_param,
-        jitter_std_state=config.pf_jitter_std_state,
-    )
-    logger.info(f"Final N_eff: {analysis['n_eff']:.1f}")
-    logger.info(f"Resampled: {analysis['resampled']}")
-    return AnalysisResult(
-        analysis=analysis["Analysis"],
-        analysis_param=analysis["Analysisparam"].T,
-        extra={
-            k: analysis[k] for k in ("weights", "n_eff", "resampled", "observation")
-        },
-    )
 
 
-ANALYSES = {
-    "enkf_Evensen2009": _enkf(enkf.enkf_analysis),
-    "enkf_Evensen2009_Sakov": _enkf(enkf.enkf_analysis, Sakov=True),
-    "enkf_analysis_localized_with_inflation": _enkf_localized_with_inflation,
-    "enkf_analysis_inflation": _enkf(enkf.enkf_analysis_inflation, forward_alpha=True),
-    "enkf_analysis_inflation_multiparm": _enkf(
-        enkf.enkf_analysis_inflation_multiparm, forward_alpha=True
-    ),
-    "enkf_dual_analysis": _enkf(enkf.enkf_dual_analysis, Sakov=False),
-    "enkf_dual_analysis_Sakov": _enkf(enkf.enkf_dual_analysis, Sakov=True),
-    "pf": _particle_filter,
-}
 
 
-def run_analysis(
-    DA_type: str,
-    data: np.ndarray,
-    data_cov: np.ndarray,
-    param: np.ndarray,
-    list_update_parm: Sequence[str],
-    ensembleX: Sequence[np.ndarray],
-    prediction: np.ndarray,
-    default_state: str = "psi",
-    config: Optional[AnalysisConfig] = None,
-    **legacy_kwargs: Any,
-) -> AnalysisResult:
-    """
-    Perform the DA analysis step
-
-    Parameters
-    ----------
-    DA_type : str
-        type of analysis: one of the keys of ``ANALYSES``.
-    data : np.array([])
-        measured data.
-    data_cov : np.array([]) or int
-        measured data covariance matrice.
-    param : np.array([])
-        model parameters to update, shape (n_param, n_members); use an empty
-        (0, n_members) array for a state-only update.
-    list_update_parm : list
-        names of the updated parameters (kept for API compatibility, unused here).
-    ensembleX : list of np.array
-        [pressure head, saturation water] ensemble matrices at each node.
-    prediction : np.array([])
-        predicted observation (after mapping).
-    default_state : {"psi", "sw"}
-        which element of ``ensembleX`` is updated.
-    config : AnalysisConfig, optional
-        analysis options (defaults if omitted).
-    **legacy_kwargs
-        Historical way of passing the options (Sakov, localisationMatrix,
-        inflation / alpha, inflate_params, jitter_params, pf_*); converted with
-        ``AnalysisConfig.from_legacy_kwargs``. Cannot be combined with ``config``.
-
-    Returns
-    -------
-    AnalysisResult
-    """
-    if DA_type not in ANALYSES:
-        raise ValueError(f"Unknown DA_type {DA_type!r}. Available: {sorted(ANALYSES)}")
-
-    if config is None:
-        config = AnalysisConfig.from_legacy_kwargs(legacy_kwargs)
-    if legacy_kwargs:
-        raise TypeError(
-            "run_analysis got unexpected keyword argument(s) "
-            f"{sorted(legacy_kwargs)} (or legacy options combined with `config`)."
-        )
-
-    state = ensembleX[1 if default_state == "sw" else 0]
-    return ANALYSES[DA_type](data, data_cov, param, state, prediction, config)
 
 
 # ---------------------------------------------------------------------------
@@ -663,121 +284,12 @@ def run_analysis(
 # ---------------------------------------------------------------------------
 
 
-class _Tee:
-    """File-like object writing to several streams (live, line flushed)."""
-
-    def __init__(self, *streams):
-        self.streams = streams
-
-    def write(self, data):
-        for s in self.streams:
-            try:
-                s.write(data)
-                s.flush()
-            except Exception:  # a broken stream must never stop the run
-                pass
-        return len(data)
-
-    def flush(self):
-        for s in self.streams:
-            try:
-                s.flush()
-            except Exception:
-                pass
-
-    def isatty(self):
-        return False
-
-    def __getattr__(self, name):  # encoding, fileno, ... of the first stream
-        return getattr(self.streams[0], name)
 
 
-@contextlib.contextmanager
-def _tee_run_output(path: str, console=None) -> Iterator[None]:
-    """Duplicate everything printed during the block into the log file ``path``.
-
-    Captured live (the file is line buffered):
-
-    - ``print`` and ``rich.print`` (``sys.stdout`` / ``sys.stderr``),
-    - ``logging`` messages of handlers that write to stdout/stderr,
-    - the rich ``console`` of the CATHY object. When it is not verbose it writes to
-      ``os.devnull``: it is temporarily redirected to the log file only, so nothing
-      new is displayed on screen.
-
-    Not captured: output written by compiled code directly to the OS file
-    descriptors (the Fortran processor) and rich output inside Jupyter.
-    """
-    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    logf = open(path, "a", encoding="utf-8", buffering=1)
-    logf.write(
-        "\n===== run started {} =====\n".format(
-            __import__("datetime").datetime.now().strftime("%d/%m/%y %H:%M:%S")
-        )
-    )
-    out, err = sys.stdout, sys.stderr
-    tee_out, tee_err = _Tee(out, logf), _Tee(err, logf)
-    sys.stdout, sys.stderr = tee_out, tee_err
-
-    # logging handlers created before the tee still hold the original streams
-    rebound = []
-    seen = set()
-    for lg in (logging.getLogger("pyCATHY"), logging.getLogger(), logger):
-        for h in lg.handlers:
-            if id(h) in seen or not isinstance(h, logging.StreamHandler):
-                continue
-            seen.add(id(h))
-            if isinstance(h, logging.FileHandler):
-                continue
-            if h.stream is out:
-                h.setStream(tee_out)
-                rebound.append((h, out))
-            elif h.stream is err:
-                h.setStream(tee_err)
-                rebound.append((h, err))
-
-    # non-verbose rich console: devnull -> log file only
-    old_console_file = None
-    if console is not None and getattr(console.file, "name", None) == os.devnull:
-        old_console_file = console.file
-        console.file = logf
-
-    try:
-        yield
-    finally:
-        if old_console_file is not None:
-            console.file = old_console_file
-        for h, stream in rebound:
-            h.setStream(stream)
-        sys.stdout, sys.stderr = out, err
-        logf.write("===== run ended =====\n")
-        logf.close()
 
 
-@contextlib.contextmanager
-def _working_directory(path: str) -> Iterator[None]:
-    """Change the working directory inside the ``with`` block, restore it afterwards (even on error).
-
-    CATHY files are addressed relative to the directory of an ensemble member,
-    and some pyCATHY routines read ``os.getcwd()``; this is the only way
-    ``cathy_DA`` changes the directory of the process.
-    """
-    previous = os.getcwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(previous)
 
 
-def _restores_cwd(method: Callable) -> Callable:
-    """Decorator: the working directory is restored when the method returns."""
-
-    @functools.wraps(method)
-    def wrapper(*args, **kwargs):
-        with _working_directory(os.getcwd()):
-            return method(*args, **kwargs)
-
-    return wrapper
 
 
 def build_obs_node_mask(
@@ -819,12 +331,6 @@ def build_obs_node_mask(
 _NEGATIVE_VALUES_ALLOWED = ("tensio",)
 
 
-def _update_key(cycle_nb: int) -> str:
-    """Key of `dict_parm_pert[parameter]` holding the ensemble of a DA cycle.
-
-    Cycle 0 (and below) is the initial perturbation, cycle n > 0 the n-th update.
-    """
-    return "ini_perturbation" if cycle_nb <= 0 else f"update_nb{cycle_nb}"
 
 
 # ---------------------------------------------------------------------------
@@ -832,75 +338,16 @@ def _update_key(cycle_nb: int) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _compute_diff_matrix(data, prediction):
-    """Absolute difference between data (n_obs,) and prediction (n_obs, n_ens)."""
-    data = np.atleast_1d(np.asarray(data, dtype=float))  # () -> (1,)
-    prediction = np.asarray(prediction, dtype=float)
-    if prediction.ndim == 1:  # (n_ens,) -> (1, n_ens)
-        prediction = prediction.reshape(len(data), -1)
-    if data.shape[0] != prediction.shape[0]:  # never broadcast one datum over all rows
-        raise ValueError(
-            f"{data.shape[0]} observations but {prediction.shape[0]} predictions"
-        )
-    return np.abs(data[:, None] - prediction)  # broadcast, no loops
 
 
-def _compute_rmse(diff_matrix):
-    """Mean absolute difference: over ensemble members (axis 1), then over observations."""
-    return float(np.mean(np.nanmean(diff_matrix, axis=1)))
 
 
-def _get_rmse_for_sensor(obs2eval, prediction):
-    """Computes RMSE for a given sensor."""
-    diff_mat = _compute_diff_matrix(obs2eval, prediction)
-    return _compute_rmse(diff_mat)
 
 
-def _append_to_performance_df(
-    df_performance,
-    t_obs,
-    name_sensor,
-    rmse_sensor,
-    rmse_avg,
-    nrmse_sensor,
-    nrmse_avg,
-    ol_bool,
-):
-    """Appends performance metrics to the main DataFrame.
-
-    The wide layout and the ``NMRMSE`` column names are legacy: they are read by
-    ``pyCATHY.plotters.cathy_plots.DA_RMS`` and by existing parquet files.
-    Change them only together with that plotter.
-    """
-    data = {
-        "time": [t_obs],
-        "ObsType": [name_sensor],
-        "RMSE" + name_sensor: [rmse_sensor],
-        "RMSE_avg": [rmse_avg],
-        "NMRMSE" + name_sensor: [nrmse_sensor],
-        "NMRMSE_avg": [nrmse_avg],
-        "OL": [ol_bool],
-    }
-    return pd.concat([df_performance, pd.DataFrame(data)], ignore_index=True)
 
 
-def _save_performance_to_parquet(df_performance, file_path="performance_data.parquet"):
-    """Saves the performance DataFrame to Parquet format, appending if the file exists."""
-    if os.path.exists(file_path):
-        df_existing = pd.read_parquet(file_path, engine="pyarrow")
-        df_performance = pd.concat([df_existing, df_performance], ignore_index=True)
-
-    df_performance.to_parquet(
-        file_path, engine="pyarrow", compression="snappy", index=False
-    )
 
 
-def _load_performance_from_parquet(file_path="performance_data.parquet"):
-    """Loads performance data from a Parquet file if it exists."""
-    if os.path.exists(file_path):
-        return pd.read_parquet(file_path, engine="pyarrow")
-    else:
-        return pd.DataFrame()  # Return an empty DataFrame if no file exists
 
 
 # %%
@@ -940,6 +387,7 @@ class DA(CATHY):
         self.isET = False
         self.localisationBool = False
         self.ert_check_reports: List[dict] = []  # ERT checks (see ERT_checks), saved every cycle
+        self.rejection_log: List[dict] = []  # who was rejected, when and why (saved as json)
         self.Archie_parms_mat_ens: Any = []  # list, then an array (n_param, n_members)
         self.count_atmbc_cycle = 0
 
@@ -993,6 +441,7 @@ class DA(CATHY):
         self.isET = False
         self.localisationBool = False
         self.ert_check_reports = []
+        self.rejection_log = []
         mapper.pop_ert_reports()  # drop reports of a previous run
 
         # Infer ensemble size NENS from perturbated parameter dictionnary
@@ -1062,6 +511,7 @@ class DA(CATHY):
         _configure_logging(config.verbose)
         self.use_log_transformed_obs = config.use_log_transformed_obs
         self.log_transform_cov = config.log_transform_cov
+        self.mask_bad_ert = config.mask_bad_ert
         # backup all spatial ET iterations (the ET files are large!)
         self.backupfort777 = config.backup_fort777
 
@@ -1077,6 +527,9 @@ class DA(CATHY):
         # -------------------------------------------------------------------
         self._mapping_petro_init()
 
+        self._log_perturbation_layout(list_parm2update)
+        self._log_time_alignment()
+
         # update the ensemble files with pertubarted parameters
         # -------------------------------------------------------------------
         self.apply_ensemble_updates(
@@ -1088,6 +541,51 @@ class DA(CATHY):
         all_atmbc_times = np.copy(self.atmbc["time"])
 
         return (callexe, all_atmbc_times, threshold_rejected, ENS_times, update_key)
+
+    def describe_perturbation(self, list_parm2update=()):
+        """What every perturbed parameter touches (soil rows, Feddes row), as a DataFrame.
+
+        Uses ``self.dict_parm_pert`` (set by ``run_DA_sequential`` or by the user) and the
+        soil table, zone map and vegetation map of the project. ``df.attrs["warnings"]``
+        lists writes that override each other. See ``pyCATHY.DA.scenario.describe_ensemble``.
+        """
+        from pyCATHY.DA.scenario import describe_ensemble
+
+        entries = [
+            {"type_parm": key, **val}
+            for key, val in (self.dict_parm_pert or {}).items()
+            if isinstance(val, dict)
+        ]
+        soil_index = zone = veg = None
+        try:
+            soil_index = self.read_inputs("soil")[0].index
+        except Exception as exc:  # no soil table yet: the rows are then not described
+            logger.debug("describe_perturbation: no soil table (%s)", exc)
+        for name, attr in (("zone", "zone"), ("root_map", "veg")):
+            try:
+                value = self.read_inputs(name)[0]
+            except Exception as exc:
+                logger.debug("describe_perturbation: no %s map (%s)", name, exc)
+                continue
+            zone, veg = (value, veg) if attr == "zone" else (zone, value)
+        return describe_ensemble(entries, list(list_parm2update), soil_index, zone, veg)
+
+    def _log_perturbation_layout(self, list_parm2update):
+        """Log once, at the start of a run, which rows each perturbed parameter writes.
+
+        Diagnostics only: whatever goes wrong here must not stop the run.
+        """
+        try:
+            table = self.describe_perturbation(list_parm2update)
+        except Exception as exc:
+            logger.debug("perturbation layout not described (%s)", exc)
+            return
+        if table.empty:
+            return
+        cols = ["key", "control", "target", "mean", "sd", "min", "max", "updated"]
+        logger.info("Perturbed parameters:\n%s", table[cols].to_string(index=False))
+        for message in table.attrs.get("warnings", []):
+            logger.warning("perturbation layout: %s", message)
 
     def run_DA_smooth(
         self,
@@ -1333,6 +831,7 @@ class DA(CATHY):
                 options.list_assimilated_obs,
                 options.update_key,
                 options.parallel,
+                t_window_start=t_atmbc,
             )
         else:
             state_bef_update, analysis_valid = self._no_analysis_cycle()
@@ -1373,6 +872,7 @@ class DA(CATHY):
         list_assimilated_obs: Union[str, Sequence[str]],
         update_key: str,
         parallel: bool,
+        t_window_start: Optional[float] = None,
     ) -> Tuple[list, np.ndarray]:
         """One DA cycle at an observation time: map, analyse, check, record.
 
@@ -1382,6 +882,7 @@ class DA(CATHY):
             ``[psi, sw]`` of the ensemble before the update, and the valid
             analysed ensemble (states, plus parameters when updated).
         """
+        self._log_assimilation_times(t_window_start)
         logger.info("Map states to observations")
         # H operator applied to the state variable
         prediction = self.map_states2Observations(
@@ -1423,9 +924,50 @@ class DA(CATHY):
         )
         self.count_DA_cycle = self.count_DA_cycle + 1
 
-        _check_positive_pressure_heads(ensemble_psi_valid)
+        _check_positive_pressure_heads(ensemble_psi_valid, "forecast")
+        _check_positive_pressure_heads(analysis_valid, "analysed")  # effect of the update (B10)
         self.update_pert_parm_dict(update_key, list_parm2update, analysis_param_valid)
         return [psi_bef_update, sw_bef_update], analysis_valid
+
+    def _log_time_alignment(self):
+        """Log, before the first window, how the observation times line up with the model windows.
+
+        Diagnostics only (see ``time_alignment``): an observation that cannot be assimilated, or
+        the one-window offset between an observation and the state it is compared with, is
+        reported here instead of showing up as a surprising result.
+        """
+        from pyCATHY.DA.time_alignment import check_time_alignment
+
+        try:
+            findings = check_time_alignment(self.ENS_times, self.all_atmbc_times)
+        except Exception as exc:  # never stop a run for a diagnostic
+            logger.debug("time alignment not checked (%s)", exc)
+            return
+        for finding in findings:
+            log = logger.error if finding.level == "error" else logger.warning
+            log("observation times: %s", finding.message)
+
+    def _log_assimilation_times(self, t_window_start):
+        """Log the times involved in one analysis, to check the time alignment (B4).
+
+        The model has just been run over ``[window start, window end]`` (consecutive
+        atmbc times). The observation of this cycle is stamped ``t_obs`` (``ENS_times``).
+        The three numbers are logged so that the observation time can be compared with
+        the time of the states it is confronted with.
+        """
+        t_obs = self.ENS_times[self.count_DA_cycle] if self.count_DA_cycle < len(self.ENS_times) else None
+        i = self.count_atmbc_cycle
+        t_end = self.all_atmbc_times[i + 1] if i + 1 < len(self.all_atmbc_times) else None
+        logger.info(
+            "Analysis %d: observation stamped t=%s s; model window [%s, %s] s",
+            self.count_DA_cycle + 1, t_obs, t_window_start, t_end,
+        )
+        if t_obs is not None and t_end is not None and t_obs != t_end:
+            logger.info(
+                "observation time (%s) differs from the end of the model window (%s): "
+                "check that this is the intended alignment",
+                t_obs, t_end,
+            )
 
     def _no_analysis_cycle(self) -> Tuple[list, np.ndarray]:
         """Time step without observation: only the hydrological model was run.
@@ -1645,9 +1187,10 @@ class DA(CATHY):
         analysis_param = []
         last_zone_ensemble = None
         # Loop over unique map nodes and perform the DA analysis
-        for loci, node_value in enumerate(np.unique(mask_surface_nodes)):
-            if node_value == -9999:
-                continue
+        # loci indexes the zones WITHOUT the nodata value: it is the position in
+        # mesh3d_nodes_valid (built without -9999) and the zone's parameter in
+        # list_parm2update. Enumerating np.unique() including -9999 shifted it by one.
+        for loci, node_value in enumerate(_valid_zone_values(mask_surface_nodes)):
 
             # surface nodes of this zone
             obs_surface_nodes_bool = np.ones(int(self.grid3d["nnod"]), dtype=bool)
@@ -1717,12 +1260,14 @@ class DA(CATHY):
         """Parameters updated by the analysis of zone number ``loci``.
 
         With a vegetation-map or zone localisation each zone updates the state
-        and its own parameter (the one at position ``loci + 1``).
+        and its own parameter, paired **by name** (``ZROOT0`` belongs to zone 0; see
+        ``scenario.select_zone_parameters``, which keeps the old positional rule for names
+        without a numeric suffix).
         """
         if self.localisation in ("veg_map", "zones"):
-            if len(list_parm2update) > 1:
-                return [list_parm2update[0], list_parm2update[loci + 1]]
-            return [list_parm2update[0]]
+            from pyCATHY.DA.scenario import select_zone_parameters
+
+            return select_zone_parameters(list_parm2update, loci)
         return list_parm2update
 
     def _assemble_localised_analysis(self, analysis_with_localisation, ensemble_psi):
@@ -1831,6 +1376,16 @@ class DA(CATHY):
         ensemble_psi_valid = ensemble_psi_valid[obs_mesh_nodes_valid, :]
         ensemble_sw_valid = ensemble_sw_valid[obs_mesh_nodes_valid, :]
 
+        # ERT: drop the unusable quadrupoles from the filter inputs only (the full-length
+        # data are returned, the performance assessment compares them to the full prediction)
+        data_full = data_valid
+        keep = self._ert_quality_mask(obskey2map, len(data_valid), obs_valid)
+        if keep is not None and not keep.all():
+            data_valid = data_valid[keep]
+            data_cov_valid = data_cov_valid[keep, :][:, keep]
+            prediction_valid = prediction_valid[keep, :]
+            analysis_config = self._mask_localisation_matrix(analysis_config, keep)
+
         # ERT: data covariance, predictions and innovation as they enter the filter
         if any("ERT" in key for key in obskey2map):
             # the check transforms data/predictions itself: give it the R the filter will use
@@ -1902,7 +1457,81 @@ class DA(CATHY):
         analysis_param = self._back_transform_analysis_param(
             list_update_parm, analysis_param
         )
-        return (ensemble_psi, ensemble_sw, data_valid, analysis, analysis_param)
+        return (ensemble_psi, ensemble_sw, data_full, analysis, analysis_param)
+
+    def _mask_localisation_matrix(self, analysis_config, keep):
+        """Drop from the covariance-localisation matrix the columns of the excluded quadrupoles.
+
+        The matrix has one column per observation. It is given for the observations before the
+        quality mask (``keep.size``); the filter sees only the kept ones, and a matrix with the
+        old width fails there with a shape error.
+        """
+        matrix = getattr(analysis_config, "localisation_matrix", None)
+        if matrix is None:
+            return analysis_config
+        matrix = np.asarray(matrix)
+        if matrix.ndim == 2 and matrix.shape[1] == keep.size:
+            return replace(analysis_config, localisation_matrix=matrix[:, keep])
+        if matrix.ndim == 2 and matrix.shape[1] == int(keep.sum()):
+            return analysis_config  # already built for the kept observations
+        logger.warning(
+            "localisation matrix has %s columns but %d observations were available (%d kept after "
+            "the ERT quality mask): it is left unchanged and will probably be rejected",
+            matrix.shape[1] if matrix.ndim == 2 else matrix.shape, keep.size, int(keep.sum()),
+        )
+        return analysis_config
+
+    def _ert_quality_mask(self, obskey2map, n_data, obs_valid=None):
+        """Mask (True = keep) of the usable ERT data among the ``n_data`` filter inputs.
+
+        Non-ERT data are always kept. Returns None when masking is off, when there
+        is no ERT data, or when the layout of the stacked data cannot be matched
+        (then nothing is dropped and a warning is logged).
+        """
+        if not getattr(self, "mask_bad_ert", True):
+            return None
+        cycle_obs = list(self.dict_obs.items())[self.count_DA_cycle][1]
+        segments, any_ert = [], False
+        for key in obskey2map:
+            entry = cycle_obs[key]
+            df = entry["data"]
+            if "ERT" in key and "rhoa" in getattr(df, "columns", []):
+                keep_k, reasons = ERT_checks.quadrupole_quality_mask(df)
+                any_ert = True
+                if reasons:
+                    logger.warning(
+                        "ERT %s: %d/%d quadrupoles excluded from the analysis %s",
+                        key, int((~keep_k).sum()), keep_k.size, reasons,
+                    )
+                # flag, never delete: the data stay complete in dict_obs and in the outputs,
+                # this record says which quadrupoles the filter did not use, and why
+                self.ert_check_reports.append(
+                    {
+                        "stage": "mask",
+                        "cycle": self.count_DA_cycle,
+                        "sensor": key,
+                        "n_total": int(keep_k.size),
+                        "n_excluded": int((~keep_k).sum()),
+                        "reasons": reasons,
+                        "excluded_idx": np.flatnonzero(~keep_k).tolist(),
+                    }
+                )
+                segments.append(keep_k)
+            else:
+                segments.append(np.ones(int(np.size(entry["data"])), dtype=bool))
+        if not any_ert:
+            return None
+        keep = np.concatenate(segments)
+        n_before = keep.size
+        if obs_valid is not None and np.size(obs_valid) == n_before:
+            keep = keep[np.asarray(obs_valid, dtype=bool)]
+        if keep.size != n_data:
+            logger.warning(
+                "ERT quality mask (%d) does not match the data (%d): no quadrupole excluded",
+                keep.size, n_data,
+            )
+            return None
+        return keep
 
     def _data_cov_of_cycle(self, n_data: int) -> np.ndarray:
         """Stacked data covariance of the current DA cycle, checked against the data size."""
@@ -1914,6 +1543,10 @@ class DA(CATHY):
                 f"but got {actual_shape}. "
                 "Consider re-computing data covariance."
             )
+        if np.ndim(data_cov) == 1:
+            # stored as the diagonal (make_data_cov(..., diagonal=True)): the dense matrix of
+            # THIS cycle only is rebuilt, so every filter and diagnostic sees what it always saw
+            data_cov = np.diag(np.asarray(data_cov, dtype=float))
         return data_cov
 
     def _analysis_config_of_cycle(self) -> AnalysisConfig:
@@ -2176,9 +1809,13 @@ class DA(CATHY):
                 logger.warning(
                     f"cannot read mbeconv for ensemble {n + 1} ({type(exc).__name__}: {exc})"
                 )
+                self._record_rejection(
+                    "after_run", [n], f"cannot read mbeconv ({type(exc).__name__}: {exc})"
+                )
                 continue
             if reason is not None:
                 logger.warning("Ensemble member %d rejected: %s", n + 1, reason)
+                self._record_rejection("after_run", [n], reason)
             rejected_ens_new.append(reason is not None)
 
         self._raise_if_too_many_rejected(rejected_ens_new, threshold_rejected)
@@ -2210,6 +1847,38 @@ class DA(CATHY):
             return "df_mbeconv['time']" + str(last_time)
         return None
 
+    def _record_rejection(self, stage: str, members, reason: str) -> None:
+        """Add rejected members (0-based indices) to the ledger and save it.
+
+        ``stage`` is ``"after_run"`` (the CATHY run of the window failed) or
+        ``"after_analysis"`` (an analysed parameter is not physical). The ledger answers
+        who was rejected, in which cycle and why, which a bare percentage does not.
+        """
+        for member in members:
+            self.rejection_log.append(
+                {
+                    "cycle": self.count_DA_cycle,
+                    "stage": stage,
+                    "member": int(member) + 1,
+                    "reason": str(reason),
+                }
+            )
+        path = os.path.join(
+            self.workdir, self.project_name, self.project_name + "_rejections.json"
+        )
+        try:
+            with open(path, "w") as f:
+                json.dump(self.rejection_log, f, indent=1)
+        except OSError as exc:  # diagnostics only: never stop a run for them
+            logger.debug("cannot save %s (%s)", path, exc)
+
+    def rejection_summary(self) -> dict:
+        """Members (1-based, sorted) rejected so far, per stage."""
+        summary: dict = {}
+        for rec in self.rejection_log:
+            summary.setdefault(rec["stage"], set()).add(rec["member"])
+        return {stage: sorted(members) for stage, members in summary.items()}
+
     def _raise_if_too_many_rejected(
         self, rejected: Sequence[bool], threshold_rejected: float
     ) -> None:
@@ -2217,9 +1886,17 @@ class DA(CATHY):
         if sum(rejected) >= (threshold_rejected / 100) * self.NENS:
             logger.error("new parameters (if updated)")
             logger.error("%s", self.dict_parm_pert)
+            summary = self.rejection_summary()
+            for rec in self.rejection_log:
+                logger.error(
+                    "rejected: cycle %s, stage %s, member %s: %s",
+                    rec["cycle"], rec["stage"], rec["member"], rec["reason"],
+                )
             raise ValueError(
                 "% number of rejected ensemble is too high:"
                 + str((sum(rejected) * 100) / (self.NENS))
+                + f". Rejected members by stage: {summary}"
+                + f" ({self.project_name}_rejections.json has the reasons)"
             )
 
     def _check_after_analysis(
@@ -2251,6 +1928,8 @@ class DA(CATHY):
             bad = np.where(mask)[0]
             if len(bad):
                 logger.warning("%s %s: %s (members %s)", label, name, values[bad], [int(i) + 1 for i in bad])
+                for i in bad:
+                    self._record_rejection("after_analysis", [i], f"{label} {name} = {values[i]:.6g}")
             id_nonvalid.update(bad.tolist())
         return set(np.arange(self.NENS)).difference(id_nonvalid)
 
@@ -2785,8 +2464,9 @@ class DA(CATHY):
             ]
 
         new_Feddes_parm = ctx.dict_parm_pert[key][ctx.update_key]
-        ctx.feddes[ens_nb][key_root[0]].iloc[int(key_root[1])] = new_Feddes_parm[ens_nb]
-        # solution to check to avoid warning: .loc[int(key_root[1])] = new_Feddes_parm[ens_nb]
+        _set_feddes_value(
+            ctx.feddes[ens_nb], key_root[0], int(key_root[1]), new_Feddes_parm[ens_nb]
+        )
 
         self.update_soil(
             FP_map=ctx.feddes[ens_nb],
@@ -3232,9 +2912,9 @@ class DA(CATHY):
                 if "St. var." in pp:
                     continue
                 update_key = _update_key(self.count_DA_cycle)
-                self.dict_parm_pert[pp][update_key] = analysis_param_valid[
-                    index_update
-                ]
+                self.dict_parm_pert[pp][update_key] = self._clip_updated_parameter(
+                    pp, analysis_param_valid[index_update]
+                )
                 index_update = index_update + 1
 
             # check after analysis
@@ -3243,9 +2923,33 @@ class DA(CATHY):
             intersection_set = set.intersection(
                 set(id_valid_after), set(self.ens_valid)
             )
-            self.ens_valid = list(intersection_set)
+            # sorted: a set has no guaranteed order, and ens_valid is used to index arrays
+            self.ens_valid = sorted(intersection_set)
 
-        pass
+    def _clip_updated_parameter(self, name: str, values) -> np.ndarray:
+        """Project the analysed values of a parameter onto its bounds.
+
+        The bounds are the ``clip_min`` / ``clip_max`` of ``dict_parm_pert[name]``
+        (scenario ``per_bounds``), already used to sample the prior. The analysis
+        is linear and unbounded: without this projection it can return values such
+        as a negative root depth. Clipping keeps the member alive (rejecting it
+        shrinks the ensemble); NaN (invalid members) are left untouched.
+        """
+        values = np.array(values, dtype=float)
+        entry = self.dict_parm_pert.get(name, {})
+        lo, hi = entry.get("clip_min"), entry.get("clip_max")
+        if lo is None and hi is None:
+            return values
+        clipped = np.clip(values, lo, hi)
+        with np.errstate(invalid="ignore"):
+            changed = np.where(clipped != values)[0]
+        if len(changed):
+            logger.warning(
+                "%s: %d analysed value(s) clipped to [%s, %s] (members %s): %s -> %s",
+                name, len(changed), lo, hi,
+                [int(i) + 1 for i in changed], values[changed], clipped[changed],
+            )
+        return clipped
 
     def _update_input_ensemble(self, list_parm2update=None, analysis=None, **kwargs):
         """

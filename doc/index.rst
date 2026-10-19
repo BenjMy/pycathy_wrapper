@@ -101,6 +101,12 @@
    content/DA/index.rst   
    
 .. toctree::
+   :maxdepth: 2
+   :caption: Guides
+
+   content/DA_guides/index.rst
+
+.. toctree::
    :maxdepth: 3
    :caption: From the literature
    

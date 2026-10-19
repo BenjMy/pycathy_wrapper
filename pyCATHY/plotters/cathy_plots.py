@@ -1377,15 +1377,15 @@ def show_DA_process_ens(
     cax = ax1.matshow(EnsembleX, aspect="auto")  # ,
     # cmap=cm.rainbow, norm=colors.LogNorm())
     ax1.set_title("Prior")
-    ax1.set_ylabel("$\psi$ params #")
+    ax1.set_ylabel(r"$\psi$ params #")
     ax1.set_xlabel("Members #")
     cbar = fig.colorbar(cax, location="bottom")
 
     ax = fig.add_subplot(2, 5, 6)
     cax = ax.matshow(np.cov(EnsembleX), aspect="auto", cmap="gray", norm=LogNorm())
     ax.set_title("cov(Prior)")
-    ax.set_xlabel("$\psi$ params #")
-    ax.set_ylabel("$\psi$ params #")
+    ax.set_xlabel(r"$\psi$ params #")
+    ax.set_ylabel(r"$\psi$ params #")
     # cbar = fig.colorbar(cax, location='bottom')
     cbar = fig.colorbar(cax, format="$%.1f$", location="bottom")
 
@@ -1421,7 +1421,7 @@ def show_DA_process_ens(
     ax = fig.add_subplot(2, 5, 4, sharey=ax1)
     cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="seismic")
     ax.set_title("Correction")
-    ax.set_ylabel("$\psi$ params #")
+    ax.set_ylabel(r"$\psi$ params #")
     ax.set_xlabel("Members #")
     cbar = fig.colorbar(cax, location="bottom")
     ax.set_yticks([])
@@ -1429,7 +1429,7 @@ def show_DA_process_ens(
     ax = fig.add_subplot(2, 5, 5, sharey=ax1)
     cax = ax.matshow(Analysis, aspect="auto")
     ax.set_title("Posterior")
-    ax.set_ylabel("$\psi$ params #")
+    ax.set_ylabel(r"$\psi$ params #")
     ax.set_xlabel("Members #")
     cbar = fig.colorbar(cax, location="bottom")
     ax.set_yticks([])
@@ -1447,7 +1447,7 @@ def show_DA_process_ens(
     # fig, ax = plt.subplots()
     # cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="jet")
     # ax.set_title("Correction")
-    # ax.set_ylabel("$\psi$ params #")
+    # ax.set_ylabel(r"$\psi$ params #")
     # ax.set_xlabel("Members #")
     # cbar = fig.colorbar(cax, location="bottom")
     # ax.set_yticks([])
@@ -1975,7 +1975,7 @@ def DA_plot_time_dynamic(
             style=["-"],
             color=colors_minmax,
             xlabel="(assimilation) time - (h)",
-            ylabel="pressure head $\psi$ (m)",
+            ylabel=r"pressure head $\psi$ (m)",
             alpha=0.1
         )
 
@@ -2000,7 +2000,7 @@ def DA_plot_time_dynamic(
             style=["-"],
             color="grey",
             label=False,
-            ylabel="pressure head $\psi$ (m)",
+            ylabel=r"pressure head $\psi$ (m)",
         )  # water saturation (-)
         prep_DA["ens_min_isOL_time"].pivot(
             index=keytime,

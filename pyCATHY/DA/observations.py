@@ -304,6 +304,28 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
 
 
 
+def obs_error_variance(values, data_err, unit=None):
+    """Variance of the observation errors (diagonal of R).
+
+    ``unit`` selects how ``data_err`` is interpreted:
+
+    - ``None`` / ``"absolute"`` (default, historical): ``data_err`` is a standard
+      deviation in the units of the data (Ohm.m for rhoa), ``var = data_err**2``.
+    - ``"percent"`` (alias ``"relative"``): ``data_err`` is a relative error in %,
+      ``var = (data_err/100 * |d|)**2``. A fixed 5 Ohm.m is 5 % of 100 Ohm.m but
+      33 % of 15 Ohm.m, so percent is usually what an "error in %" means.
+
+    ``data_err`` may be a scalar or one value per datum.
+    """
+    values = np.asarray(values, dtype=float)
+    err = np.asarray(data_err, dtype=float)
+    if unit in (None, "absolute"):
+        return np.ones(values.shape) * err**2
+    if unit in ("percent", "relative"):
+        return (err / 100.0 * np.abs(values)) ** 2
+    raise ValueError(f"unknown data_err_unit {unit!r}: use 'absolute' or 'percent'")
+
+
 def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
     """
     Build covariance matrices for assimilated observations.
@@ -343,6 +365,10 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
         Which sensors to assimilate. Default = "all".
     kwargs : dict
         Optional arguments (e.g., coils for EM sensors).
+        ``diagonal=True`` stores each cycle's covariance as its diagonal (a vector of m values)
+        instead of a dense (m, m) matrix: ``cycles x m^2`` values become ``cycles x m``. The
+        analysis rebuilds the dense matrix of one cycle at a time, so results are identical.
+        Default False (dense, as before).
 
     Returns
     -------
@@ -371,10 +397,18 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
         else:
             values = [np.array(entry["data"])]
 
-        cov = np.ones(len(values)) * entry["data_err"]**2 # **2 as we need to take the variance
+        # variance (not std) of the errors; unit set by meta['data_err_unit'] ('absolute' by default)
+        unit = entry["data_err_unit"] if "data_err_unit" in entry.index else None
+        if isinstance(unit, float) and np.isnan(unit):
+            unit = None
+        if unit is None or unit == "absolute":
+            cov = np.ones(len(values)) * entry["data_err"] ** 2  # historical behaviour
+        else:
+            cov = obs_error_variance(values, entry["data_err"], unit)
         return values, cov
 
     # Store covariance per assimilation time
+    diagonal = bool(kwargs.get("diagonal", False))
     data_cov_list = []
 
     for tA in assimilation_times:
@@ -401,10 +435,14 @@ def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
                 cov_flat, values=data_flat, name=f"ERT data cov tA={tA}"
             ).warn()
 
-        cov_diag = np.zeros((len(cov_flat), len(cov_flat)))
-        np.fill_diagonal(cov_diag, cov_flat)
-
-        data_cov_list.append(cov_diag)
+        if diagonal:
+            # keep only the diagonal (m values): the dense matrix of a cycle is rebuilt when
+            # that cycle is analysed (see DA._data_cov_of_cycle)
+            data_cov_list.append(np.asarray(cov_flat, dtype=float))
+        else:
+            cov_diag = np.zeros((len(cov_flat), len(cov_flat)))
+            np.fill_diagonal(cov_diag, cov_flat)
+            data_cov_list.append(cov_diag)
 
     # Prepare final covariance structures
     data_cov, data_pert, stacked_data_cov = prepare_observations(stacked_data_cov=data_cov_list)

@@ -14,6 +14,9 @@ from pyCATHY import cathy_utils as utils_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 import re 
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 #%%
 def check_distribution(parm2check):
@@ -23,7 +26,7 @@ def check_distribution(parm2check):
 
     if parm2check["type_parm"] == "thetar_VG":
         if parm2check["nominal"] > 1:
-            print("! warming value to high for residual water VG")
+            logger.warning("nominal thetar_VG is above 1: value too high for a residual water content")
 
     # References for Archie paarmeters range
     # https://www.sciencedirect.com/science/article/pii/S1018363918306123
@@ -35,19 +38,123 @@ def check_distribution(parm2check):
     #     Saturation exponent. The default is [2.0].
 
 
+def _require_nlayers(type_parm, nlayers):
+    """The 'layers' control samples one value per layer: fail clearly without the count."""
+    if nlayers is None:
+        raise ValueError(
+            f"{type_parm}: the 'layers' control needs the number of layers: pass nlayers=... "
+            "to perturbate_parm (entries built by perturbate() already carry it)"
+        )
+
+
+def _apply_scenario_bounds(list_pert, scenario):
+    """Store the scenario ``per_bounds`` on every entry, whatever branch built it.
+
+    The ``zone`` and ``root_map`` branches created their entries with no bounds at all, so
+    ``per_bounds`` was dropped silently (neither the prior nor the clipping of the analysed
+    values saw it). Defaults an entry already carries (e.g. ZROOT >= 0) are kept for the
+    side the scenario leaves open.
+    """
+    names = list(scenario.get("per_name", []))
+    for entry in list_pert:
+        root = re.match(r"^(.*?)(\d*)$", entry["type_parm"])
+        name, suffix = root.group(1), root.group(2)
+        if name not in names:
+            continue
+        i = names.index(name)
+        nominal = scenario["per_nom"][i]
+        listed = isinstance(nominal, list)
+        entry["clip_min"], entry["clip_max"] = check4bounds(
+            scenario, i, entry.get("clip_min"), entry.get("clip_max"),
+            het_size=len(nominal) if listed else 1,
+            het_nb=int(suffix) if (listed and suffix != "") else 0,
+        )
+
+
+def _n_classes(raster):
+    """Number of zones (or vegetation classes) of a map; the nodata value -9999 is not one.
+
+    Counting it made a map with nodata ask for one scenario entry too many, while the
+    zone numbers written to the soil table (1..K) never include it.
+    """
+    values = np.unique(np.asarray(raster))
+    return int(np.count_nonzero(values != -9999))
+
+
+def _is_number(x):
+    return isinstance(x, (int, float, np.integer, np.floating)) and not isinstance(x, bool)
+
+
+def _is_unset(b):
+    return b is None or (isinstance(b, str) and b.strip().lower() == "none")
+
+
+def parse_bounds(bounds, where="per_bounds"):
+    """Parse one bounds specification into ``(min, max)``; a side set to None is open.
+
+    Accepted: ``None`` / ``"None"`` (no bounds), ``{min = a, max = b}`` (either key
+    may be omitted) and ``[a, b]``. Anything else raises ``ValueError`` naming
+    ``where``: a malformed bound used to be ignored silently (bare ``except``),
+    leaving the parameter unbounded.
+    """
+    if _is_unset(bounds):
+        return None, None
+    if isinstance(bounds, dict):
+        unknown = set(bounds) - {"min", "max"}
+        if unknown:
+            raise ValueError(
+                f"{where}: unknown bound key(s) {sorted(unknown)}; use 'min' and 'max'."
+            )
+        lo, hi = bounds.get("min"), bounds.get("max")
+    elif isinstance(bounds, (list, tuple)) and len(bounds) == 2:
+        lo, hi = bounds
+    else:
+        raise ValueError(
+            f"{where}: cannot read bounds {bounds!r}; expected 'None', "
+            "{min = a, max = b} or [a, b]."
+        )
+    for side, v in (("min", lo), ("max", hi)):
+        if v is not None and not _is_number(v):
+            raise ValueError(f"{where}: {side} must be a number, got {v!r}.")
+    if lo is not None and hi is not None and lo >= hi:
+        raise ValueError(f"{where}: min ({lo}) must be lower than max ({hi}).")
+    return lo, hi
+
+
 def check4bounds(scenario, index, clip_min, clip_max, het_size=1, het_nb=None):
+    """Bounds of parameter ``index`` of the scenario (``per_bounds`` is optional).
 
-    try:  # try since per_bounds is not mandatory
-        if het_size == 1:
-            sc_bounds = scenario["per_bounds"][index]
-        else:
-            sc_bounds = scenario["per_bounds"][index][het_nb]
-        clip_min = sc_bounds["min"]
-        clip_max = sc_bounds["max"]
-    except:
-        pass
+    ``clip_min`` / ``clip_max`` are the defaults, kept for a side the scenario leaves
+    open. With ``het_size > 1`` (several layers, zones or classes) ``per_bounds[index]``
+    is either one bounds spec shared by all of them, or a list with one spec per entry
+    (``het_nb`` selects it).
+    """
+    per_bounds = scenario.get("per_bounds") if hasattr(scenario, "get") else None
+    if per_bounds is None:
+        return clip_min, clip_max
+    name = scenario["per_name"][index] if "per_name" in scenario else index
+    if index >= len(per_bounds):
+        logger.warning("per_bounds has no entry for %s: parameter left unbounded.", name)
+        return clip_min, clip_max
 
-    return clip_min, clip_max
+    spec = per_bounds[index]
+    is_pair = isinstance(spec, (list, tuple)) and len(spec) == 2 and all(
+        _is_unset(v) or _is_number(v) for v in spec
+    )
+    if (
+        het_size > 1
+        and isinstance(spec, (list, tuple))
+        and not is_pair
+        and not _is_unset(spec)
+    ):
+        if len(spec) != het_size:
+            raise ValueError(
+                f"per_bounds for {name}: {len(spec)} entries for {het_size} layers/zones."
+            )
+        spec = spec[het_nb]
+    lo, hi = parse_bounds(spec, where=f"per_bounds for {name}")
+    return (clip_min if lo is None else lo), (clip_max if hi is None else hi)
+
 
 def create_dict_entry(
                          name,scenario,
@@ -114,11 +221,8 @@ def process_perturbation_block(
     transf_type = scenario["transf_type"][index]
 
     # Pull bounds dynamically if available
-    clip_min, clip_max = None, None
-    if "per_bounds" in scenario:
-        bounds = scenario["per_bounds"][index]
-        if isinstance(bounds, (list, tuple)) and len(bounds) == 2:
-            clip_min, clip_max = bounds
+    # same parser as everywhere else: {min, max} and [min, max] are both accepted
+    clip_min, clip_max = check4bounds(scenario, index, None, None)
 
     # Handle perturbation by control type
     if isinstance(scenario_nom, list):
@@ -142,8 +246,7 @@ def process_perturbation_block(
         elif pert_control_name == 'zone':
             if zone_raster is None:
                 raise ValueError("zone_raster must be provided for 'zone' perturbation control.")
-            unique_zones = np.unique(zone_raster)
-            for zone_idx in range(len(unique_zones)):
+            for zone_idx in range(_n_classes(zone_raster)):
                 z_nom = scenario_nom[zone_idx]
                 z_mean = scenario_mean[zone_idx]
                 z_sd = scenario_sd[zone_idx]
@@ -163,8 +266,7 @@ def process_perturbation_block(
         elif pert_control_name == 'root_map':
             if veg_raster is None:
                 raise ValueError("veg_raster must be provided for 'root_map' perturbation control.")
-            unique_roots = np.unique(veg_raster)
-            for veg_idx in range(len(unique_roots)):
+            for veg_idx in range(_n_classes(veg_raster)):
                 r_nom = scenario_nom[veg_idx]
                 r_mean = scenario_mean[veg_idx]
                 r_sd = scenario_sd[veg_idx]
@@ -204,18 +306,47 @@ def process_perturbation_block(
 
 
 
-def perturbate(simu_DA, scenario, NENS, 
+def perturbate(simu_DA, scenario, NENS,
                **kwargs):
-    """Write a list of dictionaries, each containing all the informations on how to
-    perturbate the parameters based on the scenario to consider
-    
-    
-    pertControl = 'Layer'        
-    Perturbation per zone is not yet implemented -  Assuming that the 
-    dictionnary of perturbated parameters is build per layers i.e. 
-    ks0= layer 0, ks1=layer 1, etc...
-   
-    """  
+    """Build the list of perturbation entries described by a scenario.
+
+    Each entry is a dictionary (``type_parm``, ``nominal``, ``mean``, ``sd``,
+    ``clip_min``, ``clip_max``, ``sampling_type``, ``per_type``, ``transf_type``,
+    ``pert_control_name``, ...) later sampled by ``perturbate_parm``.
+
+    Parameters
+    ----------
+    simu_DA : DA
+        Simulation, read for the soil table, the zone map and the vegetation map.
+    scenario : dict
+        One scenario of ``scenario.toml``: lists aligned with ``per_name``
+        (``per_nom``, ``per_mean``, ``per_sigma``, ``per_type``, ``sampling_type``,
+        ``transf_type``, ``per_bounds``, ``pert_control_name``) and ``listUpdateParm``.
+    NENS : int
+        Ensemble size.
+    nzones, nlayers : int, optional (keyword)
+        Override the number of zones / layers read from the soil table.
+    validate_scenario : bool, optional (keyword, default True)
+        Check the scenario before building and the names of ``listUpdateParm`` after
+        (``pyCATHY.DA.scenario``). False skips both checks.
+
+    Notes
+    -----
+    ``pert_control_name`` selects what an entry applies to; the entries of a list
+    are written in order, so overlapping entries override each other (see
+    ``scenario.describe_ensemble``):
+
+    - ``None``: the whole domain (key ``<name>``, or ``<name>0`` for Feddes parameters
+      such as ``ZROOT``);
+    - ``"layers"``: one entry per layer, keys ``<name>0``, ``<name>1`` ... (layer index);
+    - ``"zone"``: one entry per zone, key index ``k`` is zone number ``k + 1``;
+    - ``"root_map"``: one entry per vegetation class, key index ``k`` is class ``k + 1``.
+
+    Zone and class numbers must run from 1 to K without gaps.
+    ``per_bounds`` is ``None``, ``{min = a, max = b}`` or ``[a, b]`` (see
+    ``parse_bounds``); bounds are used when sampling the prior and again to clip the
+    analysed values.
+    """
     
     df_SPP, df_FP = simu_DA.read_inputs('soil')
     zone_raster, zone_header = simu_DA.read_inputs('zone')
@@ -226,10 +357,27 @@ def perturbate(simu_DA, scenario, NENS,
     else:
         nzones = len(df_SPP.index.get_level_values(0).unique())
     if 'nlayers' in kwargs: 
-        nzones = kwargs.pop('nlayers')
+        nlayers = kwargs.pop('nlayers')
     else:
         nlayers = len(df_SPP.index.get_level_values(1).unique())
         # nlayers_PERMX = len(df_SPP['PERMX'].unique())
+
+    # fail early, with every problem listed, instead of silently ignoring a misspelled
+    # parameter or a bad bound (validate_scenario=False skips the check)
+    check_scenario = kwargs.pop("validate_scenario", True)
+    if check_scenario:
+        from pyCATHY.DA.scenario import validate_scenario as _validate
+
+        try:
+            n_feddes_rows = len(simu_DA.read_inputs("soil")[1].index.unique())
+        except Exception:  # no Feddes table readable: ZROOT / PCREF layout is then not checked
+            n_feddes_rows = None
+        _, scenario_warnings = _validate(
+            scenario, nlayers=nlayers, zone_raster=zone_raster, veg_raster=veg_raster,
+            n_feddes_rows=n_feddes_rows,
+        )
+        for message in scenario_warnings:
+            logger.warning("scenario: %s", message)
 
     #%%
     list_pert = []
@@ -306,9 +454,11 @@ def perturbate(simu_DA, scenario, NENS,
                     list_pert.append(ic)
                     
             elif pert_control_name=='zone':
-                for zonei in range(len(np.unique(zone_raster))):
+                for zonei in range(_n_classes(zone_raster)):
                     # Adjust bounds and retrieve parameters for the current zone
-                    clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                    clip_min, clip_max = check4bounds(
+                    scenario, index, None, None, het_size=_n_classes(zone_raster), het_nb=zonei
+                )
                     zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
                     scenario_per_type = scenario["per_type"][index][zonei]
 
@@ -325,7 +475,9 @@ def perturbate(simu_DA, scenario, NENS,
                 raise ValueError(f"List-type perturbation provided, but unknown control name: '{pert_control_name}'. "
                          f"Expected 'layers' or 'zone'.")
         else: 
-            
+            # bounds are optional; e.g. a pressure head ic must stay negative
+            # for an unsaturated initial state (IPOND=0)
+            clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
             ic = create_dict_entry(
                         'ic',scenario,index,'', 
                         scenario_nom, scenario_mean, scenario_sd, 
@@ -569,7 +721,7 @@ def perturbate(simu_DA, scenario, NENS,
         veg_raster, veg_header = simu_DA.read_inputs('root_map')
         
         if pert_control_name=='zone': 
-            for zonei in range(len(np.unique(zone_raster))):
+            for zonei in range(_n_classes(zone_raster)):
            
                 zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
                 Ks = create_dict_entry(
@@ -584,9 +736,9 @@ def perturbate(simu_DA, scenario, NENS,
                 list_pert.append(Ks)
                               
         elif pert_control_name=='root_map': 
-            for vegi in range(len(np.unique(veg_raster))):
+            for vegi in range(_n_classes(veg_raster)):
            
-                if len(np.unique(zone_raster)) > 1:
+                if _n_classes(zone_raster) > 1:
                     scenario_nom = scenario["per_nom"][index][vegi]
                     scenario_mean = scenario["per_mean"][index][vegi]
                     scenario_sd = scenario["per_sigma"][index][vegi]
@@ -605,7 +757,9 @@ def perturbate(simu_DA, scenario, NENS,
         elif pert_control_name == 'layers':
             for nstri in range(nlayers):
                 # Adjust bounds and retrieve parameters for the current layer
-                clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                clip_min, clip_max = check4bounds(
+                    scenario, index, None, None, het_size=nlayers, het_nb=nstri
+                )
                 layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
     
                 # Create porosity entry for this layer and validate distribution
@@ -652,9 +806,11 @@ def perturbate(simu_DA, scenario, NENS,
     
         # Perturb by 'zone' if specified
         if pert_control_name=='zone':
-            for zonei in range(len(np.unique(zone_raster))):
+            for zonei in range(_n_classes(zone_raster)):
                 # Adjust bounds and retrieve parameters for the current zone
-                clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                clip_min, clip_max = check4bounds(
+                    scenario, index, None, None, het_size=_n_classes(zone_raster), het_nb=zonei
+                )
                 zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
     
                 # Create porosity entry for this zone and validate distribution
@@ -671,7 +827,9 @@ def perturbate(simu_DA, scenario, NENS,
         elif pert_control_name=='layers':
             for nstri in range(nlayers):
                 # Adjust bounds and retrieve parameters for the current layer
-                clip_min, clip_max = check4bounds(scenario, index, clip_min, clip_max)
+                clip_min, clip_max = check4bounds(
+                    scenario, index, None, None, het_size=nlayers, het_nb=nstri
+                )
                 layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
     
                 # Create porosity entry for this layer and validate distribution
@@ -898,6 +1056,18 @@ def perturbate(simu_DA, scenario, NENS,
             list_pert.append(ZROOT)
             # nb_surf_nodes = 110
 
+    for entry in list_pert:
+        if entry.get("pert_control_name") == "layers":
+            entry["nlayers"] = nlayers  # perturbate_parm needs it to sample the layers
+    _apply_scenario_bounds(list_pert, scenario)
+
+    if check_scenario:
+        # authoritative: the names of listUpdateParm must be keys that were really built
+        # (a scalar Ks is "Ks", a scalar ZROOT is "ZROOT0": the naming depends on the parameter)
+        from pyCATHY.DA.scenario import check_update_parameters
+
+        check_update_parameters(list_pert, scenario.get("listUpdateParm", []))
+
     return list_pert
 
 
@@ -907,20 +1077,33 @@ def perturbate(simu_DA, scenario, NENS,
 # SAMPLING distribution
 # ----------------------
 
+def _std_bounds(clip_min, clip_max, loc, scale):
+    """Bounds in units of the standard deviation; an open side (None) is infinite."""
+    a = -np.inf if clip_min is None else (clip_min - loc) / scale
+    b = np.inf if clip_max is None else (clip_max - loc) / scale
+    return a, b
+
+
+def _has_bounds(entry):
+    """True when an entry carries at least one bound (a max-only bound counts)."""
+    return entry.get("clip_min") is not None or entry.get("clip_max") is not None
+
+
 def sampling_dist_trunc(myclip_a, myclip_b, ensemble_size, **kwargs):
+    """Truncated normal sample; ``myclip_a`` / ``myclip_b`` may be None (open side)."""
     # https://stackoverflow.com/questions/18441779/how-to-specify-upper-and-lower-limits-when-using-numpy-random-normal
-    X = truncnorm(
-        (myclip_a - kwargs["loc"]) / kwargs["scale"],
-        (myclip_b - kwargs["loc"]) / kwargs["scale"],
-        loc=kwargs["loc"],
-        scale=kwargs["scale"],
-    )
-    return X.rvs(ensemble_size)
+    loc, scale = kwargs["loc"], kwargs["scale"]
+    if scale == 0:  # no spread: every member is the mean (kept inside the bounds)
+        lo = -np.inf if myclip_a is None else myclip_a
+        hi = np.inf if myclip_b is None else myclip_b
+        return np.full(ensemble_size, float(np.clip(loc, lo, hi)))
+    a, b = _std_bounds(myclip_a, myclip_b, loc, scale)
+    return truncnorm(a, b, loc=loc, scale=scale).rvs(ensemble_size)
 
 
 def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
-    # sampling
-    np.random.seed(1)
+    # No reseeding here: a fixed seed per call gave every parameter the same standard-normal
+    # draws (a rank-1 parameter ensemble). Call np.random.seed(n) once beforehand to reproduce.
     if sampling_type == "lognormal":
         parm_sampling = np.random.lognormal(np.log(mean), sigma=sd, size=ensemble_size)       
     elif sampling_type == "normal":
@@ -939,12 +1122,17 @@ def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
 def perturbate_dist(parm, per_type, parm_sampling, ensemble_size):
     # pertubate
     parm_mat = np.ones(ensemble_size) * parm["nominal"]
-    if per_type == None:
+    if per_type is None or per_type == "None":
         parm_per_array = parm_sampling
-    if per_type == "multiplicative":
+    elif per_type == "multiplicative":
         parm_per_array = parm_mat * parm_sampling
     elif per_type == "additive":
         parm_per_array = parm_mat + parm_sampling
+    else:  # used to fall through and raise an UnboundLocalError
+        raise ValueError(
+            f"{parm.get('type_parm', 'parameter')}: unknown per_type {per_type!r}: use None, "
+            "'additive' or 'multiplicative' (a single value, not a list)"
+        )
     return parm_per_array
 
 
@@ -1038,13 +1226,12 @@ def VG_pert_rules(
     - y_array: (ensemble_size,) ndarray of transformed (Gaussian) samples
     """
     
-    print(
-        "(NOT YET IMPLEMENTED - The parameters of the van Genuchten retention curves α,"
-        + "n, and θ r are perturbed taking into account their mutual cor-"
-        + "relation according to Carsel and Parrish (1988)"
+    logger.warning(
+        "NOT YET IMPLEMENTED - the van Genuchten parameters (alpha, n, theta_r) are not "
+        "perturbed with their mutual correlation (Carsel and Parrish, 1988)"
     )
     
-    np.random.seed(seed=1)
+    # (no reseeding: see sampling_dist)
 
     # --- Sampling ---
     sampling_type = parm["sampling_type"]
@@ -1065,23 +1252,15 @@ def VG_pert_rules(
     #     **kwargs
     # )
 
-    if parm["clip_min"] is not None:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=parm["clip_min"],
-            myclip_b=parm["clip_max"],
-            ensemble_size=ensemble_size,
-            loc= parm['mean'],
-            scale=sd,
-        )
-    else:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=-np.inf,
-            myclip_b=np.inf,
-            ensemble_size=ensemble_size,
-            loc= parm['mean'],
-            scale=sd,
-        )
-            
+    # one call: an open side (None) is infinite, so a missing or max-only bound works too
+    parm_sampling = sampling_dist_trunc(
+        myclip_a=parm.get("clip_min"),
+        myclip_b=parm.get("clip_max"),
+        ensemble_size=ensemble_size,
+        loc=parm['mean'],
+        scale=sd,
+    )
+
     # --- Perturbation (physical space) ---
     v_array = perturbate_dist(
         parm=parm,
@@ -1282,27 +1461,37 @@ def build_dict_attributes_pert(
 def perturbate_parm_by_layers(type_parm,
                               ensemble_size,
                               nlayers,
-                              mean=[],
-                              sd=[],
+                              mean=None,
+                              sd=None,
                               per_type=None,
-                              nominal=[]
+                              nominal=None,
+                              clip_min=None,
+                              clip_max=None,
                               ):
             
         # Define the number of layers and the size of the ensemble
         # num_layers = 5
 
         # Create a Sobol sampler
+        # mutable defaults are created per call (a shared default list is a latent bug)
+        if mean is None:
+            mean = []
+        if sd is None:
+            sd = []
+        if nominal is None:
+            nominal = []
         sobol_sampler = qmc.Sobol(d=ensemble_size)
         
         # Generate Sobol sequence samples
         sobol_samples = sobol_sampler.random(n=nlayers)
         
         # Transform the Sobol sequence to follow a normal distribution
-        pressure_head_withLayers = np.zeros((ensemble_size, nlayers))
-        pressure_head_withLayers = norm.ppf(sobol_samples, 
-                                          loc=mean, 
-                                          scale=sd
-                                          )
+        if (clip_min is None and clip_max is None) or sd == 0:
+            pressure_head_withLayers = norm.ppf(sobol_samples, loc=mean, scale=sd)
+        else:
+            # bounded prior: same low-discrepancy points through the truncated quantile function
+            a, b = _std_bounds(clip_min, clip_max, mean, sd)
+            pressure_head_withLayers = truncnorm.ppf(sobol_samples, a, b, loc=mean, scale=sd)
         
         parm_mat = np.ones(ensemble_size) * nominal
         if per_type == None:
@@ -1319,8 +1508,8 @@ def perturbate_parm(
     var_per,
     parm,
     type_parm,
-    mean=[],
-    sd=[],
+    mean=None,
+    sd=None,
     per_type=None,
     sampling_type="lognormal",
     ensemble_size=128,
@@ -1347,6 +1536,11 @@ def perturbate_parm(
         Perturbated variable dictionnary
 
     """
+    # mutable defaults are created per call (a shared default list is a latent bug)
+    if mean is None:
+        mean = []
+    if sd is None:
+        sd = []
 
     savefig = False
     if 'savefig' in kwargs:
@@ -1361,6 +1555,8 @@ def perturbate_parm(
     nlayers = None
     if 'nlayers' in kwargs:
         nlayers = kwargs['nlayers']
+    elif isinstance(parm, dict):
+        nlayers = parm.get('nlayers')  # stored in the entry by perturbate()
 
     var_per_2add = {}
     
@@ -1381,7 +1577,7 @@ def perturbate_parm(
     key = "per_type"
     var_per_2add[type_parm][key] = per_type
 
-    key_root = re.split("(\d+)", type_parm)
+    key_root = re.split(r"(\d+)", type_parm)
     parm_key_nb = 0
     if len(key_root)>1:
         parm_key_nb = int(key_root[1])
@@ -1391,13 +1587,16 @@ def perturbate_parm(
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
         if parm.get('pert_control_name') == 'layers':
+            _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
                                                         mean,
                                                         sd,
                                                         per_type=parm['per_type'],
-                                                        nominal=parm['nominal']     
+                                                        nominal=parm['nominal'],
+                                                        clip_min=parm.get('clip_min'),
+                                                        clip_max=parm.get('clip_max')     
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
@@ -1408,15 +1607,18 @@ def perturbate_parm(
             )
     elif "porosity" in type_parm:
         if parm.get('pert_control_name') == 'layers':
+            _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                                   ensemble_size,
                                                                   nlayers,
                                                                   mean,
                                                                   sd,
                                                                   per_type=parm['per_type'],
-                                                                  nominal=parm['nominal']     
+                                                                  nominal=parm['nominal'],
+                                                        clip_min=parm.get('clip_min'),
+                                                        clip_max=parm.get('clip_max')     
                                                                   )
-            key_root = re.split("(\d+)", type_parm)
+            key_root = re.split(r"(\d+)", type_parm)
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
@@ -1459,13 +1661,16 @@ def perturbate_parm(
     elif "VG" in type_parm:  # van Genuchten retention curves
 
         if parm.get('pert_control_name') == 'layers':
+            _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
                                                         mean,
                                                         sd,
                                                         per_type=parm['per_type'],
-                                                        nominal=parm['nominal']     
+                                                        nominal=parm['nominal'],
+                                                        clip_min=parm.get('clip_min'),
+                                                        clip_max=parm.get('clip_max')     
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
@@ -1505,21 +1710,33 @@ def perturbate_parm(
     elif "ic" in type_parm:
 
         if parm.get('pert_control_name') == 'layers':
+            _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
                                                         mean,
                                                         sd,
                                                         per_type=parm['per_type'],
-                                                        nominal=parm['nominal']
+                                                        nominal=parm['nominal'],
+                                                        clip_min=parm.get('clip_min'),
+                                                        clip_max=parm.get('clip_max')
                                                         )
-            key_root = re.split("(\d+)", type_parm)
+            key_root = re.split(r"(\d+)", type_parm)
     
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
         else:
-            parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
+            if _has_bounds(parm):  # bounded prior (scenario per_bounds)
+                parm_sampling = sampling_dist_trunc(
+                    myclip_a=parm["clip_min"],
+                    myclip_b=parm["clip_max"],
+                    ensemble_size=ensemble_size,
+                    loc=parm['mean'],
+                    scale=sd,
+                )
+            else:
+                parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
             
             if len(key_root)>1:
                 # Case with different zones
@@ -1539,19 +1756,22 @@ def perturbate_parm(
     # --------------------------------------------------------------------
     else:
         if parm.get('pert_control_name') == 'layers':
+            _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
                                                         nlayers,
                                                         mean,
                                                         sd,
                                                         per_type=parm['per_type'],
-                                                        nominal=parm['nominal']                                                     
+                                                        nominal=parm['nominal'],
+                                                        clip_min=parm.get('clip_min'),
+                                                        clip_max=parm.get('clip_max')                                                     
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
             var_per_2add[type_parm][f'ini_{type_parm}_withLayers'] = param_withLayers
         else:
-            if var_per_2add[type_parm]['clip_min'] is not None:
+            if _has_bounds(var_per_2add[type_parm]):
                 parm_sampling = sampling_dist_trunc(
                     myclip_a=var_per_2add[type_parm]["clip_min"],
                     myclip_b=var_per_2add[type_parm]["clip_max"],

@@ -136,10 +136,10 @@ def read_tensiometers(filename, **kwargs):
 
     """
 
-    tensio_file = open(filename, "r")
-    tensio_file.close()
-
-    return df_tensio
+    raise NotImplementedError(
+        "read_tensiometers is not implemented (it returned an undefined variable); "
+        "provide a sample file to implement the reader."
+    )
 
 
 def read_TDR_prob(filename, **kwargs):
@@ -151,8 +151,7 @@ def read_TDR_prob(filename, **kwargs):
 
     """
 
-    TDR_file = open(filename, "r")
-
-    TDR_file.close()
-
-    return df_TDR
+    raise NotImplementedError(
+        "read_TDR_prob is not implemented (it returned an undefined variable); "
+        "provide a sample file to implement the reader."
+    )

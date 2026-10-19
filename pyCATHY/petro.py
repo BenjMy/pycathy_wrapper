@@ -10,6 +10,16 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
+
+def _r2_score(y_true, y_pred):
+    """Coefficient of determination (same definition as sklearn.metrics.r2_score),
+    without the scikit-learn dependency whose import was commented out."""
+    y_true = np.asarray(y_true, dtype=float)
+    y_pred = np.asarray(y_pred, dtype=float)
+    ss_res = np.sum((y_true - y_pred) ** 2)
+    ss_tot = np.sum((y_true - y_true.mean()) ** 2)
+    return 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+
 from pyCATHY.plotters import cathy_plots as pltCT
 import logging
 
@@ -41,7 +51,7 @@ def fit_VGP(sai, teta, SWRfunc, solver="lm", bvals=[(0, 0, 1, 0), (1, 1, 100, 10
 
     tetamodel = SWRfunc(sai, fitP[0], fitP[1], fitP[2], fitP[3])  # fitted SWR function
     error = [np.absolute(covar[i][i]) ** 0.5 for i in range(len(fitP))]
-    R2 = r2_score(teta, tetamodel)
+    R2 = _r2_score(teta, tetamodel)
 
     return fitP, error, R2
 

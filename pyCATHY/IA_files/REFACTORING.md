@@ -58,6 +58,51 @@ DONE · TODO · NEEDS-SOURCE (file not provided) · NEEDS-USER (decision/data)
 | R9c | Remove dead/commented code: `ER0_to_EM_ECa_DA` block removed from petro_Archie; others in petro_Archie/simulate_ERT remain | DONE (partial) |
 | R9d | `CATHY.__init__` ignored its `verbose` argument (`self.verbose = False`): now `self.verbose = verbose` (only gates a DEBUG dump of parm keys). `make_console`/`self.console` kept for `rich_display` and `swc_mapper(console=)` | DONE (verbose) / TODO (console removal) |
 
+## P0 — crash-report round (session 3, from `DA_ERT_ensemble_crash_report.md`)
+Tests: pytest under `pyCATHY/tests/` (numpy only, no CATHY run; `python -m pytest pyCATHY/tests/test_enkf_analysis.py ...`). Not executed on the real `ic_ZROOT_upd_ZROOT` case.
+| # | Item | Status |
+|---|------|--------|
+| C1 | **A1** `enkf` Sakov branch used `diag(R)` only (dropped `S S^T/(N-1)`): gain inflated with the number of data (unobservable-parameter update 0.09 / 0.67 / 8.9 for 10 / 200 / 2000 data). New `_solve_obs_space` (exact, ensemble space, picks Woodbury or direct solve by size) used at the 4 sites. Test: `test_enkf_analysis.py` | DONE |
+| C2 | **A2** lower bound for ZROOT in `_nonphysical_values`; analysed parameters clipped to `clip_min/clip_max` (`_clip_updated_parameter`); **B6** `ens_valid` sorted | DONE |
+| C3 | **A3** `ic` prior honours `per_bounds` (truncated sampling); bounds set in `scenario.toml` | DONE |
+| C4 | **B1** `data_err_unit='percent'` (`obs_error_variance`), default unchanged | DONE |
+| C5 | **B2** ERT quadrupole mask: flag, never delete (`quadrupole_quality_mask`, `DAConfig.mask_bad_ert`, record in `_ERT_checks.json`) | DONE |
+| C6 | **B13** observations not perturbed: analysis spread short by `K R K^T` (0.095 vs exact 0.65). Opt-in `AnalysisConfig.perturb_obs` | DONE (opt-in; author decides default) |
+| C7 | **B14** `enkf_analysis_inflation*`: `reshape` of the transposed prediction scrambled the ensemble mean (diff vs plain EnKF 0.24 -> 3e-15) | DONE |
+| C8 | **B9** chained `.iloc[...] =` in `_update_feddes_member` silently does nothing with pandas >= 3 -> `_set_feddes_value` | DONE |
+| C9 | **B18** `perturbate(nlayers=)` assigned `nzones`; **B19** zone localisation off by one when the map has nodata (`_valid_zone_values`) | DONE |
+| C10 | **B25** `check4bounds` swallowed errors and `process_perturbation_block` read bounds differently: one parser (`parse_bounds`), malformed bounds raise | DONE |
+| C11 | **B20-B22, B26** `pyCATHY/DA/scenario.py`: `validate_scenario` (before build), `check_update_parameters` (after build), `describe_ensemble` (what each parameter touches; reports overlapping writes, B27) | DONE (pairing zones<->parameters by name still TODO) |
+| C12 | **B15** dead `DA/performance.py` deleted; **B17** mutable defaults in `perturbate.py` and `Archie_rho_DA` (outputs identical, checked against git HEAD); **B23** `perturbate()` docstring rewritten | DONE |
+| C13 | `F821` undefined names: `UNIT_DIVISOR`, `r2_score` (own `_r2_score`), `df_tensio`, `df_TDR` fixed (50 -> 45) | DONE for these; **TODO/NEEDS-USER**: `sensitivity.py` (37, half-ported script: rewrite with explicit arguments or remove), `cathyDA_plots.plot_perf` (8, relies on script globals) |
+| C14 | `ruff` configured in `pyproject.toml` (baseline 1573 findings); `test_package_compiles.py` compiles every module with warnings as errors and rejects mutable defaults in `DA/`, `ERT/` | DONE |
+| C15 | **B5** rejection ledger: `_record_rejection`, `rejection_summary`, `<project>_rejections.json`; the "too many rejected" error lists the members by stage (message prefix unchanged). Fed by `_check_before_analysis` and `_check_after_analysis` (tested with the negative-ZROOT0 pattern of the crash report) | DONE |
+| C16 | **B10** positive psi is also checked on the **analysed** ensemble (members, max, share of nodes); **B4** each analysis logs the observation time and the model window (alignment itself not verified) | DONE (B4: log only) |
+| C17 | **B21** `_n_classes` (nodata is not a zone) at the 7 counting sites of `perturbate()` | DONE |
+| C18 | **B30** `layers` control could not be sampled through the standard `perturbate_parm` call (`nlayers` None -> TypeError; same on untouched HEAD): entries now carry `nlayers`, 5 branches raise a clear error without it | DONE |
+| C19 | `DA.describe_perturbation()` (rows written by each parameter, overlaps) logged once at the start of a run (diagnostics, never stops a run) | DONE |
+| C20 | **B31** `per_bounds` did not reach the prior of `layers` (Sobol sampler had no bounds) and was dropped for `zone`/`root_map` (entry stored `(None, None)`, so the A2 clipping had nothing either): `_apply_scenario_bounds` post-pass, truncated quantile in the layered sampler, max-only bounds recognised, `sampling_dist_trunc` accepts open sides and `sd = 0`, per-entry bounds resolved in the loops | DONE |
+| C21 | **B24** localisation conventions in docstrings (`gaspari_cohn` support is 2 L, `L > 0` enforced; matrix shape and coordinates), `build_localization_matrix` vectorised with `cdist` (identical output, ~2x faster); `perturb_obs` also in `enkf_analysis_localized_with_inflation` (was silently ignored); tests `test_localisation.py`, `test_bounds_sampling.py` | DONE |
+| C22 | **B32** the combined `zone`+`root_map`+`layers` layout described in a code comment is not implemented (one control string per parameter) | TODO (decision: implement or delete the comment) |
+| C23 | **B22** zone-parameter pairing by name (`scenario.select_zone_parameters`: `ZROOT0` is zone 0 whatever its position; a zone without a parameter updates the states only instead of `IndexError`; positional rule kept for names without a numeric suffix) | DONE |
+| C24 | **B8** `read_mbeconv` failed on a file with one single time step (1-D `loadtxt` result -> "Shape of passed values is (19, 1)...": the cause of member 20's error in the crash log, a run stopped after step 1); empty file raises "no time step" | DONE |
+| C25 | whitespace-only cleanup (W291/W293/W292, safe fixes) delivered as a separate patch, AST identical in every file (`verify_ast_identical.py`); 50 findings inside string literals left on purpose | DONE (separate patch) |
+| C26 | **Split of `cathy_DA.py` (3993 -> 3384 lines), step 1**: `analysis.py` (config + filter registry), `param_tables.py`, `runtime.py`, `performance_tables.py`; pure move proven by AST equality of the 35 definitions, identity of every re-exported name, no undefined names, tests; `scenario.py` now imports `param_tables` | DONE (obs selection, ensemble I/O and the long `DA` methods TODO) |
+| C27 | **Nomenclature, `enkf.py`**: local variables of the 6 filters renamed to one vocabulary (documented in the module): 267 tokens, no argument/keyword touched; AST equal under the rename map, 17 filter/option cases bit-identical, `tests/test_enkf_golden.py` freezes the original outputs (mutation-tested) | DONE (public names such as the `Sakov` keyword TODO) |
+| C28 | **B4/B34** pairing of observations and model states read from the code: window `[t, t_next]`, analysis if `t in ENS_times` (exact), data of the k-th analysis chosen **by counter**, state read with `iloc[-1]` (= `t_next`). New pure `DA/time_alignment.py` (`check_time_alignment`) logged before the first window: skipped observations (final time, rounded floats) and the wrong pairing they cause, unsorted/duplicated times, the one-window offset. Log only; behaviour unchanged | DONE (detection; whether the data use the same convention needs the real data) |
+| C29 | **Performance**: `make_data_cov(..., diagonal=True)` stores R as its diagonal (466.6 MB -> 193 kB for 2415 data x 10 cycles); `DA._data_cov_of_cycle` rebuilds the dense matrix of the current cycle, so filters/diagnostics get the identical matrix (bit-identical, tested). Default dense. Run script passes `diagonal=True` and its `'$\Ohm$'` escape fixed | DONE (opt-in; diagonal-aware filters TODO) |
+| C30 | **Documentation D1-D6**: `doc/content/DA_guides/{index,perturbation,localisation,troubleshooting}.rst`, linked from `doc/index.rst`; builds with Sphinx `-W`; every `toml` example run through `perturbate` by `tests/test_docs_examples.py` | DONE (full site build needs the gallery) |
+| C31 | **B35/B36** 60 scenario layouts measured against the real `perturbate`+sampler, validator checked to agree both ways (`tests/test_scenario_layouts.py`, mutation-tested); `alpha_VG` (cannot be written to the members) and `VGP` (commented out) rejected up front; Feddes rules (ZROOT/PCREF one entry per row, PCWLT/OMGC/PZ scalar only, per_type scalar); `perturbate_dist` clear error for unknown `per_type` | DONE |
+| C32 | **B37** the ERT quadrupole mask broke the covariance-localisation matrix (columns = observations): `_mask_localisation_matrix`; `gaspari_cohn` weights clamped to [0, 1] | DONE |
+
+### Reality check: the pushed commit `43f7126` vs this log (found in session 3)
+Items marked DONE above in sessions 1-2 that are **absent from the code on GitHub** (checked with markers and counts):
+- R4g (reseeding) and R7 (`NotImplementedError` in `sensors_measures`): **re-applied in session 3** (`test_perturbate_seed.py`).
+- Invalid `\d` / `\psi` escapes in `perturbate.py` and `cathy_plots.py`: re-fixed (0 left in the package).
+- R1c print/console -> logger: present for `enkf`, `pf`, `localisation`, `cathy_outputs`, `cathy_inputs`, `cathyDA_plots`, `petro`, `sensitivity`; **absent** for `cathy_tools` (46 `print` + 49 `console`), `cathy_utils` (10), `meshtools` (38), `cathy_plots` (12). `perturbate.py` had 2 prints (converted in session 3). The `print2logger.py` tool is not in the repo.
+- R4h was checked and **is** present (the `cond` call is guarded by `isEnabledFor(DEBUG)`).
+**NEEDS-USER:** push the session-2 changes that were made locally, or ask for the print -> logger conversion of the four modules to be redone.
+
 ## How to resume
 1. Re-run: `python -W error::RuntimeWarning test_ERT_checks.py; python test_refactor_equivalence.py; python test_transforms.py; for f in *.py; do python -m py_compile $f; done`
 2. Pick the first non-DONE row in priority order, state which in one line, implement, add a test, update the table + Changelog.
@@ -82,3 +127,12 @@ DONE · TODO · NEEDS-SOURCE (file not provided) · NEEDS-USER (decision/data)
 - Session 2 (cont. 5): R8d bare excepts -> except Exception (19).
 
 - Session 2 (cont. 6): R4c, R4e, R4f decided/implemented.
+- Session 3: crash-report round (C1-C14 above): Sakov gain, bounds/clipping, perturb_obs (opt-in), ERT mask (flag only), scenario validator + describe_ensemble, B9/B14/B18/B19/B25-27 fixed, F821 partly. Found that the pushed code lacks several session-1/2 items (see Reality check); R4g, R7 and the escape fixes re-applied. 102+ synthetic tests; nothing run on the real case.
+- Session 3 (cont.): C15-C19 (rejection ledger, analysed-psi check, assimilation-time log, nodata not a zone, layered sampling fix, describe_perturbation). 115 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 2): C20-C22 (bounds reach every prior, localisation tests and docstrings, perturb_obs in the localised filter). 140 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 3): C23-C25 (zone pairing by name, one-step mbeconv, whitespace patch with AST proof). 150 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 4): C26 (first four modules split out of cathy_DA.py, AST-proven). 163 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 5): C27 (enkf.py vocabulary, proven identical, golden test). 172 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 6): C28 (observation/state time pairing documented and checked before the run). 181 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 7): C29 (diagonal storage of R). 186 synthetic tests; nothing run on the real case.
+- Session 3 (cont. 8): C30-C32 (guides, measured layouts, mask x localisation). 255 synthetic tests; nothing run on the real case.

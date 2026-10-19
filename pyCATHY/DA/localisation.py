@@ -137,11 +137,23 @@ def build_localization_EM_matrix(grid_coords, ncoils, L, with_coil_covariance=Tr
 
 
 def gaspari_cohn(r, L):
+    """Gaspari-Cohn (1999) localization weight, compactly supported.
+
+    Parameters
+    ----------
+    r : float or array
+        Distance, in the same unit as ``L``.
+    L : float
+        Length scale, strictly positive. **The weight is zero beyond ``2 * L``**: ``L``
+        is half of the support, not the cut-off radius. The weight is 1 at ``r = 0``,
+        decreases monotonically, and is continuous at ``r = L`` and ``r = 2 L``.
+
+    Returns
+    -------
+    array of weights in [0, 1], same shape as ``r``.
     """
-    Gaspari-Cohn localization function
-    r: distance (can be array)
-    L: localization radius
-    """
+    if not np.all(np.asarray(L) > 0):
+        raise ValueError(f"localisation length scale L must be > 0, got {L!r}")
     r = np.abs(r) / L
     w = np.zeros_like(r)
     
@@ -151,41 +163,42 @@ def gaspari_cohn(r, L):
     w[mask1] = (((-0.25 * r[mask1] + 0.5) * r[mask1] + 0.625) * r[mask1] - 5/3) * r[mask1]**2 + 1
     w[mask2] = ((((r[mask2] / 12 - 0.5) * r[mask2] + 0.625) * r[mask2] + 5/3) * r[mask2] - 5) * r[mask2] + 4 - 2/(3*r[mask2])
     w[r > 2] = 0
-    return w
+    # rounding of the polynomial can give -2.8e-16 at r = 2 L: the weights are in [0, 1]
+    return np.clip(w, 0.0, 1.0)
 
 
 def build_localization_matrix(obs_pos, grid_pos, L):
-    """
-    Build localization matrix using Gaspari-Cohn function.
-    
+    """Localization matrix between grid points and observations (Gaspari-Cohn).
+
     Parameters
     ----------
     obs_pos : np.array of shape (n_obs, 2)
-        Observation positions [[x1, y1], [x2, y2], ...]
+        Observation coordinates, one row per observation.
     grid_pos : np.array of shape (n_grid, 2)
-        Grid positions [[x1, y1], [x2, y2], ...]
+        State (grid) coordinates, one row per grid point.
     L : float
-        Localization radius
-        
+        Length scale; weights vanish beyond ``2 * L`` (see ``gaspari_cohn``).
+
     Returns
     -------
     np.array of shape (n_grid, n_obs)
-        Localization matrix
+        ``loc[i, j]`` weights the covariance of grid point ``i`` with observation ``j``.
+
+    Notes
+    -----
+    The distance is Euclidean, so the order of the two columns does not matter as long
+    as ``obs_pos`` and ``grid_pos`` use the same one (``grid3d['mesh3d_nodes']`` is
+    ordered ``[y, x, z]``). Pass only the columns that define the distance (add ``z``
+    for a depth-dependent localisation, for example for ERT).
     """
-    n_grid = grid_pos.shape[0]
-    n_obs = obs_pos.shape[0]
-    
-    loc_matrix = np.zeros((n_grid, n_obs))
-    
-    for i in range(n_grid):
-        # distances from grid point i to all observations
-        dx = obs_pos[:,0] - grid_pos[i,0]
-        dy = obs_pos[:,1] - grid_pos[i,1]
-        d = np.sqrt(dx**2 + dy**2)
-        
-        loc_matrix[i,:] = gaspari_cohn(d, L)
-    
-    return loc_matrix
+    obs_pos = np.atleast_2d(np.asarray(obs_pos, dtype=float))
+    grid_pos = np.atleast_2d(np.asarray(grid_pos, dtype=float))
+    if obs_pos.shape[1] != grid_pos.shape[1]:
+        raise ValueError(
+            f"obs_pos has {obs_pos.shape[1]} coordinate columns, grid_pos {grid_pos.shape[1]}"
+        )
+    # all distances at once (the former loop over grid points ran in Python)
+    return gaspari_cohn(cdist(grid_pos, obs_pos), L)
 
 
 

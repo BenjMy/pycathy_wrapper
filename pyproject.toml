@@ -1,3 +1,25 @@
 [build-system]
 requires = ["setuptools>=42", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["examples", "examplesTmp", "doc", "bugs", ".virtual_documents", ".ipynb_checkpoints"]
+
+[tool.ruff.lint]
+# Correctness first: pyflakes (undefined names, unused imports/variables), bugbear
+# (mutable defaults, bare except), pycodestyle errors, pytest style.
+select = ["F", "E", "W", "B", "PERF", "UP", "SIM", "N"]
+ignore = [
+    "E501",    # line length: not enforced yet (667 hits), the formatter will handle new code
+    "N803", "N806",  # legacy matrix names (A, H, K...) are the usual EnKF notation; see docs
+    "UP045", "UP006",  # typing modernisation: not worth the churn yet
+]
+
+[tool.ruff.lint.per-file-ignores]
+"pyCATHY/tests/*" = ["N", "B", "SIM"]
+# legacy modules: keep the lint green on new code only, tighten as they are refactored
+"pyCATHY/DA/perturbate.py" = ["B006", "E701", "E702", "SIM"]
+"pyCATHY/DA/pf.py" = ["E701", "E702", "SIM"]
+"pyCATHY/plotters/*" = ["E701", "E702", "SIM", "N"]
