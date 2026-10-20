@@ -333,23 +333,6 @@ _NEGATIVE_VALUES_ALLOWED = ("tensio",)
 
 
 
-# ---------------------------------------------------------------------------
-# PERFORMANCE: RMSE / NRMSE bookkeeping (pure functions, no `self`)
-# ---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # %%
 # DA class
 # ---------
@@ -1842,10 +1825,19 @@ class DA(CATHY):
         if df_mbeconv["CUM."].isnull().values.any():
             return "df_mbeconv['CUM.']" + str(df_mbeconv["CUM."].isnull().values.any())
         last_time = df_mbeconv["TIME"].iloc[-1]
-        if np.round(last_time) < (
-            np.round(self.parm["(TIMPRT(I),I=1,NPRT)"][-1]) - self.parm["DELTAT"]
-        ):
-            return "df_mbeconv['time']" + str(last_time)
+        t_end = np.round(self.parm["(TIMPRT(I),I=1,NPRT)"][-1])
+        if np.round(last_time) < (t_end - self.parm["DELTAT"]):
+            msg = (
+                f"CATHY stopped at t={last_time:g} s before the end of the window "
+                f"(last printing time {t_end:g} s)"
+            )
+            if last_time <= 10 * float(self.parm.get("DTMIN", 0) or 0) + 1e-12:
+                msg += (
+                    f"; the time step collapsed to DTMIN={self.parm.get('DTMIN')} right at the "
+                    "start: the analysed initial state/parameters are probably non-physical "
+                    "(check the ERT innovation / geometry reports)"
+                )
+            return "df_mbeconv['time']" + str(last_time) + " - " + msg
         return None
 
     def _record_rejection(self, stage: str, members, reason: str) -> None:

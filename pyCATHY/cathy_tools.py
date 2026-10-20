@@ -75,6 +75,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 import glob
 import pickle
+import io
 import re
 import shutil
 import subprocess
@@ -3129,7 +3130,10 @@ class CATHY:
         # check size of the heteregeneity
         # -----------------------------------
         if len(zone3d) == 0:
-            print("homogeneous soil")
+            # echo only once (DA calls update_soil for every ensemble member)
+            if not getattr(self, "_homogeneous_soil_echoed", False):
+                print("homogeneous soil")
+                self._homogeneous_soil_echoed = True
             # check size of soil properties map versus nb of zones/ nb of layers
             # --------------------------------------------------------------------
             if isinstance(SPP_map["PERMX"], float):
@@ -5465,13 +5469,23 @@ class CATHY:
         except:
             return obj
 
-    def load_backup(self, filename="",**kwargs):
+    def load_backup(self, filename="", prefer=(".pkl", ".parquet"), **kwargs):
+        """
+        Load the files written by `backup_results_DA`.
 
+        Each attribute is stored as `<project>_<name>.pkl` or `.parquet`.
+        Pass `<name>=False` to skip an attribute (e.g. `df_DA=False`).
+        `prefer` sets the extension order; use `prefer=(".parquet", ".pkl")`
+        for a much faster load of the large df_DA when both files exist.
+        If the preferred file cannot be read, the other one is tried.
 
+        Returns
+        -------
+        dict with the attributes that could be read.
+        """
         if not filename:
             filename = os.path.join(self.workdir, self.project_name, f"{self.project_name}")
 
-        # List of all names (attributes) to load
         all_names = [
             "meta_DA",
             "dict_parm_pert",
@@ -5484,60 +5498,38 @@ class CATHY:
         dict_backup = {}
 
         for name in all_names:
-            if name in kwargs.keys():
-                if kwargs[name] == False:
-                    continue
-            else:
-                file_base_path = f"{filename}_{name}"
+            if kwargs.get(name, True) is False:
+                continue
 
-                # Try to find the file with either .pkl or .parquet extensions
-                file_path = None
-                for ext in [".pkl", ".parquet"]:
-                    if os.path.exists(file_base_path + ext):
-                        file_path = file_base_path + ext
-                        break
+            file_base_path = f"{filename}_{name}"
+            candidates = [file_base_path + ext for ext in prefer
+                          if os.path.exists(file_base_path + ext)]
 
-                if file_path is None:
-                    print(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")
-                    continue
-                else:
-                    print(f"Reading File {name}: {file_base_path}")
+            if not candidates:
+                print(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")
+                continue
 
-
-                # Load based on file extension
-                if file_path.endswith(".pkl"):
-                    # Load from pickle file
-                    try:
+            for file_path in candidates:
+                try:
+                    if file_path.endswith(".pkl"):
                         with open(file_path, "rb") as f:
                             obj = pickle.load(f)
+                    else:
+                        obj = pd.read_parquet(file_path, engine="pyarrow")
+                        if "data_cov" in obj.columns:
+                            obj["data_cov"] = obj["data_cov"].apply(self.deserialize)
 
-                            # Deserialize DataFrame columns if needed
-                            if isinstance(obj, pd.DataFrame):
-                                if "data" in obj.columns:
-                                    obj["data"] = obj["data"].apply(lambda x: pd.read_json(x) if isinstance(x, str) else x)
+                    # observations are stored with the 'data' frames as JSON strings
+                    if isinstance(obj, pd.DataFrame) and "data" in obj.columns:
+                        obj["data"] = obj["data"].apply(
+                            lambda x: pd.read_json(io.StringIO(x)) if isinstance(x, str) else x
+                        )
 
-                            dict_backup[name] = obj
-                    except Exception as e:
-                        print(f"Error loading pickle file for {name}: {e}")
-
-                elif file_path.endswith(".parquet"):
-                    # Load from parquet file
-                    try:
-                        df = pd.read_parquet(file_path, engine="pyarrow")
-
-                        # Deserialize specific columns if necessary
-                        if "data_cov" in df.columns:
-                            df["data_cov"] = df["data_cov"].apply(self.deserialize)
-                        if "data" in df.columns:
-                            df["data"] = df["data"].apply(lambda x: pd.read_json(x) if isinstance(x, str) else x)
-
-                        dict_backup[name] = df
-                    except Exception as e:
-                        print(f"Error loading parquet file for {name}: {e}")
-
-                else:
-                    print(f"Unsupported file type for {name}: {file_path}")
-                    continue
+                    dict_backup[name] = obj
+                    print(f"Reading File {name}: {os.path.basename(file_path)}")
+                    break
+                except Exception as e:
+                    print(f"Error loading {os.path.basename(file_path)}: {type(e).__name__}: {e}")
 
         return dict_backup
 

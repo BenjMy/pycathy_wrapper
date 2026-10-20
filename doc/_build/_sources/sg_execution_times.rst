@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**14:58.969** total execution time for 22 files **from all galleries**:
+**14:58.263** total execution time for 22 files **from all galleries**:
 
 .. container::
 
@@ -62,17 +62,17 @@ Computation times
    * - :ref:`sphx_glr_content_DA_plot_1_DA_NoUni_ic.py` (``../examples/DA/plot_1_DA_NoUni_ic.py``)
      - 00:11.812
      - 0.0
-   * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``../examples/DA/plot_5_covariances.py``)
-     - 00:11.212
-     - 0.0
    * - :ref:`sphx_glr_content_SSHydro_plot_3a_create_soil_withzones.py` (``../examples/SSHydro/plot_3a_create_soil_withzones.py``)
      - 00:10.901
+     - 0.0
+   * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``../examples/DA/plot_5_covariances.py``)
+     - 00:10.483
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1a_perturbate.py` (``../examples/DA/plot_1a_perturbate.py``)
      - 00:01.871
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_4_EM_DA.py` (``../examples/DA/plot_4_EM_DA.py``)
-     - 00:00.505
+     - 00:00.527
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``../examples/DA/plot_2_prepare_SMC_obs4DA.py``)
      - 00:00.000

@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -397,26 +397,24 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.plotters</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_plots</span> <span class="k">as</span> <span class="n">pltCT</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="read_atmbc">
 <a class="viewcode-back" href="../../content/api/generated/importers.cathy_inputs.read_atmbc.html#importers.cathy_inputs.read_atmbc">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">read_atmbc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="p">[],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_atmbc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    read atmbc file</span>
 
-
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    atmbc dataframe.</span>
-
+<span class="sd">    atmbc dataframe, HSPATM, IETO</span>
 <span class="sd">    """</span>
 
-    <span class="c1"># filename = './input/atmbc'</span>
-    <span class="n">atmbc_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">atmbc_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-    <span class="c1"># lines = [ligne.strip() for ligne in lines] # avoid retour chariot</span>
-    <span class="n">atmbc_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">atmbc_file</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">atmbc_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
     <span class="c1"># read header flags</span>
     <span class="n">Line0_header</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]</span>
@@ -425,42 +423,25 @@ document.write(`
 
     <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">value</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">tstep_idx</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># loop over lines</span>
 
     <span class="k">if</span> <span class="n">HSPATM</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># homogeneous on all surf mesh nodes</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># test_char = re.search('[a-zA-Z]', ll)</span>
-                <span class="c1"># if test_char is not None:</span>
                 <span class="k">if</span> <span class="s2">"TIME"</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
-                    <span class="n">tstep_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                    <span class="n">splt</span> <span class="o">=</span> <span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                    <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splt</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
 
-                <span class="c1"># two cases (according to file formatting):</span>
-                <span class="c1"># numerical values + flag of value</span>
-                <span class="c1"># -----------------------------------------------------------------</span>
-                <span class="c1"># 1/ value (numeric) + 'VALUE'</span>
                 <span class="k">elif</span> <span class="s2">"VALUE"</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"ATMINP"</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
                     <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
 
                 <span class="k">elif</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                        <span class="k">if</span>  <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">pass</span>
-                        <span class="c1"># take care of the additionnal empty lines (retour chariot)</span>
-                        <span class="c1"># in the end of the file</span>
-                        <span class="c1"># pass</span>
+                    <span class="c1"># else: skip additional empty lines at the end of the file</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># only numerical values</span>
-                    <span class="c1"># 2/ value (numeric)</span>
-                    <span class="c1"># -----------------------------------------------------------------</span>
                     <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
@@ -468,46 +449,50 @@ document.write(`
                 <span class="s2">"Number of values does not match number of times (check flags TIME, VALUE)"</span>
             <span class="p">)</span>
 
-        <span class="n">d_atmbc</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">d_atmbc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">])</span>
         <span class="n">cols_atmbc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"time"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">]</span>
         <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d_atmbc</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols_atmbc</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># heterogeneous on all surf mesh nodes</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># test_char = re.search('[a-zA-Z]', ll)</span>
-                <span class="c1"># if test_char is not None:</span>
-                <span class="k">if</span> <span class="s2">"TIME"</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
-                    <span class="n">tstep_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                    <span class="n">splt</span> <span class="o">=</span> <span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                    <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splt</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="c1"># parse by "time" flag; values may be spread over any number of</span>
+        <span class="c1"># lines / columns (np.savetxt writes a 2D array as rows)</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">blocks</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ll</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">continue</span>  <span class="c1"># skip empty lines</span>
+            <span class="k">if</span> <span class="s2">"time"</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ll</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
 
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">{</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Inconsistent number of values per time step: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">sizes</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"nnod"</span> <span class="ow">in</span> <span class="n">grid</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">"nnod"</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"atmbc has </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> values per time step but grid['nnod'] = </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s1">'nnod'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
 
-        <span class="c1"># Example numerical data</span>
-        <span class="c1"># data_list = [1.0, 10, 15, 20, 1.5, 5, 8, 12, ...]  # Replace with your actual data</span>
-        <span class="c1"># n = int(grid["nnod"])  # Number of values for each time</span>
+        <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">"time"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="s2">"value"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">blocks</span><span class="p">)}</span>
+        <span class="p">)</span>
 
-        <span class="c1"># Create a list of dictionaries with 'time' and 'values'</span>
-        <span class="n">data_dicts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">"nnod"</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="nb">int</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">"nnod"</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-                <span class="c1"># print(i,j)</span>
-                <span class="c1"># print(t[i])</span>
-                <span class="n">data_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'time'</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">'value'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])})</span>
-        <span class="n">df_atmbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_dicts</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">IETO</span><span class="o">=</span><span class="n">IETO</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc_3d</span><span class="p">(</span><span class="n">df_atmbc</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"no vtk file found"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">HSPATM</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">IETO</span><span class="o">=</span><span class="n">IETO</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pltCT</span><span class="o">.</span><span class="n">show_atmbc_3d</span><span class="p">(</span><span class="n">df_atmbc</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"no vtk file found"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_atmbc</span><span class="p">,</span> <span class="n">HSPATM</span><span class="p">,</span> <span class="n">IETO</span></div>
+
 
 
 
@@ -818,12 +803,9 @@ document.write(`
             <span class="n">zone_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dz</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># zone numbers starts from 1</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">soil</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer_id</span><span class="p">):</span> <span class="c1">#*dem_parm['nzone']:</span>
-       <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">"Inconsistent number of zones/layers with respect to the number of soil lines: "</span> <span class="o">+</span>
+       <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Inconsistent number of zones/layers with respect to the number of soil lines: "</span> <span class="o">+</span>
             <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">soil</span><span class="p">))</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layer_id</span><span class="p">))</span> <span class="o">+</span>
-            <span class="s2">"!Revise dem_parm file!"</span>
-
-        <span class="p">)</span>
+            <span class="s2">"!Revise dem_parm file!"</span><span class="p">)</span>
 
     <span class="c1"># name_str = np.sort(name_str)</span>
     <span class="n">df_soil</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">soil</span><span class="p">,</span> <span class="p">[</span><span class="n">zone_id</span><span class="p">,</span>
@@ -1043,7 +1025,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

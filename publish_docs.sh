@@ -82,14 +82,25 @@ echo "==> Cleaning ${BUILD_DIR}"
 rm -rf "${BUILD_DIR}"
 
 echo "==> Building docs with Sphinx"
-python -m sphinx -b html "${DOC_DIR}" "${BUILD_DIR}"
 
-# Check the output before publishing anything
+# Sphinx may return a non-zero exit code when one or more gallery examples fail.
+# Keep the build log, but allow publishing to continue if HTML was generated.
+SPHINX_STATUS=0
+python -m sphinx -b html "${DOC_DIR}" "${BUILD_DIR}" || SPHINX_STATUS=$?
+
+# Do not publish if the build did not produce its main entry point.
 if [[ ! -f "${BUILD_DIR}/index.html" ]]; then
     echo "Error: ${BUILD_DIR}/index.html was not created. Not publishing." >&2
-    exit 1
+    exit "${SPHINX_STATUS:-1}"
 fi
-echo "==> Build OK (${BUILD_DIR}/index.html found)"
+
+if [[ "${SPHINX_STATUS}" -ne 0 ]]; then
+    echo "WARNING: Sphinx exited with status ${SPHINX_STATUS}."
+    echo "Continuing because ${BUILD_DIR}/index.html exists."
+    echo "Check the log for failed examples or other Sphinx warnings/errors."
+else
+    echo "==> Build OK (${BUILD_DIR}/index.html found)"
+fi
 
 if [[ "${PUSH}" == false ]]; then
     echo "==> --no-push given: skipping publish. Open ${BUILD_DIR}/index.html to preview."

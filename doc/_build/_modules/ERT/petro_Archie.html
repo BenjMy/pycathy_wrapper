@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -395,13 +395,15 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">rich.console</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rich</span><span class="w"> </span><span class="kn">import</span> <span class="nb">print</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="w"> </span><span class="kn">import</span> <span class="n">meshtools</span> <span class="k">as</span> <span class="n">mt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.ERT</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERT_checks</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.ERT</span><span class="w"> </span><span class="kn">import</span> <span class="n">simulate_ERT</span> <span class="k">as</span> <span class="n">simuERT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.importers</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_outputs</span> <span class="k">as</span> <span class="n">out_CT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.meshtools</span><span class="w"> </span><span class="kn">import</span> <span class="n">CATHY_2_pg</span><span class="p">,</span> <span class="n">CATHY_2_Resipy</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_sw_ens_i">
@@ -419,7 +421,6 @@ document.write(`
         <span class="k">if</span> <span class="s2">"time_ass"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">time_ass</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"time_ass"</span><span class="p">]</span>
             <span class="n">df_sw</span> <span class="o">=</span> <span class="n">df_sw</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">time_ass</span><span class="p">,</span> <span class="p">:]</span>
-            <span class="n">DA_cnb</span> <span class="o">=</span> <span class="n">time_ass</span>
         <span class="c1"># case of sequential assimilation</span>
         <span class="c1"># -------------------------------------------------------------------</span>
         <span class="k">else</span><span class="p">:</span>
@@ -447,7 +448,7 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ArchieParms2parse</span> <span class="o">=</span> <span class="n">ArchieParms</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="n">ArchieParms2parse</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Archie parameters: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">ArchieParms2parse</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ArchieParms2parse</span></div>
 
 
@@ -459,12 +460,40 @@ document.write(`
                 <span class="n">path_fwd_CATHY</span><span class="p">,</span> 
                 <span class="o">**</span><span class="n">kwargs</span>
                 <span class="p">):</span>
-    
-    <span class="k">if</span> <span class="s2">"DA_cnb"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">DA_cnb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"DA_cnb"</span><span class="p">]</span>
-    <span class="k">if</span> <span class="s2">"Ens_nbi"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">Ens_nbi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"Ens_nbi"</span><span class="p">]</span>
-        
+<span class="w">    </span><span class="sd">"""Convert the saturation of one ensemble member to nodal resistivity (Archie).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    project_name : str</span>
+<span class="sd">    ArchieParms : dict</span>
+<span class="sd">        Archie parameters; per-member lists are indexed with the member number.</span>
+<span class="sd">    porosity : array-like</span>
+<span class="sd">        Nodal porosity (one array per member, or a single array shared by all).</span>
+<span class="sd">    meta_dict : dict</span>
+<span class="sd">        ERT metadata (unused here, kept for API symmetry).</span>
+<span class="sd">    path_fwd_CATHY : str</span>
+<span class="sd">        Folder of the member simulation ("&lt;prefix&gt;_&lt;n&gt;").</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        ``DA_cnb`` (cycle number), ``Ens_nbi`` (0-based member index),</span>
+<span class="sd">        ``df_sw`` / ``time_ass`` (see `get_sw_ens_i`).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ER_converted_ti : np.ndarray</span>
+<span class="sd">        Resistivity (Ohm.m) at the mesh nodes.</span>
+<span class="sd">    df_Archie : pandas.DataFrame</span>
+<span class="sd">        time, ens_nbi, sw, ER_converted, porosity.</span>
+<span class="sd">    df_sw : np.ndarray</span>
+<span class="sd">        Saturation used.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># DA cycle number (None outside a DA run) and member index (0-based; by</span>
+    <span class="c1"># default read from the ensemble folder name "&lt;prefix&gt;_&lt;n&gt;")</span>
+    <span class="n">DA_cnb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DA_cnb"</span><span class="p">)</span>
+    <span class="n">Ens_nbi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Ens_nbi"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Ens_nbi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Ens_nbi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path_fwd_CATHY</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+
     <span class="c1"># Get sw array for a given ensemble</span>
     <span class="c1"># ------------------------------------</span>
     <span class="n">df_sw</span> <span class="o">=</span> <span class="n">get_sw_ens_i</span><span class="p">(</span><span class="n">path_fwd_CATHY</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -475,7 +504,6 @@ document.write(`
     
     <span class="c1"># Convert to SW to ER values</span>
     <span class="c1"># --------------------------------------------------------------------</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"****"</span><span class="p">)</span>
  
 
     
@@ -486,11 +514,16 @@ document.write(`
         
     <span class="c1"># print(f"porosity_ensi: {porosity_ensi}")</span>
     <span class="c1"># print(f"porosity_ensi: {porosity_ensi}")</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ens_nbi indices: </span><span class="si">{</span><span class="n">Ens_nbi</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Porosity shape: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">porosity</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Porosity statistics (selected indices): min=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">porosity</span><span class="p">[</span><span class="n">Ens_nbi</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, "</span>
-          <span class="sa">f</span><span class="s2">"mean=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">porosity</span><span class="p">[</span><span class="n">Ens_nbi</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, max=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">porosity</span><span class="p">[</span><span class="n">Ens_nbi</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"****"</span><span class="p">)</span>
+    <span class="c1"># (statistics over all the nodes: the former print indexed the nodal porosity</span>
+    <span class="c1"># with the member number, hence always showed a single value)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">"member </span><span class="si">%d</span><span class="s2">: porosity </span><span class="si">%s</span><span class="s2">, min=</span><span class="si">%.3f</span><span class="s2"> mean=</span><span class="si">%.3f</span><span class="s2"> max=</span><span class="si">%.3f</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">Ens_nbi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">porosity</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">porosity</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">porosity</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">porosity</span><span class="p">),</span>
+    <span class="p">)</span>
 
     
     <span class="n">ER_converted_ti</span> <span class="o">=</span> <span class="n">Archie_rho_DA</span><span class="p">(</span>
@@ -503,6 +536,13 @@ document.write(`
                                     <span class="n">pert_sigma_Archie</span><span class="o">=</span><span class="n">ArchieParms2parse</span><span class="p">[</span><span class="s2">"pert_sigma_Archie"</span><span class="p">],</span>
                                 <span class="p">)</span>
 
+    <span class="n">ERT_checks</span><span class="o">.</span><span class="n">check_archie_inputs</span><span class="p">(</span>
+        <span class="n">df_sw</span><span class="p">,</span>
+        <span class="n">porosity</span><span class="p">,</span>
+        <span class="n">ArchieParms2parse</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Archie member </span><span class="si">{</span><span class="n">Ens_nbi</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">warn</span><span class="p">()</span>
+
     <span class="c1"># build df Archie df</span>
     <span class="n">df_Archie</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"time"</span><span class="p">,</span> <span class="s2">"ens_nb"</span><span class="p">,</span> <span class="s2">"sw"</span><span class="p">,</span> <span class="s2">"ER_converted"</span><span class="p">])</span>
     <span class="n">df_Archie</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">DA_cnb</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ER_converted_ti</span><span class="p">))</span>
@@ -514,16 +554,6 @@ document.write(`
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">ER_converted_ti</span><span class="p">,</span> <span class="n">df_Archie</span><span class="p">,</span> <span class="n">df_sw</span>
 
-<span class="c1"># def ER0_to_EM_ECa_DA(ER_converted_ti,EM_meta_dict):</span>
-    
-<span class="c1">#     # ------------------------------------------------------------------------</span>
-<span class="c1">#     print('----fwd ER data-----')</span>
-<span class="c1">#     from emagpy import Problem</span>
-<span class="c1">#     k= Problem()</span>
-<span class="c1">#     k.createSurvey(EM_meta_dict['filename'])</span>
-    
-    
-    
 <span class="k">def</span><span class="w"> </span><span class="nf">SW_2_ERT_ERa_DA</span><span class="p">(</span>
                 <span class="n">project_name</span><span class="p">,</span> 
                 <span class="n">ArchieParms</span><span class="p">,</span> 
@@ -594,8 +624,7 @@ document.write(`
                                             <span class="n">porosity</span><span class="p">,</span> 
                                             <span class="n">ERT_meta_dict</span><span class="p">,</span> 
                                             <span class="n">path_fwd_CATHY</span><span class="p">,</span> 
-                                            <span class="n">Ens_nbi</span><span class="o">=</span><span class="n">Ens_nbi</span><span class="p">,</span>
-                                            <span class="o">**</span><span class="n">kwargs</span>
+                                            <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="s2">"Ens_nbi"</span><span class="p">:</span> <span class="n">Ens_nbi</span><span class="p">}</span>  <span class="c1"># no duplicate keyword</span>
                                             <span class="p">)</span>
     
     <span class="c1"># Read the input mesh using pyvista</span>
@@ -644,7 +673,7 @@ document.write(`
     <span class="n">res0</span> <span class="o">=</span> <span class="n">mesh_geophy_new_attr</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="n">scalar_new</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------------------</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'----fwd ER data-----'</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"forward ERT: member </span><span class="si">%d</span><span class="s2">, DA cycle </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">Ens_nbi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DA_cnb</span><span class="p">)</span>
     <span class="c1"># print(scalar_new)</span>
     <span class="c1"># print("Shape:", res0.shape)</span>
     <span class="c1"># print("ERT_meta_dict:", ERT_meta_dict)</span>
@@ -653,12 +682,6 @@ document.write(`
     <span class="c1"># res0 = list(res0)</span>
     <span class="c1"># res0 = [int(round(x)) for x in res0]</span>
 
-    <span class="c1"># --- Ens_nbi check ---</span>
-    <span class="k">if</span> <span class="s1">'Ens_nbi'</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ens_nbi: </span><span class="si">{</span><span class="n">Ens_nbi</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Ens_nbi variable not found in scope."</span><span class="p">)</span>
-    
     <span class="c1"># --- res0 checks ---</span>
     <span class="n">res0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     
@@ -672,9 +695,9 @@ document.write(`
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">poro_value</span> <span class="o">=</span> <span class="n">porosity</span><span class="p">[</span><span class="n">Ens_nbi</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">poro_value</span><span class="p">)):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">"Porosity contains NaN values!"</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"porosity of member </span><span class="si">%d</span><span class="s2"> contains NaN values"</span><span class="p">,</span> <span class="n">Ens_nbi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">"Ens_nbi index out of bounds for porosity."</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"member index </span><span class="si">%d</span><span class="s2"> out of bounds for porosity"</span><span class="p">,</span> <span class="n">Ens_nbi</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"res0 contains NaN values. Please clean or replace them before proceeding."</span><span class="p">)</span>
     
     <span class="c1"># Check for negative values</span>
@@ -713,10 +736,24 @@ document.write(`
     <span class="p">}</span>
     <span class="n">df_ERT_predicted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 
+    <span class="c1"># checks: forward run (raw data) and forward vs observed quadrupoles / k</span>
+    <span class="n">member</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"member </span><span class="si">{</span><span class="n">Ens_nbi</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">check_report</span> <span class="o">=</span> <span class="n">simuERT</span><span class="o">.</span><span class="n">get_last_check_report</span><span class="p">()</span> <span class="k">if</span> <span class="s2">"pygimli"</span> <span class="ow">in</span> <span class="n">ERT_meta_dict</span><span class="p">[</span><span class="s2">"data_format"</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">check_report</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_report</span> <span class="o">=</span> <span class="n">ERT_checks</span><span class="o">.</span><span class="n">check_forward_data</span><span class="p">(</span><span class="n">df_ERT_predicted</span><span class="p">,</span> <span class="n">res0</span><span class="o">=</span><span class="n">res0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"fwd ERT data"</span><span class="p">)</span>
+        <span class="n">check_report</span><span class="o">.</span><span class="n">warn</span><span class="p">()</span>
+    <span class="n">check_report</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"fwd ERT </span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">vs_obs</span> <span class="o">=</span> <span class="n">ERT_checks</span><span class="o">.</span><span class="n">check_forward_vs_obs</span><span class="p">(</span>
+        <span class="n">df_ERT_predicted</span><span class="p">,</span> <span class="n">ERT_meta_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"data"</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"fwd vs obs </span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s2">"</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">warn</span><span class="p">()</span>
+    <span class="n">df_ERT_predicted</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">"ert_check"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ERT_checks</span><span class="o">.</span><span class="n">ERTCheckReport</span><span class="p">(</span>
+        <span class="n">check_report</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">check_report</span><span class="o">.</span><span class="n">issues</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">check_report</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">vs_obs</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
 
     <span class="c1"># savefig = False</span>
     <span class="k">if</span> <span class="n">savefig</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">'backup figures'</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"saving ERT backup figures"</span><span class="p">)</span>
         <span class="n">plotter</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">off_screen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># notebook = True</span>
         <span class="n">plotter</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">mesh_CATHY_df</span><span class="p">,</span> <span class="n">name_new_attr_CATHY</span> <span class="o">=</span> <span class="n">mt</span><span class="o">.</span><span class="n">add_attribute_2mesh</span><span class="p">(</span>
@@ -775,7 +812,17 @@ document.write(`
         <span class="p">)</span>
 
         <span class="n">plotter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'end of ER prediction'</span><span class="p">)</span>
+    <span class="n">ert_check</span> <span class="o">=</span> <span class="n">df_ERT_predicted</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">"ert_check"</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">"ERT forward, member </span><span class="si">%d</span><span class="s2"> (DA cycle </span><span class="si">%s</span><span class="s2">): res0 </span><span class="si">%.1f</span><span class="s2">-</span><span class="si">%.1f</span><span class="s2"> Ohm.m -&gt; rhoa </span><span class="si">%.3g</span><span class="s2"> to </span><span class="si">%.3g</span><span class="s2"> Ohm.m | checks: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">Ens_nbi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">DA_cnb</span><span class="p">,</span>
+        <span class="n">res0</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+        <span class="n">res0</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+        <span class="n">ert_check</span><span class="p">[</span><span class="s2">"stats"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rhoa_min"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+        <span class="n">ert_check</span><span class="p">[</span><span class="s2">"stats"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rhoa_max"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+        <span class="n">ERT_checks</span><span class="o">.</span><span class="n">issues_summary</span><span class="p">(</span><span class="n">ert_check</span><span class="p">[</span><span class="s2">"issues"</span><span class="p">]),</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_ERT_predicted</span><span class="p">,</span> <span class="n">df_Archie</span><span class="p">,</span> <span class="n">mesh_CATHY_new_attr</span>
 
@@ -880,13 +927,13 @@ document.write(`
 <div class="viewcode-block" id="Archie_rho_DA">
 <a class="viewcode-back" href="../../content/api/generated/ERT.petro_Archie.Archie_rho_DA.html#ERT.petro_Archie.Archie_rho_DA">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Archie_rho_DA</span><span class="p">(</span>
-    <span class="n">rFluid_Archie</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">sat</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">porosity</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">a_Archie</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">],</span>
-    <span class="n">m_Archie</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">],</span>
-    <span class="n">n_Archie</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">],</span>
-    <span class="n">pert_sigma_Archie</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">rFluid_Archie</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">sat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">porosity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">a_Archie</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">m_Archie</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_Archie</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pert_sigma_Archie</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="c1">#     This should be moved to DA Class</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -915,13 +962,27 @@ document.write(`
 <span class="sd">    rho: Converted Apparent Electrical Resistivity (Ohm.m).</span>
 
 <span class="sd">    """</span>
-    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">console</span> <span class="o">=</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'------------- Archie transformation -------------'</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Shape Saturation predicted: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sat</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Shape Porosity nodes: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">porosity</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Shape rFluid_Archie: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">rFluid_Archie</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="c1"># mutable defaults are created per call (a shared default list is a latent bug)</span>
+    <span class="k">if</span> <span class="n">rFluid_Archie</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rFluid_Archie</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">sat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">porosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">porosity</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">a_Archie</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">a_Archie</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">m_Archie</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">m_Archie</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">n_Archie</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_Archie</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">pert_sigma_Archie</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pert_sigma_Archie</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">"Archie transformation: sat </span><span class="si">%s</span><span class="s2">, porosity </span><span class="si">%s</span><span class="s2">, rFluid </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sat</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">porosity</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">rFluid_Archie</span><span class="p">),</span>
+    <span class="p">)</span>
 
     <span class="c1"># Loop over soil type (as many soil type than a_Archie list length)</span>
     <span class="c1"># -----------------------------------------------</span>
@@ -935,57 +996,36 @@ document.write(`
                 <span class="o">*</span> <span class="n">sat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">n_Archie</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="p">)</span>
             <span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">rho</span>
-            
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'min RHO converted SW nodes: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'max RHO converted SW nodes: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-            <span class="c1"># print(f'nb of porosities in the soil: {len(np.unique(porosity))}')</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">porosity</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Check if it's array-like (has dimensions)</span>
-                <span class="n">porosity_flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">porosity</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'nb of porosities in the soil: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">porosity_flat</span><span class="p">))</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'nb of porosities in the soil: 1 (single value: </span><span class="si">{</span><span class="n">porosity</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
-                
-            <span class="k">try</span><span class="p">:</span> <span class="c1"># CASE WITH DATA ASSIMILATION</span>
-                <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sigma</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>  <span class="c1"># Loop over assimilation times</span>
-                    <span class="k">for</span> <span class="n">meas_nb</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sigma</span><span class="p">)[</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># Loop over mesh nodes</span>
-                        <span class="c1"># See eq. 4.4 thesis Isabelle p.97</span>
-                        <span class="c1"># ------------------------------------</span>
-                        <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                            <span class="mi">0</span><span class="p">,</span>
-                            <span class="p">(</span><span class="n">pert_sigma_Archie</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span><span class="p">[</span><span class="n">ti</span><span class="p">,</span> <span class="n">meas_nb</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
-                            <span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">[</span><span class="n">ti</span><span class="p">,</span> <span class="p">:]),</span>
-                        <span class="p">)</span>
-                    <span class="n">sigma</span><span class="p">[</span><span class="n">ti</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">[</span><span class="n">ti</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">noise</span>
-                    
-                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># to avoid displaying this for all the soil layers</span>
-                    <span class="n">console</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span>
-                        <span class="s2">":octopus: Parameter perturbation :octopus:"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span>
-                    <span class="p">)</span>
-                    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
-<span class="w">                        </span><span class="sd">"""</span>
-<span class="sd">                                    Archie perturbation for fwd model \n</span>
-<span class="sd">                                    Archie rFluid: {} \n</span>
-<span class="sd">                                    Archie pert_sigma: {}  \n</span>
-<span class="sd">                                    Nb of zones (need to check this): {}</span>
-<span class="sd">                                    """</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                            <span class="n">rFluid_Archie</span><span class="p">,</span> <span class="n">pert_sigma_Archie</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rFluid_Archie</span><span class="p">)</span>
-                        <span class="p">),</span>
-                        <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">console</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">'Add noise to Archie converted resistivity - See eq. 4.4 thesis Isabelle p.95'</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">meas_nb</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)):</span>  <span class="c1"># Loop over mesh nodes</span>
-                    <span class="c1"># See eq. 4.4 thesis Isabelle p.95</span>
-                    <span class="c1"># ------------------------------------</span>
-                    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                        <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">pert_sigma_Archie</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span><span class="p">[</span><span class="n">meas_nb</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span>
-                    <span class="p">)</span>  <span class="c1"># See eq. 4.4 thesis Isabelle p.95</span>
-                    <span class="n">sigma</span><span class="p">[</span><span class="n">meas_nb</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">[</span><span class="n">meas_nb</span><span class="p">]</span> <span class="o">+</span> <span class="n">noise</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'max res after Archie'</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">))</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">"Archie zone </span><span class="si">%d</span><span class="s2">: rho from sw nodes min=</span><span class="si">%.4g</span><span class="s2"> max=</span><span class="si">%.4g</span><span class="s2"> (</span><span class="si">%d</span><span class="s2"> distinct porosities)"</span><span class="p">,</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">rho</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rho</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">porosity</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Gaussian noise on the conductivity with a standard deviation proportional</span>
+            <span class="c1"># to the conductivity: std = pert_sigma_Archie[i] * sigma (relative noise, e.g.</span>
+            <span class="c1"># 0.05 = 5 %). It used to be (pert * sigma)**2 (a variance passed as numpy's</span>
+            <span class="c1"># scale, i.e. ~1e-6 relative noise for pert=0.05), and the DA branch applied</span>
+            <span class="c1"># the draw of the last node to the whole row. The perturbed conductivity is</span>
+            <span class="c1"># kept positive (&gt;= 1 % of the noise-free value).</span>
+            <span class="n">pert</span> <span class="o">=</span> <span class="n">pert_sigma_Archie</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># to avoid displaying this for all the soil layers</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">"Archie perturbation for fwd model: rFluid=</span><span class="si">%s</span><span class="s2">, pert_sigma=</span><span class="si">%s</span><span class="s2">, nb of zones=</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span>
+                    <span class="n">rFluid_Archie</span><span class="p">,</span>
+                    <span class="n">pert_sigma_Archie</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">rFluid_Archie</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">pert</span><span class="p">:</span>
+                <span class="n">sigma_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="c1"># same code for 1-D (one value per node) and 2-D (assimilation time x node)</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sigma_ref</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">pert</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sigma_ref</span><span class="p">)</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">sigma_ref</span> <span class="o">+</span> <span class="n">noise</span><span class="p">,</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">sigma_ref</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"max resistivity after Archie: </span><span class="si">%.4g</span><span class="s2">"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">))</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sigma</span></div>
 
 </pre></div>
@@ -1035,7 +1075,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

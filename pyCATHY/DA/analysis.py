@@ -193,6 +193,14 @@ class DAConfig:
         so that a crash does not lose the results of the finished cycles.
     verbose : bool
         Print the processor output of every member.
+    psi_bounds : (float or None, float or None) or None
+        ``(psi_min, psi_max)`` [m]: the ANALYSED pressure heads are clipped to this range
+        before they are written as the initial condition of the next window (None on one
+        side = no bound on that side; None = no clipping, default). Use e.g.
+        ``(-1e3, 0.0)`` for a purely unsaturated column: a large innovation can otherwise
+        push the whole ensemble to saturation (resistivity floor), which collapses the
+        spread and can make the next CATHY window fail (time step collapse). The number of
+        clipped values is logged at every cycle.
     """
 
     inflation: float = 1.0
@@ -207,8 +215,17 @@ class DAConfig:
     seed: Optional[int] = None
     save_results: bool = False
     verbose: bool = False
+    psi_bounds: Optional[tuple] = None
 
     def __post_init__(self):
+        if self.psi_bounds is not None:
+            if len(self.psi_bounds) != 2:
+                raise ValueError(
+                    f"psi_bounds must be (psi_min, psi_max), got {self.psi_bounds!r}."
+                )
+            lo, hi = self.psi_bounds
+            if lo is not None and hi is not None and lo > hi:
+                raise ValueError(f"psi_bounds: psi_min {lo} > psi_max {hi}.")
         if isinstance(self.localisation, (list, tuple)):
             if len(self.localisation) > 1:
                 raise ValueError(

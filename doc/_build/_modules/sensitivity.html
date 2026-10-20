@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -398,6 +398,9 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="c1"># from SALib.analyze import morris as ma</span>
 
 
@@ -478,8 +481,8 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">_update_CATHY_inputs</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
 
     <span class="n">PERMX</span> <span class="o">=</span> <span class="n">PERMY</span> <span class="o">=</span> <span class="n">PERMZ</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
     <span class="n">POROS</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -538,15 +541,13 @@ document.write(`
 <a class="viewcode-back" href="../content/api/generated/sensitivity.print_Morris_out.html#sensitivity.print_Morris_out">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_Morris_out</span><span class="p">(</span><span class="n">morris_problem</span><span class="p">):</span>
 
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="s2">"</span><span class="si">{:20s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="si">{:20s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2"> </span><span class="si">{:&gt;7s}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">"Name"</span><span class="p">,</span> <span class="s2">"mean(EE)"</span><span class="p">,</span> <span class="s2">"mean(|EE|)"</span><span class="p">,</span> <span class="s2">"std(EE)"</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
+        <span class="p">))</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
         <span class="n">morris_problem</span><span class="p">[</span><span class="s2">"names"</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">"mu"</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">"mu_star"</span><span class="p">],</span> <span class="n">Si</span><span class="p">[</span><span class="s2">"sigma"</span><span class="p">]</span>
     <span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{:20s}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">mean</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="si">{:20s}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2"> </span><span class="si">{:=7.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">mean</span><span class="p">))</span>
 
     <span class="k">pass</span></div>
 
@@ -625,7 +626,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

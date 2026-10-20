@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:54.019** total execution time for 7 files **from content/DA**:
+**03:53.313** total execution time for 7 files **from content/DA**:
 
 .. container::
 
@@ -42,13 +42,13 @@ Computation times
      - 00:11.812
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_5_covariances.py` (``plot_5_covariances.py``)
-     - 00:11.212
+     - 00:10.483
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_1a_perturbate.py` (``plot_1a_perturbate.py``)
      - 00:01.871
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_4_EM_DA.py` (``plot_4_EM_DA.py``)
-     - 00:00.505
+     - 00:00.527
      - 0.0
    * - :ref:`sphx_glr_content_DA_plot_2_prepare_SMC_obs4DA.py` (``plot_2_prepare_SMC_obs4DA.py``)
      - 00:00.000

@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -442,6 +442,23 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.cathy_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">dictObs_2pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.config_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">VersionConfigManager</span>
 
+<span class="c1"># Fortran sources of the CATHY processor, fetched on first use of a project.</span>
+<span class="c1"># Pinned to a commit so that two projects created on different days run the same</span>
+<span class="c1"># code (the `main` branch moves). To upgrade: pick a new commit of</span>
+<span class="c1"># https://github.com/CATHY-Org/CATHY_src_org, check the results again, change the hash.</span>
+<span class="n">CATHY_SRC_URL</span> <span class="o">=</span> <span class="s2">"https://github.com/CATHY-Org/CATHY_src_org.git"</span>
+<span class="n">CATHY_SRC_COMMIT</span> <span class="o">=</span> <span class="s2">"ef54607df776dbb6f7d974329e5f72a276403d5c"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_clone_cathy_src</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">CATHY_SRC_URL</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="n">CATHY_SRC_COMMIT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fetch exactly ``commit`` of the CATHY sources into ``dest`` (shallow, no history)."""</span>
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">Repo</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
+    <span class="n">repo</span><span class="o">.</span><span class="n">create_remote</span><span class="p">(</span><span class="s2">"origin"</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+    <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">"--depth"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"origin"</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
+    <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="s2">"FETCH_HEAD"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">repo</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">hexsha</span>
+
+
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
 
@@ -502,7 +519,16 @@ document.write(`
 <span class="sd">    verbose : bool</span>
 <span class="sd">        Whether or not to print status messages to stderr.</span>
 <span class="sd">    """</span>
-    <span class="k">return</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># ``quiet=True`` also disables recording in rich, so a non-verbose console</span>
+    <span class="c1"># writes to os.devnull instead: nothing is displayed but everything printed</span>
+    <span class="c1"># is still recorded and can be saved with ``CATHY.save_console_log``.</span>
+    <span class="k">return</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span>
+        <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">),</span>
+        <span class="n">force_jupyter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="c1"># -----------------------------------------------------------------------------</span>
@@ -636,10 +662,8 @@ document.write(`
                     <span class="c1">#    branch="master",</span>
                     <span class="c1">#)</span>
 
-                    <span class="n">Repo</span><span class="o">.</span><span class="n">clone_from</span><span class="p">(</span>
-                        <span class="s2">"https://github.com/CATHY-Org/CATHY_src_org.git"</span><span class="p">,</span>
-                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">"tmp_src"</span><span class="p">),</span>
-                        <span class="n">branch</span><span class="o">=</span><span class="s2">"main"</span><span class="p">,</span>
+                    <span class="n">_clone_cathy_src</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">"tmp_src"</span><span class="p">)</span>
                     <span class="p">)</span>
 
 
@@ -667,10 +691,9 @@ document.write(`
                             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span>
                         <span class="p">)</span>
 
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">"no internet connection to fetch the files"</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"could not fetch the CATHY source files (</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-                    <span class="k">pass</span>
 
             <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="s2">"G. Manoli"</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">"fetch cathy G. Manoli src files"</span><span class="p">)</span>
@@ -1096,6 +1119,16 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":athletic_shoe: [b]Run processor[/b]"</span><span class="p">)</span>
             <span class="n">callexe</span> <span class="o">=</span> <span class="s2">"./"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor_name</span>
 
+            <span class="c1"># A mesh-building run (IPRT1=3) must never be followed by reading</span>
+            <span class="c1"># a leftover output/grid3d (e.g. the 20x20 one shipped with the</span>
+            <span class="c1"># project template). Remove it first so that, if the processor</span>
+            <span class="c1"># fails, the failure is visible instead of silently reusing it.</span>
+            <span class="n">_grid_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">,</span> <span class="s2">"grid3d"</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"IPRT1"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">_grid_file</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_grid_file</span><span class="p">)</span>
+
             <span class="c1"># case of simple simulation</span>
             <span class="c1"># ----------------------------------------------------------------</span>
             <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
@@ -1151,9 +1184,27 @@ document.write(`
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="c1"># stdout, stderr = p.communicate()  # This will block until the process finishes</span>
                 <span class="c1"># print(result)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-                <span class="c1"># print(p.stderr)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">))</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">))</span>
+
+            <span class="c1"># Fortran runtime errors (e.g. "End of file", array overflows)</span>
+            <span class="c1"># go to stderr with a non-zero exit status. For the mesh-building</span>
+            <span class="c1"># run, fail loudly with the real message instead of continuing.</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">_err</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">)[</span><span class="o">-</span><span class="mi">2000</span><span class="p">:]</span>
+                <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"IPRT1"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">"CATHY processor failed while building the mesh "</span>
+                        <span class="s2">"(IPRT1=3). Check that DEM, root_map, soil and "</span>
+                        <span class="s2">"dem_parameters are consistent with CATHY.H.</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">_err</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s2">"CATHY processor exited with code </span><span class="si">{}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">p</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">_err</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
 
 
             <span class="k">try</span><span class="p">:</span>
@@ -1186,6 +1237,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">run_processor</span><span class="p">(</span><span class="n">IPRT1</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_grid3d_read_retried</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_grid3d_vs_dem</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"IPRT1"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">))</span>
 
             <span class="c1"># if not "nnod3" in self.grid3d.keys():</span>
             <span class="c1">#     self.run_processor(IPRT1=3)</span>
@@ -1197,6 +1249,49 @@ document.write(`
             <span class="c1"># self.total_computation_time = t1 - t0</span>
 
         <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_grid3d_vs_dem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Verify that the grid3d just read from output/ matches the DEM / layer</span>
+<span class="sd">        definition held in memory (hapin, dem_parameters). A mismatch means</span>
+<span class="sd">        output/grid3d is stale or the preprocessor used another DEM.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hapin</span><span class="p">[</span><span class="s2">"M"</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hapin</span><span class="p">[</span><span class="s2">"N"</span><span class="p">])</span>
+            <span class="n">nstr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dem_parameters</span><span class="p">[</span><span class="s2">"nstr"</span><span class="p">])</span>
+            <span class="n">nnod</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid3d</span><span class="p">[</span><span class="s2">"nnod"</span><span class="p">])</span>
+            <span class="n">nnod3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid3d</span><span class="p">[</span><span class="s2">"nnod3"</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">return</span>  <span class="c1"># project loaded from disk without in-memory DEM info</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dem_parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"factor"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="k">return</span>  <span class="c1"># coarsened mesh: node count legitimately differs from the DEM</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="n">exp_nnod</span> <span class="o">=</span> <span class="p">(</span><span class="n">nrow</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ncol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Masked DEMs (-9999 outside the catchment): CATHY only meshes the</span>
+        <span class="c1"># corner nodes of valid cells, so the full (nrow+1)*(ncol+1) grid</span>
+        <span class="c1"># over-counts. Count the nodes touched by at least one valid cell.</span>
+        <span class="n">dem</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"DEM"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dem</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">):</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dem</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">touched</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrow</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">dj</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">touched</span><span class="p">[</span><span class="n">di</span><span class="p">:</span><span class="n">di</span> <span class="o">+</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">dj</span><span class="p">:</span><span class="n">dj</span> <span class="o">+</span> <span class="n">ncol</span><span class="p">]</span> <span class="o">|=</span> <span class="n">valid</span>
+                <span class="n">exp_nnod</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">touched</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        <span class="n">exp_nnod3</span> <span class="o">=</span> <span class="n">exp_nnod</span> <span class="o">*</span> <span class="p">(</span><span class="n">nstr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nnod</span> <span class="o">!=</span> <span class="n">exp_nnod</span> <span class="ow">or</span> <span class="n">nnod3</span> <span class="o">!=</span> <span class="n">exp_nnod3</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">"grid3d does not match the DEM: found nnod=</span><span class="si">{}</span><span class="s2">, nnod3=</span><span class="si">{}</span><span class="s2"> but a "</span>
+                <span class="s2">"</span><span class="si">{}</span><span class="s2">x</span><span class="si">{}</span><span class="s2"> DEM with nstr=</span><span class="si">{}</span><span class="s2"> needs nnod=</span><span class="si">{}</span><span class="s2">, nnod3=</span><span class="si">{}</span><span class="s2">. "</span>
+                <span class="s2">"output/grid3d is stale, or the preprocessor / processor "</span>
+                <span class="s2">"used different inputs (root_map, hap.in, CATHY.H)."</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nnod</span><span class="p">,</span> <span class="n">nnod3</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nstr</span><span class="p">,</span> <span class="n">exp_nnod</span><span class="p">,</span> <span class="n">exp_nnod3</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">create_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dirname</span><span class="o">=</span><span class="s2">"output"</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1640,6 +1735,7 @@ document.write(`
 
         <span class="c1"># print("update hap.in")</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update hap.in file[/b]"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_dirty</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># DEM / layers / spacing may change -&gt; mesh must be rebuilt</span>
 
         <span class="n">structural_parameter</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s2">"delta_x"</span><span class="p">,</span>
@@ -1771,6 +1867,17 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update dtm_13 file[/b]"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_dem</span><span class="p">(</span><span class="n">DEM</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_zone</span><span class="p">()</span>
+
+            <span class="c1"># The project template ships a 20x20 root_map. If it is left as is,</span>
+            <span class="c1"># the processor cannot build the mesh for a different DEM size.</span>
+            <span class="c1"># Write a placeholder matching the DEM, WITHOUT setting</span>
+            <span class="c1"># self.veg_map (so MAXVEG is not made "sticky" at 1; a real map</span>
+            <span class="c1"># given later through update_veg_map() still takes over).</span>
+            <span class="n">_vm</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"veg_map"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_vm</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">_vm</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">DEM</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_root_map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">DEM</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_dirty</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">"prepro/dtm_13.val"</span><span class="p">),</span> <span class="s2">"w+"</span>
@@ -2058,6 +2165,33 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">update_parm</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_cathyH</span><span class="p">(</span><span class="n">MAXZON</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">zone</span><span class="p">)))</span>
 
+    <span class="c1"># %% CONSOLE LOG</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_console_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">styles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Save everything printed through ``self.console`` (rich recording).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str, optional</span>
+<span class="sd">            Output path. Default: ``&lt;workdir&gt;/&lt;project_name&gt;/console_log.txt``.</span>
+<span class="sd">        clear : bool, optional</span>
+<span class="sd">            Empty the recording buffer after saving. The default (False) keeps</span>
+<span class="sd">            accumulating, so the file can be rewritten at any time with the</span>
+<span class="sd">            full history.</span>
+<span class="sd">        styles : bool, optional</span>
+<span class="sd">            Keep ANSI styles in the file. Default is plain text.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Path of the written file.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span> <span class="s2">"console_log.txt"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">save_text</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="n">clear</span><span class="p">,</span> <span class="n">styles</span><span class="o">=</span><span class="n">styles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span>
+
     <span class="c1"># %% INPUT FILES</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_parm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -2068,7 +2202,9 @@ document.write(`
 <span class="sd">            - Updated CATHYH file (NPRT and NUMVP).</span>
 <span class="sd">        """</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update parm file [/b]"</span><span class="p">)</span>
+        <span class="n">shellprint_update</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"shellprint_update"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shellprint_update</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update parm file [/b]"</span><span class="p">)</span>
         <span class="n">warnings_parm</span> <span class="o">=</span> <span class="p">[]</span>
 
 
@@ -2349,10 +2485,7 @@ document.write(`
 
 <span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="s2">"shellprint_update"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shellprint_update"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"shellprint_update"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update ic[/b]"</span><span class="p">)</span>
 
         <span class="c1">#  check value of WTPOSITION</span>
@@ -2394,20 +2527,18 @@ document.write(`
                 <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_DA_cycle</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dst_dir</span><span class="p">)</span>
 
+        <span class="n">pressure_head_for_mesh</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">icfile</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="n">INDP</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">icfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">INDP</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">IPOND</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"INDP </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
                 <span class="k">if</span> <span class="s2">"pressure_head_ini"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">icfile</span><span class="p">,</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"pressure_head_ini"</span><span class="p">]],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">"</span><span class="si">%1.3e</span><span class="s2">"</span><span class="p">)</span>
-
-                    <span class="c1"># try:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">map_prop2mesh</span><span class="p">({</span><span class="s2">"ic"</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"pressure_head_ini"</span><span class="p">]})</span>
-                    <span class="c1"># except:</span>
-                    <span class="c1">#     print('Impossible to map pressure head to mesh')</span>
-
+                    <span class="n">pressure_head_for_mesh</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"pressure_head_ini"</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Missing initial pressure value"</span><span class="p">)</span>
+
             <span class="k">elif</span> <span class="n">INDP</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">pressure_head_ini</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"pressure_head_ini"</span><span class="p">]</span>
                 <span class="n">icfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
@@ -2421,9 +2552,9 @@ document.write(`
                     <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">icfile</span><span class="p">,</span> <span class="n">pressure_head_ini</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">"</span><span class="si">%1.3e</span><span class="s2">"</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">map_prop2mesh</span><span class="p">({</span><span class="s2">"ic"</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"pressure_head_ini"</span><span class="p">]})</span>
+                <span class="n">pressure_head_for_mesh</span> <span class="o">=</span> <span class="n">pressure_head_ini</span>
 
-            <span class="k">elif</span> <span class="n">INDP</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">INDP</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">icfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">INDP</span><span class="p">)</span>
                     <span class="o">+</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span>
@@ -2448,7 +2579,14 @@ document.write(`
                 <span class="p">)</span>
                 <span class="n">icfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WTPOSITION</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"WTPOSITION"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="n">icfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># The file is now closed and flushed to disk, so it is safe to run</span>
+        <span class="c1"># the preprocessor/processor (called inside map_prop2mesh), which</span>
+        <span class="c1"># read the ic file.</span>
+        <span class="k">if</span> <span class="n">pressure_head_for_mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">map_prop2mesh</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">"ic"</span><span class="p">:</span> <span class="n">pressure_head_for_mesh</span><span class="p">},</span>
+                <span class="n">shellprint_update</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"shellprint_update"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">)</span>
 
         <span class="k">pass</span>
 
@@ -2519,10 +2657,7 @@ document.write(`
 
 <span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="s2">"shellprint_update"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shellprint_update"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"shellprint_update"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update atmbc[/b]"</span><span class="p">)</span>
 
         <span class="c1"># type(netValue)</span>
@@ -2595,7 +2730,12 @@ document.write(`
 
         <span class="n">atmbcfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_parm</span><span class="p">(</span><span class="n">TIMPRTi</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">NPRT</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">TMAX</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">time</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_parm</span><span class="p">(</span>
+            <span class="n">TIMPRTi</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
+            <span class="n">NPRT</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">TMAX</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">time</span><span class="p">)),</span>
+            <span class="n">shellprint_update</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"shellprint_update"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="c1"># self.update_parm(TIMPRTi=time, NPRT=len(time), TMAX=max(time))</span>
 
         <span class="c1"># don't need to update if sequential DA as the cathy.exe is already created</span>
@@ -3008,6 +3148,234 @@ document.write(`
 
         <span class="k">pass</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_outlet_side</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outlet_side</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Identify which lateral mesh side is topographically the outlet:</span>
+<span class="sd">        the side whose *top-surface* nodes have the lowest mean</span>
+<span class="sd">        elevation, using ``self.mesh_bound_cond_df`` (columns</span>
+<span class="sd">        xmin_bound/xmax_bound/ymin_bound/ymax_bound, top_bound, z).</span>
+
+<span class="sd">        Requires ``create_mesh_bounds_df`` to have been called first.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outlet_side : str, optional</span>
+<span class="sd">            If given ("xmin_bound"/"xmax_bound"/"ymin_bound"/"ymax_bound"),</span>
+<span class="sd">            skip auto-detection and return this side as-is.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Name of the resolved side column.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">outlet_side</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">outlet_side</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_bound_cond_df</span>
+        <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="s2">"time"</span> <span class="ow">in</span> <span class="n">df</span> <span class="k">else</span> <span class="n">df</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="n">df0</span><span class="p">[</span><span class="s2">"top_bound"</span><span class="p">]]</span>
+
+        <span class="n">side_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"xmin_bound"</span><span class="p">,</span> <span class="s2">"xmax_bound"</span><span class="p">,</span> <span class="s2">"ymin_bound"</span><span class="p">,</span> <span class="s2">"ymax_bound"</span><span class="p">]</span>
+        <span class="n">mean_z</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="n">top</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="s2">"z"</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">side_cols</span> <span class="k">if</span> <span class="n">top</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">any</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mean_z</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">"No lateral side flagged in mesh_bound_cond_df - check "</span>
+                <span class="s2">"create_mesh_bounds_df ran correctly on this mesh."</span>
+            <span class="p">)</span>
+        <span class="n">detected</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">mean_z</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">mean_z</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+        <span class="n">others</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mean_z</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">detected</span><span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Auto-detected outlet side: </span><span class="si">{</span><span class="n">detected</span><span class="si">}</span><span class="s2"> "</span>
+              <span class="sa">f</span><span class="s2">"(mean elev </span><span class="si">{</span><span class="n">mean_z</span><span class="p">[</span><span class="n">detected</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> m; other sides: </span><span class="si">{</span><span class="n">others</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">detected</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_outlet_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Single lowest-elevation *top-surface* node id — useful as a</span>
+<span class="sd">        diagnostic point (e.g. tracking psi across a spin-up) independent</span>
+<span class="sd">        of which whole mesh side a lateral Neumann BC is applied to,</span>
+<span class="sd">        since the Neumann mechanism can only target a full side, not an</span>
+<span class="sd">        arbitrary interior node.</span>
+
+<span class="sd">        Requires ``create_mesh_bounds_df`` to have been called first.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            id_node of the lowest top-surface node.</span>
+<span class="sd">        """</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_bound_cond_df</span>
+        <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="s2">"time"</span> <span class="ow">in</span> <span class="n">df</span> <span class="k">else</span> <span class="n">df</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="n">df0</span><span class="p">[</span><span class="s2">"top_bound"</span><span class="p">]]</span>
+        <span class="n">outlet_row</span> <span class="o">=</span> <span class="n">top</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">top</span><span class="p">[</span><span class="s2">"z"</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">outlet_row</span><span class="p">[</span><span class="s2">"id_node"</span><span class="p">])</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tributary_widths</span><span class="p">(</span><span class="n">coords_sorted</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Tributary width per point along a 1-D line of coordinates, using</span>
+<span class="sd">        the standard "half distance to each neighbour" rule (Fig. 5.1 in</span>
+<span class="sd">        Primer_CATHY.pdf, applied along a mesh edge instead of over a</span>
+<span class="sd">        horizontal surface). Widths sum exactly to</span>
+<span class="sd">        (coords[-1] - coords[0]).</span>
+<span class="sd">        """</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords_sorted</span><span class="p">)</span>
+        <span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+        <span class="n">widths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords_sorted</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">widths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">widths</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords_sorted</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="n">coords_sorted</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">widths</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_nodal_face_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Per-node lateral face area [m^2] for every node on mesh side</span>
+<span class="sd">        ``side`` (one of xmin_bound/xmax_bound/ymin_bound/ymax_bound).</span>
+
+<span class="sd">        Why this is needed: CATHY's ``nansfneubc`` file requires a</span>
+<span class="sd">        volumetric flow rate Q [L^3/T] at each node, *unlike* ``atmbc``</span>
+<span class="sd">        which takes a flux density [L/T] (Primer_CATHY.pdf, Ch. 5).</span>
+<span class="sd">        There is no built-in nodal-area accessor for lateral mesh sides</span>
+<span class="sd">        (fort.111/ARENOD only covers the horizontal top surface used by</span>
+<span class="sd">        atmbc), so this approximates it directly from mesh node</span>
+<span class="sd">        coordinates: nodes on the side form a vertical "wall" made of</span>
+<span class="sd">        columns (one column per along-boundary position, one node per</span>
+<span class="sd">        vertical mesh layer within a column); each node's area is its</span>
+<span class="sd">        column's tributary width along the boundary times its own</span>
+<span class="sd">        vertical tributary height within that column. This reproduces</span>
+<span class="sd">        the true per-node area exactly for a structured extruded mesh,</span>
+<span class="sd">        and is a much closer approximation on an irregular sloped</span>
+<span class="sd">        boundary than assigning every node the side's *average* area</span>
+<span class="sd">        (see ``compute_lateral_face_area`` for the total/average</span>
+<span class="sd">        version, still provided for convenience/back-compat).</span>
+
+<span class="sd">        Requires ``create_mesh_bounds_df`` to have been called first.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        side : str</span>
+<span class="sd">            One of "xmin_bound", "xmax_bound", "ymin_bound", "ymax_bound".</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[int, float]</span>
+<span class="sd">            Maps id_node -&gt; face area [m^2] for every node on that side.</span>
+<span class="sd">        """</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_bound_cond_df</span>
+        <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="s2">"time"</span> <span class="ow">in</span> <span class="n">df</span> <span class="k">else</span> <span class="n">df</span>
+        <span class="n">side_df</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="n">df0</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"xmin_bound"</span><span class="p">,</span> <span class="s2">"xmax_bound"</span><span class="p">):</span>
+            <span class="n">along_col</span> <span class="o">=</span> <span class="s2">"y"</span>
+        <span class="k">elif</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"ymin_bound"</span><span class="p">,</span> <span class="s2">"ymax_bound"</span><span class="p">):</span>
+            <span class="n">along_col</span> <span class="o">=</span> <span class="s2">"x"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unrecognised side '</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">side_df</span><span class="p">[</span><span class="n">along_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="n">unique_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+        <span class="n">widths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tributary_widths</span><span class="p">(</span><span class="n">unique_coords</span><span class="p">)</span>
+        <span class="n">width_by_coord</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">unique_coords</span><span class="p">,</span> <span class="n">widths</span><span class="p">))</span>
+
+        <span class="n">areas</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">unique_coords</span><span class="p">:</span>
+            <span class="n">col_nodes</span> <span class="o">=</span> <span class="n">side_df</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+                <span class="n">side_df</span><span class="p">[</span><span class="n">along_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">coord</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span>
+            <span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"z"</span><span class="p">)</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">col_nodes</span><span class="p">[</span><span class="s2">"z"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">node_ids</span> <span class="o">=</span> <span class="n">col_nodes</span><span class="p">[</span><span class="s2">"id_node"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">col_width</span> <span class="o">=</span> <span class="n">width_by_coord</span><span class="p">[</span><span class="n">coord</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># degenerate single-layer column</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">heights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tributary_widths</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">nid</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">node_ids</span><span class="p">,</span> <span class="n">heights</span><span class="p">):</span>
+                <span class="n">areas</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">nid</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">col_width</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">areas</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_lateral_face_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Total lateral face area [m^2] of mesh side ``side`` (sum of</span>
+<span class="sd">        ``compute_nodal_face_areas(side)``). Kept for convenience when</span>
+<span class="sd">        only the total (or the side-wide average) is needed - e.g. to</span>
+<span class="sd">        sanity-print an outflow rate - rather than a full per-node dict.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        side : str</span>
+<span class="sd">            One of "xmin_bound", "xmax_bound", "ymin_bound", "ymax_bound".</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Total face area [m^2] of that side.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_nodal_face_areas</span><span class="p">(</span><span class="n">side</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_bottom_face_area</span><span class="p">(</span><span class="n">res_x</span><span class="p">,</span> <span class="n">res_y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Horizontal nodal area [m^2] for a bottom-layer mesh node.</span>
+
+<span class="sd">        Unlike the lateral outlet side (an irregular vertical "wall"</span>
+<span class="sd">        needing per-column tributary integration), the mesh bottom</span>
+<span class="sd">        mirrors the DEM footprint exactly: one bottom node per DEM</span>
+<span class="sd">        pixel/mesh column. So the nodal area is simply the DEM pixel</span>
+<span class="sd">        area ``|res_x * res_y|`` - exact per node, not an average.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">res_x</span> <span class="o">*</span> <span class="n">res_y</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_neumann_flux_vs_ks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux_m_s</span><span class="p">,</span> <span class="n">zone_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Warn (does not raise) if a prescribed Neumann flux density</span>
+<span class="sd">        [m/s] exceeds the saturated hydraulic conductivity (Ks,</span>
+<span class="sd">        PERMX) of the relevant soil zone(s) - a flux larger than Ks</span>
+<span class="sd">        is drawing water out faster than the soil can physically</span>
+<span class="sd">        transmit it, which tends to show up as convergence trouble or</span>
+<span class="sd">        unphysical suction at the boundary nodes.</span>
+
+<span class="sd">        No-ops quietly if soil parameters haven't been set yet</span>
+<span class="sd">        (``self.soil_SPP`` missing) rather than raising, since BCs are</span>
+<span class="sd">        often configured before or independently of soil setup.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        flux_m_s : float</span>
+<span class="sd">            The prescribed flux density [m/s] (sign ignored - only</span>
+<span class="sd">            magnitude is compared against Ks).</span>
+<span class="sd">        zone_ids : iterable[int], optional</span>
+<span class="sd">            Soil zone id(s) touching the BC (1-based, matching</span>
+<span class="sd">            SPP_map/PERMX indexing). If None, checks against every</span>
+<span class="sd">            zone's PERMX and warns using the *minimum* Ks found (the</span>
+<span class="sd">            most conservative/likely-to-trigger case).</span>
+<span class="sd">        label : str, optional</span>
+<span class="sd">            Short description used in the printed warning (e.g.</span>
+<span class="sd">            "outlet_flux", "bottom_flux").</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">permx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soil_SPP</span><span class="p">[</span><span class="s2">"SPP_map"</span><span class="p">][</span><span class="s2">"PERMX"</span><span class="p">]))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+            <span class="k">return</span>  <span class="c1"># soil not configured yet - nothing to check against</span>
+
+        <span class="k">if</span> <span class="n">zone_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">zone_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">zone_ids</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">zone_idx</span> <span class="o">=</span> <span class="n">zone_idx</span><span class="p">[(</span><span class="n">zone_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">zone_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">permx</span><span class="p">))]</span>
+            <span class="n">ks_relevant</span> <span class="o">=</span> <span class="n">permx</span><span class="p">[</span><span class="n">zone_idx</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">zone_idx</span><span class="p">)</span> <span class="k">else</span> <span class="n">permx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ks_relevant</span> <span class="o">=</span> <span class="n">permx</span>
+
+        <span class="n">ks_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ks_relevant</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">flux_m_s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ks_min</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  WARNING: </span><span class="si">{</span><span class="n">label</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'Neumann flux'</span><span class="si">}</span><span class="s2"> magnitude "</span>
+                  <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">flux_m_s</span><span class="p">)</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> m/s) exceeds the minimum "</span>
+                  <span class="sa">f</span><span class="s2">"relevant soil Ks (</span><span class="si">{</span><span class="n">ks_min</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> m/s) - this BC is "</span>
+                  <span class="sa">f</span><span class="s2">"asking for more outflow than the soil can "</span>
+                  <span class="sa">f</span><span class="s2">"physically transmit; expect convergence trouble or "</span>
+                  <span class="sa">f</span><span class="s2">"unphysical suction at the boundary. Consider "</span>
+                  <span class="sa">f</span><span class="s2">"reducing its magnitude."</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">update_soil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">IVGHU</span><span class="o">=</span><span class="p">[],</span>
@@ -3130,10 +3498,7 @@ document.write(`
 <span class="sd">        - update mesh vtk file</span>
 
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="s2">"shellprint_update"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shellprint_update"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"shellprint_update"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">":arrows_counterclockwise: [b]Update soil[/b]"</span><span class="p">)</span>
 
 
@@ -3867,6 +4232,8 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">MAXVEG</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_maxveg</span><span class="p">(</span><span class="n">indice_veg</span><span class="p">,</span> <span class="n">maxveg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_cathyH</span><span class="p">(</span><span class="n">MAXVEG</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">MAXVEG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_mesh_built_maxveg"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAXVEG</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_dirty</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># CATHY.H changed -&gt; processor must be rebuilt</span>
 
         <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
             <span class="n">ax</span> <span class="o">=</span> <span class="n">plt_CT</span><span class="o">.</span><span class="n">show_indice_veg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">veg_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -4691,6 +5058,12 @@ document.write(`
 
         <span class="k">pass</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mesh_is_stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""True if the cached mesh is missing or inputs changed since it was built."""</span>
+        <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"mesh_pv_attributes"</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_mesh_dirty"</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">create_mesh_vtk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create custum mesh</span>
@@ -4712,6 +5085,8 @@ document.write(`
             <span class="p">),</span>
             <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_dirty</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_built_maxveg</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"MAXVEG"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># THIS IS A TEMPORARY IMPLEMENTATION OF THE PYVISTA MESH</span>
         <span class="c1">#  https://docs.pyvista.org/examples/00-load/create-structured-surface.html</span>
@@ -4775,7 +5150,7 @@ document.write(`
 <span class="sd">            Updated pyvista mesh with new property.</span>
 <span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"mesh_pv_attributes"</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_is_stale</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">create_mesh_vtk</span><span class="p">()</span>
 
         <span class="n">saveMeshPath</span> <span class="o">=</span> <span class="kc">None</span>
@@ -4867,11 +5242,11 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="s1">'POROS_cells'</span><span class="p">]</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">prop_mesh_cells</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prop_name</span><span class="si">}</span><span class="s1">_nodes'</span><span class="p">])</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">map_prop2mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_props</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map_prop2mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_props</span><span class="p">,</span> <span class="n">shellprint_update</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a given physical property to the CATHY mesh</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"mesh_pv_attributes"</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh_is_stale</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">create_mesh_vtk</span><span class="p">()</span>
 
         <span class="c1"># Guard against a stale cached mesh: if the CATHY grid has been</span>
@@ -4895,11 +5270,12 @@ document.write(`
             <span class="c1"># arrays (e.g. psi_ini), and broadcast them as if they were a</span>
             <span class="c1"># single scalar value. Use an actual scalar check instead.</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">dict_props</span><span class="p">[</span><span class="n">dp</span><span class="p">]):</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">"Single value detected for "</span>
-                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
-                    <span class="o">+</span> <span class="s2">" ==&gt; assumming it homogeneous"</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">shellprint_update</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                        <span class="s2">"Single value detected for "</span>
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s2">" ==&gt; assumming it homogeneous"</span>
+                    <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_mesh_vtk</span><span class="p">(</span>
                     <span class="n">prop</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span>
                     <span class="n">prop_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mesh_pv_attributes</span><span class="o">.</span><span class="n">points</span><span class="p">))</span>
@@ -5832,7 +6208,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

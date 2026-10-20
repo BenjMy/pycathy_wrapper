@@ -228,41 +228,62 @@ def CATHY_2_Resipy(mesh_CATHY, mesh_Resipy, scalar="saturation", show=False, **k
 
 def trace_mesh(meshIN, meshOUT, scalar, threshold=1e-1, **kwargs):
     """
-    Trace meshIN on meshOUT using nearest neigbour interpolation
+    Trace meshIN (CATHY) onto meshOUT (pygimli forward mesh).
+
+    The values are sampled with a point-in-cell linear interpolation inside the
+    tetrahedra of ``meshIN`` (no search radius), then averaged onto the cells of
+    ``meshOUT``. The previous implementation used ``meshOUT.interpolate`` with a
+    Gaussian kernel whose radius (10 x the max positive x-diff of the CATHY nodes,
+    i.e. 5 m = the whole domain) smoothed the field into a near-uniform value and
+    erased the vertical layering.
+
+    Nodes of ``meshOUT`` that fall outside ``meshIN`` take the value of the
+    nearest ``meshIN`` node.
 
     Parameters
     ----------
-    meshIN : TYPE
-        DESCRIPTION.
-    meshOUT : TYPE
-        DESCRIPTION.
-    threshold : TYPE, optional
-        DESCRIPTION. The default is 1e-1.
+    meshIN : pyvista mesh
+        CATHY mesh holding ``scalar`` as point data.
+    meshOUT : pyvista mesh
+        Mesh to fill. Its points are overwritten by ``in_nodes_mod`` (kwarg),
+        i.e. moved to the CATHY frame, in place.
+    threshold : float, optional
+        Unused, kept for API compatibility.
 
     Returns
     -------
-    out_data : TYPE
-        DESCRIPTION.
+    out_data : ndarray
+        Cell data of meshOUT.
+    warm_0 : str
+        Short summary (outside nodes, min/max/median).
     """
+    from scipy.spatial import cKDTree
+
     in_nodes_mod = kwargs["in_nodes_mod"]
     meshIN.set_active_scalars(scalar)
+    if len(in_nodes_mod) != meshOUT.n_points:
+        raise ValueError(
+            f"in_nodes_mod has {len(in_nodes_mod)} points but the forward mesh has "
+            f"{meshOUT.n_points}: 'mesh_nodes_modif' must be the transformed nodes of "
+            "the forward mesh, not the CATHY nodes"
+        )
     meshOUT.points = in_nodes_mod
 
-    rd = max(np.diff(meshIN.points[:, 0])) * 10
-    meshOUT_interp = meshOUT.interpolate(meshIN,
-                                         radius=rd,
-                                         pass_point_data=True
-                                         )
-    # plot_2d_interpolation_quality(meshIN,scalar,meshOUT,meshOUT_interp)
-    result = meshOUT_interp.point_data_to_cell_data()
-    out_data = result[scalar]
-    # out_data = np.where(out_data == 0, 1e-3, out_data)
-    out_data = np.where(out_data == 0, np.min(out_data)+1e-3, out_data)
+    samp = meshOUT.sample(meshIN, tolerance=1e-6, mark_blank=True)
+    vals = np.asarray(samp.point_data[scalar], dtype=float).copy()
+    bad = ~np.asarray(samp.point_data["vtkValidPointMask"], dtype=bool)
+    if bad.any():
+        _, idx = cKDTree(meshIN.points).query(np.asarray(samp.points)[bad])
+        vals[bad] = np.asarray(meshIN.point_data[scalar], dtype=float)[idx]
+    samp.point_data[scalar] = vals
 
-    warm_0 = ""
-    if len(np.where(out_data == 1e-3)) > 0:
-        warm_0 = f"interpolation created 0 values - replacing them by min value {np.min(out_data)+1e-3} of input CATHY predicted ER mesh"
-        warm_0 = f"min {np.min(out_data)}, max {np.min(out_data)}, median {np.median(out_data)} "
+    out_data = np.asarray(samp.point_data_to_cell_data()[scalar])
+
+    warm_0 = (
+        f"{int(bad.sum())}/{meshOUT.n_points} forward-mesh nodes outside the CATHY "
+        f"mesh (nearest node used); min {out_data.min():.4g}, max {out_data.max():.4g}, "
+        f"median {np.median(out_data):.4g}"
+    )
     return out_data, warm_0
 
 

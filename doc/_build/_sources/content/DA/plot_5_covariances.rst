@@ -101,7 +101,7 @@ Adapt them to your own dataset.
     🔄 Update dem_parameters file 
     🔄 Update dem_parameters file 
     🛠  Recompile src files [4s]
-    🍳 gfortran compilation [11s]
+    🍳 gfortran compilation [10s]
     ✅ Compilation successful!
     👟 Run processor
 
@@ -161,7 +161,7 @@ Adapt them to your own dataset.
     Traceback (most recent call last):
       File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_5_covariances.py", line 61, in <module>
         read_observations(
-      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/observations.py", line 188, in read_observations
+      File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/observations.py", line 192, in read_observations
         df, k = in_meas.read_EM(obs_2_add, data_format)
       File "/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/sensors_measures.py", line 42, in read_EM
         k = Problem()
@@ -205,7 +205,7 @@ Adapt them to your own dataset.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 11.212 seconds)
+   **Total running time of the script:** (0 minutes 10.483 seconds)
 
 
 .. _sphx_glr_download_content_DA_plot_5_covariances.py:

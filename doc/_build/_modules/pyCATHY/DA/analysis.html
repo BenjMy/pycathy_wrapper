@@ -1,0 +1,844 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyCATHY.DA.analysis &#8212; pyCATHY &lt;span class=&#34;project-release&#34;&gt;v0.1.1&lt;/span&gt;</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=6f89b0bb"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/thebelab-helper.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyCATHY/DA/analysis';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">pyCATHY <span class="project-release">v0.1.1</span></p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../content/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/citing.html">Citing pyCATHY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/gettingstarted.html">Getting Started</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Gallery of examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../content/SSHydro/index.html">Surface subsurface hydrological model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_1_pyCATHY_weilletal.html">Weill et al example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_2_pyCATHY_inputs.html">Input plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3_meshing_from_Camporese.html">Meshing from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3_meshing_from_weill.html">Changing mesh properties (resolution, coordinates, …)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3a_create_soil_withzones.html">Create soil zones control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3b_soil3d_from_weill.html">Soil 3d from a Digital Elevation Model (DEM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3c_spatial_atmbc_from_weill.html">Spatially heterogeneous atmbc (Weil et al)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3d_spatial_atmbc_from_weill_withnonodes.html">Atmbc update with no-data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_3f_meshing_from_subCatchment.html">Meshing from a Digital Elevation Model (DEM) .adf file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_4_pyCATHY_outputs.html">Output plots part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_4b_pyCATHY_outputs.html">Output plots part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_4b_waterTable_from_weill.html">Plot Water Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/SSHydro/plot_5a_infiltration_withBC.html">Update and show Boundary conditions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../content/EOdata/index.html">Working with Earth Observations datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/EOdata/plot_4_map_from_ET_EO.html">Mapping atmbc from Earth Observation xarray dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/EOdata/plot_4b_map_from_coarse_ET_EO.html">Mapping atmbc from coarse EO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../content/DA/index.html">Data Assimilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_1_DA_NoUni_ic.html">DA with Random Initial Conditions on Soil Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_1a_perturbate.html">Creating and Managing Parameter Perturbation Scenarios for Data Assimilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_2_prepare_SMC_obs4DA.html">Read SMC sensors observations to assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_3_run_sequentialDA_SMC.html">Assimilate SMC sensors observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_4_EM_DA.html">Read EM dataset observations &amp; assimilate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_5_covariances.html">Observations covariances, Localisation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/DA/plot_Weilletal_sensitivityAnalysis.html">Sensitivity analysis</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">From the literature</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../content/FromLiterature/LaCecilia2023_myst/LaCecilia2023_myst.html">D. La Cecilia and M. Camporese (2022)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/FromLiterature/Zanetti_WRR_2024_myst/Zanetti_WRR_2024_myst.html">Zanetti, F., Botter, G., &amp; Camporese, M. (2024)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../content/api/api.html">API reference: The <code class="docutils literal notranslate"><span class="pre">pyCATHY</span></code> package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/cathy_tools.html">cathy_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/importers.cathy_outputs.html">importers.cathy_outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/importers.cathy_inputs.html">importers.cathy_inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/DA.cathy_DA.html">DA.cathy_DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/ERT.petro_Archie.html">ERT.petro_Archie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/ERT.simulate_ERT.html">ERT.simulate_ERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/sensitivity.html">sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/plotters.cathy_plots.html">plotters.cathy_plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/pyCATHY.cathy_utils.html">pyCATHY.cathy_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../content/api/generated/pyCATHY.meshtools.html">pyCATHY.meshtools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/cathy_list_citation.html">Who uses CATHY ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/references.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting help and contributed</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../content/contribute.html">Contribute and support</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/BenjMy/pycathy_wrapper/issues/new?title=Issue%20on%20page%20%2F_modules/pyCATHY/DA/analysis.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyCATHY.DA.analysis</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Analysis step of the data assimilation: result container, configuration, and the registry</span>
+<span class="sd">of filters (``ANALYSES``) with their adapters. Moved out of ``cathy_DA`` without change; every</span>
+<span class="sd">name is still importable from ``pyCATHY.DA.cathy_DA``."""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.DA</span><span class="w"> </span><span class="kn">import</span> <span class="n">enkf</span><span class="p">,</span> <span class="n">pf</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Common output of every analysis (EnKF variants and particle filter).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    analysis : np.ndarray, shape (n_state, n_members)</span>
+<span class="sd">        Updated state ensemble.</span>
+<span class="sd">    analysis_param : np.ndarray, shape (n_members, n_param)</span>
+<span class="sd">        Updated parameter ensemble (n_param may be 0 for a state-only update).</span>
+<span class="sd">    diagnostics : dict or None</span>
+<span class="sd">        EnKF matrices (A, Amean, dA, dD, MeasAvg, S, COV, B, dAS) used for the</span>
+<span class="sd">        diagnostic plots; None for filters that do not provide them.</span>
+<span class="sd">    extra : dict</span>
+<span class="sd">        Filter specific outputs (particle filter: weights, n_eff, resampled, observation).</span>
+<span class="sd">    """</span>
+
+    <span class="n">analysis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">analysis_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">diagnostics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+
+<span class="n">_ENKF_DIAGNOSTICS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"A"</span><span class="p">,</span> <span class="s2">"Amean"</span><span class="p">,</span> <span class="s2">"dA"</span><span class="p">,</span> <span class="s2">"dD"</span><span class="p">,</span> <span class="s2">"MeasAvg"</span><span class="p">,</span> <span class="s2">"S"</span><span class="p">,</span> <span class="s2">"COV"</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">,</span> <span class="s2">"dAS"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_from_enkf</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">transpose_param</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert the list returned by an ``enkf.*`` filter into an AnalysisResult.</span>
+
+<span class="sd">    The filters return [*diagnostics, analysis, analysis_param]. ``transpose_param``</span>
+<span class="sd">    is needed for the filters that return the parameters as (n_param, n_members).</span>
+<span class="sd">    """</span>
+    <span class="o">*</span><span class="n">diagnostics</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">analysis_param</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="k">if</span> <span class="n">transpose_param</span><span class="p">:</span>
+        <span class="n">analysis_param</span> <span class="o">=</span> <span class="n">analysis_param</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">AnalysisResult</span><span class="p">(</span>
+        <span class="n">analysis</span><span class="o">=</span><span class="n">analysis</span><span class="p">,</span>
+        <span class="n">analysis_param</span><span class="o">=</span><span class="n">analysis_param</span><span class="p">,</span>
+        <span class="n">diagnostics</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">_ENKF_DIAGNOSTICS</span><span class="p">,</span> <span class="n">diagnostics</span><span class="p">))</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Options of one analysis step (see ``run_analysis``).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sakov : bool</span>
+<span class="sd">        Solve the analysis in ensemble space (exact, cheap for many data) where the</span>
+<span class="sd">        filter supports it.</span>
+<span class="sd">    perturb_obs : bool</span>
+<span class="sd">        Stochastic EnKF: every member assimilates the data plus a draw of N(0, R).</span>
+<span class="sd">        False (default, historical) gives an analysis spread smaller than the</span>
+<span class="sd">        posterior by K R K^T and the ensemble tends to collapse over the cycles;</span>
+<span class="sd">        True is recommended for ``enkf_Evensen2009*``. Seeded by ``DAConfig.seed``.</span>
+<span class="sd">    inflation_states : float</span>
+<span class="sd">        Multiplicative inflation of the ensemble. Legacy names: ``inflation``</span>
+<span class="sd">        and ``alpha``.</span>
+<span class="sd">    inflation_params : float</span>
+<span class="sd">        Multiplicative inflation of the parameter ensemble (localized filter).</span>
+<span class="sd">    jitter_params : float</span>
+<span class="sd">        Std of the additive noise on the parameters (localized filter).</span>
+<span class="sd">    localisation_matrix : np.ndarray or None</span>
+<span class="sd">        Localisation matrix (n_state x n_obs) of the localized filter; an empty</span>
+<span class="sd">        list/array means "no localisation" and is stored as None.</span>
+<span class="sd">    pf_resample_threshold, pf_jitter_std_param, pf_jitter_std_state : float</span>
+<span class="sd">        Particle filter settings.</span>
+<span class="sd">    """</span>
+
+    <span class="n">sakov</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">perturb_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">inflation_states</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">inflation_params</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">jitter_params</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">localisation_matrix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pf_resample_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">pf_jitter_std_param</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">pf_jitter_std_state</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localisation_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">localisation_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localisation_matrix</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localisation_matrix</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">localisation_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_legacy_kwargs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Build a config from the historical ``run_analysis(**kwargs)`` options.</span>
+
+<span class="sd">        The recognised keys are popped from ``kwargs``; any key left over is an</span>
+<span class="sd">        error for the caller to report.</span>
+<span class="sd">        """</span>
+        <span class="n">renamed</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"Sakov"</span><span class="p">:</span> <span class="s2">"sakov"</span><span class="p">,</span>
+            <span class="s2">"localisationMatrix"</span><span class="p">:</span> <span class="s2">"localisation_matrix"</span><span class="p">,</span>
+            <span class="s2">"inflate_params"</span><span class="p">:</span> <span class="s2">"inflation_params"</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">new</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">old</span><span class="p">)</span> <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="n">renamed</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">old</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">"perturb_obs"</span><span class="p">,</span>
+            <span class="s2">"jitter_params"</span><span class="p">,</span>
+            <span class="s2">"pf_resample_threshold"</span><span class="p">,</span>
+            <span class="s2">"pf_jitter_std_param"</span><span class="p">,</span>
+            <span class="s2">"pf_jitter_std_state"</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># `inflation` and `alpha` are two historical names of the same option</span>
+        <span class="n">inflation</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"inflation"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"alpha"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inflation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">"inflation_states"</span><span class="p">]</span> <span class="o">=</span> <span class="n">inflation</span> <span class="k">if</span> <span class="n">inflation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alpha</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
+
+
+<span class="c1"># DA-only options historically passed as **kwargs to run_DA_sequential / prepare_DA</span>
+<span class="c1"># (every other keyword, e.g. IPRT1 or TRAFLAG, belongs to the CATHY processor)</span>
+<span class="n">_LEGACY_DA_KEYS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"inflation"</span><span class="p">,</span>
+    <span class="s2">"localisation"</span><span class="p">,</span>
+    <span class="s2">"threshold_rejected"</span><span class="p">,</span>
+    <span class="s2">"use_log_transformed_obs"</span><span class="p">,</span>
+    <span class="s2">"log_transform_cov"</span><span class="p">,</span>
+    <span class="s2">"mask_bad_ert"</span><span class="p">,</span>
+    <span class="s2">"cleanup_vtk"</span><span class="p">,</span>
+    <span class="s2">"backup_fort777"</span><span class="p">,</span>
+    <span class="s2">"seed"</span><span class="p">,</span>
+    <span class="s2">"save_results"</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DAConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Options of a sequential DA run (see ``DA.run_DA_sequential``).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inflation : float</span>
+<span class="sd">        Multiplicative inflation passed to the analysis (``AnalysisConfig.inflation_states``).</span>
+<span class="sd">    localisation : str or None</span>
+<span class="sd">        Domain localisation: one of ``"veg_map"``, ``"zones"``, ``"nodes"``. A</span>
+<span class="sd">        list with a single entry is accepted and converted to that string</span>
+<span class="sd">        (``localisation.create_mask_localisation`` compares it to a string).</span>
+<span class="sd">        Currently the observations must be defined on every surface node (maps</span>
+<span class="sd">        such as ET or EM); point sensors fail in ``_DA_analysis`` (see README).</span>
+<span class="sd">    threshold_rejected : int</span>
+<span class="sd">        Ensemble members whose water-balance error exceeds it are rejected.</span>
+<span class="sd">    use_log_transformed_obs : bool</span>
+<span class="sd">        Assimilate log-transformed observations (useful for ERT data: the Archie</span>
+<span class="sd">        operator makes their distribution non Gaussian).</span>
+<span class="sd">    log_transform_cov : bool</span>
+<span class="sd">        With ``use_log_transformed_obs``: propagate the data covariance to the</span>
+<span class="sd">        log10 domain (first-order, R_log = J R J, J = diag(1/(ln10 (d+eps)))).</span>
+<span class="sd">        False reproduces the old behaviour (linear-domain R applied to log data,</span>
+<span class="sd">        which makes the observations effectively ignored). Default True.</span>
+<span class="sd">    mask_bad_ert : bool</span>
+<span class="sd">        Drop from the analysis the ERT quadrupoles flagged unusable (k outliers or</span>
+<span class="sd">        too large, non-positive rhoa, invalid flag; see</span>
+<span class="sd">        ``ERT_checks.quadrupole_quality_mask``). They are removed from the data, R</span>
+<span class="sd">        and predictions together; the full-length data are still used for the</span>
+<span class="sd">        performance assessment. Default True.</span>
+<span class="sd">    cleanup_vtk : {False, 'converted', 'all'}</span>
+<span class="sd">        Delete VTK files produced in ``&lt;workdir&gt;/&lt;project&gt;/DA_Ensemble`` after the run.</span>
+<span class="sd">    backup_fort777 : bool</span>
+<span class="sd">        Keep a copy of the ``fort.777`` (ET) file of every DA cycle.</span>
+<span class="sd">    analysis : AnalysisConfig or None</span>
+<span class="sd">        Options of the analysis step (Sakov form, inflation of states and parameters,</span>
+<span class="sd">        jitter, particle filter settings). None: defaults, with ``inflation`` of this</span>
+<span class="sd">        config. When given it is used as is, except that the localisation matrix of</span>
+<span class="sd">        the current cycle (``self.localisationMatrix``) is used when there is one.</span>
+<span class="sd">    seed : int or None</span>
+<span class="sd">        Seed of the global numpy random generator, set at the start of the run (the</span>
+<span class="sd">        filters draw their random numbers from it). None: do not touch the generator.</span>
+<span class="sd">    save_results : bool</span>
+<span class="sd">        Write ``df_DA`` and ``ET_DA_xr`` to ``&lt;workdir&gt;/&lt;project&gt;/`` at every cycle,</span>
+<span class="sd">        so that a crash does not lose the results of the finished cycles.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print the processor output of every member.</span>
+<span class="sd">    """</span>
+
+    <span class="n">inflation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">localisation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">threshold_rejected</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">use_log_transformed_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">log_transform_cov</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mask_bad_ert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">cleanup_vtk</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">backup_fort777</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">analysis</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnalysisConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">save_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localisation</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localisation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"Only one localisation type at a time is supported, got "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localisation</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">localisation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">localisation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localisation</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localisation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"veg_map"</span><span class="p">,</span> <span class="s2">"zones"</span><span class="p">,</span> <span class="s2">"nodes"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"localisation must be None, 'veg_map', 'zones' or 'nodes', got "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">localisation</span><span class="si">!r}</span><span class="s2">."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanup_vtk</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">"converted"</span><span class="p">,</span> <span class="s2">"all"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"cleanup_vtk must be False, 'converted' or 'all', got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cleanup_vtk</span><span class="si">!r}</span><span class="s2">."</span>
+            <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_legacy_kwargs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Build a config from the historical ``**kwargs`` of ``run_DA_sequential``.</span>
+
+<span class="sd">        The DA-only keys are popped from ``kwargs`` (the rest belongs to the CATHY</span>
+<span class="sd">        processor). ``verbose`` is read but left in ``kwargs`` because the processor</span>
+<span class="sd">        uses it too.</span>
+<span class="sd">        """</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_LEGACY_DA_KEYS</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Passing </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2"> as keyword arguments is deprecated: "</span>
+                <span class="s2">"use config=DAConfig(...)."</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"verbose"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">"verbose"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"verbose"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_enkf</span><span class="p">(</span><span class="n">filter_function</span><span class="p">,</span> <span class="n">forward_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forward_perturb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">fixed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Adapter for the filters called as f(data, cov, param, state, prediction, **kw)."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">adapter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_cov</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fixed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">forward_alpha</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"alpha"</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">inflation_states</span>
+        <span class="k">if</span> <span class="n">forward_perturb</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"perturb_obs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">perturb_obs</span>
+        <span class="k">return</span> <span class="n">_from_enkf</span><span class="p">(</span>
+            <span class="n">filter_function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_cov</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">adapter</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_enkf_localized_with_inflation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_cov</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis_localized_with_inflation</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">data_cov</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">,</span>  <span class="c1"># NB: ensemble before param in this filter's signature</span>
+        <span class="n">param</span><span class="p">,</span>
+        <span class="n">prediction</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">localisation_matrix</span><span class="p">,</span>  <span class="c1"># (state x obs), None = no localisation</span>
+        <span class="n">Sakov</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">sakov</span><span class="p">,</span>
+        <span class="n">inflate_states</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">inflation_states</span><span class="p">,</span>
+        <span class="n">inflate_params</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">inflation_params</span><span class="p">,</span>
+        <span class="n">jitter_params</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">jitter_params</span><span class="p">,</span>
+        <span class="n">perturb_obs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">perturb_obs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># this filter returns the parameters as (n_param, n_members), all others as (n_members, n_param)</span>
+    <span class="k">return</span> <span class="n">_from_enkf</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">transpose_param</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_particle_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_cov</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="n">analysis</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">particle_filter_analysis</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">data_cov</span><span class="p">,</span>
+        <span class="n">param</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">,</span>
+        <span class="n">prediction</span><span class="p">,</span>
+        <span class="n">use_enkf_update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">resample_threshold</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">pf_resample_threshold</span><span class="p">,</span>
+        <span class="n">jitter_std_param</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">pf_jitter_std_param</span><span class="p">,</span>
+        <span class="n">jitter_std_state</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">pf_jitter_std_state</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Final N_eff: </span><span class="si">{</span><span class="n">analysis</span><span class="p">[</span><span class="s1">'n_eff'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Resampled: </span><span class="si">{</span><span class="n">analysis</span><span class="p">[</span><span class="s1">'resampled'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AnalysisResult</span><span class="p">(</span>
+        <span class="n">analysis</span><span class="o">=</span><span class="n">analysis</span><span class="p">[</span><span class="s2">"Analysis"</span><span class="p">],</span>
+        <span class="n">analysis_param</span><span class="o">=</span><span class="n">analysis</span><span class="p">[</span><span class="s2">"Analysisparam"</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">extra</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">analysis</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"weights"</span><span class="p">,</span> <span class="s2">"n_eff"</span><span class="p">,</span> <span class="s2">"resampled"</span><span class="p">,</span> <span class="s2">"observation"</span><span class="p">)</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+
+<span class="n">ANALYSES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"enkf_Evensen2009"</span><span class="p">:</span> <span class="n">_enkf</span><span class="p">(</span><span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis</span><span class="p">,</span> <span class="n">forward_alpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">forward_perturb</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="s2">"enkf_Evensen2009_Sakov"</span><span class="p">:</span> <span class="n">_enkf</span><span class="p">(</span>
+        <span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis</span><span class="p">,</span> <span class="n">forward_alpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">forward_perturb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">Sakov</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">),</span>
+    <span class="s2">"enkf_analysis_localized_with_inflation"</span><span class="p">:</span> <span class="n">_enkf_localized_with_inflation</span><span class="p">,</span>
+    <span class="s2">"enkf_analysis_inflation"</span><span class="p">:</span> <span class="n">_enkf</span><span class="p">(</span><span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis_inflation</span><span class="p">,</span> <span class="n">forward_alpha</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="s2">"enkf_analysis_inflation_multiparm"</span><span class="p">:</span> <span class="n">_enkf</span><span class="p">(</span>
+        <span class="n">enkf</span><span class="o">.</span><span class="n">enkf_analysis_inflation_multiparm</span><span class="p">,</span> <span class="n">forward_alpha</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">),</span>
+    <span class="s2">"enkf_dual_analysis"</span><span class="p">:</span> <span class="n">_enkf</span><span class="p">(</span><span class="n">enkf</span><span class="o">.</span><span class="n">enkf_dual_analysis</span><span class="p">,</span> <span class="n">Sakov</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="s2">"enkf_dual_analysis_Sakov"</span><span class="p">:</span> <span class="n">_enkf</span><span class="p">(</span><span class="n">enkf</span><span class="o">.</span><span class="n">enkf_dual_analysis</span><span class="p">,</span> <span class="n">Sakov</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="s2">"pf"</span><span class="p">:</span> <span class="n">_particle_filter</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="run_analysis">
+<a class="viewcode-back" href="../../../content/api/generated/DA.cathy_DA.run_analysis.html#DA.cathy_DA.run_analysis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_analysis</span><span class="p">(</span>
+    <span class="n">DA_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_cov</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">list_update_parm</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">ensembleX</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">prediction</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">default_state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"psi"</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnalysisConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">legacy_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnalysisResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Perform the DA analysis step</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    DA_type : str</span>
+<span class="sd">        type of analysis: one of the keys of ``ANALYSES``.</span>
+<span class="sd">    data : np.array([])</span>
+<span class="sd">        measured data.</span>
+<span class="sd">    data_cov : np.array([]) or int</span>
+<span class="sd">        measured data covariance matrice.</span>
+<span class="sd">    param : np.array([])</span>
+<span class="sd">        model parameters to update, shape (n_param, n_members); use an empty</span>
+<span class="sd">        (0, n_members) array for a state-only update.</span>
+<span class="sd">    list_update_parm : list</span>
+<span class="sd">        names of the updated parameters (kept for API compatibility, unused here).</span>
+<span class="sd">    ensembleX : list of np.array</span>
+<span class="sd">        [pressure head, saturation water] ensemble matrices at each node.</span>
+<span class="sd">    prediction : np.array([])</span>
+<span class="sd">        predicted observation (after mapping).</span>
+<span class="sd">    default_state : {"psi", "sw"}</span>
+<span class="sd">        which element of ``ensembleX`` is updated.</span>
+<span class="sd">    config : AnalysisConfig, optional</span>
+<span class="sd">        analysis options (defaults if omitted).</span>
+<span class="sd">    **legacy_kwargs</span>
+<span class="sd">        Historical way of passing the options (Sakov, localisationMatrix,</span>
+<span class="sd">        inflation / alpha, inflate_params, jitter_params, pf_*); converted with</span>
+<span class="sd">        ``AnalysisConfig.from_legacy_kwargs``. Cannot be combined with ``config``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AnalysisResult</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">DA_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ANALYSES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown DA_type </span><span class="si">{</span><span class="n">DA_type</span><span class="si">!r}</span><span class="s2">. Available: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">ANALYSES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">AnalysisConfig</span><span class="o">.</span><span class="n">from_legacy_kwargs</span><span class="p">(</span><span class="n">legacy_kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">legacy_kwargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">"run_analysis got unexpected keyword argument(s) "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">legacy_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2"> (or legacy options combined with `config`)."</span>
+        <span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">ensembleX</span><span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">default_state</span> <span class="o">==</span> <span class="s2">"sw"</span> <span class="k">else</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ANALYSES</span><span class="p">[</span><span class="n">DA_type</span><span class="p">](</span><span class="n">data</span><span class="p">,</span> <span class="n">data_cov</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By B. Mary
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, B. Mary.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Oct 19, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

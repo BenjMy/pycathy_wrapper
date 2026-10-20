@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -391,6 +391,9 @@ document.write(`
 <span class="sd">"""</span>
 
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
@@ -399,6 +402,8 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span>  <span class="c1"># if not installed : pip install with conda install pyvista (in a conda terminal)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY.ERT</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERT_checks</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">pygimli</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pg</span>
@@ -412,6 +417,51 @@ document.write(`
     <span class="c1">#from resipy import R2  # geophysics tools</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">resipy</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_captured_stdout</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Keep pyGIMLi/BERT stdout out of the console: it is sent to the logger (DEBUG).</span>
+
+<span class="sd">    Python-level prints are captured, and (when stdout is a real file descriptor,</span>
+<span class="sd">    i.e. not in a notebook) the C-level output is muted. stdout is always restored,</span>
+<span class="sd">    even if the block raises. ``verbose=True`` lets everything through.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">yield</span>
+        <span class="k">return</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">saved_fd</span> <span class="o">=</span> <span class="n">devnull_fd</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">saved_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">dup</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
+        <span class="n">devnull_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">devnull_fd</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>  <span class="c1"># no real fd (notebook, pytest capture)</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">redirect_stdout</span><span class="p">(</span><span class="n">buf</span><span class="p">):</span>
+            <span class="k">yield</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">saved_fd</span><span class="p">,</span> <span class="n">fd</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="p">(</span><span class="n">saved_fd</span><span class="p">,</span> <span class="n">devnull_fd</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"pyGIMLi output:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># report of the last `create_ERT_survey_pg` call of this process (read by petro_Archie)</span>
+<span class="n">_STATE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"last_report"</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_last_check_report</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""ERTCheckReport of the last forward run done in this process (None if none)."""</span>
+    <span class="k">return</span> <span class="n">_STATE</span><span class="p">[</span><span class="s2">"last_report"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="create_ERT_survey_pg">
@@ -429,23 +479,26 @@ document.write(`
     <span class="n">fwdNoiseLevel</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="k">if</span> <span class="s2">"fwdNoiseLevel"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">fwdNoiseLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"fwdNoiseLevel"</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"fwd ERT Noise Level: </span><span class="si">{</span><span class="n">fwdNoiseLevel</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"fwd ERT noise level: </span><span class="si">%s%%</span><span class="s2">"</span><span class="p">,</span> <span class="n">fwdNoiseLevel</span><span class="p">)</span>
     <span class="n">pre</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">pre</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"forward mesh: </span><span class="si">%s%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">mesh3d</span> <span class="o">=</span> <span class="n">mt</span><span class="o">.</span><span class="n">readGmsh</span><span class="p">(</span><span class="n">pre</span> <span class="o">+</span> <span class="s2">".msh"</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
+    <span class="n">mesh3d</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">reader</span><span class="p">,</span> <span class="n">ext_try</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">mt</span><span class="o">.</span><span class="n">readGmsh</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">),</span> <span class="s2">".msh"</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">),</span> <span class="s2">".bms"</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">),</span> <span class="s2">".vtk"</span><span class="p">),</span>
+    <span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">mesh3d</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pre</span> <span class="o">+</span> <span class="s2">".bms"</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">'read the VTK!'</span><span class="p">)</span>
-                <span class="n">mesh3d</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pre</span> <span class="o">+</span> <span class="s2">".vtk"</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">"Cannot read </span><span class="si">{}</span><span class="s2">: valid extensions are .msh, .bms, or .vtk"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-                <span class="p">)</span>
+            <span class="n">mesh3d</span> <span class="o">=</span> <span class="n">reader</span><span class="p">(</span><span class="n">pre</span> <span class="o">+</span> <span class="n">ext_try</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"forward mesh read from </span><span class="si">%s%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">ext_try</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>  <span class="c1"># missing file or unreadable format: try the next one</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"cannot read </span><span class="si">%s%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">ext_try</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mesh3d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Cannot read </span><span class="si">{}</span><span class="s2">: valid extensions are .msh, .bms, or .vtk"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+        <span class="p">)</span>
     
     <span class="n">sequence_file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">sequence</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -467,23 +520,25 @@ document.write(`
             <span class="s2">"Sequence file format not recognized use .shm or .txt as a list of quadrupoles"</span>
         <span class="p">)</span>
     
-    <span class="n">res0</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="s2">"res0"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">res0</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"res0"</span><span class="p">]</span>
+    <span class="n">n_elec</span> <span class="o">=</span> <span class="n">scheme</span><span class="o">.</span><span class="n">sensorCount</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span> <span class="s2">"sensorCount"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">ERT_checks</span><span class="o">.</span><span class="n">check_scheme</span><span class="p">(</span>
+        <span class="n">scheme</span><span class="p">[</span><span class="s2">"a"</span><span class="p">],</span> <span class="n">scheme</span><span class="p">[</span><span class="s2">"b"</span><span class="p">],</span> <span class="n">scheme</span><span class="p">[</span><span class="s2">"m"</span><span class="p">],</span> <span class="n">scheme</span><span class="p">[</span><span class="s2">"n"</span><span class="p">],</span>
+        <span class="n">n_elec</span><span class="o">=</span><span class="n">n_elec</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"fwd ERT scheme"</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">warn</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res0</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh3d</span><span class="o">.</span><span class="n">cells</span><span class="p">()):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wrong initial resistivity input"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"res0"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"create_ERT_survey_pg needs res0 (one resistivity per mesh cell)"</span><span class="p">)</span>
+    <span class="n">res0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"res0"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">res0</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">res0</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh3d</span><span class="o">.</span><span class="n">cells</span><span class="p">()):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"wrong initial resistivity input: shape </span><span class="si">{</span><span class="n">res0</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> for "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mesh3d</span><span class="o">.</span><span class="n">cells</span><span class="p">())</span><span class="si">}</span><span class="s2"> mesh cells"</span>
+        <span class="p">)</span>
     <span class="c1"># Check for negative values</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">res0</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"res0 contains negative values. Resistivity must be positive."</span><span class="p">)</span>
         
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">devnull</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"/dev/null"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>
-            <span class="n">oldstdout_fno</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">dup</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">devnull</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
     
     <span class="c1"># print('+'*20)</span>
     <span class="c1"># # print(sequence_file_extension)</span>
@@ -501,26 +556,47 @@ document.write(`
         
         
 
-    <span class="n">het</span> <span class="o">=</span> <span class="n">ert</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
-        <span class="n">mesh3d</span><span class="p">,</span>
-        <span class="n">res</span><span class="o">=</span><span class="n">res0</span><span class="p">,</span>
-        <span class="n">scheme</span><span class="o">=</span><span class="n">scheme</span><span class="p">,</span>
-        <span class="n">calcOnly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">noiseLevel</span><span class="o">=</span><span class="n">fwdNoiseLevel</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="c1"># optional absolute voltage noise of the simulation (pyGIMLi default if not given)</span>
+    <span class="n">sim_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="s2">"fwdNoiseAbs"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">sim_kwargs</span><span class="p">[</span><span class="s2">"noiseAbs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"fwdNoiseAbs"</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="n">_captured_stdout</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
+        <span class="n">het</span> <span class="o">=</span> <span class="n">ert</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
+            <span class="n">mesh3d</span><span class="p">,</span>
+            <span class="n">res</span><span class="o">=</span><span class="n">res0</span><span class="p">,</span>
+            <span class="n">scheme</span><span class="o">=</span><span class="n">scheme</span><span class="p">,</span>
+            <span class="n">calcOnly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">noiseLevel</span><span class="o">=</span><span class="n">fwdNoiseLevel</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">sim_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="c1"># pg.show(mesh3d)</span>
     <span class="c1"># pg.show(het)</span>
     <span class="c1"># het.exportVTK('testmeshpg.vtk')</span>
     <span class="c1"># het.saveResult('testpg')</span>
     
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">oldstdout_fno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="n">pg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'Filtered rhoa (min/max)'</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'Correction of rhoa &lt;= 0 to 1e-3'</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"fwd rhoa (raw) min/max: </span><span class="si">%.4g</span><span class="s2"> / </span><span class="si">%.4g</span><span class="s2">"</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]))</span>
+    <span class="c1"># checks on the raw forward data (before the rhoa &lt;= 0 correction below)</span>
+    <span class="c1"># 1e-4 V is the assumed pyGIMLi default of `noiseAbs` when not set explicitly</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">ERT_checks</span><span class="o">.</span><span class="n">check_forward_data</span><span class="p">(</span>
+        <span class="n">het</span><span class="p">,</span>
+        <span class="n">res0</span><span class="o">=</span><span class="n">res0</span><span class="p">,</span>
+        <span class="n">noise_abs</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fwdNoiseAbs"</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"fwd ERT data"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">report</span><span class="o">.</span><span class="n">warn</span><span class="p">()</span>
+    <span class="n">_STATE</span><span class="p">[</span><span class="s2">"last_report"</span><span class="p">]</span> <span class="o">=</span> <span class="n">report</span>
+    <span class="n">n_fixed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">n_fixed</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"fwd ERT: </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> apparent resistivities are &lt;= 0 (min </span><span class="si">%.3g</span><span class="s2"> Ohm.m): "</span>
+            <span class="s2">"set to 1e-3 Ohm.m so that they can be log-transformed; check the "</span>
+            <span class="s2">"quadrupoles / noise level (see the ERT check report)"</span><span class="p">,</span>
+            <span class="n">n_fixed</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]),</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]))),</span>
+        <span class="p">)</span>
     <span class="c1"># het.loc[het['rhoa'] &lt;= 0, 'rhoa'] = 1e-3</span>
     <span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">][</span><span class="n">het</span><span class="p">[</span><span class="s1">'rhoa'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span>
 
@@ -579,7 +655,7 @@ document.write(`
 
 <div class="viewcode-block" id="fwd_ERT_survey">
 <a class="viewcode-back" href="../../content/api/generated/ERT.simulate_ERT.fwd_ERT_survey.html#ERT.simulate_ERT.fwd_ERT_survey">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">fwd_ERT_survey</span><span class="p">(</span><span class="n">ERT</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump</span><span class="o">=</span><span class="p">[]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fwd_ERT_survey</span><span class="p">(</span><span class="n">ERT</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fwd ERT model</span>
 
@@ -603,6 +679,8 @@ document.write(`
     <span class="c1"># fwd modelling</span>
     <span class="c1"># ---------------------------------------------------------#</span>
 
+    <span class="k">if</span> <span class="n">dump</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dump</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">ERT</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
         <span class="n">noise</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">iplot</span><span class="o">=</span><span class="n">show</span><span class="p">,</span> <span class="n">dump</span><span class="o">=</span><span class="n">dump</span>
     <span class="p">)</span>  <span class="c1"># forward modelling with 5 % noise added to the output</span>
@@ -713,7 +791,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

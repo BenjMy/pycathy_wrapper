@@ -67,7 +67,7 @@
     <link rel="prev" title="Read EM dataset observations &amp; assimilate" href="plot_4_EM_DA.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -494,7 +494,7 @@ to download the full example code.</p>
 🔄 Update dem_parameters file
 🔄 Update dem_parameters file
 🛠  Recompile src files [4s]
-🍳 gfortran compilation [11s]
+🍳 gfortran compilation [10s]
 ✅ Compilation successful!
 👟 Run processor
 </pre></div>
@@ -539,7 +539,7 @@ to download the full example code.</p>
 <div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
   File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/examples/DA/plot_5_covariances.py"</span>, line <span class="m">61</span>, in <span class="n">&lt;module&gt;</span>
 <span class="w">    </span><span class="n">read_observations</span><span class="p">(</span>
-  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/observations.py"</span>, line <span class="m">188</span>, in <span class="n">read_observations</span>
+  File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/DA/observations.py"</span>, line <span class="m">192</span>, in <span class="n">read_observations</span>
 <span class="w">    </span><span class="n">df</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">in_meas</span><span class="o">.</span><span class="n">read_EM</span><span class="p">(</span><span class="n">obs_2_add</span><span class="p">,</span> <span class="n">data_format</span><span class="p">)</span>
   File <span class="nb">"/home/z0272571a@campus.csic.es/Nextcloud/BenCSIC/Codes/BenjMy/pycathy_wrapper/pyCATHY/importers/sensors_measures.py"</span>, line <span class="m">42</span>, in <span class="n">read_EM</span>
 <span class="w">    </span><span class="n">k</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">()</span>
@@ -572,7 +572,7 @@ to download the full example code.</p>
 </span><span class="c1"># One localisation matrix per observation time</span><span class="w">
 </span><span class="n">simuWithDA</span><span class="o">.</span><span class="n">localisationMatrix</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_mat</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_measure_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.212 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.483 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-content-da-plot-5-covariances-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/aa2a9a866ff68ed36760d4ffbb2d26ed/plot_5_covariances.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_5_covariances.ipynb</span></code></a></p>
@@ -670,7 +670,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

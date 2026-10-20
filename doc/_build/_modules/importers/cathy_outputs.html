@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -402,6 +402,9 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyCATHY</span><span class="w"> </span><span class="kn">import</span> <span class="n">cathy_utils</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">_FORTRAN_EXP_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(?&lt;=[0-9])([+-]\d{2,3})(?=[\s\n]|$)'</span><span class="p">)</span>
 
@@ -420,6 +423,72 @@ document.write(`
 <span class="sd">    a number indistinguishable from zero at double precision.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">_FORTRAN_EXP_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'E\1'</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_fixed_width_block</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">max_rows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Read a whitespace-delimited numeric block, tolerant of a run that</span>
+<span class="sd">    crashed mid-write.</span>
+
+<span class="sd">    Several CATHY output readers (hgraph, hgsfdet, mbeconv) used to call</span>
+<span class="sd">    ``np.loadtxt(..., skiprows=N, usecols=range(ncols))`` directly. That</span>
+<span class="sd">    is fine for a healthy file, but a run that dies mid-timestep can</span>
+<span class="sd">    leave a truncated final line (fewer than ``ncols`` fields), which</span>
+<span class="sd">    makes ``np.loadtxt`` fail outright — turning one bad run into a</span>
+<span class="sd">    crash for every reader/caller downstream instead of just missing</span>
+<span class="sd">    the last (partial) row.</span>
+
+<span class="sd">    This reads the block line by line, keeps any row with exactly</span>
+<span class="sd">    ``ncols`` numeric fields, and skips/warns on anything else (a</span>
+<span class="sd">    truncated last line, a stray blank line, etc.) rather than raising.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Path to the output file.</span>
+<span class="sd">    skiprows : int</span>
+<span class="sd">        Number of header lines to skip before the data block starts.</span>
+<span class="sd">    ncols : int</span>
+<span class="sd">        Expected number of whitespace-separated fields per data row.</span>
+<span class="sd">    max_rows : int, optional</span>
+<span class="sd">        Only read up to this many data lines after skiprows (mirrors</span>
+<span class="sd">        ``np.loadtxt``'s ``max_rows``). If None, reads to EOF.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Shape (n_valid_rows, ncols). Shape (0, ncols) if no valid rows</span>
+<span class="sd">        were found (an empty-but-well-formed array, never raises).</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+    <span class="n">data_lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">skiprows</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">max_rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data_lines</span> <span class="o">=</span> <span class="n">data_lines</span><span class="p">[:</span><span class="n">max_rows</span><span class="p">]</span>
+
+    <span class="n">rows</span><span class="p">,</span> <span class="n">n_bad</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data_lines</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ncols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parts</span><span class="p">:</span>  <span class="c1"># don't warn on genuinely blank trailing lines</span>
+                <span class="n">n_bad</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">n_bad</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">n_bad</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">n_bad</span><span class="si">}</span><span class="s2"> malformed row(s) skipped "</span>
+                       <span class="sa">f</span><span class="s2">"(run likely crashed mid-write / output truncated)."</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: no valid data rows found "</span>
+                       <span class="sa">f</span><span class="s2">"(run likely produced no usable output for this file)."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">read_grid3d</span><span class="p">(</span><span class="n">grid3dfile</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -491,7 +560,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_number</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">);</span> <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">except</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">lines</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
 
@@ -845,31 +914,23 @@ document.write(`
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    IOUT41 hgraph Surface runoff hydrograph: plot the computed discharge at the outlet (streamflow)</span>
 
+<span class="sd">    Tolerant of a run that crashed mid-write (see ``_read_fixed_width_block``):</span>
+<span class="sd">    returns an empty-but-valid DataFrame instead of raising if the file has</span>
+<span class="sd">    no usable rows, so callers can detect "run produced no timesteps" the</span>
+<span class="sd">    same way whether the file is empty or malformed. A single data row is</span>
+<span class="sd">    returned as a (1, 5) frame.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    hgraph data numpy array.</span>
+<span class="sd">    hgraph data as a pandas DataFrame.</span>
 
 <span class="sd">    """</span>
-
-    <span class="n">hgraph_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">hgraph_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-    <span class="n">hgraph_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="n">nstep</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
-
-    <span class="n">hgraph_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
-    <span class="n">hgraph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">hgraph_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-    <span class="n">hgraph_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="c1"># np.loadtxt collapses a single data row to a 1-D array of shape</span>
-    <span class="c1"># (5,) instead of (1, 5) — e.g. for a month whose run only wrote one</span>
-    <span class="c1"># output step. atleast_2d restores the row dimension so the</span>
-    <span class="c1"># DataFrame constructor below always sees (n_rows, 5), never (5,).</span>
-    <span class="n">hgraph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">hgraph</span><span class="p">)</span>
 
     <span class="c1"># hgraph collumns information</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="n">cols_hgraph</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"time"</span><span class="p">,</span> <span class="s2">"streamflow"</span><span class="p">,</span> <span class="s2">"Unnamed0"</span><span class="p">,</span> <span class="s2">"Unnamed1"</span><span class="p">,</span> <span class="s2">"Unnamed2"</span><span class="p">]</span>
+
+    <span class="n">hgraph</span> <span class="o">=</span> <span class="n">_read_fixed_width_block</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cols_hgraph</span><span class="p">))</span>
 
     <span class="c1"># transform a numpy array into panda df</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
@@ -1075,25 +1136,19 @@ document.write(`
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Detailed seepage face hydrograph output (Incoming and outgoing flows at the seepage face)</span>
 
+<span class="sd">    Tolerant of a run that crashed mid-write (see ``_read_fixed_width_block``).</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    None.</span>
 
 <span class="sd">    """</span>
 
-    <span class="c1"># hgsfdet_file = open(filename, "r")</span>
-    <span class="c1"># lines = hgsfdet_file.readlines()</span>
-    <span class="c1"># hgsfdet_file.close()</span>
-
-    <span class="c1"># nstep = len(lines)-2</span>
-
-    <span class="n">hgsfdet_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
-    <span class="n">hgsfdet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">hgsfdet_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-    <span class="n">hgsfdet_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="c1"># hgraph collumns information</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="n">cols_hgsfdet</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"NSTEP"</span><span class="p">,</span> <span class="s2">"DELTAT"</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">,</span> <span class="s2">"NET SEEPFACE VOL"</span><span class="p">,</span> <span class="s2">"NET SEEPFACE FLX"</span><span class="p">]</span>
+
+    <span class="n">hgsfdet</span> <span class="o">=</span> <span class="n">_read_fixed_width_block</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cols_hgsfdet</span><span class="p">))</span>
 
     <span class="c1"># transform a numpy array into panda df</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
@@ -1142,14 +1197,6 @@ document.write(`
 <span class="sd">    None.</span>
 
 <span class="sd">    """</span>
-    <span class="n">mbeconv_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">mbeconv_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-    <span class="n">mbeconv_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">nstep</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
-    <span class="n">mbeconv_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
-    <span class="n">mbeconv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">mbeconv_file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">19</span><span class="p">))</span>
-    <span class="n">mbeconv_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="c1"># hgraph collumns information</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="n">cols_mbeconv</span> <span class="o">=</span> <span class="p">[</span>
@@ -1173,6 +1220,15 @@ document.write(`
         <span class="s2">"CUM. MBE"</span><span class="p">,</span>
         <span class="s2">"CUM."</span><span class="p">,</span>
     <span class="p">]</span>
+
+    <span class="n">mbeconv</span> <span class="o">=</span> <span class="n">_read_fixed_width_block</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cols_mbeconv</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">mbeconv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># kept from the previous behaviour: a run that stopped before writing</span>
+        <span class="c1"># its first time step is an error for this reader (not an empty frame)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> has no time step: the run stopped before writing its first one"</span>
+        <span class="p">)</span>
+
     <span class="c1"># transform a numpy array into panda df</span>
     <span class="c1"># ------------------------------------------------------------------------</span>
     <span class="n">df_mbeconv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mbeconv</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols_mbeconv</span><span class="p">)</span>
@@ -1318,7 +1374,7 @@ document.write(`
                 <span class="sa">f</span><span class="s2">"  n_nan    : </span><span class="si">{</span><span class="n">n_nan</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> pixels</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="sa">f</span><span class="s2">"  fort.777 : </span><span class="si">{</span><span class="n">fort777_path</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ensemble </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: ACT. ETRA sum=</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">'ACT. ETRA'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  "</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ensemble </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: ACT. ETRA sum=</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">'ACT. ETRA'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  "</span>
               <span class="sa">f</span><span class="s2">"NaNs=</span><span class="si">{</span><span class="n">n_nan</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">n_nan</span><span class="o">/</span><span class="n">n_total</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
 
         <span class="c1"># drop band dim/coord if present</span>
@@ -1352,14 +1408,14 @@ document.write(`
                 <span class="p">)</span>
             <span class="n">dt_values</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">time_vals</span><span class="p">)</span>
             <span class="n">ds_ensemble</span> <span class="o">=</span> <span class="n">ds_ensemble</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">dt_values</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✓ time converted: timedelta64 → datetime64  (ref: </span><span class="si">{</span><span class="n">ref</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    range: </span><span class="si">{</span><span class="n">dt_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">dt_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✓ time converted: timedelta64 → datetime64  (ref: </span><span class="si">{</span><span class="n">ref</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    range: </span><span class="si">{</span><span class="n">dt_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">dt_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">time_vals</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✓ time is already datetime64"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✓ time is already datetime64"</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ⚠ unexpected time dtype: </span><span class="si">{</span><span class="n">time_vals</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> — skipping conversion"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ⚠ unexpected time dtype: </span><span class="si">{</span><span class="n">time_vals</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> — skipping conversion"</span><span class="p">)</span>
 
     <span class="c1"># ── 3. Clear encoding/attrs on all vars &amp; coords ──────────────────────────</span>
     <span class="n">ENCODING_KEYS</span> <span class="o">=</span> <span class="p">{</span>
@@ -1389,10 +1445,10 @@ document.write(`
         <span class="c1">#     }}</span>
         <span class="c1"># )</span>
         <span class="c1"># add this just before to_netcdf in create_ensemble_ET_xr</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"About to save:"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  time length: </span><span class="si">{</span><span class="n">ds_ensemble</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  time values: </span><span class="si">{</span><span class="n">ds_ensemble</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">ds_ensemble</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"About to save:"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  time length: </span><span class="si">{</span><span class="n">ds_ensemble</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  time values: </span><span class="si">{</span><span class="n">ds_ensemble</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">ds_ensemble</span><span class="p">)</span>
 
         <span class="n">ds_ensemble</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span>
                 <span class="n">output_path</span><span class="p">,</span>
@@ -1404,8 +1460,8 @@ document.write(`
                 <span class="p">}}</span>
             <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  ✓ saved → </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">ds_ensemble</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  ✓ saved → </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">ds_ensemble</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ds_ensemble</span>
 
 
@@ -1424,32 +1480,33 @@ document.write(`
 <span class="sd">        If provided (e.g. '2023-06-01 06:00'), time steps are shown as</span>
 <span class="sd">        absolute datetimes. Overrides time_unit display.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">time_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNIT_DIVISOR</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"time_unit must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">UNIT_DIVISOR</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">unit_divisor</span> <span class="o">=</span> <span class="n">cathy_utils</span><span class="o">.</span><span class="n">get_UNIT_divisor</span><span class="p">()</span>  <span class="c1"># was an undefined global (NameError)</span>
+    <span class="k">if</span> <span class="n">time_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unit_divisor</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"time_unit must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">unit_divisor</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">da</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
     <span class="n">time_vals</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># timedelta64[ns]</span>
     <span class="n">origin_ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span> <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Variable: '</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dimensions: </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">sizes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global mean:   </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global std:    </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global min:    </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global max:    </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"  Mean per time step:"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Variable: '</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dimensions: </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">sizes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global mean:   </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global std:    </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global min:    </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Global max:    </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"  Mean per time step:"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">time_vals</span><span class="p">:</span>
         <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">cathy_utils</span><span class="o">.</span><span class="n">_fmt_time</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">time_unit</span><span class="p">,</span><span class="w"> </span><span class="n">origin_ts</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;25s</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"  Ensemble spread (std) per time step:"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">cathy_utils</span><span class="o">.</span><span class="n">_fmt_time</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">time_unit</span><span class="p">,</span><span class="w"> </span><span class="n">origin_ts</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;25s</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"  Ensemble spread (std) per time step:"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">time_vals</span><span class="p">:</span>
         <span class="n">spread</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s2">"ensemble"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">cathy_utils</span><span class="o">.</span><span class="n">_fmt_time</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">time_unit</span><span class="p">,</span><span class="w"> </span><span class="n">origin_ts</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;25s</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">spread</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">cathy_utils</span><span class="o">.</span><span class="n">_fmt_time</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">time_unit</span><span class="p">,</span><span class="w"> </span><span class="n">origin_ts</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;25s</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">spread</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 
 <span class="c1"># --- Usage examples ---</span>
 <span class="c1"># Relative time in hours (default):</span>
@@ -1509,7 +1566,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

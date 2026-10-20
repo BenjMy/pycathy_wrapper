@@ -419,23 +419,9 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "pyCATHY.DA.cathy_DA",
-   "module_short": "pyCATHY.DA.cathy_DA",
-   "name": "DA"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyCATHY.DA",
-   "module_short": "pyCATHY.DA",
-   "name": "DA"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "pyCATHY",
-   "module_short": "pyCATHY",
-   "name": "DA"
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "NoneType"
   }
  ],
  "simuWithDA.run_preprocessor": [

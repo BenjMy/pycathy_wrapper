@@ -65,7 +65,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -466,19 +466,19 @@ document.write(`
 <h1>ERT.petro_Archie.Archie_rho_DA<a class="headerlink" href="#ert-petro-archie-archie-rho-da" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="ERT.petro_Archie.Archie_rho_DA">
-<span class="sig-prename descclassname"><span class="pre">ERT.petro_Archie.</span></span><span class="sig-name descname"><span class="pre">Archie_rho_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rFluid_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pert_sigma_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ERT/petro_Archie.html#Archie_rho_DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ERT.petro_Archie.Archie_rho_DA" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ERT.petro_Archie.</span></span><span class="sig-name descname"><span class="pre">Archie_rho_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rFluid_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">porosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pert_sigma_Archie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ERT/petro_Archie.html#Archie_rho_DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ERT.petro_Archie.Archie_rho_DA" title="Link to this definition">#</a></dt>
 <dd><p>Compute ER values at each mesh nodes.
 If pert_sigma, add a nornal noise of sigma standart deviation and 0 mean (# See eq. 4.4 thesis Isabelle p.95)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rFluid</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Conductivity of the pore fluid for each soil zone</p></li>
-<li><p><strong>sat</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Water saturation for each soil zone</p></li>
-<li><p><strong>porosity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Porosity for each soil zone</p></li>
-<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – Tortuosity factor. The default is 1.0.</p></li>
-<li><p><strong>m</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – Cementation exponent. The default is 2.0.(usually in the range 1.3 – 2.5 for sandstones)</p></li>
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – Saturation exponent. The default is 2.0.</p></li>
-<li><p><strong>pert_sigma_Archie</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – Normal noise to add to the data</p></li>
+<li><p><strong>rFluid</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a>) – Conductivity of the pore fluid for each soil zone</p></li>
+<li><p><strong>sat</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a>) – Water saturation for each soil zone</p></li>
+<li><p><strong>porosity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a>) – Porosity for each soil zone</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – Tortuosity factor. The default is 1.0.</p></li>
+<li><p><strong>m</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – Cementation exponent. The default is 2.0.(usually in the range 1.3 – 2.5 for sandstones)</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – Saturation exponent. The default is 2.0.</p></li>
+<li><p><strong>pert_sigma_Archie</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – Normal noise to add to the data</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -569,7 +569,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

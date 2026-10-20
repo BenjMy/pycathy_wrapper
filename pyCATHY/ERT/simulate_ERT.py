@@ -109,6 +109,16 @@ def create_ERT_survey_pg(pathERT,
             "Cannot read {}: valid extensions are .msh, .bms, or .vtk".format(mesh)
         )
     
+    # a .vtk (or any format without boundary markers) comes back with all boundaries = 0, i.e. a
+    # closed Neumann box: biased potentials + "Neumann domain without calibration point" warning.
+    # -1 = free surface (top), -2 = mixed/far-field on every other outer face. Existing -2 kept.
+    if not (np.asarray(mesh3d.boundaryMarkers()) == -2).any():
+        mesh3d.createNeighborInfos()
+        _ztop = mesh3d.zmax()
+        for _b in mesh3d.boundaries():
+            if _b.outside():
+                _b.setMarker(-1 if abs(_b.center().z() - _ztop) < 1e-9 else -2)
+
     sequence_file_extension = os.path.splitext(sequence)[1]
 
     if "shm" in sequence_file_extension:

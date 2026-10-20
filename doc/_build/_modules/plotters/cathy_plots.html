@@ -64,7 +64,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -1831,15 +1831,15 @@ document.write(`
     <span class="n">cax</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">EnsembleX</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">)</span>  <span class="c1"># ,</span>
     <span class="c1"># cmap=cm.rainbow, norm=colors.LogNorm())</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Prior"</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Members #"</span><span class="p">)</span>
     <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">)</span>
 
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
     <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">EnsembleX</span><span class="p">),</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"gray"</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">())</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"cov(Prior)"</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
     <span class="c1"># cbar = fig.colorbar(cax, location='bottom')</span>
     <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"$</span><span class="si">%.1f</span><span class="s2">$"</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">)</span>
 
@@ -1875,7 +1875,7 @@ document.write(`
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
     <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dAS</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"seismic"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Correction"</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Members #"</span><span class="p">)</span>
     <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
@@ -1883,7 +1883,7 @@ document.write(`
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
     <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">Analysis</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Posterior"</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\psi$ params #"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Members #"</span><span class="p">)</span>
     <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
@@ -1901,7 +1901,7 @@ document.write(`
     <span class="c1"># fig, ax = plt.subplots()</span>
     <span class="c1"># cax = ax.matshow(np.dot(dAS, B), aspect="auto", cmap="jet")</span>
     <span class="c1"># ax.set_title("Correction")</span>
-    <span class="c1"># ax.set_ylabel("$\psi$ params #")</span>
+    <span class="c1"># ax.set_ylabel(r"$\psi$ params #")</span>
     <span class="c1"># ax.set_xlabel("Members #")</span>
     <span class="c1"># cbar = fig.colorbar(cax, location="bottom")</span>
     <span class="c1"># ax.set_yticks([])</span>
@@ -2444,7 +2444,7 @@ document.write(`
             <span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">"-"</span><span class="p">],</span>
             <span class="n">color</span><span class="o">=</span><span class="n">colors_minmax</span><span class="p">,</span>
             <span class="n">xlabel</span><span class="o">=</span><span class="s2">"(assimilation) time - (h)"</span><span class="p">,</span>
-            <span class="n">ylabel</span><span class="o">=</span><span class="s2">"pressure head $\psi$ (m)"</span><span class="p">,</span>
+            <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">"pressure head $\psi$ (m)"</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span>
         <span class="p">)</span>
 
@@ -2469,7 +2469,7 @@ document.write(`
             <span class="n">style</span><span class="o">=</span><span class="p">[</span><span class="s2">"-"</span><span class="p">],</span>
             <span class="n">color</span><span class="o">=</span><span class="s2">"grey"</span><span class="p">,</span>
             <span class="n">label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">ylabel</span><span class="o">=</span><span class="s2">"pressure head $\psi$ (m)"</span><span class="p">,</span>
+            <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">"pressure head $\psi$ (m)"</span><span class="p">,</span>
         <span class="p">)</span>  <span class="c1"># water saturation (-)</span>
         <span class="n">prep_DA</span><span class="p">[</span><span class="s2">"ens_min_isOL_time"</span><span class="p">]</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>
             <span class="n">index</span><span class="o">=</span><span class="n">keytime</span><span class="p">,</span>
@@ -2579,7 +2579,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>

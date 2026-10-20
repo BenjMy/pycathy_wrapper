@@ -65,7 +65,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 09, 2026"/>
+    <meta name="docbuild:last-update" content="Oct 19, 2026"/>
   </head>
   
   
@@ -477,7 +477,7 @@ N-D scattered data to an M-D domain.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> (<em>arrays</em>) – x, y, z, …, d, where x, y, z, … are the coordinates of the nodes
 and d is the array of values at the nodes</p></li>
-<li><p><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>callable</em><em>, </em><em>optional</em>) – <p>The radial basis function, based on the radius, r, given by the norm
+<li><p><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>callable</em><em>, </em><em>optional</em>) – <p>The radial basis function, based on the radius, r, given by the norm
 (default is Euclidean distance); the default is ‘multiquadric’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'multiquadric'</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">r</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 <span class="s1">'inverse'</span><span class="p">:</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">sqrt</span><span class="p">((</span><span class="n">r</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -492,19 +492,19 @@ and d is the array of values at the nodes</p></li>
 parameter will be available as self.epsilon. Other keyword
 arguments passed in will be available as well.</p>
 </p></li>
-<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Adjustable constant for gaussian or multiquadrics functions
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Adjustable constant for gaussian or multiquadrics functions
 - defaults to approximate average distance between nodes (which is
 a good start).</p></li>
-<li><p><strong>smooth</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Values greater than zero increase the smoothness of the
+<li><p><strong>smooth</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Values greater than zero increase the smoothness of the
 approximation. 0 is for interpolation (default), the function will
 always go through the nodal points in this case.</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>callable</em><em>, </em><em>optional</em>) – A function that returns the ‘distance’ between two points, with
+<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>callable</em><em>, </em><em>optional</em>) – A function that returns the ‘distance’ between two points, with
 inputs as arrays of positions (x, y, z, …), and an output as an
 array of distance. E.g., the default: ‘euclidean’, such that the result
 is a matrix of the distances from each point in <code class="docutils literal notranslate"><span class="pre">x1</span></code> to each point in
 <code class="docutils literal notranslate"><span class="pre">x2</span></code>. For more options, see documentation of
 <cite>scipy.spatial.distances.cdist</cite>.</p></li>
-<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Mode of the interpolation, can be ‘1-D’ (default) or ‘N-D’. When it is
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Mode of the interpolation, can be ‘1-D’ (default) or ‘N-D’. When it is
 ‘1-D’ the data <cite>d</cite> will be considered as 1-D and flattened
 internally. When it is ‘N-D’ the data <cite>d</cite> is assumed to be an array of
 shape (n_samples, m), where m is the dimension of the target domain.</p></li>
@@ -512,14 +512,14 @@ shape (n_samples, m), where m is the dimension of the target domain.</p></li>
 </dd>
 <dt class="field-even">Variables<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of data points (as determined by the input arrays).</p></li>
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – The number of data points (as determined by the input arrays).</p></li>
 <li><p><strong>di</strong> (<em>ndarray</em>) – The 1-D array of data values at each of the data coordinates <cite>xi</cite>.</p></li>
 <li><p><strong>xi</strong> (<em>ndarray</em>) – The 2-D array of data coordinates.</p></li>
-<li><p><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>callable</em>) – The radial basis function. See description under Parameters.</p></li>
-<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Parameter used by gaussian or multiquadrics functions. See Parameters.</p></li>
-<li><p><strong>smooth</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Smoothing parameter. See description under Parameters.</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>callable</em>) – The distance function. See description under Parameters.</p></li>
-<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Mode of the interpolation. See description under Parameters.</p></li>
+<li><p><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>callable</em>) – The radial basis function. See description under Parameters.</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Parameter used by gaussian or multiquadrics functions. See Parameters.</p></li>
+<li><p><strong>smooth</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Smoothing parameter. See description under Parameters.</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>callable</em>) – The distance function. See description under Parameters.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Mode of the interpolation. See description under Parameters.</p></li>
 <li><p><strong>nodes</strong> (<em>ndarray</em>) – A 1-D array of node values for the interpolation.</p></li>
 <li><p><strong>A</strong> (<em>internal property</em><em>, </em><em>do not use</em>)</p></li>
 </ul>
@@ -651,7 +651,7 @@ By B. Mary
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Oct 09, 2026.
+  Last updated on Oct 19, 2026.
   <br/>
 </p>
   </div>
