@@ -10,6 +10,7 @@ Plotting:
     - Data assimilation results
 """
 
+import logging
 import glob
 import os
 
@@ -1609,92 +1610,117 @@ def DA_plot_parm_dynamic(
     return ax
 
 
-def DA_plot_parm_dynamic_scatter(
-    parm="ks", dict_parm_pert={}, list_assimilation_times=[], savefig=False, **kwargs
-):
-    """Plot result of Data Assimilation: parameter estimation evolution over the time"""
+def _update_keys(entry):
+    """Keys of ``dict_parm_pert[parm]`` that hold the ensemble after each update, in update order.
 
-    if "ax" in kwargs:
-        ax = kwargs["ax"]
-    else:
+    Looks first for names like ``update_nb3`` / ``upd3`` / ``update3``; if none matches, returns an
+    empty list (the parameter has no analysed ensemble). Sorted by the trailing integer (not by dict order, not alphabetically).
+    """
+    import re
+    keys = [k for k in entry if re.search(r"(upd|update)", str(k), re.I)]
+    # no fallback to other arrays: 'sampling' / 'ini_*_withLayers' are copies of the prior,
+    # not analysed ensembles. No update key -> empty list (caller skips the parameter).
+
+    def _num(k):
+        m = re.search(r"(\d+)\s*$", str(k))
+        return int(m.group(1)) if m else -1
+
+    return sorted(keys, key=_num)
+
+
+def DA_plot_parm_dynamic_scatter(
+    parm="ks", dict_parm_pert=None, list_assimilation_times=None, savefig=False, **kwargs
+):
+    """Boxplot of a parameter ensemble after each update (one box per update).
+
+    Only the ``update_nb*`` entries of ``dict_parm_pert[parm]`` are plotted (the
+    initial perturbation is *not* a column), so ``list_assimilation_times`` must
+    hold the **dates (or numbers) of the updates**, one per update.
+
+    Parameters
+    ----------
+    parm : str
+        Key of ``dict_parm_pert`` (e.g. ``'ZROOT0'``).
+    dict_parm_pert : dict
+        ``results['dict_parm_pert']``.
+    list_assimilation_times : sequence
+        One entry per update. If it has one more entry than there are updates
+        the first one is assumed to be the initial time and is dropped (warning).
+    **kwargs
+        ``ax``, ``color``, ``log`` (log y-scale), ``date_fmt`` (strftime format of
+        the box labels, default adapts to the span), ``savename``.
+
+    Returns
+    -------
+    ax, df : the axis and the DataFrame (ensemble member x update) that was plotted;
+        ``(None, None)`` if the parameter has no update entries (nothing is drawn).
+    """
+    import seaborn  # lazy: only needed here
+
+    if dict_parm_pert is None:
+        dict_parm_pert = {}
+    # one column per update (keys like 'update_nb0', 'update_nb1', ...)
+    upd_keys = _update_keys(dict_parm_pert[parm])
+    if not upd_keys:
+        logging.getLogger(__name__).warning(
+            f"{parm}: no update entries in dict_parm_pert (keys: {list(dict_parm_pert[parm])}) -> skipped"
+        )
+        return None, None
+
+    ax = kwargs.get("ax")
+    if ax is None:
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
-
-
-    ensemble_size = len(dict_parm_pert[parm]["ini_perturbation"])
-    mean_t = [np.mean(dict_parm_pert[parm]["ini_perturbation"])]
-    mean_t_yaxis = np.mean(dict_parm_pert[parm]["ini_perturbation"])
-    cloud_t = np.zeros([ensemble_size, len(list_assimilation_times)])
-    cloud_t[:, 0] = np.array(dict_parm_pert[parm]["ini_perturbation"])
-    np.shape(cloud_t)
-    try:
-        for nt in list_assimilation_times[1:]:
-            cloud_t[:, int(nt + 1)] = np.hstack(
-                dict_parm_pert[parm]["update_nb" + str(int(nt))]
-            )
-    except:
-        pass
-
-    dict_parm_new = {}
-    name = []
-    i = 0
-    for k in dict_parm_pert[parm].keys():
-        if "upd" in k:
-            dict_parm_new[parm + "_" + k] = np.hstack(dict_parm_pert[parm][k])
-            name.append(str(i + 1))
-            i = i + 1
-    df = pd.DataFrame()
-    df = pd.DataFrame(data=dict_parm_new)
+    df = pd.DataFrame({k: np.ravel(np.asarray(dict_parm_pert[parm][k], dtype=float)) for k in upd_keys})
     df.index.name = "Ensemble_nb"
 
-    color = 'k'
-    if "color" in kwargs:
-        color = kwargs["color"]
+    times = pd.Index(list_assimilation_times) if list_assimilation_times is not None else pd.RangeIndex(1, df.shape[1] + 1)
+    if len(times) == df.shape[1] + 1:
+        logging.getLogger(__name__).warning(
+            f"{parm}: {len(times)} times for {df.shape[1]} updates -> dropping the first (initial) time"
+        )
+        times = times[1:]
+    if len(times) > df.shape[1]:
+        logging.getLogger(__name__).warning(
+            f"{parm}: {df.shape[1]} updates but {len(times)} times -> using the first {df.shape[1]} times"
+        )
+        times = times[: df.shape[1]]
+    if len(times) != df.shape[1]:
+        raise ValueError(
+            f"{parm}: {df.shape[1]} updates in dict_parm_pert but {len(times)} times given; "
+            "pass one time per update"
+        )
 
-    if len(df.columns)>30:
-        nii = [int(ni) for ni in np.arange(0,len(df.columns),15)]
-        name = [str(ni) for ni in nii]
-        df = df.iloc[:,nii]
-        # dates = pd.to_datetime(list_assimilation_times[nii])
-        list_assimilation_times = list_assimilation_times[nii]
+    # too many updates: keep one every 15
+    if df.shape[1] > 30:
+        nii = np.arange(0, df.shape[1], 15)
+        df = df.iloc[:, nii]
+        times = times[nii]
 
-    # if len(df.columns)>30:
-    #     nii = [int(ni) for ni in np.arange(0,len(df.columns),15)]
-    #     name = [str(ni) for ni in nii]
-    #     df = df.iloc[:,nii]
-    #     # dates = pd.to_datetime(list_assimilation_times[nii])
-    #     list_assimilation_times = list_assimilation_times[nii]
+    is_date = pd.api.types.is_datetime64_any_dtype(times)
+    df.columns = range(df.shape[1])  # positional, labels are set below
+    boxplot = seaborn.boxplot(df, color=kwargs.get("color", "grey"), ax=ax)
 
-
-    df.columns = list_assimilation_times
-    boxplot = seaborn.boxplot(
-                            df,
-                            color='grey',
-                            ax=ax
-                         )
-
-    # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
-    # if pd.api.types.is_datetime64_any_dtype(df.columns):
-    #     ax.set_xticklabels([pd.to_datetime(date).strftime('%d %b') for date in df.columns],
-    #                    rotation=45)
-    # if pd.api.types.is_datetime64_any_dtype(df.columns):
-        # ax.set_xticklabels([pd.to_datetime(date).strftime('%d (%-I%p)') for date in df.columns],
-        #                rotation=45)
-        # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b %-I %p'.lower()))
-        # ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b %H h'))
-
-        # Optional: control how often ticks appear
-        # ax.xaxis.set_major_locator(mdates.AutoDateLocator(maxticks=6))
-
-        # Rotate labels for readability
-        # plt.setp(ax.get_xticklabels(), rotation=45, ha='right')
-
+    if is_date:
+        fmt = kwargs.get("date_fmt")
+        if fmt is None:
+            sub_daily = (times.normalize() != times).any() or (times.max() - times.min()) < pd.Timedelta(days=3)
+            fmt = "%d %b %H:%M" if sub_daily else "%d %b"
+        labels = [t.strftime(fmt) for t in times]
+        ax.set_xticks(range(len(labels)))
+        ax.set_xticklabels(labels, rotation=30, ha="right")
+        ax.set_xlabel("assimilation date")
+    else:
+        ax.set_xticks(range(len(times)))
+        ax.set_xticklabels([str(t) for t in times])
+        ax.set_xlabel("assimilation #")
     ax.set_ylabel(parm)
-    ax.set_xlabel("assimilation #")
 
-    if "log" in kwargs:
-        if kwargs["log"]:
-            boxplot.set_yscale("log")
+    if kwargs.get("log"):
+        boxplot.set_yscale("log")
+    if savefig:
+        ax.figure.savefig(kwargs.get("savename", "showDA_parm") + ".png", dpi=300)
+    df.columns = times
     return ax, df
 
 

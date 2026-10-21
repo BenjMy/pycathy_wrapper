@@ -591,6 +591,24 @@ def plot_stats_ensemble_ET(ds, var="ACT. ETRA", output_fig="ensemble_ET_stats.pn
 # -----------------------------------------------------------------------------
 
 
+def _update_keys(entry):
+    """Keys of ``dict_parm_pert[parm]`` that hold the ensemble after each update, in update order.
+
+    Looks first for names like ``update_nb3`` / ``upd3`` / ``update3``; if none matches, returns an
+    empty list (the parameter has no analysed ensemble). Sorted by the trailing integer (not by dict order, not alphabetically).
+    """
+    import re
+    keys = [k for k in entry if re.search(r"(upd|update)", str(k), re.I)]
+    # no fallback to other arrays: 'sampling' / 'ini_*_withLayers' are copies of the prior,
+    # not analysed ensembles. No update key -> empty list (caller skips the parameter).
+
+    def _num(k):
+        m = re.search(r"(\d+)\s*$", str(k))
+        return int(m.group(1)) if m else -1
+
+    return sorted(keys, key=_num)
+
+
 def DA_plot_parm_dynamic_scatter(
     parm="ks", dict_parm_pert=None, list_assimilation_times=None, savefig=False, **kwargs
 ):
@@ -615,20 +633,26 @@ def DA_plot_parm_dynamic_scatter(
 
     Returns
     -------
-    ax, df : the axis and the DataFrame (ensemble member x update) that was plotted.
+    ax, df : the axis and the DataFrame (ensemble member x update) that was plotted;
+        ``(None, None)`` if the parameter has no update entries (nothing is drawn).
     """
     import seaborn  # lazy: only needed here
 
     if dict_parm_pert is None:
         dict_parm_pert = {}
+    # one column per update (keys like 'update_nb0', 'update_nb1', ...)
+    upd_keys = _update_keys(dict_parm_pert[parm])
+    if not upd_keys:
+        logging.getLogger(__name__).warning(
+            f"{parm}: no update entries in dict_parm_pert (keys: {list(dict_parm_pert[parm])}) -> skipped"
+        )
+        return None, None
+
     ax = kwargs.get("ax")
     if ax is None:
         fig = plt.figure(figsize=(6, 3), dpi=350)
         ax = fig.add_subplot()
-
-    # one column per update (keys like 'update_nb0', 'update_nb1', ...)
-    upd_keys = [k for k in dict_parm_pert[parm].keys() if "upd" in k]
-    df = pd.DataFrame({k: np.hstack(dict_parm_pert[parm][k]) for k in upd_keys})
+    df = pd.DataFrame({k: np.ravel(np.asarray(dict_parm_pert[parm][k], dtype=float)) for k in upd_keys})
     df.index.name = "Ensemble_nb"
 
     times = pd.Index(list_assimilation_times) if list_assimilation_times is not None else pd.RangeIndex(1, df.shape[1] + 1)
@@ -637,6 +661,11 @@ def DA_plot_parm_dynamic_scatter(
             f"{parm}: {len(times)} times for {df.shape[1]} updates -> dropping the first (initial) time"
         )
         times = times[1:]
+    if len(times) > df.shape[1]:
+        logging.getLogger(__name__).warning(
+            f"{parm}: {df.shape[1]} updates but {len(times)} times -> using the first {df.shape[1]} times"
+        )
+        times = times[: df.shape[1]]
     if len(times) != df.shape[1]:
         raise ValueError(
             f"{parm}: {df.shape[1]} updates in dict_parm_pert but {len(times)} times given; "

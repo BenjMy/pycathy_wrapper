@@ -921,8 +921,76 @@ class DA(CATHY):
 
         _check_positive_pressure_heads(ensemble_psi_valid, "forecast")
         _check_positive_pressure_heads(analysis_valid, "analysed")  # effect of the update (B10)
+        # report first (raw values), then project: the clipped array is what CATHY reads as next IC
+        analysis_valid = self._clip_analysed_psi(analysis_valid)
         self.update_pert_parm_dict(update_key, list_parm2update, analysis_param_valid)
         return [psi_bef_update, sw_bef_update], analysis_valid
+
+    def _clip_analysed_psi(self, analysis_valid: np.ndarray) -> np.ndarray:
+        """Project the analysed pressure heads onto ``config.psi_bounds`` = (lo, hi) [m].
+
+        The EnKF update is linear and unbounded: it can push nodes above saturation (psi > 0),
+        and CATHY cannot start a window from such an initial condition (time step collapses to
+        DTMIN within the first milliseconds). NaN columns (rejected members) stay NaN.
+        The number of clipped values is logged every cycle: a large count means the update, not
+        the clip, is the problem.
+        """
+        bounds = getattr(getattr(self, "config", None), "psi_bounds", None)
+        if bounds is None:
+            return analysis_valid
+        lo, hi = bounds
+        finite = np.isfinite(analysis_valid)
+        clipped = np.clip(analysis_valid, lo, hi)          # NaN stays NaN
+        changed = finite & (clipped != analysis_valid)
+        n_changed = int(changed.sum())
+        members = np.flatnonzero(changed.any(axis=0)) + 1
+        msg = (
+            f"[DA-PSI] cycle {self.count_DA_cycle}: {n_changed} analysed pressure heads clipped to "
+            f"[{lo}, {hi}] m ({100 * n_changed / max(int(finite.sum()), 1):.3f} % of the values, "
+            f"{members.size} members)"
+        )
+        if n_changed:
+            msg += (f"; before clipping max = {np.nanmax(analysis_valid):.3f} m, "
+                    f"min = {np.nanmin(analysis_valid):.3f} m")
+            logger.warning(msg)
+        else:
+            logger.info(msg)
+        print(msg, flush=True)
+        return clipped
+
+    def _guard_innovation(self, data_in, prediction_in, data_cov):
+        """Inflate R when the innovation is inconsistent with the observation error.
+
+        Opt-in: ``simuDA.innovation_rms_max = 3.0`` (None / not set = off). With d the (log)
+        observations, Hx the ensemble-mean prediction and R the observation error, the
+        rms of (d - Hx) / sqrt(diag R) is compared with the limit. Above it, R is multiplied by
+        (rms / limit)**2, so that the innovation seen by the filter is exactly at the limit: the
+        update is downweighted instead of pushing the states and parameters far from the
+        prior. Note: this rms uses R only (not R + spread), so it need not equal the value
+        printed by ERT_checks.
+        """
+        limit = getattr(self, "innovation_rms_max", None)
+        if limit is None:
+            return data_cov
+        d = np.asarray(data_in, dtype=float).reshape(-1)
+        hx = np.nanmean(np.asarray(prediction_in, dtype=float), axis=1)
+        cov = np.asarray(data_cov, dtype=float)
+        sd = np.sqrt(np.diag(cov)) if cov.ndim == 2 else np.sqrt(cov)
+        ok = np.isfinite(d) & np.isfinite(hx) & (sd > 0)
+        if not ok.any():
+            return data_cov
+        rms = float(np.sqrt(np.mean(((d[ok] - hx[ok]) / sd[ok]) ** 2)))
+        if rms <= limit:
+            msg = f"[DA-INNOV] cycle {self.count_DA_cycle}: innovation rms {rms:.2f} <= {limit:g}, R unchanged"
+            logger.info(msg)
+            print(msg, flush=True)
+            return data_cov
+        factor = (rms / limit) ** 2
+        msg = (f"[DA-INNOV] cycle {self.count_DA_cycle}: innovation rms {rms:.2f} > {limit:g}: "
+               f"R inflated x{factor:.2f} (effective rms {limit:g})")
+        logger.warning(msg)
+        print(msg, flush=True)
+        return data_cov * factor
 
     def _log_time_alignment(self):
         """Log, before the first window, how the observation times line up with the model windows.
@@ -1420,6 +1488,9 @@ class DA(CATHY):
         else:
             self._save_obs_pred_boxplot(data_valid, prediction_valid)
             data_in, prediction_in = data_valid, prediction_valid
+
+        # innovation guard (opt-in: simuDA.innovation_rms_max = 3.0): inflates R when model and data disagree
+        data_cov_valid = self._guard_innovation(data_in, prediction_in, data_cov_valid)
 
         result_analysis = run_analysis(
             DA_type,

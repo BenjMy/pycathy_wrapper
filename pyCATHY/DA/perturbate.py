@@ -72,6 +72,19 @@ def _apply_scenario_bounds(list_pert, scenario):
             het_size=len(nominal) if listed else 1,
             het_nb=int(suffix) if (listed and suffix != "") else 0,
         )
+        # Same for the parameter transformation (log, log-ratio, hyperbolic): the hand-built
+        # entries (scalar Archie, ...) never copied the scenario ``transf_type``, so the
+        # analysis updated them in linear space. An entry that already carries one is kept.
+        transf = scenario.get("transf_type")
+        if transf is not None and i < len(transf):
+            spec = transf[i]
+            if isinstance(spec, (list, tuple)):
+                j = int(suffix) if suffix != "" else 0
+                spec = spec[j] if j < len(spec) else None
+            if isinstance(spec, str) and spec.strip().lower() == "none":
+                spec = None
+            if entry.get("transf_type") in (None, "None"):
+                entry["transf_type"] = spec
 
 
 def _n_classes(raster):
@@ -1461,12 +1474,27 @@ def build_dict_attributes_pert(
     var_per_2add[type_parm][key] = parm_sampling
     # Parameter tranformation
     # --------------------------------------------------------------------
-    if "transf_type" in kwargs:
+    # The entry built from the scenario (create_dict_entry) already carries its
+    # ``transf_type``: an explicit kwarg overrides it, but its absence must NOT reset it
+    # to None (that silently disabled the log transform in the analysis step).
+    if kwargs.get("transf_type") is not None:
         var_per_2add[type_parm]["transf_type"] = kwargs["transf_type"]
-        if "transf_bounds" in kwargs:
-            var_per_2add[type_parm]["transf_bounds"] = kwargs["transf_bounds"]
     else:
-        var_per_2add[type_parm]["transf_type"] = None
+        var_per_2add[type_parm].setdefault("transf_type", None)
+    if "transf_bounds" in kwargs:
+        var_per_2add[type_parm]["transf_bounds"] = kwargs["transf_bounds"]
+    elif (
+        var_per_2add[type_parm].get("transf_type") == "log-ratio"
+        and "transf_bounds" not in var_per_2add[type_parm]
+    ):
+        # bounded log needs A < p < B: default to the scenario bounds of the entry
+        lo, hi = var_per_2add[type_parm].get("clip_min"), var_per_2add[type_parm].get("clip_max")
+        if lo is None or hi is None:
+            raise ValueError(
+                f"{type_parm}: transf='log-ratio' needs both per_bounds (min and max) "
+                "or an explicit transf_bounds={'A':..,'B':..}"
+            )
+        var_per_2add[type_parm]["transf_bounds"] = {"A": lo, "B": hi}
     # Parameter spatial extension
     # --------------------------------------------------------------------
     if "surf_zones_param" in kwargs:

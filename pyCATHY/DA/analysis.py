@@ -83,6 +83,12 @@ class AnalysisConfig:
         list/array means "no localisation" and is stored as None.
     pf_resample_threshold, pf_jitter_std_param, pf_jitter_std_state : float
         Particle filter settings.
+    pf_temper_neff_frac : float or None
+        Temper the likelihood (weights ~ exp(beta*loglik)) so that N_eff >= frac * N. None: exact
+        likelihood (degenerates to N_eff = 1 with thousands of ERT data).
+    pf_liu_west_a : float or None
+        Liu-West kernel shrinkage factor (e.g. 0.98) for the parameters after resampling; replaces
+        the additive ``pf_jitter_std_param``. None: legacy jitter.
     """
 
     sakov: bool = True
@@ -94,6 +100,8 @@ class AnalysisConfig:
     pf_resample_threshold: float = 0.5
     pf_jitter_std_param: float = 0.01
     pf_jitter_std_state: float = 0.05
+    pf_temper_neff_frac: Optional[float] = None
+    pf_liu_west_a: Optional[float] = None
 
     def __post_init__(self):
         if self.localisation_matrix is not None:
@@ -120,6 +128,8 @@ class AnalysisConfig:
             "pf_resample_threshold",
             "pf_jitter_std_param",
             "pf_jitter_std_state",
+            "pf_temper_neff_frac",
+            "pf_liu_west_a",
         ):
             if name in kwargs:
                 values[name] = kwargs.pop(name)
@@ -309,14 +319,16 @@ def _particle_filter(data, data_cov, param, state, prediction, config):
         resample_threshold=config.pf_resample_threshold,
         jitter_std_param=config.pf_jitter_std_param,
         jitter_std_state=config.pf_jitter_std_state,
+        temper_neff_frac=config.pf_temper_neff_frac,
+        liu_west_a=config.pf_liu_west_a,
     )
-    logger.info(f"Final N_eff: {analysis['n_eff']:.1f}")
+    logger.info(f"Final N_eff: {analysis['n_eff']:.1f} (exact likelihood: {analysis['n_eff_raw']:.2f}, beta = {analysis['beta']:.2e})")
     logger.info(f"Resampled: {analysis['resampled']}")
     return AnalysisResult(
         analysis=analysis["Analysis"],
         analysis_param=analysis["Analysisparam"].T,
         extra={
-            k: analysis[k] for k in ("weights", "n_eff", "resampled", "observation")
+            k: analysis[k] for k in ("weights", "n_eff", "n_eff_raw", "beta", "resampled", "observation")
         },
     )
 

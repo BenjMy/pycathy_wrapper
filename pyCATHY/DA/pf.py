@@ -37,7 +37,12 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     use_log_K = kwargs.get('use_log_K',False)
     param_bounds = kwargs.get('param_bounds',False)
     alpha = kwargs.get('alpha', 1.0)
-    
+    # likelihood tempering: weights ~ exp(beta * loglik), beta in (0, 1] chosen so that N_eff >= frac * N
+    # (None = exact likelihood, beta = 1). With thousands of data the exact weights always give N_eff = 1.
+    temper_neff_frac = kwargs.get('temper_neff_frac', None)
+    # Liu & West (2001) kernel shrinkage for the parameters after resampling (None = legacy additive jitter)
+    liu_west_a = kwargs.get('liu_west_a', None)
+
     # Collect data sizes
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0]
@@ -64,28 +69,35 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     # STEP 1: Compute particle weights using exact likelihood
     # =========================================================================
     
-    log_weights = np.zeros(ens_size)
-    
-    for i in range(ens_size):
-        # Innovation: difference between actual and predicted observation
-        innovation = data - observation[:, i]
-        
-        # Log-likelihood (assuming Gaussian observation errors)
-        # log p(y|x) = -0.5 * sum((y - h(x))^2 / sigma^2)
-        log_likelihood = -0.5 * np.sum((innovation / obs_std) ** 2)
-        log_weights[i] = log_likelihood
-    
-    # Normalize weights (subtract max for numerical stability)
-    log_weights -= log_weights.max()
-    weights = np.exp(log_weights)
-    weights /= weights.sum()
-    
-    # Compute effective sample size
+    innov = (data[:, None] - observation) / obs_std[:, None]          # (meas_size, ens_size)
+    loglik = -0.5 * np.sum(innov ** 2, axis=0)                        # log p(y|x_i)
+
+    def _weights(beta):
+        lw = beta * loglik
+        lw = lw - lw.max()                                            # numerical stability
+        w = np.exp(lw)
+        return w / w.sum()
+
+    beta = 1.0
+    weights = _weights(beta)
     n_eff = 1.0 / np.sum(weights ** 2)
+    n_eff_raw = n_eff
+    if temper_neff_frac is not None and n_eff < temper_neff_frac * ens_size:
+        target = temper_neff_frac * ens_size
+        lo, hi = 0.0, 1.0            # N_eff(beta) decreases with beta: bisection on the largest admissible beta
+        for _ in range(60):
+            mid = 0.5 * (lo + hi)
+            if 1.0 / np.sum(_weights(mid) ** 2) >= target:
+                lo = mid
+            else:
+                hi = mid
+        beta = max(lo, 1e-12)
+        weights = _weights(beta)
+        n_eff = 1.0 / np.sum(weights ** 2)
+        logger.info("PF: exact-likelihood N_eff = %.2f / %d -> tempered with beta = %.3e (N_eff = %.1f)",
+                    n_eff_raw, ens_size, beta, n_eff)
     logger.debug(f"  Effective sample size: N_eff = {n_eff:.1f} / {ens_size}")
-    logger.debug(f"  Weight range: [{weights.min():.3e}, {weights.max():.3e}]")
-    logger.debug(f"  Max/Min weight ratio: {weights.max()/weights.min():.3e}")
-    
+
     # Diagnose issues
     diag = diagnose_particle_filter_issues(param, weights, observation, data)
     for warning in diag['warnings']:
@@ -95,6 +107,10 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     # STEP 2: Resample if needed (when particle degeneracy occurs)
     # =========================================================================
     
+    # weighted mean / std of each parameter (the pre-resampling posterior), used by the Liu-West kernel
+    par_mean_w = param @ weights
+    par_std_w = np.sqrt(np.maximum(((param - par_mean_w[:, None]) ** 2) @ weights, 0.0))
+
     resampled = False
     if n_eff < resample_threshold * ens_size:
         logger.debug(f"  Resampling (N_eff < {resample_threshold * ens_size:.1f})...")
@@ -125,15 +141,23 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
     # STEP 4: Add jitter to prevent particle collapse
     # =========================================================================
     
-    if resampled or jitter_std_param > 0:  # Can apply jitter even without resampling
+    if resampled or (liu_west_a is None and jitter_std_param > 0):
         logger.debug("  Adding jitter to maintain diversity...")
         
         # Jitter for states (ensemble)
         if jitter_std_state > 0:
             ensemble += np.random.randn(*ensemble.shape) * jitter_std_state
         
-        # Jitter for parameters (param is par_size x ens_size)
-        if jitter_std_param > 0:
+        # Liu & West: shrink towards the weighted mean, add noise of std sqrt(1-a^2) * std_w: mean AND
+        # variance of the weighted posterior are preserved (a fixed additive jitter is not scaled to the
+        # parameters and inflates or ignores their spread). Only after a resampling.
+        if liu_west_a is not None:
+            if resampled:
+                a_lw = float(liu_west_a)
+                param = (a_lw * param + (1.0 - a_lw) * par_mean_w[:, None]
+                         + np.sqrt(1.0 - a_lw ** 2) * par_std_w[:, None]
+                         * np.random.randn(*param.shape))
+        elif jitter_std_param > 0:
             if use_log_K:
                 # Apply multiplicative jitter in log-space (better for K)
                 # This keeps K positive and maintains scale
@@ -191,6 +215,8 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
         'weights': weights,
         'n_eff': n_eff,
         'resampled': resampled,
+        'beta': beta,
+        'n_eff_raw': n_eff_raw,
         'observation': observation  # Updated observations after resampling
     }
     
@@ -210,8 +236,9 @@ def systematic_resample(weights, n_particles):
     """
     positions = (np.arange(n_particles) + np.random.rand()) / n_particles
     cumsum = np.cumsum(weights)
+    cumsum[-1] = 1.0                      # rounding: avoids an index == n_particles
     indices = np.searchsorted(cumsum, positions)
-    return indices
+    return np.minimum(indices, n_particles - 1)
 
 
 def diagnose_particle_filter_issues(param, weights, observation, data):
@@ -230,7 +257,7 @@ def diagnose_particle_filter_issues(param, weights, observation, data):
     diagnostics = {}
     
     # 1. Weight concentration
-    diagnostics['weight_concentration'] = weights.max() / weights.min()
+    diagnostics['weight_concentration'] = weights.max() / max(weights.min(), 1e-300)
     diagnostics['n_eff'] = 1.0 / np.sum(weights**2)
     
     # 2. Parameter variance
