@@ -1127,7 +1127,11 @@ def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
         # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
         parm_sampling = np.random.normal(mean, scale=sd, size=ensemble_size)
     elif sampling_type == "uniform":
-        minmax_uni = kwargs["minmax_uni"]
+        # without explicit limits: the uniform law with this mean and sd (half-width sqrt(3) sd)
+        minmax_uni = kwargs.get("minmax_uni")
+        if minmax_uni is None:
+            half = np.sqrt(3.0) * sd
+            minmax_uni = (mean - half, mean + half)
         parm_sampling = np.random.uniform(minmax_uni[0], minmax_uni[1], ensemble_size)
     return parm_sampling
 
@@ -1168,21 +1172,17 @@ def Archie_pert_rules(
     # n : TYPE, optional
     #     Saturation exponent. The default is [2.0].
 
-    if "rFluid" in type_parm:
+    # default truncations, replaced side by side by the scenario bounds (per_bounds) of the entry
+    defaults = {"rFluid": (0, np.inf), "a": (0, 2.5), "m": (1.3, 3), "n": (1.3, 3)}
+    family = "rFluid" if type_parm.startswith("rFluid") else type_parm.split("_")[0]
+    if family in defaults:
+        lo, hi = defaults[family]
+        if parm.get("clip_min") is not None:
+            lo = parm["clip_min"]
+        if parm.get("clip_max") is not None:
+            hi = parm["clip_max"]
         parm_sampling = sampling_dist_trunc(
-            myclip_a=0, myclip_b=np.inf, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    elif "a" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=0, myclip_b=2.5, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    elif "m" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=1.3, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
-        )
-    elif "n" in type_parm:
-        parm_sampling = sampling_dist_trunc(
-            myclip_a=1.3, myclip_b=3, ensemble_size=ensemble_size, loc=mean, scale=sd
+            myclip_a=lo, myclip_b=hi, ensemble_size=ensemble_size, loc=mean, scale=sd
         )
     else:
         parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)

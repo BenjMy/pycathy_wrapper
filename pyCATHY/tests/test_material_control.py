@@ -68,3 +68,13 @@ def test_validator():
     assert validate_scenario(bad, nlayers=4, raise_on_error=False)[0]
     bad = sc([[0, 1], [2], [7]])  # layer out of range
     assert validate_scenario(bad, nlayers=4, raise_on_error=False)[0]
+
+
+def test_multiplicative_with_bounds_warns():
+    s = sc()
+    s["per_type"] = [["multiplicative"] * 3]
+    s["per_bounds"] = [[0.1, 2.0]]
+    errors, warns = validate_scenario(s, nlayers=4, raise_on_error=False)
+    assert any("multiplicative" in w for w in warns)
+    s["per_type"] = [["None"] * 3]
+    assert not any("multiplicative" in w for w in validate_scenario(s, nlayers=4, raise_on_error=False)[1])

@@ -232,6 +232,14 @@ def validate_scenario(
             from pyCATHY.DA.perturbate import parse_bounds
 
             spec = scenario["per_bounds"][i]
+            _pt = scenario.get("per_type", [None] * n)[i]
+            _has = any(x is not None and not (isinstance(x, str) and x.lower() == "none")
+                       for x in (spec if isinstance(spec, (list, tuple)) else [spec]))
+            if _has and "multiplicative" in (_pt if isinstance(_pt, list) else [_pt]):
+                warnings.append(
+                    f"{name}: per_type 'multiplicative' with per_bounds: the bounds limit the sampled "
+                    "FACTOR at sampling time but the PHYSICAL value when the analysed values are clipped; "
+                    "use per_type 'None' (bounds on the physical value) or 'additive'")
             specs = spec if (isinstance(spec, list) and not (len(spec) == 2 and all(isinstance(x, (int, float)) for x in spec))) else [spec]
             for s in specs:
                 try:
