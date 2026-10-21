@@ -2254,6 +2254,14 @@ class DA(CATHY):
     ):
         """Update the initial pressure head of one ensemble member (cycle 0 only, or by layers)."""
         if dict_parm_pert[key]["pert_control_name"] == "layers":
+            if cycle_nb > 0:
+                # the analysed pressure head was written just before (_update_states_from_analysis):
+                # re-applying the prior layers here used to overwrite it at every cycle
+                if not getattr(self, "_ic_layers_skip_warned", False):
+                    self._ic_layers_skip_warned = True
+                    print(f"[DA-PARAM] cycle {cycle_nb}: layered ic prior NOT re-applied "
+                          "(it applies at cycle 0 only; the analysed state is kept)", flush=True)
+                return
 
             # if match_ic_withLayers:
             DApath = os.getcwd()
