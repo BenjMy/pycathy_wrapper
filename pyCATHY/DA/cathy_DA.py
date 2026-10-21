@@ -570,6 +570,20 @@ class DA(CATHY):
         logger.info("Perturbed parameters:\n%s", table[cols].to_string(index=False))
         for message in table.attrs.get("warnings", []):
             logger.warning("perturbation layout: %s", message)
+        # highlighted in the console: how the parameters are controlled and bounded
+        mode = getattr(self, "param_bounds_mode", "clip")
+        lines = [f"[DA-PARAM] ===== parameter update settings =====",
+                 f"[DA-PARAM] out-of-bounds handling after analysis: {mode.upper()}"]
+        for key, val in (self.dict_parm_pert or {}).items():
+            if isinstance(val, dict) and val.get("pert_control_name") == "material":
+                idx = int(re.search(r"(\d+)$", key).group(1))
+                lines.append(f"[DA-PARAM] MATERIAL control: {key} -> layers {val['layer_groups'][idx]}")
+        n_upd = len([p for p in list_parm2update if "St. var." not in p])
+        lines.append(f"[DA-PARAM] {n_upd} parameter(s) updated per cycle (ensemble size {self.NENS})")
+        if n_upd >= self.NENS:
+            lines.append(f"[DA-PARAM] WARNING: {n_upd} parameters >= {self.NENS} members: "
+                         "rank-deficient update, expect spurious correlations")
+        print("\n".join(lines), flush=True)
 
     def run_DA_smooth(
         self,
@@ -2907,9 +2921,17 @@ class DA(CATHY):
                 if "St. var." in pp:
                     continue
                 update_key = _update_key(self.count_DA_cycle)
+                before = np.asarray(
+                    self.dict_parm_pert[pp].get(_update_key(self.count_DA_cycle - 1), []), dtype=float
+                )
                 self.dict_parm_pert[pp][update_key] = self._clip_updated_parameter(
                     pp, analysis_param_valid[index_update]
                 )
+                after = np.asarray(self.dict_parm_pert[pp][update_key], dtype=float)
+                if before.size == after.size and before.size:
+                    print(f"[DA-PARAM] cycle {self.count_DA_cycle} UPDATE {pp}: mean {np.nanmean(before):.4g} "
+                          f"-> {np.nanmean(after):.4g} | sd {np.nanstd(before):.3g} -> {np.nanstd(after):.3g}",
+                          flush=True)
                 index_update = index_update + 1
 
             # check after analysis
@@ -2937,7 +2959,8 @@ class DA(CATHY):
         lo, hi = entry.get("clip_min"), entry.get("clip_max")
         if lo is None and hi is None:
             return values
-        if getattr(self, "param_bounds_mode", "clip") == "reflect":
+        mode = getattr(self, "param_bounds_mode", "clip")
+        if mode == "reflect":
             # reflection keeps the spread; one reflection can still overshoot: clip last
             clipped = np.clip(_reflect_into_bounds(values, lo, hi), lo, hi)
         else:
@@ -2946,10 +2969,20 @@ class DA(CATHY):
             changed = np.where(clipped != values)[0]
         if len(changed):
             logger.warning(
-                "%s: %d analysed value(s) clipped to [%s, %s] (members %s): %s -> %s",
-                name, len(changed), lo, hi,
+                "%s: %d analysed value(s) %s to [%s, %s] (members %s): %s -> %s",
+                name, len(changed), "reflected" if mode == "reflect" else "clipped", lo, hi,
                 [int(i) + 1 for i in changed], values[changed], clipped[changed],
             )
+            sd_b, sd_a = np.nanstd(values), np.nanstd(clipped)
+            flag = ""
+            if sd_a < 0.1 * sd_b or np.nanstd(clipped) == 0:
+                flag = "  <<< SPREAD COLLAPSE"
+            elif len(changed) > 0.5 * len(values):
+                flag = "  <<< MORE THAN HALF OF THE MEMBERS OUT OF BOUNDS"
+            print(f"[DA-PARAM] cycle {self.count_DA_cycle} {name}: {len(changed)}/{len(values)} "
+                  f"out of [{lo}, {hi}] -> {mode.upper()} | raw mean {np.nanmean(values):.4g} "
+                  f"sd {sd_b:.3g} -> final mean {np.nanmean(clipped):.4g} sd {sd_a:.3g}{flag}",
+                  flush=True)
         return clipped
 
     def _update_input_ensemble(self, list_parm2update=None, analysis=None, **kwargs):
