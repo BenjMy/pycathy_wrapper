@@ -1072,6 +1072,12 @@ def perturbate(simu_DA, scenario, NENS,
             entry["nlayers"] = len(groups)  # one sampled value per material
     _apply_scenario_bounds(list_pert, scenario)
 
+    _n_lm = sum(e.get("pert_control_name") in LAYER_LIKE for e in list_pert)
+    if _n_lm:
+        print(f"[DA-PARAM] perturbate: {_n_lm} layer/material entries sampled with the SEEDABLE random "
+              "sampler (np.random.seed reproduces the prior; the Sobol sampler is no longer the default)",
+              flush=True)
+
     if check_scenario:
         # authoritative: the names of listUpdateParm must be keys that were really built
         # (a scalar Ks is "Ks", a scalar ZROOT is "ZROOT0": the naming depends on the parameter)
@@ -1478,8 +1484,13 @@ def perturbate_parm_by_layers(type_parm,
                               nominal=None,
                               clip_min=None,
                               clip_max=None,
+                              sampler="random",
                               ):
             
+        # sampler "random" (default): uniform draws from the global numpy state, so
+        # np.random.seed(...) makes the prior reproducible. "sobol": the previous
+        # low-discrepancy sampler, which has its own unseeded generator (and warns when
+        # nlayers is not a power of 2).
         # Define the number of layers and the size of the ensemble
         # num_layers = 5
 
@@ -1491,10 +1502,14 @@ def perturbate_parm_by_layers(type_parm,
             sd = []
         if nominal is None:
             nominal = []
-        sobol_sampler = qmc.Sobol(d=ensemble_size)
-        
-        # Generate Sobol sequence samples
-        sobol_samples = sobol_sampler.random(n=nlayers)
+        if sampler == "sobol":
+            sobol_samples = qmc.Sobol(d=ensemble_size).random(n=nlayers)
+        elif sampler == "random":
+            # open interval: ppf(0) and ppf(1) are infinite
+            sobol_samples = np.random.uniform(np.finfo(float).eps, 1 - np.finfo(float).eps,
+                                              size=(nlayers, ensemble_size))
+        else:
+            raise ValueError(f"unknown sampler '{sampler}' (use 'random' or 'sobol')")
         
         # Transform the Sobol sequence to follow a normal distribution
         if (clip_min is None and clip_max is None) or sd == 0:
