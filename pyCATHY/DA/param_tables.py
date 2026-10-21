@@ -74,6 +74,27 @@ def _assign_soil_value(
         df.loc[:, update_cols] = value
 
 
+def _reflect_into_bounds(values, lo=None, hi=None) -> np.ndarray:
+    """Fold ``values`` back into ``[lo, hi]`` by reflection (NaN untouched).
+
+    Unlike ``np.clip`` it does not send every out-of-bounds member to the same value, so the
+    ensemble keeps its spread. With one bound, the value is mirrored about it.
+    """
+    v = np.array(values, dtype=float)
+    with np.errstate(invalid="ignore"):
+        if lo is not None and hi is not None:
+            w = hi - lo
+            if w <= 0:
+                return np.full_like(v, lo)
+            r = np.mod(v - lo, 2 * w)
+            return lo + np.where(r > w, 2 * w - r, r)
+        if lo is not None:
+            return np.where(v < lo, 2 * lo - v, v)
+        if hi is not None:
+            return np.where(v > hi, 2 * hi - v, v)
+    return v
+
+
 def _has_name_token(key: str, token: str) -> bool:
     """True if `token` appears in the (casefolded) parameter name `key` at the start
     of the name or after a non-alphanumeric character.

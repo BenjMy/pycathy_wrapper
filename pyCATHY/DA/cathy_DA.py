@@ -94,6 +94,7 @@ from pyCATHY.DA.param_tables import (  # noqa: F401
     _SOIL_PARM_COLUMNS,
     _VG_PARM_NAMES,
     _assign_soil_value,
+    _reflect_into_bounds,
     _check_positive_pressure_heads,
     _has_name_token,
     _nonphysical_values,
@@ -2927,14 +2928,20 @@ class DA(CATHY):
         (scenario ``per_bounds``), already used to sample the prior. The analysis
         is linear and unbounded: without this projection it can return values such
         as a negative root depth. Clipping keeps the member alive (rejecting it
-        shrinks the ensemble); NaN (invalid members) are left untouched.
+        shrinks the ensemble); NaN (invalid members) are left untouched. With
+        ``self.param_bounds_mode = "reflect"`` the values are folded back into the bounds
+        instead (all out-of-bounds members no longer collapse onto the same value).
         """
         values = np.array(values, dtype=float)
         entry = self.dict_parm_pert.get(name, {})
         lo, hi = entry.get("clip_min"), entry.get("clip_max")
         if lo is None and hi is None:
             return values
-        clipped = np.clip(values, lo, hi)
+        if getattr(self, "param_bounds_mode", "clip") == "reflect":
+            # reflection keeps the spread; one reflection can still overshoot: clip last
+            clipped = np.clip(_reflect_into_bounds(values, lo, hi), lo, hi)
+        else:
+            clipped = np.clip(values, lo, hi)
         with np.errstate(invalid="ignore"):
             changed = np.where(clipped != values)[0]
         if len(changed):
