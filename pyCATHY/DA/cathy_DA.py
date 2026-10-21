@@ -88,6 +88,7 @@ from pyCATHY.DA.analysis import (  # noqa: F401  (re-exported: the code moved to
     _particle_filter,
     run_analysis,
 )
+from pyCATHY.DA import console as _console
 from pyCATHY.DA.param_tables import (  # noqa: F401
     _ARCHIE_PARM_NAMES,
     _FEDDES_PARM_NAMES,
@@ -572,18 +573,13 @@ class DA(CATHY):
             logger.warning("perturbation layout: %s", message)
         # highlighted in the console: how the parameters are controlled and bounded
         mode = getattr(self, "param_bounds_mode", "clip")
-        lines = [f"[DA-PARAM] ===== parameter update settings =====",
-                 f"[DA-PARAM] out-of-bounds handling after analysis: {mode.upper()}"]
+        mat = []
         for key, val in (self.dict_parm_pert or {}).items():
             if isinstance(val, dict) and val.get("pert_control_name") == "material":
                 idx = int(re.search(r"(\d+)$", key).group(1))
-                lines.append(f"[DA-PARAM] MATERIAL control: {key} -> layers {val['layer_groups'][idx]}")
+                mat.append(f"{key} -> layers {val['layer_groups'][idx]}")
         n_upd = len([p for p in list_parm2update if "St. var." not in p])
-        lines.append(f"[DA-PARAM] {n_upd} parameter(s) updated per cycle (ensemble size {self.NENS})")
-        if n_upd >= self.NENS:
-            lines.append(f"[DA-PARAM] WARNING: {n_upd} parameters >= {self.NENS} members: "
-                         "rank-deficient update, expect spurious correlations")
-        print("\n".join(lines), flush=True)
+        _console.settings(mode, mat, n_upd, self.NENS, n_upd >= self.NENS)
 
     def run_DA_smooth(
         self,
@@ -2917,6 +2913,7 @@ class DA(CATHY):
             # (the previous counter also counted "St. var." and so read row -1
             # for the first parameter when no "St. var." entry came first)
             index_update = 0
+            _rows = []
             for pp in list_update_parm:
                 if "St. var." in pp:
                     continue
@@ -2929,10 +2926,10 @@ class DA(CATHY):
                 )
                 after = np.asarray(self.dict_parm_pert[pp][update_key], dtype=float)
                 if before.size == after.size and before.size:
-                    print(f"[DA-PARAM] cycle {self.count_DA_cycle} UPDATE {pp}: mean {np.nanmean(before):.4g} "
-                          f"-> {np.nanmean(after):.4g} | sd {np.nanstd(before):.3g} -> {np.nanstd(after):.3g}",
-                          flush=True)
+                    _rows.append((pp, np.nanmean(before), np.nanmean(after),
+                                  np.nanstd(before), np.nanstd(after)))
                 index_update = index_update + 1
+            _console.cycle_table(self.count_DA_cycle, _rows)
 
             # check after analysis
             # ----------------------------------------------------------------
@@ -2979,10 +2976,8 @@ class DA(CATHY):
                 flag = "  <<< SPREAD COLLAPSE"
             elif len(changed) > 0.5 * len(values):
                 flag = "  <<< MORE THAN HALF OF THE MEMBERS OUT OF BOUNDS"
-            print(f"[DA-PARAM] cycle {self.count_DA_cycle} {name}: {len(changed)}/{len(values)} "
-                  f"out of [{lo}, {hi}] -> {mode.upper()} | raw mean {np.nanmean(values):.4g} "
-                  f"sd {sd_b:.3g} -> final mean {np.nanmean(clipped):.4g} sd {sd_a:.3g}{flag}",
-                  flush=True)
+            _console.bounds_alert(self.count_DA_cycle, name, len(changed), len(values), lo, hi, mode,
+                                  (np.nanmean(values), sd_b), (np.nanmean(clipped), sd_a), flag.replace("  <<< ", ""))
         return clipped
 
     def _update_input_ensemble(self, list_parm2update=None, analysis=None, **kwargs):
