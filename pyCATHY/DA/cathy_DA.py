@@ -2121,6 +2121,7 @@ class DA(CATHY):
             update_value,
             self.veg_map if pert_control_name == "root_map" else None,
             self.zone if pert_control_name == "root_map" else None,
+            dict_parm_pert[key].get("layer_groups"),
         )
 
         # the soil file is only written when nothing is missing any more
@@ -2160,7 +2161,7 @@ class DA(CATHY):
             shellprint_update=shellprint_update,
             backup=True,
         )
-        if pert_control_name == "layers":
+        if pert_control_name == "layers":  # porosity is never a material parameter
             saveMeshPath = os.path.join(os.getcwd(), "vtk/", self.project_name + ".vtk")
             _, POROS_mesh_nodes = self.map_prop_2mesh_markers(
                 "POROS",

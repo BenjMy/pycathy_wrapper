@@ -44,7 +44,8 @@ SUPPORTED_CONTROLS = {
     "porosity": (None, "layers", "zone"),
 }
 LIST_KEYS = ("per_type", "per_name", "per_nom", "per_mean", "per_sigma", "sampling_type", "transf_type")
-CONTROLS = (None, "None", "layers", "zone", "root_map")
+CONTROLS = (None, "None", "layers", "zone", "root_map", "material")
+MATERIAL_PARAMETERS = ("SATCELL_VG", "n_VG", "thetar_VG")  # the ones with a per-material write
 SAMPLING = ("normal", "lognormal", "uniform")
 PER_TYPES = (None, "None", "additive", "multiplicative")
 TRANSFORMS = (None, "None", "log", "log-ratio", "hyperbolic")
@@ -143,6 +144,21 @@ def validate_scenario(
 
         nom = scenario["per_nom"][i]
         listed = isinstance(nom, list)
+        if control == "material":
+            groups = scenario.get("material_layers")
+            if name not in MATERIAL_PARAMETERS:
+                errors.append(f"{name}: pert_control_name 'material' is only supported for {MATERIAL_PARAMETERS}")
+            if groups is None:
+                errors.append(f"{name}: 'material' needs the scenario key 'material_layers' "
+                              "(list of lists of layer numbers)")
+            else:
+                flat = [l for g in groups for l in g]
+                if listed and len(groups) != len(nom):
+                    errors.append(f"{name}: {len(nom)} entries but 'material_layers' has {len(groups)} materials")
+                if len(flat) != len(set(flat)):
+                    errors.append("material_layers: a layer belongs to several materials")
+                if nlayers is not None and (any(l < 0 or l >= nlayers for l in flat) or set(flat) != set(range(nlayers))):
+                    errors.append(f"material_layers must cover the layers 0..{nlayers - 1} exactly once")
         feddes = name in FEDDES_LIST + FEDDES_SCALAR
 
         if feddes:
@@ -176,13 +192,13 @@ def validate_scenario(
             elif control is not None and not listed:
                 errors.append(
                     f"{name}: pert_control_name '{control}' needs one entry per "
-                    f"{'layer' if control == 'layers' else 'zone' if control == 'zone' else 'class'} "
+                    f"{'layer' if control == 'layers' else 'zone' if control == 'zone' else 'material' if control == 'material' else 'class'} "
                     "(a list) in per_nom, per_mean and per_sigma"
                 )
             elif control is None and listed:
                 errors.append(
                     f"{name}: per_nom is a list but pert_control_name is not set: a list needs "
-                    "'layers', 'zone' or 'root_map' (otherwise it fails inside numpy)"
+                    "'layers', 'material', 'zone' or 'root_map' (otherwise it fails inside numpy)"
                 )
         if listed and not feddes:
             expected = {"layers": nlayers, "zone": n_zone_classes, "root_map": n_veg_classes}.get(control)
@@ -362,7 +378,8 @@ def describe_ensemble(list_pert, list_update=(), soil_index=None, zone_raster=No
                     zone = None if zone_raster is None else np.asarray(zone_raster)
                     if control == "root_map" and (veg is None or zone is None):
                         raise ValueError("root_map needs the zone and vegetation maps")
-                    _assign_soil_value(table, control, index, cols, 1.0, veg, zone)
+                    _assign_soil_value(table, control, index, cols, 1.0, veg, zone,
+                                       entry.get("layer_groups"))
                     hit = table.dropna(how="all").index
                     target = "soil rows (zone, layer): " + ", ".join(map(str, hit.tolist()))
                     for r in hit:

@@ -49,18 +49,24 @@ def _assign_soil_value(
     value: Any,
     veg_map: Optional[np.ndarray] = None,
     zone: Optional[np.ndarray] = None,
+    layer_groups: Optional[List[List[int]]] = None,
 ) -> None:
     """Set ``value`` in the columns ``update_cols`` of the soil table ``df`` (in place).
 
     ``df`` is indexed by (zone, layer). Where the value goes depends on how the
     perturbation was built: ``"zone"`` (zone number ``index + 1``), ``"layers"``
     (layer ``index``), ``"root_map"`` (the zones of vegetation ``index + 1``,
-    from ``veg_map`` and ``zone``); anything else, or no ``index``: every row.
+    from ``veg_map`` and ``zone``), ``"material"`` (every layer of ``layer_groups[index]``);
+    anything else, or no ``index``: every row.
     """
     if pert_control_name == "zone" and index is not None:
         df.loc[(index + 1, slice(None)), update_cols] = value
     elif pert_control_name == "layers" and index is not None:
         df.loc[(slice(None), index), update_cols] = value
+    elif pert_control_name == "material" and index is not None:
+        if layer_groups is None:
+            raise ValueError("the 'material' control needs layer_groups (scenario 'material_layers')")
+        df.loc[(slice(None), list(layer_groups[index])), update_cols] = value
     elif pert_control_name == "root_map" and index is not None:
         zones_in_vegi = zone[index + 1 == veg_map]
         df.loc[zones_in_vegi, update_cols] = value

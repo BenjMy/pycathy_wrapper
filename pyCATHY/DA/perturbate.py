@@ -38,6 +38,9 @@ def check_distribution(parm2check):
     #     Saturation exponent. The default is [2.0].
 
 
+LAYER_LIKE = ("layers", "material")  # controls sampled as one value per list entry
+
+
 def _require_nlayers(type_parm, nlayers):
     """The 'layers' control samples one value per layer: fail clearly without the count."""
     if nlayers is None:
@@ -226,10 +229,11 @@ def process_perturbation_block(
 
     # Handle perturbation by control type
     if isinstance(scenario_nom, list):
-        if pert_control_name == 'layers':
-            if nlayers is None:
+        if pert_control_name in LAYER_LIKE:
+            if pert_control_name == 'layers' and nlayers is None:
                 raise ValueError("nlayers must be provided for 'layers' perturbation control.")
-            for layer_idx in range(nlayers):
+            n_items = nlayers if pert_control_name == 'layers' else len(scenario_nom)
+            for layer_idx in range(n_items):
                 entry = create_dict_entry(
                     pname, scenario, index, layer_idx,
                     scenario_nom[layer_idx],
@@ -1059,6 +1063,13 @@ def perturbate(simu_DA, scenario, NENS,
     for entry in list_pert:
         if entry.get("pert_control_name") == "layers":
             entry["nlayers"] = nlayers  # perturbate_parm needs it to sample the layers
+        elif entry.get("pert_control_name") == "material":
+            groups = scenario.get("material_layers")
+            if groups is None:
+                raise ValueError("pert_control_name 'material' needs the scenario key 'material_layers' "
+                                 "(list of lists of layer numbers, one list per material)")
+            entry["layer_groups"] = [list(g) for g in groups]
+            entry["nlayers"] = len(groups)  # one sampled value per material
     _apply_scenario_bounds(list_pert, scenario)
 
     if check_scenario:
@@ -1586,7 +1597,7 @@ def perturbate_parm(
     # Contrainsted perturbation (bounded)
     # --------------------------------------------------------------------
     if "Archie" in type_parm:
-        if parm.get('pert_control_name') == 'layers':
+        if parm.get('pert_control_name') in LAYER_LIKE:
             _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
@@ -1606,7 +1617,7 @@ def perturbate_parm(
                 parm, type_parm, ensemble_size, mean, sd, per_type, sampling_type
             )
     elif "porosity" in type_parm:
-        if parm.get('pert_control_name') == 'layers':
+        if parm.get('pert_control_name') in LAYER_LIKE:
             _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                                   ensemble_size,
@@ -1660,7 +1671,7 @@ def perturbate_parm(
     # if type_parm in ['Alpha', 'nVG', 'thethaR']: #van Genuchten retention curves
     elif "VG" in type_parm:  # van Genuchten retention curves
 
-        if parm.get('pert_control_name') == 'layers':
+        if parm.get('pert_control_name') in LAYER_LIKE:
             _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
@@ -1709,7 +1720,7 @@ def perturbate_parm(
 
     elif "ic" in type_parm:
 
-        if parm.get('pert_control_name') == 'layers':
+        if parm.get('pert_control_name') in LAYER_LIKE:
             _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
@@ -1755,7 +1766,7 @@ def perturbate_parm(
     # For all other types of perturbation
     # --------------------------------------------------------------------
     else:
-        if parm.get('pert_control_name') == 'layers':
+        if parm.get('pert_control_name') in LAYER_LIKE:
             _require_nlayers(type_parm, nlayers)
             param_withLayers = perturbate_parm_by_layers(type_parm,
                                                         ensemble_size,
