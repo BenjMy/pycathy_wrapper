@@ -2219,7 +2219,7 @@ class DA(CATHY):
 
     def _update_atmbc_member(self, dict_parm_pert, ens_nb, key):
         """Update the atmbc of one ensemble member (only the first perturbed node updates the stacked parameters)."""
-        if key.casefold() in "atmbc0".casefold():
+        if key.casefold() in ("atmbc0", "atmbc"):
             times = dict_parm_pert[key]["data2perturbate"]["time"]
             VALUE = dict_parm_pert[key]["time_variable_perturbation"][ens_nb]
             self.update_atmbc(
@@ -2401,26 +2401,26 @@ class DA(CATHY):
         # if non-homogeneous atmbc, take only the first node perturbated parameters
         # to avoid looping over all the perturbated atmbc nodes as the update is done
         # only once over the stacked perturbated atmbc parameters
-        if name.casefold() in "atmbc".casefold():
+        if name.casefold() == "atmbc":
             self._update_atmbc_member(dict_parm_pert, ens_nb, key)
 
         # ic update (i.e. water table position update)
-        elif name.casefold() in "WTPOSITION".casefold():
+        elif name.casefold() == "wtposition":
             self._update_wtposition_member(
                 ctx.cycle_nb, dict_parm_pert, ens_nb, key, False
             )
 
         # ic update (i.e. initial pressure head update)
-        elif name.casefold() in "ic".casefold():
+        elif name.casefold() == "ic":
             self._update_ic_member(ctx.cycle_nb, dict_parm_pert, ens_nb, key, False)
 
         # saturated hydraulic conductivity update
-        elif name.casefold() in "ks":
+        elif name.casefold() == "ks":
             ctx.ks = self._update_soil_params_from_perturbations(
                 dict_parm_pert, ctx.ks, key_root, key, update_key, ens_nb, False
             )
 
-        elif name.casefold() in "porosity":
+        elif name.casefold() == "porosity":
             ctx.porosity = self._update_soil_params_from_perturbations(
                 dict_parm_pert, ctx.porosity, key_root, key, update_key, ens_nb, False
             )
