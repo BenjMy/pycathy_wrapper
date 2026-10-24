@@ -10,7 +10,7 @@ import warnings
 
 import numpy as np
 
-from pyCATHY.DA import enkf, pf
+from pyCATHY.DA import enkf, esmda, pf
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +89,11 @@ class AnalysisConfig:
     pf_liu_west_a : float or None
         Liu-West kernel shrinkage factor (e.g. 0.98) for the parameters after resampling; replaces
         the additive ``pf_jitter_std_param``. None: legacy jitter.
+    esmda_alpha : float
+        Observation-error inflation ``alpha_i`` of the current ES-MDA iteration
+        (``DA_type='esmda'``); the driver sets it from ``ESMDAConfig.alphas``.
+    esmda_rng : np.random.Generator or None
+        Generator of the ES-MDA observation perturbations (None: fresh, unseeded).
     """
 
     sakov: bool = True
@@ -102,6 +107,8 @@ class AnalysisConfig:
     pf_jitter_std_state: float = 0.05
     pf_temper_neff_frac: Optional[float] = None
     pf_liu_west_a: Optional[float] = None
+    esmda_alpha: float = 1.0
+    esmda_rng: Optional[np.random.Generator] = None
 
     def __post_init__(self):
         if self.localisation_matrix is not None:
@@ -308,6 +315,32 @@ def _enkf_localized_with_inflation(data, data_cov, param, state, prediction, con
     return _from_enkf(result, transpose_param=True)
 
 
+def _esmda(data, data_cov, param, state, prediction, config):
+    """One ES-MDA update: parameters only, the state is returned unchanged.
+
+    The state is not updated because the forward model is re-run from t = 0 after
+    every iteration (see ``DA.run_DA_esmda``).
+    """
+    param = np.asarray(param, dtype=float)
+    if param.shape[0] == 0:
+        raise ValueError("ES-MDA updates parameters: list_parm2update must not be empty.")
+    updated = esmda.esmda_update(
+        param,
+        prediction,
+        data,
+        data_cov,
+        config.esmda_alpha,
+        rng=config.esmda_rng,
+        localisation=config.localisation_matrix,
+        inflation=config.inflation_params,
+    )
+    return AnalysisResult(
+        analysis=state,
+        analysis_param=updated.T,  # (n_members, n_param) like the other filters
+        extra={"alpha": config.esmda_alpha},
+    )
+
+
 def _particle_filter(data, data_cov, param, state, prediction, config):
     analysis = pf.particle_filter_analysis(
         data,
@@ -346,6 +379,7 @@ ANALYSES = {
     "enkf_dual_analysis": _enkf(enkf.enkf_dual_analysis, Sakov=False),
     "enkf_dual_analysis_Sakov": _enkf(enkf.enkf_dual_analysis, Sakov=True),
     "pf": _particle_filter,
+    "esmda": _esmda,
 }
 
 

@@ -671,6 +671,66 @@ class DA(CATHY):
 
         pass
 
+    def run_DA_esmda(
+        self,
+        dict_obs,
+        list_parm2update,
+        dict_parm_pert,
+        list_assimilated_obs,
+        config=None,
+        parallel=True,
+        da_config=None,
+        dry_run=False,
+        **kwargs,
+    ):
+        """Run ES-MDA (ensemble smoother with multiple data assimilation).
+
+        EXPERIMENTAL: not yet validated against the CATHY executable, see
+        ``pyCATHY.DA.esmda_cathy``. Parameters are updated ``config.n_iter`` times; every
+        iteration runs the whole simulation from t = 0 and compares the states at all
+        observation times (``tensio``, ``swc`` and ``ERT`` observations; EM and ET are not
+        supported) with the data, whose error covariance is inflated by ``config.alphas[i]``.
+        ``config.obs_time_convention`` sets which state a stamp refers to (see ``ESMDAConfig``).
+
+        Parameters
+        ----------
+        config : ESMDAConfig, optional
+            ES-MDA options (iterations, alpha schedule, seed, inflation, localisation).
+        da_config : DAConfig, optional
+            General DA options (rejection threshold, log-transformed observations, ...).
+            The same options are still accepted as keyword arguments (deprecated).
+        dry_run : bool
+            Prepare and check everything (ensemble folders, printing times, observations,
+            parameters) and return a ``dict`` summary of the run and its cost, without
+            simulating anything.
+        **kwargs
+            Passed to the CATHY processor (IPRT1, TRAFLAG, VTKF, ...).
+
+        Returns
+        -------
+        ESMDAResult
+            (the summary ``dict`` when ``dry_run``). Also kept as ``self.esmda_result``. The posterior parameters are stored in
+            ``dict_parm_pert[name]["update_nb1"]``.
+        """
+        from pyCATHY.DA.esmda_cathy import run_esmda_on_cathy
+
+        if da_config is None:
+            da_config = DAConfig.from_legacy_kwargs(kwargs)
+        log_path = os.path.join(self.workdir, self.project_name, "console_log.txt")
+        with _tee_run_output(log_path, getattr(self, "console", None)):
+            return run_esmda_on_cathy(
+                self,
+                dict_obs,
+                list_parm2update,
+                dict_parm_pert,
+                list_assimilated_obs,
+                config=config,
+                parallel=parallel,
+                da_config=da_config,
+                dry_run=dry_run,
+                **kwargs,
+            )
+
     def get_mesh_mask_nodes_observed(self, list_assimilated_obs):
         mesh_mask_nodes_observed = np.zeros(int(self.grid3d["nnod3"]), dtype=bool)
         obskey2map, obs2map = self._obs_key_select(list_assimilated_obs)

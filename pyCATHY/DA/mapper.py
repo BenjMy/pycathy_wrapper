@@ -262,9 +262,14 @@ def _map_ERT_parallel_DA(
                         project_name,
                         Archie_parms,
                         POROS_nodes_ensi_list,
+                        time_ass=None,
                     ):
     """
     Parallel mapping of ERT data using pedophysical transformation H
+
+    ``time_ass`` (optional): row of the member ``output/sw`` file to map, instead of the last
+    one (the default, used by the sequential DA). Used by the smoother (ES-MDA), which maps the
+    state of every survey time from one simulation of the whole period.
     """
     Hx_ERT_ens = []
 
@@ -278,6 +283,8 @@ def _map_ERT_parallel_DA(
     _ert_cfg = key_time[1]["ERT"]
     _fwd_noise = {k: _ert_cfg[k] for k in ("fwdNoiseLevel", "fwdNoiseAbs") if k in _ert_cfg}
     logger.debug("ERT forward noise settings passed to simulate_ERT: %s", _fwd_noise)
+    if time_ass is not None:  # default: nothing added, the forward reads the last time
+        _fwd_noise = {**_fwd_noise, "time_ass": int(time_ass)}
 
     ERTmapping_args = partial(
                                 Archie.SW_2_ERT_ERa_DA,
@@ -401,6 +408,7 @@ def _map_ERT_parallel(
     DA_cnb = []
     if "DA_cnb" in kwargs:
         DA_cnb = kwargs["DA_cnb"]
+    time_ass = kwargs.get("time_ass")  # None: last output time (sequential DA)
 
     # search key value to identify time and method
     tuple_list_obs = list(dict_obs.items())
@@ -419,6 +427,7 @@ def _map_ERT_parallel(
                                                 project_name,
                                                 Archie_parms,
                                                 POROS_nodes_ensi_list,
+                                                time_ass=time_ass,
                                             )
     prediction_ERT = np.vstack(Hx_ERT_ens).T
 
