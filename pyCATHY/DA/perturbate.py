@@ -38,7 +38,7 @@ def check_distribution(parm2check):
     #     Saturation exponent. The default is [2.0].
 
 
-LAYER_LIKE = ("layers", "material")  # controls sampled as one value per list entry
+LAYER_LIKE = ("layers", "material", "zone_material")  # controls sampled as one value per list entry
 
 
 def _require_nlayers(type_parm, nlayers):
@@ -234,11 +234,11 @@ def process_perturbation_block(
     scenario_mean = scenario["per_mean"][index]
     scenario_sd = scenario["per_sigma"][index]
     per_type = scenario["per_type"][index]
-    transf_type = scenario["transf_type"][index]
+    transf_type = scenario.get("transf_type", [None] * len(scenario["per_name"]))[index]
 
-    # Pull bounds dynamically if available
-    # same parser as everywhere else: {min, max} and [min, max] are both accepted
-    clip_min, clip_max = check4bounds(scenario, index, None, None)
+    # Bounds (per_bounds, optional): one spec for the whole parameter, or one spec per layer / zone /
+    # class / material (check4bounds selects it with het_size / het_nb). Same parser as everywhere else:
+    # {min, max} and [min, max] are both accepted.
 
     # Handle perturbation by control type
     if isinstance(scenario_nom, list):
@@ -247,6 +247,8 @@ def process_perturbation_block(
                 raise ValueError("nlayers must be provided for 'layers' perturbation control.")
             n_items = nlayers if pert_control_name == 'layers' else len(scenario_nom)
             for layer_idx in range(n_items):
+                clip_min, clip_max = check4bounds(scenario, index, None, None,
+                                                  het_size=n_items, het_nb=layer_idx)
                 entry = create_dict_entry(
                     pname, scenario, index, layer_idx,
                     scenario_nom[layer_idx],
@@ -264,6 +266,8 @@ def process_perturbation_block(
             if zone_raster is None:
                 raise ValueError("zone_raster must be provided for 'zone' perturbation control.")
             for zone_idx in range(_n_classes(zone_raster)):
+                clip_min, clip_max = check4bounds(scenario, index, None, None,
+                                                  het_size=_n_classes(zone_raster), het_nb=zone_idx)
                 z_nom = scenario_nom[zone_idx]
                 z_mean = scenario_mean[zone_idx]
                 z_sd = scenario_sd[zone_idx]
@@ -284,6 +288,8 @@ def process_perturbation_block(
             if veg_raster is None:
                 raise ValueError("veg_raster must be provided for 'root_map' perturbation control.")
             for veg_idx in range(_n_classes(veg_raster)):
+                clip_min, clip_max = check4bounds(scenario, index, None, None,
+                                                  het_size=_n_classes(veg_raster), het_nb=veg_idx)
                 r_nom = scenario_nom[veg_idx]
                 r_mean = scenario_mean[veg_idx]
                 r_sd = scenario_sd[veg_idx]
@@ -308,6 +314,7 @@ def process_perturbation_block(
 
     else:
         # Scalar perturbation
+        clip_min, clip_max = check4bounds(scenario, index, None, None)
         entry = create_dict_entry(
             pname, scenario, index, '',
             scenario_nom, scenario_mean, scenario_sd,
@@ -710,96 +717,17 @@ def perturbate(simu_DA, scenario, NENS,
 
 
     if "Ks" in scenario["per_name"]:
+        # same builder as the van Genuchten parameters: every control (zone, root_map, layers,
+        # material, zone_material), the transform of the scenario (log) and the scenario bounds.
+        # PERMX, PERMY and PERMZ are all set to the sampled value (param_tables._SOIL_PARM_COLUMNS).
         index = scenario["per_name"].index("Ks")
+        list_pert.extend(process_perturbation_block(scenario,
+                                                    NENS=NENS,
+                                                    index=index,
+                                                    nlayers=nlayers,
+                                                    zone_raster=zone_raster,
+                                                    veg_raster=veg_raster))
 
-        scenario_nom = scenario["per_nom"][index]
-        scenario_mean = scenario["per_mean"][index]
-        scenario_sd = scenario["per_sigma"][index]
-        scenario_per_type = scenario["per_type"][index]
-
-        scenario_sampling = "normal"
-        if "sampling_type" in scenario:
-            scenario_sampling = scenario["sampling_type"][index]
-            
-        clip_min = None
-        clip_max = None
-
-        # Handling different configurations for zones, root maps, and layer perturbations of Ks:
-        # If the scenario includes ['zone', 'root_map', 'layers'], it should contain a list of lists of lists.
-        # If it includes ['zone', 'root_map'], it should contain a list of lists.
-        # And so on...
-
-        pert_control_name = None
-        if 'pert_control_name' in scenario:
-            pert_control_name = scenario['pert_control_name'][index]
-        
-        df_SPP, df_FP = simu_DA.read_inputs('soil')
-        zone_raster, zone_header = simu_DA.read_inputs('zone')
-        veg_raster, veg_header = simu_DA.read_inputs('root_map')
-        
-        if pert_control_name=='zone': 
-            for zonei in range(_n_classes(zone_raster)):
-           
-                zone_nom, zone_mean, zone_sd = scenario_nom[zonei], scenario_mean[zonei], scenario_sd[zonei]
-                Ks = create_dict_entry(
-                            'Ks',scenario,index,zonei, 
-                            zone_nom, zone_mean, zone_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            per_type=scenario_per_type[zonei],
-                            pert_control_name=pert_control_name
-                            )
-                
-                list_pert.append(Ks)
-                              
-        elif pert_control_name=='root_map': 
-            for vegi in range(_n_classes(veg_raster)):
-           
-                if _n_classes(zone_raster) > 1:
-                    scenario_nom = scenario["per_nom"][index][vegi]
-                    scenario_mean = scenario["per_mean"][index][vegi]
-                    scenario_sd = scenario["per_sigma"][index][vegi]
-
-                Ks = create_dict_entry(
-                            'Ks',scenario,index,vegi, 
-                            scenario_nom, scenario_mean, scenario_sd, 
-                            clip_min,clip_max,
-                            NENS,
-                            pert_control_name=pert_control_name,
-                            per_type=scenario_per_type[vegi],
-                            )
-                list_pert.append(Ks)
-                
-        # Perturb by 'layers' if specified
-        elif pert_control_name == 'layers':
-            for nstri in range(nlayers):
-                # Adjust bounds and retrieve parameters for the current layer
-                clip_min, clip_max = check4bounds(
-                    scenario, index, None, None, het_size=nlayers, het_nb=nstri
-                )
-                layer_nom, layer_mean, layer_sd = scenario_nom[nstri], scenario_mean[nstri], scenario_sd[nstri]
-    
-                # Create porosity entry for this layer and validate distribution
-                Ks = create_dict_entry(
-                    'Ks', scenario, index, nstri, layer_nom, layer_mean, layer_sd, 
-                    clip_min, clip_max, NENS,
-                    per_type=scenario_per_type[nstri],
-                    pert_control_name=pert_control_name
-                )
-                check_distribution(Ks)
-                list_pert.append(Ks)
-        
-        else:
-            Ks = create_dict_entry(
-                        'Ks',scenario,index,'', 
-                        scenario_nom, scenario_mean, scenario_sd, 
-                        clip_min,clip_max,
-                        NENS,
-                        per_type=scenario["per_type"][index],
-                        )
-            list_pert.append(Ks)
-                               
-                
     # Check if 'porosity' is a parameter in the scenario and get its index if present
     if "porosity" in scenario["per_name"]:
         index = scenario["per_name"].index("porosity")
@@ -1083,6 +1011,13 @@ def perturbate(simu_DA, scenario, NENS,
                                  "(list of lists of layer numbers, one list per material)")
             entry["layer_groups"] = [list(g) for g in groups]
             entry["nlayers"] = len(groups)  # one sampled value per material
+        elif entry.get("pert_control_name") == "zone_material":
+            zgroups = scenario.get("zone_material_layers")
+            if zgroups is None:
+                raise ValueError("pert_control_name 'zone_material' needs the scenario key "
+                                 "'zone_material_layers' (list of [zone, [layers]], zone 1-based, layers 0-based)")
+            entry["layer_groups"] = [[int(z), [int(l) for l in ls]] for z, ls in zgroups]
+            entry["nlayers"] = len(zgroups)  # one sampled value per (zone, material)
     _apply_scenario_bounds(list_pert, scenario)
 
     _n_lm = sum(e.get("pert_control_name") in LAYER_LIKE for e in list_pert)

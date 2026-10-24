@@ -5422,42 +5422,50 @@ class CATHY:
 
 
     def backup_results_DA(self, meta_DA=[]):
+        """Write the attributes of the DA run (one file each, ``.parquet`` or ``.pkl``).
+
+        Every attribute is saved on its own: a failure on one (e.g. the observation frame) no longer
+        skips the others (it used to lose ``dict_parm_pert`` silently: ``self.df_obs['data_cov'][0]`` raised
+        KeyError on the MultiIndex). With the compact state store ``df_DA`` is NOT rewritten here (its
+        chunks are written per cycle and the table is written once at the end of the run)."""
         file_path = os.path.join(self.workdir, self.project_name, f"{self.project_name}")
 
         try:
             self.df_obs = dictObs_2pd(self.dict_obs)  # Convert observations to DataFrame
 
-            # Save collumns that are not serialized are they are too large
-
+            # Columns that are too large to serialise are dropped (kept in meta_DA)
             if hasattr(self.df_obs, 'elecs'):
-                meta_DA['mesh_nodes_modif'] = self.df_obs['mesh_nodes_modif']
-                meta_DA['data_cov'] = self.df_obs['data_cov'][0]
-                meta_DA['elecs'] = self.df_obs['elecs'][0]
-
-                # Drop collumns that are not serialized are they are too large
-                self.df_obs = self.df_obs.drop(columns=["mesh_nodes_modif",'elecs','data_cov'], errors="ignore")
+                if isinstance(meta_DA, dict):
+                    meta_DA['mesh_nodes_modif'] = self.df_obs['mesh_nodes_modif'].iloc[0]
+                    meta_DA['data_cov'] = self.df_obs['data_cov'].iloc[0]
+                    meta_DA['elecs'] = self.df_obs['elecs'].iloc[0]
+                self.df_obs = self.df_obs.drop(columns=["mesh_nodes_modif", 'elecs', 'data_cov'], errors="ignore")
                 self.df_obs['data'] = self.df_obs['data'].apply(lambda x: x.to_json() if isinstance(x, pd.DataFrame) else x)
+        except Exception as e:
+            print(f"Error preparing df_obs for the backup: {type(e).__name__}: {e}")
 
-            # attributes = ["dict_parm_pert", "df_DA", "df_obs", "df_performance", "ET_DA_xr", "df_Archie"]
-            attributes = ["dict_parm_pert", "df_DA", "df_obs", "ET_DA_xr", "df_Archie"]
+        # attributes = ["dict_parm_pert", "df_DA", "df_obs", "df_performance", "ET_DA_xr", "df_Archie"]
+        attributes = ["dict_parm_pert", "df_DA", "df_obs", "ET_DA_xr", "df_Archie"]
+        if getattr(self, "_state_store", None) is not None:
+            attributes.remove("df_DA")
 
-            for attr in attributes:
-                if hasattr(self, attr):
-                    data = getattr(self, attr)
-                    save_path = f"{file_path}_{attr}"
-
-                    if isinstance(data, pd.DataFrame):
-                        try:
-                            data.to_parquet(f"{save_path}.parquet",
-                                            engine="pyarrow")
-                        except:
-                            with open(f"{save_path}.pkl", "wb") as f:
-                                pickle.dump(data, f)
-                    else:
+        for attr in attributes:
+            try:
+                if not hasattr(self, attr):
+                    continue
+                data = getattr(self, attr)
+                save_path = f"{file_path}_{attr}"
+                if isinstance(data, pd.DataFrame):
+                    try:
+                        data.to_parquet(f"{save_path}.parquet", engine="pyarrow")
+                    except Exception:
                         with open(f"{save_path}.pkl", "wb") as f:
                             pickle.dump(data, f)
-        except Exception as e:
-            print(f"Error saving results: {e}")
+                else:
+                    with open(f"{save_path}.pkl", "wb") as f:
+                        pickle.dump(data, f)
+            except Exception as e:
+                print(f"Error saving {attr}: {type(e).__name__}: {e}")
 
     def serialize(self,obj):
         return json.dumps(obj.tolist() if isinstance(obj, (list, np.ndarray)) else obj)
@@ -5504,6 +5512,17 @@ class CATHY:
             file_base_path = f"{filename}_{name}"
             candidates = [file_base_path + ext for ext in prefer
                           if os.path.exists(file_base_path + ext)]
+
+            if not candidates and name == "df_DA":
+                chunk_dir = f"{filename}_states"       # compact states of an interrupted run
+                if os.path.isdir(chunk_dir):
+                    try:
+                        from pyCATHY.DA.state_store import StateStore
+                        dict_backup[name] = StateStore.from_chunks(chunk_dir).to_frame()
+                        print(f"Reading File df_DA: rebuilt from {os.path.basename(chunk_dir)}/cycle_*.npz")
+                        continue
+                    except Exception as e:
+                        print(f"Error loading {chunk_dir}: {type(e).__name__}: {e}")
 
             if not candidates:
                 print(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")

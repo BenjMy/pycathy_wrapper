@@ -56,8 +56,10 @@ def _assign_soil_value(
     ``df`` is indexed by (zone, layer). Where the value goes depends on how the
     perturbation was built: ``"zone"`` (zone number ``index + 1``), ``"layers"``
     (layer ``index``), ``"root_map"`` (the zones of vegetation ``index + 1``,
-    from ``veg_map`` and ``zone``), ``"material"`` (every layer of ``layer_groups[index]``);
-    anything else, or no ``index``: every row.
+    from ``veg_map`` and ``zone``), ``"material"`` (every layer of ``layer_groups[index]``, in
+    ALL zones), ``"zone_material"`` (``layer_groups[index] = [zone, [layers]]``: those layers of
+    that zone ONLY, so a compacted zone keeps its own parameters); anything else, or no
+    ``index``: every row.
     """
     if pert_control_name == "zone" and index is not None:
         df.loc[(index + 1, slice(None)), update_cols] = value
@@ -67,11 +69,26 @@ def _assign_soil_value(
         if layer_groups is None:
             raise ValueError("the 'material' control needs layer_groups (scenario 'material_layers')")
         df.loc[(slice(None), list(layer_groups[index])), update_cols] = value
+    elif pert_control_name == "zone_material" and index is not None:
+        if layer_groups is None:
+            raise ValueError("the 'zone_material' control needs layer_groups (scenario 'zone_material_layers')")
+        zone_id, layers = layer_groups[index]
+        df.loc[(int(zone_id), list(layers)), update_cols] = value
     elif pert_control_name == "root_map" and index is not None:
         zones_in_vegi = zone[index + 1 == veg_map]
         df.loc[zones_in_vegi, update_cols] = value
     else:
         df.loc[:, update_cols] = value
+
+    # Ks "c-lite": keep the anisotropy of the base table (PERMZ = Ks * base kz/kx of each row)
+    ratio = df.attrs.get("kz_ratio")
+    if ratio is not None and "PERMZ" in update_cols and "PERMX" in update_cols:
+        mask = pd.DataFrame(False, index=df.index, columns=["_m"])
+        _assign_soil_value(mask, pert_control_name, index, ["_m"], True, veg_map, zone, layer_groups)
+        sel = mask["_m"].to_numpy()
+        df.loc[sel, "PERMZ"] = np.asarray(df.loc[sel, "PERMX"], dtype=float) * np.asarray(
+            ratio, dtype=float
+        )[sel]
 
 
 def _reflect_into_bounds(values, lo=None, hi=None) -> np.ndarray:

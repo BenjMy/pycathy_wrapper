@@ -57,6 +57,40 @@ def get_Archie_ens_i(ArchieParms, Ens_nb):
     logger.debug("Archie parameters: %s", ArchieParms2parse)
     return ArchieParms2parse
 
+
+def nodal_porosity(porosity, Ens_nbi, n_nodes):
+    """Porosity of ONE member as a 1-D float array with one value per mesh node.
+
+    Accepted inputs (what the callers pass):
+      - ensemble container: object array / list with one entry per member, each a nodal list
+        (ERT: ``cathy_DA._ert_ensemble_inputs``). An entry that is a scalar (member without soil
+        file: ``np.ones(NENS, dtype=object) * [mean]``) is broadcast to all nodes;
+      - the nodal list / array of a single member (EM mapper);
+      - a single value or ``[value]`` (one porosity for the whole domain), broadcast.
+    The former code took ``porosity[0]`` of a nodal list, i.e. the porosity of node 0 for every node
+    (layers / zones ignored), and crashed when member 0 was an invalid (float) entry.
+    """
+    p = porosity
+    is_container = (isinstance(p, np.ndarray) and p.dtype == object) or (
+        isinstance(p, (list, tuple))
+        and len(p) > 0
+        and any(isinstance(x, (list, tuple, np.ndarray)) for x in p)
+    )
+    if is_container:
+        if not 0 <= Ens_nbi < len(p):
+            raise ValueError(f"porosity holds {len(p)} members, member index {Ens_nbi} requested")
+        p = p[Ens_nbi]
+    arr = np.asarray(p, dtype=float).ravel()
+    if arr.size == 1:
+        arr = np.full(n_nodes, float(arr[0]))
+    if arr.size != n_nodes:
+        raise ValueError(
+            f"porosity has {arr.size} values for {n_nodes} mesh nodes (member {Ens_nbi + 1}); "
+            "expected one value per node or a single value"
+        )
+    return arr
+
+
 def SW_2_ER0_DA(
                 project_name, 
                 ArchieParms, 
@@ -112,15 +146,9 @@ def SW_2_ER0_DA(
  
 
     
-    if isinstance(porosity[0], (list, np.ndarray)):
-        porosity = porosity[Ens_nbi]
-    else:
-        porosity = porosity
-        
-    # print(f"porosity_ensi: {porosity_ensi}")
-    # print(f"porosity_ensi: {porosity_ensi}")
-    # (statistics over all the nodes: the former print indexed the nodal porosity
-    # with the member number, hence always showed a single value)
+    # nodal porosity of THIS member (one value per node). Archie_rho_DA loops over zones with
+    # porosity[i], so the nodal array is wrapped in a one-zone list.
+    porosity = nodal_porosity(porosity, Ens_nbi, np.size(df_sw))
     logger.debug(
         "member %d: porosity %s, min=%.3f mean=%.3f max=%.3f",
         Ens_nbi + 1,
@@ -130,11 +158,11 @@ def SW_2_ER0_DA(
         np.max(porosity),
     )
 
-    
+
     ER_converted_ti = Archie_rho_DA(
                                     rFluid_Archie=ArchieParms2parse["rFluid_Archie"],
                                     sat=[df_sw],
-                                    porosity=porosity,
+                                    porosity=[porosity],
                                     a_Archie=ArchieParms2parse["a_Archie"],
                                     m_Archie=ArchieParms2parse["m_Archie"],
                                     n_Archie=ArchieParms2parse["n_Archie"],
@@ -154,9 +182,7 @@ def SW_2_ER0_DA(
     df_Archie["ens_nbi"] = Ens_nbi * np.ones(len(ER_converted_ti))
     df_Archie["sw"] = df_sw
     df_Archie["ER_converted"] = ER_converted_ti
-    df_Archie["porosity"] = ArchieParms2parse["porosity"] * np.ones(
-        len(ER_converted_ti)
-    )
+    df_Archie["porosity"] = porosity          # the porosity actually used, per node
     return ER_converted_ti, df_Archie, df_sw
 
 def SW_2_ERT_ERa_DA(

@@ -89,6 +89,7 @@ from pyCATHY.DA.analysis import (  # noqa: F401  (re-exported: the code moved to
     run_analysis,
 )
 from pyCATHY.DA import console as _console
+from pyCATHY.DA.state_store import StateStore
 from pyCATHY.DA.param_tables import (  # noqa: F401
     _ARCHIE_PARM_NAMES,
     _FEDDES_PARM_NAMES,
@@ -366,7 +367,8 @@ class DA(CATHY):
         # defaulted here: `CATHY.__init__` defines them, and CATHY tests
         # `count_DA_cycle is not None` to know whether a DA is running.
         self.dict_parm_pert: dict = {}
-        self.df_DA = pd.DataFrame()
+        self._state_store: Optional[StateStore] = None
+        self._df_DA_legacy = pd.DataFrame()
         self.df_Archie = pd.DataFrame()
         self.ET_DA_xr = None
         self.isET = False
@@ -418,7 +420,8 @@ class DA(CATHY):
         # if hasattr(self,'dict_obs') is False:
         self.dict_obs = dict_obs  # self.dict_obs is already assigned (in read observatio! change it to self.obs
         self.dict_parm_pert = dict_parm_pert
-        self.df_DA = pd.DataFrame()
+        self._state_store = None
+        self._df_DA_legacy = pd.DataFrame()
         self.df_Archie = pd.DataFrame()
         # per-run state, reset together with df_DA (it used to be created lazily and
         # an ET_DA_xr of a previous run was silently extended by the next run)
@@ -575,9 +578,11 @@ class DA(CATHY):
         mode = getattr(self, "param_bounds_mode", "clip")
         mat = []
         for key, val in (self.dict_parm_pert or {}).items():
-            if isinstance(val, dict) and val.get("pert_control_name") == "material":
+            if isinstance(val, dict) and val.get("pert_control_name") in ("material", "zone_material"):
                 idx = int(re.search(r"(\d+)$", key).group(1))
-                mat.append(f"{key} -> layers {val['layer_groups'][idx]}")
+                mat.append(f"{key} -> " + (f"zone {val['layer_groups'][idx][0]}, layers {val['layer_groups'][idx][1]}"
+                                           if val["pert_control_name"] == "zone_material"
+                                           else f"layers {val['layer_groups'][idx]}"))
         n_upd = len([p for p in list_parm2update if "St. var." not in p])
         _console.settings(mode, mat, n_upd, self.NENS, n_upd >= self.NENS)
 
@@ -844,6 +849,7 @@ class DA(CATHY):
             self._run_window(t_atmbc, options)
 
         self._cleanup_vtk_files(config.cleanup_vtk)
+        self._finalize_state_backup()
 
     def run_DA_sequential(self, *args, **kwargs):
         """Run the sequential Data Assimilation (see ``_run_DA_sequential_impl``).
@@ -1194,10 +1200,58 @@ class DA(CATHY):
         if n_failed:
             logger.warning(f"{n_failed} ERT check report(s) failed - see {path}")
 
+    # ------------------------------------------------------------------
+    # df_DA: legacy long table, rebuilt on demand from the compact StateStore
+    # ------------------------------------------------------------------
+    @property
+    def df_DA(self) -> pd.DataFrame:
+        """Long table (cycle, member, node). With ``DAConfig.compact_states`` it is REBUILT from the
+        StateStore at every access (cheap to avoid: use ``self._state_store.arrays(...)`` in loops)."""
+        store = getattr(self, "_state_store", None)
+        legacy = getattr(self, "_df_DA_legacy", pd.DataFrame())
+        if store is None or not len(store):
+            return legacy
+        frame = store.to_frame()
+        return frame if legacy.empty else pd.concat([frame, legacy], ignore_index=True)
+
+    @df_DA.setter
+    def df_DA(self, value) -> None:
+        self._df_DA_legacy = value
+        self._state_store = None
+
+    def _compact_states_on(self) -> bool:
+        cfg = getattr(self, "config", None)
+        return bool(getattr(cfg, "compact_states", False))
+
+    def _get_state_store(self) -> StateStore:
+        """The StateStore of this run (created at the first cycle from ``DAConfig``)."""
+        if getattr(self, "_state_store", None) is None:
+            cfg = self.config
+            chunk_dir = None
+            if cfg.save_results:                      # one npz per cycle: O(1) per cycle, a crash keeps them
+                chunk_dir = os.path.join(self.workdir, self.project_name, self.project_name + "_states")
+                if os.path.isdir(chunk_dir):          # stale chunks of a previous run of the same project
+                    for f in glob.glob(os.path.join(chunk_dir, "cycle_*.npz")):
+                        os.remove(f)
+            self._state_store = StateStore(
+                self.NENS, nodes=cfg.store_nodes, full=cfg.store_full, chunk_dir=chunk_dir
+            )
+        return self._state_store
+
+    def _finalize_state_backup(self) -> None:
+        """End of run: write ``<project>_df_DA.pkl`` ONCE (what ``load_backup`` and the plotting code read)."""
+        store = getattr(self, "_state_store", None)
+        if store is None or not len(store) or not self.config.save_results:
+            return
+        out = os.path.join(self.workdir, self.project_name, self.project_name + "_df_DA.pkl")
+        self.df_DA.to_pickle(out)
+        logger.info(f"df_DA written once at the end: {out} ({store.nbytes / 1e6:.0f} MB of states)")
+
     def _save_results_to_disk(self):
         """Write the in-memory results of the DA (``df_DA``, ``ET_DA_xr``) next to the project."""
         out_dir = os.path.join(self.workdir, self.project_name)
-        self.df_DA.to_pickle(os.path.join(out_dir, self.project_name + "_df_DA.pkl"))
+        if not self._compact_states_on():             # legacy: the whole growing table is rewritten at every cycle
+            self.df_DA.to_pickle(os.path.join(out_dir, self.project_name + "_df_DA.pkl"))
         if self.ET_DA_xr is not None:
             self.ET_DA_xr.to_netcdf(
                 os.path.join(out_dir, self.project_name + "_ET_DA.nc")
@@ -2287,6 +2341,12 @@ class DA(CATHY):
                 self.cathyH["MAXVEG"],
             )
             df = df_SPP.copy()
+            if "PERMX" in update_cols and "PERMZ" in update_cols:
+                # c-lite: remember the base anisotropy kz/kx of each row (see _assign_soil_value)
+                kx = df_SPP["PERMX"].to_numpy(dtype=float)
+                kz = df_SPP["PERMZ"].to_numpy(dtype=float)
+                with np.errstate(divide="ignore", invalid="ignore"):
+                    df.attrs["kz_ratio"] = np.where(kx > 0, kz / kx, 1.0)
             df[update_cols] = np.nan
             tables.append(df)
         return tables
@@ -2925,12 +2985,13 @@ class DA(CATHY):
             )
             ensemble_porosity_arrays[ens_nb] = POROS_mesh_nodes_ensi
 
-        first_porosity = ensemble_porosity_arrays[0]
+        first_porosity = ensemble_porosity_arrays[self.ens_valid[0]]
+        # distinct porosities of a member (3 decimals: rounding to integers always gave 1)
         unique_count = (
-            0 if first_porosity is None else len(np.unique(np.round(first_porosity)))
+            0 if first_porosity is None else len(np.unique(np.round(first_porosity, 3)))
         )
         logger.debug(
-            "Dimension of porosity used in Archie (first ensemble): %s", unique_count
+            "Dimension of porosity used in Archie (first valid member): %s", unique_count
         )
         return ensemble_fwd_paths, ensemble_porosity_arrays
 
@@ -3358,6 +3419,17 @@ class DA(CATHY):
             ]
             df_DA_ti = pd.DataFrame(np.transpose(data_df_root), columns=cols_root)
 
+        elif self._compact_states_on():
+            # compact path: float32 arrays, one chunk per cycle (no pd.concat of the whole history)
+            self._get_state_store().add(
+                self.count_atmbc_cycle,
+                psi=state[0],
+                sw=state[1],
+                analysis=state_analysis,
+                rejected=[int(rejected_ens[n]) for n in range(self.NENS)],
+            )
+            return
+
         else:
 
             for n in range(self.NENS):
@@ -3377,7 +3449,7 @@ class DA(CATHY):
 
                 df_DA_ti = pd.concat([df_DA_ti, df_DA_ti_ni], axis=0)
 
-        self.df_DA = pd.concat([self.df_DA, df_DA_ti], axis=0, ignore_index=True)
+        self._df_DA_legacy = pd.concat([self._df_DA_legacy, df_DA_ti], axis=0, ignore_index=True)
 
         pass
 

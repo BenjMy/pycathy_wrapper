@@ -44,8 +44,8 @@ SUPPORTED_CONTROLS = {
     "porosity": (None, "layers", "zone"),
 }
 LIST_KEYS = ("per_type", "per_name", "per_nom", "per_mean", "per_sigma", "sampling_type", "transf_type")
-CONTROLS = (None, "None", "layers", "zone", "root_map", "material")
-MATERIAL_PARAMETERS = ("SATCELL_VG", "n_VG", "thetar_VG")  # the ones with a per-material write
+CONTROLS = (None, "None", "layers", "zone", "root_map", "material", "zone_material")
+MATERIAL_PARAMETERS = ("SATCELL_VG", "n_VG", "thetar_VG", "Ks")  # the ones with a per-material write
 SAMPLING = ("normal", "lognormal", "uniform")
 PER_TYPES = (None, "None", "additive", "multiplicative")
 TRANSFORMS = (None, "None", "log", "log-ratio", "hyperbolic")
@@ -159,6 +159,31 @@ def validate_scenario(
                     errors.append("material_layers: a layer belongs to several materials")
                 if nlayers is not None and (any(l < 0 or l >= nlayers for l in flat) or set(flat) != set(range(nlayers))):
                     errors.append(f"material_layers must cover the layers 0..{nlayers - 1} exactly once")
+        if control == "zone_material":
+            zgroups = scenario.get("zone_material_layers")
+            if name not in MATERIAL_PARAMETERS:
+                errors.append(f"{name}: pert_control_name 'zone_material' is only supported for {MATERIAL_PARAMETERS}")
+            if zgroups is None:
+                errors.append(f"{name}: 'zone_material' needs the scenario key 'zone_material_layers' "
+                              "(list of [zone, [layers]]: zone 1-based, layers 0-based)")
+            elif any(not (isinstance(g, (list, tuple)) and len(g) == 2 and isinstance(g[1], (list, tuple)))
+                     for g in zgroups):
+                errors.append("zone_material_layers: every entry must be [zone, [layers]]")
+            else:
+                pairs = [(int(z), int(l)) for z, ls in zgroups for l in ls]
+                if listed and len(zgroups) != len(nom):
+                    errors.append(f"{name}: {len(nom)} entries but 'zone_material_layers' has {len(zgroups)} groups")
+                if len(pairs) != len(set(pairs)):
+                    errors.append("zone_material_layers: a (zone, layer) belongs to several groups")
+                if nlayers is not None and any(l < 0 or l >= nlayers for _, l in pairs):
+                    errors.append(f"zone_material_layers: layers must be in 0..{nlayers - 1}")
+                if n_zone_classes is not None and any(z < 1 or z > n_zone_classes for z, _ in pairs):
+                    errors.append(f"zone_material_layers: zones must be in 1..{n_zone_classes}")
+                if nlayers is not None and n_zone_classes is not None:
+                    n_free = n_zone_classes * nlayers - len(set(pairs))
+                    if n_free > 0:
+                        warnings.append(f"zone_material_layers: {n_free} (zone, layer) soil rows belong to no group "
+                                        "and keep the base value of the model")
         feddes = name in FEDDES_LIST + FEDDES_SCALAR
 
         if feddes:
@@ -192,13 +217,13 @@ def validate_scenario(
             elif control is not None and not listed:
                 errors.append(
                     f"{name}: pert_control_name '{control}' needs one entry per "
-                    f"{'layer' if control == 'layers' else 'zone' if control == 'zone' else 'material' if control == 'material' else 'class'} "
+                    f"{'layer' if control == 'layers' else 'zone' if control == 'zone' else 'material' if control in ('material', 'zone_material') else 'class'} "
                     "(a list) in per_nom, per_mean and per_sigma"
                 )
             elif control is None and listed:
                 errors.append(
                     f"{name}: per_nom is a list but pert_control_name is not set: a list needs "
-                    "'layers', 'material', 'zone' or 'root_map' (otherwise it fails inside numpy)"
+                    "'layers', 'material', 'zone_material', 'zone' or 'root_map' (otherwise it fails inside numpy)"
                 )
         if listed and not feddes:
             expected = {"layers": nlayers, "zone": n_zone_classes, "root_map": n_veg_classes}.get(control)

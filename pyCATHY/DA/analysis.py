@@ -210,6 +210,16 @@ class DAConfig:
         so that a crash does not lose the results of the finished cycles.
     verbose : bool
         Print the processor output of every member.
+    compact_states : bool
+        Keep the states of the ensemble in ``pyCATHY.DA.state_store.StateStore`` (float32 arrays, one
+        chunk per cycle, O(1) per cycle) instead of the growing long ``df_DA`` (7 float64 columns per
+        (cycle, member, node), copied by ``pd.concat`` at every cycle). ``df_DA`` stays available as a
+        property that rebuilds the long table (compact dtypes + ``idnode``). Default True.
+    store_full : {'all', 'analysis'}
+        'all': every node at every cycle. 'analysis': every node only at the cycles with an analysis;
+        the other cycles keep only ``store_nodes`` (needs ``store_nodes``): for large meshes.
+    store_nodes : sequence of int or None
+        Node ids kept at the cycles that are not stored in full (probes, a profile, a sample).
     psi_bounds : (float or None, float or None) or None
         ``(psi_min, psi_max)`` [m]: the ANALYSED pressure heads are clipped to this range
         before they are written as the initial condition of the next window (None on one
@@ -233,8 +243,15 @@ class DAConfig:
     save_results: bool = False
     verbose: bool = False
     psi_bounds: Optional[tuple] = None
+    compact_states: bool = True
+    store_full: str = "all"
+    store_nodes: Optional[Sequence[int]] = None
 
     def __post_init__(self):
+        if self.store_full not in ("all", "analysis"):
+            raise ValueError(f"store_full must be 'all' or 'analysis', got {self.store_full!r}.")
+        if self.store_full == "analysis" and self.store_nodes is None:
+            raise ValueError("store_full='analysis' needs store_nodes (the nodes kept at the other cycles).")
         if self.psi_bounds is not None:
             if len(self.psi_bounds) != 2:
                 raise ValueError(
