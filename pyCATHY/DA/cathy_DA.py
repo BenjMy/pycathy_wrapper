@@ -60,6 +60,7 @@ import os
 import re
 import shutil
 import subprocess
+import time
 import warnings
 import copy
 
@@ -726,6 +727,8 @@ class DA(CATHY):
         if da_config is None:
             da_config = DAConfig.from_legacy_kwargs(kwargs)
         with self._run_logging(da_config):
+            self._run_da_type = "esmda"
+            self._run_params_updated = list(list_parm2update)
             return run_esmda_on_cathy(
                 self,
                 dict_obs,
@@ -848,6 +851,8 @@ class DA(CATHY):
         # the callees below restore the working directory they change: the loop
         # always runs from the project working directory
         os.chdir(self.workdir)
+        self._run_da_type = str(options.DA_type)
+        self._run_params_updated = [p for p in options.list_parm2update if "St. var." not in p]
         for t_atmbc in self.all_atmbc_times[:-1]:  # N times -> N-1 windows
             self._run_window(t_atmbc, options)
 
@@ -1216,6 +1221,9 @@ class DA(CATHY):
         os.makedirs(out.root, exist_ok=True)
         log = IssueLog(out.issues_log, cycle_getter=lambda: getattr(self, "count_DA_cycle", None)).attach()
         self.issue_log = log
+        t0 = time.time()
+        self._run_da_type = None
+        status = "finished"
         try:
             if getattr(config, "console_log", "off") == "full":
                 with _tee_run_output(out.console_log, getattr(self, "console", None)):
@@ -1223,10 +1231,16 @@ class DA(CATHY):
             else:
                 yield log
         except BaseException as exc:
+            status = "failed"
             log.record("run", f"run aborted: {type(exc).__name__}: {exc}", level="ERROR")
             raise
         finally:
             log.detach()
+            self._run_wall_time_s = round(time.time() - t0, 1)
+            try:                                  # the manifest must never hide the real error of a run
+                self.write_run_summary(status=status)
+            except Exception as exc:
+                logger.debug("run manifest not written (%s: %s)", type(exc).__name__, exc)
 
     def _record_analysis_issues(self, result_analysis, state_before, param_before, list_update_parm, n_members):
         """Route what the analysis step shows (spread collapse, PF degeneracy, rank) to the issue log."""
@@ -1248,17 +1262,88 @@ class DA(CATHY):
         except Exception as exc:  # diagnostics only: never stop a run for them
             logger.debug("issue detection failed (%s: %s)", type(exc).__name__, exc)
 
+    def _run_options_manifest(self) -> dict:
+        """The options that decide what a run did (``None`` where an option cannot have been active)."""
+        cfg = getattr(self, "config", None)
+        ana = getattr(cfg, "analysis", None)
+        updated = list(getattr(self, "_run_params_updated", []) or [])
+        da_type = getattr(self, "_run_da_type", None)
+        out = dict(
+            da_type=da_type,
+            n_members=int(getattr(self, "NENS", 0) or 0),
+            seed=getattr(cfg, "seed", None),            # ensemble seed (the truth noise seed belongs to the script)
+            inflation=getattr(cfg, "inflation", None),
+            threshold_rejected=getattr(cfg, "threshold_rejected", None),
+            psi_bounds=list(cfg.psi_bounds) if getattr(cfg, "psi_bounds", None) else None,
+            localisation=getattr(cfg, "localisation", None),
+            use_log_transformed_obs=getattr(cfg, "use_log_transformed_obs", None),
+            store_full=getattr(cfg, "store_full", None),
+            save_results=getattr(cfg, "save_results", None),
+            write_states=getattr(cfg, "write_states", None),
+            console_log=getattr(cfg, "console_log", None),
+            perturb_obs=getattr(ana, "perturb_obs", None) if ana is not None else None,
+            sakov=getattr(ana, "sakov", None) if ana is not None else None,
+            n_updated_parameters=len(updated),
+            updated_parameters=updated,
+            state_only=(len(updated) == 0) if da_type is not None else None,
+        )
+        if ana is None and cfg is not None and da_type not in (None, "esmda"):
+            out["perturb_obs"] = out["sakov"] = "AnalysisConfig default (analysis=None)"
+        if out["state_only"]:                           # irrelevant when no parameter is updated: do not suggest they were active
+            out["param_bounds_mode"] = out["vgp_corr"] = None
+        return out
+
     def run_summary(self) -> dict:
-        """Outputs written and issues met by the last run: merge it into the run manifest of your script."""
+        """Outputs written, issues met and options used by the last run (also written to ``<project>_run.json``)."""
         log = getattr(self, "issue_log", None)
         store = getattr(self, "_state_store", None)
+        issues = log.summary() if log is not None else None
+        rejected = self.rejection_summary() if hasattr(self, "rejection_log") else {}
+        outputs = self._outputs()
+        registry = outputs.registry()
+        nc = outputs.states_nc
         return {
-            "outputs": self._outputs().registry(),
-            "issues": log.summary() if log is not None else None,
-            "n_cycles": int(self.count_DA_cycle or 0),
+            "outputs": registry,
+            "issues": issues,
+            "n_issues": issues["n_distinct"] if issues else 0,
+            "n_cycles": int(getattr(self, "count_DA_cycle", 0) or 0),
             "n_stored_cycles": len(store) if store is not None else 0,
-            "rejected_members": self.rejection_summary(),
+            "rejected_members": rejected,
+            "n_rejected_members": len({m for members in rejected.values() for m in members}),
+            "states_nc_bytes": os.path.getsize(nc) if os.path.exists(nc) else None,
+            "wall_time_s": getattr(self, "_run_wall_time_s", None),
+            "options": self._run_options_manifest(),
         }
+
+    def write_run_summary(self, status: str = "finished", extra: Optional[dict] = None) -> str:
+        """Write ``<project>_run.json``: ``run_summary()`` + ``library_status`` + versions (+ ``extra``).
+
+        Written by the library at the end of every run (EnKF, PF, ES-MDA), also when it fails. The status key is
+        called ``library_status`` on purpose: a script manifest that has its own ``status`` is not shadowed
+        (``pyCATHY.DA.run_status`` reads it first). Returns the path.
+        """
+        import sys
+        from importlib import metadata
+
+        def _version(pkg):
+            try:
+                return metadata.version(pkg)
+            except Exception:
+                return None
+
+        manifest = dict(schema=1, library_status=status, **self.run_summary())
+        manifest["versions"] = dict(python=sys.version.split()[0], numpy=np.__version__, pandas=pd.__version__,
+                                    xarray=xr.__version__, pycathy=_version("pycathy-wrapper") or _version("pyCATHY"))
+        if extra:
+            manifest["extra"] = extra
+        out = self._outputs()
+        os.makedirs(out.root, exist_ok=True)
+        manifest["outputs"]["run"] = os.path.relpath(out.run_json, out.root)    # the file does not exist yet
+        tmp = out.run_json + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=1, default=str)
+        os.replace(tmp, out.run_json)                   # atomic: a reader never sees half a file
+        return out.run_json
 
     # ------------------------------------------------------------------
     # df_DA: legacy long table, rebuilt on demand from the compact StateStore
@@ -1291,13 +1376,12 @@ class DA(CATHY):
             cfg = self.config
             chunk_dir = None
             if cfg.save_results:                      # one npz per cycle: O(1) per cycle, a crash keeps them
-                chunk_dir = self._outputs().states_chunks
-                if os.path.isdir(chunk_dir):          # stale chunks of a previous run of the same project
-                    for f in glob.glob(os.path.join(chunk_dir, "cycle_*.npz")):
-                        os.remove(f)
+                chunk_dir = self._outputs().fresh_chunk_dir()      # also removes stale chunks of a previous run
             self._state_store = StateStore(
                 self.NENS, nodes=cfg.store_nodes, full=cfg.store_full, chunk_dir=chunk_dir
             )
+            self._state_store.attrs.update(da_type=str(getattr(self, "_run_da_type", None)),
+                                           states_kind="forecast_before_update")
         return self._state_store
 
     def _finalize_state_backup(self) -> None:

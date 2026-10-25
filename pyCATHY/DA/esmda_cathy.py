@@ -632,9 +632,22 @@ def esmda_states_store(sim, result, times, t0, atm_times, da_config):
         psi_all[:, :, j], sw_all[:, :, j] = psi, sw
     if psi_all is None:
         raise RuntimeError("no member output could be read")
-    store = StateStore(n_ens, nodes=getattr(da_config, "store_nodes", None), full=getattr(da_config, "store_full", "all"))
-    store.attrs.update(da_type="esmda", states_source="posterior_forward_run" if len(result.prediction_history) > len(result.alphas)
-                       else "last_iteration_forward_run", n_iter=int(len(result.alphas)))
+    chunk_dir = None
+    if getattr(da_config, "save_results", False):       # same rule as the sequential DA: chunks follow save_results
+        from pyCATHY.DA.run_outputs import RunOutputs
+
+        chunk_dir = RunOutputs(sim.workdir, sim.project_name).fresh_chunk_dir()
+    store = StateStore(n_ens, nodes=getattr(da_config, "store_nodes", None), full=getattr(da_config, "store_full", "all"),
+                       chunk_dir=chunk_dir)
+    posterior = len(result.prediction_history) > len(result.alphas)      # run_esmda(final_forward=True) ran the final parameters
+    store.attrs.update(
+        states_kind="smoothed_posterior" if posterior else "last_iteration_forward_run",
+        description=("pyCATHY ES-MDA states of the posterior forward run (conditioned on ALL the data, also the future "
+                     "ones); cycle c <-> atm_times[c]; analysis is NaN") if posterior else
+                    ("pyCATHY ES-MDA states of the LAST ITERATION forward run: made with the parameters BEFORE the last "
+                     "update, NOT the posterior; cycle c <-> atm_times[c]; analysis is NaN"),
+        da_type="esmda", states_source="posterior_forward_run" if posterior else "last_iteration_forward_run",
+        n_iter=int(len(result.alphas)))
     atm = np.asarray(atm_times, dtype=float)
     for k, t in enumerate(times):
         cycle = int(np.argmin(np.abs(atm - float(t)))) if atm.size else k

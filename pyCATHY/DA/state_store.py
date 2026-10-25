@@ -22,6 +22,7 @@ plotting code written for ``df_DA`` keeps working. With ``chunk_dir`` every cycl
 them back.
 """
 import glob
+import json
 import os
 import re
 
@@ -76,7 +77,8 @@ class StateStore:
         self.rejected.append(rej)
         if self.chunk_dir:
             np.savez(os.path.join(self.chunk_dir, f"cycle_{int(cycle):05d}.npz"), cycle=int(cycle), node_ids=ids,
-                     is_analysis=bool(is_analysis), rejected=rej, nens=self.nens, **chunk)
+                     is_analysis=bool(is_analysis), rejected=rej, nens=self.nens,
+                     attrs_json=json.dumps(self.attrs, default=str), **chunk)       # metadata survives a chunk-only reload
 
     # ------------------------------------------------------------------ reading
     def __len__(self):
@@ -139,9 +141,9 @@ class StateStore:
         )
         ds["rejected"] = (("cycle", "member"), np.stack(self.rejected).astype(np.int8))
         ds["is_analysis"] = (("cycle",), np.asarray(self.is_analysis, dtype=bool))
-        ds.attrs.update(self.attrs)
-        ds.attrs.update(nens=self.nens, store_full=self.full,
+        ds.attrs.update(nens=self.nens, store_full=self.full, states_kind="forecast_before_update",
                         description="pyCATHY ensemble states; cycle c <-> atm_times[c]; psi/sw before the update, analysis after")
+        ds.attrs.update(self.attrs)                    # explicit metadata of the DA type wins (e.g. ES-MDA: smoothed_posterior)
         return ds
 
     def save_netcdf(self, path, nodes=None, complevel=4):
@@ -158,6 +160,9 @@ class StateStore:
         with np.load(files[0]) as z:
             nens, dtype = int(z["nens"]), z["psi"].dtype
         st = cls(nens, dtype=dtype)
+        with np.load(files[-1]) as z:                  # chunks written before attrs existed have no 'attrs_json'
+            if "attrs_json" in z.files:
+                st.attrs.update(json.loads(str(z["attrs_json"])))
         for f in files:
             with np.load(f) as z:
                 st.cycles.append(int(z["cycle"]))

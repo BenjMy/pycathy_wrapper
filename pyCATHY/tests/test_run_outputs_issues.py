@@ -147,3 +147,63 @@ def test_write_states_false_disables_the_file(tmp_path):
 def test_console_log_option_is_validated():
     with pytest.raises(ValueError, match="console_log"):
         DAConfig(console_log="verbose")
+
+
+# ---- run manifest (<project>_run.json), written by the library for every DA type
+def _manifest_shell(tmp_path, **attrs):
+    sim = _da_shell(tmp_path)
+    sim.NENS = 8
+    sim.count_DA_cycle = 3
+    sim.rejection_log = [dict(cycle=1, stage="run", member=2, reason="x"), dict(cycle=2, stage="run", member=2, reason="x"),
+                         dict(cycle=2, stage="analysis", member=5, reason="y")]
+    for k, v in attrs.items():
+        setattr(sim, k, v)
+    return sim
+
+
+def test_manifest_records_options_counts_and_outputs(tmp_path):
+    import json
+    from pyCATHY.DA.analysis import AnalysisConfig
+
+    sim = _manifest_shell(tmp_path, config=DAConfig(inflation=1.1, seed=1, analysis=AnalysisConfig(perturb_obs=True)))
+    with sim._run_logging(sim.config) as log:
+        sim._run_da_type, sim._run_params_updated = "enkf_Evensen2009", []     # what run_DA_sequential sets
+        log.record("collapse", "spread x0.1", cycle=2)
+    data = json.load(open(sim._outputs().run_json))
+    assert data["library_status"] == "finished" and data["n_cycles"] == 3
+    assert data["n_issues"] == 1 and data["n_rejected_members"] == 2          # member 2 counted once
+    assert data["wall_time_s"] is not None and data["versions"]["numpy"]
+    opt = data["options"]
+    assert opt["perturb_obs"] is True and opt["sakov"] is True and opt["inflation"] == 1.1 and opt["seed"] == 1
+    assert opt["state_only"] is True and opt["n_updated_parameters"] == 0
+    assert opt["param_bounds_mode"] is None and opt["vgp_corr"] is None          # irrelevant without parameter update
+    assert data["outputs"]["issues"] == "prj_issues.log" and data["outputs"]["run"] == "prj_run.json"
+
+
+def test_manifest_flags_a_failed_run_and_keeps_the_original_error(tmp_path):
+    import json
+
+    sim = _manifest_shell(tmp_path, config=DAConfig())
+    with pytest.raises(RuntimeError, match="boom"):
+        with sim._run_logging(sim.config):
+            raise RuntimeError("boom")
+    data = json.load(open(sim._outputs().run_json))
+    assert data["library_status"] == "failed" and data["n_issues"] == 1
+
+
+def test_manifest_with_parameters_updated_is_not_state_only(tmp_path):
+    sim = _manifest_shell(tmp_path, config=DAConfig(), _run_da_type="esmda", _run_params_updated=["Ks", "porosity"])
+    opt = sim.run_summary()["options"]
+    assert opt["state_only"] is False and opt["updated_parameters"] == ["Ks", "porosity"] and "param_bounds_mode" not in opt
+
+
+def test_manifest_does_not_shadow_the_status_of_the_script_manifest(tmp_path):
+    from pyCATHY.DA.run_status import _run_status
+    import json
+
+    sim = _manifest_shell(tmp_path, config=DAConfig())
+    sim.write_run_summary(status="finished")
+    folder = tmp_path / "prj"
+    assert _run_status(str(folder)) == "finished"                                # fallback to library_status
+    (folder / "prj_nb7.json").write_text(json.dumps({"status": "failed"}))
+    assert _run_status(str(folder)) == "failed"                                  # the script's own status wins

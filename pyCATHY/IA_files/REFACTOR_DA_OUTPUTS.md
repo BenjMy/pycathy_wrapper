@@ -60,8 +60,8 @@ Why this one:
       `run_DA_esmda` to the issue log.
 - [x] **S6** `DA.run_summary()` returns `{outputs, issues, n_cycles, rejected}` so the notebook merges it into its run JSON
       (the manifest of the notebook is written outside the library). DONE: `DA.run_summary()`; the notebook still has to merge it.
-- [~] **S7** Tests (no CATHY executable needed) + docs + changelog entry. Tests and docstrings DONE (`test_run_outputs_issues.py`,
-      17 tests); no changelog / sphinx page written.
+- [x] **S7** Tests (no CATHY executable needed) + docs + changelog entry. Tests and docstrings DONE (`test_run_outputs_issues.py`,
+      17 tests) + changelog entry (`doc/changes.md`, S15); no dedicated sphinx page.
 - [x] **S8** ES-MDA states = states of the POSTERIOR forward run (`esmda_cathy.esmda_states_store`), same `StateStore` /
       `<project>_states.nc`, `analysis` = NaN, attrs `da_type="esmda"`, `states_source="posterior_forward_run"`.
       CORRECTION of section 5: no extra run is needed, `run_esmda(final_forward=True)` (default, and the only value the
@@ -222,3 +222,69 @@ Done in this round:
   (`ok`, `partial`, `no states`, `no results`, `failed`), states kind, issue counts, missing files; reads the run json status.
 - `run_twin.sh`: `status` command; `plots` prints that table first and still runs nb8, then `real-plots` when
   `REAL_PLOTS` is set (`REAL=0` disables); `everything` runs `real` + real plots with `WITH_REAL=1`; nb8's exit code is kept.
+
+## 9. Round S15: library manifest `<project>_run.json`
+
+Gap found: `RunOutputs.run_json` was documented as written by `DA.write_run_summary`, which did not exist; `run_summary()`
+lacked the fields asked in section 3 (items 3, 8, 9, 10 and the state-only note of item 1).
+
+- [x] **S15** `DA.write_run_summary(status, extra)`, called by `_run_logging` at the end of EVERY run (EnKF, PF, ES-MDA),
+      also on failure (`library_status="failed"`; the original exception is never hidden). Atomic write (tmp + replace).
+      Content: `outputs` (now incl. `run`), `issues`, `n_issues`, `n_cycles`, `n_stored_cycles`, `rejected_members`,
+      `n_rejected_members`, `states_nc_bytes`, `wall_time_s`, `versions`, and `options` = `da_type`, `n_members`, `seed`,
+      `inflation`, `threshold_rejected`, `psi_bounds`, `localisation`, `use_log_transformed_obs`, `store_full`, `save_results`,
+      `write_states`, `console_log`, `perturb_obs`, `sakov`, `n_updated_parameters`, `updated_parameters`, `state_only`.
+      When `state_only`, `param_bounds_mode` and `vgp_corr` are recorded as `null` (section 3, item 1).
+      When `DAConfig.analysis` is None, `perturb_obs`/`sakov` are recorded as "AnalysisConfig default (analysis=None)"
+      (the effective default is `perturb_obs=False`: check item 10 for `enkf_Evensen2009`).
+- Key is `library_status`, NOT `status`: the notebook manifest keeps its own `status`; `run_status` reads the script's first
+  and falls back to `library_status`.
+- Tests: 4 new (109 in the 4 DA test files). Full suite: 489 passed, 9 failed + 15 errors identical to the untouched repo.
+- Not done (outside the library): notebook-side items of section 3 (relative paths, git hash of the notebook, `argv_parsed`,
+  seed naming), S12 (nb8), S14 real scripts, `nb8_helpers.summarize_run` fix (section 8), `df_performance` for ES-MDA.
+  Still unverified on a real CATHY run.
+
+## 10. Round S16: ES-MDA chunks, `states_kind`, nb8 homogenised
+
+Question asked: StateStore + `_states/` chunks + `_states.nc` for ES-MDA too, and one processing/plotting pipeline.
+State before this round: StateStore and `_states.nc` already existed for ES-MDA (S8); chunks did not.
+
+- [x] **S16a** ES-MDA writes `<project>_states/` chunks under the SAME rule as the sequential DA (`DAConfig.save_results`),
+      through `RunOutputs.fresh_chunk_dir()` (also used by the sequential path; removes stale chunks).
+- [x] **S16b** `StateStore` chunks now persist `attrs` (`attrs_json`): a chunks-only reload keeps `da_type`, `states_kind`,
+      `states_source`. Old chunks without it still load.
+- [x] **S16c** `states_kind` attribute in `states.nc` / chunks: `forecast_before_update` (EnKF, PF: `psi`/`sw` are the
+      values BEFORE the update at each cycle) vs `smoothed_posterior` (ES-MDA: posterior forward run, conditioned on ALL the
+      data incl. future ones). `description` of the ES-MDA file no longer claims "before the update".
+- [x] **S16d** nb8_helpers: `summarize_run` selects the open loop by TIME value (fixes `IndexError: Boolean index has wrong
+      length: 23 instead of 362`); `nearest_index`; `parameter_evolution` / `parm_evolution_ds` / `parameter_table(params_ds=)`
+      read every ES-MDA iterate from `_params.nc` (sequential: `dict_parm_pert`).
+- [x] **S16e** nb8_plots_synthetic (S12): OL drawn on its own time axis (states) / matched by time (profiles); ONE-line reasons
+      (`--debug` for tracebacks); final table plotted / skipped per run; exit 1 only for real skips (`n/a` reasons, e.g. a
+      state-only run has no parameter figure, do not count); `states_kind` column in summary.csv and a warning in the heatmap
+      title when forecast and smoother states are mixed.
+- Verified: 4 new tests (ES-MDA chunks, stale chunks, attrs round trip, default kind); nb8 smoke-tested end to end on a
+  synthetic project (EnKF run + ES-MDA run + 362-time open loop, stub loader). NOT run on real CATHY outputs.
+- Open: a real crash-safety for ES-MDA would be a per-ITERATION checkpoint of the parameters (today `_params.nc` is written
+  once at the end; the state chunks are written after the posterior run, so they only protect the NetCDF write).
+  Like-for-like EnKF vs ES-MDA state scores would need the sequential `analysis` field (psi only) or a smoother-style
+  re-run of the EnKF posterior: not done.
+
+## 11. Verdict on section 5 (ES-MDA runs cannot be plotted), checked against the code
+
+| Root cause of section 5 | Status | Where |
+|---|---|---|
+| 1. ES-MDA never called `backup_results_DA` | fixed for NEW runs | S10 |
+| 2. ES-MDA never fed the StateStore / no `states.nc` | fixed for NEW runs (+ chunks with `save_results`) | S8, S16a |
+| 3. `meta_DA` never written | fixed for NEW runs | S11 |
+| 4. nb8 must separate "not finished" from "finished without states" | fixed in this round: unfinished runs are named with their status in the final table, exit 1 | S16f |
+| Recommendation "one extra forward run with the posterior" | NOT needed: `run_esmda(final_forward=True)` (default, the only call of the CATHY adapter) already runs the final parameters; verified in `esmda.run_esmda` | S8 |
+
+Correction made in S16f: `states_kind` was `smoothed_posterior` unconditionally. It is now `last_iteration_forward_run`
+(description: "NOT the posterior") when the final forward run is absent, so such states can never be plotted next to the EnKF as if
+they were posterior.
+
+Still true: existing ES-MDA runs made BEFORE these patches are not repaired (they lack the files); they have to be re-run.
+`df_performance` is still not written for ES-MDA but it is not in `run_status.REQUIRED` and nb8 does not read it.
+NOT verified on a real CATHY run (reads `psi`/`sw` with `read_outputs`, unit-tested with a fake simulation only).
+

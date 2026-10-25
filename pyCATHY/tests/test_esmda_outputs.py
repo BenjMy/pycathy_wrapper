@@ -131,3 +131,61 @@ def test_load_backup_reads_states_params_and_says_clearly_when_missing(tmp_path,
     sim.load_backup()
     out = capsys.readouterr().out
     assert out.count("\n") == 1 and "missing:" in out and "states" in out        # ONE line, not a stack of errors
+
+
+# ---- chunks (<project>_states/) and the kind of states, same rules as the sequential DA
+def test_esmda_writes_chunks_only_with_save_results_and_they_reload_like_the_netcdf(tmp_path):
+    from pyCATHY.DA.state_store import StateStore
+
+    o = RunOutputs(str(tmp_path), "prj")
+    sim = _fake_sim(tmp_path)
+    esmda_cathy.esmda_states_store(sim, _result(), TIMES, 0.0, ATM, DAConfig())             # save_results False
+    assert not os.path.isdir(o.states_chunks)
+
+    st = esmda_cathy.esmda_states_store(sim, _result(), TIMES, 0.0, ATM, DAConfig(save_results=True))
+    assert sorted(os.listdir(o.states_chunks)) == ["cycle_00001.npz", "cycle_00002.npz"]
+    back = StateStore.from_chunks(o.states_chunks)
+    assert back.attrs["da_type"] == "esmda" and back.attrs["states_kind"] == "smoothed_posterior"   # attrs survive
+    a, b = st.to_xarray(), back.to_xarray()
+    assert a.attrs["states_kind"] == b.attrs["states_kind"] == "smoothed_posterior"
+    np.testing.assert_array_equal(a["psi"].values, b["psi"].values)
+    assert "ALL the data" in a.attrs["description"]
+
+
+def test_stale_chunks_of_a_previous_run_are_removed(tmp_path):
+    o = RunOutputs(str(tmp_path), "prj")
+    os.makedirs(o.states_chunks)
+    open(os.path.join(o.states_chunks, "cycle_00099.npz"), "wb").close()
+    sim = _fake_sim(tmp_path)
+    esmda_cathy.esmda_states_store(sim, _result(), TIMES, 0.0, ATM, DAConfig(save_results=True))
+    assert "cycle_00099.npz" not in os.listdir(o.states_chunks)
+
+
+def test_record_outputs_with_save_results_leaves_chunks_and_netcdf(tmp_path):
+    sim = _fake_sim(tmp_path)
+    cfg = DAConfig(save_results=True)
+    sim.config = cfg
+    esmda_cathy.record_esmda_outputs(sim, _result(), ["Ks"], _phys, TIMES, 0.0, ATM, ["swc"], cfg)
+    o = RunOutputs(str(tmp_path), "prj")
+    assert os.path.exists(o.states_nc) and len(os.listdir(o.states_chunks)) == 2
+    assert load_states(o.states_nc).attrs["states_kind"] == "smoothed_posterior"
+
+
+def test_sequential_store_is_tagged_as_forecast(tmp_path):
+    from pyCATHY.DA.state_store import StateStore
+
+    st = StateStore(2)
+    st.add(1, np.zeros((3, 2)), np.zeros((3, 2)), np.zeros((3, 2)))
+    assert st.to_xarray().attrs["states_kind"] == "forecast_before_update"                  # default of the sequential path
+
+
+def test_states_without_the_final_forward_run_are_not_called_posterior(tmp_path):
+    sim = _fake_sim(tmp_path)
+    r = _result()
+    r.prediction_history = r.prediction_history[:3]                  # final_forward=False: one run per iteration only
+    st = esmda_cathy.esmda_states_store(sim, r, TIMES, 0.0, ATM, DAConfig())
+    ds = st.to_xarray()
+    assert ds.attrs["states_kind"] == "last_iteration_forward_run" and "NOT the posterior" in ds.attrs["description"]
+    assert ds.attrs["states_source"] == "last_iteration_forward_run"
+    assert esmda_cathy.esmda_states_store(sim, _result(), TIMES, 0.0, ATM, DAConfig()).to_xarray().attrs[
+        "states_kind"] == "smoothed_posterior"

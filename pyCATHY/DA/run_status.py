@@ -46,6 +46,14 @@ def _run_status(project_dir):
                 return str(d["status"])
         except (OSError, ValueError):
             continue
+    name = os.path.basename(os.path.normpath(project_dir))      # fallback: the manifest written by the library itself
+    try:
+        with open(os.path.join(project_dir, f"{name}_run.json"), encoding="utf-8") as f:
+            d = json.load(f)
+        if isinstance(d, dict) and "library_status" in d:
+            return str(d["library_status"])
+    except (OSError, ValueError):
+        pass
     return None
 
 

@@ -37,9 +37,19 @@ class RunOutputs:
     run_json = property(lambda self: self._file("_run.json"))
     console_log = property(lambda self: os.path.join(self.root, "console_log.txt"))
 
+    def fresh_chunk_dir(self) -> str:
+        """``<project>_states/`` ready for a new run: created, and emptied of the stale chunks of a previous run."""
+        import glob
+
+        d = self.states_chunks
+        if os.path.isdir(d):
+            for f in glob.glob(os.path.join(d, "cycle_*.npz")):
+                os.remove(f)
+        return d
+
     def registry(self) -> dict:
         """Name -> path (relative to the project folder) of the outputs that exist now."""
         names = dict(states=self.states_nc, states_chunks=self.states_chunks, params=self.params_nc, issues=self.issues_log,
                      rejections=self.rejections_json, ert_checks=self.ert_checks_json,
-                     console_log=self.console_log)
+                     console_log=self.console_log, run=self.run_json)
         return {k: os.path.relpath(p, self.root) for k, p in names.items() if os.path.exists(p)}
