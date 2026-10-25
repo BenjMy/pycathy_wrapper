@@ -1156,3 +1156,16 @@ def test_dry_run_also_logs_the_recap(monkeypatch, caplog):
     sim, dict_obs, parm, _, _ = _ert_problem(monkeypatch)
     run_esmda_on_cathy(sim, dict_obs, ["Ks"], parm, ["ERT"], dry_run=True)
     assert any("strategy" in r.getMessage() and "assimilation windows" in r.getMessage() for r in caplog.records)
+
+
+def test_state_rows_accept_a_late_printed_time_only_within_the_lag_tolerance():
+    import pandas as pd
+    from pyCATHY.DA import esmda_cathy as ec
+
+    df = pd.DataFrame({"x": range(3)}, index=[0.0, 9901.35, 15428.29])
+    with pytest.raises(ec.ESMDATimeError):
+        ec.state_rows_at_times(df, [9240.0])                      # default: exact match only
+    assert ec.state_rows_at_times(df, [9240.0], lag_tol=700.0) == [1]
+    with pytest.raises(ec.ESMDATimeError):
+        ec.state_rows_at_times(df, [9240.0], lag_tol=100.0)       # printed 661 s late: refused
+    assert ec.state_rows_at_times(df, [0.0]) == [0]

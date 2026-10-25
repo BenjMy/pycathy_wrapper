@@ -1211,6 +1211,8 @@ class DA(CATHY):
         legacy = getattr(self, "_df_DA_legacy", pd.DataFrame())
         if store is None or not len(store):
             return legacy
+        warnings.warn("DA.df_DA is deprecated: use DA.states_dataset() (xarray) or <project>_states.nc; the long table is "
+                      "rebuilt on every access.", DeprecationWarning, stacklevel=2)
         frame = store.to_frame()
         return frame if legacy.empty else pd.concat([frame, legacy], ignore_index=True)
 
@@ -1239,13 +1241,27 @@ class DA(CATHY):
         return self._state_store
 
     def _finalize_state_backup(self) -> None:
-        """End of run: write ``<project>_df_DA.pkl`` ONCE (what ``load_backup`` and the plotting code read)."""
+        """End of run: write ``<project>_states.nc`` (compressed NetCDF, one xarray Dataset) ONCE; the legacy long table
+        ``<project>_df_DA.pkl`` only with ``DAConfig.legacy_df_DA`` (deprecated, ~10x larger)."""
         store = getattr(self, "_state_store", None)
         if store is None or not len(store) or not self.config.save_results:
             return
-        out = os.path.join(self.workdir, self.project_name, self.project_name + "_df_DA.pkl")
-        self.df_DA.to_pickle(out)
-        logger.info(f"df_DA written once at the end: {out} ({store.nbytes / 1e6:.0f} MB of states)")
+        base = os.path.join(self.workdir, self.project_name, self.project_name)
+        try:
+            store.save_netcdf(base + "_states.nc")
+            logger.info(f"states written once at the end: {base}_states.nc ({store.nbytes / 1e6:.0f} MB in memory)")
+        except Exception as exc:                      # the per-cycle chunks are the safety net
+            logger.warning(f"could not write {base}_states.nc ({type(exc).__name__}: {exc}); chunks are kept")
+        if getattr(self.config, "legacy_df_DA", False):
+            self.df_DA.to_pickle(base + "_df_DA.pkl")
+            logger.info(f"legacy df_DA written: {base}_df_DA.pkl")
+
+    def states_dataset(self):
+        """The ensemble states as an ``xarray.Dataset`` [cycle, member, node] (psi, sw, analysis, rejected)."""
+        store = getattr(self, "_state_store", None)
+        if store is None or not len(store):
+            raise ValueError("no compact states: run with DAConfig(compact_states=True)")
+        return store.to_xarray()
 
     def _save_results_to_disk(self):
         """Write the in-memory results of the DA (``df_DA``, ``ET_DA_xr``) next to the project."""

@@ -121,6 +121,31 @@ class StateStore:
             }))
         return pd.concat(parts, ignore_index=True)
 
+    def to_xarray(self, nodes=None):
+        """``xarray.Dataset`` with ``psi``, ``sw``, ``analysis`` [cycle, member, node] (float32), ``rejected`` [cycle,
+        member] and ``is_analysis`` [cycle]; coordinates ``cycle`` (the atmbc cycle counter), ``member``, ``node`` (ids).
+        Only the nodes stored at EVERY cycle (or ``nodes``) are included, as in ``arrays``; rejected members are NaN."""
+        import xarray as xr
+
+        cycles, members, node_ids, _ = None, None, None, None
+        data = {}
+        for f in FIELDS:
+            cycles, members, node_ids, data[f] = self.arrays(f, nodes)
+        coords = dict(cycle=cycles.astype(np.int32), member=members.astype(np.int16), node=node_ids.astype(np.int32))
+        ds = xr.Dataset(
+            {f: (("cycle", "member", "node"), data[f]) for f in FIELDS},
+            coords=coords,
+        )
+        ds["rejected"] = (("cycle", "member"), np.stack(self.rejected).astype(np.int8))
+        ds["is_analysis"] = (("cycle",), np.asarray(self.is_analysis, dtype=bool))
+        ds.attrs.update(nens=self.nens, store_full=self.full,
+                        description="pyCATHY ensemble states; cycle c <-> atm_times[c]; psi/sw before the update, analysis after")
+        return ds
+
+    def save_netcdf(self, path, nodes=None, complevel=4):
+        """Write ``to_xarray()`` as a compressed NetCDF (zlib; needs netCDF4 or h5netcdf, else uncompressed scipy)."""
+        return save_dataset(self.to_xarray(nodes), path, complevel)
+
     @classmethod
     def from_chunks(cls, chunk_dir):
         files = sorted(glob.glob(os.path.join(chunk_dir, "cycle_*.npz")),
@@ -139,3 +164,26 @@ class StateStore:
                 for k in FIELDS:
                     st.data[k].append(z[k])
         return st
+
+
+def save_dataset(ds, path, complevel=4):
+    """NetCDF with zlib compression when an engine supports it (netCDF4, h5netcdf), else uncompressed (scipy)."""
+    import importlib.util
+
+    for engine in ("netcdf4", "h5netcdf"):
+        if importlib.util.find_spec("netCDF4" if engine == "netcdf4" else "h5netcdf"):
+            enc = {v: dict(zlib=True, complevel=complevel) for v in ds.data_vars if ds[v].dtype.kind in "fiu"}
+            ds.to_netcdf(path, engine=engine, encoding=enc)
+            return path
+    ds.to_netcdf(path)                                  # scipy: NetCDF3, no compression
+    return path
+
+
+def load_states(path):
+    """``xarray.Dataset`` of the states of a run from ``<project>_states.nc`` (a file) or ``<project>_states/`` (the
+    per-cycle chunks, a directory). Same layout as ``StateStore.to_xarray``."""
+    import xarray as xr
+
+    if os.path.isdir(path):
+        return StateStore.from_chunks(path).to_xarray()
+    return xr.load_dataset(path)

@@ -445,9 +445,9 @@ def Carsel_Parrish_1988(soilTexture=None):
             # dict_Carsel_Parrish_1988_VGN[st][hv] = {}
             conversion = 1
             if "Ks" in hv:
-                conversion = 1e-3 / 3600
+                conversion = 1e-2 / 3600      # cm/h -> m/s
             elif "alpha" in hv:
-                conversion = 1 / 1e-3
+                conversion = 100.0            # 1/cm -> 1/m
 
             dict_Carsel_Parrish_1988_VGN[st][hv] = {
                 "xmean": table[i][j][0] * conversion,
@@ -473,7 +473,7 @@ def Carsel_Parrish_1988(soilTexture=None):
     # transformations
     # ------------------------------------------------------------------------
     hydraulic_variable = ["Ks", "theta_r", "alpha", "N"]
-    soil_texture = ["C", "S", "SL", "SIL", "CL"]
+    soil_texture = ["C", "S", "SI", "SIL", "CL"]   # same order as the table above (row 3 is silt, not sandy loam)
 
     if soilTexture is not None:
         if soilTexture not in soil_texture:
@@ -525,6 +525,7 @@ def Carsel_Parrish_1988(soilTexture=None):
         ["soil_texture", "hydraulic_variable"]
     ).sort_index()
 
+    VGP_predict_CATHY = {}
     # between 0.36 (close random packing) and 0.40 (loose random packing) [Allen, 1985]
 
     if soilTexture is not None:

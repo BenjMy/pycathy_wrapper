@@ -55,19 +55,32 @@ class ESMDATimeError(ValueError):
 
 
 # --------------------------------------------------------------------------- pure helpers
-def state_rows_at_times(df, times, atol=1e-6):
+# CATHY prints the state at the FIRST TIME STEP >= a requested printing time (it does not shorten the step to land
+# on it). In ONE run over the whole period (ES-MDA) a survey time is therefore printed up to DTMAX seconds late.
+# PRINT_LAG_TOL [s] accepts a printed time in [t, t + PRINT_LAG_TOL] as the state at t. 0 (default) = exact match,
+# the historical behaviour. Set it to a few DTMAX when the time steps are small (e.g. DTMAX = 60 s -> 120 s).
+PRINT_LAG_TOL = 0.0
+
+
+def state_rows_at_times(df, times, atol=1e-6, lag_tol=None):
     """Positions of the rows of ``df`` (index = output time) matching ``times``.
 
-    Raises ``ESMDATimeError`` if a time has no row within ``atol`` (relative to 1 + |t|).
+    A row matches if its time is within ``atol`` (relative to 1 + |t|) of ``t`` or, when ``lag_tol`` (default
+    ``PRINT_LAG_TOL``) is positive, if it is the first row printed in ``[t, t + lag_tol]`` (CATHY prints at the
+    first time step >= the requested time). Raises ``ESMDATimeError`` if a time has no such row.
     """
+    lag_tol = PRINT_LAG_TOL if lag_tol is None else float(lag_tol)
     index = np.asarray(df.index, dtype=float)
     rows = []
     for t in times:
         hits = np.flatnonzero(np.abs(index - float(t)) <= atol * (1.0 + abs(float(t))))
+        if hits.size == 0 and lag_tol > 0:
+            late = np.flatnonzero((index >= float(t)) & (index <= float(t) + lag_tol))
+            hits = late[:1]
         if hits.size == 0:
             raise ESMDATimeError(
                 f"No output at t={t}: printed times are {index.tolist()}. "
-                "Observation times must be CATHY printing times."
+                "Observation times must be CATHY printing times (or set esmda_cathy.PRINT_LAG_TOL)."
             )
         rows.append(int(hits[0]))
     return rows

@@ -92,6 +92,12 @@ def test_chunks_survive_and_reload(tmp_path):
     assert np.allclose(back.arrays("sw")[3], da._state_store.arrays("sw")[3], equal_nan=True)
     da._finalize_state_backup()
     pkl = os.path.join(tmp_path, "prj", "prj_df_DA.pkl")
+    nc = os.path.join(tmp_path, "prj", "prj_states.nc")
+    assert os.path.isfile(nc) and not os.path.exists(pkl)                       # NetCDF by default, no legacy pickle
+    import xarray as xr
+    assert xr.load_dataset(nc)["sw"].shape == (NC, NE, NN)
+    da.config.legacy_df_DA = True                                               # opt-in (deprecated)
+    da._finalize_state_backup()
     assert os.path.isfile(pkl) and len(pd.read_pickle(pkl)) == NC * NE * NN
     # a new run of the same project removes stale chunks
     da2 = make_da(True, tmp_path, save_results=True)
@@ -119,3 +125,49 @@ def test_backup_saves_every_attribute_even_if_one_fails(tmp_path, monkeypatch):
     cathy_tools.CATHY.backup_results_DA(da, {})          # the class method itself (other tests may stub the DA one)
     files = os.listdir(os.path.join(tmp_path, "prj"))
     assert "prj_dict_parm_pert.pkl" in files and any(f.startswith("prj_df_Archie") for f in files)
+
+
+# ------------------------------------------------------------------ xarray / NetCDF boundary
+def _small_store(nens=3, nnod=5, ncyc=4, **kw):
+    st = StateStore(nens, **kw)
+    rng = np.random.default_rng(0)
+    for c in range(ncyc):
+        psi = rng.normal(size=(nnod, nens)); sw = rng.uniform(size=(nnod, nens))
+        st.add(c, psi=psi, sw=sw, analysis=psi + 1.0, rejected=[0, 1, 0][:nens])
+    return st
+
+
+def test_to_xarray_matches_arrays_and_masks_rejected():
+    st = _small_store()
+    ds = st.to_xarray()
+    assert ds["sw"].dims == ("cycle", "member", "node")
+    assert ds["sw"].shape == (4, 3, 5) and ds["rejected"].shape == (4, 3)
+    _, _, _, a = st.arrays("sw")
+    np.testing.assert_array_equal(ds["sw"].values, a)
+    assert np.isnan(ds["sw"].values[:, 1, :]).all() and not np.isnan(ds["sw"].values[:, 0, :]).any()
+    assert list(ds["cycle"].values) == [0, 1, 2, 3]
+
+
+def test_netcdf_roundtrip_and_load_states_from_chunks(tmp_path):
+    from pyCATHY.DA.state_store import load_states
+    st = _small_store(chunk_dir=str(tmp_path / "chunks"))
+    nc = st.save_netcdf(str(tmp_path / "x_states.nc"))
+    a = load_states(nc)
+    b = load_states(str(tmp_path / "chunks"))
+    for f in ("psi", "sw", "analysis"):
+        np.testing.assert_allclose(a[f].values, st.to_xarray()[f].values, rtol=1e-6)
+        np.testing.assert_allclose(b[f].values, a[f].values, rtol=1e-6)
+
+
+def test_df_DA_is_deprecated_but_still_rebuilt(recwarn):
+    import warnings
+    from pyCATHY.DA.cathy_DA import DA
+    da = DA.__new__(DA)
+    da._state_store = _small_store()
+    da._df_DA_legacy = __import__("pandas").DataFrame()
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        frame = da.df_DA
+    assert any(issubclass(x.category, DeprecationWarning) for x in w)
+    assert len(frame) == 4 * 3 * 5
+    assert da.states_dataset()["psi"].shape == (4, 3, 5)

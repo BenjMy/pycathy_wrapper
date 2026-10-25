@@ -5482,7 +5482,8 @@ class CATHY:
         Load the files written by `backup_results_DA`.
 
         Each attribute is stored as `<project>_<name>.pkl` or `.parquet`.
-        Pass `<name>=False` to skip an attribute (e.g. `df_DA=False`).
+        Pass `<name>=False` to skip an attribute (e.g. `df_DA=False`). `states` = xarray Dataset of the
+        ensemble states (`<project>_states.nc` or the chunks): prefer it to the deprecated `df_DA`.
         `prefer` sets the extension order; use `prefer=(".parquet", ".pkl")`
         for a much faster load of the large df_DA when both files exist.
         If the preferred file cannot be read, the other one is tried.
@@ -5549,6 +5550,19 @@ class CATHY:
                     break
                 except Exception as e:
                     print(f"Error loading {os.path.basename(file_path)}: {type(e).__name__}: {e}")
+
+        if kwargs.get("states", True) is not False:
+            # compact ensemble states as an xarray Dataset [cycle, member, node]: the final NetCDF, else the per-cycle chunks
+            from pyCATHY.DA.state_store import load_states
+
+            for cand in (f"{filename}_states.nc", f"{filename}_states"):
+                if os.path.exists(cand):
+                    try:
+                        dict_backup["states"] = load_states(cand)
+                        print(f"Reading states: {os.path.basename(cand)}")
+                        break
+                    except Exception as e:
+                        print(f"Error loading {os.path.basename(cand)}: {type(e).__name__}: {e}")
 
         return dict_backup
 

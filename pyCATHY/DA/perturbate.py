@@ -187,13 +187,21 @@ def create_dict_entry(
     # if type(nstri) == int: 
     #     per_type = scenario["per_type"][index][nstri]
         
+    # Sampling law. Historically always "normal" (the scenario's ``sampling_type`` was ignored here); it is now honoured
+    # for Ks only (log-normal prior: ``per_sigma`` = std of ln(Ks)), so that existing scenario files keep their behaviour.
+    sampling = "normal"
+    if name == "Ks":
+        _samp = scenario.get("sampling_type")
+        if isinstance(_samp, (list, tuple)) and index < len(_samp) and _samp[index] in ("normal", "lognormal", "uniform"):
+            sampling = _samp[index]
+
     dict_parm_entry = {
         "type_parm": name + str(nstri),
         "nominal": scenario_nom,  # nominal value
         "mean": scenario_mean,
         "sd": scenario_sd,
         "units": "",  # units
-        "sampling_type": "normal",
+        "sampling_type": sampling,
         "ensemble_size": NENS,  # size of the ensemble
         "per_type": per_type,
         "transf_type": transf_type,
@@ -1191,9 +1199,9 @@ def VG_pert_rules(
     - y_array: (ensemble_size,) ndarray of transformed (Gaussian) samples
     """
     
-    logger.warning(
-        "NOT YET IMPLEMENTED - the van Genuchten parameters (alpha, n, theta_r) are not "
-        "perturbed with their mutual correlation (Carsel and Parrish, 1988)"
+    logger.info(
+        "van Genuchten parameters drawn independently here; for their mutual correlation (Botto et al. 2018) call "
+        "pyCATHY.DA.vgp_correlation.apply_vgp_correlation on the result"
     )
     
     # (no reseeding: see sampling_dist)
@@ -1217,14 +1225,25 @@ def VG_pert_rules(
     #     **kwargs
     # )
 
-    # one call: an open side (None) is infinite, so a missing or max-only bound works too
-    parm_sampling = sampling_dist_trunc(
-        myclip_a=parm.get("clip_min"),
-        myclip_b=parm.get("clip_max"),
-        ensemble_size=ensemble_size,
-        loc=parm['mean'],
-        scale=sd,
-    )
+    if sampling_type == "lognormal":
+        # log-normal prior: ln(x) ~ N(ln(mean), sd^2) truncated to [ln(clip_min), ln(clip_max)]; sd = std of ln(x)
+        lo, hi = parm.get("clip_min"), parm.get("clip_max")
+        parm_sampling = np.exp(sampling_dist_trunc(
+            myclip_a=None if (lo is None or lo <= 0) else np.log(lo),
+            myclip_b=None if (hi is None or hi <= 0) else np.log(hi),
+            ensemble_size=ensemble_size,
+            loc=np.log(parm["mean"]),
+            scale=sd,
+        ))
+    else:
+        # one call: an open side (None) is infinite, so a missing or max-only bound works too
+        parm_sampling = sampling_dist_trunc(
+            myclip_a=parm.get("clip_min"),
+            myclip_b=parm.get("clip_max"),
+            ensemble_size=ensemble_size,
+            loc=parm['mean'],
+            scale=sd,
+        )
 
     # --- Perturbation (physical space) ---
     v_array = perturbate_dist(
@@ -1327,7 +1346,8 @@ def Johnson1970_transform(V, transform_type, A=None, B=None):
     - Y: float or ndarray
         Transformed variable (normally distributed).
     """
-    rootName = 'Johnson_'
+    transform_type = str(transform_type).replace('Johnson_', '')      # accept 'LN' and 'Johnson_LN' (as the inverse)
+    rootName = ''
     if transform_type == rootName+'LN':
         return np.log(V)
     elif transform_type == rootName+'SB':
@@ -1356,6 +1376,7 @@ def inverse_Johnson1970_transform(Y, transform_type, A=None, B=None):
     - V: float or ndarray
         Original variable value.
     """
+    transform_type = str(transform_type).replace('Johnson_', '')
     if transform_type == 'LN':
         return np.exp(Y)
     elif transform_type == 'SB':
@@ -1448,6 +1469,7 @@ def perturbate_parm_by_layers(type_parm,
                               clip_min=None,
                               clip_max=None,
                               sampler="random",
+                              sampling_type="normal",
                               ):
             
         # sampler "random" (default): uniform draws from the global numpy state, so
@@ -1474,6 +1496,16 @@ def perturbate_parm_by_layers(type_parm,
         else:
             raise ValueError(f"unknown sampler '{sampler}' (use 'random' or 'sobol')")
         
+        # log-normal prior: the (truncated) normal law of ln(x); mean = the median, sd = std of ln(x)
+        if sampling_type == "lognormal":
+            lo = None if (clip_min is None or clip_min <= 0) else np.log(clip_min)
+            hi = None if (clip_max is None or clip_max <= 0) else np.log(clip_max)
+            lmean = np.log(mean)
+            if (lo is None and hi is None) or sd == 0:
+                return np.exp(norm.ppf(sobol_samples, loc=lmean, scale=sd))
+            a_, b_ = _std_bounds(lo, hi, lmean, sd)
+            return np.exp(truncnorm.ppf(sobol_samples, a_, b_, loc=lmean, scale=sd))
+
         # Transform the Sobol sequence to follow a normal distribution
         if (clip_min is None and clip_max is None) or sd == 0:
             pressure_head_withLayers = norm.ppf(sobol_samples, loc=mean, scale=sd)
@@ -1493,6 +1525,53 @@ def perturbate_parm_by_layers(type_parm,
         return pressure_head_withLayers
 
         
+
+# ---------------------------------------------------------------------------
+# Correlated van Genuchten parameters (Botto et al. 2018), applied while the parameters are perturbed
+# ---------------------------------------------------------------------------
+VGP_CORRELATION = {"spec": None, "sigma_vg": None}      # spec None -> independent draws (default)
+
+
+def set_vgp_correlation(spec=None, sigma_vg=None):
+    """Choose how the VGP (SATCELL_VG, n_VG, thetar_VG) of one group are drawn by ``perturbate_parm``.
+
+    ``spec``: None (default: independent draws), ``'botto:sandy_loam'`` | ``'botto:silt_loam'`` | ``{group: soil_class}``
+    (Botto et al. 2018 Table 2; sigma_VG defaults to 0.1), or a 3 x 3 correlation matrix / ``{group: matrix}`` (order
+    SATCELL_VG, n_VG, thetar_VG; ``sigma_vg`` defaults to 1). The draw is replaced once all three entries of a group exist."""
+    VGP_CORRELATION["spec"], VGP_CORRELATION["sigma_vg"] = spec, sigma_vg
+
+
+def _apply_vgp_correlation_if_ready(var_per):
+    from pyCATHY.DA import vgp_correlation as VC
+    spec, sig = VGP_CORRELATION["spec"], VGP_CORRELATION["sigma_vg"]
+    groups = sorted({g for key in var_per for n in VC.VGP_NAMES if (g := VC._group_id(key, n)) is not None})
+    for g in groups:
+        keys = [f"{n}{g}" for n in VC.VGP_NAMES]
+        if not all(k in var_per for k in keys) or any("vgp_corr_mode" in var_per[k] for k in keys):
+            continue
+        sub = {k: var_per[k] for k in keys}                  # same entry objects: modified in place
+        if spec is None:
+            mode = "independent"
+            print(f"[VGP corr] group {g}: DEFAULT (independent draws, no correlation)")
+        elif isinstance(spec, str) and spec.startswith("botto:") or (isinstance(spec, dict) and
+                                                                      all(isinstance(v, str) for v in spec.values())):
+            cls = spec.split(":", 1)[1] if isinstance(spec, str) else spec
+            sv = VC.SIGMA_VG_UPDATED if sig in (None, 1.0) else sig
+            _, rep = VC.apply_botto_vgp(sub, cls, sigma_vg=sv)
+            mode = f"botto:{cls}, sigma_VG={sv}"
+            for _g, r in rep.items():
+                print(f"[VGP corr] group {g}: NOT default, Botto 2018 {r['soil_class']}, sigma_VG={sv}\n"
+                      f"  target corr\n{np.round(r['target'], 2)}\n  sample corr\n{np.round(r['sample'], 2)}")
+        else:
+            _, rep = VC.apply_vgp_correlation(sub, spec, sigma_vg=1.0 if sig is None else sig)
+            mode = "user matrix"
+            for _g, r in rep.items():
+                print(f"[VGP corr] group {g}: NOT default, user correlation matrix\n  target\n{np.round(r['target'], 2)}"
+                      f"\n  sample\n{np.round(r['sample'], 2)}")
+        for k in keys:
+            var_per[k]["vgp_corr_mode"] = mode
+    return var_per
+
 def perturbate_parm(
     var_per,
     parm,
@@ -1754,7 +1833,8 @@ def perturbate_parm(
                                                         per_type=parm['per_type'],
                                                         nominal=parm['nominal'],
                                                         clip_min=parm.get('clip_min'),
-                                                        clip_max=parm.get('clip_max')                                                     
+                                                        clip_max=parm.get('clip_max'),
+                                                        sampling_type=(sampling_type if sampling_type == 'lognormal' else 'normal'),
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
@@ -1788,6 +1868,8 @@ def perturbate_parm(
     # Add to var perturbated stacked dict
     # ----------------------------------
     var_per = var_per | var_per_2add
+    if type_parm in ("SATCELL_VG", "n_VG", "thetar_VG") or str(type_parm).startswith(("SATCELL_VG", "n_VG", "thetar_VG")):
+        var_per = _apply_vgp_correlation_if_ready(var_per)
 
     if savefig is not False:
         plt_CT.plot_hist_perturbated_parm(

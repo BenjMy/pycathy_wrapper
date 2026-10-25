@@ -214,7 +214,11 @@ class DAConfig:
         Keep the states of the ensemble in ``pyCATHY.DA.state_store.StateStore`` (float32 arrays, one
         chunk per cycle, O(1) per cycle) instead of the growing long ``df_DA`` (7 float64 columns per
         (cycle, member, node), copied by ``pd.concat`` at every cycle). ``df_DA`` stays available as a
-        property that rebuilds the long table (compact dtypes + ``idnode``). Default True.
+        property that rebuilds the long table (compact dtypes + ``idnode``). Default True. At the end of the run the
+        states are written once as ``<project>_states.nc`` (xarray Dataset [cycle, member, node], compressed).
+    legacy_df_DA : bool
+        Also write the legacy long table ``<project>_df_DA.pkl`` at the end of a compact run (large, DEPRECATED).
+        Default False.
     store_full : {'all', 'analysis'}
         'all': every node at every cycle. 'analysis': every node only at the cycles with an analysis;
         the other cycles keep only ``store_nodes`` (needs ``store_nodes``): for large meshes.
@@ -244,6 +248,7 @@ class DAConfig:
     verbose: bool = False
     psi_bounds: Optional[tuple] = None
     compact_states: bool = True
+    legacy_df_DA: bool = False
     store_full: str = "all"
     store_nodes: Optional[Sequence[int]] = None
 
