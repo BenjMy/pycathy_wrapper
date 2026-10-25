@@ -49,6 +49,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 from typing import Any, List, Optional, Sequence, Tuple, Union
+import contextlib
 import glob
 
 import multiprocessing
@@ -90,6 +91,8 @@ from pyCATHY.DA.analysis import (  # noqa: F401  (re-exported: the code moved to
 )
 from pyCATHY.DA import console as _console
 from pyCATHY.DA.state_store import StateStore
+from pyCATHY.DA.run_outputs import RunOutputs
+from pyCATHY.DA.issues import IssueLog, analysis_issues
 from pyCATHY.DA.param_tables import (  # noqa: F401
     _ARCHIE_PARM_NAMES,
     _FEDDES_PARM_NAMES,
@@ -375,6 +378,7 @@ class DA(CATHY):
         self.localisationBool = False
         self.ert_check_reports: List[dict] = []  # ERT checks (see ERT_checks), saved every cycle
         self.rejection_log: List[dict] = []  # who was rejected, when and why (saved as json)
+        self.issue_log: Optional[IssueLog] = None  # light log of the problems of the run (see issues.py)
         self.Archie_parms_mat_ens: Any = []  # list, then an array (n_param, n_members)
         self.count_atmbc_cycle = 0
 
@@ -721,8 +725,7 @@ class DA(CATHY):
 
         if da_config is None:
             da_config = DAConfig.from_legacy_kwargs(kwargs)
-        log_path = os.path.join(self.workdir, self.project_name, "console_log.txt")
-        with _tee_run_output(log_path, getattr(self, "console", None)):
+        with self._run_logging(da_config):
             return run_esmda_on_cathy(
                 self,
                 dict_obs,
@@ -854,11 +857,12 @@ class DA(CATHY):
     def run_DA_sequential(self, *args, **kwargs):
         """Run the sequential Data Assimilation (see ``_run_DA_sequential_impl``).
 
-        Everything printed during the run is also written, live, to
-        ``<workdir>/<project_name>/console_log.txt``.
+        The problems met during the run (rejected members, ensemble collapse, particle degeneracy, ...) are
+        summarised in ``<workdir>/<project_name>/<project_name>_issues.log``. With
+        ``DAConfig(console_log="full")`` everything printed is also written to ``console_log.txt``.
         """
-        log_path = os.path.join(self.workdir, self.project_name, "console_log.txt")
-        with _tee_run_output(log_path, getattr(self, "console", None)):
+        config = kwargs.get("config", args[6] if len(args) > 6 else None)
+        with self._run_logging(config):
             return self._run_DA_sequential_impl(*args, **kwargs)
 
     run_DA_sequential.__doc__ = (run_DA_sequential.__doc__ or "") + (
@@ -1192,13 +1196,69 @@ class DA(CATHY):
         """Write the ERT check reports next to the project and log how many failed."""
         if not self.ert_check_reports:
             return
-        path = os.path.join(
-            self.workdir, self.project_name, self.project_name + "_ERT_checks.json"
-        )
+        path = RunOutputs(self.workdir, self.project_name).ert_checks_json
         ERT_checks.save_reports(self.ert_check_reports, path)
         n_failed = ERT_checks.count_failed(self.ert_check_reports)
         if n_failed:
             logger.warning(f"{n_failed} ERT check report(s) failed - see {path}")
+
+    # ------------------------------------------------------------------
+    # outputs layout and light issue log (same for EnKF, PF and ES-MDA)
+    # ------------------------------------------------------------------
+    def _outputs(self) -> RunOutputs:
+        """Where this run writes its files (see ``run_outputs.RunOutputs``)."""
+        return RunOutputs(self.workdir, self.project_name)
+
+    @contextlib.contextmanager
+    def _run_logging(self, config=None):
+        """Issue log for the whole run; the heavy console tee only with ``DAConfig.console_log == 'full'``."""
+        out = self._outputs()
+        os.makedirs(out.root, exist_ok=True)
+        log = IssueLog(out.issues_log, cycle_getter=lambda: getattr(self, "count_DA_cycle", None)).attach()
+        self.issue_log = log
+        try:
+            if getattr(config, "console_log", "off") == "full":
+                with _tee_run_output(out.console_log, getattr(self, "console", None)):
+                    yield log
+            else:
+                yield log
+        except BaseException as exc:
+            log.record("run", f"run aborted: {type(exc).__name__}: {exc}", level="ERROR")
+            raise
+        finally:
+            log.detach()
+
+    def _record_analysis_issues(self, result_analysis, state_before, param_before, list_update_parm, n_members):
+        """Route what the analysis step shows (spread collapse, PF degeneracy, rank) to the issue log."""
+        log = getattr(self, "issue_log", None)
+        if log is None:
+            return
+        try:
+            found = analysis_issues(
+                state_before=state_before,
+                state_after=result_analysis.analysis,
+                param_before=param_before if np.size(param_before) else None,
+                param_after=result_analysis.analysis_param if np.size(result_analysis.analysis_param) else None,
+                param_names=[p for p in list_update_parm if p != "St. var."],
+                pf_extra=result_analysis.extra,
+                n_members=n_members,
+            )
+            for kind, level, message in found:
+                log.record(kind, message, level=level)
+        except Exception as exc:  # diagnostics only: never stop a run for them
+            logger.debug("issue detection failed (%s: %s)", type(exc).__name__, exc)
+
+    def run_summary(self) -> dict:
+        """Outputs written and issues met by the last run: merge it into the run manifest of your script."""
+        log = getattr(self, "issue_log", None)
+        store = getattr(self, "_state_store", None)
+        return {
+            "outputs": self._outputs().registry(),
+            "issues": log.summary() if log is not None else None,
+            "n_cycles": int(self.count_DA_cycle or 0),
+            "n_stored_cycles": len(store) if store is not None else 0,
+            "rejected_members": self.rejection_summary(),
+        }
 
     # ------------------------------------------------------------------
     # df_DA: legacy long table, rebuilt on demand from the compact StateStore
@@ -1231,7 +1291,7 @@ class DA(CATHY):
             cfg = self.config
             chunk_dir = None
             if cfg.save_results:                      # one npz per cycle: O(1) per cycle, a crash keeps them
-                chunk_dir = os.path.join(self.workdir, self.project_name, self.project_name + "_states")
+                chunk_dir = self._outputs().states_chunks
                 if os.path.isdir(chunk_dir):          # stale chunks of a previous run of the same project
                     for f in glob.glob(os.path.join(chunk_dir, "cycle_*.npz")):
                         os.remove(f)
@@ -1244,14 +1304,16 @@ class DA(CATHY):
         """End of run: write ``<project>_states.nc`` (compressed NetCDF, one xarray Dataset) ONCE; the legacy long table
         ``<project>_df_DA.pkl`` only with ``DAConfig.legacy_df_DA`` (deprecated, ~10x larger)."""
         store = getattr(self, "_state_store", None)
-        if store is None or not len(store) or not self.config.save_results:
+        write = getattr(self.config, "write_states", True) or self.config.save_results
+        if store is None or not len(store) or not write:
             return
         base = os.path.join(self.workdir, self.project_name, self.project_name)
+        states_nc = self._outputs().states_nc
         try:
-            store.save_netcdf(base + "_states.nc")
-            logger.info(f"states written once at the end: {base}_states.nc ({store.nbytes / 1e6:.0f} MB in memory)")
-        except Exception as exc:                      # the per-cycle chunks are the safety net
-            logger.warning(f"could not write {base}_states.nc ({type(exc).__name__}: {exc}); chunks are kept")
+            store.save_netcdf(states_nc)
+            logger.info(f"states written once at the end: {states_nc} ({store.nbytes / 1e6:.0f} MB in memory)")
+        except Exception as exc:                      # the per-cycle chunks (if any) are the safety net
+            logger.warning(f"could not write {states_nc} ({type(exc).__name__}: {exc}); chunks are kept")
         if getattr(self.config, "legacy_df_DA", False):
             self.df_DA.to_pickle(base + "_df_DA.pkl")
             logger.info(f"legacy df_DA written: {base}_df_DA.pkl")
@@ -1634,6 +1696,7 @@ class DA(CATHY):
         )
         analysis = result_analysis.analysis
         analysis_param = result_analysis.analysis_param
+        self._record_analysis_issues(result_analysis, ensemble_psi_valid, param_valid, list_update_parm, len(ens_valid))
 
         # plot ensemble covariance matrices and changes (only for ENKF)
         if result_analysis.diagnostics is not None:
@@ -2059,6 +2122,9 @@ class DA(CATHY):
         ``"after_analysis"`` (an analysed parameter is not physical). The ledger answers
         who was rejected, in which cycle and why, which a bare percentage does not.
         """
+        if getattr(self, "issue_log", None) is not None and len(members):
+            self.issue_log.record("rejection", f"{len(members)} member(s) rejected at stage {stage}: {reason}",
+                                  level="WARNING", members=[int(m) + 1 for m in members])
         for member in members:
             self.rejection_log.append(
                 {
@@ -2068,9 +2134,7 @@ class DA(CATHY):
                     "reason": str(reason),
                 }
             )
-        path = os.path.join(
-            self.workdir, self.project_name, self.project_name + "_rejections.json"
-        )
+        path = RunOutputs(self.workdir, self.project_name).rejections_json
         try:
             with open(path, "w") as f:
                 json.dump(self.rejection_log, f, indent=1)

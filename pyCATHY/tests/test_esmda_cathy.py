@@ -1017,7 +1017,10 @@ def test_run_DA_esmda_writes_the_console_log_like_the_sequential_run(tmp_path, m
 
     monkeypatch.setattr(esmda_cathy, "run_esmda_on_cathy", fake_run)
     sim = _da_shell(tmp_path)
-    assert sim.run_DA_esmda({}, ["Ks"], {}, ["swc"]) == "done"
+    from pyCATHY.DA.analysis import DAConfig
+
+    full = DAConfig(console_log="full")                         # the heavy tee is opt-in since the issue log
+    assert sim.run_DA_esmda({}, ["Ks"], {}, ["swc"], da_config=full) == "done"
 
     log = (tmp_path / "prj" / "console_log.txt").read_text()   # same file as run_DA_sequential
     assert "===== run started" in log and "===== run ended =====" in log
@@ -1026,7 +1029,7 @@ def test_run_DA_esmda_writes_the_console_log_like_the_sequential_run(tmp_path, m
     assert "an info line" in capsys.readouterr().out            # and still shown on screen
 
     # a second run appends (as the sequential one), the first one is kept
-    sim.run_DA_esmda({}, ["Ks"], {}, ["swc"])
+    sim.run_DA_esmda({}, ["Ks"], {}, ["swc"], da_config=full)
     assert (tmp_path / "prj" / "console_log.txt").read_text().count("===== run started") == 2
 
 
@@ -1037,8 +1040,10 @@ def test_run_DA_esmda_logs_the_traceback_when_the_run_fails(tmp_path, monkeypatc
 
     monkeypatch.setattr(esmda_cathy, "run_esmda_on_cathy", failing_run)
     sim = _da_shell(tmp_path)
+    from pyCATHY.DA.analysis import DAConfig
+
     with pytest.raises(RuntimeError, match="boom"):
-        sim.run_DA_esmda({}, ["Ks"], {}, ["swc"])
+        sim.run_DA_esmda({}, ["Ks"], {}, ["swc"], da_config=DAConfig(console_log="full"))
     log = (tmp_path / "prj" / "console_log.txt").read_text()
     assert "before the failure" in log and "===== run ended =====" in log  # the log is closed properly
 

@@ -5446,8 +5446,16 @@ class CATHY:
 
         # attributes = ["dict_parm_pert", "df_DA", "df_obs", "df_performance", "ET_DA_xr", "df_Archie"]
         attributes = ["dict_parm_pert", "df_DA", "df_obs", "ET_DA_xr", "df_Archie"]
-        if getattr(self, "_state_store", None) is not None:
-            attributes.remove("df_DA")
+        legacy = getattr(self, "_df_DA_legacy", None)
+        if getattr(self, "_state_store", None) is not None or (legacy is not None and legacy.empty):
+            attributes.remove("df_DA")       # states live in the StateStore / states.nc; never write an empty table
+
+        if isinstance(meta_DA, dict) and meta_DA:      # was requested by load_backup but never written
+            try:
+                with open(f"{file_path}_meta_DA.pkl", "wb") as f:
+                    pickle.dump(meta_DA, f)
+            except Exception as e:
+                print(f"Error saving meta_DA: {type(e).__name__}: {e}")
 
         for attr in attributes:
             try:
@@ -5505,6 +5513,8 @@ class CATHY:
             "df_Archie",
         ]
         dict_backup = {}
+        loaded, missing, errors = [], [], []
+        verbose = bool(kwargs.get("verbose", False))
 
         for name in all_names:
             if kwargs.get(name, True) is False:
@@ -5516,17 +5526,17 @@ class CATHY:
 
             if not candidates and name == "df_DA":
                 chunk_dir = f"{filename}_states"       # compact states of an interrupted run
-                if os.path.isdir(chunk_dir):
+                if os.path.isdir(chunk_dir) and any(fn.startswith("cycle_") for fn in os.listdir(chunk_dir)):
                     try:
                         from pyCATHY.DA.state_store import StateStore
                         dict_backup[name] = StateStore.from_chunks(chunk_dir).to_frame()
-                        print(f"Reading File df_DA: rebuilt from {os.path.basename(chunk_dir)}/cycle_*.npz")
+                        loaded.append("df_DA(chunks)")
                         continue
                     except Exception as e:
-                        print(f"Error loading {chunk_dir}: {type(e).__name__}: {e}")
+                        errors.append(f"{os.path.basename(chunk_dir)}: {type(e).__name__}: {e}")
 
             if not candidates:
-                print(f"File not found for {name}: {file_base_path} (with .pkl or .parquet extension)")
+                missing.append(name)
                 continue
 
             for file_path in candidates:
@@ -5546,25 +5556,51 @@ class CATHY:
                         )
 
                     dict_backup[name] = obj
-                    print(f"Reading File {name}: {os.path.basename(file_path)}")
+                    loaded.append(name)
                     break
                 except Exception as e:
-                    print(f"Error loading {os.path.basename(file_path)}: {type(e).__name__}: {e}")
+                    errors.append(f"{os.path.basename(file_path)}: {type(e).__name__}: {e}")
 
         if kwargs.get("states", True) is not False:
             # compact ensemble states as an xarray Dataset [cycle, member, node]: the final NetCDF, else the per-cycle chunks
             from pyCATHY.DA.state_store import load_states
 
+            tried = []
             for cand in (f"{filename}_states.nc", f"{filename}_states"):
                 if os.path.exists(cand):
                     try:
                         dict_backup["states"] = load_states(cand)
-                        print(f"Reading states: {os.path.basename(cand)}")
+                        loaded.append("states")
                         break
                     except Exception as e:
-                        print(f"Error loading {os.path.basename(cand)}: {type(e).__name__}: {e}")
+                        tried.append(f"{os.path.basename(cand)}: {type(e).__name__}: {e}")
+            if "states" not in dict_backup:
+                missing.append("states")
+                if tried:
+                    errors.extend(tried)
 
+        if kwargs.get("params", True) is not False and os.path.exists(f"{filename}_params.nc"):
+            try:                                   # ES-MDA: parameters of every iteration (+ predictions, misfit)
+                import xarray as xr
+
+                dict_backup["params"] = xr.load_dataset(f"{filename}_params.nc")
+                loaded.append("params")
+            except Exception as e:
+                errors.append(f"_params.nc: {type(e).__name__}: {e}")
+
+        if "states" in dict_backup and "df_DA" in missing:
+            missing.remove("df_DA")                    # deprecated table: the states replace it
+        line = f"Loaded {os.path.basename(filename)}: {', '.join(loaded) or 'nothing'}"
+        if missing:
+            line += f" | missing: {', '.join(missing)}"
+        if errors:
+            line += " | errors: " + "; ".join(errors)
+        print(line)  # one line per run (``verbose=True`` kept for the callers that want the detail below)
+        if verbose:
+            for name in loaded:
+                print(f"  read {name}")
         return dict_backup
+
 
     def DEPRECATED_load_pickle_backup(self,filename=""):
         if len(filename) == 0:

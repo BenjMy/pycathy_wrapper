@@ -43,6 +43,7 @@ class StateStore:
         self.nodes = None if nodes is None else np.unique(np.asarray(nodes, dtype=np.int64))
         self.full = full
         self.chunk_dir = chunk_dir
+        self.attrs = {}                               # str / number metadata written in the NetCDF (da_type, ...)
         self.cycles, self.node_ids, self.is_analysis = [], [], []
         self.data = {f: [] for f in FIELDS}
         self.rejected = []
@@ -138,6 +139,7 @@ class StateStore:
         )
         ds["rejected"] = (("cycle", "member"), np.stack(self.rejected).astype(np.int8))
         ds["is_analysis"] = (("cycle",), np.asarray(self.is_analysis, dtype=bool))
+        ds.attrs.update(self.attrs)
         ds.attrs.update(nens=self.nens, store_full=self.full,
                         description="pyCATHY ensemble states; cycle c <-> atm_times[c]; psi/sw before the update, analysis after")
         return ds
@@ -151,7 +153,8 @@ class StateStore:
         files = sorted(glob.glob(os.path.join(chunk_dir, "cycle_*.npz")),
                        key=lambda f: int(re.findall(r"cycle_(\d+)", f)[-1]))
         if not files:
-            raise FileNotFoundError(f"no cycle_*.npz in {chunk_dir}")
+            raise FileNotFoundError(f"no cycle_*.npz in {chunk_dir}: this run wrote no states (crashed before the first "
+                                    "cycle, or a DA type that does not store them)")
         with np.load(files[0]) as z:
             nens, dtype = int(z["nens"]), z["psi"].dtype
         st = cls(nens, dtype=dtype)

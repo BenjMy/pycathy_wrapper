@@ -598,6 +598,120 @@ def set_member_outputs(sim, print_times, t_end):
 
 
 # --------------------------------------------------------------------------- orchestration
+# --------------------------------------------------------------------------- outputs (same files as the sequential DA)
+def read_member_states(sim, ens_nb, times, time_offset=0.0):
+    """Pressure head and saturation of ALL nodes of one member at ``times`` (absolute): two [n_times, n_nodes] arrays."""
+    out_dir = os.path.join(_member_dir(sim, ens_nb), sim.output_dirname)
+    df_psi = sim.read_outputs(filename="psi", path=out_dir)
+    df_sw, _ = sim.read_outputs(filename="sw", path=out_dir)
+    rel = [t - time_offset for t in times]
+    psi = df_psi.iloc[state_rows_at_times(df_psi, rel)].values
+    sw = df_sw.iloc[state_rows_at_times(df_sw, rel)].values
+    return np.asarray(psi, dtype=float), np.asarray(sw, dtype=float)
+
+
+def esmda_states_store(sim, result, times, t0, atm_times, da_config):
+    """``StateStore`` of the POSTERIOR forward run (the last run, made with the final parameters), one chunk per state
+    time, ``cycle`` = index of the matching atmbc time (as in the sequential DA); ``analysis`` is NaN (a smoother has
+    no per-cycle analysis). Members that are invalid or whose output cannot be read are flagged ``rejected``."""
+    from pyCATHY.DA.state_store import StateStore
+
+    n_ens = int(sim.NENS)
+    psi_all = sw_all = None
+    bad = ~np.asarray(result.valid, dtype=bool)
+    for j in np.flatnonzero(~bad):
+        try:
+            psi, sw = read_member_states(sim, int(j), times, t0)
+        except Exception as exc:  # one unreadable member must not lose the others
+            logger.warning("member %d: states of the posterior run not read (%s: %s)", j + 1, type(exc).__name__, exc)
+            bad[j] = True
+            continue
+        if psi_all is None:
+            psi_all = np.full((len(times), psi.shape[1], n_ens), np.nan, dtype=np.float32)
+            sw_all = np.full_like(psi_all, np.nan)
+        psi_all[:, :, j], sw_all[:, :, j] = psi, sw
+    if psi_all is None:
+        raise RuntimeError("no member output could be read")
+    store = StateStore(n_ens, nodes=getattr(da_config, "store_nodes", None), full=getattr(da_config, "store_full", "all"))
+    store.attrs.update(da_type="esmda", states_source="posterior_forward_run" if len(result.prediction_history) > len(result.alphas)
+                       else "last_iteration_forward_run", n_iter=int(len(result.alphas)))
+    atm = np.asarray(atm_times, dtype=float)
+    for k, t in enumerate(times):
+        cycle = int(np.argmin(np.abs(atm - float(t)))) if atm.size else k
+        store.add(cycle, psi_all[k], sw_all[k], np.full_like(psi_all[k], np.nan), rejected=bad, is_analysis=True)
+    return store
+
+
+def esmda_params_dataset(result, to_physical, names):
+    """``xarray.Dataset``: parameters of every iterate in PHYSICAL space [iteration, member(, dim)], predictions
+    [run, obs, member], misfit [run], alpha [update]. Iteration 0 = prior, last = posterior."""
+    import xarray as xr
+
+    n_ens = result.param.shape[1]
+    hist = [to_physical(h) for h in result.param_history]
+    data = {}
+    for n in names:
+        a = np.stack([np.asarray(h[n], dtype=float) for h in hist])
+        safe = re.sub(r"[^0-9A-Za-z_]", "_", str(n))
+        if a.ndim == 2 and a.shape[1] == n_ens:
+            data[safe] = (("iteration", "member"), a)
+        elif a.ndim == 3 and a.shape[2] == n_ens:
+            data[safe] = (("iteration", f"{safe}_dim", "member"), a)
+        else:
+            logger.warning("parameter %s: shape %s not stored in _params.nc", n, a.shape)
+    if result.prediction_history:
+        data["prediction"] = (("run", "obs", "member"), np.stack(result.prediction_history).astype(np.float32))
+        data["misfit"] = (("run",), np.asarray(result.misfit_history, dtype=float))
+    data["alpha"] = (("update",), np.asarray(result.alphas, dtype=float))
+    data["valid"] = (("member",), np.asarray(result.valid, dtype=bool))
+    ds = xr.Dataset(data)
+    ds.attrs.update(da_type="esmda", n_iter=int(len(result.alphas)),
+                    description="iteration 0 = prior, last = posterior; run n_iter = posterior forward run")
+    return ds
+
+
+def record_esmda_outputs(sim, result, names, to_physical, times, t0, atm_times, list_assimilated_obs, da_config):
+    """Everything an ES-MDA run leaves next to the project, as the sequential DA does: issue log entries,
+    ``_params.nc``, ``_states.nc`` (posterior run), and the standard backup (``dict_parm_pert``, ``df_obs``, ...).
+    Each part is independent and guarded: a failure here must never lose a run that took hours."""
+    from pyCATHY.DA.issues import esmda_issues
+    from pyCATHY.DA.run_outputs import RunOutputs
+    from pyCATHY.DA.state_store import save_dataset
+
+    def guarded(label, fn):
+        try:
+            fn()
+        except Exception as exc:
+            logger.warning("ES-MDA output '%s' not written (%s: %s)", label, type(exc).__name__, exc)
+
+    out = RunOutputs(sim.workdir, sim.project_name)
+    os.makedirs(out.root, exist_ok=True)
+
+    def issues():
+        log = getattr(sim, "issue_log", None)
+        if log is not None:
+            for it, kind, level, msg in esmda_issues(result.param_history, result.valid, result.misfit_history, names):
+                log.record(kind, msg, cycle=it, level=level)
+
+    def params():
+        save_dataset(esmda_params_dataset(result, to_physical, names), out.params_nc)
+
+    def states():
+        if not getattr(da_config, "write_states", True):
+            return
+        sim._state_store = esmda_states_store(sim, result, times, t0, atm_times, da_config)
+        sim.config = da_config if getattr(sim, "config", None) is None else sim.config
+        sim._finalize_state_backup()
+
+    def backup():
+        meta = {"listAssimilatedObs": list_assimilated_obs, "listUpdatedparm": list(names), "da_type": "esmda",
+                "alphas": [float(a) for a in result.alphas], "misfit": [float(m) for m in result.misfit_history]}
+        sim.backup_results_DA(meta)
+
+    for label, fn in (("issues", issues), ("params", params), ("states", states), ("backup", backup)):
+        guarded(label, fn)
+
+
 def run_esmda_on_cathy(
     sim,
     dict_obs,
@@ -759,4 +873,6 @@ def run_esmda_on_cathy(
     sim.ens_valid = [int(i) for i in np.flatnonzero(result.valid)]
     result.param_names = list(names)
     sim.esmda_result = result
+    record_esmda_outputs(sim, result, names, to_physical, times, t0, all_atmbc_times, list_assimilated_obs,
+                         da_config if da_config is not None else getattr(sim, "config", None))
     return result

@@ -224,6 +224,12 @@ class DAConfig:
         the other cycles keep only ``store_nodes`` (needs ``store_nodes``): for large meshes.
     store_nodes : sequence of int or None
         Node ids kept at the cycles that are not stored in full (probes, a profile, a sample).
+    write_states : bool
+        Write ``<project>_states.nc`` at the end of the run (EnKF and PF), whatever ``save_results``. Default True.
+        ``save_results`` only controls the per-cycle crash-safety files (``<project>_states/``, ET).
+    console_log : {'off', 'full'}
+        'off' (default): no ``console_log.txt``; the problems met during the run are summarised in the light
+        ``<project>_issues.log``. 'full': also tee the whole console to ``console_log.txt`` (heavy, legacy behaviour).
     psi_bounds : (float or None, float or None) or None
         ``(psi_min, psi_max)`` [m]: the ANALYSED pressure heads are clipped to this range
         before they are written as the initial condition of the next window (None on one
@@ -251,8 +257,12 @@ class DAConfig:
     legacy_df_DA: bool = False
     store_full: str = "all"
     store_nodes: Optional[Sequence[int]] = None
+    write_states: bool = True
+    console_log: str = "off"
 
     def __post_init__(self):
+        if self.console_log not in ("off", "full"):
+            raise ValueError(f"console_log must be 'off' or 'full', got {self.console_log!r}.")
         if self.store_full not in ("all", "analysis"):
             raise ValueError(f"store_full must be 'all' or 'analysis', got {self.store_full!r}.")
         if self.store_full == "analysis" and self.store_nodes is None:
