@@ -374,7 +374,7 @@ filter with the default config give different numbers; `perturb_obs=False` repro
 `esmda` are bit-identical (tested). The advisory now fires only on an explicit `False`; the "perturb_obs=True is ignored" line is merged
 into the filter's own advisory (it would have fired on every default run). Manifest: `perturb_obs` is the effective value (was a
 placeholder string) + `perturb_obs_applied`. Low-level `enkf.enkf_analysis` keeps `False`. Sampling error of the non-centred noise
-(section 12, item 5) is still open.
+(section 12, item 5) is addressed by the opt-in `AnalysisConfig.perturb_obs_center` (S19c, default False: results unchanged; with it the analysis mean equals that of the unperturbed data to 1e-10). Turning it on is a decision for the owner: it changes results.
 
 **Lognormal centring:** `lognormal_center = "median"` (default, bit-identical) | `"mean"` (`mu = ln(nominal) - sd^2/2`), at the three
 sampling sites (`sampling_dist`, `VG_pert_rules`, `perturbate_parm_by_layers`). Per call, per entry key, or `using_lognormal_center`.

@@ -86,19 +86,28 @@ def _solve_obs_space(obs_pert, data_cov, rhs, ens_size):
     return Rinv_rhs - Rinv_S @ np.linalg.solve(M, S.T @ Rinv_rhs)
 
 
-def _sample_obs_noise(data_cov, n_samples):
+def _sample_obs_noise(data_cov, n_samples, center=False):
     """Draw ``n_samples`` columns of observation noise ~ N(0, R), shape (m, n_samples).
 
     Uses numpy's global generator (seeded by ``DAConfig.seed``). A diagonal R costs
     O(m N); a full R needs a Cholesky factor.
+
+    ``center=True`` removes the mean over the members (same random numbers are drawn, so the seed
+    sequence is unchanged): the analysis mean is then the one of the unperturbed data instead of
+    carrying a sampling error of about sigma/sqrt(N) propagated by the gain. The sample covariance
+    (N-1 divisor) is still an unbiased estimate of R.
     """
     R = np.asarray(data_cov, dtype=float)
     if R.ndim == 1:
-        return np.sqrt(R)[:, None] * np.random.standard_normal((R.size, n_samples))
-    if np.count_nonzero(R) == np.count_nonzero(np.diag(R)):
+        noise = np.sqrt(R)[:, None] * np.random.standard_normal((R.size, n_samples))
+    elif np.count_nonzero(R) == np.count_nonzero(np.diag(R)):
         std = np.sqrt(np.diag(R))
-        return std[:, None] * np.random.standard_normal((std.size, n_samples))
-    return np.linalg.cholesky(R) @ np.random.standard_normal((R.shape[0], n_samples))
+        noise = std[:, None] * np.random.standard_normal((std.size, n_samples))
+    else:
+        noise = np.linalg.cholesky(R) @ np.random.standard_normal((R.shape[0], n_samples))
+    if center and n_samples > 1:
+        noise = noise - noise.mean(axis=1, keepdims=True)
+    return noise
 
 
 def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
@@ -153,6 +162,7 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
     # stochastic EnKF (Evensen 2003): each member assimilates d + eps_i, eps_i ~ N(0, R).
     # Without it the analysis spread is smaller than the posterior by K R K^T.
     perturb_obs = kwargs.pop('perturb_obs', False)
+    perturb_obs_center = kwargs.pop('perturb_obs_center', False)   # zero-mean noise over the members
     # multiplicative covariance inflation (alpha >= 1): the anomalies of the augmented
     # (state + parameters) ensemble and of the predicted data are multiplied by sqrt(alpha)
     # before the analysis, means unchanged. alpha = 1 (default) is a no-op.
@@ -224,7 +234,7 @@ def enkf_analysis(data, data_cov, param, ensemble, predict_obs, **kwargs):
         innovations = (data - predict_obs.T).T
     if perturb_obs and (data.ndim <= 1 or data.shape[-1] == 1):
         # (a 2-D (m, N) `data` is taken as already perturbed by the caller)
-        innovations = innovations + _sample_obs_noise(data_cov.T, ens_size)
+        innovations = innovations + _sample_obs_noise(data_cov.T, ens_size, perturb_obs_center)
     logger.debug(
         "innovation (obs - pred): mean=%.4g, std=%.4g",
         np.mean(innovations), np.std(innovations),
@@ -383,6 +393,7 @@ def enkf_analysis_localized_with_inflation(
     inflate_params = kwargs.pop('inflate_params')
     jitter_params = kwargs.pop('jitter_params')
     perturb_obs = kwargs.pop('perturb_obs', False)  # stochastic EnKF, see enkf_analysis
+    perturb_obs_center = kwargs.pop('perturb_obs_center', False)
 
     ens_size = ensemble.shape[1]
     sim_size = ensemble.shape[0]
@@ -400,7 +411,7 @@ def enkf_analysis_localized_with_inflation(
     obs_anomalies = predict_obs - obs_mean
     innovations = data.reshape(-1,1) - predict_obs
     if perturb_obs:
-        innovations = innovations + _sample_obs_noise(data_cov, ens_size)
+        innovations = innovations + _sample_obs_noise(data_cov, ens_size, perturb_obs_center)
 
     # Step 3: Observation covariance
     if Sakov:

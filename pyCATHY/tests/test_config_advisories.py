@@ -274,3 +274,78 @@ def test_manifest_records_the_effective_perturb_obs():
     sim._run_da_type = "enkf_analysis_inflation"
     o = sim._run_options_manifest()
     assert o["perturb_obs"] is True and o["perturb_obs_applied"] is False      # configured, but this filter never perturbs
+
+
+# ---- round S19c: opt-in centring of the observation noise --------------------------------------------------------
+def test_centred_noise_has_zero_member_mean_and_same_random_stream():
+    R = np.diag([.5, 1., 2.])
+    np.random.seed(0); raw = enkf._sample_obs_noise(R, 16)
+    np.random.seed(0); cen = enkf._sample_obs_noise(R, 16, center=True)
+    np.testing.assert_allclose(cen.mean(1), 0, atol=1e-14)
+    np.testing.assert_allclose(cen, raw - raw.mean(1, keepdims=True))
+    np.random.seed(0); again = enkf._sample_obs_noise(R, 16)
+    np.testing.assert_array_equal(raw, again)                      # default untouched
+
+
+def _analysis(center, perturb=True, N=40, seed=0):
+    rng = np.random.default_rng(1)
+    P = np.diag([1., 2., .5, 1.5]); R = np.eye(4) * .5
+    x = np.linalg.cholesky(P) @ rng.normal(size=(4, N))
+    y = rng.normal(size=4)
+    np.random.seed(seed)
+    out = enkf.enkf_analysis(y, R, np.zeros((0, N)), x, x.copy(), Sakov=True,
+                             perturb_obs=perturb, perturb_obs_center=center)
+    return out[9], x, y, R
+
+
+def test_centred_noise_gives_the_analysis_mean_of_the_unperturbed_data():
+    cen, *_ = _analysis(True)
+    plain, *_ = _analysis(False, perturb=False)
+    raw, *_ = _analysis(False)
+    np.testing.assert_allclose(cen.mean(1), plain.mean(1), atol=1e-10)      # exact, not statistical
+    assert np.abs(raw.mean(1) - plain.mean(1)).max() > 1e-3                 # the sampling error that was there
+
+
+def test_centred_noise_keeps_the_kalman_posterior_variance():
+    rng = np.random.default_rng(3)
+    P = np.diag([1., 2., .5, 1.5]); R = np.eye(4) * .5; N = 2000
+    Pa = P - P @ np.linalg.inv(P + R) @ P
+    x = np.linalg.cholesky(P) @ rng.normal(size=(4, N))
+    np.random.seed(0)
+    out = enkf.enkf_analysis(np.zeros(4), R, np.zeros((0, N)), x, x.copy(), Sakov=True, perturb_obs=True,
+                             perturb_obs_center=True)[9]
+    assert np.all(np.abs(np.var(out, axis=1, ddof=1) / np.diag(Pa) - 1) < 0.1)
+
+
+def test_default_is_not_centred_and_reaches_the_adapters():
+    from pyCATHY.DA.cathy_DA import ANALYSES
+    assert AnalysisConfig().perturb_obs_center is False
+    rng = np.random.default_rng(0)
+    n, m, N = 6, 5, 24
+    H = rng.normal(size=(m, n)) / np.sqrt(n)
+    ens, param = rng.normal(size=(n, N)), 0.4 + 0.05 * rng.normal(size=(1, N))
+    y = H @ rng.normal(size=n); R = np.eye(m) * .1
+    res = {}
+    for key, cfg in (("def", AnalysisConfig()), ("off", AnalysisConfig(perturb_obs_center=False)),
+                     ("on", AnalysisConfig(perturb_obs_center=True))):
+        np.random.seed(5)
+        res[key] = ANALYSES["enkf_Evensen2009"](y, R, param.copy(), ens.copy(), H @ ens, cfg).analysis
+    np.testing.assert_array_equal(res["def"], res["off"])
+    assert not np.allclose(res["def"], res["on"])
+    legacy = AnalysisConfig.from_legacy_kwargs({"perturb_obs_center": True})
+    assert legacy.perturb_obs_center is True
+
+
+def test_localized_filter_forwards_the_centring():
+    from pyCATHY.DA.cathy_DA import ANALYSES
+    rng = np.random.default_rng(0)
+    n, m, N = 6, 5, 24
+    H = rng.normal(size=(m, n)) / np.sqrt(n)
+    ens, param = rng.normal(size=(n, N)), 0.4 + 0.05 * rng.normal(size=(1, N))
+    y = H @ rng.normal(size=n); R = np.eye(m) * .1
+    out = {}
+    for c in (False, True):
+        np.random.seed(5)
+        out[c] = ANALYSES["enkf_analysis_localized_with_inflation"](
+            y, R, param.copy(), ens.copy(), H @ ens, AnalysisConfig(perturb_obs_center=c, localisation_matrix=np.ones((n, m)))).analysis
+    assert not np.allclose(out[False], out[True])

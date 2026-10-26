@@ -33,6 +33,9 @@ Behaviour changes (round S19), read before re-running an old script:
   ``enkf_Evensen2009*`` or the localized filter give different numbers; ``AnalysisConfig(perturb_obs=False)`` reproduces the old ones.
   The ``*_inflation*``, ``*_dual_*``, ``pf`` and ``esmda`` filters are bit-identical. The low-level ``enkf.enkf_analysis`` keeps
   ``perturb_obs=False``. ``<project>_run.json`` records ``perturb_obs`` (effective value) and ``perturb_obs_applied``.
+* New option ``AnalysisConfig.perturb_obs_center`` (default ``False``, results unchanged): removes the member mean from the
+  observation-noise draws, so the analysis mean is that of the unperturbed data instead of carrying a sampling error of about
+  sigma/sqrt(N) (the posterior variance stays Kalman-consistent). Same random stream; recorded in ``<project>_run.json``.
 * Lognormal priors: new option ``lognormal_center`` (``"median"`` = historical default, bit-identical; ``"mean"``: the nominal
   value becomes the ensemble MEAN, ``ln x ~ N(ln(nominal) - sd^2/2, sd^2)``). Set it per call (``sampling_dist(..., center="mean")``),
   per parameter entry (``parm["lognormal_center"]``) or for a block of code (``with perturbate.using_lognormal_center("mean"):``).

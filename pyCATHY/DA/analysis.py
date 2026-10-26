@@ -74,6 +74,9 @@ class AnalysisConfig:
         to reproduce a result obtained before S19. Used by ``enkf_Evensen2009*`` and the
         localized filter (the ``*_inflation*`` and ``*_dual_*`` filters never perturb;
         ES-MDA and the particle filter have their own noise). Seeded by ``DAConfig.seed``.
+    perturb_obs_center : bool
+        With ``perturb_obs``: remove the mean over the members from the noise draws, so the analysis
+        mean is that of the unperturbed data (default False, as before: results unchanged).
     inflation_states : float
         Multiplicative inflation of the ensemble. Legacy names: ``inflation``
         and ``alpha``.
@@ -101,6 +104,7 @@ class AnalysisConfig:
 
     sakov: bool = True
     perturb_obs: bool = True
+    perturb_obs_center: bool = False
     inflation_states: float = 1.0
     inflation_params: float = 1.0
     jitter_params: float = 0.0
@@ -134,6 +138,7 @@ class AnalysisConfig:
         values = {new: kwargs.pop(old) for old, new in renamed.items() if old in kwargs}
         for name in (
             "perturb_obs",
+            "perturb_obs_center",
             "jitter_params",
             "pf_resample_threshold",
             "pf_jitter_std_param",
@@ -325,6 +330,7 @@ def _enkf(filter_function, forward_alpha=False, forward_perturb=False, **fixed):
             kwargs["alpha"] = config.inflation_states
         if forward_perturb:
             kwargs["perturb_obs"] = config.perturb_obs
+            kwargs["perturb_obs_center"] = config.perturb_obs_center
         return _from_enkf(
             filter_function(data, data_cov, param, state, prediction, **kwargs)
         )
@@ -345,6 +351,7 @@ def _enkf_localized_with_inflation(data, data_cov, param, state, prediction, con
         inflate_params=config.inflation_params,
         jitter_params=config.jitter_params,
         perturb_obs=config.perturb_obs,
+        perturb_obs_center=config.perturb_obs_center,
     )
     # this filter returns the parameters as (n_param, n_members), all others as (n_members, n_param)
     return _from_enkf(result, transpose_param=True)

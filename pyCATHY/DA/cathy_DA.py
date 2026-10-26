@@ -1288,6 +1288,7 @@ class DA(CATHY):
             write_states=getattr(cfg, "write_states", None),
             console_log=getattr(cfg, "console_log", None),
             perturb_obs=getattr(ana, "perturb_obs", None) if ana is not None else None,
+            perturb_obs_center=getattr(ana, "perturb_obs_center", None) if ana is not None else None,
             sakov=getattr(ana, "sakov", None) if ana is not None else None,
             inflation_convention=INFLATION_CONVENTION.get(da_type) if da_type else None,
             n_updated_parameters=len(updated),
@@ -1297,6 +1298,7 @@ class DA(CATHY):
         if ana is None and cfg is not None and da_type not in (None, "esmda"):
             default = AnalysisConfig()                  # the config the run really used (analysis=None)
             out["perturb_obs"], out["sakov"] = default.perturb_obs, default.sakov
+            out["perturb_obs_center"] = default.perturb_obs_center
         # the option is only applied by the filters that perturb (the *_inflation* / *_dual_* ones never do)
         out["perturb_obs_applied"] = bool(out["perturb_obs"]) and da_type in _PERTURBS_OBS if da_type else None
         if out["state_only"]:                           # irrelevant when no parameter is updated: do not suggest they were active
