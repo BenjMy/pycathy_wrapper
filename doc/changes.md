@@ -37,7 +37,8 @@ Behaviour changes (round S19), read before re-running an old script:
   value becomes the ensemble MEAN, ``ln x ~ N(ln(nominal) - sd^2/2, sd^2)``). Set it per call (``sampling_dist(..., center="mean")``),
   per parameter entry (``parm["lognormal_center"]``) or for a block of code (``with perturbate.using_lognormal_center("mean"):``).
   The median-centred ensemble mean is higher than the nominal value by ``exp(sd^2/2)`` (+5 % at sd 0.3, +28 % at 0.7, +65 % at 1.0).
-  Not yet readable from the scenario file. With clip bounds the law is truncated and the mean is only approximately the nominal value.
+  In a scenario file: ``lognormal_center = "mean"`` (all parameters) or a list aligned with ``per_name``; absent = ``"median"``, the
+  prior is unchanged. With clip bounds the law is truncated and the mean is only approximately the nominal value.
 * ``read_observations``: a second sensor of another type at the same time no longer REPLACES the first one (the name was bumped
   from the last key only); ``discharge`` is read; a file name for ``swc`` / ``scale`` / ``tensio`` no longer dies on an undefined
   variable; an unknown ``data_type``, a missing ``tA`` or a missing file reader raise an explicit error; ``data_format`` is always

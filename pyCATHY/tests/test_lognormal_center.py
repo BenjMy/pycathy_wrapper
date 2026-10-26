@@ -72,3 +72,47 @@ def test_truncated_vg_path_reads_the_entry_key():
     np.testing.assert_array_equal(out[None], out["median"])                       # default unchanged
     assert out["mean"].mean() / 2.0 == pytest.approx(1.0, rel=0.02)
     assert out["median"].mean() / 2.0 == pytest.approx(np.exp(0.125), rel=0.02)
+
+
+# ---- scenario file -------------------------------------------------------------------------------------------------
+def _entries():
+    return [{"type_parm": "Ks"}, {"type_parm": "ZROOT0"}, {"type_parm": "ZROOT1"}, {"type_parm": "ic"}]
+
+
+def test_absent_key_leaves_entries_untouched():
+    e = _entries()
+    P._apply_lognormal_center(e, {"per_name": ["Ks", "ZROOT", "ic"]})
+    assert all("lognormal_center" not in x for x in e)
+
+
+def test_string_applies_to_every_parameter_and_list_is_per_name():
+    e = _entries()
+    P._apply_lognormal_center(e, {"per_name": ["Ks", "ZROOT", "ic"], "lognormal_center": "mean"})
+    assert [x["lognormal_center"] for x in e] == ["mean"] * 4
+    e = _entries()
+    P._apply_lognormal_center(e, {"per_name": ["Ks", "ZROOT", "ic"], "lognormal_center": ["mean", "median", "mean"]})
+    assert [x["lognormal_center"] for x in e] == ["mean", "median", "median", "mean"]   # ZROOT0 and ZROOT1 share ZROOT's value
+
+
+def test_bad_value_and_mixed_zone_values_are_errors():
+    with pytest.raises(ValueError, match="lognormal_center"):
+        P._apply_lognormal_center(_entries(), {"per_name": ["Ks"], "lognormal_center": "mode"})
+    with pytest.raises(ValueError, match="one value per parameter"):
+        P._apply_lognormal_center([{"type_parm": "Ks"}], {"per_name": ["Ks"], "lognormal_center": [["mean", "median"]]})
+
+
+def _scenario(name):
+    import pathlib, tomllib
+    with open(pathlib.Path(__file__).parent / "scenario_ert_example.toml", "rb") as f:
+        return tomllib.load(f)["scenario"][name]
+
+
+def test_scenario_validation_accepts_and_rejects():
+    import copy
+    from pyCATHY.DA.scenario import validate_scenario
+    sc = copy.deepcopy(_scenario("ic_ZROOT_upd_ZROOT"))
+    n = len(sc["per_name"])
+    for ok in ("mean", "median", ["mean"] * n):
+        assert validate_scenario({**sc, "lognormal_center": ok}, raise_on_error=False)[0] == []
+    assert any("lognormal_center" in e for e in validate_scenario({**sc, "lognormal_center": "mode"}, raise_on_error=False)[0])
+    assert any("lognormal_center" in e for e in validate_scenario({**sc, "lognormal_center": ["mean"] * (n + 1)}, raise_on_error=False)[0])

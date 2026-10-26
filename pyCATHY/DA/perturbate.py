@@ -51,6 +51,29 @@ def _require_nlayers(type_parm, nlayers):
         )
 
 
+def _apply_lognormal_center(list_pert, scenario):
+    """Store the scenario key ``lognormal_center`` on every entry, whatever branch built it.
+
+    The key is a string (``"mean"``: all parameters) or a list aligned with ``per_name``. Absent: the entries are left
+    untouched, so the process default (``set_lognormal_center``, ``"median"``) applies and existing scenarios give the
+    same prior as before. It only matters for entries sampled with ``sampling_type="lognormal"``.
+    """
+    spec = scenario.get("lognormal_center")
+    if spec is None:
+        return
+    names = list(scenario.get("per_name", []))
+    for entry in list_pert:
+        name = re.match(r"^(.*?)(\d*)$", entry["type_parm"]).group(1)
+        if name not in names:
+            continue
+        value = spec[names.index(name)] if isinstance(spec, (list, tuple)) else spec
+        if isinstance(value, (list, tuple)):               # one value per zone / layer: a single choice per parameter
+            value = value[0] if len(set(value)) == 1 else None
+        if value is None:
+            raise ValueError(f"{entry['type_parm']}: lognormal_center must be one value per parameter, got {spec!r}")
+        entry["lognormal_center"] = _check_lognormal_center(value)
+
+
 def _apply_scenario_bounds(list_pert, scenario):
     """Store the scenario ``per_bounds`` on every entry, whatever branch built it.
 
@@ -1028,6 +1051,7 @@ def perturbate(simu_DA, scenario, NENS,
             entry["layer_groups"] = [[int(z), [int(l) for l in ls]] for z, ls in zgroups]
             entry["nlayers"] = len(zgroups)  # one sampled value per (zone, material)
     _apply_scenario_bounds(list_pert, scenario)
+    _apply_lognormal_center(list_pert, scenario)
 
     _n_lm = sum(e.get("pert_control_name") in LAYER_LIKE for e in list_pert)
     if _n_lm:
@@ -1886,6 +1910,7 @@ def perturbate_parm(
                                                         clip_min=parm.get('clip_min'),
                                                         clip_max=parm.get('clip_max'),
                                                         sampling_type=(sampling_type if sampling_type == 'lognormal' else 'normal'),
+                                                        lognormal_center=parm.get('lognormal_center'),
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]

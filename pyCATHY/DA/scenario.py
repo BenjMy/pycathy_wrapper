@@ -121,6 +121,11 @@ def validate_scenario(
     if errors:  # misaligned lists: the per-parameter checks below would index out of range
         return _finish(errors, warnings, raise_on_error)
 
+    if isinstance(scenario.get("lognormal_center"), (list, tuple)) and len(scenario["lognormal_center"]) != n:
+        errors.append(f"'lognormal_center' has {len(scenario['lognormal_center'])} entries but per_name has {n}: "
+                      "give one string for all parameters or one entry per parameter")
+        return _finish(errors, warnings, raise_on_error)
+
     names = list(scenario["per_name"])
     for dup in {x for x in names if names.count(x) > 1}:
         errors.append(f"parameter '{dup}' appears more than once in per_name")
@@ -252,6 +257,13 @@ def validate_scenario(
                 for item in (v if isinstance(v, list) else [v]):
                     if item not in allowed:
                         errors.append(f"{name}: {key} '{item}' not in {allowed}")
+        # lognormal centring: a string for all parameters or a list aligned with per_name
+        if "lognormal_center" in scenario:
+            spec = scenario["lognormal_center"]
+            v = spec[i] if isinstance(spec, (list, tuple)) else spec
+            for item in (v if isinstance(v, list) else [v]):
+                if item not in ("median", "mean"):
+                    errors.append(f"{name}: lognormal_center '{item}' not in ('median', 'mean')")
         # bounds (same parser as the perturbation itself)
         if "per_bounds" in scenario and n == len(scenario["per_bounds"]):
             from pyCATHY.DA.perturbate import parse_bounds

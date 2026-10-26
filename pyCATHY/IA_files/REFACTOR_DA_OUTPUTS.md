@@ -378,8 +378,10 @@ placeholder string) + `perturb_obs_applied`. Low-level `enkf.enkf_analysis` keep
 
 **Lognormal centring:** `lognormal_center = "median"` (default, bit-identical) | `"mean"` (`mu = ln(nominal) - sd^2/2`), at the three
 sampling sites (`sampling_dist`, `VG_pert_rules`, `perturbate_parm_by_layers`). Per call, per entry key, or `using_lognormal_center`.
-NOT done: reading it from the scenario file (the entries are built in about 15 places; needs a run that exercises them) and the
-truncated case (realised mean only approximate, see `parameter_summary`).
+Scenario file (S19b): key `lognormal_center` (string for all parameters, or a list aligned with `per_name`), stored on every entry by ONE
+post-pass (`_apply_lognormal_center`, same pattern as `_apply_scenario_bounds`) and validated by `validate_scenario`; absent key = entries
+untouched. Only the Ks layered path samples a lognormal through `perturbate_parm_by_layers`, and it reads the entry key. Not run through
+a full `perturbate()` on a real mesh. Truncated case: the realised mean is only approximate (see `parameter_summary`).
 
 Verified: full suite 9 failed / 15 errors identical to the untouched commit (environment), passed 516 -> 565. NOT run on a real
 CATHY simulation: re-run one short case and compare `<project>_run.json` before trusting the new default on a long run.
