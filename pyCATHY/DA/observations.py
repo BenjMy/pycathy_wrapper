@@ -659,4 +659,6 @@ def init_obs_cov_matrice(dict_obs, obs_cov_type):
         except Exception:  # pygimli container: no len() and no dict access
             err_arr = np.tile(dict_obs["data_err"], len(dict_obs["data"]["a"]))
             data_cov = np.diag(err_arr**2)
+    else:
+        raise ValueError(f"unknown obs_cov_type {obs_cov_type!r}: use 'reciprocal_err' or 'data_err'")
     return data_cov

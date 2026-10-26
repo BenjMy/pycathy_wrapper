@@ -224,3 +224,49 @@ def test_obs_key_select_unchanged_for_lists(sel):
     d = {0.0: {"swc": _entry(1, 1, "swc"), "tensiometer": _entry(1, 1, "tensiometer"), "swc1": _entry(1, 1, "swc"),
                "ERT": _entry(1, 1, "ERT"), "swc12": _entry(1, 1, "swc")}}
     assert _da_selection(d, 0, sel) == _old_obs_key_select(list(d[0.0]), list(sel))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# round S19d: neighbours of the same bug classes
+# --------------------------------------------------------------------------------------------------------------------
+def test_unknown_obs_cov_type_is_an_explicit_error():
+    """Any other string than the two known ones raised UnboundLocalError on `data_cov`."""
+    from pyCATHY.DA.observations import init_obs_cov_matrice
+    d = {"data": pd.DataFrame({"rec_err": [1.0, 2.0]}), "data_err": 3.0}
+    with pytest.raises(ValueError, match="obs_cov_type"):
+        init_obs_cov_matrice(d, "recip_err")
+    assert init_obs_cov_matrice(d, "reciprocal_err").shape == (2, 2)
+    assert init_obs_cov_matrice(d, "data_err").shape == (2, 2)
+
+
+def _sync_inputs():
+    dm = {100.0: {"swc": {"assimilation_times": 100.0, "datetime": 1}, "ERT": {"assimilation_times": 100.0}},
+          250.0: {"swc": {"assimilation_times": 250.0}}}
+    return dm, pd.DataFrame({"datetime": [pd.Timestamp("2023-01-01")]})
+
+
+def test_resynchronise_shifts_keys_and_entries_without_touching_the_input():
+    """`dict(data_measure)` was a shallow copy: the caller's entries were rewritten (key 100.0 but assimilation_times 50.0)."""
+    from pyCATHY.cathy_utils import resynchronise_times
+    dm, atm = _sync_inputs()
+    out = resynchronise_times(dm, atm, 50.0)
+    assert list(out) == [50.0, 200.0]
+    assert out[50.0]["swc"]["assimilation_times"] == 50.0 and out[200.0]["swc"]["assimilation_times"] == 200.0
+    assert dm[100.0]["swc"]["assimilation_times"] == 100.0 and list(dm) == [100.0, 250.0]      # input intact
+
+
+@pytest.mark.parametrize("offset", [None, "x"])
+def test_resynchronise_failure_names_the_real_cause(offset):
+    """The bare `except:` handler indexed `data_measure[0]` (KeyError: 0), hiding the TypeError, or silently went on with
+    the unsynchronised times."""
+    from pyCATHY.cathy_utils import resynchronise_times
+    dm, atm = _sync_inputs()
+    with pytest.raises(ValueError, match="cannot synchronise") as exc:
+        resynchronise_times(dm, atm, offset)
+    assert isinstance(exc.value.__cause__, TypeError)
+    assert dm[100.0]["swc"]["assimilation_times"] == 100.0
+
+
+def test_legacy_performance_module_imports_os():
+    import pyCATHY.DA.performance as perf
+    assert hasattr(perf, "os")

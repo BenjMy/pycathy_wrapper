@@ -314,36 +314,29 @@ def dictObs_2pd(dict_obs):
 
 
 def resynchronise_times(data_measure, atmbc_df, time_offset):
-    """resynchronise dict as old key is elapsed time in second from the first observation,
-    while new key is from the first atmbc time
+    """Resynchronise a dict of observations: old keys are elapsed seconds from the first observation, new keys
+    (``old - time_offset``) are elapsed seconds from the first atmbc time.
+
+    Returns a NEW dict (the input and its entries are not modified; the DataFrames inside are shared, not copied) in which
+    every entry's ``assimilation_times`` is the new key. Raises ``ValueError`` (with the cause chained) when the times cannot
+    be shifted: continuing with unsynchronised times would assimilate every observation at the wrong time.
+    ``atmbc_df`` is only used to report the reference time in the error message.
     """
-    data_measure_sync = dict(data_measure)
     try:
-        new_keys = []
-        for d in range(len(data_measure_sync.keys())):
-            items_dict = list(data_measure_sync.items())
-            # new_key = (
-            #     atmbc_df["diff"]
-            #     .dt.total_seconds()
-            #     .unique()[d]
-            # )
-
-            old_key = list(data_measure_sync.keys())[d]
-            new_key = list(data_measure_sync.keys())[d] - time_offset
-
-            for sensor in list(items_dict[d][1].keys()):
-                data_measure_sync[old_key][sensor]["assimilation_times"] = new_key
-            new_keys.append(new_key)
-        data_measure_sync = dict(zip(new_keys, data_measure_sync.values()))
-
-    except:
-        print("datetime first atmbc point")
-        print(atmbc_df["datetime"][0])
-        print("datetime first measurement")
-        print(data_measure[0][sensor]["datetime"])
-        print("cant synchronise times - continue without")
-    return data_measure_sync
-
+        synced = {}
+        for old_key, sensors in data_measure.items():
+            new_key = old_key - time_offset
+            synced[new_key] = {name: {**entry, "assimilation_times": new_key} for name, entry in sensors.items()}
+    except Exception as exc:
+        try:
+            first_atmbc = atmbc_df["datetime"].iloc[0]
+        except Exception:
+            first_atmbc = "unknown"
+        raise ValueError(
+            f"cannot synchronise the observation times with time_offset={time_offset!r} "
+            f"(first atmbc datetime: {first_atmbc}): {type(exc).__name__}: {exc}"
+        ) from exc
+    return synced
 
 
 #%% ---------------------------------------------------------------------------

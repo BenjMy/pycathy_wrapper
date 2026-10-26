@@ -46,6 +46,9 @@ Behaviour changes (round S19), read before re-running an old script:
   from the last key only); ``discharge`` is read; a file name for ``swc`` / ``scale`` / ``tensio`` no longer dies on an undefined
   variable; an unknown ``data_type``, a missing ``tA`` or a missing file reader raise an explicit error; ``data_format`` is always
   stored for ERT / EM and ``meta`` is optional.
+* ``cathy_utils.resynchronise_times`` returns a new dict instead of rewriting the caller's entries, and raises ``ValueError`` (cause chained)
+  when the times cannot be shifted: its bare ``except`` raised ``KeyError: 0`` (hiding the real error) or went on with unsynchronised
+  times. ``init_obs_cov_matrice`` raises ``ValueError`` for an unknown ``obs_cov_type`` (was ``UnboundLocalError``).
 * ``make_data_cov``: ``list_assimilated_obs='swc'`` (a string, as in the documentation) selected every sensor whose name contains
   one of the LETTERS; ``['all']`` selected nothing. The selection is now the rule of the DA loop (``observations.select_sensors``,
   also used by ``DA._obs_key_select``), the sensors are stacked in the order of ``dict_obs[tA]`` (the order of the data vector; a

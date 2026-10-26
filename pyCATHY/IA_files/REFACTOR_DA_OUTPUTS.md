@@ -385,3 +385,17 @@ a full `perturbate()` on a real mesh. Truncated case: the realised mean is only 
 
 Verified: full suite 9 failed / 15 errors identical to the untouched commit (environment), passed 516 -> 565. NOT run on a real
 CATHY simulation: re-run one short case and compare `<project>_run.json` before trusting the new default on a long run.
+
+## 15. Round S19d: second sweep (pyflakes + patterns of the S19 bugs)
+
+Method: pyflakes on `DA/`, `importers/`, `cathy_utils.py` (undefined names), grep for mutable defaults / bare `except`, then each hit
+reproduced before touching it. NOT an audit of the whole package.
+- `cathy_utils.resynchronise_times`: (1) the input entries were rewritten (shallow copy: key 100.0, `assimilation_times` 50.0);
+  (2) the bare `except:` handler indexed `data_measure[0]` -> `KeyError: 0` hid the real error; where it did not crash it went on
+  with the UNsynchronised times (observations assimilated at the wrong time). Now returns a new dict, raises `ValueError` from the cause.
+  Behaviour change: the old "continue without synchronising" path is gone on purpose.
+- `observations.init_obs_cov_matrice`: unknown `obs_cov_type` -> `UnboundLocalError`; now `ValueError`.
+- `DA/performance.py` (legacy, imported by nobody, superseded by `performance_tables.py`): `os` was never imported (4 uses).
+Seen, NOT changed: unused locals in `enkf.py` / `pf.py` (`meas_size`, `P_augm`, `analysis_state`, `n_ens`, `sim_size`, ...: dead
+assignments, no effect); duplicate imports in `cathy_outputs.py` / `cathy_utils.py`; `perturbate_obs` is a stub (`perturbate=True`
+returns `None`); the vertical scaling of the localisation (section 13, item 3) is still a decision for the owner.

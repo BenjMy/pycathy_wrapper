@@ -1,5 +1,7 @@
 """Class managing data Assimilation performance assessement
 """
+import os
+
 import pandas as pd
 import numpy as np
 from pyCATHY.cathy_tools import CATHY
