@@ -195,3 +195,64 @@ def _update_key(cycle_nb: int) -> str:
     Cycle 0 (and below) is the initial perturbation, cycle n > 0 the n-th update.
     """
     return "ini_perturbation" if cycle_nb <= 0 else f"update_nb{cycle_nb}"
+
+
+# ---------------------------------------------------------------------------
+# Realised prior / posterior of the updated parameters (what the ensemble really is, not what was asked for)
+# ---------------------------------------------------------------------------
+def _ensembles_of(entry: dict) -> List[np.ndarray]:
+    """Prior then every analysed ensemble of one ``dict_parm_pert`` entry, each flattened to (n_member,)."""
+    rows = [np.ravel(np.asarray(entry["ini_perturbation"], dtype=float))]
+    keys = sorted(int(k[len("update_nb"):]) for k in entry if str(k).startswith("update_nb") and str(k)[9:].isdigit())
+    rows += [np.ravel(np.asarray(entry[f"update_nb{k}"], dtype=float)) for k in keys]
+    return rows
+
+
+def parameter_summary(dict_parm_pert: dict, bound_tol: float = 1e-6) -> dict:
+    """Per parameter: sampling law, bounds, REALISED prior mean / median / sd, final mean / sd, contraction
+    ``1 - sd_final / sd_prior`` and the fraction of the final ensemble sitting on a bound.
+
+    Why: the requested prior is not the realised one. ``lognormal`` takes the nominal value as the MEDIAN (the mean is
+    higher by exp(sd^2 / 2): +65 % at sd = 1), and a truncated normal has a smaller sd than requested (0.30 -> 0.16 with
+    bounds at +/- 0.67 sd). Entries without an ensemble are skipped.
+    """
+    out = {}
+    for name, entry in (dict_parm_pert or {}).items():
+        if not isinstance(entry, dict) or "ini_perturbation" not in entry:
+            continue
+        ens = _ensembles_of(entry)
+        first, last = ens[0], ens[-1]
+        nominal = entry.get("nominal")
+        nominal = float(nominal) if isinstance(nominal, (int, float, np.integer, np.floating)) else None
+        sd0, sd1 = float(np.nanstd(first, ddof=1)), float(np.nanstd(last, ddof=1))
+        lo, hi = entry.get("clip_min"), entry.get("clip_max")
+        scale = max(abs(float(np.nanmean(last))), abs(float(np.nanstd(last))), 1e-300)
+        at_bound = np.zeros(last.shape, bool)
+        for b in (lo, hi):
+            if b is not None:
+                at_bound |= np.abs(last - float(b)) <= bound_tol * max(abs(float(b)), scale)
+        out[name] = dict(
+            sampling_type=entry.get("sampling_type"), per_type=entry.get("per_type"), nominal=nominal,
+            clip_min=lo, clip_max=hi, n_members=int(np.sum(~np.isnan(first))), n_updates=len(ens) - 1,
+            prior_mean=float(np.nanmean(first)), prior_median=float(np.nanmedian(first)), prior_sd=sd0,
+            prior_mean_over_nominal=(float(np.nanmean(first)) / nominal) if nominal else None,
+            final_mean=float(np.nanmean(last)), final_sd=sd1,
+            contraction=(1.0 - sd1 / sd0) if sd0 > 0 else None,
+            frac_at_bound_final=float(np.mean(at_bound[~np.isnan(last)])) if (lo is not None or hi is not None) else None,
+        )
+    return out
+
+
+def parameter_flags(summary: dict, collapse: float = 0.95, at_bound: float = 0.25) -> List[Tuple[str, str]]:
+    """``[(parameter, message)]`` for the situations that make an updated parameter ensemble useless:
+    spread contracted by ``collapse`` or more (no further information can be assimilated), or ``at_bound`` of the members
+    piled on a bound (the bound, not the data, decides the value)."""
+    out = []
+    for name, s in summary.items():
+        if s["n_updates"] and s["contraction"] is not None and s["contraction"] >= collapse:
+            out.append((name, f"ensemble spread contracted by {100 * s['contraction']:.0f} % "
+                              f"(sd {s['prior_sd']:.3g} -> {s['final_sd']:.3g}): collapsed, check inflation / perturbed obs"))
+        if s["frac_at_bound_final"] is not None and s["frac_at_bound_final"] >= at_bound:
+            out.append((name, f"{100 * s['frac_at_bound_final']:.0f} % of the final members sit on a bound "
+                              f"[{s['clip_min']}, {s['clip_max']}]: the bound decides, not the data"))
+    return out

@@ -415,6 +415,55 @@ ANALYSES = {
 }
 
 
+# What each DA type does with the options of the config. Checked numerically (tests/test_config_advisories.py):
+#   inflation_states, "plain" EnKF filters : VARIANCE factor on the PRIOR states+parameters (anomalies x sqrt(a)),
+#   inflation_*, localized filter / ES-MDA : STANDARD-DEVIATION factor on the ANALYSIS (anomalies x a), so a = 1.21 there
+#                                            is the same spread change as a = 1.1 in the plain filters.
+INFLATION_CONVENTION = {
+    "enkf_Evensen2009": "variance factor on the prior (std x sqrt(a))",
+    "enkf_Evensen2009_Sakov": "variance factor on the prior (std x sqrt(a))",
+    "enkf_analysis_inflation": "variance factor on the prior (std x sqrt(a))",
+    "enkf_analysis_inflation_multiparm": "variance factor on the prior (std x sqrt(a))",
+    "enkf_analysis_localized_with_inflation": "std factor on the analysis (std x a), states and parameters apart",
+    "esmda": "std factor on the updated parameters after EACH iteration (std x a per iteration, compounding)",
+    "enkf_dual_analysis": "ignored",
+    "enkf_dual_analysis_Sakov": "ignored",
+    "pf": "ignored (see the pf_* jitter / Liu-West options)",
+}
+_STOCHASTIC_ENKF = ("enkf_Evensen2009", "enkf_Evensen2009_Sakov", "enkf_analysis_localized_with_inflation",
+                    "enkf_analysis_inflation", "enkf_analysis_inflation_multiparm", "enkf_dual_analysis",
+                    "enkf_dual_analysis_Sakov")
+_PERTURBS_OBS = ("enkf_Evensen2009", "enkf_Evensen2009_Sakov", "enkf_analysis_localized_with_inflation", "esmda")
+
+
+def config_advisories(DA_type: str, config: "AnalysisConfig") -> list:
+    """``[(kind, message), ...]``: options of ``config`` that the filter ``DA_type`` ignores, or settings known to
+    degrade the ensemble. Pure function (nothing is changed): the caller logs them once per run.
+
+    * a stochastic EnKF without perturbed observations (``perturb_obs=False``, the default) lacks the ``K R K^T`` term of
+      the posterior covariance: in a linear-Gaussian test the posterior variance came out at 20-50 % of the theoretical
+      one (99-103 % with ``perturb_obs=True``), so the spread collapses over the cycles unless inflation compensates;
+    * ``inflation_states`` is ignored by ``enkf_dual_analysis*`` and ``pf``; ``perturb_obs=True`` by every filter that
+      does not perturb (the ``*_inflation*`` and ``*_dual_*`` ones).
+    """
+    out = []
+    if DA_type in _STOCHASTIC_ENKF:
+        if DA_type in _PERTURBS_OBS:
+            if not config.perturb_obs:
+                out.append(("config", f"{DA_type} runs without perturbed observations (perturb_obs=False): the posterior "
+                                      "variance is underestimated (about 20-50 % of the Kalman one in a linear test) and "
+                                      "the spread can collapse; use AnalysisConfig(perturb_obs=True) or inflation"))
+        else:                                           # this filter never perturbs, whatever the option says
+            if config.perturb_obs:
+                out.append(("config", f"perturb_obs=True is ignored by {DA_type}"))
+            out.append(("config", f"{DA_type} never perturbs the observations: the posterior variance is underestimated "
+                                  "(about 20-50 % of the Kalman one in a linear test) and the spread can collapse; "
+                                  "use enkf_Evensen2009 with perturb_obs=True or inflation"))
+    if config.inflation_states != 1.0 and INFLATION_CONVENTION.get(DA_type, "").startswith("ignored"):
+        out.append(("config", f"inflation={config.inflation_states:g} has no effect with {DA_type}"))
+    return out
+
+
 def run_analysis(
     DA_type: str,
     data: np.ndarray,

@@ -18,6 +18,11 @@ Data assimilation outputs (EnKF, PF and ES-MDA now share one layout):
 * ``python -m pyCATHY.DA.run_status``: verdict per run (``ok``, ``partial``, ``no states``, ``no results``, ``failed``).
 * ES-MDA also writes the ``<project>_states/`` chunks (with ``save_results``); states carry a ``states_kind`` attribute
   (``forecast_before_update`` for EnKF/PF, ``smoothed_posterior`` for ES-MDA) that also survives a chunk-only reload.
+* The issue log now warns about options the chosen filter ignores or that degrade the ensemble: ``perturb_obs=False`` (default, the
+  posterior variance is underestimated), inflation ignored by ``enkf_dual_analysis*`` / ``pf``; the inflation convention of every
+  DA type is recorded in ``<project>_run.json`` (``options.inflation_convention``). No numerical default changed.
+* ``<project>_run.json`` has a ``parameters`` block (realised prior and final ensemble of every updated parameter); a parameter
+  ensemble that collapsed (spread contracted by >= 95 %) or piled on a bound (>= 25 % of the members) is logged in the issue log.
 * ``load_backup`` prints one line per run instead of one error block per missing file.
 
 Version 0.1.2
@@ -31,4 +36,4 @@ Documentation:
 This release contains contributions from:
 
 * Luca Peruzzo (@Peruz)
-* Francesca Zanetti 
+* Francesca Zanetti

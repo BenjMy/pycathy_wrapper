@@ -288,3 +288,57 @@ Still true: existing ES-MDA runs made BEFORE these patches are not repaired (the
 `df_performance` is still not written for ES-MDA but it is not in `run_status.REQUIRED` and nb8 does not read it.
 NOT verified on a real CATHY run (reads `psi`/`sw` with `read_outputs`, unit-tested with a fake simulation only).
 
+## 12. Round S17: review of the analysis step (what was checked, what was found)
+
+Method: each claim was reproduced numerically on a linear-Gaussian twin before touching code; the checks are kept as
+tests in `tests/test_config_advisories.py` (22 test cases). NO numerical default changed: results of existing runs are identical.
+
+**Verified correct (no change):**
+- `enkf._solve_obs_space` (Woodbury / direct) equals the full solve to 1e-14 for diagonal and full R, m < N and m > N.
+- ES-MDA reproduces the Kalman posterior mean and variance for n_iter = 1, 2, 4, 8 (mean error < 0.01, variance ratio 1.00 +/- 0.01).
+- Particle filter: weights computed in the log domain, tempering holds N_eff at the target when the exact likelihood is degenerate
+  (2000 data, N_eff_raw = 1.0), systematic resampling counts are floor/ceil of N w.
+
+**Found (DA issues, not fixed silently):**
+1. `perturb_obs=False` is the DEFAULT. A stochastic EnKF without perturbed observations lacks the K R K^T term (Burgers et al. 1998):
+   posterior variance = 20-50 % of the Kalman one in the test (99-103 % with `perturb_obs=True`). The spread then collapses over
+   the cycles unless inflation compensates. `enkf_analysis_inflation`, `_multiparm` and `enkf_dual_analysis*` NEVER perturb
+   (the option is not forwarded). -> advisory in the issue log; default NOT changed (would change every existing result).
+2. Inflation means different things: variance factor on the PRIOR (plain EnKF filters, std x sqrt(a)) vs standard-deviation factor
+   on the ANALYSIS (localized filter, ES-MDA; ES-MDA applies it after EACH iteration, so it compounds). inflation=1.21 in ES-MDA is
+   the same spread change as 1.1 in `enkf_Evensen2009`. -> `INFLATION_CONVENTION` per DA type, written to the manifest
+   (`options.inflation_convention`).
+3. `inflation` has NO effect with `enkf_dual_analysis*` and `pf` (silently ignored; checked bit-identical). -> advisory.
+4. `enkf_dual_analysis` step 2 uses mean(diag(obs_space_cov)) as the observation error: that is R with `Sakov=True` but
+   S S^T/(N-1) + R with `Sakov=False`, so the two dual variants are not only two solvers of the same filter. NOT changed (filter
+   design), to be decided by whoever owns that method.
+5. With `perturb_obs=True` the noise is not centred across members: the analysis mean carries a sampling error ~ sigma/sqrt(N)
+   propagated by the gain. Option to centre it not implemented (changes results); candidate for a later round.
+
+Implemented: `analysis.config_advisories(DA_type, config)` (pure), called once per cycle by `_analysis_config_of_cycle` and logged
+as kind `config` (one distinct line in `<project>_issues.log`, counted per cycle); `INFLATION_CONVENTION`.
+Not covered: the localisation, `perturbate.py` (1886 lines) and `observations.py`; not run on a real CATHY simulation.
+
+## 13. Round S18: perturbation, observations, localisation
+
+**Verified correct (pinned as tests):** `_log10_cov` (first-order covariance in log10 space) matches Monte Carlo (4.715 vs 4.73e-4 for 5 %
+relative error); Johnson LN / SB / SU round trips (1e-16); Evensen (2003) AR(1) forcing is stationary (variance 0.97-0.99, lag-1
+correlation 0.832 vs gamma 0.833; NB: with `q[:,0] = 0` the first step has variance 0, `atmbc_pert_rules` initialises it with white
+noise, correctly); Gaspari-Cohn (1 at 0, 5/24 at L, zero beyond 2L, monotone, continuous, positive semi-definite); the localized filter
+equals the plain filter with a taper of ones, does nothing with zeros, leaves masked rows untouched.
+
+**Found (documented, not changed):**
+1. `sampling_type="lognormal"`: the nominal value is the MEDIAN. The ensemble mean is higher by exp(sd^2/2): +5 % at sd 0.3, +28 % at
+   0.7, +65 % at 1.0. An ensemble centred on the "truth" in the median is NOT centred in the mean.
+2. Truncated normal: the requested sd is that of the UNtruncated law. Bounds at +/- 0.67 sd give a realised sd of 0.16 instead of 0.30
+   (0.22 for bounds at +/- 1.5 sd). The prior the filter sees is narrower than the one in the scenario file.
+3. Localisation is isotropic Euclidean: one L for x, y and z. In CATHY (z in metres, x/y in tens of metres) the vertical is
+   effectively not localised unless the coordinates are rescaled (documented in `build_localization_matrix`).
+
+**Implemented:** `param_tables.parameter_summary(dict_parm_pert)` (realised prior mean / median / sd, final mean / sd, contraction,
+fraction at a bound, `prior_mean_over_nominal`) written to `<project>_run.json` under `parameters`, and `parameter_flags` logged as
+kind `parameter` in `<project>_issues.log` when an updated parameter has contracted by >= 95 % (collapsed) or >= 25 % of its final
+members sit on a bound (the bound decides, not the data). Works for the sequential DA (`update_nbK`) and ES-MDA (`update_nb1`).
+
+Not covered by this review: `read_observations` / `make_data_cov` (about 560 lines), the vertical-coordinate scaling of the localisation
+in `run_DA_sequential`, `perturbate_parm_by_layers` / VGP correlation. Not run on a real CATHY simulation.

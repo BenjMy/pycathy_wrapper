@@ -78,6 +78,8 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.DA.analysis import (  # noqa: F401  (re-exported: the code moved to its own module)
+    INFLATION_CONVENTION,
+    config_advisories,
     ANALYSES,
     _ENKF_DIAGNOSTICS,
     _LEGACY_DA_KEYS,
@@ -95,6 +97,8 @@ from pyCATHY.DA.state_store import StateStore
 from pyCATHY.DA.run_outputs import RunOutputs
 from pyCATHY.DA.issues import IssueLog, analysis_issues
 from pyCATHY.DA.param_tables import (  # noqa: F401
+    parameter_flags,
+    parameter_summary,
     _ARCHIE_PARM_NAMES,
     _FEDDES_PARM_NAMES,
     _SOIL_PARM_COLUMNS,
@@ -894,7 +898,7 @@ class DA(CATHY):
         # check if there is an observation at the given atmbc time
         # --------------------------------------------------------
         t_end = self.all_atmbc_times[self.count_atmbc_cycle + 1]
-        if t_end in self.ENS_times:          # was: if t_atmbc in self.ENS_times   
+        if t_end in self.ENS_times:          # was: if t_atmbc in self.ENS_times
             state_bef_update, analysis_valid = self._analysis_cycle(
                 options.DA_type,
                 options.list_parm2update,
@@ -1283,6 +1287,7 @@ class DA(CATHY):
             console_log=getattr(cfg, "console_log", None),
             perturb_obs=getattr(ana, "perturb_obs", None) if ana is not None else None,
             sakov=getattr(ana, "sakov", None) if ana is not None else None,
+            inflation_convention=INFLATION_CONVENTION.get(da_type) if da_type else None,
             n_updated_parameters=len(updated),
             updated_parameters=updated,
             state_only=(len(updated) == 0) if da_type is not None else None,
@@ -1313,6 +1318,7 @@ class DA(CATHY):
             "states_nc_bytes": os.path.getsize(nc) if os.path.exists(nc) else None,
             "wall_time_s": getattr(self, "_run_wall_time_s", None),
             "options": self._run_options_manifest(),
+            "parameters": parameter_summary(getattr(self, "dict_parm_pert", None)),
         }
 
     def write_run_summary(self, status: str = "finished", extra: Optional[dict] = None) -> str:
@@ -1331,6 +1337,10 @@ class DA(CATHY):
             except Exception:
                 return None
 
+        log = getattr(self, "issue_log", None)
+        if log is not None:                          # parameter ensembles that are useless are DA issues: log them first
+            for name, message in parameter_flags(parameter_summary(getattr(self, "dict_parm_pert", None))):
+                log.record("parameter", f"{name}: {message}")
         manifest = dict(schema=1, library_status=status, **self.run_summary())
         manifest["versions"] = dict(python=sys.version.split()[0], numpy=np.__version__, pandas=pd.__version__,
                                     xarray=xr.__version__, pycathy=_version("pycathy-wrapper") or _version("pyCATHY"))
@@ -1899,6 +1909,14 @@ class DA(CATHY):
             localisation_matrix = self.localisationMatrix[self.count_DA_cycle]
         else:
             localisation_matrix = None
+        cfg = self._analysis_config_without_advice(localisation_matrix)
+        log = getattr(self, "issue_log", None)
+        if log is not None and getattr(self, "_run_da_type", None):
+            for kind, message in config_advisories(self._run_da_type, cfg):    # once per distinct message, counted per cycle
+                log.record(kind, message, level="WARNING")
+        return cfg
+
+    def _analysis_config_without_advice(self, localisation_matrix) -> AnalysisConfig:
         if self.config.analysis is None:
             return AnalysisConfig(
                 inflation_states=self.inflation,
@@ -1937,8 +1955,8 @@ class DA(CATHY):
         invalid = (prediction_valid <= 0) | np.isnan(prediction_valid)
         if np.any(invalid):
             logger.warning(f"""
-                      ⚠️ Invalid values found in prediction valid (before log-transform): 
-                          {np.sum(prediction_valid <= 0)} entries ≤ 0 
+                      ⚠️ Invalid values found in prediction valid (before log-transform):
+                          {np.sum(prediction_valid <= 0)} entries ≤ 0
                           {np.sum(np.isnan(prediction_valid))}  nan"
                         """)
 
