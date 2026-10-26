@@ -212,8 +212,8 @@ def parameter_summary(dict_parm_pert: dict, bound_tol: float = 1e-6) -> dict:
     """Per parameter: sampling law, bounds, REALISED prior mean / median / sd, final mean / sd, contraction
     ``1 - sd_final / sd_prior`` and the fraction of the final ensemble sitting on a bound.
 
-    Why: the requested prior is not the realised one. ``lognormal`` takes the nominal value as the MEDIAN (the mean is
-    higher by exp(sd^2 / 2): +65 % at sd = 1), and a truncated normal has a smaller sd than requested (0.30 -> 0.16 with
+    Why: the requested prior is not the realised one. ``lognormal`` takes the nominal value as the MEDIAN unless ``lognormal_center="mean"`` is set (the mean is
+    then higher by exp(sd^2 / 2): +65 % at sd = 1), and a truncated normal has a smaller sd than requested (0.30 -> 0.16 with
     bounds at +/- 0.67 sd). Entries without an ensemble are skipped.
     """
     out = {}

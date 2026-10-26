@@ -65,11 +65,11 @@ def test_dual_filter_ignores_inflation_and_says_so(da_type):
 
 def test_advisories_by_filter():
     adv = lambda t, **kw: " | ".join(m for _, m in config_advisories(t, AnalysisConfig(**kw)))
-    assert "without perturbed observations" in adv("enkf_Evensen2009")              # the default
-    assert adv("enkf_Evensen2009", perturb_obs=True) == ""
+    assert adv("enkf_Evensen2009") == ""                                            # perturb_obs=True is the default (S19)
+    assert "without perturbed observations" in adv("enkf_Evensen2009", perturb_obs=False)
     assert adv("esmda") == "" and adv("esmda", inflation_params=1.2) == ""
     assert "never perturbs" in adv("enkf_analysis_inflation")
-    assert "perturb_obs=True is ignored by enkf_analysis_inflation" in adv("enkf_analysis_inflation", perturb_obs=True)
+    assert "no effect" in adv("enkf_analysis_inflation", perturb_obs=True)         # said once, in the filter's own advisory
     assert "no effect with pf" in adv("pf", inflation_states=1.5) and adv("pf") == ""
 
 
@@ -77,6 +77,7 @@ def test_cycle_config_logs_the_advisories_once_per_distinct_message(tmp_path):
     sim = DA.__new__(DA)
     sim.config, sim.inflation, sim.localisationMatrix, sim.count_DA_cycle = DAConfig(), 1.0, None, 0
     sim._run_da_type = "enkf_Evensen2009"
+    sim.config = DAConfig(analysis=AnalysisConfig(perturb_obs=False))        # the advisory only fires on an explicit False
     sim.issue_log = IssueLog(str(tmp_path / "i.log"))
     for c in range(3):
         sim.count_DA_cycle = c
@@ -222,3 +223,54 @@ def test_log10_covariance_propagation_matches_monte_carlo():
     d = np.array([20., 100., 400.]); sig = .05 * d
     y = d[:, None] + sig[:, None] * rng.standard_normal((3, 200000))
     np.testing.assert_allclose(np.diag(_log10_cov(d, np.diag(sig ** 2))), np.var(np.log10(y + 1e-3), axis=1), rtol=0.02)
+
+
+# ---- round S19: perturb_obs=True is the default ------------------------------------------------------------------
+def test_perturb_obs_is_on_by_default_and_the_default_run_is_silent(tmp_path):
+    assert AnalysisConfig().perturb_obs is True
+    sim = DA.__new__(DA)
+    sim.config, sim.inflation, sim.localisationMatrix, sim.count_DA_cycle = DAConfig(), 1.0, None, 0
+    sim._run_da_type = "enkf_Evensen2009"
+    sim.issue_log = IssueLog(str(tmp_path / "i.log"))
+    assert sim._analysis_config_of_cycle().perturb_obs is True               # the config built when analysis=None
+    assert sim.issue_log.summary()["n_events"] == 0
+
+
+def test_default_config_gives_the_kalman_posterior_variance():
+    """Through the registered adapter with a default AnalysisConfig (not the low-level function)."""
+    from pyCATHY.DA.cathy_DA import ANALYSES
+    rng = np.random.default_rng(3)
+    P = np.diag([1., 2., .5, 1.5]); R = np.eye(4) * .5; N = 2000
+    Pa = P - P @ np.linalg.inv(P + R) @ P
+    x = np.linalg.cholesky(P) @ rng.normal(size=(4, N))
+    np.random.seed(0)
+    res = ANALYSES["enkf_Evensen2009"](np.zeros(4), R, np.zeros((0, N)), x, x.copy(), AnalysisConfig())
+    ratio = np.var(res.analysis, axis=1, ddof=1) / np.diag(Pa)
+    assert np.all(np.abs(ratio - 1) < 0.1)
+
+
+@pytest.mark.parametrize("da_type", ["enkf_analysis_inflation", "enkf_dual_analysis", "pf"])
+def test_default_change_does_not_touch_filters_that_do_not_perturb(da_type):
+    """Bit-identical results for perturb_obs True / False: the new default cannot change them."""
+    from pyCATHY.DA.cathy_DA import ANALYSES
+    rng = np.random.default_rng(0)
+    n, m, N = 6, 5, 24
+    H = rng.normal(size=(m, n)) / np.sqrt(n)
+    ens, param = rng.normal(size=(n, N)), 0.4 + 0.05 * rng.normal(size=(1, N))
+    y = H @ rng.normal(size=n); R = np.eye(m) * .1
+    out = []
+    for flag in (True, False):
+        np.random.seed(5)
+        out.append(ANALYSES[da_type](y, R, param.copy(), ens.copy(), H @ ens, AnalysisConfig(perturb_obs=flag)).analysis)
+    np.testing.assert_array_equal(out[0], out[1])
+
+
+def test_manifest_records_the_effective_perturb_obs():
+    sim = DA.__new__(DA)
+    sim.config, sim._run_params_updated = DAConfig(), []
+    sim._run_da_type = "enkf_Evensen2009"
+    o = sim._run_options_manifest()
+    assert o["perturb_obs"] is True and o["sakov"] is True and o["perturb_obs_applied"] is True
+    sim._run_da_type = "enkf_analysis_inflation"
+    o = sim._run_options_manifest()
+    assert o["perturb_obs"] is True and o["perturb_obs_applied"] is False      # configured, but this filter never perturbs

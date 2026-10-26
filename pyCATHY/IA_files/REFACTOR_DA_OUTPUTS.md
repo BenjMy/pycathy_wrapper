@@ -340,5 +340,46 @@ fraction at a bound, `prior_mean_over_nominal`) written to `<project>_run.json` 
 kind `parameter` in `<project>_issues.log` when an updated parameter has contracted by >= 95 % (collapsed) or >= 25 % of its final
 members sit on a bound (the bound decides, not the data). Works for the sequential DA (`update_nbK`) and ES-MDA (`update_nb1`).
 
-Not covered by this review: `read_observations` / `make_data_cov` (about 560 lines), the vertical-coordinate scaling of the localisation
+Not covered by this review (S19 covers `read_observations` / `make_data_cov`): the vertical-coordinate scaling of the localisation
 in `run_DA_sequential`, `perturbate_parm_by_layers` / VGP correlation. Not run on a real CATHY simulation.
+
+## 14. Round S19: observations, `perturb_obs` default, lognormal centring
+
+Each bug below was reproduced by a test that FAILED before the fix (`tests/test_observations_review.py`, 33 cases;
+`test_lognormal_center.py`, 11 (incl. parametrized); 4 new + 2 updated in `test_config_advisories.py`).
+
+**`read_observations` (fixed):**
+1. `discharge` was an `if` apart from the `elif` chain: it fell into the "unknown data_type" branch and then died on undefined
+   `obs_cov_type` / `filename`. 2. `filename` was only defined when the data were NOT a file name. 3. An unknown `data_type` logged a
+   warning and raised `UnboundLocalError`; now `ValueError` listing the supported types. 4. `tA` defaulted to `[]` (unhashable):
+   `TypeError` far from the cause; now `ValueError`. 5. **Silent overwrite**: the sensor name was bumped only when `data_type in
+   <last key>`; with `{swc, tensio}` a second `swc` kept the name `swc` and REPLACED the first. Now the first free `<type><k>`.
+6. `kwargs['meta']` was mandatory for ERT / EM; `data_format` is now always stored (the DA reads `["data_format"]`).
+7. `in_meas.read_swc` / `read_scale` do not exist: explicit `NotImplementedError` when a file name is given.
+
+**`make_data_cov` (fixed):**
+1. `list_assimilated_obs='swc'` (the form of the documentation example) was iterated letter by letter: `'s' in 'tensio'`, the
+   tensiometer was assimilated too. `['all']` selected nothing. Substring matching differed from the DA loop (root name, digits removed).
+   One rule now, `observations.select_sensors`, used by `make_data_cov` AND `DA._obs_key_select`.
+2. **Silent permutation of R**: sensors were stacked in order of first appearance over ALL times; the data vector uses the order of
+   `dict_obs[tA]`. A sensor added in another order at a later time got the other sensor's variance (same total size: nothing raised).
+3. A sensor holding n values got one variance. 4. ERT relative errors read `rhoa` always; the DA assimilates `resist` for resipy.
+5. EM `coils` had to be passed again although stored in the entry. 6. No sensor at a time: a numpy error; now names the time.
+Kept on purpose: times are stacked chronologically (the DA refuses an unsorted `dict_obs`).
+NOT changed, to decide: `data_err = rec_err` for ERT is assumed absolute (Ohm.m), see `init_obs_cov_matrice`; NaN `rec_err`
+gives a NaN variance (only warned by `ERT_checks`); dense (m, m) per cycle stays the default (`diagonal=True` is linear in m).
+
+**`perturb_obs=True` is now the default of `AnalysisConfig`** (decided by the owner). Effect: `enkf_Evensen2009*` and the localized
+filter with the default config give different numbers; `perturb_obs=False` reproduces the old ones. Filters that never perturb, `pf` and
+`esmda` are bit-identical (tested). The advisory now fires only on an explicit `False`; the "perturb_obs=True is ignored" line is merged
+into the filter's own advisory (it would have fired on every default run). Manifest: `perturb_obs` is the effective value (was a
+placeholder string) + `perturb_obs_applied`. Low-level `enkf.enkf_analysis` keeps `False`. Sampling error of the non-centred noise
+(section 12, item 5) is still open.
+
+**Lognormal centring:** `lognormal_center = "median"` (default, bit-identical) | `"mean"` (`mu = ln(nominal) - sd^2/2`), at the three
+sampling sites (`sampling_dist`, `VG_pert_rules`, `perturbate_parm_by_layers`). Per call, per entry key, or `using_lognormal_center`.
+NOT done: reading it from the scenario file (the entries are built in about 15 places; needs a run that exercises them) and the
+truncated case (realised mean only approximate, see `parameter_summary`).
+
+Verified: full suite 9 failed / 15 errors identical to the untouched commit (environment), passed 516 -> 565. NOT run on a real
+CATHY simulation: re-run one short case and compare `<project>_run.json` before trusting the new default on a long run.

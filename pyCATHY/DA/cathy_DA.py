@@ -72,6 +72,7 @@ from rich.progress import track
 
 from pyCATHY.cathy_utils import dictObs_2pd  # noqa: F401  (re-exported, see __all__)
 from pyCATHY.cathy_tools import CATHY, subprocess_run_multi
+from pyCATHY.DA.observations import select_sensors
 from pyCATHY.DA import mapper, localisation
 from pyCATHY.ERT import ERT_checks
 from pyCATHY.importers import cathy_inputs as in_CT
@@ -79,6 +80,7 @@ from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.DA.analysis import (  # noqa: F401  (re-exported: the code moved to its own module)
     INFLATION_CONVENTION,
+    _PERTURBS_OBS,
     config_advisories,
     ANALYSES,
     _ENKF_DIAGNOSTICS,
@@ -1293,7 +1295,10 @@ class DA(CATHY):
             state_only=(len(updated) == 0) if da_type is not None else None,
         )
         if ana is None and cfg is not None and da_type not in (None, "esmda"):
-            out["perturb_obs"] = out["sakov"] = "AnalysisConfig default (analysis=None)"
+            default = AnalysisConfig()                  # the config the run really used (analysis=None)
+            out["perturb_obs"], out["sakov"] = default.perturb_obs, default.sakov
+        # the option is only applied by the filters that perturb (the *_inflation* / *_dual_* ones never do)
+        out["perturb_obs_applied"] = bool(out["perturb_obs"]) and da_type in _PERTURBS_OBS if da_type else None
         if out["state_only"]:                           # irrelevant when no parameter is updated: do not suggest they were active
             out["param_bounds_mode"] = out["vgp_corr"] = None
         return out
@@ -2949,18 +2954,10 @@ class DA(CATHY):
         """find data to map from dictionnary of observations"""
         # Loop trought observation dictionnary for a given assimilation time (count_DA_cycle)
         # -----------------------------------------------------------------
-        obskey2map = []  # data type 2 map
-        obs2map = []  # data dict 2 map
-        items_dict = list(self.dict_obs.items())
-        for sensor in items_dict[self.count_DA_cycle][1].keys():
-            if "all" in list_assimilated_obs:
-                obskey2map.append(sensor)
-                obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
-            else:
-                str_sensor_rootname = re.sub(r"\d", "", sensor)
-                if str_sensor_rootname in list_assimilated_obs:
-                    obskey2map.append(sensor)
-                    obs2map.append(items_dict[self.count_DA_cycle][1][sensor])
+        # one rule, shared with observations.make_data_cov: the covariance and the data vector select the same sensors
+        sensors_now = list(self.dict_obs.items())[self.count_DA_cycle][1]
+        obskey2map = select_sensors(list(sensors_now.keys()), list_assimilated_obs)
+        obs2map = [sensors_now[sensor] for sensor in obskey2map]
         return obskey2map, obs2map
 
     def _check_prediction_shape(self, Hx_ens, obskey2map):

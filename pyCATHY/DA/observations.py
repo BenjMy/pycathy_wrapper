@@ -18,6 +18,53 @@ from pyCATHY.cathy_utils import dictObs_2pd
 logger = logging.getLogger(__name__)
 
 
+# the DA loop (DA._obs_key_select) and the covariance (make_data_cov) MUST select the same sensors, in the same order:
+# one rule, defined here
+def sensor_root_name(sensor):
+    """Name of a sensor without its digits: ``swc12`` -> ``swc`` (the key used to select what is assimilated)."""
+    return re.sub(r"\d", "", str(sensor))
+
+
+def select_sensors(sensor_names, list_assimilated_obs="all"):
+    """Sensors (given order kept) that are assimilated.
+
+    ``list_assimilated_obs`` is ``"all"``, a sensor type (``"swc"``) or a list of them (``["swc", "ERT"]``); a sensor is
+    selected when its name without digits equals one of them. A plain string is ONE type, not a sequence of letters.
+    """
+    wanted = [list_assimilated_obs] if isinstance(list_assimilated_obs, str) else list(list_assimilated_obs)
+    if "all" in wanted:
+        return list(sensor_names)
+    return [s for s in sensor_names if sensor_root_name(s) in wanted]
+
+
+def unique_sensor_name(existing, data_type):
+    """``data_type`` if free, else ``data_type<k>`` with k one above the highest number already used."""
+    existing = {str(k) for k in existing}
+    if data_type not in existing:
+        return data_type
+    pattern = re.compile(rf"^{re.escape(data_type)}(\d+)$")
+    used = [int(m.group(1)) for m in map(pattern.match, existing) if m]
+    return f"{data_type}{max(used, default=0) + 1}"
+
+
+def _read_or_pass(obs_2_add, reader_name, data_type):
+    """Read a file with ``importers.sensors_measures.<reader_name>``; data given directly (value, dataframe) pass through."""
+    if not isinstance(obs_2_add, str):
+        return obs_2_add
+    reader = getattr(in_meas, reader_name, None)
+    if reader is None:
+        raise NotImplementedError(
+            f"read_observations: no file reader for data_type {data_type!r} "
+            f"(`importers.sensors_measures.{reader_name}` does not exist): pass the data itself (value or dataframe)"
+        )
+    return reader(obs_2_add)
+
+
+SUPPORTED_DATA_TYPES = ("discharge", "scale", "swc", "tensio*", "ETact", "EM", "ERT")
+
+
+
+
 def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False, 
                       **kwargs):
     """
@@ -38,6 +85,17 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
         % of error for a given measurement dataset.
     show : Bool
         plot measure graph. The default is False.
+    **kwargs
+        ``tA`` (required): assimilation time, ONE number (s). ``mesh_nodes``, ``datetime``, ``meta`` (dict merged into the
+        entry, e.g. ``data_format``, ``data_err_unit``), ``obs_cov_type``, ``elecs``, ``units`` ('$kPa$' for tensiometers).
+
+    Notes
+    -----
+    A second observation of the same ``data_type`` at the same ``tA`` is stored as ``<type>1``, ``<type>2`` ...
+    (first free number); an observation is never replaced. The DA loop selects sensors by their name WITHOUT digits
+    (``swc12`` -> ``swc``), so a ``data_type`` should not contain digits.
+    Raises ``ValueError`` for an unknown ``data_type`` or a missing ``tA``, ``NotImplementedError`` when a file is given
+    for a type that has no reader (pass the data itself then).
 
     Returns
     -------
@@ -99,150 +157,68 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
 
     """
 
-    dict_obs_2add = {}
-    # specify mesh node position for point measurements
-    # ---------------------------------------------------------------------
-    mesh_nodes = []
-    if "mesh_nodes" in kwargs:
-        mesh_nodes = kwargs["mesh_nodes"]
+    mesh_nodes = kwargs.get("mesh_nodes", [])
+    datetime = kwargs.get("datetime", None)
+    tA = kwargs.get("tA", None)
+    if tA is None or isinstance(tA, (list, tuple, set, dict, np.ndarray)):
+        raise ValueError(f"read_observations: `tA` (the assimilation time, ONE number in s) is required, got {tA!r}")
+    meta = kwargs.get("meta") or {}
+    if re.search(r"\d", str(data_type)):
+        logger.warning("read_observations: data_type %r contains digits; the DA selects sensors by their name without "
+                       "digits, so it cannot be picked by name in list_assimilated_obs", data_type)
 
-    # specify assimilation time if not contained in the file
-    # ---------------------------------------------------------------------
-    tA = []
-    if "tA" in kwargs:
-        tA = kwargs["tA"]
-    datetime = None
-    if "datetime" in kwargs:
-        datetime = kwargs["datetime"]    
-    # discharge type read
+    dict_obs_2add = {}
+    filename = obs_2_add if isinstance(obs_2_add, str) else None
+    obs_cov_type = None          # point sensors: the covariance between the sensors is formed later (make_data_cov)
+
+    # one chain: every branch defines df, units, filename, obs_cov_type
     # ---------------------------------------------------------------------
     if data_type == "discharge":
-        df = in_meas.read_discharge(obs_2_add)
+        df = _read_or_pass(obs_2_add, "read_discharge", data_type)
         units = "$m^{3}/s$"
 
-    # weight type read
-    # ---------------------------------------------------------------------
-    if data_type == "scale":
-        # infer ET from weight data
-        if isinstance(obs_2_add, str):
-            df = in_meas.read_scale(obs_2_add)
-        else:
-            df = obs_2_add
-            filename = None
-
+    elif data_type == "scale":                     # infer ET from weight data
+        df = _read_or_pass(obs_2_add, "read_scale", data_type)
         units = "$mm/s$"
-        obs_cov_type = None
 
-    # discharge type read
-    # ---------------------------------------------------------------------
     elif data_type == "swc":
-        if isinstance(obs_2_add, str):
-            df = in_meas.read_swc(obs_2_add)
-        else:
-            df = obs_2_add
-            filename = None
+        df = _read_or_pass(obs_2_add, "read_swc", data_type)
         units = "$m^{3}/m^{3}$"
-        obs_cov_type = None
-        # point sensors --> covariance between the sensors is formed later
 
-        # if 'date' in df.keys:
-        #     date_yyyymmdd_hhmmss = df['date']
-        #     dict_obs_2add.update(
-        #          date_yyyymmdd_hhmmss = date_yyyymmdd_hhmmss
-        #          )
-
-    # tensiometer type read
-    # ---------------------------------------------------------------------
     elif "tensio" in data_type:
-        if isinstance(obs_2_add, str):
-            df = in_meas.read_tensiometers(obs_2_add)
-        else:
-            df = obs_2_add
-            filename = None
+        df = _read_or_pass(obs_2_add, "read_tensiometers", data_type)
+        units = "m"
+        if kwargs.get("units") == "$kPa$":
+            df = utils_CT.kPa2m(df)                # convert in m
 
-        units = 'm'
-        if "units" in kwargs:
-            if kwargs['units'] == "$kPa$":
-                # convert in m
-                # -------------------
-                df = utils_CT.kPa2m(df)
-            
-        obs_cov_type = None
-        
-        
-    # Actual ET type read
-    # ---------------------------------------------------------------------
     elif data_type == "ETact":
         df = obs_2_add
-        filename = None
-        units = 'm'
-        obs_cov_type = None
+        units = "m"
 
-    # EM (Electromagnetic survey) type read
-    # ---------------------------------------------------------------------
-    elif data_type == "EM":
-        obs_cov_type = "reciprocal_err"
-        if "obs_cov_type" in kwargs:
-            obs_cov_type = kwargs["obs_cov_type"]
-        data_format = "resipy"
-        if "data_format" in kwargs['meta']:
-            data_format = kwargs['meta']["data_format"]
-            dict_obs_2add.update(data_format=data_format)
-            
-        df, k = in_meas.read_EM(obs_2_add, data_format)
-        dict_obs_2add.update(coils=k.coils)
-        dict_obs_2add.update(k_emagpy=k)
+    elif data_type in ("EM", "ERT"):
+        obs_cov_type = kwargs.get("obs_cov_type", "reciprocal_err")
+        data_format = meta.get("data_format", "resipy")
+        dict_obs_2add.update(data_format=data_format)      # the DA reads it to know which column is the datum
         filename = obs_2_add
-        units = "$mS/m$"
-        # df = df
 
-    # ERT type read
-    # ---------------------------------------------------------------------
-    elif data_type == "ERT":
+        if data_type == "EM":
+            df, k = in_meas.read_EM(obs_2_add, data_format)
+            dict_obs_2add.update(coils=k.coils, k_emagpy=k)
+            units = "$mS/m$"
+        else:
+            elecs = kwargs.get("elecs", [])
+            df, dict_ERT = in_meas.read_ERT(obs_2_add, data_format)
+            ERT_checks.check_observations(df, name=f"ERT obs {obs_2_add}").warn()
+            dict_obs_2add.update(sequenceERT=filename)
+            units = r"$\Omega$"
+            if "elecs" in dict_ERT:
+                elecs = dict_ERT["elecs"]
+            if obs_cov_type == "reciprocal_err":
+                data_err = df["rec_err"].values
+            dict_obs_2add.update(elecs=elecs, fwdNoiseLevel=kwargs.get("fwdNoiseLevel", 5))
 
-        obs_cov_type = "reciprocal_err"
-        if "obs_cov_type" in kwargs:
-            obs_cov_type = kwargs["obs_cov_type"]
-
-        data_format = "resipy"
-        if "data_format" in kwargs['meta']:
-            data_format = kwargs['meta']["data_format"]
-            dict_obs_2add.update(data_format=data_format)
-            
-        elecs = []
-        if "elecs" in kwargs:
-            elecs = kwargs.pop('elecs')
-
-        df, dict_ERT = in_meas.read_ERT(obs_2_add, data_format)
-        ERT_checks.check_observations(df, name=f"ERT obs {obs_2_add}").warn()
-        filename = obs_2_add
-        dict_obs_2add.update(sequenceERT=filename)
-
-        units = r"$\Omega$"
-
-        if "elecs" in dict_ERT.keys():
-            elecs = dict_ERT["elecs"]
-            
-        if obs_cov_type == "reciprocal_err":
-           data_err =  df['rec_err'].values
-
-        fwdNoiseLevel = 5
-        if "fwdNoiseLevel" in kwargs:
-            fwdNoiseLevel = kwargs.pop('fwdNoiseLevel')
-            
-        sequenceERT = None
-        if "sequenceERT" in kwargs:
-            sequenceERT = kwargs.pop('sequenceERT')
-            # import pygimli as pg
-            # shm = pg.load(sequenceERT)
-            
-        dict_obs_2add.update(elecs=elecs)
-        dict_obs_2add.update(fwdNoiseLevel=fwdNoiseLevel)
-
-    # no file specified (raise error)
-    # ---------------------------------------------------------------------
     else:
-        logger.warning("read_observations: unknown data_type %r, no file read", data_type)
+        raise ValueError(f"read_observations: unknown data_type {data_type!r}; supported: {', '.join(SUPPORTED_DATA_TYPES)}")
 
     dict_obs_2add.update(
         filename=filename,
@@ -255,50 +231,25 @@ def read_observations(dict_obs, obs_2_add, data_type, data_err, show=False,
         datetime=datetime,
     )
 
-    # add optionnal data metadata to the dictionnary
+    # optional data metadata (data_format, data_err_unit, ...)
     # ---------------------------------------------------------------------
-    if "meta" in kwargs:
-        meta = kwargs["meta"]
-        dict_obs_2add.update(meta)
-
-        # print(dict_obs_2add.keys())
-        # print(dict_obs_2add)
+    dict_obs_2add.update(meta)
 
     # data covariance and perturbation (if required)
     # ---------------------------------------------------------------------
-
     data_cov, dataPert, stacked_data_cov = prepare_observations(
         dict_obs_2add, perturbate=False, obs_cov_type=obs_cov_type
     )
     dict_obs_2add.update(data_cov=data_cov, dataPert=dataPert)
 
-    dict_obs_2add = OrderedDict(dict_obs_2add)
-
-    # check if assimilation already existing andincrement sensor name if so
+    # a second sensor of the same type at the same time gets the next free name; nothing is ever replaced
     # ---------------------------------------------------------------------
-    sensor_name = data_type
-
-    if tA in dict_obs.keys():
-        logger.debug("assimilation time %s already exists: adding a sensor to it", tA)
-        for k in dict_obs[tA]:
-            k
-        if data_type in k:
-            match = re.match(r"([a-z]+)([0-9]+)", k, re.I)
-            if match:
-                items = match.groups()
-                it = int(items[1]) + 1
-            else:
-                it = 1
-            sensor_name = sensor_name + str(it)
-        dict_obs[tA][sensor_name] = {}
-        dict_obs_2add.update(sensor_name=sensor_name)
-    else:
-        dict_obs[tA] = {}
-        dict_obs[tA][sensor_name] = {}
-        dict_obs_2add.update(sensor_name=sensor_name)
-
-    for key in dict_obs_2add.keys():
-        dict_obs[tA][sensor_name][key] = dict_obs_2add[key]
+    sensors_at_tA = dict_obs.setdefault(tA, {})
+    sensor_name = unique_sensor_name(sensors_at_tA.keys(), data_type)
+    if sensor_name != data_type:
+        logger.debug("assimilation time %s already has a %s: stored as %s", tA, data_type, sensor_name)
+    dict_obs_2add.update(sensor_name=sensor_name)
+    sensors_at_tA[sensor_name] = dict(dict_obs_2add)
 
     return dict_obs
 
@@ -326,130 +277,103 @@ def obs_error_variance(values, data_err, unit=None):
     raise ValueError(f"unknown data_err_unit {unit!r}: use 'absolute' or 'percent'")
 
 
+def _sensor_values(sensor, entry, coils=None):
+    """Data of one sensor as a flat array, in the SAME layout as ``DA._get_data2assimilate``."""
+    data = entry["data"]
+    if "ERT" in sensor:
+        fmt = str(entry.get("data_format") or "")
+        # the DA assimilates `resist` for resipy and `rhoa` for pygimli data (rhoa when the format is not recorded)
+        for col in (("rhoa", "resist") if (not fmt or "pygimli" in fmt) else ("resist", "rhoa")):
+            try:
+                return np.asarray(data[col]).ravel()
+            except KeyError:
+                continue
+        raise KeyError(f"ERT sensor {sensor!r}: neither 'rhoa' nor 'resist' in its data")
+    if "EM" in sensor:
+        coils = coils if coils is not None else entry.get("coils")
+        if coils is None:
+            raise ValueError("Missing `coils` argument for EM data (not in the observation entry either).")
+        return np.hstack(np.asarray(data[coils]))
+    return np.atleast_1d(np.asarray(data)).ravel()
+
+
 def make_data_cov(simu, dict_obs, list_assimilated_obs="all", **kwargs):
     """
-    Build covariance matrices for assimilated observations.
+    Build the (diagonal) data-error covariance of every assimilation time.
 
-   Combine covariance between different observations
+    For each time, in chronological order (the DA refuses an unsorted ``dict_obs``), the sensors selected by
+    ``list_assimilated_obs`` are stacked in the order they have in ``dict_obs[tA]``: this is the order of the data vector
+    and of the predictions of ``DA._obs_key_select``, so R(i, i) belongs to datum i.
 
-   cov_swc = [ 1.  0   0
-               0   1.  0
-               0   0   1
-           ]
+    The variance of a sensor is ``data_err**2`` (``data_err`` = standard deviation, scalar or one value per datum), or
+    ``(data_err/100 * |d|)**2`` when the entry has ``data_err_unit = 'percent'`` (see :func:`obs_error_variance`).
 
-   cov_tensio = [  err_tensio      0               0
-                   0               err_tensio.     0
-                   0               0               err_tensio
-               ]
-
-   cov_ert =   [   1.  0   0
-                   0   1.  0
-                   0   0   1
-               ]
-
-   COV_swc_tensio = [  1.  0   0   0   0   0
-                       0   1.  0   0   0   0
-                       0   0   1   0   0   0
-                       0   0   0   1   0   0
-                       0   0   0   0   1   0
-                       0   0   0   0   0   1
-                   ]
-   
     Parameters
     ----------
     simu : object
-        Simulation object that will store stacked covariance.
+        Simulation object that will store ``stacked_data_cov``.
     dict_obs : dict
-        Dictionary of observations, passed to dictObs_2pd().
-    list_assimilated_obs : list or "all", optional
-        Which sensors to assimilate. Default = "all".
+        ``{tA: {sensor_name: entry}}`` built by :func:`read_observations`.
+    list_assimilated_obs : "all", str or list, optional
+        Which sensors to assimilate: ``"all"``, a type (``"swc"``) or a list (``["swc", "ERT"]``); a sensor is selected when
+        its name without digits is in the list (same rule as the DA loop, :func:`select_sensors`).
     kwargs : dict
-        Optional arguments (e.g., coils for EM sensors).
-        ``diagonal=True`` stores each cycle's covariance as its diagonal (a vector of m values)
-        instead of a dense (m, m) matrix: ``cycles x m^2`` values become ``cycles x m``. The
-        analysis rebuilds the dense matrix of one cycle at a time, so results are identical.
-        Default False (dense, as before).
+        ``coils`` (EM; default: the ``coils`` stored in the entry). ``diagonal=True`` stores each cycle's covariance as its
+        diagonal (a vector of m values) instead of a dense (m, m) matrix: ``cycles x m^2`` values become ``cycles x m``. The
+        analysis rebuilds the dense matrix of one cycle at a time, so results are identical. Default False (dense).
 
     Returns
     -------
-    data_cov : np.ndarray
-        Covariance matrix (per time step).
-    data_pert : np.ndarray
-        Perturbed data (from prepare_observations).
-    stacked_data_cov : list of np.ndarray
-        Time-dependent covariance matrices.
+    data_cov, data_pert, stacked_data_cov : the first two are empty (kept for the historical signature); the third is the
+        list of covariances, one per assimilation time, also stored in ``simu.stacked_data_cov``.
+
+    Raises
+    ------
+    ValueError : no sensor selected at a time, ``data_err`` of the wrong length, EM without coils.
     """
-
-    data_measure_df = dictObs_2pd(dict_obs)
-    assimilation_times = np.unique(data_measure_df.index.get_level_values(1))
-
-    def extract_sensor_data(sensor, tA):
-        """Helper: extract data and covariance for one sensor at time tA."""
-        entry = data_measure_df.xs((sensor, tA))
-
-        if "ERT" in sensor:
-            values = np.array(entry["data"]["rhoa"])
-        elif "EM" in sensor:
-            coils = kwargs.get("coils", None)
-            if coils is None:
-                raise ValueError("Missing `coils` argument for EM data.")
-            values = np.hstack(np.array(entry["data"][coils]))
-        else:
-            values = [np.array(entry["data"])]
-
-        # variance (not std) of the errors; unit set by meta['data_err_unit'] ('absolute' by default)
-        unit = entry["data_err_unit"] if "data_err_unit" in entry.index else None
-        if isinstance(unit, float) and np.isnan(unit):
-            unit = None
-        if unit is None or unit == "absolute":
-            cov = np.ones(len(values)) * entry["data_err"] ** 2  # historical behaviour
-        else:
-            cov = obs_error_variance(values, entry["data_err"], unit)
-        return values, cov
-
-    # Store covariance per assimilation time
     diagonal = bool(kwargs.get("diagonal", False))
     data_cov_list = []
 
-    for tA in assimilation_times:
-        sensors_at_t = data_measure_df.xs(tA, level=1).index
+    for tA in sorted(dict_obs):
+        sensors_at_t = dict_obs[tA]
+        selected = select_sensors(list(sensors_at_t), list_assimilated_obs)
+        if not selected:
+            raise ValueError(f"make_data_cov: no sensor of {list_assimilated_obs!r} at tA={tA} "
+                             f"(sensors there: {list(sensors_at_t)})")
 
-        # Determine which sensors to use
-        if list_assimilated_obs == "all":
-            selected_sensors = sensors_at_t
-        else:
-            selected_sensors = [s for s in sensors_at_t if any(l in s for l in list_assimilated_obs)]
+        data_parts, cov_parts = [], []
+        for sensor in selected:
+            entry = sensors_at_t[sensor]
+            values = _sensor_values(sensor, entry, kwargs.get("coils"))
+            err = np.asarray(entry["data_err"], dtype=float)
+            if err.ndim > 0 and err.size not in (1, len(values)):
+                raise ValueError(f"make_data_cov: sensor {sensor!r} at tA={tA} has {err.size} data_err values "
+                                 f"for {len(values)} data")
+            unit = entry.get("data_err_unit")
+            if isinstance(unit, float) and np.isnan(unit):
+                unit = None
+            if unit is None or unit == "absolute":
+                cov = np.ones(len(values)) * err ** 2            # variance (not std) of the errors
+            else:
+                cov = obs_error_variance(values, err, unit)
+            data_parts.append(values)
+            cov_parts.append(cov)
 
-        # Collect data and covariance
-        all_values, all_cov = [], []
-        for sensor in selected_sensors:
-            values, cov = extract_sensor_data(sensor, tA)
-            all_values.append(values)
-            all_cov.append(cov)
-
-        # Flatten and build diagonal covariance
-        data_flat = np.hstack(all_values)
-        cov_flat = np.hstack(all_cov)
-        if any("ERT" in s for s in selected_sensors):
-            ERT_checks.check_data_cov(
-                cov_flat, values=data_flat, name=f"ERT data cov tA={tA}"
-            ).warn()
+        data_flat = np.hstack(data_parts)
+        cov_flat = np.hstack(cov_parts)
+        if any("ERT" in s for s in selected):
+            ERT_checks.check_data_cov(cov_flat, values=data_flat, name=f"ERT data cov tA={tA}").warn()
 
         if diagonal:
             # keep only the diagonal (m values): the dense matrix of a cycle is rebuilt when
             # that cycle is analysed (see DA._data_cov_of_cycle)
             data_cov_list.append(np.asarray(cov_flat, dtype=float))
         else:
-            cov_diag = np.zeros((len(cov_flat), len(cov_flat)))
-            np.fill_diagonal(cov_diag, cov_flat)
-            data_cov_list.append(cov_diag)
+            data_cov_list.append(np.diag(np.asarray(cov_flat, dtype=float)))
 
-    # Prepare final covariance structures
     data_cov, data_pert, stacked_data_cov = prepare_observations(stacked_data_cov=data_cov_list)
     simu.stacked_data_cov = stacked_data_cov
-
     return data_cov, data_pert, stacked_data_cov
-
 
 
 

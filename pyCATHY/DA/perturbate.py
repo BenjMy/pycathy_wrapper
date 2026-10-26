@@ -4,6 +4,7 @@
     Prepare for DA class
 """
 
+from contextlib import contextmanager
 import pandas as pd
 import numpy as np
 from scipy.stats import stats, qmc, norm
@@ -1074,11 +1075,59 @@ def sampling_dist_trunc(myclip_a, myclip_b, ensemble_size, **kwargs):
     return truncnorm(a, b, loc=loc, scale=scale).rvs(ensemble_size)
 
 
+# Lognormal prior: what does the nominal value ``mean`` mean?
+#   "median" (historical default): ln(x) ~ N(ln(mean), sd^2)  -> median = mean, ensemble mean = mean * exp(sd^2/2)
+#                                  (+5 % at sd 0.3, +28 % at 0.7, +65 % at 1.0)
+#   "mean"                       : ln(x) ~ N(ln(mean) - sd^2/2, sd^2) -> ensemble mean = mean, median = mean * exp(-sd^2/2)
+# With clip bounds the law is truncated and the realised mean is no longer exact in either mode
+# (see ``param_tables.parameter_summary``: ``prior_mean_over_nominal``).
+LOGNORMAL_CENTERS = ("median", "mean")
+_lognormal_center_default = "median"
+
+
+def _check_lognormal_center(center):
+    if center not in LOGNORMAL_CENTERS:
+        raise ValueError(f"unknown lognormal_center {center!r}: use one of {LOGNORMAL_CENTERS}")
+    return center
+
+
+def set_lognormal_center(center):
+    """Set the process-wide default (``"median"`` or ``"mean"``); returns the previous one."""
+    global _lognormal_center_default
+    previous = _lognormal_center_default
+    _lognormal_center_default = _check_lognormal_center(center)
+    return previous
+
+
+@contextmanager
+def using_lognormal_center(center):
+    """``with using_lognormal_center("mean"): ...`` temporarily centres the lognormal priors on the MEAN."""
+    previous = set_lognormal_center(center)
+    try:
+        yield
+    finally:
+        set_lognormal_center(previous)
+
+
+def lognormal_log_location(mean, sd, center=None):
+    """Location ``mu`` of ``ln(x) ~ N(mu, sd^2)`` so that ``mean`` is the median (``"median"``) or the mean (``"mean"``).
+
+    ``center=None`` uses the process default (``set_lognormal_center``, ``"median"`` unless changed). The default
+    returns exactly ``np.log(mean)``, so existing results are reproduced bit for bit.
+    """
+    center = _check_lognormal_center(_lognormal_center_default if center is None else center)
+    if center == "median":
+        return np.log(mean)
+    return np.log(mean) - 0.5 * np.asarray(sd, dtype=float) ** 2
+
+
 def sampling_dist(sampling_type, mean, sd, ensemble_size, **kwargs):
     # No reseeding here: a fixed seed per call gave every parameter the same standard-normal
     # draws (a rank-1 parameter ensemble). Call np.random.seed(n) once beforehand to reproduce.
+    # kwargs: ``minmax_uni`` (uniform), ``center`` ("median" | "mean", lognormal; None = process default)
     if sampling_type == "lognormal":
-        parm_sampling = np.random.lognormal(np.log(mean), sigma=sd, size=ensemble_size)       
+        parm_sampling = np.random.lognormal(lognormal_log_location(mean, sd, kwargs.get("center")),
+                                            sigma=sd, size=ensemble_size)
     elif sampling_type == "normal":
         # parm_sampling = np.random.normal(mean, sd, size=ensemble_size)
         parm_sampling = np.random.normal(mean, scale=sd, size=ensemble_size)
@@ -1141,7 +1190,7 @@ def Archie_pert_rules(
             myclip_a=lo, myclip_b=hi, ensemble_size=ensemble_size, loc=mean, scale=sd
         )
     else:
-        parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size)
+        parm_sampling = sampling_dist(sampling_type, mean, sd, ensemble_size, center=parm.get("lognormal_center"))
 
     parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
     return parm_sampling, parm_per_array
@@ -1232,7 +1281,7 @@ def VG_pert_rules(
             myclip_a=None if (lo is None or lo <= 0) else np.log(lo),
             myclip_b=None if (hi is None or hi <= 0) else np.log(hi),
             ensemble_size=ensemble_size,
-            loc=np.log(parm["mean"]),
+            loc=lognormal_log_location(parm["mean"], sd, parm.get("lognormal_center")),
             scale=sd,
         ))
     else:
@@ -1470,6 +1519,7 @@ def perturbate_parm_by_layers(type_parm,
                               clip_max=None,
                               sampler="random",
                               sampling_type="normal",
+                              lognormal_center=None,
                               ):
             
         # sampler "random" (default): uniform draws from the global numpy state, so
@@ -1500,7 +1550,7 @@ def perturbate_parm_by_layers(type_parm,
         if sampling_type == "lognormal":
             lo = None if (clip_min is None or clip_min <= 0) else np.log(clip_min)
             hi = None if (clip_max is None or clip_max <= 0) else np.log(clip_max)
-            lmean = np.log(mean)
+            lmean = lognormal_log_location(mean, sd, lognormal_center)
             if (lo is None and hi is None) or sd == 0:
                 return np.exp(norm.ppf(sobol_samples, loc=lmean, scale=sd))
             a_, b_ = _std_bounds(lo, hi, lmean, sd)
@@ -1804,7 +1854,8 @@ def perturbate_parm(
                     scale=sd,
                 )
             else:
-                parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
+                parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size,
+                                              center=parm.get('lognormal_center'))
             
             if len(key_root)>1:
                 # Case with different zones
@@ -1849,7 +1900,8 @@ def perturbate_parm(
                     scale=sd,
                 )
             else:
-                parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size)
+                parm_sampling = sampling_dist(sampling_type,  parm['mean'], sd, ensemble_size,
+                                              center=parm.get('lognormal_center'))
             parm_per_array = perturbate_dist(parm, per_type, parm_sampling, ensemble_size)
     
                 

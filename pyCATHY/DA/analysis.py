@@ -68,9 +68,12 @@ class AnalysisConfig:
         filter supports it.
     perturb_obs : bool
         Stochastic EnKF: every member assimilates the data plus a draw of N(0, R).
-        False (default, historical) gives an analysis spread smaller than the
-        posterior by K R K^T and the ensemble tends to collapse over the cycles;
-        True is recommended for ``enkf_Evensen2009*``. Seeded by ``DAConfig.seed``.
+        True (default since round S19) gives the posterior covariance of the Kalman filter;
+        False (the historical default) gives an analysis spread smaller than the
+        posterior by K R K^T and the ensemble tends to collapse over the cycles: set it only
+        to reproduce a result obtained before S19. Used by ``enkf_Evensen2009*`` and the
+        localized filter (the ``*_inflation*`` and ``*_dual_*`` filters never perturb;
+        ES-MDA and the particle filter have their own noise). Seeded by ``DAConfig.seed``.
     inflation_states : float
         Multiplicative inflation of the ensemble. Legacy names: ``inflation``
         and ``alpha``.
@@ -97,7 +100,7 @@ class AnalysisConfig:
     """
 
     sakov: bool = True
-    perturb_obs: bool = False
+    perturb_obs: bool = True
     inflation_states: float = 1.0
     inflation_params: float = 1.0
     jitter_params: float = 0.0
@@ -440,11 +443,11 @@ def config_advisories(DA_type: str, config: "AnalysisConfig") -> list:
     """``[(kind, message), ...]``: options of ``config`` that the filter ``DA_type`` ignores, or settings known to
     degrade the ensemble. Pure function (nothing is changed): the caller logs them once per run.
 
-    * a stochastic EnKF without perturbed observations (``perturb_obs=False``, the default) lacks the ``K R K^T`` term of
+    * a stochastic EnKF without perturbed observations (``perturb_obs=False``, the default until round S18) lacks the ``K R K^T`` term of
       the posterior covariance: in a linear-Gaussian test the posterior variance came out at 20-50 % of the theoretical
       one (99-103 % with ``perturb_obs=True``), so the spread collapses over the cycles unless inflation compensates;
-    * ``inflation_states`` is ignored by ``enkf_dual_analysis*`` and ``pf``; ``perturb_obs=True`` by every filter that
-      does not perturb (the ``*_inflation*`` and ``*_dual_*`` ones).
+    * ``inflation_states`` is ignored by ``enkf_dual_analysis*`` and ``pf``; ``perturb_obs`` has no effect on the filters
+      that never perturb (the ``*_inflation*`` and ``*_dual_*`` ones), which is said once, in their own advisory.
     """
     out = []
     if DA_type in _STOCHASTIC_ENKF:
@@ -454,9 +457,9 @@ def config_advisories(DA_type: str, config: "AnalysisConfig") -> list:
                                       "variance is underestimated (about 20-50 % of the Kalman one in a linear test) and "
                                       "the spread can collapse; use AnalysisConfig(perturb_obs=True) or inflation"))
         else:                                           # this filter never perturbs, whatever the option says
-            if config.perturb_obs:
-                out.append(("config", f"perturb_obs=True is ignored by {DA_type}"))
-            out.append(("config", f"{DA_type} never perturbs the observations: the posterior variance is underestimated "
+            # perturb_obs is True by default: no separate "ignored" line, it would fire on every default run
+            out.append(("config", f"{DA_type} never perturbs the observations (the perturb_obs option has no effect): the "
+                                  f"posterior variance is underestimated "
                                   "(about 20-50 % of the Kalman one in a linear test) and the spread can collapse; "
                                   "use enkf_Evensen2009 with perturb_obs=True or inflation"))
     if config.inflation_states != 1.0 and INFLATION_CONVENTION.get(DA_type, "").startswith("ignored"):
