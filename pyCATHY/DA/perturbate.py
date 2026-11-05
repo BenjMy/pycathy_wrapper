@@ -581,7 +581,33 @@ def perturbate(simu_DA, scenario, NENS,
                 "time_decorrelation_len": scenario["time_decorrelation_len"][index],
                 "savefig": "atmbc.png"
             }
-            
+
+            comps_cfg = scenario.get("atmbc_components")
+            if comps_cfg:
+                # rain and ETp perturbed separately (see atmbc_components_pert_rules)
+                nom = getattr(simu_DA, "atmbc_components", None)
+                if nom is None:
+                    raise ValueError(
+                        'scenario["atmbc_components"] needs the forcing declared with '
+                        "simu.set_atmbc_components(time, rain, etp) before perturbate()"
+                    )
+                if len(df) != len(unique_times):
+                    raise NotImplementedError("atmbc_components: homogeneous atmbc only (HSPATM=1)")
+                if len(nom["time"]) != len(simu_DA.atmbc["time"]) or not np.allclose(
+                    nom["time"], np.asarray(simu_DA.atmbc["time"], dtype=float)
+                ):
+                    raise ValueError(
+                        "atmbc_components: the times of set_atmbc_components differ from the atmbc times "
+                        "(was update_atmbc called again afterwards?)"
+                    )
+                atmbc["atmbc_components"] = dict(comps_cfg)
+                atmbc["data2perturbate"] = {
+                    "time": simu_DA.atmbc["time"],
+                    "VALUE": values,
+                    "rain": np.asarray(nom["rain"], dtype=float),
+                    "etp": np.asarray(nom["etp"], dtype=float),
+                }
+
             list_pert.append(atmbc)
 
     #%% Petro-Pedophysical parameters
@@ -1399,6 +1425,86 @@ def atmbc_pert_rules(
     return white_noise, parm_per_ti
 
 
+def _ar1_noise(rng, nens, times, tau, gamma_kind="evensen", w=None):
+    """Unit-variance AR(1) noise, shape (nens, ntimes) (Evensen 2003, eq. 14).
+
+    q_k = gamma q_{k-1} + sqrt(1 - gamma^2) w_k, gamma from the interval ENDING at k (dt = t_k - t_{k-1}):
+    gamma = 1 - dt/tau ("evensen", clipped to [0, 1)) or exp(-dt/tau) ("exp", exact for any dt/tau).
+    ``w`` = pre-drawn white noise (so that two variables can share / correlate their noise);
+    tau None / <= 0 -> white noise in time.
+    """
+    times = np.asarray(times, dtype=float)
+    ntimes = times.size
+    w = rng.standard_normal((nens, ntimes)) if w is None else w
+    if tau is None or tau <= 0:
+        return w
+    dt = np.diff(times, append=times[-1] + np.median(np.diff(times)))
+    kind = str(gamma_kind).lower()
+    if kind in ("evensen", "evensen2003", "linear", "1-dt/tau"):
+        gamma = np.clip(1.0 - dt / tau, 0.0, 0.999999)
+    elif kind in ("exp", "exponential", "exp(-dt/tau)"):
+        gamma = np.exp(-dt / tau)
+    else:
+        raise ValueError(f"atmbc_components: unknown gamma_kind {gamma_kind!r} (use 'evensen' or 'exp')")
+    q = np.empty_like(w)
+    q[:, 0] = w[:, 0]
+    for k in range(1, ntimes):
+        g = gamma[k - 1]
+        q[:, k] = g * q[:, k - 1] + np.sqrt(1.0 - g ** 2) * w[:, k]
+    return q
+
+
+def atmbc_components_pert_rules(var_per_2add, parm, type_parm, ensemble_size, rng=None):
+    """Perturb rain and ETp of the atmbc SEPARATELY (multiplicative, mean-1 lognormal, AR(1) in time).
+
+    ``parm["atmbc_components"]`` (the scenario entry)::
+
+        {"rain": {"sd_rel": 0.3, "tau": 86400.0},
+         "etp":  {"sd_rel": 0.1, "tau": 172800.0},
+         "gamma_kind": "evensen", "rho": 0.0}
+
+    ``sd_rel`` is the relative standard deviation (CV) of the mean-preserving lognormal factor (E[factor] = 1); ``tau`` the decorrelation time [s];
+    ``rho`` the correlation between the rain and the ETp WHITE noises (same time step), -1 < rho < 1.
+    Same construction as the ``atmbc_perturb.perturb_rain_etp`` toolbox of the ETa-DA test project.
+    Dry days stay dry (rain 0 * factor = 0).
+
+    Stores, in ``var_per_2add[type_parm]``: ``time_variable_perturbation`` (net flux rain - ETp, what
+    ``_update_atmbc_member`` / ``selec_atmbc_window`` write), ``time_variable_rain`` and ``time_variable_etp``
+    (ensemble_size x ntimes, [m/s]; used by the ETa operator). Returns (white-noise-like sampling, net flux).
+    """
+    cfg = parm["atmbc_components"]
+    rng = rng if rng is not None else np.random.default_rng()
+    times = np.asarray(parm["data2perturbate"]["time"], dtype=float)
+    rain0 = np.asarray(parm["data2perturbate"]["rain"], dtype=float)
+    etp0 = np.asarray(parm["data2perturbate"]["etp"], dtype=float)
+    kind = cfg.get("gamma_kind", "evensen")
+    rho = float(cfg.get("rho", 0.0) or 0.0)
+    if not -1.0 < rho < 1.0:
+        raise ValueError(f"atmbc_components: rho must be in (-1, 1), got {rho}")
+
+    def factor(c, noise):
+        sd_rel = float(c["sd_rel"])
+        s2 = np.log1p(sd_rel ** 2)                       # variance of ln(factor): factor has mean 1, rel. sd = sd_rel
+        return np.exp(noise * np.sqrt(s2) - 0.5 * s2)
+
+    # the cross-correlation rho is imposed on the WHITE noises, BEFORE the AR(1) filter: each variable then keeps
+    # its own decorrelation time (mixing the filtered series would blend the rain memory into ETp)
+    w1 = rng.standard_normal((ensemble_size, times.size))
+    w2 = rng.standard_normal((ensemble_size, times.size))
+    w_rain, w_etp = w1, rho * w1 + np.sqrt(1.0 - rho ** 2) * w2
+    n_rain = _ar1_noise(rng, ensemble_size, times, cfg["rain"].get("tau"), kind, w=w_rain)
+    n_etp = _ar1_noise(rng, ensemble_size, times, cfg["etp"].get("tau"), kind, w=w_etp)
+
+    rain = rain0[None, :] * factor(cfg["rain"], n_rain)
+    etp = etp0[None, :] * factor(cfg["etp"], n_etp)
+    net = rain - etp
+
+    var_per_2add[type_parm]["time_variable_rain"] = rain
+    var_per_2add[type_parm]["time_variable_etp"] = etp
+    var_per_2add[type_parm]["time_variable_perturbation"] = net
+    return n_rain, net
+
+
 # def Johnson1970():
 #     print("not yet implemented - see Botto 2018")
 
@@ -1834,6 +1940,16 @@ def perturbate_parm(
 
     # Time dependant perturbation
     # --------------------------------------------------------------------
+    elif "atmbc" in type_parm and isinstance(parm, dict) and parm.get("atmbc_components"):
+        parm_sampling, parm_per_array = atmbc_components_pert_rules(
+                                                        var_per_2add,
+                                                        parm,
+                                                        type_parm,
+                                                        ensemble_size,
+                                                        rng=kwargs.get("rng"),
+                                                        )
+        savefig = False
+
     elif "atmbc" in type_parm:
     # elif any("atmbc" in item for item in type_parm):
         parm_sampling, parm_per_array = atmbc_pert_rules(    

@@ -352,6 +352,15 @@ _NEGATIVE_VALUES_ALLOWED = ("tensio",)
 
 
 class DA(CATHY):
+    #: ETa operator. "none": the raw ``ACT. ETRA`` of fort.777 (net extraction, in excess of the rain).
+    #: "mass_balance": total ETa = ACT. ETRA + min(rain, ETp) of the member and window; needs
+    #: ``set_atmbc_components`` (see ``_predict_ET``).
+    eta_patch_mode = "none"
+    #: which atmbc record the ETa patch reads for window ``i``: ``i + eta_patch_record_offset``. 0 = the record at the
+    #: start of the window (IETO=1 piecewise constant). Use 1 if CATHY's last step of a window is driven by the NEXT
+    #: record (the print at exactly the closing atmbc time, finding F8): check with a no-noise run at the true parameters.
+    eta_patch_record_offset = 0
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._init_da_state()
@@ -3091,7 +3100,7 @@ class DA(CATHY):
 
         Hx_stacked = []  # stacked predicted observation
         if self.isET:
-            Hx_stacked.append(self._predict_ET(path_fwd_CATHY, obs2map))
+            Hx_stacked.append(self._predict_ET(path_fwd_CATHY, obs2map, ens_nb=ens_nb))
 
         # Loop over observations to map
         # ---------------------------------------------------------------------
@@ -3223,11 +3232,38 @@ class DA(CATHY):
             return np.vstack([Hx_ens, Hx_ens_ERT])
         return Hx_ens_ERT
 
-    def _predict_ET(self, path_fwd_CATHY, obs2map):
+    def _window_rain_etp(self, ens_nb):
+        """Rain and ETp [m/s] of member ``ens_nb`` over the window being analysed.
+
+        The perturbed members (``scenario["atmbc_components"]``) carry their own rain / ETp
+        (``time_variable_rain`` / ``time_variable_etp``); otherwise the nominal forcing declared by
+        ``set_atmbc_components``. With IETO=1 the value at ``all_atmbc_times[i]`` holds over window ``i``
+        (``count_atmbc_cycle`` is incremented only after the analysis).
+        """
+        shift = int(getattr(self, "eta_patch_record_offset", 0))
+        for key, entry in getattr(self, "dict_parm_pert", {}).items():
+            if str(key).casefold().startswith("atmbc") and "time_variable_rain" in entry:
+                rain, etp = entry["time_variable_rain"][ens_nb], entry["time_variable_etp"][ens_nb]
+                i = min(self.count_atmbc_cycle + shift, len(rain) - 1)
+                return float(rain[i]), float(etp[i])
+        comps = getattr(self, "atmbc_components", None)
+        if comps is None:
+            raise ValueError(
+                'eta_patch_mode="mass_balance" needs the forcing declared with set_atmbc_components(time, rain, etp)'
+            )
+        i = min(self.count_atmbc_cycle + shift, len(comps["rain"]) - 1)
+        return float(comps["rain"][i]), float(comps["etp"][i])
+
+    def _predict_ET(self, path_fwd_CATHY, obs2map, ens_nb=None):
         """Predicted actual evapotranspiration of one ensemble member at the observed nodes.
 
         Reads ``fort.777`` of the member and returns the ``ACT. ETRA`` column of the
         last time step at the surface nodes of the ``ETact`` observations.
+
+        With ``self.eta_patch_mode == "mass_balance"`` the total ETa is returned instead:
+        CATHY imposes the net flux ``rain - ETp``, so ``ACT. ETRA`` is only the extraction in
+        excess of the rain; the rain that evaporates directly is ``min(rain, ETp)``, hence
+        ``ETa = ACT. ETRA + min(rain, ETp)`` (rain and ETp of this member and window, [m/s]).
         """
         df_fort777 = out_CT.read_fort777(os.path.join(path_fwd_CATHY, "fort.777"))
         df_fort777 = df_fort777.set_index("time_sec")
@@ -3236,7 +3272,16 @@ class DA(CATHY):
         nodes = [obs["mesh_nodes"] for obs in obs2map if obs["data_type"] == "ETact"]
         # flat integer positions (a list of arrays is an error with recent pandas)
         selected = df_fort777.loc[last_time]["ACT. ETRA"].iloc[np.hstack(nodes)]
-        return selected.values
+
+        mode = getattr(self, "eta_patch_mode", "none")
+        if mode in (None, "none"):
+            return selected.values
+        if mode != "mass_balance":
+            raise ValueError(f"eta_patch_mode must be 'none' or 'mass_balance', got {mode!r}")
+        if ens_nb is None:
+            raise ValueError("eta_patch_mode='mass_balance' needs the member index (ens_nb)")
+        rain, etp = self._window_rain_etp(ens_nb)
+        return selected.values + min(rain, etp)
 
     def _read_state_ensemble(self):
         # read grid to infer dimension of the ensemble X

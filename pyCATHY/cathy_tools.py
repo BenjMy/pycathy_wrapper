@@ -2362,6 +2362,56 @@ class CATHY:
                     plt_CT.show_atmbc(time, VALUE, **kwargs)
         pass
 
+    def set_atmbc_components(self, time, rain, etp, HSPATM=1, IETO=1, **kwargs):
+        """
+        Homogeneous atmospheric forcing given as its two components, rain and ETp.
+
+        CATHY imposes the NET flux at the surface, ``rain - ETp``, so that is what is
+        written in ``input/atmbc`` (through :meth:`update_atmbc`). Declaring the two parts
+        as well keeps what the net flux hides, and two things need it:
+
+        - the ensemble perturbation of rain and ETp *separately*
+          (``scenario["atmbc_components"]`` of ``pyCATHY.DA.perturbate``): perturbing the
+          net flux multiplicatively is wrong as soon as it changes sign;
+        - the ETa operator of the DA (``DA.eta_patch_mode = "mass_balance"``): ``ACT. ETRA``
+          of ``fort.777`` is the extraction in excess of the rain, so the total actual
+          evapotranspiration needs the rain and ETp of the window.
+
+        Parameters
+        ----------
+        time : array_like
+            Atmbc times [s] (same convention as :meth:`update_atmbc`).
+        rain, etp : array_like
+            Rain and potential evapotranspiration [m/s], one value per time, both >= 0
+            (``abs`` is taken of ``etp``). ``rain - etp`` is the net flux written.
+        HSPATM : int
+            Only 1 (homogeneous in space) is supported.
+        IETO : int
+            1 = piecewise constant (default), 0 = linear interpolation.
+        **kwargs
+            Passed to :meth:`update_atmbc`.
+        """
+        if HSPATM != 1:
+            raise NotImplementedError("set_atmbc_components: only homogeneous atmbc (HSPATM=1)")
+        time = np.asarray(time, dtype=float).ravel()
+        rain = np.asarray(rain, dtype=float).ravel()
+        etp = np.abs(np.asarray(etp, dtype=float).ravel())
+        if not (time.size == rain.size == etp.size):
+            raise ValueError(
+                f"set_atmbc_components: time ({time.size}), rain ({rain.size}) and etp ({etp.size}) "
+                "must have the same length"
+            )
+        if np.any(rain < 0):
+            raise ValueError("set_atmbc_components: rain must be >= 0 [m/s]")
+        self.atmbc_components = {"time": time, "rain": rain, "etp": etp}
+        self.update_atmbc(
+            HSPATM=HSPATM,
+            IETO=IETO,
+            time=list(time),
+            netValue=list(rain - etp),
+            **kwargs,
+        )
+
     def _record_bc_in_mesh_bounds_df(self, BCtypName, time, nodes, values, no_flow):
         """
         Keep self.mesh_bound_cond_df (consumed by show_bc()/plot_mesh_bounds)
