@@ -36,6 +36,56 @@ def _fix_fortran_exponents(text: str) -> str:
     return _FORTRAN_EXP_RE.sub(r'E\1', text)
 
 
+# One Fortran-written real: mantissa + optional exponent, where the exponent is
+# either "E+dd"/"D-dd"/... or the E-less 3-digit form ("-314").
+_FORTRAN_NUM_RE = re.compile(
+    r'[+-]?(?:\d+\.\d*|\.\d+|\d+)(?:[EeDd][+-]?\d+|[+-]\d{3})?'
+)
+_FORTRAN_NOE_RE = re.compile(r'([+-]?(?:\d+\.\d*|\.\d+|\d+))([+-]\d{3})')
+
+
+def _fortran_float(tok: str) -> float:
+    """float() that also accepts the D exponent and the E-less 3-digit exponent."""
+    try:
+        return float(tok)
+    except ValueError:
+        pass
+    t = tok.replace("D", "E").replace("d", "e")
+    m = _FORTRAN_NOE_RE.fullmatch(t)
+    if m:
+        t = m.group(1) + "E" + m.group(2)
+    return float(t)
+
+
+def _parse_fixed_width_row(line, ncols):
+    """
+    Parse one data line into ``ncols`` floats.
+
+    Returns ``(values, repaired)``; ``values`` is None if the line cannot be
+    parsed. ``repaired`` is True when plain whitespace splitting did not give
+    ``ncols`` floats but a numeric re-tokenisation did. This happens with
+    fixed-width Fortran fields that are exactly as wide as the number: e.g.
+    CATHY writes mbeconv with ``1PE10.3`` for VIN / CUM. VIN, so a negative
+    value fills the whole field and fuses with the previous column
+    ("1.234E+00-5.678E-01"), and 3-digit exponents lose their 'E'
+    ("2.12-314"). A truncated line still fails (too few numbers).
+    """
+    parts = line.split()
+    if len(parts) == ncols:
+        try:
+            return [_fortran_float(x) for x in parts], False
+        except ValueError:
+            pass
+    toks = _FORTRAN_NUM_RE.findall(line)
+    # accept only if the numbers account for every character of the line
+    if len(toks) == ncols and "".join(toks) == "".join(parts):
+        try:
+            return [_fortran_float(x) for x in toks], True
+        except ValueError:
+            pass
+    return None, False
+
+
 def _read_fixed_width_block(filename, skiprows, ncols, max_rows=None):
     """
     Read a whitespace-delimited numeric block, tolerant of a run that
@@ -78,21 +128,28 @@ def _read_fixed_width_block(filename, skiprows, ncols, max_rows=None):
     if max_rows is not None:
         data_lines = data_lines[:max_rows]
 
-    rows, n_bad = [], 0
-    for line in data_lines:
-        parts = line.split()
-        if len(parts) != ncols:
-            if parts:  # don't warn on genuinely blank trailing lines
-                n_bad += 1
+    rows, bad_lines, n_repaired = [], [], 0
+    for i, line in enumerate(data_lines):
+        if not line.strip():  # don't warn on genuinely blank trailing lines
             continue
-        try:
-            rows.append([float(x) for x in parts])
-        except ValueError:
-            n_bad += 1
+        values, repaired = _parse_fixed_width_row(line, ncols)
+        if values is None:
+            bad_lines.append(skiprows + i + 1)  # 1-based line number in the file
+            continue
+        n_repaired += repaired
+        rows.append(values)
 
-    if n_bad:
-        logger.warning(f"{filename}: {n_bad} malformed row(s) skipped "
-                       f"(run likely crashed mid-write / output truncated).")
+    if n_repaired:
+        logger.info(f"{filename}: {n_repaired} row(s) had fused/E-less fixed-width "
+                    f"fields and were re-parsed.")
+
+    if bad_lines:
+        shown = ", ".join(map(str, bad_lines[:5])) + (" ..." if len(bad_lines) > 5 else "")
+        where = ("the last line of the file (truncated: run likely crashed mid-write)"
+                 if bad_lines == [skiprows + len(data_lines)]
+                 else f"line(s) {shown}")
+        logger.warning(f"{filename}: {len(bad_lines)} malformed row(s) skipped "
+                       f"-- {where}.")
 
     if not rows:
         logger.warning(f"{filename}: no valid data rows found "
