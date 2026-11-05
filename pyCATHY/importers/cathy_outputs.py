@@ -130,7 +130,8 @@ def _read_fixed_width_block(filename, skiprows, ncols, max_rows=None):
 
     rows, bad_lines, n_repaired = [], [], 0
     for i, line in enumerate(data_lines):
-        if not line.strip():  # don't warn on genuinely blank trailing lines
+        if not line.strip() or line.lstrip().startswith("#"):
+            # blank trailing lines and '#' comment lines are not data (mbeconv has 3 '#' header lines, callers skip 2)
             continue
         values, repaired = _parse_fixed_width_row(line, ncols)
         if values is None:

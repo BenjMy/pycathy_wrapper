@@ -81,3 +81,16 @@ def test_truncated_last_line_is_skipped_and_located(tmp_path, caplog):
     assert len(df) == 3
     msgs = " ".join(r.getMessage() for r in caplog.records)
     assert "1 malformed row(s) skipped" in msgs and "last line" in msgs
+
+
+def test_real_three_line_header_gives_no_warning(tmp_path, caplog):
+    """CATHY writes 3 '#' header lines to mbeconv (volume, names, units); readers skip 2: line 3 is not 'malformed'."""
+    header = ("#INITIAL VOLUME OF WATER IN THE SUBSURFACE =   1.72937E+02\n"
+              "#NSTEP       DELTAT         TIME  NLIN   AVG.LIN ...\n"
+              "#                                 ITER.    ITER.      (>0 x inc)\n")
+    path = tmp_path / "mbeconv"
+    path.write_text(header + "\n".join(_fortran_row(_values(i)) for i in range(3)) + "\n")
+    with caplog.at_level("WARNING"):
+        df = read_mbeconv(str(path))
+    assert len(df) == 3
+    assert not [r for r in caplog.records if "malformed" in r.getMessage()]
