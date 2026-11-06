@@ -300,6 +300,144 @@ def DA_plot_time_dynamic(
         ax.figure.savefig(savename + ".png", dpi=300)
 
 
+#%% ---------------------------------------------------------------------------
+# -----------------Plot STATE time series (depths) and PARAMETER evolution ----
+# -----------------------------------------------------------------------------
+
+def plot_state_timeseries(state, depths=None, rain=None, title=None):
+    """Area-mean saturation and pressure head in time at several depths.
+
+    Parameters
+    ----------
+    state : dict
+        ``{label: {"sw": DataFrame, "psi": DataFrame}}`` (e.g. label ``"prior"`` / ``"posterior"``); each frame has
+        the dates as index and one column per requested depth (m below the surface, float), already averaged over
+        the whole area. ``DataFrame.attrs["actual_depth"] = {depth: mean depth of the nodes used}`` is shown in the
+        legend when it differs from the requested one.
+    depths : sequence of float, optional
+        Depths to draw (default: the columns of the first frame).
+    rain : pd.Series, optional
+        Daily rain [mm/d], drawn as a small top panel.
+
+    One colour per depth; the ``"prior"`` label is dashed, the others solid. Returns the figure (None if no data).
+    """
+    labels = [l for l, s in (state or {}).items() if s]
+    if not labels:
+        return None
+    cols = list(state[labels[0]]["sw"].columns) if depths is None else [float(d) for d in depths]
+    nrow = 2 + (rain is not None)
+    ratios = ([1] if rain is not None else []) + [2, 2]
+    fig, axs = plt.subplots(nrow, 1, figsize=(11, 2.6 * nrow + 1.5), sharex=True,
+                            gridspec_kw=dict(height_ratios=ratios))
+    axs = np.atleast_1d(axs)
+    k = 0
+    if rain is not None:
+        axs[0].bar(rain.index, rain.values, width=0.9, color="tab:blue")
+        axs[0].set_ylabel("rain [mm/d]")
+        k = 1
+    styles = {"prior": "--"}
+    for ax, var, ylabel in ((axs[k], "sw", "saturation [-]"), (axs[k + 1], "psi", r"pressure head $\psi$ [m]")):
+        for i, d in enumerate(cols):
+            for lab in labels:
+                df = state[lab][var]
+                if d not in df.columns:
+                    continue
+                act = df.attrs.get("actual_depth", {}).get(d, d)
+                txt = f"{d:g} m" + (f" (nodes at {act:.2f} m)" if abs(act - d) > 0.05 else "")
+                ax.plot(df.index, df[d].values, styles.get(lab, "-"), color=f"C{i}", lw=1.3, label=f"{txt}, {lab}")
+        ax.set_ylabel(ylabel)
+        ax.grid(alpha=0.3)
+    axs[k].legend(ncol=2, fontsize=7, frameon=False, loc="best")
+    axs[k].set_title("area mean of the 3D domain at fixed depth below the surface", fontsize=8)
+    if title:
+        fig.suptitle(title, fontsize=8)
+    format_date_axis(axs[-1])
+    fig.tight_layout()
+    return fig
+
+
+def select_update_indices(n_updates, n_inter=None, n_times=None):
+    """Positions (0-based, in the list of updates) of the ensembles to show: the first, ``n_inter`` evenly spaced
+    intermediate ones, and the last.
+
+    ``n_inter`` is inferred from the length of the time series when not given: about one intermediate ensemble per
+    10 time steps, between 1 and 6 (``n_times`` = number of days / windows, default: the number of updates). It is
+    always capped so that the positions are distinct.
+    """
+    if n_updates <= 0:
+        return []
+    if n_inter is None:
+        n = n_times if n_times else n_updates
+        n_inter = int(np.clip(round(n / 10), 1, 6))
+    n_inter = int(max(0, min(n_inter, n_updates - 2)))
+    idx = np.linspace(0, n_updates - 1, n_inter + 2).round().astype(int)
+    return list(dict.fromkeys(idx.tolist()))
+
+
+def DA_plot_parm_evolution(parm_hist, params=None, times=None, n_inter=None, n_times=None, truth=None,
+                           log=("SATCELL_VG0", "Ks0", "Ks"), color="tab:purple"):
+    """One panel per parameter: boxplot of the prior ensemble, of a few intermediate analyses and of the last one.
+
+    Unlike :func:`DA_plot_parm_dynamic_scatter` (one box per update, thinned to every 15th beyond 30 updates) the
+    number of boxes is bounded and readable: prior + ``n_inter`` intermediate + final (see
+    :func:`select_update_indices`).
+
+    Parameters
+    ----------
+    parm_hist : dict
+        ``{parm: {"ini_perturbation": array, "update_nb1": array, ...}}`` (``DA.dict_parm_pert`` restricted to those keys).
+    params : list of str, optional
+        Parameters to draw (default: all of ``parm_hist``). Ones without any ``update_nb*`` entry (perturbed but
+        not updated) show the prior only and are marked in the title.
+    times : sequence, optional
+        One date / number per update (as for ``DA_plot_parm_dynamic_scatter``); one extra leading entry is dropped.
+    n_inter, n_times : see :func:`select_update_indices`.
+    truth : dict, optional
+        ``{parm: value}``, drawn as a black dashed line.
+    log : parameters drawn on a log y-scale.
+
+    Returns
+    -------
+    fig, axes
+    """
+    params = list(params) if params else list(parm_hist)
+    truth = truth or {}
+    fig, axs = plt.subplots(1, len(params), figsize=(4.3 * len(params) + 0.5, 3.8), squeeze=False)
+    for ax, p in zip(axs[0], params):
+        entry = parm_hist[p]
+        keys = _update_keys(entry)
+        groups, labels = [], []
+        if "ini_perturbation" in entry:
+            groups.append(np.ravel(np.asarray(entry["ini_perturbation"], dtype=float)))
+            labels.append("prior")
+        t = None
+        if times is not None and len(keys):
+            t = pd.Index(times)
+            if len(t) == len(keys) + 1:
+                t = t[1:]
+            t = t if len(t) == len(keys) else None
+        sel = select_update_indices(len(keys), n_inter, n_times)
+        for i in sel:
+            groups.append(np.ravel(np.asarray(entry[keys[i]], dtype=float)))
+            lab = f"#{i + 1}"
+            if t is not None and pd.api.types.is_datetime64_any_dtype(t):
+                lab = f"{pd.Timestamp(t[i]):%d %b}\n#{i + 1}"
+            labels.append(lab + ("\n(final)" if i == len(keys) - 1 else ""))
+        groups = [g[np.isfinite(g)] for g in groups]
+        bp = ax.boxplot(groups, patch_artist=True, showfliers=False)
+        ax.set_xticklabels(labels, fontsize=7)
+        for j, box in enumerate(bp["boxes"]):
+            box.set(facecolor="0.75" if (labels[j] == "prior") else color, alpha=0.6)
+        if truth.get(p) is not None:
+            ax.axhline(truth[p], color="k", ls="--", lw=1, label=f"truth {truth[p]:.3g}")
+            ax.legend(fontsize=7, frameon=False)
+        if p in log:
+            ax.set_yscale("log")
+        ax.set_title(p + ("" if keys else " (not updated: prior only)"), fontsize=9)
+    fig.tight_layout()
+    return fig, axs
+
+
 def DA_plot_ET_dynamic(ET_DA,
                         nodePos=None,
                         nodeIndice=None,

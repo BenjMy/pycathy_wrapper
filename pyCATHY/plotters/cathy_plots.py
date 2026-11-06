@@ -57,6 +57,15 @@ import rioxarray as rio
 import scipy.stats as stats
 import seaborn
 
+# Single source of truth for the DA plotters lives in cathyDA_plots.py; re-exported here so that
+# ``from pyCATHY.plotters import cathy_plots as plt_CT; plt_CT.DA_plot_...`` keeps working.
+# (cathyDA_plots imports prepare_DA_plot_time_dynamic from this module lazily, inside the function: no import cycle.)
+from pyCATHY.plotters.cathyDA_plots import (  # noqa: E402,F401
+    _update_keys,
+    DA_plot_parm_dynamic_scatter,
+    DA_plot_time_dynamic,
+)
+
 
 # mpl.style.use('default')
 mpl.rcParams["grid.color"] = "k"
@@ -1610,120 +1619,6 @@ def DA_plot_parm_dynamic(
     return ax
 
 
-def _update_keys(entry):
-    """Keys of ``dict_parm_pert[parm]`` that hold the ensemble after each update, in update order.
-
-    Looks first for names like ``update_nb3`` / ``upd3`` / ``update3``; if none matches, returns an
-    empty list (the parameter has no analysed ensemble). Sorted by the trailing integer (not by dict order, not alphabetically).
-    """
-    import re
-    keys = [k for k in entry if re.search(r"(upd|update)", str(k), re.I)]
-    # no fallback to other arrays: 'sampling' / 'ini_*_withLayers' are copies of the prior,
-    # not analysed ensembles. No update key -> empty list (caller skips the parameter).
-
-    def _num(k):
-        m = re.search(r"(\d+)\s*$", str(k))
-        return int(m.group(1)) if m else -1
-
-    return sorted(keys, key=_num)
-
-
-def DA_plot_parm_dynamic_scatter(
-    parm="ks", dict_parm_pert=None, list_assimilation_times=None, savefig=False, **kwargs
-):
-    """Boxplot of a parameter ensemble after each update (one box per update).
-
-    Only the ``update_nb*`` entries of ``dict_parm_pert[parm]`` are plotted (the
-    initial perturbation is *not* a column), so ``list_assimilation_times`` must
-    hold the **dates (or numbers) of the updates**, one per update.
-
-    Parameters
-    ----------
-    parm : str
-        Key of ``dict_parm_pert`` (e.g. ``'ZROOT0'``).
-    dict_parm_pert : dict
-        ``results['dict_parm_pert']``.
-    list_assimilation_times : sequence
-        One entry per update. If it has one more entry than there are updates
-        the first one is assumed to be the initial time and is dropped (warning).
-    **kwargs
-        ``ax``, ``color``, ``log`` (log y-scale), ``date_fmt`` (strftime format of
-        the box labels, default adapts to the span), ``savename``.
-
-    Returns
-    -------
-    ax, df : the axis and the DataFrame (ensemble member x update) that was plotted;
-        ``(None, None)`` if the parameter has no update entries (nothing is drawn).
-    """
-    import seaborn  # lazy: only needed here
-
-    if dict_parm_pert is None:
-        dict_parm_pert = {}
-    # one column per update (keys like 'update_nb0', 'update_nb1', ...)
-    upd_keys = _update_keys(dict_parm_pert[parm])
-    if not upd_keys:
-        logging.getLogger(__name__).warning(
-            f"{parm}: no update entries in dict_parm_pert (keys: {list(dict_parm_pert[parm])}) -> skipped"
-        )
-        return None, None
-
-    ax = kwargs.get("ax")
-    if ax is None:
-        fig = plt.figure(figsize=(6, 3), dpi=350)
-        ax = fig.add_subplot()
-    df = pd.DataFrame({k: np.ravel(np.asarray(dict_parm_pert[parm][k], dtype=float)) for k in upd_keys})
-    df.index.name = "Ensemble_nb"
-
-    times = pd.Index(list_assimilation_times) if list_assimilation_times is not None else pd.RangeIndex(1, df.shape[1] + 1)
-    if len(times) == df.shape[1] + 1:
-        logging.getLogger(__name__).warning(
-            f"{parm}: {len(times)} times for {df.shape[1]} updates -> dropping the first (initial) time"
-        )
-        times = times[1:]
-    if len(times) > df.shape[1]:
-        logging.getLogger(__name__).warning(
-            f"{parm}: {df.shape[1]} updates but {len(times)} times -> using the first {df.shape[1]} times"
-        )
-        times = times[: df.shape[1]]
-    if len(times) != df.shape[1]:
-        raise ValueError(
-            f"{parm}: {df.shape[1]} updates in dict_parm_pert but {len(times)} times given; "
-            "pass one time per update"
-        )
-
-    # too many updates: keep one every 15
-    if df.shape[1] > 30:
-        nii = np.arange(0, df.shape[1], 15)
-        df = df.iloc[:, nii]
-        times = times[nii]
-
-    is_date = pd.api.types.is_datetime64_any_dtype(times)
-    df.columns = range(df.shape[1])  # positional, labels are set below
-    boxplot = seaborn.boxplot(df, color=kwargs.get("color", "grey"), ax=ax)
-
-    if is_date:
-        fmt = kwargs.get("date_fmt")
-        if fmt is None:
-            sub_daily = (times.normalize() != times).any() or (times.max() - times.min()) < pd.Timedelta(days=3)
-            fmt = "%d %b %H:%M" if sub_daily else "%d %b"
-        labels = [t.strftime(fmt) for t in times]
-        ax.set_xticks(range(len(labels)))
-        ax.set_xticklabels(labels, rotation=30, ha="right")
-        ax.set_xlabel("assimilation date")
-    else:
-        ax.set_xticks(range(len(times)))
-        ax.set_xticklabels([str(t) for t in times])
-        ax.set_xlabel("assimilation #")
-    ax.set_ylabel(parm)
-
-    if kwargs.get("log"):
-        boxplot.set_yscale("log")
-    if savefig:
-        ax.figure.savefig(kwargs.get("savename", "showDA_parm") + ".png", dpi=300)
-    df.columns = times
-    return ax, df
-
-
 def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs):
     """Select data from DA_df dataframe"""
 
@@ -1915,154 +1810,6 @@ def prepare_DA_plot_time_dynamic(DA, state="psi", nodes_of_interest=[], **kwargs
         select_isENS = spatial_mean_isENS_time_ens
 
     return prep_DA
-
-
-def DA_plot_time_dynamic(
-    DA, state="psi", nodes_of_interest=[], savefig=False, **kwargs
-):
-    """Plot result of Data Assimilation: state estimation evolution over the time"""
-
-
-    keytime = "time"
-    xlabel = "time (h)"
-    if kwargs.get("start_date") is not None:
-        start_date = kwargs["start_date"]
-        xlabel = "date"
-        keytime = "time_date"
-
-    # kwargs['keytime']
-    prep_DA = prepare_DA_plot_time_dynamic(
-                                            DA,
-                                            state=state,
-                                            nodes_of_interest=nodes_of_interest,
-                                            **kwargs
-                                        )
-    if "ax" in kwargs:
-        ax = kwargs["ax"]
-    else:
-        fig = plt.figure(figsize=(6, 3), dpi=350)
-        ax = fig.add_subplot()
-
-    alpha = 0.2
-    # colors_minmax = 'darkblue'
-    colors_minmax = 'grey'
-    if "colors_minmax" in kwargs:
-        colors_minmax = kwargs["colors_minmax"]
-
-
-    if "keytime" in kwargs:
-        keytime = kwargs['keytime']
-        xlabel = "assimilation_times"
-
-
-    ylabel = r"pressure head $\psi$ (m)"
-    if "sw" in state:
-        ylabel = "water saturation (-)"
-
-
-    # --------------------------------------------------------------------------
-
-    if len(prep_DA["isENS"]) > 0:
-
-        prep_DA["ens_mean_isENS_time"].pivot(
-            index=keytime,
-            columns=["idnode"],
-            # columns=['idnode'],
-            values=["mean(ENS)"],
-        ).plot(ax=ax, style=["--"],
-               color=colors_minmax,
-               # alpha=0.2
-               )
-
-        # print(prep_DA["ens_mean_isENS_time"].isna().sum())
-        # print(prep_DA["ens_mean_isENS_time"]['mean(ENS)'].dtype)
-        # print(prep_DA["ens_mean_isENS_time"]['time_date'].dtype)
-
-
-        prep_DA["ens_max_isENS_time"].pivot(
-            index=keytime,
-            columns=["idnode"],
-            # columns=['idnode'],
-            values=["max(ENS)"],
-        ).plot(ax=ax,
-               style=["-"],
-               color=colors_minmax,
-               alpha=0.1
-               )
-
-        prep_DA["ens_min_isENS_time"].pivot(
-            index=keytime,
-            columns=["idnode"],
-            # columns=['idnode'],
-            values=["min(ENS)"],
-        ).plot(
-            ax=ax,
-            # style=[".-"],
-            style=["-"],
-            color=colors_minmax,
-            xlabel="(assimilation) time - (h)",
-            ylabel=r"pressure head $\psi$ (m)",
-            alpha=0.1
-        )
-
-
-        lgd = ax.fill_between(
-            prep_DA["ens_max_isENS_time"][keytime],
-            prep_DA["ens_min_isENS_time"]["min(ENS)"],
-            prep_DA["ens_max_isENS_time"]["max(ENS)"],
-            alpha=alpha,
-            color=colors_minmax,
-            label="minmax DA",
-        )
-
-    if "ens_mean_isOL_time" in prep_DA.keys():
-        prep_DA["ens_mean_isOL_time"].pivot(
-            index=keytime,
-            # columns=["Ensemble_nb",'idnode'],
-            columns=["idnode"],
-            values=["mean(ENS)_OL"],
-        ).plot(
-            ax=ax,
-            style=["-"],
-            color="grey",
-            label=False,
-            ylabel=r"pressure head $\psi$ (m)",
-        )  # water saturation (-)
-        prep_DA["ens_min_isOL_time"].pivot(
-            index=keytime,
-            columns=["idnode"],
-            # columns=['idnode'],
-            values=["min(ENS)_OL"],
-        ).plot(ax=ax, style=["--"], color="grey", label=False)
-
-        prep_DA["ens_max_isOL_time"].pivot(
-            index=keytime,
-            columns=["idnode"],
-            # columns=['idnode'],
-            values=["max(ENS)_OL"],
-        ).plot(ax=ax, style=["--"], color="grey", label=False)
-
-        ax.fill_between(
-            prep_DA["ens_mean_isOL_time"][keytime],
-            prep_DA["ens_min_isOL_time"]["min(ENS)_OL"],
-            prep_DA["ens_max_isOL_time"]["max(ENS)_OL"],
-            alpha=0.2,
-            color="grey",
-            label="minmax OL",
-        )
-
-    ax.set_xlabel(xlabel)
-    # ax.set_ylabel('pressure head (m)')
-    ax.set_ylabel(ylabel)
-
-    savename = "showDA_dynamic"
-    if "savename" in kwargs:
-        savename = kwargs["savename"]
-
-    if savefig == True:
-        plt.savefig(savename + ".png", dpi=300)
-    pass
-
 
 
 def calculate_rmse_nrmse(y_pred, y_obs, normalization="range"):

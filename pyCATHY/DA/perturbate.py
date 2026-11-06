@@ -1918,7 +1918,9 @@ def perturbate_parm(
                                                         per_type=parm['per_type'],
                                                         nominal=parm['nominal'],
                                                         clip_min=parm.get('clip_min'),
-                                                        clip_max=parm.get('clip_max')     
+                                                        clip_max=parm.get('clip_max'),
+                                                        sampling_type=(sampling_type if sampling_type == 'lognormal' else 'normal'),
+                                                        lognormal_center=parm.get('lognormal_center'),
                                                         )
             parm_sampling = param_withLayers[parm_key_nb]
             parm_per_array = param_withLayers[parm_key_nb]
