@@ -294,7 +294,15 @@ def read_dem_parameters(dem_parametersfile):
     lines_s = [ll.split() for ll in lines]
     flat_lines_s = [item for sublist in lines_s for item in sublist]
     lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
-    
+
+    # Newer CATHY (withIrrigation) dem_parameters files describe the last line
+    # as 'ZRATIO(I) I=1 NSTR' (3 tokens) instead of 'zratio(i),i=1,nstr'.
+    # Collapse these tokens into the single key, otherwise 'NSTR' is duplicated
+    # and its value is overwritten by a zratio value.
+    names_lower = [n.lower() for n in lines_s_names]
+    if names_lower[-3:] == ["zratio(i)", "i=1", "nstr"]:
+        names_lower = names_lower[:-3] + ["zratio(i),i=1,nstr"]
+    lines_s_names = names_lower
 
     dict_dem_parm = {}
     ii = 0

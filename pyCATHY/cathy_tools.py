@@ -322,20 +322,42 @@ class CATHY:
             elif self.version == "withIrr":
                 print("adjust folder names")
              
-                path_local_src = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/"
-                path_local_dataset = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/dataset/"
-                path_local_prepro_src = "/home/z0272571a@CAMPUS.CSIC.ES/Nextcloud/BenCSIC/Codes/CATHYorg/CATHY_src_WithIrrigation/code/prepro/src"
+                # Fetch the source files from GitHub instead of a local folder
+                tmp_src = os.path.join(self.workdir, self.project_name, "tmp_src")
+                if os.path.exists(tmp_src):
+                    shutil.rmtree(tmp_src)
+                try:
+                    self.console.print(
+                        ":inbox_tray: [b]Fetch cathy src files (withIrrigation) from GitHub[/b]"
+                    )
+                    Repo.clone_from(
+                        "https://github.com/CATHY-Org/CATHY_src_WithIrrigation.git",
+                        tmp_src,
+                        branch="main",
+                        depth=1,
+                    )
+                except Exception as err:
+                    print(f"could not fetch the withIrrigation src files from GitHub: {err}")
+                    sys.exit()
+
+                path_src = os.path.join(tmp_src, "code")
+                path_dataset = os.path.join(tmp_src, "dataset")
+                path_prepro_src = os.path.join(tmp_src, "code", "prepro", "src")
+
                 shutil.copytree(
-                    path_local_src, os.path.join(self.workdir, self.project_name, "src")
+                    path_src, os.path.join(self.workdir, self.project_name, "src")
                 )
                 shutil.copytree(
-                    path_local_dataset, os.path.join(self.workdir, self.project_name),
+                    path_dataset, os.path.join(self.workdir, self.project_name),
                     dirs_exist_ok=True  # Allows overwriting existing directory
                 )
                 shutil.copytree(
-                    path_local_prepro_src, os.path.join(self.workdir, self.project_name,  f"{self.prepro_input_dirname}/src")
+                    path_prepro_src,
+                    os.path.join(self.workdir, self.project_name, f"{self.prepro_input_dirname}/src"),
+                    dirs_exist_ok=True,
                 )
-                         
+                shutil.rmtree(tmp_src)
+
                 source_dir = os.path.join(self.workdir, self.project_name, "other-dem")
                 dest_dir = os.path.join(self.workdir, self.project_name, self.input_dirname)
                 
@@ -347,6 +369,15 @@ class CATHY:
                 
                 # Remove empty source directory
                 os.rmdir(source_dir)
+
+                # The files of 'other-dem' now live in the input folder:
+                # point the Fortran file-name table (cathy.fnames) to them
+                fnames_path = os.path.join(self.workdir, self.project_name, "cathy.fnames")
+                if os.path.exists(fnames_path):
+                    with open(fnames_path, "r") as f:
+                        fnames_txt = f.read()
+                    with open(fnames_path, "w") as f:
+                        f.write(fnames_txt.replace("'other-dem/", "'input/"))
       
 
         # clear output files if required
@@ -475,54 +506,51 @@ class CATHY:
     def recompileSrc(self, verbose=False):
         """
         Other option is self.run_processor(runProcess=False)
-
         """
-        ti = time.time()  # executation time estimate
+        ti = time.time()
         self.console.print(
             ":hammer_and_wrench: [b] Recompile src files[/b] ["
             + str(int(abs(ti - self.t0)))
             + "s]"
         )
-        
-        
-        # gfortran_executable = 'gfortran.exe'
-
-        # # Execute the where command to find the path to gfortran
-        # where_command = ['where', gfortran_executable]
-        # result = subprocess.run(where_command, stdout=subprocess.PIPE, shell=True, check=True)
-        
-        # # Get the path to gfortran from the output of the where command
-        # gfortran_path = result.stdout.decode('utf-8').strip().split('\r\n')[0]
 
         # clean all files previously compiled
         for file in glob.glob("*.o"):
             os.remove(file)
-        # list all the fortran files to compile and compile
+
+        # Step 1: compile each .f file to .o WITH large memory model flags
+        compile_errors = []
         for file in glob.glob("*.f"):
-            
-            # filepath = Path(self.workdir) / self.project_name / 'src' / str(file)
             filepath = str(file)
-            # bashCommand = "gfortran -c " + str(filepath)
-            # bashCommand = "gfortran -c " + str('picard')
-            # bashCommand = "gfortran -c " + str('interp_irr.f')
-            # gfortran -c *.f
-            # gfortran *.o -L\MinGW\lib -llapack -lblas -o cathy
-            # print(bashCommand)
+            bashCommand = f"gfortran -O -mcmodel=large -fPIC -c {filepath}"
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 process = subprocess.Popen(
                     bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
-                # if verbose==True:
-                #     output, error = process.communicate()
                 output, error = process.communicate()
-        # list all the fortran compiled files to compile and run
-        files = ""
-        for file in glob.glob("*.o"):
-            # files += " " + os.path.join(self.workdir, self.project_name, 'prepro/src/' + str(file))
-            files += " " + str(file)
-        bashCommand = "gfortran" + files + " -llapack -lblas -o " + self.processor_name
-        ti = time.time()  # executation time estimate
+                if process.returncode != 0:
+                    compile_errors.append((filepath, error.decode()))
+                    if verbose:
+                        self.console.print(f":x: [red]Error compiling {filepath}[/red]")
+                        print(error.decode())
+
+        if compile_errors:
+            self.console.print(
+                f":x: [red]{len(compile_errors)} file(s) failed to compile[/red]"
+            )
+            for fname, err in compile_errors:
+                self.console.print(f"  - {fname}: {err}")
+            return
+
+        # Step 2: link all .o files WITH the same flags
+        files = " ".join(glob.glob("*.o"))
+        bashCommand = (
+            f"gfortran -mcmodel=large -fPIC {files} "
+            f"-llapack -lblas -o {self.processor_name}"
+        )
+
+        ti = time.time()
         self.console.print(
             ":cooking: [b]gfortran compilation[/b] ["
             + str(int(abs(ti - self.t0)))
@@ -535,21 +563,26 @@ class CATHY:
                 bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             output, error = process.communicate()
-            
-        print(error)
 
+        if process.returncode != 0:
+            self.console.print(":x: [red]Linker error:[/red]")
+            print(error.decode())
+            return
+        else:
+            self.console.print(":white_check_mark: [green]Compilation successful![/green]")
+            if verbose:
+                print(output.decode())
 
         try:
             shutil.move(
-                os.path.join(
-                    self.workdir, self.project_name, "src", self.processor_name
-                ),
+                os.path.join(self.workdir, self.project_name, "src", self.processor_name),
                 os.path.join(self.workdir, self.project_name, self.processor_name),
             )
-        except:
-            self.console.print(":pensive_face: [b]Cannot find the new processsor[/b]")
+        except Exception as e:
+            self.console.print(
+                f":pensive_face: [b]Cannot find the new processor[/b]: {e}"
+            )
 
-        pass
 
     def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
         """
