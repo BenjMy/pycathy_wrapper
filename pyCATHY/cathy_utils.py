@@ -799,3 +799,33 @@ def scenario_dict_to_multiindex_df(scenario_dict, scenario_name):
     df.columns = pd.MultiIndex.from_tuples(df.columns)
     
     return df.T
+
+
+# --------------------------------------------------------------------------- #
+# names of the flow vtk files written by the processor
+# --------------------------------------------------------------------------- #
+def _has_flow_vtk(vtk_dir):
+    """True when the folder holds the ``flow<nnnn>.vtk`` files of the newer sources."""
+    import glob
+    import os
+
+    return len(glob.glob(os.path.join(vtk_dir, "flow*.vtk"))) > 0
+
+
+def flow_vtk_filename(vtk_dir, timeStep):
+    """
+    Name of the flow vtk file of time step ``timeStep`` (0 = initial state).
+
+    The default sources write ``100.vtk, 101.vtk, ...``; the sources of version ``withIrr``
+    write ``flow2000.vtk, flow2001.vtk, ...``. The naming is detected from the folder content.
+    """
+    if _has_flow_vtk(vtk_dir):
+        return "flow" + str(2000 + int(timeStep)) + ".vtk"
+    return str(100 + int(timeStep)) + ".vtk"
+
+
+def flow_vtk_glob(vtk_dir):
+    """(glob pattern of every flow vtk file, name of the initial-state file) of a vtk folder."""
+    if _has_flow_vtk(vtk_dir):
+        return "flow*.vtk", "flow2000.vtk"
+    return "1*.vtk", "100.vtk"

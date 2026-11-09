@@ -1,0 +1,24 @@
+    2         1                           IPRT1  TRAFLAG
+    1         0.0     1                   ISIMGR PONDH_MIN VELREC
+    0         0.01                        KSLOPE TOLKSL
+   -3.0      -1.0      -3.0      -1.0     PKRL   PKRR   PSEL   PSER
+   -3.0      -2.5      -1.5      -1.0     PDSE1L PDSE1R PDSE2L PDSE2R
+    0         0         0                 ISFONE ISFCVG DUPUIT
+    1.0       1         1                 TETAF  LUMP   IOPT
+    0         0.8                         NLRELX OMEGA
+    0         1.0e-3  1.0e+30    1.0e+30  L2NORM TOLUNS TOLSWI  ERNLMX
+   10         5         7                 ITUNS  ITUNS1 ITUNS2
+    2       500         1.0e-10           ISOLV  ITMXCG TOLCG
+    5.0e-5  1.0e-6     300.0   2592000.0  DELTAT DTMIN  DTMAX  TMAX
+    0.0       1.1       0.0       0.5     DTMAGA DTMAGM DTREDS DTREDM
+    4        4           9
+          60.0       600.0      3600.0     14400.0
+       43200.0     86400.0    259200.0    864000.0
+     1728000.0                                         IPRT VTKF NPRT (TIMPRT(I),I=1,NPRT)
+   32
+    4    8   59   63  114  118  169  173
+  224  228  279  283  334  338  389  393
+  444  448  499  503  554  558  609  613
+  664  668  719  723  774  778  829  833 NUMVP (NODVP(I),I=1,NUMVP)
+    0                                    NR
+    0                                    NUM_QOUT (ID_QOUT(I),I=1,NUM_QOUT)

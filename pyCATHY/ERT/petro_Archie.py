@@ -11,6 +11,7 @@ import logging
 from pyCATHY import meshtools as mt
 from pyCATHY.ERT import ERT_checks
 from pyCATHY.ERT import simulate_ERT as simuERT
+from pyCATHY.cathy_utils import flow_vtk_filename
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.meshtools import CATHY_2_pg, CATHY_2_Resipy
 
@@ -261,9 +262,11 @@ def SW_2_ERT_ERa_DA(
     # Read the input mesh using pyvista
     # ------------------------------------
     if DA_cnb is not None:
-        mesh_CATHY_ref = pv.read(os.path.join(path_fwd_CATHY, "vtk/100.vtk"))
+        _vtk_dir = os.path.join(path_fwd_CATHY, "vtk")
     else:
-        mesh_CATHY_ref = pv.read(os.path.join("vtk/100.vtk"))
+        _vtk_dir = "vtk"
+    # initial state of the flow simulation (naming depends on the version of the sources)
+    mesh_CATHY_ref = pv.read(os.path.join(_vtk_dir, flow_vtk_filename(_vtk_dir, 0)))
         
     # add attribute converted to CATHY mesh
     # ------------------------------------------------------------------------

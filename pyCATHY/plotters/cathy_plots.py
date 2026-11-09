@@ -47,6 +47,8 @@ from shapely.geometry import Polygon, MultiPoint, Point
 from pyCATHY.cathy_utils import (
     change_x2date,
     convert_time_units,
+    flow_vtk_filename,
+    flow_vtk_glob,
     label_units,
     transform2_time_delta,
 )
@@ -508,6 +510,7 @@ def show_vtk(
 
     # Parse physical attribute + cmap from unit
     # -------------------------------------------------------------------------
+    auto_filename = filename is None
     if filename is None:
         # for surface/subsurface hydrology
         # --------------------------------------------------------------------
@@ -540,6 +543,10 @@ def show_vtk(
             filename = "ER_converted" + str(timeStep) + "_nearIntrp2_pg_msh.vtk"
             my_colormap = "viridis"
             unit = "ER_converted" + str(timeStep) + "_nearIntrp2_pg_msh"
+
+    if auto_filename and unit in ("pressure", "saturation"):
+        # naming of the flow files depends on the version of the sources
+        filename = flow_vtk_filename(path, timeStep)
 
     if unit == 'PERMX':
         my_colormap = None
@@ -710,14 +717,16 @@ def show_vtk_TL(
         path = os.getcwd()
 
     if filename is None:
+        # naming of the flow files depends on the version of the sources
+        _pattern, _first = flow_vtk_glob(path)
         if unit == "pressure":
-            filename = "1*.vtk"
-            filename0 = "100.vtk"
+            filename = _pattern
+            filename0 = _first
             my_colormap = "autumn"
         elif unit == "saturation":
             my_colormap = "Blues"
-            filename = "1*.vtk"
-            filename0 = "100.vtk"
+            filename = _pattern
+            filename0 = _first
         elif "ER" in unit:
             filename = "ER" + str(timeStep) + ".vtk"
             my_colormap = "viridis"

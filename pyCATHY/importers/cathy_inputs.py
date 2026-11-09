@@ -209,6 +209,21 @@ def read_parm(filename, **kwargs):
     flat_lines_s = [item for sublist in lines_s for item in sublist]
     lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
 
+    # Hand edited files may carry leftover numbers glued to a label ('TMAX608400.086400.0'):
+    # Fortran ignores them (list directed read), so keep the label and drop the leftovers.
+    known_labels = sorted(parm_header, key=len, reverse=True)
+
+    def _clean_label(name):
+        if name in parm_header or name.startswith("("):
+            return name
+        for label in known_labels:
+            rest = name[len(label):]
+            if name.startswith(label) and rest and re.fullmatch(r"[0-9.eE+\-]+", rest):
+                return label
+        return name
+
+    lines_s_names = [_clean_label(name) for name in lines_s_names]
+
     ii = 0
     for lname in lines_s_names:
         # print(lname)
@@ -273,6 +288,13 @@ def read_dem_parameters(dem_parametersfile):
     flat_lines_s = [item for sublist in lines_s for item in sublist]
     lines_s_num, lines_s_names = _search_num_values_in_list(flat_lines_s)
 
+    # Keys are case insensitive, and the last label line of newer sources (version
+    # ``withIrr``) reads 'ZRATIO(I) I=1 NSTR' (3 tokens) instead of 'zratio(i),i=1,nstr'.
+    # Collapse it into the single key, otherwise 'NSTR' appears twice and the second
+    # occurrence overwrites the real number of layers with a ZRATIO value.
+    lines_s_names = [name.lower() for name in lines_s_names]
+    if lines_s_names[-3:] == ["zratio(i)", "i=1", "nstr"]:
+        lines_s_names = lines_s_names[:-3] + ["zratio(i),i=1,nstr"]
 
     dict_dem_parm = {}
     ii = 0
