@@ -829,3 +829,12 @@ def flow_vtk_glob(vtk_dir):
     if _has_flow_vtk(vtk_dir):
         return "flow*.vtk", "flow2000.vtk"
     return "1*.vtk", "100.vtk"
+
+
+def transport_vtk_filename(timeStep, kind="celt", base=3000):
+    """
+    Name of the transport vtk file of time step ``timeStep`` (0 = initial state) written by the
+    sources with the new vtk writers: ``celt<3000+k>.vtk`` (per element; ``VTK_TRAN_CELT``).
+    Only written when the transport is on (TRAFLAG=1).
+    """
+    return "%s%04d.vtk" % (kind, base + int(timeStep))

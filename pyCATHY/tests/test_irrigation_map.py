@@ -90,3 +90,25 @@ def test_generated_map_is_readable_by_the_writer_and_reader(tmp_path):
     back = read_irrigation_map(tmp_path / "irr", 3, 3)
     np.testing.assert_allclose(back["rates"], r, rtol=1e-7)
     assert back["times"].tolist() == t.tolist()
+
+
+# ------------------------------------------------- series -> irrigation_map (Salerno construction)
+def test_select_irrigation_records_matches_the_rule_of_the_r_script():
+    from pyCATHY.irrigation import select_irrigation_records
+
+    irr = np.array([0, 0, 0, 5, 6, 0, 0, 0, 7, 0, 0, 0])
+    # first kept; zeros before the first irrigation dropped; irrigated rows kept; ONE zero after an
+    # irrigated row kept, further zeros dropped; last row always kept
+    assert select_irrigation_records(irr).tolist() == [0, 3, 4, 5, 8, 9, 11]
+    assert select_irrigation_records(np.zeros(5)).tolist() == [0, 4]
+
+
+def test_irrigation_map_from_series_uses_landuse_classes_and_monthly_kc():
+    from pyCATHY.irrigation import irrigation_map_from_series
+
+    land = np.array([[1, 3], [4, 2]])
+    kc = {"2306": np.full((2, 2), 0.5), "2307": np.full((2, 2), 1.0)}
+    t, r = irrigation_map_from_series([0.0, 3600.0, 7200.0], [0.0, 2e-7, 1e-7], ["2306", "2306", "2307"], land, kc)
+    assert r.shape == (3, 2, 2) and r[0].sum() == 0
+    np.testing.assert_allclose(r[1], [[0, 1e-7], [1e-7, 0]])      # classes 3 and 4, Kc 0.5
+    np.testing.assert_allclose(r[2], [[0, 1e-7], [1e-7, 0]])      # Kc 1.0 x 1e-7

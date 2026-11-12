@@ -445,6 +445,7 @@ CATHY_H_PARAMS = {
 # parm_fmt              number of entries of the parm dict per line of the parm file
 # cathyH_mode           how CATHY.H is written: "rewrite" or "patch" (see below)
 # dem_nodata_in_dem_file value of the processor `dem` file outside the catchment
+# unnamed_unit_files    {fort.N written by the solver: name in output/}, see CATHY._collect_unit_files
 # mesh_body_files       {output file: file written by the solver elsewhere}, see CATHY._assemble_mesh_files
 #
 # The solver locates its files through ``cathy.fnames``, which belongs to the source
@@ -467,6 +468,7 @@ CATHY_DIR_LAYOUT = {
         "cathyH_mode": "rewrite",
         # output files the mesh body is written to (none: written in output/ directly)
         "mesh_body_files": {},
+        "unnamed_unit_files": {},
         # value of the processor's `dem` file outside the catchment (the wrapper user-facing
         # convention stays -9999 and is translated when the file is written/read)
         "dem_nodata_in_dem_file": -9999,
@@ -491,6 +493,7 @@ CATHY_DIR_LAYOUT = {
             "transp_ic": "ic-transport",
             "transp_atmbc": "atmbc-transport",
             "transp_dirbc": "dirbc-transport",
+            "mesh": "xyz-coords",          # external 3-d mesh input (empty placeholder in the datasets)
         },
         "prepro_file_names": {
             "zone": "zone_map",
@@ -508,6 +511,16 @@ CATHY_DIR_LAYOUT = {
         # the mesh has exactly the active cells; -9999 cells are meshed as elevations).
         # Salerno's own `dem` has 0 outside the catchment and `dtm_13.val` -9999.
         "dem_nodata_in_dem_file": 0,
+        # units written without a file name in cathy.fnames (-> fort.N in the project folder);
+        # moved to output/ after each run: {file written by the solver: name in output/}
+        #   1133 recharge.f  : TIME, SSTORE1, SSTORE2, REC (storage terms of the recharge)
+        #   1178 detout.f    : detailed surface output (one value per surface node and print)
+        #   1200 cathy_main.f: TIME, QTRAN, RWU(1..NR) (root water uptake series)
+        "unnamed_unit_files": {
+            "fort.1133": "recharge_storage",
+            "fort.1178": "detout_1178",
+            "fort.1200": "rwu_series",
+        },
     },
 }
 

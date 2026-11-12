@@ -69,6 +69,25 @@ CATHY_SRC_WITHIRR_URL = "https://github.com/CATHY-Org/CATHY_src_WithIrrigation.g
 CATHY_SRC_WITHIRR_COMMIT = "f172f61a66b5ab566170498358e1228549b63be9"
 
 
+# Upper bounds of CATHY.H that depend on the boundary-condition inputs (number of Dirichlet / Neumann
+# / seepage-face nodes, ...), which the wrapper cannot derive from the DEM: an existing project keeps
+# the value declared by its own CATHY.H when it is larger than the one the wrapper computes.
+CATHYH_BC_BOUNDS = ("NPMAX", "NPMAX_TRA", "NQMAX", "NSFMAX", "NNSFMX")
+
+
+def _existing_numeric_parameters(lines, names=CATHYH_BC_BOUNDS):
+    """{name: int} of the ``NAME=<integer>`` entries of the uncommented PARAMETER statements of a
+    CATHY.H (expressions such as ``NQMAX=NODMAX`` are ignored)."""
+    found = {}
+    for line in lines:
+        if line[:1] in ("C", "c", "*", "!") or "PARAMETER" not in line.upper():
+            continue
+        for name, value in re.findall(r"\b(\w+)\s*=\s*(\d+)\s*(?=[,)])", line):
+            if name.upper() in names:
+                found[name.upper()] = int(value)
+    return found
+
+
 def _patch_fortran_parameters(lines, overrides):
     """
     Return ``lines`` of a Fortran include file (CATHY.H) where, in the uncommented
@@ -462,6 +481,34 @@ class CATHY:
     # --------------------------------------------------------------------------- #
     # version dependent file locations
     # --------------------------------------------------------------------------- #
+    def update_irrigation_map(self, times=None, rates=None, irr_sw=0.8, irr_flag=1, fields=None, t_end=None):
+        """
+        Write the ``irrigation_map`` input of the irrigation module (sources with irrigation).
+
+        Either give ``times``/``rates`` directly (``rates``: (n, nrow, ncol) in m/s, row 0 = north,
+        or (n,) for a homogeneous irrigation), or ``fields``: a list of schedules for
+        :func:`pyCATHY.irrigation.build_irrigation_map` (``mask``, ``start_doy``, ``end_doy``,
+        ``interval_days``, ``start_hour``, ``duration_h``, ``rate_mm_h``); ``t_end`` defaults to TMAX.
+
+        Parameters
+        ----------
+        irr_sw : float
+            Irrigation is applied at a surface node only if its water saturation is below it.
+        irr_flag : int
+            1 activates the module, 0 skips all irrigation input and processing.
+        """
+        from pyCATHY.irrigation import build_irrigation_map, write_irrigation_map
+
+        if fields is not None:
+            nrow, ncol = int(self.hapin["M"]), int(self.hapin["N"])
+            if t_end is None:
+                t_end = float(self.parm["TMAX"])
+            times, rates = build_irrigation_map(fields, (nrow, ncol), t_end)
+        if times is None or rates is None:
+            raise ValueError("give times and rates, or fields")
+        write_irrigation_map(self._input_path("irrigation_map"), times, rates, irr_sw=irr_sw, irr_flag=irr_flag)
+        return times, rates
+
     def _fetch_withIrr_src(self, ref=None):
         """
         Fetch the sources of the version with irrigation from GitHub.
@@ -831,8 +878,13 @@ class CATHY:
             )
 
 
-    def run_processor(self, recompile=True, runProcess=True, verbose=False, **kwargs):
+    def run_processor(self, recompile=True, runProcess=True, verbose=False, read_grid=True, **kwargs):
         """
+        # read_grid : bool, default True
+        #   Read output/grid3d after the run (and rebuild the mesh once if it is missing). Set
+        #   False for sources that do not write grid3d (e.g. the old source of the Venezia case,
+        #   where the nodes are in output/xyz only): the run is done, outputs are left untouched.
+
         Run cathy.exe
 
         1. updates cathy parameters and cathyH based on **kwargs
@@ -1010,7 +1062,10 @@ class CATHY:
 
             if kwargs.get("IPRT1") == 3 and p.returncode == 0:
                 self._assemble_mesh_files()
+            self._collect_unit_files()
 
+            if not read_grid:
+                return
             try:
                 self.grid3d = out_CT.read_grid3d(
                     os.path.join(self.workdir, self.project_name, 'output', 'grid3d')
@@ -1053,6 +1108,20 @@ class CATHY:
             # self.total_computation_time = t1 - t0
 
         return
+
+    def _collect_unit_files(self):
+        """
+        Some sources write series to Fortran units that have no file name in ``cathy.fnames``
+        (``fort.1133``, ``fort.1178``, ``fort.1200`` in the project folder). Move them to
+        ``output/`` under a descriptive name (``unnamed_unit_files`` in CATHY_DIR_LAYOUT) so that the
+        project folder stays clean and every run starts without a stale file.
+        """
+        mapping = VersionConfigManager("cathy", "dir_layout", self.version).get("unnamed_unit_files", {})
+        project_dir = os.path.join(self.workdir, self.project_name)
+        for src_name, dst_name in mapping.items():
+            src = os.path.join(project_dir, src_name)
+            if os.path.exists(src):
+                os.replace(src, os.path.join(project_dir, "output", dst_name))
 
     def _assemble_mesh_files(self):
         """
@@ -1102,6 +1171,13 @@ class CATHY:
         # corner nodes of valid cells, so the full (nrow+1)*(ncol+1) grid
         # over-counts. Count the nodes touched by at least one valid cell.
         dem = getattr(self, "DEM", None)
+        if dem is None:
+            # project loaded from disk: use its own dem file (nodata convention of the source
+            # is translated to -9999 by read_inputs)
+            try:
+                dem = self.read_inputs("dem")[0]
+            except Exception:
+                dem = None
         if dem is not None and np.shape(dem) == (nrow, ncol):
             valid = np.asarray(dem) != -9999
             if not valid.all():
@@ -1414,12 +1490,21 @@ class CATHY:
                 "NRMAX", "MAXPRT", "MAXVP", "N1MAX",
             ]
             overrides = {k: self.cathyH[k] for k in derived if k in self.cathyH}
+            # bounds only: never go below what the case's own CATHY.H declares (e.g. MAXVEG of a
+            # project whose soil has several vegetation classes: smaller makes the solver stop)
+            for _name, _value in _existing_numeric_parameters(Lines0_109, names=derived).items():
+                if _name in overrides and overrides[_name] < _value:
+                    overrides[_name] = _value
             overrides.update({k: v for k, v in kwargs.items() if k in self.cathyH})
             with open(
                 os.path.join(self.workdir, self.project_name, "src", "CATHY.H"), "w+"
             ) as CATHYH_file:
                 CATHYH_file.writelines(_patch_fortran_parameters(Lines0_109, overrides))
             return
+
+        for _name, _value in _existing_numeric_parameters(Lines0_109).items():
+            if _name in self.cathyH and self.cathyH[_name] < _value:
+                self.cathyH[_name] = _value
 
         with open(
             os.path.join(self.workdir,
@@ -2101,7 +2186,7 @@ class CATHY:
         # check if consistency between DELTAT, DTMIN, and DTMAX
         # ------------------------------------------------------------
 
-        if min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])) <= 0:
+        if len(np.atleast_1d(self.parm["(TIMPRT(I),I=1,NPRT)"])) > 1 and min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])) <= 0:
             raise ValueError("Vtk time steps should be monotonically increasing")
 
         if self.parm["DTMIN"] > min(np.diff(self.parm["(TIMPRT(I),I=1,NPRT)"])

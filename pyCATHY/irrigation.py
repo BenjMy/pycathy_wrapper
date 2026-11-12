@@ -220,3 +220,59 @@ def cell_raster_to_node_rates(rates, dx, dy, nodata=(0, -9999), dem=None):
         weights[index[r + 1, c], k] += cell_area / 6.0      # SW
     node_rates = rates.reshape(nt, nrow * ncol) @ weights.T / area
     return node_rates[0] if single else node_rates
+
+
+# --------------------------------------------------------------------------- #
+# irrigation_map from an hourly irrigation series + land use + monthly crop coefficient maps
+# (the construction used for the Salerno case, ported from its R script)
+# --------------------------------------------------------------------------- #
+def select_irrigation_records(irr):
+    """
+    Indices of the rows of an hourly irrigation series that are written to the irrigation_map.
+
+    Same rule as the R script of the Salerno case: the first and the last rows are kept; between
+    them a row with zero irrigation is dropped when the row before it is also zero (so an
+    irrigated row is followed by one zero row that switches the irrigation off, and long dry
+    periods collapse to a single zero record).
+    """
+    irr = np.asarray(irr, dtype=float)
+    n = len(irr)
+    keep = [0]
+    zero_before = True
+    for i in range(1, n - 1):
+        if irr[i] == 0:
+            if zero_before:
+                continue                      # dropped
+            zero_before = True
+        else:
+            zero_before = False
+        keep.append(i)
+    if n > 1:
+        keep.append(n - 1)
+    return np.array(keep, dtype=int)
+
+
+def irrigation_map_from_series(times, irr_rate, month_keys, landuse, kc_by_month, irrigated_classes=(3, 4)):
+    """
+    Build (times, rates) of an ``irrigation_map`` from an hourly series.
+
+    Parameters
+    ----------
+    times : 1d array [s], irrigation_map times (first one 0)
+    irr_rate : 1d array [m/s], irrigation rate of each record (before the crop coefficient)
+    month_keys : sequence of str, key of the Kc map valid for each record (e.g. "2306")
+    landuse : 2d array (nrow, ncol) of land-use classes (row 0 = north)
+    kc_by_month : dict key -> 2d array (nrow, ncol) of crop coefficients (same orientation)
+    irrigated_classes : land-use classes that are irrigated
+
+    Returns
+    -------
+    times (n,), rates (n, nrow, ncol) [m/s]: ``Kc * irr_rate`` on irrigated cells, 0 elsewhere.
+    """
+    landuse = np.asarray(landuse)
+    irrigated = np.isin(landuse, irrigated_classes)
+    rates = np.zeros((len(times),) + landuse.shape)
+    for i, (rate, key) in enumerate(zip(irr_rate, month_keys)):
+        if rate != 0:
+            rates[i][irrigated] = np.asarray(kc_by_month[key])[irrigated] * rate
+    return np.asarray(times, dtype=float), rates

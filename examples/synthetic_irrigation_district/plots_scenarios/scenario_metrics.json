@@ -1,0 +1,172 @@
+{
+ "S0_base": {
+  "classic": {
+   "rz_mean_irrigated": 0.413754943759127,
+   "stress_days_irrigated": 40.0,
+   "deep_gain_mm_irrigated": 32.72444337583306,
+   "rz_mean_rainfed": 0.31726140579775775,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 122.0625,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 157.6502809882429
+  },
+  "module": {
+   "rz_mean_irrigated": 0.4207010417144181,
+   "stress_days_irrigated": 38.064516129032256,
+   "deep_gain_mm_irrigated": 40.80825732916704,
+   "rz_mean_rainfed": 0.3173196174910011,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 132.72521583406348,
+   "irr_unused_mm": 0.8646980565615467,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 166.08516796926997
+  }
+ },
+ "S1_root0.3": {
+  "classic": {
+   "rz_mean_irrigated": 0.41352500649798835,
+   "stress_days_irrigated": 38.064516129032256,
+   "deep_gain_mm_irrigated": 48.26544405256686,
+   "rz_mean_rainfed": 0.31279531393469434,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 122.0625,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 156.11821012763758
+  },
+  "module": {
+   "rz_mean_irrigated": 0.4200637934771812,
+   "stress_days_irrigated": 37.41935483870967,
+   "deep_gain_mm_irrigated": 55.17906275454794,
+   "rz_mean_rainfed": 0.3127780596748883,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 131.35092033097496,
+   "irr_unused_mm": 0.7678281100406837,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 162.9559815642234
+  }
+ },
+ "S2_root1.0": {
+  "classic": {
+   "rz_mean_irrigated": 0.4127065371440268,
+   "stress_days_irrigated": 45.80645161290323,
+   "deep_gain_mm_irrigated": 19.555776793800753,
+   "rz_mean_rainfed": 0.3221607872233781,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 122.0625,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 161.2436196371406
+  },
+  "module": {
+   "rz_mean_irrigated": 0.41709103278751686,
+   "stress_days_irrigated": 43.87096774193549,
+   "deep_gain_mm_irrigated": 28.210923932262915,
+   "rz_mean_rainfed": 0.32218909207304786,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 133.2158197618137,
+   "irr_unused_mm": 0.9797791721707224,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 168.61931252569525
+  }
+ },
+ "S3_night": {
+  "classic": {
+   "rz_mean_irrigated": 0.4130613548508481,
+   "stress_days_irrigated": 38.70967741935484,
+   "deep_gain_mm_irrigated": 31.66278448870452,
+   "rz_mean_rainfed": 0.3172583577738476,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 122.0625,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 156.04029419503445
+  },
+  "module": {
+   "rz_mean_irrigated": 0.4216355720981109,
+   "stress_days_irrigated": 36.12903225806452,
+   "deep_gain_mm_irrigated": 39.59104250904681,
+   "rz_mean_rainfed": 0.31726597185244676,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 132.8943404757291,
+   "irr_unused_mm": 0.88667731313809,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 165.44445284244924
+  }
+ },
+ "S4_strips": {
+  "classic": {
+   "rz_mean_irrigated": 0.43826515545081646,
+   "stress_days_irrigated": 33.87096774193549,
+   "deep_gain_mm_irrigated": 50.41896706339833,
+   "rz_mean_rainfed": 0.329631965925284,
+   "irr_nominal_mm": 158.59375,
+   "irr_applied_mm": 158.59375,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 189.50116708359468
+  },
+  "module": {
+   "rz_mean_irrigated": 0.4443433273332963,
+   "stress_days_irrigated": 33.87096774193549,
+   "deep_gain_mm_irrigated": 62.99778884689622,
+   "rz_mean_rainfed": 0.33091071621636237,
+   "irr_nominal_mm": 158.59375,
+   "irr_applied_mm": 174.42043376393326,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 200.39042291988417
+  }
+ },
+ "S5_checker": {
+  "classic": {
+   "rz_mean_irrigated": 0.43045924830338317,
+   "stress_days_irrigated": 56.12903225806451,
+   "deep_gain_mm_irrigated": 43.10838148276663,
+   "rz_mean_rainfed": 0.3565959587506908,
+   "irr_nominal_mm": 112.5,
+   "irr_applied_mm": 112.5,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 150.01991597756836
+  },
+  "module": {
+   "rz_mean_irrigated": 0.44320294424805323,
+   "stress_days_irrigated": 38.70967741935484,
+   "deep_gain_mm_irrigated": 63.919307474320284,
+   "rz_mean_rainfed": 0.3650021027503796,
+   "irr_nominal_mm": 112.5,
+   "irr_applied_mm": 126.58942082031248,
+   "irr_unused_mm": 0.0,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 167.31731604772304
+  }
+ },
+ "S6_thresh0.5": {
+  "module": {
+   "rz_mean_irrigated": 0.3293355771143321,
+   "stress_days_irrigated": 60.0,
+   "deep_gain_mm_irrigated": -6.503091570966291,
+   "rz_mean_rainfed": 0.3172804670117892,
+   "irr_nominal_mm": 122.0625,
+   "irr_applied_mm": 48.8909329360573,
+   "irr_unused_mm": 82.41885609167706,
+   "runoff_mm": 0.0,
+   "recharge_mm": 0.0,
+   "net_flux_mm": 80.16649619128687
+  }
+ }
+}

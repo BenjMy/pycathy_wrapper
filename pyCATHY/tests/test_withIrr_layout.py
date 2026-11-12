@@ -7,6 +7,7 @@ Fixtures in data/withIrr/ are copies of files of the CATHY_src_WithIrrigation da
 import os
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
 from pyCATHY.cathy_tools import CATHY, _patch_fortran_parameters
@@ -289,3 +290,99 @@ def test_without_fnames_the_table_of_the_version_is_used(tmp_path):
     s = stub("withIrr")
     s.workdir, s.project_name = str(tmp_path), ""
     assert rel(s, CATHY._input_path(s, "atmbc")) == "input/atmbc-flow"
+
+
+# ----------------------------------------------------- T-13: mesh alias, transport vtk names
+def test_mesh_input_alias_follows_the_new_sources(tmp_path):
+    s = stub("withIrr")
+    s.workdir, s.project_name = str(tmp_path), ""
+    assert rel(s, CATHY._input_path(s, "mesh")) == "input/xyz-coords"
+    d = stub("1.0.0")
+    d.workdir, d.project_name = str(tmp_path), ""
+    assert rel(d, CATHY._input_path(d, "mesh")) == "input/mesh"
+
+
+def test_transport_vtk_names():
+    from pyCATHY.cathy_utils import transport_vtk_filename
+
+    assert transport_vtk_filename(0) == "celt3000.vtk"
+    assert transport_vtk_filename(12) == "celt3012.vtk"
+
+
+# ------------------------------------------------- T-17: unnamed fortran units collected in output/
+def _unit_stub(tmp_path, version):
+    s = stub(version)
+    s.workdir, s.project_name, s.version = str(tmp_path), "", version
+    (tmp_path / "output").mkdir(exist_ok=True)
+    return s
+
+
+def test_collect_unit_files_moves_fort_files_into_output(tmp_path):
+    s = _unit_stub(tmp_path, "withIrr")
+    for n, txt in (("fort.1133", "a"), ("fort.1178", "b"), ("fort.1200", "c")):
+        (tmp_path / n).write_text(txt)
+    (tmp_path / "fort.9999").write_text("other")                      # not ours: untouched
+    (tmp_path / "output" / "rwu_series").write_text("stale")
+    CATHY._collect_unit_files(s)
+    assert (tmp_path / "output" / "recharge_storage").read_text() == "a"
+    assert (tmp_path / "output" / "detout_1178").read_text() == "b"
+    assert (tmp_path / "output" / "rwu_series").read_text() == "c"    # stale file replaced
+    assert not (tmp_path / "fort.1133").exists() and (tmp_path / "fort.9999").exists()
+
+
+def test_collect_unit_files_is_a_noop_for_the_default_version(tmp_path):
+    s = _unit_stub(tmp_path, "1.0.0")
+    (tmp_path / "fort.1133").write_text("a")
+    CATHY._collect_unit_files(s)
+    assert (tmp_path / "fort.1133").exists()
+
+
+# --------------------------------------------------------------- update_irrigation_map
+def _irr_stub(tmp_path):
+    s = stub("withIrr")
+    s.workdir, s.project_name, s.version = str(tmp_path), "", "withIrr"
+    s.hapin = {"M": 4, "N": 5}
+    s.parm = {"TMAX": 3 * 86400.0}
+    s._input_path = lambda name: CATHY._input_path(s, name)
+    (tmp_path / "other-dem").mkdir()
+    return s
+
+
+def test_update_irrigation_map_from_fields_writes_the_file_where_the_solver_reads_it(tmp_path):
+    from pyCATHY.irrigation import read_irrigation_map
+
+    s = _irr_stub(tmp_path)
+    mask = np.zeros((4, 5), bool); mask[1:3, 1:4] = True
+    fld = dict(mask=mask, start_doy=1, end_doy=2, interval_days=1, start_hour=6, duration_h=2, rate_mm_h=3.6)
+    times, rates = CATHY.update_irrigation_map(s, fields=[fld], irr_sw=0.7)
+    m = read_irrigation_map(tmp_path / "other-dem" / "irrigation_map", 4, 5)
+    assert (m["irr_flag"], m["irr_sw"], m["irr_hs"]) == (1, 0.7, 0)
+    assert m["times"].tolist() == times.tolist() and m["rates"].shape == (len(times), 4, 5)
+    np.testing.assert_allclose(m["rates"].max(), 1e-6, rtol=1e-7)
+
+
+def test_update_irrigation_map_needs_data(tmp_path):
+    with pytest.raises(ValueError):
+        CATHY.update_irrigation_map(_irr_stub(tmp_path))
+
+
+# ------------------------------------- bounds of CATHY.H that depend on the BC inputs of the case
+def test_existing_bc_bounds_are_read_from_a_cathy_h():
+    from pyCATHY.cathy_tools import _existing_numeric_parameters
+
+    lines = [
+        "      PARAMETER (NPMAX=1,NPMAX_TRA=1,NQMAX=154,NSFMAX=1)\n",
+        "cxcx  PARAMETER (NQMAX=999)\n",                       # commented: ignored
+        "      PARAMETER (NODMAX=(ROWMAX/DEMRES+1)*(COLMAX/DEMRES+1))\n",
+        "      PARAMETER (NFACEMAX=2000000)\n",                 # not a BC bound: ignored
+        "      PARAMETER (NSFMAX=NQMAX)\n",                     # expression: ignored
+    ]
+    assert _existing_numeric_parameters(lines) == {"NPMAX": 1, "NPMAX_TRA": 1, "NQMAX": 154, "NSFMAX": 1}
+
+
+def test_existing_bounds_for_derived_keys_can_be_read():
+    from pyCATHY.cathy_tools import _existing_numeric_parameters
+
+    lines = ["      PARAMETER (MAXZON=1,MAXTRM=65000,MAXIT=30,MAXVEG=9)\n", "      PARAMETER (NRMAX=1,MAXPRT=50,MAXVP=40,MAXQOUT=1)\n"]
+    got = _existing_numeric_parameters(lines, names=("MAXVEG", "MAXPRT", "MAXVP", "MAXTRM"))
+    assert got == {"MAXVEG": 9, "MAXPRT": 50, "MAXVP": 40, "MAXTRM": 65000}
