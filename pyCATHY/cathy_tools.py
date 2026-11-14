@@ -51,6 +51,7 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.cathy_utils import dictObs_2pd
+from pyCATHY.mesh_properties import set_mesh_property
 from pyCATHY.config_manager import VersionConfigManager
 
 # Fortran sources of the CATHY processor, fetched on first use of a project.
@@ -141,6 +142,7 @@ def make_console(verbose):
 
 
 # -----------------------------------------------------------------------------
+
 class CATHY:
     """
     Main CATHY object.
@@ -4699,23 +4701,27 @@ class CATHY:
         #  https://docs.pyvista.org/examples/00-load/create-structured-surface.html
         pass
 
-    def update_mesh_vtk(self, prop="", prop_value=[], replaceVTK=True, **kwargs):
+    def update_mesh_vtk(self, prop="", prop_value=[], replaceVTK=True,
+                        location="auto", **kwargs):
         """
-        https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data
+        Write a property onto the mesh and (optionally) into the project .vtk.
+
+        Values are stored as real ``point_data`` (one per node) or
+        ``cell_data`` (one per cell) so they can be coloured/sliced in
+        ParaView; previously everything went to ``field_data``. A scalar is
+        broadcast to every node. See ``pyCATHY.mesh_properties``.
 
         Parameters
         ----------
-        prop : TYPE, optional
-            DESCRIPTION. The default is ''.
-        prop_value : TYPE, optional
-            DESCRIPTION. The default is [].
-
-        Returns
-        -------
-        None.
-
+        prop : str
+            Property name.
+        prop_value : float or array-like
+            Scalar, or one value per node / per cell.
+        location : {'auto', 'point', 'cell', 'field'}
+            'field' keeps the legacy unchecked ``field_data`` behaviour.
         """
-        self.mesh_pv_attributes.add_field_data(prop_value, prop)
+        set_mesh_property(self.mesh_pv_attributes, prop, prop_value,
+                          location=location)
 
         if replaceVTK:
             self.mesh_pv_attributes.save(
@@ -4883,11 +4889,7 @@ class CATHY:
                         + str(dp)
                         + " ==> assumming it homogeneous"
                     )
-                self.update_mesh_vtk(
-                    prop=dp,
-                    prop_value=np.ones(len(self.mesh_pv_attributes.points))
-                    * dict_props[dp],
-                )
+                self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
             else:
                 dict_props[dp] = np.asarray(dict_props[dp])
                 if len(dict_props[dp]) != len(self.mesh_pv_attributes.points):
