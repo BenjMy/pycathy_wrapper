@@ -83,3 +83,149 @@ def property_summary(mesh) -> dict:
             if a.ndim == 1 and a.dtype.kind in "fiu" and a.size:
                 out[k] = (loc, float(a.min()), float(a.max()))
     return out
+
+
+# ─────────────────────────────────────────────────────────────
+# Geometry helpers: columns, depth below surface, layer index
+# ─────────────────────────────────────────────────────────────
+def node_geometry(mesh, decimals: int = 3):
+    """
+    Per-node ``(column_id, depth, level)`` for a terrain-following layered mesh.
+
+    * ``column_id`` : nodes sharing (x, y) (rounded to ``decimals``) form a column
+    * ``depth``     : surface elevation of the column (max z) minus node z (m, >= 0)
+    * ``level``     : 0 at the surface, increasing downwards
+    """
+    pts = np.asarray(mesh.points)
+    xy = np.round(pts[:, :2], decimals)
+    _, col = np.unique(xy, axis=0, return_inverse=True)
+    col = np.asarray(col).ravel()
+    ztop = np.full(col.max() + 1, -np.inf)
+    np.maximum.at(ztop, col, pts[:, 2])
+    depth = ztop[col] - pts[:, 2]
+    level = np.zeros(len(pts), dtype=int)
+    for c in range(col.max() + 1):
+        idx = np.where(col == c)[0]
+        level[idx[np.argsort(depth[idx])]] = np.arange(len(idx))
+    return col, depth, level
+
+
+def surface_to_nodes(mesh, surface_2d, x0, y0, dx, dy, origin: str = "lower"):
+    """
+    Look up a 2-D raster ``surface_2d`` (Ny, Nx) at every node's (x, y).
+
+    ``origin='lower'``: row 0 is at ``y0`` (same convention as
+    ``meshtools.build_mesh_dataset``); ``'upper'``: row 0 is the top row
+    (``y0`` is then the lower edge of the last row, as for most GeoTIFFs).
+    Indices are clipped to the raster, so nodes on the outer edge take the
+    nearest cell.
+    """
+    if origin not in ("lower", "upper"):
+        raise ValueError("origin must be 'lower' or 'upper'")
+    a = np.asarray(surface_2d)
+    ny, nx = a.shape
+    pts = np.asarray(mesh.points)
+    ix = np.clip(((pts[:, 0] - x0) / dx).astype(int), 0, nx - 1)
+    iy = np.clip(((pts[:, 1] - y0) / dy).astype(int), 0, ny - 1)
+    if origin == "upper":
+        iy = ny - 1 - iy
+    return a[iy, ix]
+
+
+# ─────────────────────────────────────────────────────────────
+# Root properties
+# ─────────────────────────────────────────────────────────────
+def feddes_root_profile(depth, zroot, pz):
+    """
+    CATHY root-density profile (see ``update_soil`` docs):
+    ``beta = (1 - d/ZROOT) * exp(-PZ * d / ZROOT)`` for ``d < ZROOT`` else 0.
+    ``depth``, ``zroot`` and ``pz`` are per-node arrays; ``zroot <= 0`` gives 0.
+    """
+    depth, zroot, pz = (np.asarray(a, dtype=float) for a in (depth, zroot, pz))
+    ratio = np.divide(depth, zroot, out=np.full_like(depth, np.inf), where=zroot > 0)
+    r = np.minimum(ratio, 1.0)          # beta is 0 at r=1, so this is exact
+    beta = (1.0 - r) * np.exp(-pz * r)
+    return np.where(ratio < 1.0, beta, 0.0)
+
+
+def add_root_properties(mesh, veg_class_2d, FP, raster, origin="lower",
+                        zroot_col="ZROOT", pz_col="PZ"):
+    """
+    Write ``veg_class`` (1-based), ``ZROOT`` (m), ``root_zone`` (0/1) and
+    ``root_beta`` (-) on the nodes.
+
+    ``FP`` is a table indexed by vegetation class (1..nveg) with ``ZROOT``
+    and ``PZ`` columns (the Feddes table). ``raster`` is ``(x0, y0, dx, dy)``.
+    Classes absent from ``FP`` raise instead of silently getting 0.
+    """
+    cls = surface_to_nodes(mesh, veg_class_2d, *raster, origin=origin).astype(int)
+    missing = sorted(set(np.unique(cls)) - set(int(i) for i in FP.index))
+    if missing:
+        raise ValueError(f"vegetation classes {missing} are not in the Feddes table "
+                         f"(has {list(FP.index)})")
+    zr = np.asarray(FP[zroot_col].astype(float).reindex(cls).values)
+    pz = np.asarray(FP[pz_col].astype(float).reindex(cls).values)
+    _, depth, _ = node_geometry(mesh)
+    set_mesh_property(mesh, "veg_class", cls.astype(float), "point")
+    set_mesh_property(mesh, "ZROOT", zr, "point")
+    set_mesh_property(mesh, "root_zone", (depth < zr).astype(float), "point")
+    set_mesh_property(mesh, "root_beta", feddes_root_profile(depth, zr, pz), "point")
+
+
+# ─────────────────────────────────────────────────────────────
+# Soil properties
+# ─────────────────────────────────────────────────────────────
+def add_soil_properties(mesh, zone_2d, SPP, raster, nstr, origin="lower",
+                        columns=None):
+    """
+    Write soil hydraulic properties (e.g. PERMX, POROS) on the nodes.
+
+    ``SPP`` is the table indexed by ``(zone, layer)`` (both 1-based) that
+    ``update_soil`` builds (``simu.soil_SPP["SPP_map"]``). A node at level
+    ``k`` takes the properties of layer ``min(k, nstr-1) + 1``, i.e. the layer
+    just below it (the bottom nodes take the last layer).
+    """
+    zone = surface_to_nodes(mesh, zone_2d, *raster, origin=origin).astype(int)
+    _, _, level = node_geometry(mesh)
+    layer = np.minimum(level, nstr - 1) + 1
+    cols = list(columns) if columns is not None else [
+        c for c in SPP.columns if c not in ("layer", "zone")]
+    keys = list(zip(zone.tolist(), layer.tolist()))
+    missing = sorted(set(keys) - set(SPP.index))
+    if missing:
+        raise ValueError(f"(zone, layer) pairs {missing[:5]} not in the SPP table")
+    for c in cols:
+        vals = SPP[c].astype(float).reindex(keys).values
+        set_mesh_property(mesh, c, vals, "point")
+    set_mesh_property(mesh, "soil_zone", zone.astype(float), "point")
+    set_mesh_property(mesh, "soil_layer", layer.astype(float), "point")
+
+
+# ─────────────────────────────────────────────────────────────
+# Transfer to another mesh (e.g. ERT)
+# ─────────────────────────────────────────────────────────────
+def interpolate_to_points(mesh, names, points, method: str = "linear"):
+    """
+    Sample node properties ``names`` at ``points`` (n, 3), e.g. ERT cell centres.
+
+    ``method='linear'`` uses scipy's Delaunay interpolation and falls back to
+    nearest node outside the convex hull (no NaN); ``'nearest'`` is a pure
+    nearest-node lookup (use it for class-like properties: veg_class,
+    soil_zone, soil_layer).
+    """
+    from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
+
+    if method not in ("linear", "nearest"):
+        raise ValueError("method must be 'linear' or 'nearest'")
+    src = np.asarray(mesh.points)
+    pts = np.asarray(points, dtype=float)
+    out = {}
+    for n in ([names] if isinstance(names, str) else names):
+        vals = np.asarray(mesh.point_data[n], dtype=float)
+        near = NearestNDInterpolator(src, vals)(pts)
+        if method == "nearest":
+            out[n] = near
+        else:
+            lin = LinearNDInterpolator(src, vals)(pts)
+            out[n] = np.where(np.isnan(lin), near, lin)
+    return out

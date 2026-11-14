@@ -51,7 +51,11 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.cathy_utils import dictObs_2pd
-from pyCATHY.mesh_properties import set_mesh_property
+from pyCATHY.mesh_properties import (
+    add_root_properties,
+    add_soil_properties,
+    set_mesh_property,
+)
 from pyCATHY.config_manager import VersionConfigManager
 
 # Fortran sources of the CATHY processor, fetched on first use of a project.
@@ -4720,8 +4724,9 @@ class CATHY:
         location : {'auto', 'point', 'cell', 'field'}
             'field' keeps the legacy unchecked ``field_data`` behaviour.
         """
-        set_mesh_property(self.mesh_pv_attributes, prop, prop_value,
-                          location=location)
+        if not kwargs.get("_save_only", False):
+            set_mesh_property(self.mesh_pv_attributes, prop, prop_value,
+                              location=location)
 
         if replaceVTK:
             self.mesh_pv_attributes.save(
@@ -4902,6 +4907,33 @@ class CATHY:
                     )
                 self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
         pass
+
+    def map_soil_root_to_mesh(self, replaceVTK=True):
+        """
+        Write soil (SPP table: PERMX, POROS, ...) and root properties
+        (veg_class, ZROOT, root_zone, root_beta) onto the mesh nodes, derived
+        from the same tables CATHY reads (``soil_SPP["SPP_map"]``,
+        ``soil_FP["FP"]``, ``veg_map``, ``zone``), then save the project .vtk.
+        See ``pyCATHY.mesh_properties``.
+        """
+        for attr in ("veg_map", "zone", "soil_SPP", "soil_FP", "hapin", "dem_parameters"):
+            if not hasattr(self, attr):
+                raise RuntimeError(
+                    f"map_soil_root_to_mesh needs `{attr}`: call update_soil() "
+                    "(and update_veg_map/update_zone) first."
+                )
+        if self._mesh_is_stale():
+            self.create_mesh_vtk()
+        raster = (self.hapin["xllcorner"], self.hapin["yllcorner"],
+                  self.hapin["delta_x"], self.hapin["delta_y"])
+        add_root_properties(self.mesh_pv_attributes, self.veg_map,
+                            self.soil_FP["FP"], raster)
+        add_soil_properties(self.mesh_pv_attributes, self.zone,
+                            self.soil_SPP["SPP_map"], raster,
+                            nstr=self.dem_parameters["nstr"])
+        if replaceVTK:
+            self.update_mesh_vtk(prop="", prop_value=None, replaceVTK=True,
+                                 _save_only=True)
 
     def map_prop_veg(self, dict_props):
         if hasattr(self, "veg_map") == False:

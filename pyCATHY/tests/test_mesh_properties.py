@@ -46,3 +46,75 @@ def test_field_legacy_and_summary(tmp_path):
     f = tmp_path / "m.vtk"; m.save(f, binary=False)
     back = pv.read(f)
     assert np.allclose(back.point_data["zroot"], m.point_data["zroot"])
+
+
+# ── soil / root mapping ──────────────────────────────────────
+import pandas as pd
+
+from pyCATHY.mesh_properties import (add_root_properties, add_soil_properties,
+                                     feddes_root_profile, interpolate_to_points,
+                                     node_geometry, surface_to_nodes)
+
+
+def _layered(nx=3, ny=2, nz=4, dz=0.5):
+    """Terrain-following mesh: surface z = 10 + x*0.1, nz layers, dz thick."""
+    xs, ys = np.arange(nx + 1) * 1.0, np.arange(ny + 1) * 1.0
+    X, Y, L = np.meshgrid(xs, ys, np.arange(nz + 1), indexing="ij")
+    Z = 10 + 0.1 * X - L * dz
+    return pv.StructuredGrid(X, Y, Z).cast_to_unstructured_grid()
+
+
+def test_node_geometry():
+    m = _layered()
+    col, depth, level = node_geometry(m)
+    assert col.max() + 1 == 4 * 3 and depth.min() == 0 and np.isclose(depth.max(), 2.0)
+    assert set(level) == {0, 1, 2, 3, 4} and np.allclose(depth, level * 0.5)  # slope-independent
+
+
+def test_surface_to_nodes_origin():
+    m = _layered()
+    a = np.array([[1, 2, 3], [4, 5, 6]])                  # (Ny=2, Nx=3)
+    lo = surface_to_nodes(m, a, 0.0, 0.0, 1.0, 1.0, "lower")
+    up = surface_to_nodes(m, a, 0.0, 0.0, 1.0, 1.0, "upper")
+    p = m.points
+    i = np.where((p[:, 0] == 2) & (p[:, 1] == 0))[0][0]   # cell (iy=0, ix=2)
+    assert lo[i] == 3 and up[i] == 6
+    with pytest.raises(ValueError):
+        surface_to_nodes(m, a, 0, 0, 1, 1, "middle")
+
+
+def test_feddes_profile():
+    b = feddes_root_profile([0.0, 0.5, 1.0, 2.0], [1.0] * 4, [1.0] * 4)
+    assert np.isclose(b[0], 1.0) and 0 < b[1] < 1 and b[2] == 0 and b[3] == 0
+    assert feddes_root_profile([0.1], [0.0], [1.0])[0] == 0.0
+
+
+def test_add_root_and_soil_and_interp():
+    m = _layered()
+    veg = np.array([[1, 1, 2], [1, 1, 2]])
+    FP = pd.DataFrame({"ZROOT": [0.4, 1.2], "PZ": [4.0, 4.0]}, index=[1, 2])
+    add_root_properties(m, veg, FP, (0.0, 0.0, 1.0, 1.0))
+    z = m.point_data["ZROOT"]
+    assert set(np.unique(z)) == {0.4, 1.2}
+    d = node_geometry(m)[1]
+    assert np.all((m.point_data["root_zone"] == 1) == (d < z))
+    assert np.all(m.point_data["root_beta"][d >= z] == 0)
+    with pytest.raises(ValueError):
+        add_root_properties(m, veg + 5, FP, (0.0, 0.0, 1.0, 1.0))
+
+    idx = pd.MultiIndex.from_product([[1, 2], [1, 2, 3, 4]], names=["zone", "layer"])
+    SPP = pd.DataFrame({"PERMX": np.arange(1, 9) * 1e-6}, index=idx)
+    zone = np.array([[1, 1, 2], [1, 1, 2]])
+    add_soil_properties(m, zone, SPP, (0.0, 0.0, 1.0, 1.0), nstr=4)
+    layer = m.point_data["soil_layer"]
+    assert layer.min() == 1 and layer.max() == 4          # bottom nodes -> last layer
+    k = np.where((m.points[:, 0] == 3) & (m.points[:, 1] == 0))[0]
+    assert np.allclose(sorted(m.point_data["PERMX"][k]), [5e-6, 6e-6, 7e-6, 8e-6, 8e-6])
+
+    pts = m.points[:5] + 0.01
+    lin = interpolate_to_points(m, ["ZROOT", "PERMX"], pts)
+    assert np.all(np.isfinite(lin["ZROOT"])) and np.all(np.isfinite(lin["PERMX"]))
+    far = interpolate_to_points(m, "veg_class", [[100.0, 100.0, 0.0]], "nearest")
+    assert far["veg_class"][0] in (1.0, 2.0)
+    with pytest.raises(ValueError):
+        interpolate_to_points(m, "ZROOT", pts, "cubic")
