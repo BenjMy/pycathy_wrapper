@@ -4908,13 +4908,19 @@ class CATHY:
                 self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
         pass
 
-    def map_soil_root_to_mesh(self, replaceVTK=True):
+    def map_soil_root_to_mesh(self, replaceVTK=True, origin="upper"):
         """
         Write soil (SPP table: PERMX, POROS, ...) and root properties
         (veg_class, ZROOT, root_zone, root_beta) onto the mesh nodes, derived
         from the same tables CATHY reads (``soil_SPP["SPP_map"]``,
         ``soil_FP["FP"]``, ``veg_map``, ``zone``), then save the project .vtk.
         See ``pyCATHY.mesh_properties``.
+
+        ``origin`` is the row order of the 2-D maps ``veg_map`` / ``zone``:
+        ``"upper"`` (default) = CATHY/ASCII-grid files, first row in the north;
+        ``"lower"`` = first row at ``yllcorner`` (as ``meshtools.build_mesh_dataset``
+        assumes for ``raster_DEM_masked``). Check on a real run that
+        ``root_zone`` matches the vegetation map plot.
         """
         for attr in ("veg_map", "zone", "soil_SPP", "soil_FP", "hapin", "dem_parameters"):
             if not hasattr(self, attr):
@@ -4927,10 +4933,10 @@ class CATHY:
         raster = (self.hapin["xllcorner"], self.hapin["yllcorner"],
                   self.hapin["delta_x"], self.hapin["delta_y"])
         add_root_properties(self.mesh_pv_attributes, self.veg_map,
-                            self.soil_FP["FP"], raster)
+                            self.soil_FP["FP"], raster, origin=origin)
         add_soil_properties(self.mesh_pv_attributes, self.zone,
                             self.soil_SPP["SPP_map"], raster,
-                            nstr=self.dem_parameters["nstr"])
+                            nstr=self.dem_parameters["nstr"], origin=origin)
         if replaceVTK:
             self.update_mesh_vtk(prop="", prop_value=None, replaceVTK=True,
                                  _save_only=True)
