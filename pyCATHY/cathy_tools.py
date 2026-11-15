@@ -54,6 +54,7 @@ from pyCATHY.cathy_utils import dictObs_2pd
 from pyCATHY.mesh_properties import (
     add_root_properties,
     add_soil_properties,
+    mesh_to_xarray,
     set_mesh_property,
 )
 from pyCATHY.config_manager import VersionConfigManager
@@ -4907,6 +4908,13 @@ class CATHY:
                     )
                 self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
         pass
+
+    def mesh_as_xarray(self, names=None):
+        """``(layer, y, x)`` xarray view of the mesh node properties
+        (see ``pyCATHY.mesh_properties.mesh_to_xarray``)."""
+        if self._mesh_is_stale():
+            self.create_mesh_vtk()
+        return mesh_to_xarray(self.mesh_pv_attributes, names=names)
 
     def map_soil_root_to_mesh(self, replaceVTK=True, origin="upper"):
         """
