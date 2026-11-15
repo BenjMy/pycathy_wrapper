@@ -118,3 +118,29 @@ def test_add_root_and_soil_and_interp():
     assert far["veg_class"][0] in (1.0, 2.0)
     with pytest.raises(ValueError):
         interpolate_to_points(m, "ZROOT", pts, "cubic")
+
+
+# ── xarray (layer, y, x) view ────────────────────────────────
+from pyCATHY.mesh_properties import mesh_to_xarray, xarray_to_mesh
+
+
+def test_xarray_round_trip():
+    m = _layered(nx=3, ny=2, nz=4)
+    set_mesh_property(m, "ZROOT", np.linspace(0.1, 2.0, m.n_points))
+    ds = mesh_to_xarray(m)
+    assert ds["ZROOT"].dims == ("layer", "y", "x") and ds.sizes == {"layer": 5, "y": 3, "x": 4}
+    assert float(ds["depth"].sel(layer=0).max()) == 0 and np.isclose(float(ds["depth"].max()), 2.0)
+    assert np.allclose(ds["z"].sel(layer=0).values, 10 + 0.1 * ds["x"].values[None, :])   # terrain
+    assert not np.isnan(ds["ZROOT"].values).any() and (ds["node_id"].values >= 0).all()
+    # modify in xarray, write back: node-wise inverse
+    ds["double"] = ds["ZROOT"] * 2
+    written = xarray_to_mesh(ds, m)
+    assert set(written) == {"ZROOT", "double"} and np.allclose(m.point_data["double"], 2 * m.point_data["ZROOT"])
+    with pytest.raises(ValueError):
+        xarray_to_mesh(ds.isel(x=slice(0, 2)), m)             # not this mesh
+    # masked column -> NaN in the view, ids -1
+    keep = ~((m.points[:, 0] == 0) & (m.points[:, 1] == 0))
+    sub = m.extract_points(keep, adjacent_cells=False)
+    ds2 = mesh_to_xarray(sub, names=[])
+    assert (ds2["node_id"].values < 0).sum() == 5 and np.isnan(ds2["z"].values).sum() == 5
+    assert sub.n_points == (ds2["node_id"].values >= 0).sum()

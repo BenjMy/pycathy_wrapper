@@ -229,3 +229,74 @@ def interpolate_to_points(mesh, names, points, method: str = "linear"):
             lin = LinearNDInterpolator(src, vals)(pts)
             out[n] = np.where(np.isnan(lin), near, lin)
     return out
+
+
+# ─────────────────────────────────────────────────────────────
+# xarray view: (layer, y, x) <-> mesh nodes
+# ─────────────────────────────────────────────────────────────
+def mesh_to_xarray(mesh, names=None, decimals: int = 3):
+    """
+    Regular ``(layer, y, x)`` xarray Dataset view of the node properties.
+
+    Nodes must lie on a horizontal grid (same x/y values in every layer,
+    as in CATHY's terrain-following mesh); columns missing from the grid
+    (masked DEM cells) become NaN. Coordinates ``x``, ``y``, ``layer`` (0 =
+    surface); data variables: ``z(layer, y, x)`` (terrain-following node
+    elevation), ``depth(layer, y, x)`` (below the local surface) and
+    ``node_id(layer, y, x)`` (mesh point index, -1 where there is no node)
+    plus every requested ``point_data`` array (default: all scalar ones).
+    ``xarray_to_mesh`` is the exact inverse for the properties.
+    """
+    import xarray as xr
+
+    pts = np.asarray(mesh.points)
+    xs = np.unique(np.round(pts[:, 0], decimals))
+    ys = np.unique(np.round(pts[:, 1], decimals))
+    ix = np.searchsorted(xs, np.round(pts[:, 0], decimals))
+    iy = np.searchsorted(ys, np.round(pts[:, 1], decimals))
+    _, depth, level = node_geometry(mesh, decimals)
+    nl = int(level.max()) + 1
+    shape = (nl, len(ys), len(xs))
+    node_id = np.full(shape, -1, dtype=int)
+    node_id[level, iy, ix] = np.arange(len(pts))
+    if (node_id >= 0).sum() != len(pts):
+        raise ValueError("two nodes map to the same (layer, y, x): the mesh is not a "
+                         "single-valued layered grid")
+
+    def _fill(vals):
+        out = np.full(shape, np.nan)
+        out[level, iy, ix] = np.asarray(vals, dtype=float)
+        return out
+
+    dims = ("layer", "y", "x")
+    data = {"z": (dims, _fill(pts[:, 2])), "depth": (dims, _fill(depth)),
+            "node_id": (dims, node_id)}
+    keys = list(names) if names is not None else [
+        k for k in mesh.point_data.keys()
+        if np.asarray(mesh.point_data[k]).ndim == 1
+        and np.asarray(mesh.point_data[k]).dtype.kind in "fiu"
+        and len(mesh.point_data[k]) == mesh.n_points]
+    for k in keys:
+        data[k] = (dims, _fill(mesh.point_data[k]))
+    return xr.Dataset(data, coords={"layer": np.arange(nl), "y": ys, "x": xs})
+
+
+def xarray_to_mesh(ds, mesh, names=None) -> list:
+    """
+    Write the ``(layer, y, x)`` variables of ``ds`` (made by ``mesh_to_xarray``,
+    possibly modified or extended) back onto ``mesh`` as point data. Returns the
+    names written. NaN values at existing nodes are rejected.
+    """
+    nid = np.asarray(ds["node_id"].values)
+    if nid.max() + 1 != mesh.n_points or (nid >= 0).sum() != mesh.n_points:
+        raise ValueError("ds does not describe this mesh (node_id / n_points mismatch)")
+    skip = {"z", "depth", "node_id"}
+    keys = list(names) if names is not None else [
+        v for v in ds.data_vars if v not in skip and ds[v].dims == ("layer", "y", "x")]
+    ok = nid >= 0
+    order = nid[ok]
+    for k in keys:
+        arr = np.empty(mesh.n_points)
+        arr[order] = np.asarray(ds[k].values, dtype=float)[ok]
+        set_mesh_property(mesh, k, arr, "point")
+    return keys
