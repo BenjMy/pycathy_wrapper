@@ -51,6 +51,12 @@ from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
 from pyCATHY.cathy_utils import dictObs_2pd
+from pyCATHY.mesh_properties import (
+    add_root_properties,
+    add_soil_properties,
+    mesh_to_xarray,
+    set_mesh_property,
+)
 from pyCATHY.config_manager import VersionConfigManager
 
 # Fortran sources of the CATHY processor, fetched on first use of a project.
@@ -141,6 +147,7 @@ def make_console(verbose):
 
 
 # -----------------------------------------------------------------------------
+
 class CATHY:
     """
     Main CATHY object.
@@ -4699,23 +4706,28 @@ class CATHY:
         #  https://docs.pyvista.org/examples/00-load/create-structured-surface.html
         pass
 
-    def update_mesh_vtk(self, prop="", prop_value=[], replaceVTK=True, **kwargs):
+    def update_mesh_vtk(self, prop="", prop_value=[], replaceVTK=True,
+                        location="auto", **kwargs):
         """
-        https://docs.pyvista.org/api/core/_autosummary/pyvista.ExplicitStructuredGrid.add_field_data.html#pyvista.ExplicitStructuredGrid.add_field_data
+        Write a property onto the mesh and (optionally) into the project .vtk.
+
+        Values are stored as real ``point_data`` (one per node) or
+        ``cell_data`` (one per cell) so they can be coloured/sliced in
+        ParaView; previously everything went to ``field_data``. A scalar is
+        broadcast to every node. See ``pyCATHY.mesh_properties``.
 
         Parameters
         ----------
-        prop : TYPE, optional
-            DESCRIPTION. The default is ''.
-        prop_value : TYPE, optional
-            DESCRIPTION. The default is [].
-
-        Returns
-        -------
-        None.
-
+        prop : str
+            Property name.
+        prop_value : float or array-like
+            Scalar, or one value per node / per cell.
+        location : {'auto', 'point', 'cell', 'field'}
+            'field' keeps the legacy unchecked ``field_data`` behaviour.
         """
-        self.mesh_pv_attributes.add_field_data(prop_value, prop)
+        if not kwargs.get("_save_only", False):
+            set_mesh_property(self.mesh_pv_attributes, prop, prop_value,
+                              location=location)
 
         if replaceVTK:
             self.mesh_pv_attributes.save(
@@ -4883,11 +4895,7 @@ class CATHY:
                         + str(dp)
                         + " ==> assumming it homogeneous"
                     )
-                self.update_mesh_vtk(
-                    prop=dp,
-                    prop_value=np.ones(len(self.mesh_pv_attributes.points))
-                    * dict_props[dp],
-                )
+                self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
             else:
                 dict_props[dp] = np.asarray(dict_props[dp])
                 if len(dict_props[dp]) != len(self.mesh_pv_attributes.points):
@@ -4900,6 +4908,46 @@ class CATHY:
                     )
                 self.update_mesh_vtk(prop=dp, prop_value=dict_props[dp])
         pass
+
+    def mesh_as_xarray(self, names=None):
+        """``(layer, y, x)`` xarray view of the mesh node properties
+        (see ``pyCATHY.mesh_properties.mesh_to_xarray``)."""
+        if self._mesh_is_stale():
+            self.create_mesh_vtk()
+        return mesh_to_xarray(self.mesh_pv_attributes, names=names)
+
+    def map_soil_root_to_mesh(self, replaceVTK=True, origin="upper"):
+        """
+        Write soil (SPP table: PERMX, POROS, ...) and root properties
+        (veg_class, ZROOT, root_zone, root_beta) onto the mesh nodes, derived
+        from the same tables CATHY reads (``soil_SPP["SPP_map"]``,
+        ``soil_FP["FP"]``, ``veg_map``, ``zone``), then save the project .vtk.
+        See ``pyCATHY.mesh_properties``.
+
+        ``origin`` is the row order of the 2-D maps ``veg_map`` / ``zone``:
+        ``"upper"`` (default) = CATHY/ASCII-grid files, first row in the north;
+        ``"lower"`` = first row at ``yllcorner`` (as ``meshtools.build_mesh_dataset``
+        assumes for ``raster_DEM_masked``). Check on a real run that
+        ``root_zone`` matches the vegetation map plot.
+        """
+        for attr in ("veg_map", "zone", "soil_SPP", "soil_FP", "hapin", "dem_parameters"):
+            if not hasattr(self, attr):
+                raise RuntimeError(
+                    f"map_soil_root_to_mesh needs `{attr}`: call update_soil() "
+                    "(and update_veg_map/update_zone) first."
+                )
+        if self._mesh_is_stale():
+            self.create_mesh_vtk()
+        raster = (self.hapin["xllcorner"], self.hapin["yllcorner"],
+                  self.hapin["delta_x"], self.hapin["delta_y"])
+        add_root_properties(self.mesh_pv_attributes, self.veg_map,
+                            self.soil_FP["FP"], raster, origin=origin)
+        add_soil_properties(self.mesh_pv_attributes, self.zone,
+                            self.soil_SPP["SPP_map"], raster,
+                            nstr=self.dem_parameters["nstr"], origin=origin)
+        if replaceVTK:
+            self.update_mesh_vtk(prop="", prop_value=None, replaceVTK=True,
+                                 _save_only=True)
 
     def map_prop_veg(self, dict_props):
         if hasattr(self, "veg_map") == False:
