@@ -144,3 +144,18 @@ def test_xarray_round_trip():
     ds2 = mesh_to_xarray(sub, names=[])
     assert (ds2["node_id"].values < 0).sum() == 5 and np.isnan(ds2["z"].values).sum() == 5
     assert sub.n_points == (ds2["node_id"].values >= 0).sum()
+
+
+def test_feddes_table_accepts_update_soil_array():
+    """soil_FP["FP"] is an (n_veg, 6) ndarray (PCANA PCREF PCWLT ZROOT PZ OMGC), not a DataFrame."""
+    import numpy as np
+    from pyCATHY.mesh_properties import _as_feddes_table
+    FP = np.array([[0, 0, 0, 1.0, 1.0, 0], [0, 0, 0, 2.5, 3.0, 0]], dtype=float)
+    t = _as_feddes_table(FP)
+    assert list(t.index) == [1, 2] and list(t["ZROOT"]) == [1.0, 2.5] and list(t["PZ"]) == [1.0, 3.0]
+    assert _as_feddes_table(t) is t
+    try:
+        _as_feddes_table(np.zeros((2, 3)))
+        raise AssertionError("short table must raise")
+    except ValueError:
+        pass

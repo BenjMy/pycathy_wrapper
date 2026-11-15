@@ -148,6 +148,22 @@ def feddes_root_profile(depth, zroot, pz):
     return np.where(ratio < 1.0, beta, 0.0)
 
 
+FEDDES_COLUMNS = ["PCANA", "PCREF", "PCWLT", "ZROOT", "PZ", "OMGC"]
+
+
+def _as_feddes_table(FP):
+    """DataFrame indexed by vegetation class (1..n). Accepts the (n, 6) array that
+    ``update_soil`` stores in ``soil_FP["FP"]`` (columns PCANA PCREF PCWLT ZROOT PZ OMGC)."""
+    import pandas as pd
+    if hasattr(FP, "index") and hasattr(FP, "columns"):
+        return FP
+    a = np.asarray(FP, dtype=float)
+    if a.ndim != 2 or a.shape[1] < len(FEDDES_COLUMNS):
+        raise ValueError(f"Feddes table must be (n_veg, >=6); got shape {a.shape}")
+    return pd.DataFrame(a[:, :len(FEDDES_COLUMNS)], columns=FEDDES_COLUMNS,
+                        index=np.arange(1, a.shape[0] + 1))
+
+
 def add_root_properties(mesh, veg_class_2d, FP, raster, origin="lower",
                         zroot_col="ZROOT", pz_col="PZ"):
     """
@@ -158,6 +174,7 @@ def add_root_properties(mesh, veg_class_2d, FP, raster, origin="lower",
     and ``PZ`` columns (the Feddes table). ``raster`` is ``(x0, y0, dx, dy)``.
     Classes absent from ``FP`` raise instead of silently getting 0.
     """
+    FP = _as_feddes_table(FP)
     cls = surface_to_nodes(mesh, veg_class_2d, *raster, origin=origin).astype(int)
     missing = sorted(set(np.unique(cls)) - set(int(i) for i in FP.index))
     if missing:
