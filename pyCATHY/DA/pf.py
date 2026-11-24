@@ -173,7 +173,8 @@ def particle_filter_analysis(data, data_cov, param, ensemble, observation, **kwa
                 # Additive jitter for all parameters
                 param += np.random.randn(*param.shape) * jitter_std_param
         
-        logger.debug(f"  param range AFTER jitter: [{param.min():.3e}, {param.max():.3e}]")
+        if param.size > 0:
+            logger.debug(f"  param range AFTER jitter: [{param.min():.3e}, {param.max():.3e}]")
     
     # =========================================================================
     # STEP 5: Enforce parameter bounds
@@ -261,8 +262,13 @@ def diagnose_particle_filter_issues(param, weights, observation, data):
     diagnostics['n_eff'] = 1.0 / np.sum(weights**2)
     
     # 2. Parameter variance
-    diagnostics['param_std'] = param.std(axis=1).mean()
-    diagnostics['param_range'] = param.max() - param.min()
+    # state-only run (no parameter updated): param has shape (0, ens_size), so min/max/std are undefined
+    if param.size > 0:
+        diagnostics['param_std'] = param.std(axis=1).mean()
+        diagnostics['param_range'] = param.max() - param.min()
+    else:
+        diagnostics['param_std'] = 0.0
+        diagnostics['param_range'] = 0.0
     
     # 3. Innovation magnitude
     innovation = data[:, np.newaxis] - observation
@@ -281,7 +287,7 @@ def diagnose_particle_filter_issues(param, weights, observation, data):
         warnings.append("CRITICAL: Extreme weight concentration - almost all weight on one particle")
     if diagnostics['n_eff'] < 10:
         warnings.append("WARNING: Very low N_eff - particle degeneracy")
-    if diagnostics['param_range'] > 100 * diagnostics['param_std']:
+    if param.size > 0 and diagnostics['param_range'] > 100 * diagnostics['param_std']:
         warnings.append("WARNING: Extreme parameter spread - likely has outliers")
     if n_outliers > param.shape[1] * 0.1:
         warnings.append(f"WARNING: {n_outliers} parameter outliers detected")
