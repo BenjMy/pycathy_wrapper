@@ -2642,7 +2642,31 @@ class DA(CATHY):
         self, cycle_nb, dict_parm_pert, ens_nb, key, shellprint_update
     ):
         """Update the initial pressure head of one ensemble member (cycle 0 only, or by layers)."""
-        if dict_parm_pert[key]["pert_control_name"] == "layers":
+        if dict_parm_pert[key]["pert_control_name"] == "material":
+            # one value per group of layers: ic0, ic1, ... share the ``layer_groups`` of the scenario.
+            # The prior (or the ES-MDA iterate, stored under ini_perturbation) applies at cycle 0 only;
+            # afterwards the analysed pressure head is the state.
+            if cycle_nb > 0:
+                return
+            groups = dict_parm_pert[key]["layer_groups"]
+            root = re.split(r"(\d+)", key)[0]
+            per_layer = np.full(max(max(g) for g in groups) + 1, np.nan)
+            for gi, layers in enumerate(groups):
+                per_layer[list(layers)] = dict_parm_pert[f"{root}{gi}"]["ini_perturbation"][ens_nb]
+            if np.isnan(per_layer).any():
+                raise ValueError(f"{root}: the 'material' groups {groups} do not cover every layer "
+                                 f"(layers without a value: {np.flatnonzero(np.isnan(per_layer)).tolist()})")
+            DApath = os.getcwd()
+            ic_nodes = self.map_prop_2mesh_markers(
+                "ic", per_layer, to_nodes=True,
+                saveMeshPath=os.path.join(DApath, "vtk", self.project_name + ".vtk"),
+            )
+            self.update_ic(
+                INDP=1, IPOND=0, pressure_head_ini=ic_nodes,
+                filename=os.path.join(DApath, "input/ic"),
+                backup=False, shellprint_update=shellprint_update,
+            )
+        elif dict_parm_pert[key]["pert_control_name"] == "layers":
             if cycle_nb > 0:
                 # the analysed pressure head was written just before (_update_states_from_analysis):
                 # re-applying the prior layers here used to overwrite it at every cycle

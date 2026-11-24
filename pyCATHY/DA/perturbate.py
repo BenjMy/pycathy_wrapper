@@ -509,6 +509,34 @@ def perturbate(simu_DA, scenario, NENS,
                     
                     list_pert.append(ic)
                     
+            elif pert_control_name == 'material':
+                # one initial pressure head per group of layers (scenario 'material_layers'): the prior
+                # mean of every group can be its own truth value (a layered initial condition)
+                groups = scenario.get("ic_layers", scenario.get("material_layers"))
+                if groups is None:
+                    raise ValueError("ic: pert_control_name 'material' needs the scenario key 'ic_layers' "
+                                     "(or 'material_layers'): list of lists of layer numbers, one list per group")
+                ngroups = len(groups)
+                for key in ("per_nom", "per_mean", "per_sigma"):
+                    if len(scenario[key][index]) != ngroups:
+                        raise ValueError(f"ic: '{key}' has {len(scenario[key][index])} entries but "
+                                         f"material_layers has {ngroups} groups")
+                _pt = scenario["per_type"][index]
+                _tf = scenario.get("transf_type", [None] * len(scenario["per_name"]))[index]
+                for gi in range(ngroups):
+                    clip_min, clip_max = check4bounds(scenario, index, None, None,
+                                                      het_size=ngroups, het_nb=gi)
+                    ic = create_dict_entry(
+                        'ic', scenario, index, gi,
+                        scenario_nom[gi], scenario_mean[gi], scenario_sd[gi],
+                        clip_min, clip_max, NENS,
+                        per_type=_pt[gi] if isinstance(_pt, list) else _pt,
+                        pert_control_name=pert_control_name,
+                        transf_type=_tf[gi] if isinstance(_tf, list) else _tf,
+                    )
+                    check_distribution(ic)
+                    list_pert.append(ic)
+
             elif pert_control_name=='zone':
                 for zonei in range(_n_classes(zone_raster)):
                     # Adjust bounds and retrieve parameters for the current zone
@@ -529,7 +557,7 @@ def perturbate(simu_DA, scenario, NENS,
                     list_pert.append(ic)        
             else:
                 raise ValueError(f"List-type perturbation provided, but unknown control name: '{pert_control_name}'. "
-                         f"Expected 'layers' or 'zone'.")
+                         f"Expected 'layers', 'material' or 'zone'.")
         else: 
             # bounds are optional; e.g. a pressure head ic must stay negative
             # for an unsaturated initial state (IPOND=0)
@@ -1063,7 +1091,11 @@ def perturbate(simu_DA, scenario, NENS,
         if entry.get("pert_control_name") == "layers":
             entry["nlayers"] = nlayers  # perturbate_parm needs it to sample the layers
         elif entry.get("pert_control_name") == "material":
+            # the initial pressure head may have its own groups ('ic_layers'): the layers of a layered
+            # initial condition need not be the soil materials
             groups = scenario.get("material_layers")
+            if re.match(r"^ic\d*$", str(entry.get("type_parm"))) and scenario.get("ic_layers") is not None:
+                groups = scenario["ic_layers"]
             if groups is None:
                 raise ValueError("pert_control_name 'material' needs the scenario key 'material_layers' "
                                  "(list of lists of layer numbers, one list per material)")

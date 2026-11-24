@@ -39,13 +39,16 @@ FEDDES_SCALAR = ("PCWLT", "OMGC", "PZ")
 # controls each parameter really supports (measured with perturbate() on a stub simulation,
 # see tests/test_scenario_layouts.py); the others fail with an obscure error inside numpy
 SUPPORTED_CONTROLS = {
-    "ic": (None, "layers", "zone"),
+    # "material": ONE initial pressure head per group of layers (scenario key ``material_layers``),
+    # e.g. the 3 layers of a layered truth; the value of a group is written in every layer of it
+    "ic": (None, "layers", "zone", "material"),
     "WTPOSITION": (None,),
     "porosity": (None, "layers", "zone"),
 }
 LIST_KEYS = ("per_type", "per_name", "per_nom", "per_mean", "per_sigma", "sampling_type", "transf_type")
 CONTROLS = (None, "None", "layers", "zone", "root_map", "material", "zone_material")
 MATERIAL_PARAMETERS = ("SATCELL_VG", "n_VG", "thetar_VG", "Ks")  # the ones with a per-material write
+IC_MATERIAL = ("ic",)  # initial pressure head: one value per group of layers (DA._update_ic_member)
 SAMPLING = ("normal", "lognormal", "uniform")
 PER_TYPES = (None, "None", "additive", "multiplicative")
 TRANSFORMS = (None, "None", "log", "log-ratio", "hyperbolic")
@@ -151,10 +154,14 @@ def validate_scenario(
         listed = isinstance(nom, list)
         if control == "material":
             groups = scenario.get("material_layers")
-            if name not in MATERIAL_PARAMETERS:
-                errors.append(f"{name}: pert_control_name 'material' is only supported for {MATERIAL_PARAMETERS}")
+            if name in IC_MATERIAL and scenario.get("ic_layers") is not None:
+                groups = scenario["ic_layers"]          # own groups for the initial pressure head
+            if name not in MATERIAL_PARAMETERS + IC_MATERIAL:
+                errors.append(f"{name}: pert_control_name 'material' is only supported for "
+                              f"{MATERIAL_PARAMETERS + IC_MATERIAL}")
             if groups is None:
-                errors.append(f"{name}: 'material' needs the scenario key 'material_layers' "
+                errors.append(f"{name}: 'material' needs the scenario key "
+                              f"{'ic_layers (or material_layers)' if name in IC_MATERIAL else 'material_layers'} "
                               "(list of lists of layer numbers)")
             else:
                 flat = [l for g in groups for l in g]
@@ -435,6 +442,9 @@ def describe_ensemble(list_pert, list_update=(), soil_index=None, zone_raster=No
         elif name in FEDDES_PARAMETERS:
             target = (f"Feddes table row {index} (vegetation class order, 0-based)"
                       if index is not None else "Feddes table, all rows")
+        elif name == "ic" and control == "material" and entry.get("layer_groups") is not None \
+                and index is not None and index < len(entry["layer_groups"]):
+            target = f"initial pressure head of the nodes of layers {list(entry['layer_groups'][index])}"
         elif name in CONDITIONS:
             target = "initial / boundary condition (all nodes)"
         else:
