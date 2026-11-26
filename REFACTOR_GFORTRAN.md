@@ -28,7 +28,7 @@ Status: **plan only, no code changed yet.**
 - BLAS: `dcopy` (called in `dxpay.f`, `normres.f`, `precond.f`; **not defined locally**).
 - `ddot`, `dnrm2`, `daxpy` are already defined in `solscal-extended.f` (no external lib needed).
 
-=> The dependency is tiny and can be removed from the Fortran source itself (see step 1).
+=> The dependency is tiny, but the sources stay untouched: the libraries come from conda (see step 1).
 To be confirmed with a real build (no gfortran in the authoring sandbox): link without `-llapack -lblas` and list the undefined symbols.
 
 ### Why it recompiles
@@ -59,12 +59,11 @@ Checked in `pycathy_wrapper` (`cathy_tools.py`) and in the Fortran of both `CATH
 
 ## Plan
 
-### 1. Remove LAPACK/BLAS from the Fortran source
-- Add `pycathy_blas_min.f` with a plain `dcopy`.
-- In `iperplane.f` replace `dgetrf/dgetrs` by a small 4×4 Gaussian elimination with partial pivoting (`solve4x4`).
-- Drop `-llapack -lblas` from the link command.
-- Apply to the sources fetched by `_clone_cathy_src` (`CATHY-Org/CATHY_src_org`) and to `CATHY_SCF_LAI` (`version="SCF_variable"`); bump `CATHY_SRC_COMMIT`.
-- Validate: same outputs as the LAPACK build on the Weill et al. test case (tolerance to define).
+### 1. LAPACK/BLAS without touching the Fortran sources (decision: **no edits to any `.f` / `.f90`**)
+- Default: get `libblas` + `liblapack` (conda-forge, OpenBLAS/MKL/Accelerate depending on platform) from the **conda environment** and link with `-llapack -lblas` as today, adding `-L$CONDA_PREFIX/lib` (`%CONDA_PREFIX%\\Library\\lib` on Windows) when needed. Same routines as now, so results are unchanged; nothing is installed system-wide.
+- Optional later (only if conda linking is painful on Windows): a wrapper-side shim file (`pycathy/fortran/lapack_shim.f`: `dcopy`, `dgetrf`, `dgetrs`) compiled *next to* the CATHY sources, never inside them. Not needed for the first release.
+- Applies to both `CATHY_src_org` and `CATHY_SCF_LAI`; no upstream fork/PR, no vendored patched sources.
+- Validate: Weill et al. case gives the same output as the current build.
 
 ### 2. Get the compiler from conda/mamba
 - Add the conda-forge `fortran-compiler` metapackage (platform-specific gfortran/flang) to `environment.yml` and to the docs; keep `make`/`ninja` optional.
@@ -102,16 +101,24 @@ Proposal: **A + B now; C is already satisfied** (monthly LAI loop: no recompile 
 ### 7. Tests (assertion-based)
 - `find_fortran_compiler` with mocked `PATH`/env (conda-prefixed name, missing compiler).
 - Build cache: hit/miss on a changed `CATHY.H`, unchanged source, changed flag.
-- `solve4x4` vs `numpy.linalg.solve` on random well-conditioned and pivot-requiring matrices.
+- Link-flag construction per platform (conda prefix present / absent).
 - Failure tracking: a deliberately broken `.f` is reported, not swallowed.
 
-## Open questions (need your input)
+## Decisions (from the user)
 
-1. ~~Monthly vegetation parameters~~ answered: run-time `input/soil`; only `MAXVEG` is compile-time. Remaining: share the LAI loop script to confirm no other `CATHY.H` value changes between months.
-2. Which sources are the target: `CATHY_src_org` only, or also `CATHY_SCF_LAI` (`version="SCF_variable"`)? Do I patch them upstream (fork + PR in CATHY-Org) or vendor patched sources inside pyCATHY?
-3. Windows: native support is a hard requirement, or is "works on Linux/macOS conda, Windows best effort" acceptable for the first release?
-4. Largest problems you run (nodes, layers): do you rely on `-mcmodel=large` (static arrays > 2 GB)? Is Apple Silicon a target?
-5. In DA ensembles, do all members share the same `CATHY.H` (same dimensions)? Today each member may recompile.
-6. Build cache location: inside the project folder (portable, visible) or a user cache dir (shared across projects)?
-7. Distribution: pip only (pip cannot install a compiler) or also a conda-forge recipe with `fortran-compiler` as run dependency?
-8. Numerical tolerance accepted when replacing LAPACK `dgetrf/dgetrs` by the 4×4 solver (bit-for-bit is not guaranteed).
+| Topic | Decision |
+|---|---|
+| Fortran sources | **Do not modify.** Both `CATHY_src_org` and `CATHY_SCF_LAI` are targets. |
+| Windows | **Native Windows is mandatory** (conda install on Windows is the expected route). |
+| Apple Silicon | Nice to have, not mandatory. |
+| DA ensembles | All members share the same `CATHY.H` (to confirm with the LAI loop script / a DA run). |
+| Distribution | pip **and** a conda-forge recipe (`fortran-compiler`, `libblas`, `liblapack` as run dependencies). |
+| Numerical tolerance | Not an issue: real LAPACK from conda is kept (step 1), results unchanged. |
+| Build cache location (my choice, revisit if needed) | User cache dir (`platformdirs`), override with `PYCATHY_CACHE`; ensemble members and projects share binaries. |
+
+## Open points / risks to test in CI (not decided by questions)
+
+1. **Windows native toolchain**: conda-forge Fortran on win-64 plus linking against conda's LAPACK/BLAS; the Python side (`/dev/null`, `./pycppp`, `.exe`) is handled in step 3. Possible separate Windows recipe (different compiler package/flags) if the unified one fails.
+2. **`-mcmodel=large`**: x86-64 only; probably unsupported on Apple Silicon and of limited use on Windows (2 GB image limit). Question left for you: do your largest meshes need more than 2 GB of static arrays? If not, the flag can be dropped on those platforms.
+3. **Shared `CATHY.H` in ensembles**: verify with a DA run before relying on one compile per ensemble.
+4. **Your LAI loop script**: still needed to confirm that nothing but vegetation inputs changes between months.
