@@ -1,0 +1,39 @@
+# Build the CATHY Fortran code with the conda-provided compiler on every platform
+name: Fortran build (conda)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "3.10"
+          miniforge-version: latest
+          channels: conda-forge
+          channel-priority: strict
+          activate-environment: pycathy-ci
+
+      - name: Install compiler and algebra libraries from conda (no system packages)
+        run: |
+          conda install -y fortran-compiler libblas liblapack pytest
+          pip install -r env/requirements.txt
+          pip install .
+
+      - name: Fortran build tests
+        run: |
+          mkdir -p tmp-fortran-test && cd tmp-fortran-test
+          MPLBACKEND=agg pytest --pyargs pyCATHY.tests.test_fortran_build -v

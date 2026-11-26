@@ -48,51 +48,41 @@ Dependencies
 ------------
 - NumPy, SciPy, and Matplotlib beyond default python packages
 
-- Fortran and the algebra libraries BLAS and LAPACK.
+- A Fortran compiler and the algebra libraries BLAS and LAPACK. **They are installed in the
+  conda/mamba environment: nothing has to be installed system-wide** (no ``apt install gfortran``,
+  no WSL on Windows).
+
+Linux, macOS and Windows (conda or mamba)::
+
+    conda create --name pyCATHY python=3.10
+    conda activate pyCATHY
+    conda install -c conda-forge fortran-compiler libblas liblapack
+    pip install pyCATHY
+
+or, from the repository, ``conda env create -f environment.yml``.
+
+pyCATHY looks for the compiler in this order: ``$PYCATHY_FC``, ``$FC``, the gfortran of the active
+conda environment, then ``gfortran`` / ``flang`` on the ``PATH``. The compiled CATHY executables are
+cached (content hash of the Fortran sources, ``CATHY.H``, compiler and flags): changing input files
+such as the vegetation parameters does not trigger a recompilation. Set ``$PYCATHY_CACHE`` to choose the
+cache directory and ``$PYCATHY_FFLAGS`` to replace the default compiler flags.
 
 .. tab-set::
 
+    .. tab-item:: System compiler (advanced)
 
-
-
-    .. tab-item:: Ubuntu 22
-
-        .. code:: bash
-
-           sudo apt-get update
-           sudo apt-get install gfortran
-           sudo apt install libopenblas-dev
-           
-    .. tab-item:: Ubuntu 20
+        If you prefer a compiler installed by your system, make sure ``gfortran``, BLAS and LAPACK are
+        on the path of the linker, for example:
 
         .. code:: bash
 
-           sudo apt-get update
-           sudo apt-get install gfortran
-           sudo apt-get install blas-dev lapack-dev
-
-    .. tab-item:: Fedora
-
-        .. code:: bash
-
-            sudo dnf upgrade --refresh
-            sudo dnf install gcc-gfortran
-	    sudo dnf install blas-devel
-	    sudo dnf install lapack-devel
-
+           sudo apt-get install gfortran libopenblas-dev     # Ubuntu 22
+           sudo dnf install gcc-gfortran blas-devel lapack-devel   # Fedora
 
     .. tab-item:: Windows
 
-        We recommand to install a **virtual machine**:
-
-        .. code:: bash
-
-            install WSL from Microsoft Store app (search WSL)
-	    install linux from Microsoft Store app (search ubuntu lts)
-	    turn Windows features on or off:
-	      - enable Windows subsystem for Linux
-	      - enable Virtual machine platform
-	     restart PC 
+        Install Miniforge/Anaconda for Windows and follow the conda instructions above (native
+        Windows support is being validated, see ``REFACTOR_GFORTRAN.md``).
 
 
 .. warning:: pyCATHY for Data Assimilation relies on others libraries 

@@ -1,7 +1,22 @@
 # REFACTOR_GFORTRAN.md — pyCATHY without a system gfortran / LAPACK / BLAS
 
 Branch: `refactor/no-gfortran-install` (created from `main`; no existing branch covered this topic).
-Status: **plan only, no code changed yet.**
+Status: **steps 1, 3, 4A, 5 and the Linux part of 6/7 implemented** (see "Implementation status"); macOS and Windows still to be validated in CI.
+
+## Implementation status
+
+| Step | Status | Notes |
+|---|---|---|
+| 1. LAPACK/BLAS without touching the sources | DONE (Linux) | `link_libraries()` adds the conda `lib` dir + rpath, then `-llapack -lblas`; Fortran sources untouched. |
+| 2. Compiler from conda | DONE (docs/env) | `environment.yml`, `installing.rst`: `fortran-compiler libblas liblapack`. Windows/macOS conda packages not tested here. |
+| 3. `pyCATHY/fortran_build.py` | DONE | compiler lookup, platform flags, parallel `.f` compile, F90 module ordering (replaces the "compile twice" hack), no `chdir`/`os.system`. |
+| 4A. Content-hash build cache | DONE | user cache dir, `$PYCATHY_CACHE`; key = sources + `*.H` + compiler version + flags. |
+| 4B. Parallel build | DONE | thread pool over `*.f`. |
+| 5. Wrapper clean-up | DONE | `run_preprocessor` raises with the compiler output on failure; `recompileSrc(verbose=False, force=False)` (backward compatible), `CATHY.last_build` keeps the `BuildResult`; `processor_name` is `cathy.exe` on Windows. |
+| 6. CI + docs | PARTIAL | `.github/workflows/fortran-build.yml` (Linux, macOS Intel/ARM, Windows) **written but never run**. |
+| 7. Tests | DONE | `pyCATHY/tests/test_fortran_build.py` (19 tests, real builds skipped without a compiler). |
+
+Verified in the authoring sandbox (Linux x86-64, system gfortran + libopenblas, no conda): preprocessor builds, `cathy` builds from the Weill et al. sources in ~4.5 s (parallel), second build is a cache hit (0.0 s), and `CATHY.run_preprocessor()` + `run_processor()` run end to end. **Not verified**: conda gfortran packages, macOS, Windows, `CATHY_SCF_LAI` build, results identical to the old build bit by bit (same sources/flags/libraries, so expected).
 
 ## Goal
 

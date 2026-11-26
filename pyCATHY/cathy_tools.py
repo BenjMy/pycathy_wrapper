@@ -47,6 +47,7 @@ from git import Repo  # In order to fetch the file directly from the repo
 import tempfile
 
 import pyCATHY.meshtools as mt
+from pyCATHY import fortran_build
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
@@ -110,7 +111,7 @@ def subprocess_run_multi(pathexe_list):
 
     print(f"x= {pathexe_list}, PID = {os.getpid()}")
     os.chdir(pathexe_list)
-    callexe = "./" + "cathy"
+    callexe = "./" + "cathy" + fortran_build.exe_suffix()
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -214,7 +215,7 @@ class CATHY:
 
         # convention for directory tree
         # ---------------------------------------------------------------------
-        self.processor_name = "cathy"
+        self.processor_name = "cathy" + fortran_build.exe_suffix()  # "cathy.exe" on Windows
         self.input_dirname = "input"
         self.output_dirname = "output"
 
@@ -408,43 +409,26 @@ class CATHY:
         files describing physiographic features of the drainage system, as shown in Table 2.
         """
 
-        self.console.print(":cooking: [b]gfortran compilation[/b]")
-        for loopi in range(2):  # run it twice (to avoid the first error)
-            os.chdir(os.path.join(self.workdir, self.project_name, "prepro/src/"))
+        self.console.print(":cooking: [b]Fortran compilation (preprocessor)[/b]")
+        prepro_src = Path(self.workdir) / self.project_name / "prepro" / "src"
+        build = fortran_build.build_preprocessor(prepro_src)
+        if not build.ok:
+            raise RuntimeError(
+                "Preprocessor compilation failed:\n" + build.report()
+            )
 
-            # clean all files compiled
-            for file in glob.glob("*.o"):
-                os.remove(file)
-
-            # if self.notebook==False:
-            # bashCommand = "gfortran -O -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
-            # bashCommand = "gfortran -O -mcmodel=large -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
-            bashCommand = "gfortran -O -mcmodel=large -fPIC -o pycppp mpar.f90 mbbio.f90 wbb_sr.f90 csort.f90 qsort.f90 depit.f90 cca.f90 smean.f90 dsf.f90 facet.f90 hg.f90 mrbb_sr.f90 bb2shp_sr.f90 shape.f90 dbase.f90 streamer.f90 cppp.f90"
-            try:
-                p = os.system(bashCommand + "> /dev/null 2>&1")
-                # run it twice (to avoid the first error)
-                p = os.system(bashCommand + "> /dev/null 2>&1")
-
-            except:
-                print("bash cmd not recognized")
-
-            os.chdir(self.workdir)
-        # move to the directory where the source FORTRAN files are contained (cathy_main.f)
-        # shutil.move(
-        #     os.path.join(self.workdir, self.project_name, "prepro/src/pycppp"),
-        #     os.path.join(self.workdir, self.project_name, "prepro/pycppp"),
-        # )
-        src = Path(self.workdir) / self.project_name / "prepro/src/pycppp"
-        dst = Path(self.workdir) / self.project_name / "prepro/pycppp"
-
+        src = build.exe
+        dst = Path(self.workdir) / self.project_name / "prepro" / (
+            "pycppp" + fortran_build.exe_suffix()
+        )
         if dst.exists():
             dst.unlink()  # Delete the existing destination file
-        src.rename(dst)
+        src.replace(dst)
 
         self.console.print(":athletic_shoe: [b]Run preprocessor[/b]")
         os.chdir(os.path.join(self.workdir, self.project_name, "prepro"))
 
-        bashcmd = "./pycppp"
+        bashcmd = str(dst)
         my_data = "2\n0\n1\n"  # user input data
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -578,9 +562,22 @@ class CATHY:
     #     pass
 
 
-    def recompileSrc(self, verbose=False):
+    def recompileSrc(self, verbose=False, force=False):
         """
+        Compile the CATHY sources and place the executable in the project root.
+
         Other option is self.run_processor(runProcess=False)
+
+        The executable is cached (content hash of the ``*.f`` files, ``CATHY.H``,
+        compiler and flags): nothing is recompiled when none of them changed, e.g.
+        when only input files (soil, vegetation parameters...) are updated.
+
+        Parameters
+        ----------
+        verbose : bool, optional
+            Print the compiler diagnostics on failure.
+        force : bool, optional
+            Ignore the build cache and recompile. The default is False.
         """
         ti = time.time()
         self.console.print(
@@ -589,69 +586,29 @@ class CATHY:
             + "s]"
         )
 
-        # clean all files previously compiled
-        for file in glob.glob("*.o"):
-            os.remove(file)
+        src_dir = Path(self.workdir) / self.project_name / "src"
+        build = fortran_build.build_cathy(
+            src_dir, exe_name=self.processor_name, force=force
+        )
+        self.last_build = build  # failures stay inspectable (pipeline reports)
 
-        # Step 1: compile each .f file to .o WITH large memory model flags
-        compile_errors = []
-        for file in glob.glob("*.f"):
-            filepath = str(file)
-            bashCommand = f"gfortran -O -mcmodel=large -fPIC -c {filepath}"
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                process = subprocess.Popen(
-                    bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                )
-                output, error = process.communicate()
-                if process.returncode != 0:
-                    compile_errors.append((filepath, error.decode()))
-                    if verbose:
-                        self.console.print(f":x: [red]Error compiling {filepath}[/red]")
-                        print(error.decode())
-
-        if compile_errors:
-            self.console.print(
-                f":x: [red]{len(compile_errors)} file(s) failed to compile[/red]"
-            )
-            for fname, err in compile_errors:
-                self.console.print(f"  - {fname}: {err}")
+        if not build.ok:
+            self.console.print(":x: [red]Compilation failed[/red]")
+            self.console.print(build.report())
+            if verbose:
+                print(build.report())
             return
 
-        # Step 2: link all .o files WITH the same flags
-        files = " ".join(glob.glob("*.o"))
-        bashCommand = (
-            f"gfortran -mcmodel=large -fPIC {files} "
-            f"-llapack -lblas -o {self.processor_name}"
-        )
-
-        ti = time.time()
-        self.console.print(
-            ":cooking: [b]gfortran compilation[/b] ["
-            + str(int(abs(ti - self.t0)))
-            + "s]"
-        )
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            process = subprocess.Popen(
-                bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            output, error = process.communicate()
-
-        if process.returncode != 0:
-            self.console.print(":x: [red]Linker error:[/red]")
-            print(error.decode())
-            return
+        if build.from_cache:
+            self.console.print(":white_check_mark: [green]Executable reused from build cache[/green]")
         else:
             self.console.print(":white_check_mark: [green]Compilation successful![/green]")
-            if verbose:
-                print(output.decode())
 
         try:
+            exe_name = fortran_build.exe_filename(self.processor_name)
             shutil.move(
-                os.path.join(self.workdir, self.project_name, "src", self.processor_name),
-                os.path.join(self.workdir, self.project_name, self.processor_name),
+                str(src_dir / exe_name),
+                os.path.join(self.workdir, self.project_name, exe_name),
             )
         except Exception as e:
             self.console.print(
