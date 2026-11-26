@@ -1,23 +1,23 @@
 # REFACTOR_GFORTRAN.md — pyCATHY without a system gfortran / LAPACK / BLAS
 
 Branch: `refactor/no-gfortran-install` (created from `main`; no existing branch covered this topic).
-Status: **steps 1, 3, 4A, 5 and the Linux part of 6/7 implemented** (see "Implementation status"); macOS and Windows still to be validated in CI.
+Status: **implemented and validated in CI on Linux, macOS (Intel) and native Windows** (build + end-to-end run). Apple Silicon untested (no runner available).
 
 ## Implementation status
 
 | Step | Status | Notes |
 |---|---|---|
-| 1. LAPACK/BLAS without touching the sources | DONE (Linux) | `link_libraries()` adds the conda `lib` dir + rpath, then `-llapack -lblas`; Fortran sources untouched. |
-| 2. Compiler from conda | DONE (docs/env) | `environment.yml`, `installing.rst`: `fortran-compiler libblas liblapack`. Windows/macOS conda packages not tested here. |
-| 3. `pyCATHY/fortran_build.py` | DONE | compiler lookup, platform flags, parallel `.f` compile, F90 module ordering (replaces the "compile twice" hack), no `chdir`/`os.system`. |
-| 4A. Content-hash build cache | DONE | user cache dir, `$PYCATHY_CACHE`; key = sources + `*.H` + compiler version + flags. |
+| 1. BLAS/LAPACK without touching the sources | DONE | CATHY needs only 3 external routines (`dcopy`, `dgetrf`, `dgetrs`, the last two on a 4x4 system). The wrapper compiles its own reference implementation (`LAPACK_SHIM_SOURCE`, written in the cache dir) next to the sources: no library to install or link, on any OS. `PYCATHY_BLAS=system` links the real `-llapack -lblas` instead. Weill et al. simulation: **all 35 output files identical byte for byte** with LAPACK and with the shim (only CPU-time columns of `risul`/`dtcoupling` differ). |
+| 2. Compiler from conda | DONE | Linux/macOS: `conda install -c conda-forge fortran-compiler` (gfortran). **Windows: `gfortran_win-64`** (`fortran-compiler` is flang on win-64 and rejects `ACCESS='transparent'` in `streamer.f90`). `environment.yml` / `environment-windows.yml`. |
+| 3. `pyCATHY/fortran_build.py` | DONE | compiler lookup, platform flags, parallel `.f` compile, F90 module ordering (replaces the "compile twice" hack), no `chdir`/`os.system`. Windows: static Fortran runtime + 256 MB stack (default 1 MB overflows: exit code 0xC00000FD). |
+| 4A. Content-hash build cache | DONE | user cache dir, `$PYCATHY_CACHE`; key = sources + `*.H` + compiler version + flags + BLAS mode. |
 | 4B. Parallel build | DONE | thread pool over `*.f`. |
-| 5. Wrapper clean-up | DONE | `run_preprocessor` raises with the compiler output on failure; `recompileSrc(verbose=False, force=False)` (backward compatible), `CATHY.last_build` keeps the `BuildResult`; `processor_name` is `cathy.exe` on Windows. |
-| 6. CI + docs | PARTIAL | `.github/workflows/fortran-build.yml` (Linux, macOS Intel/ARM, Windows) **written but never run**. |
-| Distribution | DRAFT | `conda-recipe/meta.yaml` (untested; sha256, PyPI url and noarch/`fortran-compiler` question are TODO). `documentation.yml` still uses `apt` (docs build only; not migrated). |
-| 7. Tests | DONE | `pyCATHY/tests/test_fortran_build.py` (19 tests, real builds skipped without a compiler). |
+| 5. Wrapper clean-up | DONE | `run_preprocessor` raises with the compiler output on failure; `recompileSrc(verbose=False, force=False)` (backward compatible), `CATHY.last_build` keeps the `BuildResult`; `processor_name` is `cathy.exe` on Windows. Windows fixes found by CI: read-only git files in `tmp_src` (`_rmtree`), git handles closed after fetching sources. |
+| 6. CI + docs | DONE | `.github/workflows/fortran-build.yml`: Linux, macOS Intel, Windows: unit tests, build of the Weill sources, cache hit, and a full preprocessor + processor run through the wrapper. `macos-14` (Apple Silicon) is not supported by this account's runners. `documentation.yml` still uses `apt` (docs build only; not migrated). |
+| Distribution | DRAFT | `conda-recipe/meta.yaml` (untested; per-platform, not `noarch`; sha256 / PyPI url TODO). |
+| 7. Tests | DONE | `pyCATHY/tests/test_fortran_build.py` (real builds skipped without a compiler), `test_rmtree_readonly.py`. |
 
-Verified in the authoring sandbox (Linux x86-64, system gfortran + libopenblas, no conda): preprocessor builds, `cathy` builds from the Weill et al. sources in ~4.5 s (parallel), second build is a cache hit (0.0 s), and `CATHY.run_preprocessor()` + `run_processor()` run end to end. `CATHY_SCF_LAI` sources also build (cathy 4.6 s, prepro 1.7 s). **Not verified**: conda gfortran packages, macOS, Windows, a full `SCF_variable` simulation, results identical to the old build bit by bit (same sources/flags/libraries, so expected).
+Not verified: Apple Silicon, a full `SCF_variable` simulation (its sources do build), `CATHY_SCF_LAI` on Windows, the conda-forge recipe.
 
 ## Goal
 
@@ -75,11 +75,11 @@ Checked in `pycathy_wrapper` (`cathy_tools.py`) and in the Fortran of both `CATH
 
 ## Plan
 
-### 1. LAPACK/BLAS without touching the Fortran sources (decision: **no edits to any `.f` / `.f90`**)
-- Default: get `libblas` + `liblapack` (conda-forge, OpenBLAS/MKL/Accelerate depending on platform) from the **conda environment** and link with `-llapack -lblas` as today, adding `-L$CONDA_PREFIX/lib` (`%CONDA_PREFIX%\\Library\\lib` on Windows) when needed. Same routines as now, so results are unchanged; nothing is installed system-wide.
-- Optional later (only if conda linking is painful on Windows): a wrapper-side shim file (`pycathy/fortran/lapack_shim.f`: `dcopy`, `dgetrf`, `dgetrs`) compiled *next to* the CATHY sources, never inside them. Not needed for the first release.
+### 1. BLAS/LAPACK without touching the Fortran sources (decision: **no edits to any `.f` / `.f90`**) — DONE
+- Default (`PYCATHY_BLAS=shim`): wrapper-provided `DCOPY`/`DGETRF`/`DGETRS` compiled next to the CATHY sources, never inside them. No library is installed or linked, so there is nothing platform specific (conda's MKL-based `libblas`/`liblapack` for Windows ships DLLs only and crashed the MinGW executable at start-up with "32 bit pseudo relocation out of range").
+- `PYCATHY_BLAS=system`: link `-llapack -lblas` (conda library directory when available) as before.
 - Applies to both `CATHY_src_org` and `CATHY_SCF_LAI`; no upstream fork/PR, no vendored patched sources.
-- Validate: Weill et al. case gives the same output as the current build.
+- Validated: shim vs `numpy.linalg.solve` on 400 random 4x4 systems (134 needing row interchanges) and byte-identical outputs on the Weill et al. case.
 
 ### 2. Get the compiler from conda/mamba
 - Add the conda-forge `fortran-compiler` metapackage (platform-specific gfortran/flang) to `environment.yml` and to the docs; keep `make`/`ninja` optional.
@@ -129,12 +129,13 @@ Proposal: **A + B now; C is already satisfied** (monthly LAI loop: no recompile 
 | Apple Silicon | Nice to have, not mandatory. |
 | DA ensembles | All members share the same `CATHY.H` (to confirm with the LAI loop script / a DA run). |
 | Distribution | pip **and** a conda-forge recipe (`fortran-compiler`, `libblas`, `liblapack` as run dependencies). |
-| Numerical tolerance | Not an issue: real LAPACK from conda is kept (step 1), results unchanged. |
+| Numerical tolerance | Not an issue: outputs of the Weill case are byte-identical with the shim and with real LAPACK. |
 | Build cache location (my choice, revisit if needed) | User cache dir (`platformdirs`), override with `PYCATHY_CACHE`; ensemble members and projects share binaries. |
 
-## Open points / risks to test in CI (not decided by questions)
+## Open points / risks
 
-1. **Windows native toolchain**: conda-forge Fortran on win-64 plus linking against conda's LAPACK/BLAS; the Python side (`/dev/null`, `./pycppp`, `.exe`) is handled in step 3. Possible separate Windows recipe (different compiler package/flags) if the unified one fails.
-2. **`-mcmodel=large`**: x86-64 only; probably unsupported on Apple Silicon and of limited use on Windows (2 GB image limit). Question left for you: do your largest meshes need more than 2 GB of static arrays? If not, the flag can be dropped on those platforms.
+1. **`-mcmodel=large`**: only used on Linux x86-64 (not supported on Apple Silicon, not applicable to Windows). Question for you: do your largest meshes need more than 2 GB of static arrays? If not it can be dropped everywhere.
+2. **Apple Silicon**: no CI runner available (`macos-14` is rejected by this account); expected to work (gfortran, no `-mcmodel`), untested.
 3. **Shared `CATHY.H` in ensembles**: verify with a DA run before relying on one compile per ensemble.
 4. **Your LAI loop script**: still needed to confirm that nothing but vegetation inputs changes between months.
+5. **conda-forge recipe**: per-platform package, sha256 / PyPI url, maintainers.
