@@ -162,8 +162,8 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     """
     ``-llapack -lblas``, with the conda library directory (and rpath) when available.
 
-    On Windows conda ships MSVC-style import libraries (``liblapack.lib``, ``libblas.lib``);
-    they are passed by path (``-llapack`` is not found by the MinGW linker).
+    On Windows the conda libraries (``liblapack``/``libblas`` ``.lib`` import libraries, or
+    ``.dll`` only) are passed by path: ``-llapack`` is not found by the MinGW linker.
     """
     env = os.environ if env is None else env
     system = system or platform.system()
@@ -172,9 +172,12 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     if prefix is not None:
         libdir = prefix / "Library" / "lib" if system == "Windows" else prefix / "lib"
         if system == "Windows":
-            libs = [libdir / "liblapack.lib", libdir / "libblas.lib"]
-            if all(lib.exists() for lib in libs):
-                return [str(lib) for lib in libs]
+            # conda ships either import libraries (Library/lib/*.lib) or only the DLLs
+            # (Library/bin/*.dll, which the MinGW linker can link against directly).
+            for folder, ext in ((libdir, ".lib"), (prefix / "Library" / "bin", ".dll")):
+                libs = [folder / ("liblapack" + ext), folder / ("libblas" + ext)]
+                if all(lib.exists() for lib in libs):
+                    return [str(lib) for lib in libs]
         if libdir.is_dir():
             flags.append(f"-L{libdir}")
             if system != "Windows":

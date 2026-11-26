@@ -244,3 +244,13 @@ def test_windows_links_import_libs_by_path(tmp_path):
     assert fb.link_libraries("Windows", env=env, compiler="x86_64-w64-mingw32-gfortran.exe") == flags
     # without them: fall back to the -l form
     assert fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path / "none")})[-2:] == ["-llapack", "-lblas"]
+
+
+def test_windows_links_dlls_when_no_import_libs(tmp_path):
+    (tmp_path / "Library" / "lib").mkdir(parents=True)
+    bindir = tmp_path / "Library" / "bin"
+    bindir.mkdir(parents=True)
+    for n in ("liblapack.dll", "libblas.dll"):
+        (bindir / n).write_text("")
+    flags = fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path)})
+    assert flags == [str(bindir / "liblapack.dll"), str(bindir / "libblas.dll")]
