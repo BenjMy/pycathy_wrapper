@@ -77,3 +77,24 @@ jobs:
           assert again.ok and again.from_cache, "second build should be a cache hit"
           print("OK", cathy.exe)
           EOF
+
+      - name: End-to-end run (preprocessor + processor through the wrapper)
+        env:
+          PYCATHY_CACHE: ${{ runner.temp }}/pycathy-cache-e2e
+        run: |
+          python - <<'EOF'
+          import os
+          from pathlib import Path
+          from pyCATHY import cathy_tools
+
+          c = cathy_tools.CATHY(
+              dirName=os.path.join(os.environ["RUNNER_TEMP"], "e2e"),
+              prj_name="p", verbose=False, clear_src=True,
+          )
+          c.run_preprocessor(verbose=False)
+          c.run_processor(IPRT1=2, TRAFLAG=0, verbose=False)
+          assert c.last_build.ok, c.last_build.report()
+          psi = Path(c.workdir) / c.project_name / "output" / "psi"
+          assert psi.exists() and psi.stat().st_size > 0, "processor produced no output"
+          print("E2E OK", psi.stat().st_size)
+          EOF
