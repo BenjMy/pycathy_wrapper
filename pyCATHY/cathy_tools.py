@@ -86,10 +86,13 @@ CATHY_SRC_COMMIT = "ef54607df776dbb6f7d974329e5f72a276403d5c"
 def _clone_cathy_src(dest, url=CATHY_SRC_URL, commit=CATHY_SRC_COMMIT):
     """Fetch exactly ``commit`` of the CATHY sources into ``dest`` (shallow, no history)."""
     repo = Repo.init(dest)
-    repo.create_remote("origin", url)
-    repo.git.fetch("--depth", "1", "origin", commit)
-    repo.git.checkout("FETCH_HEAD")
-    return repo.head.commit.hexsha
+    try:
+        repo.create_remote("origin", url)
+        repo.git.fetch("--depth", "1", "origin", commit)
+        repo.git.checkout("FETCH_HEAD")
+        return repo.head.commit.hexsha
+    finally:
+        repo.close()  # release git's file handles (a directory cannot be deleted otherwise on Windows)
 
 
 
@@ -336,12 +339,13 @@ class CATHY:
                 dest = os.path.join(self.workdir, self.project_name)
             
                 with tempfile.TemporaryDirectory() as tmp:
-                    Repo.clone_from(
+                    scf_repo = Repo.clone_from(
                         "https://github.com/CATHY-Org/CATHY_SCF_LAI.git",
                         tmp,
                         branch="main",
                         depth=1,
                     )
+                    scf_repo.close()  # release git's file handles (Windows)
                     shutil.copytree(
                         tmp,
                         dest,
