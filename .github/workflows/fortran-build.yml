@@ -40,6 +40,12 @@ jobs:
           pip install -r env/requirements.txt
           pip install .
 
+      - name: List BLAS/LAPACK libraries installed by conda (Windows diagnostics)
+        if: runner.os == 'Windows'
+        run: |
+          ls "$CONDA_PREFIX/Library/lib" | grep -i -E "blas|lapack|mkl_rt|mkl_core|openblas" || true
+          ls "$CONDA_PREFIX/Library/bin" | grep -i -E "blas|lapack|mkl_rt" || true
+
       - name: Fortran build tests
         run: |
           mkdir -p tmp-fortran-test && cd tmp-fortran-test
