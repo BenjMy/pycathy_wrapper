@@ -14,6 +14,7 @@ Status: **steps 1, 3, 4A, 5 and the Linux part of 6/7 implemented** (see "Implem
 | 4B. Parallel build | DONE | thread pool over `*.f`. |
 | 5. Wrapper clean-up | DONE | `run_preprocessor` raises with the compiler output on failure; `recompileSrc(verbose=False, force=False)` (backward compatible), `CATHY.last_build` keeps the `BuildResult`; `processor_name` is `cathy.exe` on Windows. |
 | 6. CI + docs | PARTIAL | `.github/workflows/fortran-build.yml` (Linux, macOS Intel/ARM, Windows) **written but never run**. |
+| Distribution | DRAFT | `conda-recipe/meta.yaml` (untested; sha256, PyPI url and noarch/`fortran-compiler` question are TODO). `documentation.yml` still uses `apt` (docs build only; not migrated). |
 | 7. Tests | DONE | `pyCATHY/tests/test_fortran_build.py` (19 tests, real builds skipped without a compiler). |
 
 Verified in the authoring sandbox (Linux x86-64, system gfortran + libopenblas, no conda): preprocessor builds, `cathy` builds from the Weill et al. sources in ~4.5 s (parallel), second build is a cache hit (0.0 s), and `CATHY.run_preprocessor()` + `run_processor()` run end to end. `CATHY_SCF_LAI` sources also build (cathy 4.6 s, prepro 1.7 s). **Not verified**: conda gfortran packages, macOS, Windows, a full `SCF_variable` simulation, results identical to the old build bit by bit (same sources/flags/libraries, so expected).
