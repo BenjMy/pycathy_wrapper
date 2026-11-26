@@ -20,10 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: MSVC environment (conda-forge flang links with the MSVC linker)
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
       - uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: "3.10"
@@ -34,7 +30,13 @@ jobs:
 
       - name: Install compiler and algebra libraries from conda (no system packages)
         run: |
-          conda install -y fortran-compiler libblas liblapack pytest
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            # conda-forge's `fortran-compiler` is flang on win-64, which rejects the
+            # gfortran extensions used by the CATHY sources (ACCESS='transparent').
+            conda install -y gfortran_win-64 libblas liblapack pytest
+          else
+            conda install -y fortran-compiler libblas liblapack pytest
+          fi
           pip install -r env/requirements.txt
           pip install .
 
@@ -57,7 +59,8 @@ jobs:
           shutil.copytree(prj / "src", work / "src")
           shutil.copytree(prj / "prepro" / "src", work / "prepro_src")
           print("compiler:", fb.find_fortran_compiler())
-          print("flags:", fb.default_compile_flags(), fb.link_libraries())
+          c = fb.find_fortran_compiler()
+          print("flags:", fb.default_compile_flags(compiler=c), fb.link_libraries(compiler=c))
 
           pre = fb.build_preprocessor(work / "prepro_src")
           assert pre.ok, pre.report()

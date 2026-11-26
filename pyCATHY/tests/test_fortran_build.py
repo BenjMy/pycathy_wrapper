@@ -232,7 +232,7 @@ def test_compiler_family_and_flang_flags():
     assert fb.default_compile_flags("Windows", "AMD64", env={}, compiler="flang.exe") == ["-O"]
 
 
-def test_flang_windows_links_import_libs_by_path(tmp_path):
+def test_windows_links_import_libs_by_path(tmp_path):
     libdir = tmp_path / "Library" / "lib"
     libdir.mkdir(parents=True)
     for n in ("liblapack.lib", "libblas.lib"):
@@ -240,5 +240,7 @@ def test_flang_windows_links_import_libs_by_path(tmp_path):
     env = {"CONDA_PREFIX": str(tmp_path)}
     flags = fb.link_libraries("Windows", env=env, compiler="flang.exe")
     assert flags == [str(libdir / "liblapack.lib"), str(libdir / "libblas.lib")]
-    # gfortran (mingw) keeps the -l form
-    assert fb.link_libraries("Windows", env=env, compiler="gfortran.exe")[-2:] == ["-llapack", "-lblas"]
+    # MinGW gfortran uses the same import libraries by path
+    assert fb.link_libraries("Windows", env=env, compiler="x86_64-w64-mingw32-gfortran.exe") == flags
+    # without them: fall back to the -l form
+    assert fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path / "none")})[-2:] == ["-llapack", "-lblas"]

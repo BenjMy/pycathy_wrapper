@@ -162,8 +162,8 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     """
     ``-llapack -lblas``, with the conda library directory (and rpath) when available.
 
-    flang on Windows links against conda's MSVC-style import libraries, which are
-    passed by path (``liblapack.lib``, ``libblas.lib``).
+    On Windows conda ships MSVC-style import libraries (``liblapack.lib``, ``libblas.lib``);
+    they are passed by path (``-llapack`` is not found by the MinGW linker).
     """
     env = os.environ if env is None else env
     system = system or platform.system()
@@ -171,7 +171,7 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     prefix = _conda_prefix(env)
     if prefix is not None:
         libdir = prefix / "Library" / "lib" if system == "Windows" else prefix / "lib"
-        if system == "Windows" and compiler_family(compiler) == "flang":
+        if system == "Windows":
             libs = [libdir / "liblapack.lib", libdir / "libblas.lib"]
             if all(lib.exists() for lib in libs):
                 return [str(lib) for lib in libs]
