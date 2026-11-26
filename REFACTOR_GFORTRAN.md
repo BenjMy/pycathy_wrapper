@@ -43,6 +43,20 @@ To be confirmed with a real build (no gfortran in the authoring sandbox): link w
 4. Global `os.chdir` + `glob` on the current directory (fragile, not thread/process safe for DA ensembles).
 5. Compiler failures in the preprocessor are silently swallowed.
 
+## Vegetation: findings (answer to question 1)
+
+Checked in `pycathy_wrapper` (`cathy_tools.py`) and in the Fortran of both `CATHY_src_org` (test project sources) and `CATHY_SCF_LAI` (`src/datin.f`).
+
+- Monthly workflow (Python script: LAI -> lookup table -> root depth + Feddes parameters -> `update_soil` / `update_veg_map`) writes:
+  - `input/soil`: per vegetation class `PCANA PCREF PCWLT ZROOT PZ OMGC` (+ `SCF` block in `SCF_variable`), via `_write_SOIL_file`.
+  - `input/root_map`: vegetation class raster, via `_write_root_map`.
+  - `src/CATHY.H`: **only `MAXVEG`** (number of classes), via `update_veg_map` -> `update_cathyH`.
+- Fortran `datin.f` reads those values at run time (`READ(IIN4,*) PCANA(I),PCREF(I),PCWLT(I),ZROOT(I),...` for `I=1,NVEG`; `READ(IIN4,*) (SCF(I),I=1,NVEG)` in SCF_LAI). `MAXVEG` only dimensions arrays (`NVEG.GT.MAXVEG` -> error). No `.f` file holds the vegetation values.
+- Hence changing LAI / root depth / Feddes / SCF month by month **never requires recompiling**, provided `MAXVEG` does not change (`update_veg_map(..., maxveg=N)` already keeps it fixed).
+- Why it recompiles today anyway: `run_processor(recompile=True)` is the default and `recompileSrc()` rebuilds all `*.f` unconditionally. Immediate workaround: `run_processor(recompile=False)` after the first month. Proper fix: content-hash cache (option A), which makes a rewritten but identical `CATHY.H` a cache hit.
+- Note: `CATHY_SCF_LAI` ships `MAXVEG=15` in its `CATHY.H` (template value); wrapper overwrites it per project.
+- Not seen yet: your LAI loop script. Please send it to confirm that nothing else (e.g. `MAXZON`, layers, DEM) changes between months.
+
 ## Plan
 
 ### 1. Remove LAPACK/BLAS from the Fortran source
@@ -69,12 +83,12 @@ To be confirmed with a real build (no gfortran in the authoring sandbox): link w
 |---|---|---|
 | **A. Content-hash build cache** (proposed first) | Key = sha256(all `*.f` + `CATHY.H` + compiler version + flags). Hit → copy cached `cathy`; miss → build and store. Changing something that does not alter the key never recompiles; DA ensembles with identical dimensions compile once. | Low. Needs a cache location (project dir vs user cache dir). |
 | **B. Incremental objects + parallel build** | Cache one `.o` per source keyed by hash(file + headers it includes); relink only. Compile the rest with N workers. | Most files include `CATHY.H`, so a dimension change still rebuilds nearly everything; parallelism helps most. |
-| **C. Vegetation (and other physical) parameters at run time** | Read the monthly vegetation parameters from an input file instead of compiling them in; only true dimensions stay in `CATHY.H`. | Fortran change in CATHY-Org; removes your most frequent recompile reason. Depends on where those parameters live today (question 1). |
+| **C. Vegetation parameters at run time** | **Already the case** (see "Vegetation: findings"): Feddes/root/SCF values are read from `input/soil` at run time. Only `MAXVEG` (number of classes) is compile-time. The monthly loop only needs `recompile=False` (or a cache hit). | No Fortran change needed. |
 | D. Dimension buckets | Round dimensions up to size classes so many projects share one executable. | Larger static arrays, more memory, interacts with `-mcmodel=large`. |
 | E. Prebuilt binaries per OS | Ship executables for reference cases. | Does not cover arbitrary DEMs. |
 | F. `ccache` (conda) | Compiler-level cache. | Easy add-on, little gain with A+B. |
 
-Proposal: **A + B now, C for the vegetation parameters**. Preprocessor: compile once per pyCATHY version (cache) and drop the double compile.
+Proposal: **A + B now; C is already satisfied** (monthly LAI loop: no recompile as long as `MAXVEG` is constant). Preprocessor: compile once per pyCATHY version (cache) and drop the double compile.
 
 ### 5. Wrapper clean-up
 - `run_preprocessor` / `run_processor`: absolute paths, `subprocess.run(cwd=...)`, executable name from `fortran_build`, no `./`.
@@ -93,7 +107,7 @@ Proposal: **A + B now, C for the vegetation parameters**. Preprocessor: compile 
 
 ## Open questions (need your input)
 
-1. **Monthly vegetation parameters**: where are they today — hard-coded in a `.f` (e.g. a block-data / table) of `CATHY_SCF_LAI`, or only in `CATHY.H`? Which file do you edit when you change them? This decides whether option C is feasible.
+1. ~~Monthly vegetation parameters~~ answered: run-time `input/soil`; only `MAXVEG` is compile-time. Remaining: share the LAI loop script to confirm no other `CATHY.H` value changes between months.
 2. Which sources are the target: `CATHY_src_org` only, or also `CATHY_SCF_LAI` (`version="SCF_variable"`)? Do I patch them upstream (fork + PR in CATHY-Org) or vendor patched sources inside pyCATHY?
 3. Windows: native support is a hard requirement, or is "works on Linux/macOS conda, Windows best effort" acceptable for the first release?
 4. Largest problems you run (nodes, layers): do you rely on `-mcmodel=large` (static arrays > 2 GB)? Is Apple Silicon a target?
