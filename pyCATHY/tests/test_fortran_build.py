@@ -82,7 +82,8 @@ def test_link_libraries_with_and_without_conda(tmp_path):
     assert flags[-2:] == ["-llapack", "-lblas"]
     (tmp_path / "Library" / "lib").mkdir(parents=True)
     win = fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path)})
-    assert win == [f"-L{tmp_path / 'Library' / 'lib'}", "-llapack", "-lblas"]
+    assert win == ["-static-libgfortran", "-static-libgcc",
+                   f"-L{tmp_path / 'Library' / 'lib'}", "-llapack", "-lblas"]
 
 
 def test_user_cache_dir(tmp_path):
@@ -239,9 +240,11 @@ def test_windows_links_import_libs_by_path(tmp_path):
         (libdir / n).write_text("")
     env = {"CONDA_PREFIX": str(tmp_path)}
     flags = fb.link_libraries("Windows", env=env, compiler="flang.exe")
-    assert flags == [str(libdir / "liblapack.lib"), str(libdir / "libblas.lib")]
-    # MinGW gfortran uses the same import libraries by path
-    assert fb.link_libraries("Windows", env=env, compiler="x86_64-w64-mingw32-gfortran.exe") == flags
+    assert flags[-2:] == [str(libdir / "liblapack.lib"), str(libdir / "libblas.lib")]
+    # MinGW gfortran: same libraries by path, plus the static Fortran runtime
+    mingw = fb.link_libraries("Windows", env=env, compiler="x86_64-w64-mingw32-gfortran.exe")
+    assert mingw[-2:] == flags[-2:]
+    assert mingw[:2] == ["-static-libgfortran", "-static-libgcc"]
     # without them: fall back to the -l form
     assert fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path / "none")})[-2:] == ["-llapack", "-lblas"]
 
@@ -253,4 +256,4 @@ def test_windows_links_dlls_when_no_import_libs(tmp_path):
     for n in ("liblapack.dll", "libblas.dll"):
         (bindir / n).write_text("")
     flags = fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path)})
-    assert flags == [str(bindir / "liblapack.dll"), str(bindir / "libblas.dll")]
+    assert flags[-2:] == [str(bindir / "liblapack.dll"), str(bindir / "libblas.dll")]

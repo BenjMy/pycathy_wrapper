@@ -168,6 +168,10 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     env = os.environ if env is None else env
     system = system or platform.system()
     flags: list[str] = []
+    if system == "Windows" and compiler_family(compiler) == "gfortran":
+        # A MinGW executable that auto-imports data from the Fortran runtime DLLs can fail
+        # at start-up ("32 bit pseudo relocation ... out of range"): link the runtime statically.
+        flags += ["-static-libgfortran", "-static-libgcc"]
     prefix = _conda_prefix(env)
     if prefix is not None:
         libdir = prefix / "Library" / "lib" if system == "Windows" else prefix / "lib"
@@ -177,7 +181,7 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
             for folder, ext in ((libdir, ".lib"), (prefix / "Library" / "bin", ".dll")):
                 libs = [folder / ("liblapack" + ext), folder / ("libblas" + ext)]
                 if all(lib.exists() for lib in libs):
-                    return [str(lib) for lib in libs]
+                    return flags + [str(lib) for lib in libs]
         if libdir.is_dir():
             flags.append(f"-L{libdir}")
             if system != "Windows":
