@@ -199,3 +199,46 @@ def test_real_preprocessor_module_order(tmp_path):
     assert res.ok, res.report()
     assert res.exe.exists()
     assert shutil.which(str(res.exe)) or res.exe.is_file()
+
+
+# ----------------------------------------------------------------------------
+# flang (conda-forge fortran-compiler on win-64)
+# ----------------------------------------------------------------------------
+def test_conda_flang_is_found_when_no_gfortran(tmp_path):
+    exe = _fake_exe(tmp_path / "Library" / "bin" / "flang.exe")
+    env = {"CONDA_PREFIX": str(tmp_path)}
+    assert fb.find_fortran_compiler(env=env, which=lambda n: None) == str(exe)
+
+
+def test_conda_gfortran_preferred_over_flang(tmp_path):
+    _fake_exe(tmp_path / "bin" / "flang")
+    gf = _fake_exe(tmp_path / "bin" / "x86_64-conda-linux-gnu-gfortran")
+    env = {"CONDA_PREFIX": str(tmp_path)}
+    assert fb.find_fortran_compiler(env=env, which=lambda n: None) == str(gf)
+
+
+def test_conda_beats_gfortran_on_path(tmp_path):
+    flang = _fake_exe(tmp_path / "Library" / "bin" / "flang.exe")
+    env = {"CONDA_PREFIX": str(tmp_path)}
+    assert fb.find_fortran_compiler(env=env, which=lambda n: "C:/mingw64/bin/" + n) == str(flang)
+
+
+def test_compiler_family_and_flang_flags():
+    assert fb.compiler_family("C:/x/Library/bin/flang.exe") == "flang"
+    assert fb.compiler_family("/usr/bin/flang-new") == "flang"
+    assert fb.compiler_family("/usr/bin/x86_64-conda-linux-gnu-gfortran") == "gfortran"
+    assert fb.compiler_family(None) == "gfortran"
+    assert fb.default_compile_flags("Linux", "x86_64", env={}, compiler="/usr/bin/flang") == ["-O"]
+    assert fb.default_compile_flags("Windows", "AMD64", env={}, compiler="flang.exe") == ["-O"]
+
+
+def test_flang_windows_links_import_libs_by_path(tmp_path):
+    libdir = tmp_path / "Library" / "lib"
+    libdir.mkdir(parents=True)
+    for n in ("liblapack.lib", "libblas.lib"):
+        (libdir / n).write_text("")
+    env = {"CONDA_PREFIX": str(tmp_path)}
+    flags = fb.link_libraries("Windows", env=env, compiler="flang.exe")
+    assert flags == [str(libdir / "liblapack.lib"), str(libdir / "libblas.lib")]
+    # gfortran (mingw) keeps the -l form
+    assert fb.link_libraries("Windows", env=env, compiler="gfortran.exe")[-2:] == ["-llapack", "-lblas"]

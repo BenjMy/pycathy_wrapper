@@ -111,7 +111,9 @@ def find_fortran_compiler(env=None, which=shutil.which) -> str:
         for bindir in _conda_bin_dirs(prefix):
             if not bindir.is_dir():
                 continue
-            for pattern in ("*-gfortran", "*-gfortran.exe", "gfortran", "gfortran.exe"):
+            # gfortran first (linux/osx), then flang (what conda-forge ships on win-64)
+            for pattern in ("*-gfortran", "*-gfortran.exe", "gfortran", "gfortran.exe",
+                            "flang-new.exe", "flang-new", "flang.exe", "flang"):
                 matches = sorted(bindir.glob(pattern))
                 if matches:
                     return str(matches[0])
@@ -128,10 +130,17 @@ def find_fortran_compiler(env=None, which=shutil.which) -> str:
     )
 
 
-def default_compile_flags(system=None, machine=None, env=None) -> list[str]:
+def compiler_family(compiler: str | None) -> str:
+    """``"flang"`` or ``"gfortran"`` (default) from the compiler file name."""
+    name = Path(compiler).name.lower() if compiler else ""
+    return "flang" if "flang" in name else "gfortran"
+
+
+def default_compile_flags(system=None, machine=None, env=None, compiler=None) -> list[str]:
     """
     ``-O`` everywhere; ``-fPIC`` outside Windows; ``-mcmodel=large`` only on Linux x86-64
     (it is x86-64 specific; not supported on Apple Silicon, of no use on Windows).
+    flang (conda-forge on Windows) only gets ``-O``.
     ``$PYCATHY_FFLAGS`` replaces the defaults entirely.
     """
     env = os.environ if env is None else env
@@ -140,6 +149,8 @@ def default_compile_flags(system=None, machine=None, env=None) -> list[str]:
     system = system or platform.system()
     machine = (machine or platform.machine()).lower()
     flags = ["-O"]
+    if compiler_family(compiler) == "flang":
+        return flags
     if system == "Linux" and machine in ("x86_64", "amd64"):
         flags.append("-mcmodel=large")
     if system != "Windows":
@@ -147,14 +158,23 @@ def default_compile_flags(system=None, machine=None, env=None) -> list[str]:
     return flags
 
 
-def link_libraries(system=None, env=None) -> list[str]:
-    """``-llapack -lblas``, with the conda library directory (and rpath) when available."""
+def link_libraries(system=None, env=None, compiler=None) -> list[str]:
+    """
+    ``-llapack -lblas``, with the conda library directory (and rpath) when available.
+
+    flang on Windows links against conda's MSVC-style import libraries, which are
+    passed by path (``liblapack.lib``, ``libblas.lib``).
+    """
     env = os.environ if env is None else env
     system = system or platform.system()
     flags: list[str] = []
     prefix = _conda_prefix(env)
     if prefix is not None:
         libdir = prefix / "Library" / "lib" if system == "Windows" else prefix / "lib"
+        if system == "Windows" and compiler_family(compiler) == "flang":
+            libs = [libdir / "liblapack.lib", libdir / "libblas.lib"]
+            if all(lib.exists() for lib in libs):
+                return [str(lib) for lib in libs]
         if libdir.is_dir():
             flags.append(f"-L{libdir}")
             if system != "Windows":
@@ -255,7 +275,7 @@ def build_preprocessor(src_dir, exe_name="pycppp", sources=PREPRO_SOURCES, compi
     """Compile the CATHY preprocessor (single command: Fortran 90 module order matters)."""
     src_dir = Path(src_dir)
     compiler = compiler or find_fortran_compiler()
-    flags = list(flags) if flags is not None else default_compile_flags()
+    flags = list(flags) if flags is not None else default_compile_flags(compiler=compiler)
     exe = src_dir / exe_filename(exe_name)
     cache = Path(cache_dir) if cache_dir else user_cache_dir()
     sources = order_by_module_dependencies(src_dir, list(sources))
@@ -284,8 +304,8 @@ def build_cathy(src_dir, exe_name="cathy", compiler=None, flags=None, link_flags
     """
     src_dir = Path(src_dir)
     compiler = compiler or find_fortran_compiler()
-    flags = list(flags) if flags is not None else default_compile_flags()
-    link_flags = list(link_flags) if link_flags is not None else link_libraries()
+    flags = list(flags) if flags is not None else default_compile_flags(compiler=compiler)
+    link_flags = list(link_flags) if link_flags is not None else link_libraries(compiler=compiler)
     exe = src_dir / exe_filename(exe_name)
     sources = sorted(p.name for p in src_dir.glob("*.f"))
     if not sources:
