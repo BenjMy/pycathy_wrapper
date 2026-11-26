@@ -38,6 +38,7 @@ are taking care of recompiling the source files via bash cmd.
 """
 import json
 import os
+import stat
 import sys
 import warnings
 from pathlib import Path
@@ -48,6 +49,20 @@ import tempfile
 
 import pyCATHY.meshtools as mt
 from pyCATHY import fortran_build
+
+
+def _rmtree(path):
+    """``shutil.rmtree`` that also removes read-only files (git packs on Windows)."""
+
+    def _handler(func, p, _exc):
+        os.chmod(p, stat.S_IWRITE)
+        func(p)
+
+    if sys.version_info >= (3, 12):
+        shutil.rmtree(path, onexc=_handler)
+    else:
+        shutil.rmtree(path, onerror=_handler)
+
 from pyCATHY.importers import cathy_inputs as in_CT
 from pyCATHY.importers import cathy_outputs as out_CT
 from pyCATHY.plotters import cathy_plots as plt_CT
@@ -251,13 +266,13 @@ class CATHY:
                         os.path.join(self.workdir, self.project_name, "src")
                     ):
                         print("clear src files")
-                        shutil.rmtree(
+                        _rmtree(
                             os.path.join(self.workdir, self.project_name, "src")
                         )
-                        shutil.rmtree(
+                        _rmtree(
                             os.path.join(self.workdir, self.project_name, "input")
                         )
-                        shutil.rmtree(
+                        _rmtree(
                             os.path.join(self.workdir, self.project_name, "prepro")
                         )
 
@@ -370,7 +385,7 @@ class CATHY:
         if not os.path.exists(os.path.join(self.workdir, self.project_name, "output")):
                 self.create_output(output_dirname="output")
 
-                shutil.rmtree(
+                _rmtree(
                     os.path.join(self.workdir, self.project_name, "tmp_src")
                 )
                 os.remove(os.path.join(self.workdir, self.project_name, "readme.txt"))
@@ -385,10 +400,10 @@ class CATHY:
                     ):
                         self.create_output(output_dirname="output")
                     else:
-                        shutil.rmtree(
+                        _rmtree(
                             os.path.join(self.workdir, self.project_name, "output")
                         )
-                        shutil.rmtree(
+                        _rmtree(
                             os.path.join(self.workdir, self.project_name, "vtk")
                         )
                         self.create_output(output_dirname="output")
