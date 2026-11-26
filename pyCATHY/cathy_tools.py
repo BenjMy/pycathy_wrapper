@@ -4819,9 +4819,29 @@ class CATHY:
             zones_markers_3d = self.zone3d
 
         if zones_markers_3d is None:
-            zones_markers_3d = []
-            for l in range(self.dem_parameters['nstr']):
-                zones_markers_3d.append(np.ones([self.hapin["M"], self.hapin["N"]])*l)
+            nstr = int(self.dem_parameters['nstr'])
+            nzone = int(self.dem_parameters.get('nzone', 1))
+            zone2d = getattr(self, 'zone', None)
+            # zone x layer markers: only when the property map has one value
+            # per (zone, layer) row, ordered zone first then layer (as
+            # init_soil_SPP_map_df / fill_soil_df). Any other length keeps the
+            # layer-only markers (e.g. 'ic' with nstr values).
+            if (
+                nzone > 1
+                and zone2d is not None
+                and np.size(zone2d) > 0
+                and len(prop_map) == nzone * nstr
+            ):
+                zone2d = np.asarray(zone2d).astype(int)
+                zones_markers_3d = [
+                    (zone2d - 1) * nstr + l for l in range(nstr)
+                ]
+            else:
+                zones_markers_3d = []
+                for l in range(nstr):
+                    zones_markers_3d.append(
+                        np.ones([self.hapin["M"], self.hapin["N"]])*l
+                    )
 
         np.unique(zones_markers_3d)
 
@@ -4839,6 +4859,17 @@ class CATHY:
 
         # Get unique markers in the mesh
         unique_markers = np.unique(self.mesh_pv_attributes["cell_markers_zone3d"])
+
+        try:
+            _finite = np.isfinite(np.asarray(prop_map, dtype=float))
+        except (TypeError, ValueError):
+            _finite = None
+        if _finite is not None and not np.all(_finite):
+            raise ValueError(
+                f"prop_map for '{prop_name}' contains NaN/inf at positions "
+                f"{np.flatnonzero(~_finite).tolist()}: some (zone, layer) rows "
+                "are not defined in the soil table"
+            )
 
         # Check that the number of properties matches the number of unique markers
         # print('Skip Error Temporary!')
