@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
+        os: [ubuntu-latest, macos-15-intel, macos-14, windows-latest]
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -37,3 +37,29 @@ jobs:
         run: |
           mkdir -p tmp-fortran-test && cd tmp-fortran-test
           MPLBACKEND=agg pytest --pyargs pyCATHY.tests.test_fortran_build -v
+
+      - name: Build the preprocessor and CATHY (Weill example sources) with conda gfortran + LAPACK/BLAS
+        env:
+          PYCATHY_CACHE: ${{ runner.temp }}/pycathy-cache
+        run: |
+          python - <<'EOF'
+          import os, shutil, tempfile
+          from pathlib import Path
+          from pyCATHY import fortran_build as fb
+
+          prj = Path(os.environ["GITHUB_WORKSPACE"]) / "pyCATHY/tests/weil_exemple/my_cathy_prj"
+          work = Path(tempfile.mkdtemp())
+          shutil.copytree(prj / "src", work / "src")
+          shutil.copytree(prj / "prepro" / "src", work / "prepro_src")
+          print("compiler:", fb.find_fortran_compiler())
+          print("flags:", fb.default_compile_flags(), fb.link_libraries())
+
+          pre = fb.build_preprocessor(work / "prepro_src")
+          assert pre.ok, pre.report()
+          cathy = fb.build_cathy(work / "src")
+          assert cathy.ok, cathy.report()
+          assert cathy.exe.exists()
+          again = fb.build_cathy(work / "src")
+          assert again.ok and again.from_cache, "second build should be a cache hit"
+          print("OK", cathy.exe)
+          EOF
