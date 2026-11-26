@@ -1,6 +1,7 @@
 """Tests of pyCATHY.fortran_build (compiler lookup, flags, cache key, real mini build)."""
 
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -257,3 +258,75 @@ def test_windows_links_dlls_when_no_import_libs(tmp_path):
         (bindir / n).write_text("")
     flags = fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path)})
     assert flags[-2:] == [str(bindir / "liblapack.dll"), str(bindir / "libblas.dll")]
+
+
+# ----------------------------------------------------------------------------
+# BLAS/LAPACK shim (DCOPY, DGETRF, DGETRS provided by the wrapper)
+# ----------------------------------------------------------------------------
+def test_blas_mode_default_env_and_error():
+    assert fb.blas_mode(env={}) == "shim"
+    assert fb.blas_mode(env={fb.ENV_BLAS: "system"}) == "system"
+    assert fb.blas_mode(env={fb.ENV_BLAS: "system"}, blas="shim") == "shim"
+    with pytest.raises(ValueError):
+        fb.blas_mode(env={fb.ENV_BLAS: "mkl"})
+
+
+def test_shim_source_is_valid_fixed_form():
+    lines = fb.LAPACK_SHIM_SOURCE.splitlines()
+    assert max(len(line) for line in lines) <= 72
+    for name in ("SUBROUTINE DCOPY", "SUBROUTINE DGETRF", "SUBROUTINE DGETRS"):
+        assert name in fb.LAPACK_SHIM_SOURCE
+
+
+def test_write_lapack_shim_is_idempotent(tmp_path):
+    p1 = fb.write_lapack_shim(tmp_path)
+    assert p1.read_text() == fb.LAPACK_SHIM_SOURCE
+    mtime = p1.stat().st_mtime_ns
+    assert fb.write_lapack_shim(tmp_path) == p1
+    assert p1.stat().st_mtime_ns == mtime
+
+
+def test_shim_build_needs_no_library_and_matches_numpy(tmp_path):
+    np = pytest.importorskip("numpy")
+    compiler = _compiler_or_skip()
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "main.f").write_text(
+        "      PROGRAM MAIN\n"
+        "      DOUBLE PRECISION A(4,4),B(4),C(4)\n"
+        "      INTEGER IPIV(4),INFO,I,J\n"
+        "      READ(*,*) ((A(I,J),J=1,4),I=1,4)\n"
+        "      READ(*,*) (B(I),I=1,4)\n"
+        "      CALL DCOPY(4,B,1,C,1)\n"
+        "      CALL DGETRF(4,4,A,4,IPIV,INFO)\n"
+        "      CALL DGETRS('N',4,1,A,4,IPIV,B,4,INFO)\n"
+        "      WRITE(*,'(9E26.17)') (B(I),I=1,4),(C(I),I=1,4),DBLE(INFO)\n"
+        "      END\n"
+    )
+    res = fb.build_cathy(src, "solve", compiler=compiler, flags=["-O"],
+                         cache_dir=tmp_path / "cache")  # default: shim, no -llapack -lblas
+    assert res.ok, res.report()
+
+    rng = np.random.default_rng(1)
+    for k in range(25):
+        A = rng.normal(size=(4, 4))
+        if k % 2 == 0:
+            A[0, 0] = 1e-12  # forces a row interchange
+        b = rng.normal(size=4)
+        text = "\n".join(" ".join(repr(float(v)) for v in row) for row in A) + "\n"
+        text += " ".join(repr(float(v)) for v in b) + "\n"
+        out = subprocess.run([str(res.exe)], input=text, capture_output=True, text=True).stdout
+        vals = [float(out[i * 26:(i + 1) * 26]) for i in range(9)]
+        assert vals[8] == 0.0  # INFO
+        assert np.allclose(vals[4:8], b)  # DCOPY
+        assert np.allclose(vals[:4], np.linalg.solve(A, b), rtol=1e-8, atol=1e-10)
+
+
+def test_blas_mode_is_part_of_the_cache_key(tmp_path):
+    compiler = _compiler_or_skip()
+    src = _mini_project(tmp_path)
+    kw = dict(compiler=compiler, flags=["-O"], link_flags=[], cache_dir=tmp_path / "cache")
+    shim = fb.build_cathy(src, "prog", blas="shim", **kw)
+    system = fb.build_cathy(src, "prog", blas="system", **kw)
+    assert shim.ok and system.ok
+    assert shim.key != system.key

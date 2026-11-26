@@ -1,0 +1,13 @@
+# Windows. (conda-forge `fortran-compiler` is flang on win-64, which rejects the gfortran
+# extensions used by the CATHY preprocessor sources, hence gfortran_win-64.)
+name: pyCATHY
+channels:
+- conda-forge
+- default
+dependencies:
+- python=3.10
+- git
+- pip
+- gfortran_win-64
+- pip:
+  - numpy

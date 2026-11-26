@@ -1,3 +1,4 @@
+# Linux and macOS. Windows: use environment-windows.yml
 name: pyCATHY
 channels:
 - conda-forge
@@ -6,8 +7,6 @@ dependencies:
 - python=3.10
 - git
 - pip
-- fortran-compiler   # gfortran/flang from conda-forge (no system compiler needed)
-- libblas
-- liblapack
+- fortran-compiler   # gfortran from conda-forge: no system compiler, no BLAS/LAPACK needed
 - pip:
   - numpy

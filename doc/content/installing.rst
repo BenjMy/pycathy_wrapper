@@ -48,41 +48,51 @@ Dependencies
 ------------
 - NumPy, SciPy, and Matplotlib beyond default python packages
 
-- A Fortran compiler and the algebra libraries BLAS and LAPACK. **They are installed in the
-  conda/mamba environment: nothing has to be installed system-wide** (no ``apt install gfortran``,
-  no WSL on Windows).
+- A Fortran compiler. **It is installed in the conda/mamba environment: nothing has to be installed
+  system-wide** (no ``apt install gfortran``, no WSL on Windows). BLAS and LAPACK are **not**
+  needed: the few routines CATHY uses (``dcopy``, ``dgetrf``, ``dgetrs``) are compiled with it.
 
-Linux, macOS and Windows (conda or mamba)::
+Linux and macOS (conda or mamba)::
 
     conda create --name pyCATHY python=3.10
     conda activate pyCATHY
-    conda install -c conda-forge fortran-compiler libblas liblapack
+    conda install -c conda-forge fortran-compiler
     pip install pyCATHY
 
-or, from the repository, ``conda env create -f environment.yml``.
+Windows (Anaconda/Miniforge prompt)::
 
-pyCATHY looks for the compiler in this order: ``$PYCATHY_FC``, ``$FC``, the gfortran of the active
+    conda create --name pyCATHY python=3.10
+    conda activate pyCATHY
+    conda install -c conda-forge gfortran_win-64
+    pip install pyCATHY
+
+On Windows ``fortran-compiler`` installs *flang*, which does not accept the gfortran extensions
+used by the CATHY preprocessor sources: install ``gfortran_win-64`` instead.
+
+or, from the repository, ``conda env create -f environment.yml`` (``environment-windows.yml`` on Windows).
+
+pyCATHY looks for the compiler in this order: ``$PYCATHY_FC``, ``$FC``, the compiler of the active
 conda environment, then ``gfortran`` / ``flang`` on the ``PATH``. The compiled CATHY executables are
 cached (content hash of the Fortran sources, ``CATHY.H``, compiler and flags): changing input files
-such as the vegetation parameters does not trigger a recompilation. Set ``$PYCATHY_CACHE`` to choose the
-cache directory and ``$PYCATHY_FFLAGS`` to replace the default compiler flags.
+such as the vegetation parameters does not trigger a recompilation. Environment variables:
+``$PYCATHY_CACHE`` (cache directory), ``$PYCATHY_FFLAGS`` (replaces the default compiler flags) and
+``$PYCATHY_BLAS=system`` (link the real BLAS/LAPACK, ``-llapack -lblas``, instead of the built-in routines).
 
 .. tab-set::
 
     .. tab-item:: System compiler (advanced)
 
-        If you prefer a compiler installed by your system, make sure ``gfortran``, BLAS and LAPACK are
-        on the path of the linker, for example:
+        If you prefer a compiler installed by your system, make sure ``gfortran`` is on the ``PATH``,
+        for example:
 
         .. code:: bash
 
-           sudo apt-get install gfortran libopenblas-dev     # Ubuntu 22
-           sudo dnf install gcc-gfortran blas-devel lapack-devel   # Fedora
+           sudo apt-get install gfortran     # Ubuntu
+           sudo dnf install gcc-gfortran     # Fedora
 
     .. tab-item:: Windows
 
-        Install Miniforge/Anaconda for Windows and follow the conda instructions above (native
-        Windows support is being validated, see ``REFACTOR_GFORTRAN.md``).
+        Install Miniforge/Anaconda for Windows and follow the Windows conda instructions above.
 
 
 .. warning:: pyCATHY for Data Assimilation relies on others libraries 

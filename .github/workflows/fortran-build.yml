@@ -28,30 +28,24 @@ jobs:
           channel-priority: strict
           activate-environment: pycathy-ci
 
-      - name: Install compiler and algebra libraries from conda (no system packages)
+      - name: Install the Fortran compiler from conda (no system packages, no BLAS/LAPACK)
         run: |
           if [ "$RUNNER_OS" = "Windows" ]; then
             # conda-forge's `fortran-compiler` is flang on win-64, which rejects the
             # gfortran extensions used by the CATHY sources (ACCESS='transparent').
-            conda install -y gfortran_win-64 libblas liblapack pytest
+            conda install -y gfortran_win-64 pytest
           else
-            conda install -y fortran-compiler libblas liblapack pytest
+            conda install -y fortran-compiler pytest
           fi
           pip install -r env/requirements.txt
           pip install .
-
-      - name: List BLAS/LAPACK libraries installed by conda (Windows diagnostics)
-        if: runner.os == 'Windows'
-        run: |
-          ls "$CONDA_PREFIX/Library/lib" | grep -i -E "blas|lapack|mkl_rt|mkl_core|openblas" || true
-          ls "$CONDA_PREFIX/Library/bin" | grep -i -E "blas|lapack|mkl_rt" || true
 
       - name: Fortran build tests
         run: |
           mkdir -p tmp-fortran-test && cd tmp-fortran-test
           MPLBACKEND=agg pytest --pyargs pyCATHY.tests.test_fortran_build -v
 
-      - name: Build the preprocessor and CATHY (Weill example sources) with conda gfortran + LAPACK/BLAS
+      - name: Build the preprocessor and CATHY (Weill example sources) with the conda Fortran compiler
         env:
           PYCATHY_CACHE: ${{ runner.temp }}/pycathy-cache
         run: |
@@ -66,7 +60,7 @@ jobs:
           shutil.copytree(prj / "prepro" / "src", work / "prepro_src")
           print("compiler:", fb.find_fortran_compiler())
           c = fb.find_fortran_compiler()
-          print("flags:", fb.default_compile_flags(compiler=c), fb.link_libraries(compiler=c))
+          print("flags:", fb.default_compile_flags(compiler=c), fb.runtime_link_flags(compiler=c))
 
           pre = fb.build_preprocessor(work / "prepro_src")
           assert pre.ok, pre.report()

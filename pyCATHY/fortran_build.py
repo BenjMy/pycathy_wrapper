@@ -38,6 +38,181 @@ PREPRO_SOURCES = (
 ).split()
 
 
+ENV_BLAS = "PYCATHY_BLAS"  # "shim" (default) or "system"
+
+# CATHY only needs three external routines: DCOPY (BLAS), DGETRF and DGETRS (LAPACK, always
+# called on a 4x4 system by IPERPLANE). The wrapper compiles this reference-algorithm
+# implementation next to the CATHY sources (they stay untouched), so no BLAS/LAPACK library
+# has to be installed or linked on any platform. PYCATHY_BLAS=system links the real ones.
+LAPACK_SHIM_NAME = "pycathy_blas_lapack_min.f"
+LAPACK_SHIM_SOURCE = """\
+C     Minimal DCOPY / DGETRF / DGETRS (reference algorithms, unblocked)
+      SUBROUTINE DCOPY(N,DX,INCX,DY,INCY)
+      INTEGER N,INCX,INCY
+      DOUBLE PRECISION DX(*),DY(*)
+      INTEGER I,IX,IY
+      IF (N.LE.0) RETURN
+      IX=1
+      IY=1
+      IF (INCX.LT.0) IX=(-N+1)*INCX+1
+      IF (INCY.LT.0) IY=(-N+1)*INCY+1
+      DO 10 I=1,N
+         DY(IY)=DX(IX)
+         IX=IX+INCX
+         IY=IY+INCY
+   10 CONTINUE
+      RETURN
+      END
+C
+      SUBROUTINE DGETRF(M,N,A,LDA,IPIV,INFO)
+      INTEGER INFO,LDA,M,N
+      INTEGER IPIV(*)
+      DOUBLE PRECISION A(LDA,*)
+      INTEGER I,J,JP,K
+      DOUBLE PRECISION PIV,TMP
+      INFO=0
+      IF (M.LT.0 .OR. N.LT.0 .OR. LDA.LT.MAX(1,M)) THEN
+         INFO=-1
+         RETURN
+      END IF
+      IF (M.EQ.0 .OR. N.EQ.0) RETURN
+      DO 60 J=1,MIN(M,N)
+         JP=J
+         PIV=ABS(A(J,J))
+         DO 10 I=J+1,M
+            IF (ABS(A(I,J)).GT.PIV) THEN
+               PIV=ABS(A(I,J))
+               JP=I
+            END IF
+   10    CONTINUE
+         IPIV(J)=JP
+         IF (A(JP,J).NE.0.0D0) THEN
+            IF (JP.NE.J) THEN
+               DO 20 K=1,N
+                  TMP=A(J,K)
+                  A(J,K)=A(JP,K)
+                  A(JP,K)=TMP
+   20          CONTINUE
+            END IF
+            DO 30 I=J+1,M
+               A(I,J)=A(I,J)/A(J,J)
+   30       CONTINUE
+         ELSE IF (INFO.EQ.0) THEN
+            INFO=J
+         END IF
+         DO 50 K=J+1,N
+            DO 40 I=J+1,M
+               A(I,K)=A(I,K)-A(I,J)*A(J,K)
+   40       CONTINUE
+   50    CONTINUE
+   60 CONTINUE
+      RETURN
+      END
+C
+      SUBROUTINE DGETRS(TRANS,N,NRHS,A,LDA,IPIV,B,LDB,INFO)
+      CHARACTER TRANS
+      INTEGER INFO,LDA,LDB,N,NRHS
+      INTEGER IPIV(*)
+      DOUBLE PRECISION A(LDA,*),B(LDB,*)
+      INTEGER I,J,K,IP
+      DOUBLE PRECISION TMP
+      LOGICAL NOTRAN
+      INFO=0
+      NOTRAN=(TRANS.EQ.'N' .OR. TRANS.EQ.'n')
+      IF (.NOT.NOTRAN .AND. TRANS.NE.'T' .AND. TRANS.NE.'t'
+     &    .AND. TRANS.NE.'C' .AND. TRANS.NE.'c') THEN
+         INFO=-1
+         RETURN
+      END IF
+      IF (N.LT.0 .OR. NRHS.LT.0 .OR. LDA.LT.MAX(1,N)
+     &    .OR. LDB.LT.MAX(1,N)) THEN
+         INFO=-2
+         RETURN
+      END IF
+      IF (N.EQ.0 .OR. NRHS.EQ.0) RETURN
+      IF (NOTRAN) THEN
+         DO 20 I=1,N
+            IP=IPIV(I)
+            IF (IP.NE.I) THEN
+               DO 10 K=1,NRHS
+                  TMP=B(I,K)
+                  B(I,K)=B(IP,K)
+                  B(IP,K)=TMP
+   10          CONTINUE
+            END IF
+   20    CONTINUE
+         DO 60 K=1,NRHS
+            DO 40 J=1,N
+               IF (B(J,K).NE.0.0D0) THEN
+                  DO 30 I=J+1,N
+                     B(I,K)=B(I,K)-B(J,K)*A(I,J)
+   30             CONTINUE
+               END IF
+   40       CONTINUE
+            DO 55 J=N,1,-1
+               IF (B(J,K).NE.0.0D0) THEN
+                  B(J,K)=B(J,K)/A(J,J)
+                  DO 50 I=1,J-1
+                     B(I,K)=B(I,K)-B(J,K)*A(I,J)
+   50             CONTINUE
+               END IF
+   55       CONTINUE
+   60    CONTINUE
+      ELSE
+         DO 120 K=1,NRHS
+            DO 80 J=1,N
+               TMP=B(J,K)
+               DO 70 I=1,J-1
+                  TMP=TMP-A(I,J)*B(I,K)
+   70          CONTINUE
+               B(J,K)=TMP/A(J,J)
+   80       CONTINUE
+            DO 100 J=N,1,-1
+               TMP=B(J,K)
+               DO 90 I=J+1,N
+                  TMP=TMP-A(I,J)*B(I,K)
+   90          CONTINUE
+               B(J,K)=TMP
+  100       CONTINUE
+  120    CONTINUE
+         DO 150 I=N,1,-1
+            IP=IPIV(I)
+            IF (IP.NE.I) THEN
+               DO 140 K=1,NRHS
+                  TMP=B(I,K)
+                  B(I,K)=B(IP,K)
+                  B(IP,K)=TMP
+  140          CONTINUE
+            END IF
+  150    CONTINUE
+      END IF
+      RETURN
+      END
+"""
+
+
+def write_lapack_shim(cache_dir=None) -> Path:
+    """Write the shim source (if needed) in the cache directory and return its path."""
+    folder = (Path(cache_dir) if cache_dir else user_cache_dir()) / "shim"
+    path = folder / LAPACK_SHIM_NAME
+    try:
+        if not path.exists() or path.read_text() != LAPACK_SHIM_SOURCE:
+            folder.mkdir(parents=True, exist_ok=True)
+            path.write_text(LAPACK_SHIM_SOURCE)
+    except OSError:
+        pass
+    return path
+
+
+def blas_mode(env=None, blas=None) -> str:
+    """``"shim"`` (default: no BLAS/LAPACK needed) or ``"system"`` (link -llapack -lblas)."""
+    env = os.environ if env is None else env
+    mode = (blas or env.get(ENV_BLAS) or "shim").lower()
+    if mode not in ("shim", "system"):
+        raise ValueError(f"{ENV_BLAS} must be 'shim' or 'system', got {mode!r}")
+    return mode
+
+
 class FortranCompilerNotFound(RuntimeError):
     """No usable Fortran compiler could be located."""
 
@@ -158,6 +333,14 @@ def default_compile_flags(system=None, machine=None, env=None, compiler=None) ->
     return flags
 
 
+def runtime_link_flags(system=None, compiler=None) -> list[str]:
+    """MinGW gfortran: link the Fortran runtime statically (no runtime DLL to find/relocate)."""
+    system = system or platform.system()
+    if system == "Windows" and compiler_family(compiler) == "gfortran":
+        return ["-static-libgfortran", "-static-libgcc"]
+    return []
+
+
 def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     """
     ``-llapack -lblas``, with the conda library directory (and rpath) when available.
@@ -167,11 +350,7 @@ def link_libraries(system=None, env=None, compiler=None) -> list[str]:
     """
     env = os.environ if env is None else env
     system = system or platform.system()
-    flags: list[str] = []
-    if system == "Windows" and compiler_family(compiler) == "gfortran":
-        # A MinGW executable that auto-imports data from the Fortran runtime DLLs can fail
-        # at start-up ("32 bit pseudo relocation ... out of range"): link the runtime statically.
-        flags += ["-static-libgfortran", "-static-libgcc"]
+    flags: list[str] = runtime_link_flags(system, compiler)
     prefix = _conda_prefix(env)
     if prefix is not None:
         libdir = prefix / "Library" / "lib" if system == "Windows" else prefix / "lib"
@@ -302,9 +481,14 @@ def build_preprocessor(src_dir, exe_name="pycppp", sources=PREPRO_SOURCES, compi
 
 
 def build_cathy(src_dir, exe_name="cathy", compiler=None, flags=None, link_flags=None,
-                workers=None, use_cache=True, force=False, cache_dir=None) -> BuildResult:
+                workers=None, use_cache=True, force=False, cache_dir=None,
+                blas=None) -> BuildResult:
     """
     Compile every ``*.f`` of ``src_dir`` (in parallel) and link ``exe_name``.
+
+    ``blas="shim"`` (default, or ``$PYCATHY_BLAS``): DCOPY/DGETRF/DGETRS come from a small
+    wrapper-provided file compiled next to the sources, nothing is linked.
+    ``blas="system"``: link ``-llapack -lblas`` (conda libraries when available).
 
     Cache hit (same sources, ``*.H``, compiler, flags) -> the stored executable is copied
     and nothing is compiled. ``force=True`` ignores the cache (and refreshes it).
@@ -312,14 +496,21 @@ def build_cathy(src_dir, exe_name="cathy", compiler=None, flags=None, link_flags
     src_dir = Path(src_dir)
     compiler = compiler or find_fortran_compiler()
     flags = list(flags) if flags is not None else default_compile_flags(compiler=compiler)
-    link_flags = list(link_flags) if link_flags is not None else link_libraries(compiler=compiler)
+    mode = blas_mode(blas=blas)
+    if link_flags is None:
+        link_flags = link_libraries(compiler=compiler) if mode == "system" else runtime_link_flags(compiler=compiler)
     exe = src_dir / exe_filename(exe_name)
     sources = sorted(p.name for p in src_dir.glob("*.f"))
     if not sources:
         return BuildResult(False, link_error=f"no *.f source file found in {src_dir}")
 
     cache = Path(cache_dir) if cache_dir else user_cache_dir()
-    key = build_key(src_dir, sources, "cathy|" + compiler_version(compiler), flags, link_flags)
+    compile_list = list(sources)
+    shim_id = ""
+    if mode == "shim":
+        compile_list.append(str(write_lapack_shim(cache)))
+        shim_id = "shim-" + hashlib.sha256(LAPACK_SHIM_SOURCE.encode()).hexdigest()[:12]
+    key = build_key(src_dir, sources, f"cathy|{mode}|{shim_id}|" + compiler_version(compiler), flags, link_flags)
     cached = cache / key / exe.name
     if use_cache and not force and cached.exists():
         shutil.copy2(cached, exe)
@@ -331,16 +522,16 @@ def build_cathy(src_dir, exe_name="cathy", compiler=None, flags=None, link_flags
     def compile_one(name):
         obj = Path(name).with_suffix(".o").name
         p = _run([compiler, *flags, "-c", name, "-o", obj], src_dir)
-        return name, p.returncode, p.stderr
+        return Path(name).name, p.returncode, p.stderr
 
     workers = workers or min(32, os.cpu_count() or 1)
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        outcomes = list(pool.map(compile_one, sources))
+        outcomes = list(pool.map(compile_one, compile_list))
     failed = [(name, err) for name, rc, err in outcomes if rc != 0]
     if failed:
         return BuildResult(False, None, False, key, failed=failed)
 
-    objects = [Path(n).with_suffix(".o").name for n in sources]
+    objects = [Path(n).with_suffix(".o").name for n in compile_list]
     p = _run([compiler, *flags, *objects, *link_flags, "-o", str(exe)], src_dir)
     if p.returncode != 0 or not exe.exists():
         return BuildResult(False, None, False, key, link_error=p.stderr)
