@@ -334,10 +334,14 @@ def default_compile_flags(system=None, machine=None, env=None, compiler=None) ->
 
 
 def runtime_link_flags(system=None, compiler=None) -> list[str]:
-    """MinGW gfortran: link the Fortran runtime statically (no runtime DLL to find/relocate)."""
+    """
+    MinGW gfortran on Windows: link the Fortran runtime statically (no runtime DLL to
+    find/relocate) and reserve a 256 MB stack (Windows default is 1 MB, Linux 8 MB: CATHY
+    otherwise ends with 0xC00000FD, stack overflow).
+    """
     system = system or platform.system()
     if system == "Windows" and compiler_family(compiler) == "gfortran":
-        return ["-static-libgfortran", "-static-libgcc"]
+        return ["-static-libgfortran", "-static-libgcc", "-Wl,--stack,268435456"]
     return []
 
 

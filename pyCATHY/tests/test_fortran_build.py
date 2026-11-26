@@ -83,8 +83,8 @@ def test_link_libraries_with_and_without_conda(tmp_path):
     assert flags[-2:] == ["-llapack", "-lblas"]
     (tmp_path / "Library" / "lib").mkdir(parents=True)
     win = fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path)})
-    assert win == ["-static-libgfortran", "-static-libgcc",
-                   f"-L{tmp_path / 'Library' / 'lib'}", "-llapack", "-lblas"]
+    assert win == fb.runtime_link_flags("Windows") + [
+        f"-L{tmp_path / 'Library' / 'lib'}", "-llapack", "-lblas"]
 
 
 def test_user_cache_dir(tmp_path):
@@ -245,7 +245,8 @@ def test_windows_links_import_libs_by_path(tmp_path):
     # MinGW gfortran: same libraries by path, plus the static Fortran runtime
     mingw = fb.link_libraries("Windows", env=env, compiler="x86_64-w64-mingw32-gfortran.exe")
     assert mingw[-2:] == flags[-2:]
-    assert mingw[:2] == ["-static-libgfortran", "-static-libgcc"]
+    assert mingw[:-2] == fb.runtime_link_flags("Windows", compiler="gfortran")
+    assert "-Wl,--stack,268435456" in mingw
     # without them: fall back to the -l form
     assert fb.link_libraries("Windows", env={"CONDA_PREFIX": str(tmp_path / "none")})[-2:] == ["-llapack", "-lblas"]
 
@@ -330,3 +331,10 @@ def test_blas_mode_is_part_of_the_cache_key(tmp_path):
     system = fb.build_cathy(src, "prog", blas="system", **kw)
     assert shim.ok and system.ok
     assert shim.key != system.key
+
+
+def test_runtime_link_flags_only_for_mingw_gfortran():
+    assert "-static-libgfortran" in fb.runtime_link_flags("Windows", "x86_64-w64-mingw32-gfortran.exe")
+    assert fb.runtime_link_flags("Linux", "gfortran") == []
+    assert fb.runtime_link_flags("Darwin", "gfortran") == []
+    assert fb.runtime_link_flags("Windows", "flang-new.exe") == []
