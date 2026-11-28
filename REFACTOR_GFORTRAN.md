@@ -15,6 +15,7 @@ Status: **implemented and validated in CI on Linux, macOS (Intel) and native Win
 | 5. Wrapper clean-up | DONE | `run_preprocessor` raises with the compiler output on failure; `recompileSrc(verbose=False, force=False)` (backward compatible), `CATHY.last_build` keeps the `BuildResult`; `processor_name` is `cathy.exe` on Windows. Windows fixes found by CI: read-only git files in `tmp_src` (`_rmtree`), git handles closed after fetching sources. |
 | 6. CI + docs | DONE | `.github/workflows/fortran-build.yml`: Linux, macOS Intel, Windows: unit tests, build of the Weill sources, cache hit, and a full preprocessor + processor run through the wrapper. `macos-14` (Apple Silicon) is not supported by this account's runners. `documentation.yml` still uses `apt` (docs build only; not migrated). |
 | Distribution | DRAFT | `conda-recipe/meta.yaml` (untested; per-platform, not `noarch`; sha256 / PyPI url TODO). |
+| HPC | DRAFT | `hpc/drago/`: install script, Slurm templates (single run, warm cache + job array for ensembles) for the CSIC Drago cluster; untested on Drago, [VERIFY] points listed in its README. |
 | 7. Tests | DONE | `pyCATHY/tests/test_fortran_build.py` (real builds skipped without a compiler), `test_rmtree_readonly.py`. |
 
 Not verified: Apple Silicon, a full `SCF_variable` simulation (its sources do build), `CATHY_SCF_LAI` on Windows, the conda-forge recipe.

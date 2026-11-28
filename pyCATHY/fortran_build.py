@@ -546,9 +546,14 @@ def build_cathy(src_dir, exe_name="cathy", compiler=None, flags=None, link_flags
 
 def _store(exe: Path, cached: Path) -> None:
     """Best effort: a read-only or full cache must never break a build."""
+    tmp = cached.with_name(f".{cached.name}.{os.getpid()}.{id(exe)}.tmp")
     try:
         cached.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(exe, cached)
-        _make_executable(cached)
+        shutil.copy2(exe, tmp)
+        _make_executable(tmp)
+        os.replace(tmp, cached)  # atomic: concurrent jobs (DA ensembles) never see a partial file
     except OSError:
-        pass
+        try:
+            tmp.unlink()
+        except OSError:
+            pass

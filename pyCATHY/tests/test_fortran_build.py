@@ -338,3 +338,15 @@ def test_runtime_link_flags_only_for_mingw_gfortran():
     assert fb.runtime_link_flags("Linux", "gfortran") == []
     assert fb.runtime_link_flags("Darwin", "gfortran") == []
     assert fb.runtime_link_flags("Windows", "flang-new.exe") == []
+
+
+def test_store_is_atomic_and_leaves_no_temp_file(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+
+    exe = tmp_path / "exe"
+    exe.write_bytes(b"binary" * 1000)
+    cached = tmp_path / "cache" / "key" / "exe"
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(lambda _: fb._store(exe, cached), range(16)))
+    assert cached.read_bytes() == exe.read_bytes()
+    assert [p.name for p in cached.parent.iterdir()] == ["exe"]
